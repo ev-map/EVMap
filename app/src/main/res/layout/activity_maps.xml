@@ -1,14 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <fragment
-        android:id="@+id/map"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
+    <data>
+
+        <variable
+            name="charger"
+            type="String" />
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".MapsActivity" />
+        android:fitsSystemWindows="true">
+
+        <fragment
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".MapsActivity" />
+
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/gallery"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/anchor_point"
+            android:background="@color/colorAccent"
+            app:layout_behavior="@string/BackDropBottomSheetBehavior"
+            android:fitsSystemWindows="true"
+            android:visibility="gone"></androidx.viewpager.widget.ViewPager>
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:behavior_peekHeight="@dimen/bottom_sheet_peek_height"
+            android:id="@+id/bottom_sheet"
+            app:layout_behavior="@string/BottomSheetBehaviorGoogleMapsLike"
+            app:anchorPoint="@dimen/anchor_point"
+            app:behavior_hideable="true"
+            android:visibility="gone"
+            android:fitsSystemWindows="true">
+
+            <include layout="@layout/detail_view" />
+
+        </androidx.core.widget.NestedScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

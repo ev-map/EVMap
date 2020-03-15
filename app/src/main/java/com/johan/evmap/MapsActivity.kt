@@ -2,6 +2,8 @@ package com.johan.evmap
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.Observable
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -12,12 +14,15 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.maps.android.ui.IconGenerator
 import com.johan.evmap.api.*
+import com.johan.evmap.databinding.ActivityMapsBinding
+import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
+    private lateinit var binding: ActivityMapsBinding
     private lateinit var map: GoogleMap
     private lateinit var api: GoingElectricApi
     private var chargepoints: List<ChargepointListItem> = emptyList()
@@ -26,11 +31,27 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_maps)
-        val mapFragment = supportFragmentManager
-                .findFragmentById(R.id.map) as SupportMapFragment
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_maps)
+
+        val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
         api = GoingElectricApi.create(getString(R.string.goingelectric_key))
+
+        val behavior = BottomSheetBehaviorGoogleMapsLike.from(binding.bottomSheet);
+        binding.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
+            override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
+                when (propertyId) {
+                    BR.charger -> {
+                        if (binding.charger != null) {
+                            behavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED
+                        } else {
+                            behavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN
+                        }
+                    }
+                }
+            }
+
+        })
     }
 
 
@@ -43,6 +64,23 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         map.setOnCameraIdleListener {
             loadChargepoints()
+        }
+        map.setOnMarkerClickListener { marker ->
+            when (marker) {
+                in markers -> {
+                    binding.charger = markers[marker]
+                    true
+                }
+                in clusterMarkers -> {
+                    val newZoom = map.cameraPosition.zoom + 2
+                    map.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.position, newZoom))
+                    true
+                }
+                else -> false
+            }
+        }
+        map.setOnMapClickListener {
+            binding.charger = null
         }
     }
 

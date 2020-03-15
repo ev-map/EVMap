@@ -5,9 +5,10 @@
 
     <data>
 
+        <import type="com.johan.evmap.api.ChargeLocation" />
         <variable
             name="charger"
-            type="String" />
+            type="ChargeLocation" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -28,8 +29,7 @@
             android:layout_height="@dimen/anchor_point"
             android:background="@color/colorAccent"
             app:layout_behavior="@string/BackDropBottomSheetBehavior"
-            android:fitsSystemWindows="true"
-            android:visibility="gone"></androidx.viewpager.widget.ViewPager>
+            android:fitsSystemWindows="true" />
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
@@ -39,11 +39,13 @@
             android:id="@+id/bottom_sheet"
             app:layout_behavior="@string/BottomSheetBehaviorGoogleMapsLike"
             app:anchorPoint="@dimen/anchor_point"
+            app:defaultState="stateHidden"
             app:behavior_hideable="true"
-            android:visibility="gone"
             android:fitsSystemWindows="true">
 
-            <include layout="@layout/detail_view" />
+            <include
+                layout="@layout/detail_view"
+                app:charger="@{charger}" />
 
         </androidx.core.widget.NestedScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

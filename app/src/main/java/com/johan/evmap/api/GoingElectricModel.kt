@@ -18,10 +18,15 @@ data class ChargeLocation(
     val coordinates: Coordinate,
     val address: Address,
     val chargepoints: List<Chargepoint>,
-    //val network: String,
+    @JsonObjectOrFalse val network: String?,
     val url: String,
-    @Json(name = "fault_report") val faultReport: Boolean,
-    val verified: Boolean
+    // @Json(name = "fault_report") val faultReport: Boolean, <- Object or false in detail, true or false in overview
+    val verified: Boolean,
+    // only shown in details:
+    @JsonObjectOrFalse val operator: String?,
+    @Json(name = "general_information") @JsonObjectOrFalse val generalInformation: String?,
+    val photos: List<ChargerPhoto>?
+    //val chargecards: Boolean?
 ) : ChargepointListItem() {
     val maxPower: Double
         get() {
@@ -39,6 +44,9 @@ data class ChargeLocation(
         }.joinToString(" · ")
     }
 }
+
+@JsonClass(generateAdapter = true)
+data class ChargerPhoto(val id: String)
 
 @JsonClass(generateAdapter = true)
 data class ChargeLocationCluster(

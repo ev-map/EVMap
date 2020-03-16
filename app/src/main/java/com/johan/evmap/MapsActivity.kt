@@ -38,17 +38,23 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mapFragment.getMapAsync(this)
         api = GoingElectricApi.create(getString(R.string.goingelectric_key))
 
-        val behavior = BottomSheetBehaviorGoogleMapsLike.from(binding.bottomSheet);
+        val behavior = BottomSheetBehaviorGoogleMapsLike.from(binding.bottomSheet)
         binding.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
+            var previousCharger = binding.charger
+
             override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
-                when (propertyId) {
-                    BR.charger -> {
-                        if (binding.charger != null) {
+                if (propertyId == BR.charger) {
+                    if (binding.charger != null) {
+                        if (previousCharger == null ||
+                            previousCharger!!.id != binding.charger!!.id
+                        ) {
                             behavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED
-                        } else {
-                            behavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN
+                            loadChargerDetails()
                         }
+                    } else {
+                        behavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN
                     }
+                    previousCharger = binding.charger
                 }
             }
 
@@ -94,6 +100,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             clusterDistance = 70
         ).enqueue(object : Callback<ChargepointList> {
             override fun onFailure(call: Call<ChargepointList>, t: Throwable) {
+                //TODO: show error message
                 t.printStackTrace()
             }
 
@@ -102,11 +109,34 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 response: Response<ChargepointList>
             ) {
                 if (!response.isSuccessful || response.body()!!.status != "ok") {
+                    //TODO: show error message
                     return
                 }
 
                 chargepoints = response.body()!!.chargelocations
                 updateMap()
+            }
+        })
+    }
+
+    private fun loadChargerDetails() {
+        val id = binding.charger?.id ?: return
+        api.getChargepointDetail(id).enqueue(object : Callback<ChargepointList> {
+            override fun onFailure(call: Call<ChargepointList>, t: Throwable) {
+                //TODO: show error message
+                t.printStackTrace()
+            }
+
+            override fun onResponse(
+                call: Call<ChargepointList>,
+                response: Response<ChargepointList>
+            ) {
+                if (!response.isSuccessful || response.body()!!.status != "ok") {
+                    //TODO: show error message
+                    return
+                }
+
+                binding.charger = response.body()!!.chargelocations[0] as ChargeLocation
             }
         })
     }

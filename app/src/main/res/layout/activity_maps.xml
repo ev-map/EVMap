@@ -29,7 +29,8 @@
             android:layout_height="@dimen/anchor_point"
             android:background="@color/colorAccent"
             app:layout_behavior="@string/BackDropBottomSheetBehavior"
-            android:fitsSystemWindows="true" />
+            android:fitsSystemWindows="true"
+            app:invisibleUnless="@{charger.photos != null &amp;&amp; charger.photos.size() > 0}" />
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"

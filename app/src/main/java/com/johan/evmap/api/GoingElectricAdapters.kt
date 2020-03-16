@@ -56,3 +56,48 @@ internal class ChargepointListItemJsonAdapter(val moshi: Moshi) :
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }
+
+internal class JsonObjectOrFalseAdapter<T> private constructor(
+    private val objectDelegate: JsonAdapter<T>?
+) : JsonAdapter<T>() {
+
+    class Factory() : JsonAdapter.Factory {
+        override fun create(
+            type: Type,
+            annotations: Set<Annotation>?,
+            moshi: Moshi
+        ): JsonAdapter<*>? {
+            val clazz = Types.getRawType(type)
+            return when (hasJsonObjectOrFalseAnnotation(annotations)) {
+                false -> null
+                true -> JsonObjectOrFalseAdapter(moshi.adapter(clazz))
+            }
+        }
+    }
+
+    override fun fromJson(reader: JsonReader) = when (reader.peek()) {
+        JsonReader.Token.BOOLEAN -> when (reader.nextBoolean()) {
+            false -> null // Response was false
+            else ->
+                throw IllegalStateException("Non-false boolean for @JsonObjectOrFalse field")
+        }
+        JsonReader.Token.BEGIN_OBJECT -> objectDelegate?.fromJson(reader)
+        JsonReader.Token.STRING -> objectDelegate?.fromJson(reader)
+        JsonReader.Token.NUMBER -> objectDelegate?.fromJson(reader)
+        else ->
+            throw IllegalStateException("Non-object-non-boolean value for @JsonObjectOrFalse field")
+    }
+
+    override fun toJson(writer: JsonWriter, value: T?) =
+        objectDelegate?.toJson(writer, value) ?: Unit
+}
+
+private fun hasJsonObjectOrFalseAnnotation(annotations: Set<Annotation>?) =
+    annotations?.firstOrNull { it.annotationClass == JsonObjectOrFalse::class } != null
+
+@JsonQualifier
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.FIELD)
+annotation class JsonObjectOrFalse {
+
+}

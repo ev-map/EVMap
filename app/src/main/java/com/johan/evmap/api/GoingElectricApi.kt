@@ -19,6 +19,9 @@ interface GoingElectricApi {
         @Query("cluster_distance") clusterDistance: Int
     ): Call<ChargepointList>
 
+    @GET("/chargepoints/")
+    fun getChargepointDetail(@Query("ge_id") id: Long): Call<ChargepointList>
+
     companion object {
         fun create(apikey: String): GoingElectricApi {
             val client = OkHttpClient.Builder()
@@ -34,6 +37,7 @@ interface GoingElectricApi {
 
             val moshi = Moshi.Builder()
                 .add(ChargepointListItemJsonAdapterFactory())
+                .add(JsonObjectOrFalseAdapter.Factory())
                 .build()
 
             val retrofit = Retrofit.Builder()

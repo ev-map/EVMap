@@ -3,4 +3,9 @@
     <color name="colorPrimary">#6200EE</color>
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#03DAC5</color>
+    <color name="charger_100kw">#ffeb3b</color>
+    <color name="charger_43kw">#ff9800</color>
+    <color name="charger_20kw">#03a9f4</color>
+    <color name="charger_11kw">#607d8b</color>
+    <color name="charger_low">#9e9e9e</color>
 </resources>

@@ -27,6 +27,17 @@ data class ChargeLocation(
         get() {
             return chargepoints.map { it.power }.max() ?: 0.0
         }
+
+    fun formatChargepoints(): String {
+        return chargepoints.map {
+            val powerFmt = if (it.power - it.power.toInt() == 0.0) {
+                "%.0f".format(it.power)
+            } else {
+                "%.1f".format(it.power)
+            }
+            "${it.count}x ${it.type} $powerFmt kW"
+        }.joinToString(" · ")
+    }
 }
 
 @JsonClass(generateAdapter = true)
@@ -39,7 +50,16 @@ data class ChargeLocationCluster(
 data class Coordinate(val lat: Double, val lng: Double)
 
 @JsonClass(generateAdapter = true)
-data class Address(val city: String, val country: String, val postcode: String, val street: String)
+data class Address(
+    val city: String,
+    val country: String,
+    val postcode: String,
+    val street: String
+) {
+    override fun toString(): String {
+        return "$street, $postcode $city"
+    }
+}
 
 @JsonClass(generateAdapter = true)
 data class Chargepoint(val type: String, val power: Double, val count: Int)

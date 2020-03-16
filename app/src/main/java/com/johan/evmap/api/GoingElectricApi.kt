@@ -15,7 +15,8 @@ interface GoingElectricApi {
         @Query("sw_lat") swlat: Double, @Query("sw_lng") sw_lng: Double,
         @Query("ne_lat") ne_lat: Double, @Query("ne_lng") ne_lng: Double,
         @Query("clustering") clustering: Boolean,
-        @Query("zoom") zoom: Float
+        @Query("zoom") zoom: Float,
+        @Query("cluster_distance") clusterDistance: Int
     ): Call<ChargepointList>
 
     companion object {

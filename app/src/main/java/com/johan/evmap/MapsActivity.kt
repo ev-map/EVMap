@@ -15,6 +15,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.maps.android.ui.IconGenerator
 import com.johan.evmap.api.*
 import com.johan.evmap.databinding.ActivityMapsBinding
+import com.johan.evmap.ui.getBitmapDescriptor
 import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike
 import retrofit2.Call
 import retrofit2.Callback
@@ -89,7 +90,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         api.getChargepoints(
             bounds.southwest.latitude, bounds.southwest.longitude,
             bounds.northeast.latitude, bounds.northeast.longitude,
-            clustering = true, zoom = map.cameraPosition.zoom
+            clustering = map.cameraPosition.zoom < 12, zoom = map.cameraPosition.zoom,
+            clusterDistance = 70
         ).enqueue(object : Callback<ChargepointList> {
             override fun onFailure(call: Call<ChargepointList>, t: Throwable) {
                 t.printStackTrace()
@@ -126,14 +128,14 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 MarkerOptions()
                     .position(LatLng(charger.coordinates.lat, charger.coordinates.lng))
                     .icon(
-                        BitmapDescriptorFactory.defaultMarker(
-                            when {
-                                charger.maxPower >= 100 -> BitmapDescriptorFactory.HUE_YELLOW
-                                charger.maxPower >= 43 -> BitmapDescriptorFactory.HUE_ORANGE
-                                charger.maxPower >= 20 -> BitmapDescriptorFactory.HUE_AZURE
-                                charger.maxPower >= 11 -> BitmapDescriptorFactory.HUE_BLUE
-                                else -> BitmapDescriptorFactory.HUE_GREEN
-                            }
+                        getBitmapDescriptor(
+                            R.drawable.ic_map_marker_charging, when {
+                                charger.maxPower >= 100 -> R.color.charger_100kw
+                                charger.maxPower >= 43 -> R.color.charger_43kw
+                                charger.maxPower >= 20 -> R.color.charger_20kw
+                                charger.maxPower >= 11 -> R.color.charger_11kw
+                                else -> R.color.charger_low
+                            }, this
                         )
                     )
             ) to charger

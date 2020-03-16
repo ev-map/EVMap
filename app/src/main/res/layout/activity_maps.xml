@@ -35,18 +35,31 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            app:behavior_peekHeight="@dimen/bottom_sheet_peek_height"
+            app:behavior_peekHeight="@dimen/peek_height"
             android:id="@+id/bottom_sheet"
             app:layout_behavior="@string/BottomSheetBehaviorGoogleMapsLike"
             app:anchorPoint="@dimen/anchor_point"
             app:defaultState="stateHidden"
             app:behavior_hideable="true"
-            android:fitsSystemWindows="true">
+            android:fitsSystemWindows="true"
+            tools:defaultState="stateCollapsed">
 
             <include
                 layout="@layout/detail_view"
                 app:charger="@{charger}" />
 
         </androidx.core.widget.NestedScrollView>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_directions"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            app:layout_anchor="@id/bottom_sheet"
+            app:layout_anchorGravity="top|right|end"
+            android:src="@drawable/ic_directions"
+            android:layout_margin="@dimen/fab_margin"
+            app:layout_behavior="@string/ScrollAwareFABBehavior"
+            android:clickable="true"
+            android:focusable="true" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

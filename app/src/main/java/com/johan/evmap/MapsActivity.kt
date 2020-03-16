@@ -4,6 +4,8 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.Observable
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -13,6 +15,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.maps.android.ui.IconGenerator
+import com.johan.evmap.adapter.GalleryPagerAdapter
 import com.johan.evmap.api.*
 import com.johan.evmap.databinding.ActivityMapsBinding
 import com.johan.evmap.ui.getBitmapDescriptor
@@ -21,11 +24,13 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var binding: ActivityMapsBinding
     private lateinit var map: GoogleMap
     private lateinit var api: GoingElectricApi
+    private lateinit var galleryAdapter: GalleryPagerAdapter
     private var chargepoints: List<ChargepointListItem> = emptyList()
     private var markers: Map<Marker, ChargeLocation> = emptyMap()
     private var clusterMarkers: List<Marker> = emptyList()
@@ -39,18 +44,32 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         api = GoingElectricApi.create(getString(R.string.goingelectric_key))
 
         val behavior = BottomSheetBehaviorGoogleMapsLike.from(binding.bottomSheet)
+
+        galleryAdapter = GalleryPagerAdapter(this)
+        binding.gallery.setAdapter(galleryAdapter)
+        binding.gallery.layoutManager =
+            LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        binding.gallery.addItemDecoration(DividerItemDecoration(
+            this, LinearLayoutManager.HORIZONTAL
+        ).apply {
+            setDrawable(getDrawable(R.drawable.gallery_divider)!!)
+        })
+
         binding.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
             var previousCharger = binding.charger
 
             override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
                 if (propertyId == BR.charger) {
                     if (binding.charger != null) {
+                        val charger = binding.charger!!
+
                         if (previousCharger == null ||
-                            previousCharger!!.id != binding.charger!!.id
+                            previousCharger!!.id != charger.id
                         ) {
                             behavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED
                             loadChargerDetails()
                         }
+                        galleryAdapter.submitList(charger.photos)
                     } else {
                         behavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN
                     }

@@ -9,6 +9,10 @@
         <variable
             name="charger"
             type="ChargeLocation" />
+
+        <variable
+            name="myLocationEnabled"
+            type="boolean" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -31,6 +35,20 @@
             app:layout_behavior="@string/BackDropBottomSheetBehavior"
             android:fitsSystemWindows="true"
             app:invisibleUnless="@{charger.photos != null &amp;&amp; charger.photos.size() > 0}" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_locate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/fab_margin"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@drawable/ic_location"
+            app:backgroundTint="@android:color/white"
+            app:borderWidth="0dp"
+            app:isFabActive="@{ myLocationEnabled }"
+            app:layout_behavior=".ui.HideOnScrollFabBehavior" />
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"

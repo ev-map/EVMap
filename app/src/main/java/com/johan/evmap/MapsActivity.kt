@@ -1,11 +1,17 @@
 package com.johan.evmap
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.Observable
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -24,13 +30,14 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+const val REQUEST_LOCATION_PERMISSION = 1
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
-
     private lateinit var binding: ActivityMapsBinding
     private lateinit var map: GoogleMap
     private lateinit var api: GoingElectricApi
     private lateinit var galleryAdapter: GalleryPagerAdapter
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var chargepoints: List<ChargepointListItem> = emptyList()
     private var markers: Map<Marker, ChargeLocation> = emptyMap()
     private var clusterMarkers: List<Marker> = emptyList()
@@ -38,6 +45,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_maps)
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
@@ -78,16 +86,24 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             }
 
         })
+
+        binding.fabLocate.setOnClickListener {
+            if (!hasLocationPermission()) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                    REQUEST_LOCATION_PERMISSION
+                )
+            } else {
+                enableLocation(true)
+            }
+        }
+
     }
 
 
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
-
-        // Add a marker in Sydney and move the camera
-        val sydney = LatLng(54.0, 9.0)
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 11f))
-
         map.setOnCameraIdleListener {
             loadChargepoints()
         }
@@ -108,7 +124,33 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         map.setOnMapClickListener {
             binding.charger = null
         }
+
+        if (hasLocationPermission()) {
+            enableLocation(false)
+        }
     }
+
+    private fun enableLocation(animate: Boolean) {
+        map.isMyLocationEnabled = true
+        binding.myLocationEnabled = true
+        map.uiSettings.isMyLocationButtonEnabled = false
+        fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+            if (location != null) {
+                val latLng = LatLng(location.latitude, location.longitude)
+                if (animate) {
+                    val camUpdate = CameraUpdateFactory.newLatLng(latLng)
+                    map.animateCamera(camUpdate)
+                } else {
+                    val camUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 13f)
+                    map.moveCamera(camUpdate)
+                }
+            }
+        }
+    }
+
+    private fun hasLocationPermission() =
+        ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
+                PackageManager.PERMISSION_GRANTED
 
     private fun loadChargepoints() {
         val bounds = map.projection.visibleRegion.latLngBounds
@@ -195,6 +237,21 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                     .position(LatLng(cluster.coordinates.lat, cluster.coordinates.lng))
                     .icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon(cluster.clusterCount.toString())))
             )
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        when (requestCode) {
+            REQUEST_LOCATION_PERMISSION -> {
+                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    enableLocation(true)
+                }
+            }
+            else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }
     }
 }

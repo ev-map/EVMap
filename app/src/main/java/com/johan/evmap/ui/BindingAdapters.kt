@@ -1,11 +1,14 @@
 package com.johan.evmap.ui
 
-import android.R
 import android.content.res.ColorStateList
 import android.util.TypedValue
 import android.view.View
+import android.widget.ImageView
 import androidx.databinding.BindingAdapter
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.johan.evmap.R
 
 
 @BindingAdapter("goneUnless")
@@ -27,4 +30,23 @@ fun isFabActive(view: FloatingActionButton, isColored: Boolean) {
         view.context.theme.resolveAttribute(R.attr.colorControlNormal, color, true)
     }
     view.imageTintList = ColorStateList.valueOf(color.data)
+}
+
+@BindingAdapter("data")
+fun <T> setRecyclerViewData(recyclerView: RecyclerView, items: List<T>?) {
+    if (recyclerView.adapter is ListAdapter<*, *>) {
+        (recyclerView.adapter as ListAdapter<T, *>).submitList(items)
+    }
+}
+
+@BindingAdapter("connectorIcon")
+fun getConnectorItem(view: ImageView, type: String) {
+    view.setImageResource(
+        when (type) {
+            "Typ2" -> R.drawable.connector_typ2
+            "CCS" -> R.drawable.connector_ccs
+            // TODO: add other connectors
+            else -> 0
+        }
+    )
 }

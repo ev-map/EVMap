@@ -1,5 +1,6 @@
 package com.johan.evmap.api
 
+import com.johan.evmap.adapter.Equatable
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -35,12 +36,7 @@ data class ChargeLocation(
 
     fun formatChargepoints(): String {
         return chargepoints.map {
-            val powerFmt = if (it.power - it.power.toInt() == 0.0) {
-                "%.0f".format(it.power)
-            } else {
-                "%.1f".format(it.power)
-            }
-            "${it.count}x ${it.type} $powerFmt kW"
+            "${it.count} × ${it.type} ${it.formatPower()}"
         }.joinToString(" · ")
     }
 }
@@ -70,4 +66,13 @@ data class Address(
 }
 
 @JsonClass(generateAdapter = true)
-data class Chargepoint(val type: String, val power: Double, val count: Int)
+data class Chargepoint(val type: String, val power: Double, val count: Int) : Equatable {
+    fun formatPower(): String {
+        val powerFmt = if (power - power.toInt() == 0.0) {
+            "%.0f".format(power)
+        } else {
+            "%.1f".format(power)
+        }
+        return "$powerFmt kW"
+    }
+}

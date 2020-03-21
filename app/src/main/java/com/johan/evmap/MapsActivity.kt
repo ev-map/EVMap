@@ -21,7 +21,8 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.maps.android.ui.IconGenerator
-import com.johan.evmap.adapter.GalleryPagerAdapter
+import com.johan.evmap.adapter.ConnectorAdapter
+import com.johan.evmap.adapter.GalleryAdapter
 import com.johan.evmap.api.*
 import com.johan.evmap.databinding.ActivityMapsBinding
 import com.johan.evmap.ui.getBitmapDescriptor
@@ -36,7 +37,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var binding: ActivityMapsBinding
     private lateinit var map: GoogleMap
     private lateinit var api: GoingElectricApi
-    private lateinit var galleryAdapter: GalleryPagerAdapter
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var chargepoints: List<ChargepointListItem> = emptyList()
     private var markers: Map<Marker, ChargeLocation> = emptyMap()
@@ -53,8 +53,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         val behavior = BottomSheetBehaviorGoogleMapsLike.from(binding.bottomSheet)
 
-        galleryAdapter = GalleryPagerAdapter(this)
-        binding.gallery.setAdapter(galleryAdapter)
+        binding.gallery.adapter = GalleryAdapter(this)
         binding.gallery.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         binding.gallery.addItemDecoration(DividerItemDecoration(
@@ -62,6 +61,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         ).apply {
             setDrawable(getDrawable(R.drawable.gallery_divider)!!)
         })
+
+        binding.detailView.connectors.adapter = ConnectorAdapter()
+        binding.detailView.connectors.layoutManager =
+            LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
         binding.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
             var previousCharger = binding.charger
@@ -77,7 +80,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                             behavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED
                             loadChargerDetails()
                         }
-                        galleryAdapter.submitList(charger.photos)
                     } else {
                         behavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN
                     }

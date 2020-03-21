@@ -34,7 +34,8 @@
             android:background="?android:colorBackground"
             app:layout_behavior="@string/BackDropBottomSheetBehavior"
             android:fitsSystemWindows="true"
-            app:invisibleUnless="@{charger.photos != null &amp;&amp; charger.photos.size() > 0}" />
+            app:invisibleUnless="@{charger.photos != null &amp;&amp; charger.photos.size() > 0}"
+            app:data="@{charger.photos}" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_locate"
@@ -64,6 +65,7 @@
             tools:defaultState="stateCollapsed">
 
             <include
+                android:id="@+id/detail_view"
                 layout="@layout/detail_view"
                 app:charger="@{charger}" />
 

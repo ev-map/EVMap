@@ -11,8 +11,8 @@ import com.johan.evmap.R
 import com.johan.evmap.api.ChargerPhoto
 import com.squareup.picasso.Picasso
 
-class GalleryPagerAdapter(context: Context) :
-    ListAdapter<ChargerPhoto, GalleryPagerAdapter.ViewHolder>(ChargerPhotoDiffCallback()) {
+class GalleryAdapter(context: Context) :
+    ListAdapter<ChargerPhoto, GalleryAdapter.ViewHolder>(ChargerPhotoDiffCallback()) {
     class ViewHolder(val view: ImageView) : RecyclerView.ViewHolder(view)
 
     val apikey = context.getString(R.string.goingelectric_key)

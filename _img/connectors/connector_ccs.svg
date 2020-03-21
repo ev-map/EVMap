@@ -1,0 +1,14 @@
+<svg id="Ebene_5" data-name="Ebene 5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <defs>
+        <style>.cls-1{fill:none;stroke:#000;stroke-miterlimit:10;stroke-width:2px;}</style>
+    </defs>
+    <title>ccs</title>
+    <path class="cls-1"
+        d="M20,8.2a7.89,7.89,0,0,1-8,7.87A7.91,7.91,0,0,1,6.29,2.6H17.71A8,8,0,0,1,20,8.2Z" />
+    <circle cx="12" cy="7.4" r="1.6" />
+    <circle cx="9.6" cy="5" r="1" />
+    <circle cx="14.4" cy="5" r="1" />
+    <circle cx="9" cy="18.73" r="1.5" />
+    <circle cx="15" cy="18.73" r="1.5" />
+    <rect class="cls-1" x="6.24" y="16.07" width="11.52" height="5.33" rx="2.67" />
+</svg>

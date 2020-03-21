@@ -2,7 +2,6 @@ package com.johan.evmap.ui
 
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
@@ -22,7 +21,6 @@ class HideOnScrollFabBehavior(context: Context, attrs: AttributeSet) :
         axes: Int,
         type: Int
     ): Boolean {
-        Log.d("debug", "onStartNestedScroll")
         return axes == ViewCompat.SCROLL_AXIS_VERTICAL || super.onStartNestedScroll(
             coordinatorLayout,
             child,
@@ -64,7 +62,6 @@ class HideOnScrollFabBehavior(context: Context, attrs: AttributeSet) :
         dependency: View
     ): Boolean {
         val behavior = BottomSheetBehaviorGoogleMapsLike.from<View>(dependency)
-        Log.d("debug", "state: ${behavior.state}")
         when (behavior.state) {
             BottomSheetBehaviorGoogleMapsLike.STATE_SETTLING -> {
 
@@ -90,7 +87,6 @@ class HideOnScrollFabBehavior(context: Context, attrs: AttributeSet) :
         type: Int,
         consumed: IntArray
     ) {
-        Log.d("debug", "onNestedScroll $dyConsumed")
         super.onNestedScroll(
             coordinatorLayout,
             child,

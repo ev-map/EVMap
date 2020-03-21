@@ -73,10 +73,26 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="@{charger.generalInformation}"
-                tools:text="Nur für Gäste."
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.937"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/connectors"
+                tools:text="Nur für Gäste." />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/connectors"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView3" />
+                app:layout_constraintTop_toBottomOf="@+id/textView3"
+                app:data="@{charger.chargepoints}"
+                tools:itemCount="3"
+                tools:layoutManager="LinearLayoutManager"
+                tools:listitem="@layout/item_connector"
+                tools:orientation="horizontal" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>

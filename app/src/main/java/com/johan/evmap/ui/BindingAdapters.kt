@@ -43,8 +43,11 @@ fun <T> setRecyclerViewData(recyclerView: RecyclerView, items: List<T>?) {
 fun getConnectorItem(view: ImageView, type: String) {
     view.setImageResource(
         when (type) {
-            "Typ2" -> R.drawable.connector_typ2
-            "CCS" -> R.drawable.connector_ccs
+            "CCS" -> R.drawable.ic_connector_ccs
+            "CHAdeMO" -> R.drawable.ic_connector_chademo
+            "Schuko" -> R.drawable.ic_connector_schuko
+            "Tesla Supercharger" -> R.drawable.ic_connector_supercharger
+            "Typ2" -> R.drawable.ic_connector_typ2
             // TODO: add other connectors
             else -> 0
         }

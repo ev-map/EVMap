@@ -1,0 +1,22 @@
+<svg id="Ebene_5" data-name="Ebene 5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <defs>
+        <style>
+            .cls-1,.cls-2,.cls-3,.cls-4{fill:none;}.cls-2,.cls-3,.cls-4{stroke:#000;stroke-miterlimit:10;}.cls-3{stroke-width:2px;}.cls-4{stroke-width:0.5px;}
+        </style>
+    </defs>
+    <title>connector_chademo</title>
+    <path class="cls-1" d="M12,12H36V36H12Z" />
+    <circle class="cls-2" cx="17" cy="12" r="2" />
+    <path class="cls-3" d="M21,12A9,9,0,0,1,3,12a9.46,9.46,0,0,1,.06-1.07A9,9,0,0,1,21,12Z" />
+    <rect x="18.05" y="3.61" width="1.69" height="2"
+        transform="translate(2.27 14.71) rotate(-45)" />
+    <rect x="4.27" y="3.61" width="1.69" height="2"
+        transform="translate(5.46 11.49) rotate(-135)" />
+    <circle class="cls-2" cx="7" cy="12" r="2" />
+    <circle class="cls-2" cx="12" cy="7" r="2" />
+    <line class="cls-4" x1="10.5" y1="5.5" x2="13.5" y2="8.5" />
+    <line class="cls-4" x1="10.5" y1="8.5" x2="13.5" y2="5.5" />
+    <circle class="cls-2" cx="12" cy="17" r="2" />
+    <line class="cls-4" x1="10.5" y1="15.5" x2="13.5" y2="18.5" />
+    <line class="cls-4" x1="10.5" y1="18.5" x2="13.5" y2="15.5" />
+</svg>

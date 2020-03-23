@@ -10,10 +10,10 @@
         android:strokeColor="#000" />
     <path
         android:fillColor="#FF000000"
-        android:pathData="M12,9.5m-2,0a2,2 0,1 1,4 0a2,2 0,1 1,-4 0" />
+        android:pathData="M12,10.5m-2,0a2,2 0,1 1,4 0a2,2 0,1 1,-4 0" />
     <path
         android:fillColor="#FF000000"
-        android:pathData="M18,9.5m-2,0a2,2 0,1 1,4 0a2,2 0,1 1,-4 0" />
+        android:pathData="M18,10.5m-2,0a2,2 0,1 1,4 0a2,2 0,1 1,-4 0" />
     <path
         android:fillColor="#FF000000"
         android:pathData="M15,15.5m-2,0a2,2 0,1 1,4 0a2,2 0,1 1,-4 0" />
@@ -22,7 +22,7 @@
         android:pathData="M9,15.5m-2,0a2,2 0,1 1,4 0a2,2 0,1 1,-4 0" />
     <path
         android:fillColor="#FF000000"
-        android:pathData="M6,9.5m-2,0a2,2 0,1 1,4 0a2,2 0,1 1,-4 0" />
+        android:pathData="M6,10.5m-2,0a2,2 0,1 1,4 0a2,2 0,1 1,-4 0" />
     <path
         android:fillColor="#FF000000"
         android:pathData="M9,6m-1.25,0a1.25,1.25 0,1 1,2.5 0a1.25,1.25 0,1 1,-2.5 0" />

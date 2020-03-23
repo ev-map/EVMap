@@ -50,3 +50,13 @@ fun getConnectorItem(view: ImageView, type: String) {
         }
     )
 }
+
+@BindingAdapter("srcCompat")
+fun setImageResource(imageView: ImageView, resource: Int) {
+    imageView.setImageResource(resource)
+}
+
+@BindingAdapter("android:contentDescription")
+fun setContentDescriptionResource(imageView: ImageView, resource: Int) {
+    imageView.contentDescription = imageView.context.getString(resource)
+}

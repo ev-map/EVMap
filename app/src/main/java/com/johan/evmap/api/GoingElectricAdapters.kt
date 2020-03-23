@@ -1,6 +1,7 @@
 package com.johan.evmap.api
 
 import com.squareup.moshi.*
+import org.threeten.bp.LocalTime
 import java.lang.reflect.Type
 
 
@@ -99,5 +100,33 @@ private fun hasJsonObjectOrFalseAnnotation(annotations: Set<Annotation>?) =
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FIELD)
 annotation class JsonObjectOrFalse {
+
+}
+
+internal class HoursAdapter {
+    private val regex = Regex("from (.*) till (.*)")
+
+    @FromJson
+    fun fromJson(str: String): Hours? {
+        if (str == "closed") {
+            return Hours(null, null)
+        } else {
+            val match = regex.find(str)
+                ?: throw IllegalArgumentException("$str does not match hours format")
+            return Hours(
+                LocalTime.parse(match.groupValues[1]),
+                LocalTime.parse(match.groupValues[2])
+            )
+        }
+    }
+
+    @ToJson
+    fun toJson(value: Hours): String {
+        if (value.start == null || value.end == null) {
+            return "closed"
+        } else {
+            return "from ${value.start} till ${value.end}"
+        }
+    }
 
 }

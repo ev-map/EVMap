@@ -1,5 +1,6 @@
 package com.johan.evmap.adapter
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -9,6 +10,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.johan.evmap.BR
 import com.johan.evmap.R
+import com.johan.evmap.api.ChargeLocation
 import com.johan.evmap.api.Chargepoint
 
 interface Equatable {
@@ -46,4 +48,35 @@ abstract class DataBindingAdapter<T : Equatable>() :
 
 class ConnectorAdapter : DataBindingAdapter<Chargepoint>() {
     override fun getItemViewType(position: Int): Int = R.layout.item_connector
+}
+
+class DetailAdapter : DataBindingAdapter<DetailAdapter.Detail>() {
+    data class Detail(val icon: Int, val contentDescription: Int, val text: CharSequence) :
+        Equatable
+
+    override fun getItemViewType(position: Int): Int = R.layout.item_detail
+}
+
+fun buildDetails(loc: ChargeLocation?, ctx: Context): List<DetailAdapter.Detail> {
+    if (loc == null) return emptyList()
+
+    return listOfNotNull(
+        DetailAdapter.Detail(R.drawable.ic_address, R.string.address, loc.address.toString()),
+        if (loc.operator != null) DetailAdapter.Detail(
+            R.drawable.ic_operator,
+            R.string.operator,
+            loc.operator
+        ) else null,
+        if (loc.network != null) DetailAdapter.Detail(
+            R.drawable.ic_network,
+            R.string.network,
+            loc.network
+        ) else null,
+        // TODO: separate layout for opening hours with expandable details
+        if (loc.openinghours != null) DetailAdapter.Detail(
+            R.drawable.ic_hours,
+            R.string.hours,
+            loc.openinghours.getStatusText(ctx)
+        ) else null
+    )
 }

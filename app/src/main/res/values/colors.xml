@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#6200EE</color>
-    <color name="colorPrimaryDark">#3700B3</color>
-    <color name="colorAccent">#03DAC5</color>
+    <color name="colorPrimary">#4caf50</color>
+    <color name="colorPrimaryVariant">#087f23</color>
+    <color name="colorSecondary">#00e676</color>
+    <color name="colorSecondaryVariant">#00b248</color>
     <color name="charger_100kw">#ffeb3b</color>
     <color name="charger_43kw">#ff9800</color>
     <color name="charger_20kw">#03a9f4</color>

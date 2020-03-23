@@ -29,6 +29,10 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
     }
 
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
+
     dataBinding {
         enabled = true
     }
@@ -46,13 +50,14 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'com.google.maps.android:android-maps-utils:0.5'
-    implementation 'com.github.johan12345:CustomBottomSheetBehavior:-SNAPSHOT'
+    implementation 'com.github.johan12345:CustomBottomSheetBehavior:0d0e30d8f1'
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
     implementation 'com.google.android.gms:play-services-location:17.0.0'
     implementation 'com.squareup.retrofit2:retrofit:2.7.2'
     implementation 'com.squareup.retrofit2:converter-moshi:2.7.2'
     implementation 'com.squareup.moshi:moshi-kotlin:1.9.2'
     implementation 'com.squareup.picasso:picasso:2.71828'
+    implementation 'com.jakewharton.threetenabp:threetenabp:1.2.2'
 
     // debug tools
     implementation 'com.facebook.stetho:stetho:1.5.1'

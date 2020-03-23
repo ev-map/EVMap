@@ -38,6 +38,7 @@ interface GoingElectricApi {
             val moshi = Moshi.Builder()
                 .add(ChargepointListItemJsonAdapterFactory())
                 .add(JsonObjectOrFalseAdapter.Factory())
+                .add(HoursAdapter())
                 .build()
 
             val retrofit = Retrofit.Builder()

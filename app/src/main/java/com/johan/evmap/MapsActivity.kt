@@ -1,7 +1,9 @@
 package com.johan.evmap
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -20,8 +22,10 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.material.snackbar.Snackbar
 import com.google.maps.android.ui.IconGenerator
 import com.johan.evmap.adapter.ConnectorAdapter
+import com.johan.evmap.adapter.DetailAdapter
 import com.johan.evmap.adapter.GalleryAdapter
 import com.johan.evmap.api.*
 import com.johan.evmap.databinding.ActivityMapsBinding
@@ -51,21 +55,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mapFragment.getMapAsync(this)
         api = GoingElectricApi.create(getString(R.string.goingelectric_key))
 
+        setupAdapters()
+
         val behavior = BottomSheetBehaviorGoogleMapsLike.from(binding.bottomSheet)
-
-        binding.gallery.adapter = GalleryAdapter(this)
-        binding.gallery.layoutManager =
-            LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        binding.gallery.addItemDecoration(DividerItemDecoration(
-            this, LinearLayoutManager.HORIZONTAL
-        ).apply {
-            setDrawable(getDrawable(R.drawable.gallery_divider)!!)
-        })
-
-        binding.detailView.connectors.adapter = ConnectorAdapter()
-        binding.detailView.connectors.layoutManager =
-            LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-
         binding.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
             var previousCharger = binding.charger
 
@@ -100,7 +92,62 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 enableLocation(true)
             }
         }
+        binding.fabDirections.setOnClickListener {
+            val charger = binding.charger
+            if (charger != null) {
+                val intent = Intent(Intent.ACTION_VIEW)
+                val coord = charger.coordinates
 
+                // google maps navigation
+                intent.data = Uri.parse("google.navigation:q=${coord.lat},${coord.lng}")
+                if (intent.resolveActivity(packageManager) != null) {
+                    startActivity(intent);
+                } else {
+                    // fallback: generic geo intent
+                    intent.data = Uri.parse("geo:${coord.lat},${coord.lng}")
+                    if (intent.resolveActivity(packageManager) != null) {
+                        startActivity(intent);
+                    } else {
+                        Snackbar.make(
+                            binding.root,
+                            R.string.no_maps_app_found,
+                            Snackbar.LENGTH_SHORT
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    private fun setupAdapters() {
+        binding.gallery.apply {
+            adapter = GalleryAdapter(this@MapsActivity)
+            layoutManager =
+                LinearLayoutManager(this@MapsActivity, LinearLayoutManager.HORIZONTAL, false)
+            addItemDecoration(DividerItemDecoration(
+                this@MapsActivity, LinearLayoutManager.HORIZONTAL
+            ).apply {
+                setDrawable(getDrawable(R.drawable.gallery_divider)!!)
+            })
+        }
+
+        binding.detailView.connectors.apply {
+            adapter = ConnectorAdapter()
+            layoutManager =
+                LinearLayoutManager(this@MapsActivity, LinearLayoutManager.HORIZONTAL, false)
+        }
+
+        binding.detailView.details.apply {
+            adapter = DetailAdapter()
+            layoutManager =
+                LinearLayoutManager(this@MapsActivity, LinearLayoutManager.VERTICAL, false)
+            addItemDecoration(
+                DividerItemDecoration(
+                    this@MapsActivity,
+                    LinearLayoutManager.VERTICAL
+                )
+            )
+        }
     }
 
 

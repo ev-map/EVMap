@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">EV Map</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="connectors">Anschlüsse</string>
+    <string name="no_maps_app_found">Keine Navigations-App gefunden</string>
+    <string name="address">Adresse</string>
+    <string name="operator">Betreiber</string>
+    <string name="network">Verbund</string>
+    <string name="hours">Öffnungszeiten</string>
+    <string name="open_247"><![CDATA[<b>24 Stunden geöffnet</b>]]></string>
+    <string name="closed"><![CDATA[<b>Geschlossen</b>]]></string>
+    <string name="open_closesat"><![CDATA[<b>Geöffnet</b> · Schließt um %s]]></string>
+    <string name="closed_opensat"><![CDATA[<b>Geschlossen</b> · Öffnet um %s]]></string>
+</resources>

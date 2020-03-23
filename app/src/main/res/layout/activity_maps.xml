@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
         <import type="com.johan.evmap.api.ChargeLocation" />
+
         <variable
             name="charger"
             type="ChargeLocation" />
@@ -16,26 +17,42 @@
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/root"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="false">
 
         <fragment
             android:id="@+id/map"
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:fitsSystemWindows="true"
             tools:context=".MapsActivity" />
+
+        <!--<com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appbarlayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/AppTheme.AppBarOverlay"
+            app:layout_behavior="@string/ScrollingAppBarLayoutBehavior">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:popupTheme="@style/AppTheme.PopupOverlay"/>
+        </com.google.android.material.appbar.AppBarLayout>-->
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/gallery"
             android:layout_width="match_parent"
             android:layout_height="@dimen/gallery_height"
             android:background="?android:colorBackground"
-            app:layout_behavior="@string/BackDropBottomSheetBehavior"
             android:fitsSystemWindows="true"
+            app:data="@{charger.photos}"
             app:invisibleUnless="@{charger.photos != null &amp;&amp; charger.photos.size() > 0}"
-            app:data="@{charger.photos}" />
+            app:layout_behavior="@string/BackDropBottomSheetBehavior" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_locate"
@@ -52,16 +69,16 @@
             app:layout_behavior=".ui.HideOnScrollFabBehavior" />
 
         <androidx.core.widget.NestedScrollView
+            android:id="@+id/bottom_sheet"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            app:behavior_peekHeight="@dimen/peek_height"
-            android:id="@+id/bottom_sheet"
-            app:layout_behavior="@string/BottomSheetBehaviorGoogleMapsLike"
-            app:anchorPoint="@dimen/gallery_height"
-            app:defaultState="stateHidden"
-            app:behavior_hideable="true"
             android:fitsSystemWindows="true"
+            android:orientation="vertical"
+            app:anchorPoint="@dimen/gallery_height"
+            app:behavior_hideable="true"
+            app:behavior_peekHeight="@dimen/peek_height"
+            app:defaultState="stateHidden"
+            app:layout_behavior="@string/BottomSheetBehaviorGoogleMapsLike"
             tools:defaultState="stateCollapsed">
 
             <include
@@ -73,14 +90,20 @@
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_directions"
-            android:layout_height="wrap_content"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/fab_margin"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@drawable/ic_directions"
             app:layout_anchor="@id/bottom_sheet"
             app:layout_anchorGravity="top|right|end"
-            android:src="@drawable/ic_directions"
-            android:layout_margin="@dimen/fab_margin"
-            app:layout_behavior="@string/ScrollAwareFABBehavior"
-            android:clickable="true"
-            android:focusable="true" />
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+            app:layout_behavior="@string/ScrollAwareFABBehavior" />
+
+        <!--<com.mahc.custombottomsheetbehavior.MergedAppBarLayout
+            android:id="@+id/mergedappbarlayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_behavior="@string/MergedAppBarLayoutBehavior"/>-->
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

@@ -1,4 +1,14 @@
 <resources>
     <string name="app_name">EV Map</string>
     <string name="title_activity_maps">Map</string>
+    <string name="connectors">Connectors</string>
+    <string name="no_maps_app_found">No navigation app found</string>
+    <string name="address">Address</string>
+    <string name="operator">Operator</string>
+    <string name="network">Network</string>
+    <string name="hours">Opening hours</string>
+    <string name="open_247"><![CDATA[<b>Open 24/7</b>]]></string>
+    <string name="closed"><![CDATA[<b>Closed</b>]]></string>
+    <string name="open_closesat"><![CDATA[<b>Open</b> · Closes at %s]]></string>
+    <string name="closed_opensat"><![CDATA[<b>Closed</b> · Opens at %s]]></string>
 </resources>

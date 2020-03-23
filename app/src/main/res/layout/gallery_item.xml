@@ -5,4 +5,5 @@
     android:layout_height="match_parent"
     android:adjustViewBounds="true"
     android:scaleType="fitCenter"
+    android:fitsSystemWindows="true"
     tools:srcCompat="@tools:sample/backgrounds/scenic" />

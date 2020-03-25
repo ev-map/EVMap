@@ -3,6 +3,7 @@ package com.johan.evmap
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -18,10 +19,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
 import com.google.android.material.snackbar.Snackbar
 import com.google.maps.android.ui.IconGenerator
 import com.johan.evmap.adapter.ConnectorAdapter
@@ -173,6 +171,14 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         map.setOnMapClickListener {
             binding.charger = null
         }
+
+        val mode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        map.setMapStyle(
+            if (mode == Configuration.UI_MODE_NIGHT_YES) {
+                MapStyleOptions.loadRawResourceStyle(this, R.raw.maps_night_mode)
+            } else null
+        )
+
 
         if (hasLocationPermission()) {
             enableLocation(false)

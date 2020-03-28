@@ -21,12 +21,12 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.google.android.material.snackbar.Snackbar
-import com.google.maps.android.ui.IconGenerator
 import com.johan.evmap.adapter.ConnectorAdapter
 import com.johan.evmap.adapter.DetailAdapter
 import com.johan.evmap.adapter.GalleryAdapter
 import com.johan.evmap.api.*
 import com.johan.evmap.databinding.ActivityMapsBinding
+import com.johan.evmap.ui.ClusterIconGenerator
 import com.johan.evmap.ui.getBitmapDescriptor
 import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike
 import retrofit2.Call
@@ -261,11 +261,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         markers.keys.forEach { it.remove() }
         clusterMarkers.forEach { it.remove() }
 
-        val iconGenerator = IconGenerator(this).apply {
-            setBackground(getDrawable(R.drawable.marker_cluster_bg))
-            setTextAppearance(R.style.TextAppearance_AppCompat_Inverse)
-        }
-
+        val iconGenerator = ClusterIconGenerator(this)
         val clusters = chargepoints.filterIsInstance<ChargeLocationCluster>()
         val chargers = chargepoints.filterIsInstance<ChargeLocation>()
 

@@ -17,15 +17,19 @@
         <TextView
             android:id="@+id/textView9"
             android:layout_width="0dp"
-            android:layout_height="19dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
+            android:layout_marginTop="18dp"
             android:layout_marginEnd="16dp"
+            android:layout_marginBottom="14dp"
             android:maxLines="1"
             android:text="@{item.text}"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/imageView3"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
             tools:text="Lorem ipsum" />
 
         <ImageView
@@ -33,15 +37,30 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginTop="16dp"
             android:contentDescription="@{item.contentDescription}"
             android:tint="?colorPrimary"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@{item.icon}"
             tools:srcCompat="@drawable/ic_address" />
+
+        <TextView
+            android:id="@+id/textView8"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="14dp"
+            android:text="@{item.detailText}"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+            android:autoLink="phone|web"
+            app:goneUnless="@{item.detailText != null}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/textView9"
+            app:layout_constraintTop_toBottomOf="@+id/textView9"
+            tools:text="Lorem ipsum" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

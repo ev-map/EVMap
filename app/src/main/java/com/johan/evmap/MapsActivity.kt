@@ -115,6 +115,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
             }
         }
+        binding.detailView.goingelectricButton.setOnClickListener {
+            val charger = binding.charger
+            if (charger != null) {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https:${charger.url}"))
+                startActivity(intent)
+            }
+        }
     }
 
     private fun setupAdapters() {

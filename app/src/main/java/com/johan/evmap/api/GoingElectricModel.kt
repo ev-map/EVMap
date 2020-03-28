@@ -31,10 +31,13 @@ data class ChargeLocation(
     val verified: Boolean,
     // only shown in details:
     @JsonObjectOrFalse val operator: String?,
-    @Json(name = "general_information") @JsonObjectOrFalse val generalInformation: String?,
+    @JsonObjectOrFalse @Json(name = "general_information") val generalInformation: String?,
+    @JsonObjectOrFalse @Json(name = "ladeweile") val amenities: String?,
+    @JsonObjectOrFalse @Json(name = "location_description") val locationDescription: String?,
     val photos: List<ChargerPhoto>?,
     //val chargecards: Boolean?
-    val openinghours: OpeningHours?
+    val openinghours: OpeningHours?,
+    val cost: Cost?
 ) : ChargepointListItem() {
     val maxPower: Double
         get() {
@@ -45,6 +48,24 @@ data class ChargeLocation(
         return chargepoints.map {
             "${it.count} × ${it.type} ${it.formatPower()}"
         }.joinToString(" · ")
+    }
+}
+
+@JsonClass(generateAdapter = true)
+data class Cost(
+    val freecharging: Boolean,
+    val freeparking: Boolean,
+    @JsonObjectOrFalse @Json(name = "description_short") val descriptionShort: String?,
+    @JsonObjectOrFalse @Json(name = "description_long") val descriptionLong: String?
+) {
+    fun getStatusText(ctx: Context): CharSequence {
+        return HtmlCompat.fromHtml(
+            ctx.getString(
+                R.string.cost_detail,
+                if (freecharging) ctx.getString(R.string.free) else ctx.getString(R.string.paid),
+                if (freeparking) ctx.getString(R.string.free) else ctx.getString(R.string.paid)
+            ), 0
+        )
     }
 }
 

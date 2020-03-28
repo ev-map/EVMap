@@ -51,8 +51,12 @@ class ConnectorAdapter : DataBindingAdapter<Chargepoint>() {
 }
 
 class DetailAdapter : DataBindingAdapter<DetailAdapter.Detail>() {
-    data class Detail(val icon: Int, val contentDescription: Int, val text: CharSequence) :
-        Equatable
+    data class Detail(
+        val icon: Int,
+        val contentDescription: Int,
+        val text: CharSequence,
+        val detailText: CharSequence? = null
+    ) : Equatable
 
     override fun getItemViewType(position: Int): Int = R.layout.item_detail
 }
@@ -61,7 +65,12 @@ fun buildDetails(loc: ChargeLocation?, ctx: Context): List<DetailAdapter.Detail>
     if (loc == null) return emptyList()
 
     return listOfNotNull(
-        DetailAdapter.Detail(R.drawable.ic_address, R.string.address, loc.address.toString()),
+        DetailAdapter.Detail(
+            R.drawable.ic_address,
+            R.string.address,
+            loc.address.toString(),
+            loc.locationDescription
+        ),
         if (loc.operator != null) DetailAdapter.Detail(
             R.drawable.ic_operator,
             R.string.operator,
@@ -76,7 +85,15 @@ fun buildDetails(loc: ChargeLocation?, ctx: Context): List<DetailAdapter.Detail>
         if (loc.openinghours != null) DetailAdapter.Detail(
             R.drawable.ic_hours,
             R.string.hours,
-            loc.openinghours.getStatusText(ctx)
-        ) else null
+            loc.openinghours.getStatusText(ctx),
+            loc.openinghours.description
+        ) else null,
+        if (loc.cost != null) DetailAdapter.Detail(
+            R.drawable.ic_cost,
+            R.string.cost,
+            loc.cost.getStatusText(ctx),
+            loc.cost.descriptionLong ?: loc.cost.descriptionShort
+        )
+        else null
     )
 }

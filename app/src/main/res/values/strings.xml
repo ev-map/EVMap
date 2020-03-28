@@ -11,4 +11,11 @@
     <string name="closed"><![CDATA[<b>Closed</b>]]></string>
     <string name="open_closesat"><![CDATA[<b>Open</b> · Closes at %s]]></string>
     <string name="closed_opensat"><![CDATA[<b>Closed</b> · Opens at %s]]></string>
+    <string name="cost">Cost</string>
+    <string name="cost_detail"><![CDATA[<b>Charging:</b> %s · <b>Parking:</b> %s]]></string>
+    <string name="free">Free</string>
+    <string name="paid">Paid</string>
+    <string name="amenities">Amenities</string>
+    <string name="general_info">General information</string>
+    <string name="go_to_goingelectric">Source: goingelectric.de</string>
 </resources>

@@ -5,15 +5,11 @@
 
     <data>
 
-        <import type="com.johan.evmap.api.ChargeLocation" />
+        <import type="com.johan.evmap.MapsActivityViewModel" />
 
         <variable
-            name="charger"
-            type="ChargeLocation" />
-
-        <variable
-            name="myLocationEnabled"
-            type="boolean" />
+            name="vm"
+            type="MapsActivityViewModel" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -50,8 +46,8 @@
             android:layout_height="@dimen/gallery_height"
             android:background="?android:colorBackground"
             android:fitsSystemWindows="true"
-            app:data="@{charger.photos}"
-            app:invisibleUnless="@{charger.photos != null &amp;&amp; charger.photos.size() > 0}"
+            app:data="@{vm.charger.photos}"
+            app:invisibleUnless="@{vm.charger.photos != null &amp;&amp; vm.charger.photos.size() > 0}"
             app:layout_behavior="@string/BackDropBottomSheetBehavior" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -65,7 +61,7 @@
             android:src="@drawable/ic_location"
             app:backgroundTint="@android:color/white"
             app:borderWidth="0dp"
-            app:isFabActive="@{ myLocationEnabled }"
+            app:isFabActive="@{ vm.myLocationEnabled }"
             app:layout_behavior=".ui.HideOnScrollFabBehavior" />
 
         <androidx.core.widget.NestedScrollView
@@ -84,7 +80,7 @@
             <include
                 android:id="@+id/detail_view"
                 layout="@layout/detail_view"
-                app:charger="@{charger}" />
+                app:charger="@{vm.charger}" />
 
         </androidx.core.widget.NestedScrollView>
 

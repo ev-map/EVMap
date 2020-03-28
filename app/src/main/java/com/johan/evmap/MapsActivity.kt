@@ -6,11 +6,14 @@ import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import androidx.databinding.Observable
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -35,18 +38,35 @@ import retrofit2.Response
 
 const val REQUEST_LOCATION_PERMISSION = 1
 
+class MapsActivityViewModel : ViewModel() {
+    val chargepoints: MutableLiveData<List<ChargepointListItem>> by lazy {
+        MutableLiveData<List<ChargepointListItem>>().apply {
+            value = emptyList()
+        }
+    }
+    val charger: MutableLiveData<ChargeLocation> by lazy {
+        MutableLiveData<ChargeLocation>()
+    }
+    val myLocationEnabled: MutableLiveData<Boolean> by lazy {
+        MutableLiveData<Boolean>()
+    }
+}
+
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var binding: ActivityMapsBinding
-    private lateinit var map: GoogleMap
+    private var map: GoogleMap? = null
     private lateinit var api: GoingElectricApi
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private var chargepoints: List<ChargepointListItem> = emptyList()
+    private val vm: MapsActivityViewModel by viewModels()
     private var markers: Map<Marker, ChargeLocation> = emptyMap()
     private var clusterMarkers: List<Marker> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_maps)
+        binding.lifecycleOwner = this
+        binding.vm = vm
+
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
@@ -56,27 +76,26 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         setupAdapters()
 
         val behavior = BottomSheetBehaviorGoogleMapsLike.from(binding.bottomSheet)
-        binding.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
-            var previousCharger = binding.charger
 
-            override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
-                if (propertyId == BR.charger) {
-                    if (binding.charger != null) {
-                        val charger = binding.charger!!
+        vm.charger.observe(this, object : Observer<ChargeLocation> {
+            var previousCharger = vm.charger.value
 
-                        if (previousCharger == null ||
-                            previousCharger!!.id != charger.id
-                        ) {
-                            behavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED
-                            loadChargerDetails()
-                        }
-                    } else {
-                        behavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN
+            override fun onChanged(charger: ChargeLocation?) {
+                if (charger != null) {
+                    if (previousCharger == null ||
+                        previousCharger!!.id != charger.id
+                    ) {
+                        behavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED
+                        loadChargerDetails()
                     }
-                    previousCharger = binding.charger
+                } else {
+                    behavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN
                 }
+                previousCharger = charger
             }
-
+        })
+        vm.chargepoints.observe(this, Observer<List<ChargepointListItem>> {
+            updateMap(it)
         })
 
         binding.fabLocate.setOnClickListener {
@@ -91,7 +110,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         }
         binding.fabDirections.setOnClickListener {
-            val charger = binding.charger
+            val charger = vm.charger.value
             if (charger != null) {
                 val intent = Intent(Intent.ACTION_VIEW)
                 val coord = charger.coordinates
@@ -116,7 +135,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         }
         binding.detailView.goingelectricButton.setOnClickListener {
-            val charger = binding.charger
+            val charger = vm.charger.value
             if (charger != null) {
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https:${charger.url}"))
                 startActivity(intent)
@@ -156,15 +175,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
 
-    override fun onMapReady(googleMap: GoogleMap) {
-        map = googleMap
+    override fun onMapReady(map: GoogleMap) {
+        this.map = map
         map.setOnCameraIdleListener {
             loadChargepoints()
         }
         map.setOnMarkerClickListener { marker ->
             when (marker) {
                 in markers -> {
-                    binding.charger = markers[marker]
+                    vm.charger.value = markers[marker]
                     true
                 }
                 in clusterMarkers -> {
@@ -176,7 +195,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         }
         map.setOnMapClickListener {
-            binding.charger = null
+            vm.charger.value = null
         }
 
         val mode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
@@ -193,8 +212,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun enableLocation(animate: Boolean) {
+        val map = this.map ?: return
         map.isMyLocationEnabled = true
-        binding.myLocationEnabled = true
+        vm.myLocationEnabled.value = true
         map.uiSettings.isMyLocationButtonEnabled = false
         fusedLocationClient.lastLocation.addOnSuccessListener { location ->
             if (location != null) {
@@ -215,6 +235,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 PackageManager.PERMISSION_GRANTED
 
     private fun loadChargepoints() {
+        val map = this.map ?: return
         val bounds = map.projection.visibleRegion.latLngBounds
         api.getChargepoints(
             bounds.southwest.latitude, bounds.southwest.longitude,
@@ -236,14 +257,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                     return
                 }
 
-                chargepoints = response.body()!!.chargelocations
-                updateMap()
+                vm.chargepoints.value = response.body()!!.chargelocations
             }
         })
     }
 
     private fun loadChargerDetails() {
-        val id = binding.charger?.id ?: return
+        val id = vm.charger.value?.id ?: return
         api.getChargepointDetail(id).enqueue(object : Callback<ChargepointList> {
             override fun onFailure(call: Call<ChargepointList>, t: Throwable) {
                 //TODO: show error message
@@ -259,12 +279,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                     return
                 }
 
-                binding.charger = response.body()!!.chargelocations[0] as ChargeLocation
+                vm.charger.value = response.body()!!.chargelocations[0] as ChargeLocation
             }
         })
     }
 
-    private fun updateMap() {
+    private fun updateMap(chargepoints: List<ChargepointListItem>) {
+        val map = this.map ?: return
         markers.keys.forEach { it.remove() }
         clusterMarkers.forEach { it.remove() }
 

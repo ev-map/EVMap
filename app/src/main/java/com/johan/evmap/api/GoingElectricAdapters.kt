@@ -1,8 +1,8 @@
 package com.johan.evmap.api
 
 import com.squareup.moshi.*
-import org.threeten.bp.LocalTime
 import java.lang.reflect.Type
+import java.time.LocalTime
 
 
 internal class ChargepointListItemJsonAdapterFactory : JsonAdapter.Factory {

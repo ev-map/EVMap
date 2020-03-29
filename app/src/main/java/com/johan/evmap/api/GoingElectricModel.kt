@@ -6,9 +6,10 @@ import com.johan.evmap.R
 import com.johan.evmap.adapter.Equatable
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import org.threeten.bp.DayOfWeek
-import org.threeten.bp.LocalDate
-import org.threeten.bp.LocalTime
+import kotlinx.android.parcel.Parcelize
+import java.time.DayOfWeek
+import java.time.LocalDate
+import java.time.LocalTime
 
 @JsonClass(generateAdapter = true)
 data class ChargepointList(

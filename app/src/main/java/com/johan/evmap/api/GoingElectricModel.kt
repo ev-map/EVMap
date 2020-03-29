@@ -1,6 +1,7 @@
 package com.johan.evmap.api
 
 import android.content.Context
+import android.os.Parcelable
 import androidx.core.text.HtmlCompat
 import com.johan.evmap.R
 import com.johan.evmap.adapter.Equatable
@@ -144,7 +145,8 @@ data class Hours(
 )
 
 @JsonClass(generateAdapter = true)
-data class ChargerPhoto(val id: String)
+@Parcelize
+data class ChargerPhoto(val id: String) : Parcelable
 
 @JsonClass(generateAdapter = true)
 data class ChargeLocationCluster(

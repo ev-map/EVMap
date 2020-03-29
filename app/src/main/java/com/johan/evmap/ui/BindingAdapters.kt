@@ -7,6 +7,7 @@ import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.johan.evmap.R
 
@@ -34,6 +35,13 @@ fun isFabActive(view: FloatingActionButton, isColored: Boolean) {
 
 @BindingAdapter("data")
 fun <T> setRecyclerViewData(recyclerView: RecyclerView, items: List<T>?) {
+    if (recyclerView.adapter is ListAdapter<*, *>) {
+        (recyclerView.adapter as ListAdapter<T, *>).submitList(items)
+    }
+}
+
+@BindingAdapter("data")
+fun <T> setRecyclerViewData(recyclerView: ViewPager2, items: List<T>?) {
     if (recyclerView.adapter is ListAdapter<*, *>) {
         (recyclerView.adapter as ListAdapter<T, *>).submitList(items)
     }

@@ -1,14 +1,19 @@
 package com.johan.evmap
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
+import android.view.ViewTreeObserver
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.app.ActivityOptionsCompat
+import androidx.core.app.SharedElementCallback
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.MutableLiveData
@@ -27,6 +32,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.johan.evmap.adapter.ConnectorAdapter
 import com.johan.evmap.adapter.DetailAdapter
 import com.johan.evmap.adapter.GalleryAdapter
+import com.johan.evmap.adapter.galleryTransitionName
 import com.johan.evmap.api.*
 import com.johan.evmap.databinding.ActivityMapsBinding
 import com.johan.evmap.ui.ClusterIconGenerator
@@ -61,17 +67,21 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private var markers: Map<Marker, ChargeLocation> = emptyMap()
     private var clusterMarkers: List<Marker> = emptyList()
 
+    private var reenterState: Bundle? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        api = GoingElectricApi.create(getString(R.string.goingelectric_key))
+
         binding = DataBindingUtil.setContentView(this, R.layout.activity_maps)
         binding.lifecycleOwner = this
         binding.vm = vm
 
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        ActivityCompat.setExitSharedElementCallback(this, exitElementCallback)
 
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
-        api = GoingElectricApi.create(getString(R.string.goingelectric_key))
 
         setupAdapters()
 
@@ -144,8 +154,22 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun setupAdapters() {
+        val galleryClickListener = object : GalleryAdapter.ItemClickListener {
+            override fun onItemClick(view: View, position: Int) {
+                val photos = vm.charger.value?.photos ?: return
+                val intent = Intent(this@MapsActivity, GalleryActivity::class.java).apply {
+                    putExtra(GalleryActivity.EXTRA_PHOTOS, ArrayList<ChargerPhoto>(photos))
+                    putExtra(GalleryActivity.EXTRA_POSITION, position)
+                }
+                val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                    this@MapsActivity, view, view.transitionName
+                )
+                startActivity(intent, options.toBundle())
+            }
+        }
+
         binding.gallery.apply {
-            adapter = GalleryAdapter(this@MapsActivity)
+            adapter = GalleryAdapter(this@MapsActivity, galleryClickListener)
             layoutManager =
                 LinearLayoutManager(this@MapsActivity, LinearLayoutManager.HORIZONTAL, false)
             addItemDecoration(DividerItemDecoration(
@@ -211,6 +235,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
+    @SuppressLint("MissingPermission")
     private fun enableLocation(animate: Boolean) {
         val map = this.map ?: return
         map.isMyLocationEnabled = true
@@ -332,5 +357,59 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             }
             else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }
+    }
+
+    private val exitElementCallback = object : SharedElementCallback() {
+        override fun onMapSharedElements(
+            names: MutableList<String>,
+            sharedElements: MutableMap<String, View>
+        ) {
+            if (reenterState != null) {
+                val startingPosition = reenterState!!.getInt(EXTRA_STARTING_GALLERY_POSITION)
+                val currentPosition = reenterState!!.getInt(EXTRA_CURRENT_GALLERY_POSITION)
+                if (startingPosition != currentPosition) {
+                    // Current element has changed, need to override previous exit transitions
+                    val newTransitionName = galleryTransitionName(currentPosition)
+                    val newSharedElement =
+                        binding.gallery.findViewHolderForAdapterPosition(currentPosition)?.itemView
+                    if (newSharedElement != null) {
+                        names.clear()
+                        names.add(newTransitionName)
+
+                        sharedElements.clear()
+                        sharedElements[newTransitionName] = newSharedElement
+                    }
+                }
+                reenterState = null
+            }
+        }
+    }
+
+    override fun onActivityReenter(resultCode: Int, data: Intent) {
+        // returning to gallery
+        super.onActivityReenter(resultCode, data)
+        reenterState = Bundle(data.extras)
+        reenterState?.let {
+            val startingPosition = it.getInt(EXTRA_STARTING_GALLERY_POSITION)
+            val currentPosition = it.getInt(EXTRA_CURRENT_GALLERY_POSITION)
+            if (startingPosition != currentPosition) binding.gallery.scrollToPosition(
+                currentPosition
+            )
+            ActivityCompat.postponeEnterTransition(this)
+
+            binding.gallery.viewTreeObserver.addOnPreDrawListener(object :
+                ViewTreeObserver.OnPreDrawListener {
+                override fun onPreDraw(): Boolean {
+                    binding.gallery.viewTreeObserver.removeOnPreDrawListener(this)
+                    ActivityCompat.startPostponedEnterTransition(this@MapsActivity)
+                    return true
+                }
+            })
+        }
+    }
+
+    companion object {
+        const val EXTRA_STARTING_GALLERY_POSITION = "extra_starting_item_position"
+        const val EXTRA_CURRENT_GALLERY_POSITION = "extra_current_item_position"
     }
 }

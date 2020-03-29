@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="com.johan.evmap.api.ChargerPhoto" />
+
+        <import type="java.util.List" />
+
+        <variable
+            name="photos"
+            type="List&lt;ChargerPhoto&gt;" />
+    </data>
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/gallery"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/black"
+        app:data="@{photos}" />
+</layout>

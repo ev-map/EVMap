@@ -69,6 +69,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
+            android:fillViewport="true"
             android:orientation="vertical"
             app:anchorPoint="@dimen/gallery_height"
             app:behavior_hideable="true"

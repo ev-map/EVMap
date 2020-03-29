@@ -66,6 +66,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private val vm: MapsActivityViewModel by viewModels()
     private var markers: Map<Marker, ChargeLocation> = emptyMap()
     private var clusterMarkers: List<Marker> = emptyList()
+    private lateinit var bottomSheetBehavior: BottomSheetBehaviorGoogleMapsLike<View>
 
     private var reenterState: Bundle? = null
 
@@ -85,7 +86,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         setupAdapters()
 
-        val behavior = BottomSheetBehaviorGoogleMapsLike.from(binding.bottomSheet)
+        bottomSheetBehavior = BottomSheetBehaviorGoogleMapsLike.from(binding.bottomSheet)
 
         vm.charger.observe(this, object : Observer<ChargeLocation> {
             var previousCharger = vm.charger.value
@@ -95,11 +96,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                     if (previousCharger == null ||
                         previousCharger!!.id != charger.id
                     ) {
-                        behavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED
+                        bottomSheetBehavior.state =
+                            BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED
                         loadChargerDetails()
                     }
                 } else {
-                    behavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN
+                    bottomSheetBehavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN
                 }
                 previousCharger = charger
             }
@@ -356,6 +358,18 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
             }
             else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        }
+    }
+
+    override fun onBackPressed() {
+        if (bottomSheetBehavior.state != BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED &&
+            bottomSheetBehavior.state != BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN
+        ) {
+            bottomSheetBehavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED
+        } else if (bottomSheetBehavior.state == BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED) {
+            vm.charger.value = null
+        } else {
+            super.onBackPressed()
         }
     }
 

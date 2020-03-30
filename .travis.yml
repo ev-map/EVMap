@@ -6,15 +6,16 @@ android:
     - android-29
 env:
   global:
-    - secure: "KYdFlMarsyXw+OHht1Atp+Kirbw9O09Ck14EjFuKb1eNtknurZ/tGEXuD+8xWh1W8W21kgHEG7s3rzru53t29buz+FW9f+ZmhEWXFP3OydyvXLw4BAVVOjm6xG2uHX/8MOGLJNM7cfaF25EPQ+kznHe84R29KaLH90mNRr2lPa4VnfbcnvDStiVaez/vJ72UoYSP5HICAzoF70yC3ZvvCK1hZv71UIysCbFE2IkxvMhG9OOGebdnRmFssaRCrvfRLjitobcLzkPWzZZIqdjNASf8/iAxX8VgGBYfVj8ID06AfMrtgXNJRCvcD0LICraQ+WPUbikMunRieGO8PNHSB5vKdPoC50aLUa0RoRb4G3QM1pR2A8xAFlIJFX2R7iY+2t24L9hRFqB98+QoQzutfkAI1T0rzem/wtpZpuan+bDawDJEHGCeYbE0aPDAl6lytgrEE9fRgV3c1jJLQzu0xIWG8YLl3iMg0hL+c0wCKXoeqrfCFS6kYmmG7W+rQp4tCZifvRbWfAXwIPQieffKxqdEuUwiUsYxdzCu9v9uU3nflEOLLuRgeMP3gV8mpur9b5GztpkfgfzcAqsF+NiY01kYgGtrgCYlMy0TxASE+UuALrtkQtU01wwhs9RH7Az0Ib3C+MT5DTjxHQCYETIViocmNEG2vfAbgHazCpGAhcY="
+    - secure: KYdFlMarsyXw+OHht1Atp+Kirbw9O09Ck14EjFuKb1eNtknurZ/tGEXuD+8xWh1W8W21kgHEG7s3rzru53t29buz+FW9f+ZmhEWXFP3OydyvXLw4BAVVOjm6xG2uHX/8MOGLJNM7cfaF25EPQ+kznHe84R29KaLH90mNRr2lPa4VnfbcnvDStiVaez/vJ72UoYSP5HICAzoF70yC3ZvvCK1hZv71UIysCbFE2IkxvMhG9OOGebdnRmFssaRCrvfRLjitobcLzkPWzZZIqdjNASf8/iAxX8VgGBYfVj8ID06AfMrtgXNJRCvcD0LICraQ+WPUbikMunRieGO8PNHSB5vKdPoC50aLUa0RoRb4G3QM1pR2A8xAFlIJFX2R7iY+2t24L9hRFqB98+QoQzutfkAI1T0rzem/wtpZpuan+bDawDJEHGCeYbE0aPDAl6lytgrEE9fRgV3c1jJLQzu0xIWG8YLl3iMg0hL+c0wCKXoeqrfCFS6kYmmG7W+rQp4tCZifvRbWfAXwIPQieffKxqdEuUwiUsYxdzCu9v9uU3nflEOLLuRgeMP3gV8mpur9b5GztpkfgfzcAqsF+NiY01kYgGtrgCYlMy0TxASE+UuALrtkQtU01wwhs9RH7Az0Ib3C+MT5DTjxHQCYETIViocmNEG2vfAbgHazCpGAhcY=
+    - secure: Hoko50vP+Mwm/O4CWvPvjMxd1gGhi+Bultjyy1WpludSmZFCfKz45Mj1EqzeYk6MeMLvGOEkSLB5wjdXdgJ9j5gEOF5K34k4vESJA7+DqDO3I7Xw9cnWgOXdFqB0qGHar0TVP3Dfg7ZcRgtmeX6t2uoELFLiS9GvTnbZXk4PCUybd979Xi8XHjEQV7+3EZbSjtsI4GFeIK1rrjd0I+UM88zYrWnz1KhdCjWvQb4iZjo+ib6NmGGEMqR7jJPRZz3KB01Y+n5h21qq9/Nv31zQIqt2B5nRxy3vBvvqKapgprIk+hVOpNnBU8w89uWUU6tYUeFk0t7z1TYWjgaBrMmGCM+aKkQ2q5F/ygNzDwB+KkpJx709Yhf0ZX8g2yvkdz+Ok7moYuvmrOPOf4E/U3BlfZxbGtRD2bGYbDgHLFYlTn6v5J2kJHDJAz31yvF5jvJejDaPp2IBVfoMRy7ZJFmGUNHGd9Se6bRwxS++AoobP5WDrBiUXNe2KKDMs3e7vbaO+hLbZ9XHpjeWIJGUfvtTee8EHZqF/8A3ju53V4/R0ehlOv2UZbpYNqcmwrsy9/R4pgMfDkG3Q054LmYrxD8DIC9b8excVMwWRP5aQ1TqZnxO2B1/vJU87RcnGl3jekeHTdHXbRq9BMV4dAdPfB9X3nGIi2GgV0iTBk+24xccOc0=
 script:
-  - ./gradlew lintDebug testDebugUnitTest
+  - "./gradlew lintDebug testDebugUnitTest"
   - cat opacapp/build/reports/lint-results-debug.xml
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 cache:
   directories:
-    - $HOME/.gradle/caches/
-    - $HOME/.gradle/wrapper/
-    - $HOME/.android/build-cache
+    - "$HOME/.gradle/caches/"
+    - "$HOME/.gradle/wrapper/"
+    - "$HOME/.android/build-cache"

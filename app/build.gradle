@@ -38,6 +38,18 @@ android {
         dataBinding = true
     }
 
+    // add API keys from environment variable if not set in apikeys.xml
+    applicationVariants.all { variant ->
+        ext.env = System.getenv()
+        def goingelectricKey = env.GOINGELECTRIC_API_KEY
+        if (goingelectricKey != null) {
+            variant.resValue "string", "goingelectric_key", goingelectricKey
+        }
+        def googleMapsKey = env.GOOGLE_MAPS_API_KEY
+        if (googleMapsKey != null) {
+            variant.resValue "string", "google_maps_key", googleMapsKey
+        }
+    }
 }
 
 dependencies {
@@ -72,4 +84,3 @@ dependencies {
 
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.5'
 }
-

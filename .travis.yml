@@ -10,7 +10,6 @@ env:
     - secure: Hoko50vP+Mwm/O4CWvPvjMxd1gGhi+Bultjyy1WpludSmZFCfKz45Mj1EqzeYk6MeMLvGOEkSLB5wjdXdgJ9j5gEOF5K34k4vESJA7+DqDO3I7Xw9cnWgOXdFqB0qGHar0TVP3Dfg7ZcRgtmeX6t2uoELFLiS9GvTnbZXk4PCUybd979Xi8XHjEQV7+3EZbSjtsI4GFeIK1rrjd0I+UM88zYrWnz1KhdCjWvQb4iZjo+ib6NmGGEMqR7jJPRZz3KB01Y+n5h21qq9/Nv31zQIqt2B5nRxy3vBvvqKapgprIk+hVOpNnBU8w89uWUU6tYUeFk0t7z1TYWjgaBrMmGCM+aKkQ2q5F/ygNzDwB+KkpJx709Yhf0ZX8g2yvkdz+Ok7moYuvmrOPOf4E/U3BlfZxbGtRD2bGYbDgHLFYlTn6v5J2kJHDJAz31yvF5jvJejDaPp2IBVfoMRy7ZJFmGUNHGd9Se6bRwxS++AoobP5WDrBiUXNe2KKDMs3e7vbaO+hLbZ9XHpjeWIJGUfvtTee8EHZqF/8A3ju53V4/R0ehlOv2UZbpYNqcmwrsy9/R4pgMfDkG3Q054LmYrxD8DIC9b8excVMwWRP5aQ1TqZnxO2B1/vJU87RcnGl3jekeHTdHXbRq9BMV4dAdPfB9X3nGIi2GgV0iTBk+24xccOc0=
 script:
   - "./gradlew lintDebug testDebugUnitTest"
-  - cat opacapp/build/reports/lint-results-debug.xml
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/

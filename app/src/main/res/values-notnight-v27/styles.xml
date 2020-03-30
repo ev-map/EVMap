@@ -3,5 +3,6 @@
 
     <style name="AppTheme" parent="AppTheme.Base">
         <item name="android:navigationBarColor">@android:color/white</item>
+        <item name="android:windowLightNavigationBar">true</item>
     </style>
 </resources>

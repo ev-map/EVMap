@@ -181,7 +181,7 @@ data class Chargepoint(val type: String, val power: Double, val count: Int) : Eq
     }
 
     companion object {
-        const val TYPE_2 = "Type2"
+        const val TYPE_2 = "Typ2"
         const val CCS = "CCS"
         const val SCHUKO = "Schuko"
         const val CHADEMO = "CHAdeMO"

@@ -1,7 +1,8 @@
 package com.johan.evmap.api
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import okhttp3.*
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import org.json.JSONObject
 import java.io.IOException
 import java.util.concurrent.TimeUnit
@@ -16,11 +17,16 @@ enum class ChargepointStatus {
     AVAILABLE, UNKNOWN, CHARGING
 }
 
-class ChargecloudAvailabilityDetector(private val client: OkHttpClient,
-                                      private val operatorId: String): AvailabilityDetector {
+class AvailabilityDetectorException(message: String) : Exception(message)
+
+class ChargecloudAvailabilityDetector(
+    private val client: OkHttpClient,
+    private val operatorId: String
+) : AvailabilityDetector {
     @ExperimentalCoroutinesApi
     override suspend fun getAvailability(location: ChargeLocation): Map<Chargepoint, List<ChargepointStatus>> {
-        val url = "https://app.chargecloud.de/emobility:ocpi/$operatorId/app/2.0/locations?latitude=${location.coordinates.lat}&longitude=${location.coordinates.lng}&radius=$radius&offset=0&limit=10"
+        val url =
+            "https://app.chargecloud.de/emobility:ocpi/$operatorId/app/2.0/locations?latitude=${location.coordinates.lat}&longitude=${location.coordinates.lng}&radius=$radius&offset=0&limit=10"
         val request = Request.Builder().url(url).build()
         val response = client.newCall(request).await()
 
@@ -32,8 +38,8 @@ class ChargecloudAvailabilityDetector(private val client: OkHttpClient,
         if (statusMessage != "Success") throw IOException(statusMessage)
 
         val data = json.getJSONArray("data")
-        if (data.length() > 1) throw IOException("found multiple candidates.")
-        if (data.length() == 0) throw IOException("no candidates found.")
+        if (data.length() > 1) throw AvailabilityDetectorException("found multiple candidates.")
+        if (data.length() == 0) throw AvailabilityDetectorException("no candidates found.")
 
         val evses = data.getJSONObject(0).getJSONArray("evses")
         val chargepointStatus = mutableMapOf<Chargepoint, List<ChargepointStatus>>()
@@ -42,15 +48,15 @@ class ChargecloudAvailabilityDetector(private val client: OkHttpClient,
                 val type = getType(connector.getString("standard"))
                 val power = connector.getDouble("max_power")
                 val status = ChargepointStatus.valueOf(connector.getString("status"))
-                if (type == null) return@connector
 
-                var chargepoint = chargepointStatus.keys.filter {
-                    it.type == type
-                    it.power == power
-                }.getOrNull(0)
+                var chargepoint = getCorrespondingChargepoint(chargepointStatus.keys, type, power)
                 val statusList: List<ChargepointStatus>
                 if (chargepoint == null) {
-                    chargepoint = Chargepoint(type, power, 1)
+                    // find corresponding chargepoint from goingelectric to get correct power
+                    val geChargepoint =
+                        getCorrespondingChargepoint(location.chargepoints, type, power)
+                            ?: throw AvailabilityDetectorException("Chargepoints from chargecloud API and goingelectric do not match.")
+                    chargepoint = Chargepoint(type, geChargepoint.power, 1)
                     statusList = listOf(status)
                 } else {
                     val previousStatus = chargepointStatus[chargepoint]!!
@@ -63,16 +69,39 @@ class ChargecloudAvailabilityDetector(private val client: OkHttpClient,
                 chargepointStatus[chargepoint] = statusList
             }
         }
-        return chargepointStatus
+
+
+
+        if (chargepointStatus.keys == location.chargepoints.toSet()) {
+            return chargepointStatus
+        } else {
+            throw AvailabilityDetectorException("Chargepoints from chargecloud API and goingelectric do not match.")
+        }
     }
 
-    private fun getType(string: String): String? {
+    private fun getCorrespondingChargepoint(
+        cps: Iterable<Chargepoint>, type: String, power: Double
+    ): Chargepoint? {
+        var filter = cps.filter {
+            it.type == type
+            it.power in power - 2..power + 2
+        }
+        if (filter.size > 1) {
+            filter = cps.filter {
+                it.type == type
+                it.power == power
+            }
+        }
+        return filter.getOrNull(0)
+    }
+
+    private fun getType(string: String): String {
         return when (string) {
             "IEC_62196_T2" -> Chargepoint.TYPE_2
             "DOMESTIC_F" -> Chargepoint.SCHUKO
             "IEC_62196_T2_COMBO" -> Chargepoint.CCS
             "CHADEMO" -> Chargepoint.CHADEMO
-            else -> null
+            else -> throw IllegalArgumentException("unrecognized type $string")
         }
     }
 }

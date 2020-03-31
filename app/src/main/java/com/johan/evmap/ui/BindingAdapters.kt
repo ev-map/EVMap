@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.johan.evmap.R
+import com.johan.evmap.api.Chargepoint
 
 
 @BindingAdapter("goneUnless")
@@ -51,11 +52,11 @@ fun <T> setRecyclerViewData(recyclerView: ViewPager2, items: List<T>?) {
 fun getConnectorItem(view: ImageView, type: String) {
     view.setImageResource(
         when (type) {
-            "CCS" -> R.drawable.ic_connector_ccs
-            "CHAdeMO" -> R.drawable.ic_connector_chademo
-            "Schuko" -> R.drawable.ic_connector_schuko
-            "Tesla Supercharger" -> R.drawable.ic_connector_supercharger
-            "Typ2" -> R.drawable.ic_connector_typ2
+            Chargepoint.CCS -> R.drawable.ic_connector_ccs
+            Chargepoint.CHADEMO -> R.drawable.ic_connector_chademo
+            Chargepoint.SCHUKO -> R.drawable.ic_connector_schuko
+            Chargepoint.SUPERCHARGER -> R.drawable.ic_connector_supercharger
+            Chargepoint.TYPE_2 -> R.drawable.ic_connector_typ2
             // TODO: add other connectors
             else -> 0
         }

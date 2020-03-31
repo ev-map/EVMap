@@ -179,4 +179,12 @@ data class Chargepoint(val type: String, val power: Double, val count: Int) : Eq
         }
         return "$powerFmt kW"
     }
+
+    companion object {
+        const val TYPE_2 = "Type2"
+        const val CCS = "CCS"
+        const val SCHUKO = "Schuko"
+        const val CHADEMO = "CHAdeMO"
+        const val SUPERCHARGER = "Tesla Supercharger"
+    }
 }

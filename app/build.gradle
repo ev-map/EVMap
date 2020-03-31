@@ -77,6 +77,8 @@ dependencies {
     implementation 'com.facebook.stetho:stetho:1.5.1'
     implementation 'com.facebook.stetho:stetho-okhttp3:1.5.1'
     testImplementation 'junit:junit:4.12'
+    //noinspection GradleDependency
+    testImplementation 'org.json:json:20080701'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 

@@ -7,11 +7,23 @@
 
         <import type="com.johan.evmap.api.ChargeLocation" />
 
+        <import type="com.johan.evmap.api.Chargepoint" />
+
+        <import type="com.johan.evmap.api.ChargepointStatus" />
+
+        <import type="java.util.Map" />
+
+        <import type="java.util.List" />
+
         <import type="com.johan.evmap.adapter.DataBindingAdaptersKt" />
 
         <variable
             name="charger"
             type="ChargeLocation" />
+
+        <variable
+            name="availability"
+            type="Map&lt;Chargepoint, List&lt;ChargepointStatus>>" />
     </data>
 
     <androidx.cardview.widget.CardView
@@ -70,7 +82,7 @@
                 android:id="@+id/connectors"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:data="@{charger.chargepoints}"
+                app:data="@{DataBindingAdaptersKt.chargepointWithAvailability(charger.chargepoints, availability)}"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/textView7"

@@ -1,9 +1,11 @@
 package com.johan.evmap.ui
 
+import android.content.Context
 import android.content.res.ColorStateList
-import android.util.TypedValue
 import android.view.View
 import android.widget.ImageView
+import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -25,13 +27,16 @@ fun invisibleUnless(view: View, visible: Boolean) {
 
 @BindingAdapter("isFabActive")
 fun isFabActive(view: FloatingActionButton, isColored: Boolean) {
-    val color = TypedValue()
-    if (isColored) {
-        view.context.theme.resolveAttribute(R.attr.colorAccent, color, true)
-    } else {
-        view.context.theme.resolveAttribute(R.attr.colorControlNormal, color, true)
-    }
-    view.imageTintList = ColorStateList.valueOf(color.data)
+    val color = view.context.theme.obtainStyledAttributes(
+        intArrayOf(
+            if (isColored) {
+                R.attr.colorAccent
+            } else {
+                R.attr.colorControlNormal
+            }
+        )
+    )
+    view.imageTintList = ColorStateList.valueOf(color.getColor(0, 0))
 }
 
 @BindingAdapter("data")
@@ -71,4 +76,33 @@ fun setImageResource(imageView: ImageView, resource: Int) {
 @BindingAdapter("android:contentDescription")
 fun setContentDescriptionResource(imageView: ImageView, resource: Int) {
     imageView.contentDescription = imageView.context.getString(resource)
+}
+
+@BindingAdapter("tintAvailability")
+fun setTintAvailability(view: ImageView, available: Int?) {
+    view.imageTintList = ColorStateList.valueOf(availabilityColor(available, view.context))
+}
+
+@BindingAdapter("textColorAvailability")
+fun setTintAvailability(view: TextView, available: Int?) {
+    view.setTextColor(availabilityColor(available, view.context))
+}
+
+@BindingAdapter("backgroundTintAvailability")
+fun setTintAvailability(view: View, available: Int?) {
+    view.backgroundTintList = ColorStateList.valueOf(availabilityColor(available, view.context))
+}
+
+private fun availabilityColor(
+    available: Int?,
+    context: Context
+): Int = if (available != null) {
+    if (available > 0) {
+        ContextCompat.getColor(context, R.color.available)
+    } else {
+        ContextCompat.getColor(context, R.color.unavailable)
+    }
+} else {
+    val ta = context.theme.obtainStyledAttributes(intArrayOf(R.attr.colorControlNormal))
+    ta.getColor(0, 0)
 }

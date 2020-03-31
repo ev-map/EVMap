@@ -12,6 +12,7 @@ import com.johan.evmap.BR
 import com.johan.evmap.R
 import com.johan.evmap.api.ChargeLocation
 import com.johan.evmap.api.Chargepoint
+import com.johan.evmap.api.ChargepointStatus
 
 interface Equatable {
     override fun equals(other: Any?): Boolean;
@@ -46,7 +47,21 @@ abstract class DataBindingAdapter<T : Equatable>() :
     }
 }
 
-class ConnectorAdapter : DataBindingAdapter<Chargepoint>() {
+fun chargepointWithAvailability(
+    chargepoints: Iterable<Chargepoint>?,
+    availability: Map<Chargepoint, List<ChargepointStatus>>?
+): List<ConnectorAdapter.ChargepointWithAvailability>? {
+    return chargepoints?.map {
+        ConnectorAdapter.ChargepointWithAvailability(
+            it, availability?.get(it)?.count { it == ChargepointStatus.AVAILABLE }
+        )
+    }
+}
+
+class ConnectorAdapter : DataBindingAdapter<ConnectorAdapter.ChargepointWithAvailability>() {
+    data class ChargepointWithAvailability(val chargepoint: Chargepoint, val available: Int?) :
+        Equatable
+
     override fun getItemViewType(position: Int): Int = R.layout.item_connector
 }
 

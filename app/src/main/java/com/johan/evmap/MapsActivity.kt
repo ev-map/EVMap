@@ -88,6 +88,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         binding.vm = vm
 
         ActivityCompat.setExitSharedElementCallback(this, exitElementCallback)
+        setSupportActionBar(binding.toolbar)
+        title = ""
 
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)

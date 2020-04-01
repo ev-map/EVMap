@@ -26,19 +26,23 @@
             android:fitsSystemWindows="true"
             tools:context=".MapsActivity" />
 
-        <!--<com.google.android.material.appbar.AppBarLayout
-            android:id="@+id/appbarlayout"
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/toolbar_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:theme="@style/AppTheme.AppBarOverlay"
-            app:layout_behavior="@string/ScrollingAppBarLayoutBehavior">
+            android:layout_margin="8dp"
+            android:elevation="8dp"
+            app:cardCornerRadius="4dp"
+            app:layout_behavior="@string/ScrollingAppBarLayoutBehavior"
+            android:background="@drawable/rounded_rect"
+            android:backgroundTint="?android:colorBackground">
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                app:popupTheme="@style/AppTheme.PopupOverlay"/>
-        </com.google.android.material.appbar.AppBarLayout>-->
+                android:layout_height="?attr/actionBarSize" />
+
+        </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/gallery"

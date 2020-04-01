@@ -206,11 +206,13 @@
 
             <TextView
                 android:id="@+id/textView13"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:gravity="right|end"
                 android:text="@{availability != null ? @string/realtime_data_source(availability.source) : @string/realtime_data_unavailable}"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
+                app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/connectors"
                 tools:text="Echtzeitdaten nicht verfügbar" />
 

@@ -115,7 +115,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 previousCharger = charger
             }
         })
-        vm.chargepoints.observe(this, Observer<List<ChargepointListItem>> {
+        vm.chargepoints.observe(this, Observer {
             updateMap(it)
         })
 
@@ -161,6 +161,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https:${charger.url}"))
                 startActivity(intent)
             }
+        }
+        binding.detailView.topPart.setOnClickListener {
+            bottomSheetBehavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT
         }
     }
 

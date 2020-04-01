@@ -216,6 +216,16 @@
                 app:layout_constraintTop_toBottomOf="@+id/connectors"
                 tools:text="Echtzeitdaten nicht verfügbar" />
 
+            <View
+                android:id="@+id/topPart"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:text="TextView"
+                app:layout_constraintBottom_toBottomOf="@+id/textView3"
+                app:layout_constraintEnd_toStartOf="@+id/guideline2"
+                app:layout_constraintStart_toStartOf="@+id/guideline"
+                app:layout_constraintTop_toTopOf="@+id/textView" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>

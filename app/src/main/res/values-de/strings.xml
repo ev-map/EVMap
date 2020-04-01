@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">EV Map</string>
-    <string name="title_activity_maps">Map</string>
+    <string name="title_activity_maps">EV Map</string>
     <string name="connectors">Anschlüsse</string>
     <string name="no_maps_app_found">Keine Navigations-App gefunden</string>
     <string name="address">Adresse</string>
@@ -18,5 +18,7 @@
     <string name="paid">Kostenpflichtig</string>
     <string name="amenities">Ladeweile</string>
     <string name="general_info">Allgemeine Hinweise</string>
+    <string name="realtime_data_unavailable">Echtzeitstatus nicht verfügbar</string>
+    <string name="realtime_data_source">Quelle Echtzeitdaten (beta): %s</string>
     <string name="go_to_goingelectric">Quelle: goingelectric.de</string>
 </resources>

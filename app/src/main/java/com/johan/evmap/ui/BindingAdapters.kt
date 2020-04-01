@@ -79,17 +79,17 @@ fun setContentDescriptionResource(imageView: ImageView, resource: Int) {
 }
 
 @BindingAdapter("tintAvailability")
-fun setTintAvailability(view: ImageView, available: Int?) {
+fun setImageTintAvailability(view: ImageView, available: Int?) {
     view.imageTintList = ColorStateList.valueOf(availabilityColor(available, view.context))
 }
 
 @BindingAdapter("textColorAvailability")
-fun setTintAvailability(view: TextView, available: Int?) {
+fun setTextColorAvailability(view: TextView, available: Int?) {
     view.setTextColor(availabilityColor(available, view.context))
 }
 
 @BindingAdapter("backgroundTintAvailability")
-fun setTintAvailability(view: View, available: Int?) {
+fun setBackgroundTintAvailability(view: View, available: Int?) {
     view.backgroundTintList = ColorStateList.valueOf(availabilityColor(available, view.context))
 }
 

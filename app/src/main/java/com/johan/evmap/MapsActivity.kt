@@ -19,6 +19,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -38,9 +39,13 @@ import com.johan.evmap.databinding.ActivityMapsBinding
 import com.johan.evmap.ui.ClusterIconGenerator
 import com.johan.evmap.ui.getBitmapDescriptor
 import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.IOException
 
 const val REQUEST_LOCATION_PERMISSION = 1
 
@@ -52,6 +57,9 @@ class MapsActivityViewModel : ViewModel() {
     }
     val charger: MutableLiveData<ChargeLocation> by lazy {
         MutableLiveData<ChargeLocation>()
+    }
+    val availability: MutableLiveData<ChargeLocationStatus> by lazy {
+        MutableLiveData<ChargeLocationStatus>()
     }
     val myLocationEnabled: MutableLiveData<Boolean> by lazy {
         MutableLiveData<Boolean>()
@@ -96,6 +104,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                     if (previousCharger == null ||
                         previousCharger!!.id != charger.id
                     ) {
+                        vm.availability.value = null
                         bottomSheetBehavior.state =
                             BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED
                         loadChargerDetails()
@@ -290,8 +299,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun loadChargerDetails() {
-        val id = vm.charger.value?.id ?: return
-        api.getChargepointDetail(id).enqueue(object : Callback<ChargepointList> {
+        val charger = vm.charger.value ?: return
+        api.getChargepointDetail(charger.id).enqueue(object : Callback<ChargepointList> {
             override fun onFailure(call: Call<ChargepointList>, t: Throwable) {
                 //TODO: show error message
                 t.printStackTrace()
@@ -309,6 +318,27 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 vm.charger.value = response.body()!!.chargelocations[0] as ChargeLocation
             }
         })
+
+        lifecycleScope.launch {
+            loadChargerAvailability(charger)
+        }
+    }
+
+    private suspend fun loadChargerAvailability(charger: ChargeLocation) {
+        var availability: ChargeLocationStatus? = null
+        withContext(Dispatchers.IO) {
+            for (ad in availabilityDetectors) {
+                try {
+                    availability = ad.getAvailability(charger)
+                    break
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                } catch (e: AvailabilityDetectorException) {
+                    e.printStackTrace()
+                }
+            }
+        }
+        vm.availability.value = availability
     }
 
     private fun updateMap(chargepoints: List<ChargepointListItem>) {

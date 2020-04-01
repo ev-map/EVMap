@@ -9,11 +9,7 @@
 
         <import type="com.johan.evmap.api.Chargepoint" />
 
-        <import type="com.johan.evmap.api.ChargepointStatus" />
-
-        <import type="java.util.Map" />
-
-        <import type="java.util.List" />
+        <import type="com.johan.evmap.api.ChargeLocationStatus" />
 
         <import type="com.johan.evmap.adapter.DataBindingAdaptersKt" />
 
@@ -23,7 +19,8 @@
 
         <variable
             name="availability"
-            type="Map&lt;Chargepoint, List&lt;ChargepointStatus>>" />
+            type="ChargeLocationStatus" />
+
     </data>
 
     <androidx.cardview.widget.CardView
@@ -82,7 +79,7 @@
                 android:id="@+id/connectors"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:data="@{DataBindingAdaptersKt.chargepointWithAvailability(charger.chargepoints, availability)}"
+                app:data="@{DataBindingAdaptersKt.chargepointWithAvailability(charger.chargepoints, availability.status)}"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/textView7"
@@ -183,7 +180,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/connectors"
+                app:layout_constraintTop_toBottomOf="@+id/textView13"
                 tools:itemCount="3"
                 tools:listitem="@layout/item_detail" />
 
@@ -206,6 +203,16 @@
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/textView4" />
+
+            <TextView
+                android:id="@+id/textView13"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{availability != null ? @string/realtime_data_source(availability.source) : @string/realtime_data_unavailable}"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+                app:layout_constraintEnd_toStartOf="@+id/guideline2"
+                app:layout_constraintTop_toBottomOf="@+id/connectors"
+                tools:text="Echtzeitdaten nicht verfügbar" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

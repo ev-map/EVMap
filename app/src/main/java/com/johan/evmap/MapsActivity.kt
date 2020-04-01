@@ -246,6 +246,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         if (hasLocationPermission()) {
             enableLocation(false)
+        } else {
+            // center the camera on Europe
+            val cameraUpdate = CameraUpdateFactory.newLatLngZoom(LatLng(50.113388, 9.252536), 3.5f)
+            map.moveCamera(cameraUpdate)
         }
     }
 
@@ -258,11 +262,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         fusedLocationClient.lastLocation.addOnSuccessListener { location ->
             if (location != null) {
                 val latLng = LatLng(location.latitude, location.longitude)
+                val camUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 13f)
                 if (animate) {
-                    val camUpdate = CameraUpdateFactory.newLatLng(latLng)
                     map.animateCamera(camUpdate)
                 } else {
-                    val camUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 13f)
                     map.moveCamera(camUpdate)
                 }
             }

@@ -12,6 +12,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.johan.evmap.adapter.GalleryAdapter
 import com.johan.evmap.adapter.galleryTransitionName
 import com.johan.evmap.databinding.ActivityGalleryBinding
+import com.johan.evmap.fragment.MapFragment
 import com.ortiz.touchview.TouchImageView
 
 
@@ -68,8 +69,8 @@ class GalleryActivity : AppCompatActivity() {
     override fun finishAfterTransition() {
         isReturning = true
         val data = Intent()
-        data.putExtra(MapsActivity.EXTRA_STARTING_GALLERY_POSITION, startingPosition)
-        data.putExtra(MapsActivity.EXTRA_CURRENT_GALLERY_POSITION, currentPosition)
+        data.putExtra(MapFragment.EXTRA_STARTING_GALLERY_POSITION, startingPosition)
+        data.putExtra(MapFragment.EXTRA_CURRENT_GALLERY_POSITION, currentPosition)
         setResult(Activity.RESULT_OK, data)
         super.finishAfterTransition()
     }

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="com.johan.evmap.fragment.MapViewModel" />
+
+        <variable
+            name="vm"
+            type="MapViewModel" />
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/root"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="false">
+
+        <fragment
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true"
+            tools:context=".MapsActivity" />
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/toolbar_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:elevation="8dp"
+            app:cardCornerRadius="4dp"
+            app:layout_behavior="@string/ScrollingAppBarLayoutBehavior"
+            android:background="@drawable/rounded_rect"
+            android:backgroundTint="?android:colorBackground">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize">
+
+                <EditText
+                    android:id="@+id/etSearch"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="@string/search"
+                    android:inputType="text" />
+
+            </androidx.appcompat.widget.Toolbar>
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/gallery"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/gallery_height"
+            android:background="?android:colorBackground"
+            android:fitsSystemWindows="true"
+            app:data="@{vm.charger.photos}"
+            app:invisibleUnless="@{vm.charger.photos != null &amp;&amp; vm.charger.photos.size() > 0}"
+            app:layout_behavior="@string/BackDropBottomSheetBehavior" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_locate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/fab_margin"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@drawable/ic_location"
+            app:backgroundTint="@android:color/white"
+            app:borderWidth="0dp"
+            app:isFabActive="@{ vm.myLocationEnabled }"
+            app:layout_behavior=".ui.HideOnScrollFabBehavior" />
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/bottom_sheet"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true"
+            android:fillViewport="true"
+            android:orientation="vertical"
+            app:anchorPoint="@dimen/gallery_height"
+            app:behavior_hideable="true"
+            app:behavior_peekHeight="@dimen/peek_height"
+            app:defaultState="stateHidden"
+            app:layout_behavior="@string/BottomSheetBehaviorGoogleMapsLike"
+            tools:defaultState="stateCollapsed">
+
+            <include
+                android:id="@+id/detail_view"
+                layout="@layout/detail_view"
+                app:charger="@{vm.charger}"
+                app:availability="@{vm.availability}" />
+
+        </androidx.core.widget.NestedScrollView>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_directions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/fab_margin"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@drawable/ic_directions"
+            app:layout_anchor="@id/bottom_sheet"
+            app:layout_anchorGravity="top|right|end"
+            app:layout_behavior="@string/ScrollAwareFABBehavior" />
+
+        <!--<com.mahc.custombottomsheetbehavior.MergedAppBarLayout
+            android:id="@+id/mergedappbarlayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_behavior="@string/MergedAppBarLayoutBehavior"/>-->
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

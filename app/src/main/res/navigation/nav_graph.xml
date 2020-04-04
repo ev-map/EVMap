@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/mapFragment">
+
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="com.johan.evmap.fragment.MapFragment"
+        android:label="MapFragment">
+        <action
+            android:id="@+id/action_mapFragment_to_galleryActivity"
+            app:destination="@id/galleryActivity" />
+    </fragment>
+    <activity
+        android:id="@+id/galleryActivity"
+        android:name="com.johan.evmap.GalleryActivity"
+        android:label="GalleryActivity" />
+</navigation>

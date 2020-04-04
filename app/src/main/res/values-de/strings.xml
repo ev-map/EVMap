@@ -22,4 +22,6 @@
     <string name="realtime_data_source">Quelle Echtzeitdaten (beta): %s</string>
     <string name="go_to_goingelectric">Quelle: goingelectric.de</string>
     <string name="search">Suche</string>
+    <string name="menu_map">Map</string>
+    <string name="menu_favs">Favorites</string>
 </resources>

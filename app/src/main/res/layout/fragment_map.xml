@@ -32,23 +32,22 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:elevation="8dp"
-            app:cardCornerRadius="4dp"
             app:layout_behavior="@string/ScrollingAppBarLayoutBehavior"
-            android:background="@drawable/rounded_rect"
+            android:background="@drawable/rounded_rect_4dp"
             android:backgroundTint="?android:colorBackground">
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize">
+                android:layout_height="48dp">
 
-                <EditText
-                    android:id="@+id/etSearch"
+                <TextView
+                    android:id="@+id/search"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:hint="@string/search"
-                    android:inputType="text" />
+                    android:text="@string/search"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+                    android:textColor="?android:textColorSecondary" />
 
             </androidx.appcompat.widget.Toolbar>
 

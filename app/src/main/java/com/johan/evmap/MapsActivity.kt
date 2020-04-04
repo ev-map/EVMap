@@ -4,8 +4,12 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.navigation.NavigationView
 import com.johan.evmap.api.ChargeLocation
 
 const val REQUEST_LOCATION_PERMISSION = 1
@@ -13,6 +17,7 @@ const val REQUEST_LOCATION_PERMISSION = 1
 
 class MapsActivity : AppCompatActivity() {
     private lateinit var navController: NavController
+    lateinit var appBarConfiguration: AppBarConfiguration
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,6 +29,14 @@ class MapsActivity : AppCompatActivity() {
         //title = ""
 
         navController = findNavController(R.id.nav_host_fragment)
+        appBarConfiguration = AppBarConfiguration(
+            setOf(
+                R.id.map,
+                R.id.favs
+            ),
+            findViewById<DrawerLayout>(R.id.drawer_layout)
+        )
+        findViewById<NavigationView>(R.id.nav_view).setupWithNavController(navController)
     }
 
     override fun onBackPressed() {

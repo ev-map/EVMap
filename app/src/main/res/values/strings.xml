@@ -21,4 +21,6 @@
     <string name="realtime_data_source">Real-time status source (beta): %s</string>
     <string name="go_to_goingelectric">Source: goingelectric.de</string>
     <string name="search">Search</string>
+    <string name="menu_map">Map</string>
+    <string name="menu_favs">Favorites</string>
 </resources>

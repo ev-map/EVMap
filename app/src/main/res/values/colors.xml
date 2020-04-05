@@ -11,4 +11,5 @@
     <color name="charger_low">#9e9e9e</color>
     <color name="available">#4caf50</color>
     <color name="unavailable">#f44336</color>
+    <color name="status_bar_scrim">#C3000000</color>
 </resources>

@@ -24,4 +24,6 @@
     <string name="search">Suche</string>
     <string name="menu_map">Map</string>
     <string name="menu_favs">Favorites</string>
+    <string name="menu_filter">Filtern</string>
+    <string name="not_implemented">noch nicht implementiert</string>
 </resources>

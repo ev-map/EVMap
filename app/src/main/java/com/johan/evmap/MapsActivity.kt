@@ -4,20 +4,27 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
+import com.google.android.material.snackbar.Snackbar
 import com.johan.evmap.api.ChargeLocation
 
 const val REQUEST_LOCATION_PERMISSION = 1
 
 
 class MapsActivity : AppCompatActivity() {
+    interface FragmentCallback {
+        fun getRootView(): CoordinatorLayout
+    }
+
     private lateinit var navController: NavController
     lateinit var appBarConfiguration: AppBarConfiguration
+    var fragmentCallback: FragmentCallback? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,13 +65,12 @@ class MapsActivity : AppCompatActivity() {
             if (intent.resolveActivity(pm) != null) {
                 startActivity(intent);
             } else {
-                // TODO:
-                /*
+                val cb = fragmentCallback ?: return
                 Snackbar.make(
-                    ,
+                    cb.getRootView(),
                     R.string.no_maps_app_found,
                     Snackbar.LENGTH_SHORT
-                )*/
+                )
             }
         }
     }

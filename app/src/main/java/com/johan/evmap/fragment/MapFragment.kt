@@ -2,14 +2,14 @@ package com.johan.evmap.fragment
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -26,6 +26,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
+import com.google.android.material.snackbar.Snackbar
 import com.johan.evmap.GalleryActivity
 import com.johan.evmap.MapsActivity
 import com.johan.evmap.R
@@ -38,6 +39,7 @@ import com.johan.evmap.databinding.FragmentMapBinding
 import com.johan.evmap.ui.ClusterIconGenerator
 import com.johan.evmap.ui.getBitmapDescriptor
 import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike
+import kotlinx.android.synthetic.main.fragment_map.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -63,7 +65,7 @@ class MapViewModel : ViewModel() {
     }
 }
 
-class MapFragment : Fragment(), OnMapReadyCallback {
+class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallback {
     private lateinit var binding: FragmentMapBinding
     private val vm: MapViewModel by viewModels()
     private var map: GoogleMap? = null
@@ -85,6 +87,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
         api = GoingElectricApi.create(getString(R.string.goingelectric_key))
 
+        setHasOptionsMenu(true)
+
         return binding.root
     }
 
@@ -98,10 +102,23 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         setupAdapters()
 
         val navController = findNavController()
+        (activity as? MapsActivity)?.setSupportActionBar(binding.toolbar)
         binding.toolbar.setupWithNavController(
             navController,
             (requireActivity() as MapsActivity).appBarConfiguration
         )
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        val hostActivity = activity as? MapsActivity ?: return
+        hostActivity.fragmentCallback = this
+    }
+
+    override fun onDetach() {
+        val hostActivity = activity as? MapsActivity ?: return
+        hostActivity.fragmentCallback = null
+        super.onDetach()
     }
 
     private fun setupClickListeners() {
@@ -398,6 +415,21 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.map, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_filter -> {
+                Snackbar.make(root, R.string.not_implemented, Snackbar.LENGTH_SHORT).show()
+                return true
+            }
+            else -> return super.onOptionsItemSelected(item)
+        }
+    }
+
     fun goBack(): Boolean {
         if (bottomSheetBehavior.state != BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED &&
             bottomSheetBehavior.state != BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN
@@ -416,5 +448,9 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     companion object {
         const val EXTRA_STARTING_GALLERY_POSITION = "extra_starting_item_position"
         const val EXTRA_CURRENT_GALLERY_POSITION = "extra_current_item_position"
+    }
+
+    override fun getRootView(): CoordinatorLayout {
+        return root
     }
 }

@@ -19,4 +19,8 @@
         android:name="com.johan.evmap.GalleryActivity"
         android:label="GalleryActivity"
         tools:layout="@layout/activity_gallery" />
+    <fragment
+        android:id="@+id/about"
+        android:name="com.johan.evmap.fragment.AboutFragment"
+        android:label="@string/about" />
 </navigation>

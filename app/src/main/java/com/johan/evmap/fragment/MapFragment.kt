@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
-import android.net.Uri
 import android.os.Bundle
 import android.view.*
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -143,8 +142,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         binding.detailView.goingelectricButton.setOnClickListener {
             val charger = vm.charger.value
             if (charger != null) {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https:${charger.url}"))
-                startActivity(intent)
+                (activity as? MapsActivity)?.openUrl("https:${charger.url}")
             }
         }
         binding.detailView.topPart.setOnClickListener {

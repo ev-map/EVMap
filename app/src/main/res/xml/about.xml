@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <PreferenceCategory android:title="@string/about">
+
+        <Preference
+            android:key="version"
+            android:title="@string/version"
+            tools:summary="0.0.1" />
+
+        <Preference
+            android:key="github_link"
+            android:title="@string/github_link_title"
+            android:summary="@string/github_link" />
+
+    </PreferenceCategory>
+</PreferenceScreen>

@@ -39,7 +39,8 @@ class MapsActivity : AppCompatActivity() {
         appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.map,
-                R.id.favs
+                R.id.favs,
+                R.id.about
             ),
             findViewById<DrawerLayout>(R.id.drawer_layout)
         )
@@ -73,6 +74,11 @@ class MapsActivity : AppCompatActivity() {
                 )
             }
         }
+    }
+
+    fun openUrl(url: String) {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        startActivity(intent)
     }
 
 

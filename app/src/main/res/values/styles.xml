@@ -8,6 +8,11 @@
         <item name="colorSecondary">@color/colorSecondary</item>
         <item name="colorSecondaryVariant">@color/colorSecondaryVariant</item>
         <item name="android:windowTranslucentStatus">true</item>
+        <item name="preferenceTheme">@style/AppTheme.Preference</item>
+    </style>
+
+    <style name="AppTheme.Preference" parent="@style/PreferenceThemeOverlay">
+        <item name="android:layout">@layout/fragment_preference</item>
     </style>
 
     <style name="AppTheme" parent="AppTheme.Base" />

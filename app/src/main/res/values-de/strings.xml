@@ -26,4 +26,8 @@
     <string name="menu_favs">Favorites</string>
     <string name="menu_filter">Filtern</string>
     <string name="not_implemented">noch nicht implementiert</string>
+    <string name="about">Über EVMap</string>
+    <string name="version">Version</string>
+    <string name="github_link_title">Quellcode</string>
+    <string name="settings">Einstellungen</string>
 </resources>

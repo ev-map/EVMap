@@ -2,7 +2,6 @@ package com.johan.evmap.fragment
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
@@ -108,16 +107,16 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         )
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
+    override fun onResume() {
+        super.onResume()
         val hostActivity = activity as? MapsActivity ?: return
         hostActivity.fragmentCallback = this
     }
 
-    override fun onDetach() {
+    override fun onPause() {
+        super.onPause()
         val hostActivity = activity as? MapsActivity ?: return
         hostActivity.fragmentCallback = null
-        super.onDetach()
     }
 
     private fun setupClickListeners() {
@@ -428,17 +427,17 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         }
     }
 
-    fun goBack(): Boolean {
-        if (bottomSheetBehavior.state != BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED &&
+    override fun goBack(): Boolean {
+        return if (bottomSheetBehavior.state != BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED &&
             bottomSheetBehavior.state != BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN
         ) {
             bottomSheetBehavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED
-            return true
+            true
         } else if (bottomSheetBehavior.state == BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED) {
             vm.charger.value = null
-            return true
+            true
         } else {
-            return false
+            false
         }
     }
 

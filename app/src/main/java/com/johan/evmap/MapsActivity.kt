@@ -20,6 +20,7 @@ const val REQUEST_LOCATION_PERMISSION = 1
 class MapsActivity : AppCompatActivity() {
     interface FragmentCallback {
         fun getRootView(): CoordinatorLayout
+        fun goBack(): Boolean
     }
 
     private lateinit var navController: NavController
@@ -48,7 +49,8 @@ class MapsActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-
+        val didGoBack = fragmentCallback?.goBack() ?: false
+        if (!didGoBack) super.onBackPressed()
     }
 
     fun navigateTo(charger: ChargeLocation) {

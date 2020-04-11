@@ -2,6 +2,7 @@
 
 buildscript {
     ext.kotlin_version = '1.3.61'
+    ext.about_libs_version = '8.1.1'
     repositories {
         google()
         jcenter()
@@ -9,6 +10,7 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:4.0.0-beta03'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "com.mikepenz.aboutlibraries.plugin:aboutlibraries-plugin:$about_libs_version"
 
         def nav_version = "2.3.0-alpha04"
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version"

@@ -10,6 +10,7 @@ import androidx.preference.PreferenceFragmentCompat
 import com.johan.evmap.BuildConfig
 import com.johan.evmap.MapsActivity
 import com.johan.evmap.R
+import com.mikepenz.aboutlibraries.LibsBuilder
 
 
 class AboutFragment : PreferenceFragmentCompat() {
@@ -34,6 +35,16 @@ class AboutFragment : PreferenceFragmentCompat() {
         return when (preference?.key) {
             "github_link" -> {
                 (activity as? MapsActivity)?.openUrl(preference.summary.toString())
+                true
+            }
+            "oss_licenses" -> {
+                LibsBuilder()
+                    .withLicenseShown(true)
+                    .withAboutVersionShown(false)
+                    .withAboutIconShown(false)
+                    .withActivityTitle(getString(R.string.oss_licenses))
+                    .withExcludedLibraries()
+                    .start(requireActivity())
                 true
             }
             else -> super.onPreferenceTreeClick(preference)

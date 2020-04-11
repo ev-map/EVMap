@@ -89,12 +89,12 @@
             android:fitsSystemWindows="true"
             android:fillViewport="true"
             android:orientation="vertical"
-            app:anchorPoint="@dimen/gallery_height"
+            app:bottomsheetbehavior_anchorPoint="@dimen/gallery_height"
             app:behavior_hideable="true"
             app:behavior_peekHeight="@dimen/peek_height"
-            app:defaultState="stateHidden"
+            app:bottomsheetbehavior_defaultState="stateHidden"
             app:layout_behavior="@string/BottomSheetBehaviorGoogleMapsLike"
-            tools:defaultState="stateCollapsed">
+            tools:bottomsheetbehavior_defaultState="stateCollapsed">
 
             <include
                 android:id="@+id/detail_view"

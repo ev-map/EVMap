@@ -14,5 +14,9 @@
             android:title="@string/github_link_title"
             android:summary="@string/github_link" />
 
+        <Preference
+            android:key="oss_licenses"
+            android:title="@string/oss_licenses" />
+
     </PreferenceCategory>
 </PreferenceScreen>

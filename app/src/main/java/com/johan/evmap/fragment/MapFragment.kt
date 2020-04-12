@@ -12,7 +12,8 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.*
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -32,42 +33,25 @@ import com.johan.evmap.REQUEST_LOCATION_PERMISSION
 import com.johan.evmap.adapter.ConnectorAdapter
 import com.johan.evmap.adapter.DetailAdapter
 import com.johan.evmap.adapter.GalleryAdapter
-import com.johan.evmap.api.*
+import com.johan.evmap.api.ChargeLocation
+import com.johan.evmap.api.ChargeLocationCluster
+import com.johan.evmap.api.ChargepointListItem
+import com.johan.evmap.api.ChargerPhoto
 import com.johan.evmap.databinding.FragmentMapBinding
 import com.johan.evmap.ui.ClusterIconGenerator
 import com.johan.evmap.ui.getBitmapDescriptor
+import com.johan.evmap.viewmodel.MapPosition
+import com.johan.evmap.viewmodel.MapViewModel
+import com.johan.evmap.viewmodel.viewModelFactory
 import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike
 import kotlinx.android.synthetic.main.fragment_map.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import java.io.IOException
-
-class MapViewModel : ViewModel() {
-    val chargepoints: MutableLiveData<List<ChargepointListItem>> by lazy {
-        MutableLiveData<List<ChargepointListItem>>().apply {
-            value = emptyList()
-        }
-    }
-    val charger: MutableLiveData<ChargeLocation> by lazy {
-        MutableLiveData<ChargeLocation>()
-    }
-    val availability: MutableLiveData<ChargeLocationStatus> by lazy {
-        MutableLiveData<ChargeLocationStatus>()
-    }
-    val myLocationEnabled: MutableLiveData<Boolean> by lazy {
-        MutableLiveData<Boolean>()
-    }
-}
 
 class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallback {
     private lateinit var binding: FragmentMapBinding
-    private val vm: MapViewModel by viewModels()
+    private val vm: MapViewModel by viewModels(factoryProducer = {
+        viewModelFactory { MapViewModel(getString(R.string.goingelectric_key)) }
+    })
     private var map: GoogleMap? = null
-    private lateinit var api: GoingElectricApi
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var bottomSheetBehavior: BottomSheetBehaviorGoogleMapsLike<View>
     private var markers: Map<Marker, ChargeLocation> = emptyMap()
@@ -83,7 +67,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         binding.vm = vm
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
-        api = GoingElectricApi.create(getString(R.string.goingelectric_key))
 
         setHasOptionsMenu(true)
 
@@ -155,13 +138,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
             override fun onChanged(charger: ChargeLocation?) {
                 if (charger != null) {
-                    if (previousCharger == null ||
-                        previousCharger!!.id != charger.id
-                    ) {
-                        vm.availability.value = null
+                    if (previousCharger == null || previousCharger!!.id != charger.id) {
                         bottomSheetBehavior.state =
                             BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED
-                        loadChargerDetails()
                     }
                 } else {
                     bottomSheetBehavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN
@@ -225,12 +204,14 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
     override fun onMapReady(map: GoogleMap) {
         this.map = map
         map.setOnCameraIdleListener {
-            loadChargepoints()
+            vm.mapPosition.value = MapPosition(
+                map.projection.visibleRegion.latLngBounds, map.cameraPosition.zoom
+            )
         }
         map.setOnMarkerClickListener { marker ->
             when (marker) {
                 in markers -> {
-                    vm.charger.value = markers[marker]
+                    vm.chargerSparse.value = markers[marker]
                     true
                 }
                 in clusterMarkers -> {
@@ -242,7 +223,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             }
         }
         map.setOnMapClickListener {
-            vm.charger.value = null
+            vm.chargerSparse.value = null
         }
 
         val mode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
@@ -260,6 +241,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             val cameraUpdate = CameraUpdateFactory.newLatLngZoom(LatLng(50.113388, 9.252536), 3.5f)
             map.moveCamera(cameraUpdate)
         }
+
+        vm.mapPosition.value = MapPosition(
+            map.projection.visibleRegion.latLngBounds, map.cameraPosition.zoom
+        )
     }
 
     @SuppressLint("MissingPermission")
@@ -288,77 +273,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             Manifest.permission.ACCESS_FINE_LOCATION
         ) ==
                 PackageManager.PERMISSION_GRANTED
-    }
-
-    private fun loadChargepoints() {
-        val map = this.map ?: return
-        val bounds = map.projection.visibleRegion.latLngBounds
-        api.getChargepoints(
-            bounds.southwest.latitude, bounds.southwest.longitude,
-            bounds.northeast.latitude, bounds.northeast.longitude,
-            clustering = map.cameraPosition.zoom < 12, zoom = map.cameraPosition.zoom,
-            clusterDistance = 70
-        ).enqueue(object : Callback<ChargepointList> {
-            override fun onFailure(call: Call<ChargepointList>, t: Throwable) {
-                //TODO: show error message
-                t.printStackTrace()
-            }
-
-            override fun onResponse(
-                call: Call<ChargepointList>,
-                response: Response<ChargepointList>
-            ) {
-                if (!response.isSuccessful || response.body()!!.status != "ok") {
-                    //TODO: show error message
-                    return
-                }
-
-                vm.chargepoints.value = response.body()!!.chargelocations
-            }
-        })
-    }
-
-    private fun loadChargerDetails() {
-        val charger = vm.charger.value ?: return
-        api.getChargepointDetail(charger.id).enqueue(object : Callback<ChargepointList> {
-            override fun onFailure(call: Call<ChargepointList>, t: Throwable) {
-                //TODO: show error message
-                t.printStackTrace()
-            }
-
-            override fun onResponse(
-                call: Call<ChargepointList>,
-                response: Response<ChargepointList>
-            ) {
-                if (!response.isSuccessful || response.body()!!.status != "ok") {
-                    //TODO: show error message
-                    return
-                }
-
-                vm.charger.value = response.body()!!.chargelocations[0] as ChargeLocation
-            }
-        })
-
-        lifecycleScope.launch {
-            loadChargerAvailability(charger)
-        }
-    }
-
-    private suspend fun loadChargerAvailability(charger: ChargeLocation) {
-        var availability: ChargeLocationStatus? = null
-        withContext(Dispatchers.IO) {
-            for (ad in availabilityDetectors) {
-                try {
-                    availability = ad.getAvailability(charger)
-                    break
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                } catch (e: AvailabilityDetectorException) {
-                    e.printStackTrace()
-                }
-            }
-        }
-        vm.availability.value = availability
     }
 
     private fun updateMap(chargepoints: List<ChargepointListItem>) {
@@ -434,7 +348,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             bottomSheetBehavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED
             true
         } else if (bottomSheetBehavior.state == BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED) {
-            vm.charger.value = null
+            vm.chargerSparse.value = null
             true
         } else {
             false

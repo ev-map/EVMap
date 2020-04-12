@@ -5,11 +5,11 @@
 
     <data>
 
-        <import type="com.johan.evmap.fragment.MapViewModel" />
+        <import type="com.johan.evmap.viewmodel.MapViewModel" />
 
         <variable
             name="vm"
-            type="MapViewModel" />
+            type="com.johan.evmap.viewmodel.MapViewModel" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout

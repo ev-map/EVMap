@@ -83,7 +83,7 @@ class MapViewModel(geApiKey: String) : ViewModel() {
         api.getChargepoints(
             bounds.southwest.latitude, bounds.southwest.longitude,
             bounds.northeast.latitude, bounds.northeast.longitude,
-            clustering = zoom < 12, zoom = zoom,
+            clustering = zoom < 13, zoom = zoom,
             clusterDistance = 70
         ).enqueue(object : Callback<ChargepointList> {
             override fun onFailure(call: Call<ChargepointList>, t: Throwable) {

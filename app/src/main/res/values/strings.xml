@@ -18,6 +18,7 @@
     <string name="amenities">Amenities</string>
     <string name="general_info">General information</string>
     <string name="realtime_data_unavailable">Real-time status unavailable</string>
+    <string name="realtime_data_loading">Checking real-time status…</string>
     <string name="realtime_data_source">Real-time status source (beta): %s</string>
     <string name="go_to_goingelectric">Source: goingelectric.de</string>
     <string name="search">Search</string>

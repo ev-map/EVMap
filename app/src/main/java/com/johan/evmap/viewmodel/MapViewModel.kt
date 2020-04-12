@@ -23,10 +23,10 @@ class MapViewModel(geApiKey: String) : ViewModel() {
     val mapPosition: MutableLiveData<MapPosition> by lazy {
         MutableLiveData<MapPosition>()
     }
-    val chargepoints: MediatorLiveData<List<ChargepointListItem>> by lazy {
-        MediatorLiveData<List<ChargepointListItem>>()
+    val chargepoints: MediatorLiveData<Resource<List<ChargepointListItem>>> by lazy {
+        MediatorLiveData<Resource<List<ChargepointListItem>>>()
             .apply {
-                value = emptyList()
+                value = Resource.loading(emptyList())
                 addSource(mapPosition) {
                     mapPosition.value?.let { pos -> loadChargepoints(pos) }
                 }
@@ -36,11 +36,10 @@ class MapViewModel(geApiKey: String) : ViewModel() {
     val chargerSparse: MutableLiveData<ChargeLocation> by lazy {
         MutableLiveData<ChargeLocation>()
     }
-    val chargerDetails: MediatorLiveData<ChargeLocation> by lazy {
-        MediatorLiveData<ChargeLocation>().apply {
+    val chargerDetails: MediatorLiveData<Resource<ChargeLocation>> by lazy {
+        MediatorLiveData<Resource<ChargeLocation>>().apply {
             addSource(chargerSparse) { charger ->
                 if (charger != null) {
-                    value = null
                     loadChargerDetails(charger)
                 } else {
                     value = null
@@ -48,17 +47,22 @@ class MapViewModel(geApiKey: String) : ViewModel() {
             }
         }
     }
-    val charger: MediatorLiveData<ChargeLocation> by lazy {
-        MediatorLiveData<ChargeLocation>().apply {
-            addSource(chargerSparse) { value = it }
-            addSource(chargerDetails) { if (it != null) value = it }
+    val charger: MediatorLiveData<Resource<ChargeLocation>> by lazy {
+        MediatorLiveData<Resource<ChargeLocation>>().apply {
+            addSource(chargerDetails) {
+                value = when (it?.status) {
+                    null -> null
+                    Status.SUCCESS -> Resource.success(it.data)
+                    Status.LOADING -> Resource.loading(chargerSparse.value)
+                    Status.ERROR -> Resource.error(it.message, chargerSparse.value)
+                }
+            }
         }
     }
-    val availability: MediatorLiveData<ChargeLocationStatus> by lazy {
-        MediatorLiveData<ChargeLocationStatus>().apply {
-            addSource(chargerDetails) { charger ->
+    val availability: MediatorLiveData<Resource<ChargeLocationStatus>> by lazy {
+        MediatorLiveData<Resource<ChargeLocationStatus>>().apply {
+            addSource(chargerSparse) { charger ->
                 if (charger != null) {
-                    value = null
                     viewModelScope.launch {
                         loadAvailability(charger)
                     }
@@ -73,6 +77,7 @@ class MapViewModel(geApiKey: String) : ViewModel() {
     }
 
     private fun loadChargepoints(mapPosition: MapPosition) {
+        chargepoints.value = Resource.loading(chargepoints.value?.data)
         val bounds = mapPosition.bounds
         val zoom = mapPosition.zoom
         api.getChargepoints(
@@ -82,7 +87,7 @@ class MapViewModel(geApiKey: String) : ViewModel() {
             clusterDistance = 70
         ).enqueue(object : Callback<ChargepointList> {
             override fun onFailure(call: Call<ChargepointList>, t: Throwable) {
-                //TODO: show error message
+                chargepoints.value = Resource.error(t.message, chargepoints.value?.data)
                 t.printStackTrace()
             }
 
@@ -91,25 +96,28 @@ class MapViewModel(geApiKey: String) : ViewModel() {
                 response: Response<ChargepointList>
             ) {
                 if (!response.isSuccessful || response.body()!!.status != "ok") {
-                    //TODO: show error message
-                    return
+                    chargepoints.value =
+                        Resource.error(response.message(), chargepoints.value?.data)
+                } else {
+                    chargepoints.value = Resource.success(response.body()!!.chargelocations)
                 }
-
-                chargepoints.value = response.body()!!.chargelocations
             }
         })
     }
 
     private suspend fun loadAvailability(charger: ChargeLocation) {
-        var value: ChargeLocationStatus? = null
+        availability.value = Resource.loading(null)
+        var value: Resource<ChargeLocationStatus>? = null
         withContext(Dispatchers.IO) {
             for (ad in availabilityDetectors) {
                 try {
-                    value = ad.getAvailability(charger)
+                    value = Resource.success(ad.getAvailability(charger))
                     break
                 } catch (e: IOException) {
+                    value = Resource.error(e.message, null)
                     e.printStackTrace()
                 } catch (e: AvailabilityDetectorException) {
+                    value = Resource.error(e.message, null)
                     e.printStackTrace()
                 }
             }
@@ -118,10 +126,11 @@ class MapViewModel(geApiKey: String) : ViewModel() {
     }
 
     private fun loadChargerDetails(charger: ChargeLocation) {
+        chargerDetails.value = Resource.loading(null)
         api.getChargepointDetail(charger.id).enqueue(object :
             Callback<ChargepointList> {
             override fun onFailure(call: Call<ChargepointList>, t: Throwable) {
-                //TODO: show error message
+                chargerDetails.value = Resource.error(t.message, null)
                 t.printStackTrace()
             }
 
@@ -130,11 +139,11 @@ class MapViewModel(geApiKey: String) : ViewModel() {
                 response: Response<ChargepointList>
             ) {
                 if (!response.isSuccessful || response.body()!!.status != "ok") {
-                    //TODO: show error message
-                    return
+                    chargerDetails.value = Resource.error(response.message(), null)
+                } else {
+                    chargerDetails.value =
+                        Resource.success(response.body()!!.chargelocations[0] as ChargeLocation)
                 }
-
-                chargerDetails.value = response.body()!!.chargelocations[0] as ChargeLocation
             }
         })
     }

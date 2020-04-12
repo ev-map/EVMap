@@ -114,7 +114,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             }
         }
         binding.fabDirections.setOnClickListener {
-            val charger = vm.charger.value
+            val charger = vm.charger.value?.data
             if (charger != null) {
                 if (lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
                     (requireActivity() as MapsActivity).navigateTo(charger)
@@ -122,7 +122,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             }
         }
         binding.detailView.goingelectricButton.setOnClickListener {
-            val charger = vm.charger.value
+            val charger = vm.charger.value?.data
             if (charger != null) {
                 (activity as? MapsActivity)?.openUrl("https:${charger.url}")
             }
@@ -133,30 +133,23 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
     }
 
     private fun setupObservers() {
-        vm.charger.observe(viewLifecycleOwner, object : Observer<ChargeLocation> {
-            var previousCharger = vm.charger.value
-
-            override fun onChanged(charger: ChargeLocation?) {
-                if (charger != null) {
-                    if (previousCharger == null || previousCharger!!.id != charger.id) {
-                        bottomSheetBehavior.state =
-                            BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED
-                    }
-                } else {
-                    bottomSheetBehavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN
-                }
-                previousCharger = charger
+        vm.chargerSparse.observe(viewLifecycleOwner, Observer {
+            if (it != null) {
+                bottomSheetBehavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED
+            } else {
+                bottomSheetBehavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN
             }
         })
         vm.chargepoints.observe(viewLifecycleOwner, Observer {
-            updateMap(it)
+            val chargepoints = it.data
+            if (chargepoints != null) updateMap(chargepoints)
         })
     }
 
     private fun setupAdapters() {
         val galleryClickListener = object : GalleryAdapter.ItemClickListener {
             override fun onItemClick(view: View, position: Int) {
-                val photos = vm.charger.value?.photos ?: return
+                val photos = vm.charger.value?.data?.photos ?: return
                 val intent = Intent(context, GalleryActivity::class.java).apply {
                     putExtra(GalleryActivity.EXTRA_PHOTOS, ArrayList<ChargerPhoto>(photos))
                     putExtra(GalleryActivity.EXTRA_POSITION, position)

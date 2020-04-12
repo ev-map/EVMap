@@ -6,6 +6,7 @@
     <data>
 
         <import type="com.johan.evmap.viewmodel.MapViewModel" />
+        <import type="com.johan.evmap.viewmodel.Status" />
 
         <variable
             name="vm"
@@ -54,6 +55,17 @@
 
                 </androidx.appcompat.widget.Toolbar>
 
+                <ProgressBar
+                    android:id="@+id/progressBar2"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-10dp"
+                    android:layout_marginBottom="-7dp"
+                    android:indeterminate="true"
+                    android:visibility="visible"
+                    app:goneUnless="@{ vm.chargepoints.status == Status.LOADING }" />
+
             </com.google.android.material.appbar.AppBarLayout>
 
         </FrameLayout>
@@ -64,8 +76,8 @@
             android:layout_height="@dimen/gallery_height"
             android:background="?android:colorBackground"
             android:fitsSystemWindows="true"
-            app:data="@{vm.charger.photos}"
-            app:invisibleUnless="@{vm.charger.photos != null &amp;&amp; vm.charger.photos.size() > 0}"
+            app:data="@{vm.charger.data.photos}"
+            app:invisibleUnless="@{vm.charger.data.photos != null &amp;&amp; vm.charger.data.photos.size() > 0}"
             app:layout_behavior="@string/BackDropBottomSheetBehavior" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton

@@ -13,13 +13,15 @@
 
         <import type="com.johan.evmap.adapter.DataBindingAdaptersKt" />
 
+        <import type="com.johan.evmap.viewmodel.Resource" />
+
         <variable
             name="charger"
-            type="ChargeLocation" />
+            type="Resource&lt;ChargeLocation&gt;" />
 
         <variable
             name="availability"
-            type="ChargeLocationStatus" />
+            type="Resource&lt;ChargeLocationStatus&gt;" />
 
     </data>
 
@@ -42,7 +44,7 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="@{charger.name}"
+                android:text="@{charger.data.name}"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
@@ -55,7 +57,7 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="@{charger.address.toString()}"
+                android:text="@{charger.data.address.toString()}"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
@@ -68,7 +70,7 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="@{charger.formatChargepoints()}"
+                android:text="@{charger.data.formatChargepoints()}"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
@@ -79,7 +81,7 @@
                 android:id="@+id/connectors"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:data="@{DataBindingAdaptersKt.chargepointWithAvailability(charger.chargepoints, availability.status)}"
+                app:data="@{DataBindingAdaptersKt.chargepointWithAvailability(charger.data.chargepoints, availability.data.status)}"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/textView7"
@@ -108,7 +110,7 @@
                 android:text="@string/amenities"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
                 android:textColor="?colorPrimary"
-                app:goneUnless="@{charger.amenities != null}"
+                app:goneUnless="@{charger.data.amenities != null}"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
@@ -119,9 +121,9 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:text="@{charger.amenities}"
+                android:text="@{charger.data.amenities}"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-                app:goneUnless="@{charger.amenities != null}"
+                app:goneUnless="@{charger.data.amenities != null}"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
@@ -136,7 +138,7 @@
                 android:text="@string/general_info"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
                 android:textColor="?colorPrimary"
-                app:goneUnless="@{charger.generalInformation != null}"
+                app:goneUnless="@{charger.data.generalInformation != null}"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
@@ -147,9 +149,9 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:text="@{charger.generalInformation}"
+                android:text="@{charger.data.generalInformation}"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-                app:goneUnless="@{charger.generalInformation != null}"
+                app:goneUnless="@{charger.data.generalInformation != null}"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@+id/guideline3"
@@ -176,7 +178,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:nestedScrollingEnabled="false"
-                app:data="@{DataBindingAdaptersKt.buildDetails(charger, context)}"
+                app:data="@{DataBindingAdaptersKt.buildDetails(charger.data, context)}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"
@@ -209,7 +211,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:gravity="right|end"
-                android:text="@{availability != null ? @string/realtime_data_source(availability.source) : @string/realtime_data_unavailable}"
+                android:text="@{availability != null ? @string/realtime_data_source(availability.data.source) : @string/realtime_data_unavailable}"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintStart_toStartOf="@+id/guideline"

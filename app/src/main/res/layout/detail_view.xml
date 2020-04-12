@@ -5,11 +5,11 @@
 
     <data>
 
-        <import type="com.johan.evmap.api.ChargeLocation" />
+        <import type="com.johan.evmap.api.goingelectric.ChargeLocation" />
 
-        <import type="com.johan.evmap.api.Chargepoint" />
+        <import type="com.johan.evmap.api.goingelectric.Chargepoint" />
 
-        <import type="com.johan.evmap.api.ChargeLocationStatus" />
+        <import type="com.johan.evmap.api.availability.ChargeLocationStatus" />
 
         <import type="com.johan.evmap.adapter.DataBindingAdaptersKt" />
 

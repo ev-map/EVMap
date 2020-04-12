@@ -5,7 +5,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLngBounds
-import com.johan.evmap.api.*
+import com.johan.evmap.api.availability.AvailabilityDetectorException
+import com.johan.evmap.api.availability.ChargeLocationStatus
+import com.johan.evmap.api.availability.availabilityDetectors
+import com.johan.evmap.api.goingelectric.ChargeLocation
+import com.johan.evmap.api.goingelectric.ChargepointList
+import com.johan.evmap.api.goingelectric.ChargepointListItem
+import com.johan.evmap.api.goingelectric.GoingElectricApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

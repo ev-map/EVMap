@@ -10,9 +10,9 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.johan.evmap.BR
 import com.johan.evmap.R
-import com.johan.evmap.api.ChargeLocation
-import com.johan.evmap.api.Chargepoint
-import com.johan.evmap.api.ChargepointStatus
+import com.johan.evmap.api.availability.ChargepointStatus
+import com.johan.evmap.api.goingelectric.ChargeLocation
+import com.johan.evmap.api.goingelectric.Chargepoint
 
 interface Equatable {
     override fun equals(other: Any?): Boolean;

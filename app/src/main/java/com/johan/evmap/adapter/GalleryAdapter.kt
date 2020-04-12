@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.johan.evmap.R
-import com.johan.evmap.api.ChargerPhoto
+import com.johan.evmap.api.goingelectric.ChargerPhoto
 import com.ortiz.touchview.TouchImageView
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso

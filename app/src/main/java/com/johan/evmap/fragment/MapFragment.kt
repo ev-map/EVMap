@@ -37,10 +37,10 @@ import com.johan.evmap.REQUEST_LOCATION_PERMISSION
 import com.johan.evmap.adapter.ConnectorAdapter
 import com.johan.evmap.adapter.DetailAdapter
 import com.johan.evmap.adapter.GalleryAdapter
-import com.johan.evmap.api.ChargeLocation
-import com.johan.evmap.api.ChargeLocationCluster
-import com.johan.evmap.api.ChargepointListItem
-import com.johan.evmap.api.ChargerPhoto
+import com.johan.evmap.api.goingelectric.ChargeLocation
+import com.johan.evmap.api.goingelectric.ChargeLocationCluster
+import com.johan.evmap.api.goingelectric.ChargepointListItem
+import com.johan.evmap.api.goingelectric.ChargerPhoto
 import com.johan.evmap.databinding.FragmentMapBinding
 import com.johan.evmap.ui.*
 import com.johan.evmap.viewmodel.MapPosition

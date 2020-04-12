@@ -1,12 +1,12 @@
 package com.johan.evmap.api
 
+import android.location.Location
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.suspendCancellableCoroutine
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
 import org.json.JSONArray
-import org.json.JSONObject
 import java.io.IOException
 import kotlin.coroutines.resumeWithException
 
@@ -35,4 +35,13 @@ suspend fun Call.await(): Response {
             }
         }
     }
+}
+
+fun distanceBetween(
+    startLatitude: Double, startLongitude: Double,
+    endLatitude: Double, endLongitude: Double
+): Float {
+    val distance = floatArrayOf(0f)
+    Location.distanceBetween(startLatitude, startLongitude, endLatitude, endLongitude, distance)
+    return distance[0]
 }

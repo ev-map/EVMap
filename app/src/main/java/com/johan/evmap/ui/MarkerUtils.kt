@@ -6,7 +6,7 @@ import androidx.interpolator.view.animation.FastOutLinearInInterpolator
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
 import com.google.android.gms.maps.model.Marker
 import com.johan.evmap.R
-import com.johan.evmap.api.ChargeLocation
+import com.johan.evmap.api.goingelectric.ChargeLocation
 
 fun getMarkerTint(charger: ChargeLocation): Int = when {
     charger.maxPower >= 100 -> R.color.charger_100kw

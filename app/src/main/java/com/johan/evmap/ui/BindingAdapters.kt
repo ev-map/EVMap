@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.johan.evmap.R
-import com.johan.evmap.api.Chargepoint
+import com.johan.evmap.api.goingelectric.Chargepoint
 
 
 @BindingAdapter("goneUnless")

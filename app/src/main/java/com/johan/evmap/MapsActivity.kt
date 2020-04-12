@@ -12,7 +12,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
-import com.johan.evmap.api.ChargeLocation
+import com.johan.evmap.api.goingelectric.ChargeLocation
 
 const val REQUEST_LOCATION_PERMISSION = 1
 

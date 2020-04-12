@@ -1,4 +1,4 @@
-package com.johan.evmap.api
+package com.johan.evmap.api.goingelectric
 
 import com.squareup.moshi.*
 import java.lang.reflect.Type
@@ -12,7 +12,9 @@ internal class ChargepointListItemJsonAdapterFactory : JsonAdapter.Factory {
         moshi: Moshi
     ): JsonAdapter<*>? {
         if (Types.getRawType(type) == ChargepointListItem::class.java) {
-            return ChargepointListItemJsonAdapter(moshi)
+            return ChargepointListItemJsonAdapter(
+                moshi
+            )
         } else {
             return null
         }
@@ -24,9 +26,13 @@ internal class ChargepointListItemJsonAdapterFactory : JsonAdapter.Factory {
 internal class ChargepointListItemJsonAdapter(val moshi: Moshi) :
     JsonAdapter<ChargepointListItem>() {
     private val clusterAdapter =
-        moshi.adapter<ChargeLocationCluster>(ChargeLocationCluster::class.java)
+        moshi.adapter<ChargeLocationCluster>(
+            ChargeLocationCluster::class.java
+        )
 
-    private val locationAdapter = moshi.adapter<ChargeLocation>(ChargeLocation::class.java)
+    private val locationAdapter = moshi.adapter<ChargeLocation>(
+        ChargeLocation::class.java
+    )
 
     @FromJson
     override fun fromJson(reader: JsonReader): ChargepointListItem {
@@ -69,9 +75,13 @@ internal class JsonObjectOrFalseAdapter<T> private constructor(
             moshi: Moshi
         ): JsonAdapter<*>? {
             val clazz = Types.getRawType(type)
-            return when (hasJsonObjectOrFalseAnnotation(annotations)) {
+            return when (hasJsonObjectOrFalseAnnotation(
+                annotations
+            )) {
                 false -> null
-                true -> JsonObjectOrFalseAdapter(moshi.adapter(clazz))
+                true -> JsonObjectOrFalseAdapter(
+                    moshi.adapter(clazz)
+                )
             }
         }
     }

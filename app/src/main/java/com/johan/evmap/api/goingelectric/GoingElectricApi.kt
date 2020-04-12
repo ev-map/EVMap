@@ -1,4 +1,4 @@
-package com.johan.evmap.api
+package com.johan.evmap.api.goingelectric
 
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.squareup.moshi.Moshi

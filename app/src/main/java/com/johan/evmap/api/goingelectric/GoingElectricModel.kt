@@ -1,4 +1,4 @@
-package com.johan.evmap.api
+package com.johan.evmap.api.goingelectric
 
 import android.content.Context
 import android.os.Parcelable

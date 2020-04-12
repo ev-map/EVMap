@@ -1,6 +1,8 @@
 package com.johan.evmap
 
-import com.johan.evmap.api.*
+import com.johan.evmap.api.availability.availabilityDetectors
+import com.johan.evmap.api.goingelectric.ChargeLocation
+import com.johan.evmap.api.goingelectric.GoingElectricApi
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.junit.Test

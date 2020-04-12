@@ -38,8 +38,7 @@ import com.johan.evmap.api.ChargeLocationCluster
 import com.johan.evmap.api.ChargepointListItem
 import com.johan.evmap.api.ChargerPhoto
 import com.johan.evmap.databinding.FragmentMapBinding
-import com.johan.evmap.ui.ClusterIconGenerator
-import com.johan.evmap.ui.getBitmapDescriptor
+import com.johan.evmap.ui.*
 import com.johan.evmap.viewmodel.MapPosition
 import com.johan.evmap.viewmodel.MapViewModel
 import com.johan.evmap.viewmodel.viewModelFactory
@@ -57,6 +56,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
     private var markers: Map<Marker, ChargeLocation> = emptyMap()
     private var clusterMarkers: List<Marker> = emptyList()
 
+    private lateinit var clusterIconGenerator: ClusterIconGenerator
+    private lateinit var chargerIconGenerator: ChargerIconGenerator
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -67,6 +69,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         binding.vm = vm
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
+        clusterIconGenerator = ClusterIconGenerator(requireContext())
+        chargerIconGenerator = ChargerIconGenerator(requireContext())
 
         setHasOptionsMenu(true)
 
@@ -214,6 +218,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 }
                 else -> false
             }
+
         }
         map.setOnMapClickListener {
             vm.chargerSparse.value = null
@@ -270,40 +275,51 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
     private fun updateMap(chargepoints: List<ChargepointListItem>) {
         val map = this.map ?: return
-        markers.keys.forEach { it.remove() }
         clusterMarkers.forEach { it.remove() }
 
-        val context = context ?: return
-        val iconGenerator = ClusterIconGenerator(context)
         val clusters = chargepoints.filterIsInstance<ChargeLocationCluster>()
         val chargers = chargepoints.filterIsInstance<ChargeLocation>()
 
-        markers = chargers.map { charger ->
-            map.addMarker(
+        val chargepointIds = chargers.map { it.id }.toSet()
+        markers = markers.filter {
+            if (!chargepointIds.contains(it.value.id)) {
+                val tint = getMarkerTint(it.value)
+                if (it.key.isVisible) {
+                    animateMarkerDisappear(it.key, tint, chargerIconGenerator)
+                } else {
+                    it.key.remove()
+                }
+                false
+            } else {
+                true
+            }
+        }
+        markers = markers + chargers.filter {
+            !markers.containsValue(it)
+        }.map { charger ->
+            val tint = getMarkerTint(charger)
+            val marker = map.addMarker(
                 MarkerOptions()
                     .position(LatLng(charger.coordinates.lat, charger.coordinates.lng))
                     .icon(
-                        getBitmapDescriptor(
-                            R.drawable.ic_map_marker_charging, when {
-                                charger.maxPower >= 100 -> R.color.charger_100kw
-                                charger.maxPower >= 43 -> R.color.charger_43kw
-                                charger.maxPower >= 20 -> R.color.charger_20kw
-                                charger.maxPower >= 11 -> R.color.charger_11kw
-                                else -> R.color.charger_low
-                            }, context
+                        chargerIconGenerator.getBitmapDescriptor(
+                            R.drawable.ic_map_marker_charging,
+                            tint
                         )
                     )
-            ) to charger
+            )
+            animateMarkerAppear(marker, tint, chargerIconGenerator)
+
+            marker to charger
         }.toMap()
         clusterMarkers = clusters.map { cluster ->
             map.addMarker(
                 MarkerOptions()
                     .position(LatLng(cluster.coordinates.lat, cluster.coordinates.lng))
-                    .icon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon(cluster.clusterCount.toString())))
+                    .icon(BitmapDescriptorFactory.fromBitmap(clusterIconGenerator.makeIcon(cluster.clusterCount.toString())))
             )
         }
     }
-
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,

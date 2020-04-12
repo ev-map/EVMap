@@ -2,6 +2,7 @@ package com.johan.evmap.fragment
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
@@ -25,6 +26,9 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.widget.Autocomplete
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.android.material.snackbar.Snackbar
 import com.johan.evmap.GalleryActivity
 import com.johan.evmap.MapsActivity
@@ -44,6 +48,8 @@ import com.johan.evmap.viewmodel.MapViewModel
 import com.johan.evmap.viewmodel.viewModelFactory
 import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike
 import kotlinx.android.synthetic.main.fragment_map.*
+
+const val REQUEST_AUTOCOMPLETE = 2
 
 class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallback {
     private lateinit var binding: FragmentMapBinding
@@ -133,6 +139,15 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         }
         binding.detailView.topPart.setOnClickListener {
             bottomSheetBehavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT
+        }
+        binding.search.setOnClickListener {
+            val fields = listOf(Place.Field.LAT_LNG)
+            val intent: Intent = Autocomplete.IntentBuilder(
+                AutocompleteActivityMode.OVERLAY, fields
+            )
+                .build(requireContext())
+                .addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+            startActivityForResult(intent, REQUEST_AUTOCOMPLETE)
         }
     }
 
@@ -317,6 +332,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             )
         }
     }
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -344,6 +360,19 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 return true
             }
             else -> return super.onOptionsItemSelected(item)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        when (requestCode) {
+            REQUEST_AUTOCOMPLETE -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    val place = Autocomplete.getPlaceFromIntent(data!!)
+                    val zoom = 12f
+                    map?.animateCamera(CameraUpdateFactory.newLatLngZoom(place.latLng, zoom))
+                }
+            }
+            else -> super.onActivityResult(requestCode, resultCode, data)
         }
     }
 

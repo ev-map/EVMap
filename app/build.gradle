@@ -71,6 +71,7 @@ dependencies {
     implementation 'com.github.johan12345:CustomBottomSheetBehavior:c2dcf0dc'
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
     implementation 'com.google.android.gms:play-services-location:17.0.0'
+    implementation 'com.google.android.libraries.places:places:2.2.0'
     implementation 'com.squareup.retrofit2:retrofit:2.7.2'
     implementation 'com.squareup.retrofit2:converter-moshi:2.7.2'
     implementation 'com.squareup.moshi:moshi-kotlin:1.9.2'

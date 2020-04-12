@@ -16,7 +16,6 @@ import com.johan.evmap.api.ChargeLocation
 
 const val REQUEST_LOCATION_PERMISSION = 1
 
-
 class MapsActivity : AppCompatActivity() {
     interface FragmentCallback {
         fun getRootView(): CoordinatorLayout

@@ -302,10 +302,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 MarkerOptions()
                     .position(LatLng(charger.coordinates.lat, charger.coordinates.lng))
                     .icon(
-                        chargerIconGenerator.getBitmapDescriptor(
-                            R.drawable.ic_map_marker_charging,
-                            tint
-                        )
+                        chargerIconGenerator.getBitmapDescriptor(tint)
                     )
             )
             animateMarkerAppear(marker, tint, chargerIconGenerator)

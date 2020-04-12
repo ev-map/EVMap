@@ -21,7 +21,7 @@ fun animateMarkerAppear(
     tint: Int,
     gen: ChargerIconGenerator
 ) {
-    ValueAnimator.ofInt(0, 255).apply {
+    ValueAnimator.ofInt(0, 20).apply {
         duration = 250
         interpolator = LinearOutSlowInInterpolator()
         addUpdateListener { animationState ->
@@ -31,11 +31,7 @@ fun animateMarkerAppear(
             }
             val scale = animationState.animatedValue as Int
             marker.setIcon(
-                gen.getBitmapDescriptor(
-                    R.drawable.ic_map_marker_charging,
-                    tint,
-                    scale = scale
-                )
+                gen.getBitmapDescriptor(tint, scale = scale)
             )
         }
     }.start()
@@ -46,7 +42,7 @@ fun animateMarkerDisappear(
     tint: Int,
     gen: ChargerIconGenerator
 ) {
-    ValueAnimator.ofInt(255, 0).apply {
+    ValueAnimator.ofInt(20, 0).apply {
         duration = 200
         interpolator = FastOutLinearInInterpolator()
         addUpdateListener { animationState ->
@@ -56,11 +52,7 @@ fun animateMarkerDisappear(
             }
             val scale = animationState.animatedValue as Int
             marker.setIcon(
-                gen.getBitmapDescriptor(
-                    R.drawable.ic_map_marker_charging,
-                    tint,
-                    scale = scale
-                )
+                gen.getBitmapDescriptor(tint, scale = scale)
             )
         }
         addListener(onEnd = {

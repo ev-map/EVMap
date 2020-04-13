@@ -1,0 +1,13 @@
+<svg id="Ebene_5" data-name="Ebene 5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <defs>
+        <style>.cls-1,.cls-2{fill:none;}.cls-2{stroke:#000;stroke-miterlimit:10;stroke-width:2px;}
+        </style>
+    </defs>
+    <title>connector_cee_blau</title>
+    <path class="cls-1" d="M12,12H36V36H12Z" />
+    <circle cx="16" cy="10" r="2" />
+    <circle cx="8" cy="10" r="2" />
+    <circle cx="12" cy="17" r="1.25" />
+    <circle class="cls-2" cx="12" cy="12" r="9.5" />
+    <circle cx="12" cy="22" r="1.5" />
+</svg>

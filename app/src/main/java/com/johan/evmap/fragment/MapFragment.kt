@@ -155,6 +155,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         vm.chargerSparse.observe(viewLifecycleOwner, Observer {
             if (it != null) {
                 bottomSheetBehavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED
+                binding.fabDirections.show()
             } else {
                 bottomSheetBehavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN
             }
@@ -184,6 +185,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
         binding.gallery.apply {
             adapter = GalleryAdapter(context, galleryClickListener)
+            itemAnimator = null
             layoutManager =
                 LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             addItemDecoration(
@@ -196,12 +198,14 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
         binding.detailView.connectors.apply {
             adapter = ConnectorAdapter()
+            itemAnimator = null
             layoutManager =
                 LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         }
 
         binding.detailView.details.apply {
             adapter = DetailAdapter()
+            itemAnimator = null
             layoutManager =
                 LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             addItemDecoration(

@@ -70,15 +70,27 @@
 
         </FrameLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/gallery"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/gallery_height"
             android:background="?android:colorBackground"
             android:fitsSystemWindows="true"
-            app:data="@{vm.charger.data.photos}"
-            app:invisibleUnless="@{vm.charger.data.photos != null &amp;&amp; vm.charger.data.photos.size() > 0}"
-            app:layout_behavior="@string/BackDropBottomSheetBehavior" />
+            app:layout_behavior="@string/BackDropBottomSheetBehavior">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/gallery"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/gallery_height"
+                app:data="@{vm.charger.data.photos}" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                app:srcCompat="@drawable/collage_bw"
+                app:invisibleUnless="@{vm.charger.data.photos == null || vm.charger.data.photos.size() == 0}" />
+
+        </FrameLayout>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_locate"
@@ -106,7 +118,7 @@
             app:behavior_peekHeight="@dimen/peek_height"
             app:bottomsheetbehavior_defaultState="stateHidden"
             app:layout_behavior="@string/BottomSheetBehaviorGoogleMapsLike"
-            tools:bottomsheetbehavior_defaultState="stateCollapsed">
+            tools:bottomsheetbehavior_defaultState="stateAnchorPoint">
 
             <include
                 android:id="@+id/detail_view"

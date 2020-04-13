@@ -48,7 +48,7 @@ class ChargerIconGenerator(val context: Context) {
             return value.byteCount
         }
     }
-    val oversize = 1.5f
+    val oversize = 1f  // increase to add padding for overshoot scale animation
     val icon = R.drawable.ic_map_marker_charging
 
     init {

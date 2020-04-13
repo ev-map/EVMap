@@ -17,6 +17,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
+import retrofit2.HttpException
 import retrofit2.Response
 import java.io.IOException
 
@@ -120,6 +121,9 @@ class MapViewModel(geApiKey: String) : ViewModel() {
                     value = Resource.success(ad.getAvailability(charger))
                     break
                 } catch (e: IOException) {
+                    value = Resource.error(e.message, null)
+                    e.printStackTrace()
+                } catch (e: HttpException) {
                     value = Resource.error(e.message, null)
                     e.printStackTrace()
                 } catch (e: AvailabilityDetectorException) {

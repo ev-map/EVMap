@@ -8,3 +8,5 @@
 .externalNativeBuild
 .cxx
 apikeys.xml
+/app/release/app-release.aab
+/_img/connectors/*.ai

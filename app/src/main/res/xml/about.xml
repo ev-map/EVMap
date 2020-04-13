@@ -25,7 +25,7 @@
         <Preference
             android:key="privacy"
             android:title="@string/privacy" />
-        
+
         <Preference
             android:key="oss_licenses"
             android:title="@string/oss_licenses" />

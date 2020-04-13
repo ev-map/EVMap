@@ -5,16 +5,17 @@
 
     <data>
 
-        <import type="com.johan.evmap.api.goingelectric.ChargeLocation" />
+        <import type="net.vonforst.evmap.api.goingelectric.ChargeLocation" />
 
-        <import type="com.johan.evmap.api.goingelectric.Chargepoint" />
+        <import type="net.vonforst.evmap.api.goingelectric.Chargepoint" />
 
-        <import type="com.johan.evmap.api.availability.ChargeLocationStatus" />
+        <import type="net.vonforst.evmap.api.availability.ChargeLocationStatus" />
 
-        <import type="com.johan.evmap.adapter.DataBindingAdaptersKt" />
+        <import type="net.vonforst.evmap.adapter.DataBindingAdaptersKt" />
 
-        <import type="com.johan.evmap.viewmodel.Resource" />
-        <import type="com.johan.evmap.viewmodel.Status" />
+        <import type="net.vonforst.evmap.viewmodel.Resource" />
+
+        <import type="net.vonforst.evmap.viewmodel.Status" />
 
         <variable
             name="charger"

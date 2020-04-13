@@ -7,7 +7,7 @@
 
         <variable
             name="item"
-            type="com.johan.evmap.adapter.DetailAdapter.Detail" />
+            type="net.vonforst.evmap.adapter.DetailAdapter.Detail" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

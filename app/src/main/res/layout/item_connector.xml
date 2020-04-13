@@ -5,7 +5,7 @@
 
     <data>
 
-        <import type="com.johan.evmap.adapter.ConnectorAdapter.ChargepointWithAvailability" />
+        <import type="net.vonforst.evmap.adapter.ConnectorAdapter.ChargepointWithAvailability" />
 
         <variable
             name="item"

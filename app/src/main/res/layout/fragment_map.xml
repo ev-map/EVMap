@@ -5,12 +5,13 @@
 
     <data>
 
-        <import type="com.johan.evmap.viewmodel.MapViewModel" />
-        <import type="com.johan.evmap.viewmodel.Status" />
+        <import type="net.vonforst.evmap.viewmodel.MapViewModel" />
+
+        <import type="net.vonforst.evmap.viewmodel.Status" />
 
         <variable
             name="vm"
-            type="com.johan.evmap.viewmodel.MapViewModel" />
+            type="net.vonforst.evmap.viewmodel.MapViewModel" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout

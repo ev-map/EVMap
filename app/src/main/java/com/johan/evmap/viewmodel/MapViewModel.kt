@@ -27,6 +27,10 @@ class MapViewModel(geApiKey: String) : ViewModel() {
     private var api: GoingElectricApi =
         GoingElectricApi.create(geApiKey)
 
+    val bottomSheetState: MutableLiveData<Int> by lazy {
+        MutableLiveData<Int>()
+    }
+
     val mapPosition: MutableLiveData<MapPosition> by lazy {
         MutableLiveData<MapPosition>()
     }

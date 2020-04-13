@@ -3,8 +3,8 @@ package com.johan.evmap
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -18,10 +18,11 @@ const val REQUEST_LOCATION_PERMISSION = 1
 
 class MapsActivity : AppCompatActivity() {
     interface FragmentCallback {
-        fun getRootView(): CoordinatorLayout
+        fun getRootView(): View
         fun goBack(): Boolean
     }
 
+    private var reenterState: Bundle? = null
     private lateinit var navController: NavController
     lateinit var appBarConfiguration: AppBarConfiguration
     var fragmentCallback: FragmentCallback? = null
@@ -30,10 +31,6 @@ class MapsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_maps)
-
-        //ActivityCompat.setExitSharedElementCallback(this, exitElementCallback)
-        //setSupportActionBar(binding.toolbar)
-        //title = ""
 
         navController = findNavController(R.id.nav_host_fragment)
         appBarConfiguration = AppBarConfiguration(
@@ -81,54 +78,4 @@ class MapsActivity : AppCompatActivity() {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
         startActivity(intent)
     }
-
-
-    /*private val exitElementCallback = object : SharedElementCallback() {
-        override fun onMapSharedElements(
-            names: MutableList<String>,
-            sharedElements: MutableMap<String, View>
-        ) {
-            if (reenterState != null) {
-                val startingPosition = reenterState!!.getInt(MapFragment.EXTRA_STARTING_GALLERY_POSITION)
-                val currentPosition = reenterState!!.getInt(MapFragment.EXTRA_CURRENT_GALLERY_POSITION)
-                if (startingPosition != currentPosition) {
-                    // Current element has changed, need to override previous exit transitions
-                    val newTransitionName = galleryTransitionName(currentPosition)
-                    val newSharedElement =
-                        binding.gallery.findViewHolderForAdapterPosition(currentPosition)?.itemView
-                    if (newSharedElement != null) {
-                        names.clear()
-                        names.add(newTransitionName)
-
-                        sharedElements.clear()
-                        sharedElements[newTransitionName] = newSharedElement
-                    }
-                }
-                reenterState = null
-            }
-        }
-    }*/
-
-    /*override fun onActivityReenter(resultCode: Int, data: Intent) {
-        // returning to gallery
-        super.onActivityReenter(resultCode, data)
-        reenterState = Bundle(data.extras)
-        reenterState?.let {
-            val startingPosition = it.getInt(MapFragment.EXTRA_STARTING_GALLERY_POSITION)
-            val currentPosition = it.getInt(MapFragment.EXTRA_CURRENT_GALLERY_POSITION)
-            if (startingPosition != currentPosition) binding.gallery.scrollToPosition(
-                currentPosition
-            )
-            ActivityCompat.postponeEnterTransition(this)
-
-            binding.gallery.viewTreeObserver.addOnPreDrawListener(object :
-                ViewTreeObserver.OnPreDrawListener {
-                override fun onPreDraw(): Boolean {
-                    binding.gallery.viewTreeObserver.removeOnPreDrawListener(this)
-                    ActivityCompat.startPostponedEnterTransition(this@MapsActivity)
-                    return true
-                }
-            })
-        }
-    }*/
 }

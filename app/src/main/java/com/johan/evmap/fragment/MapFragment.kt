@@ -8,13 +8,15 @@ import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.*
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -30,7 +32,6 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.android.material.snackbar.Snackbar
-import com.johan.evmap.GalleryActivity
 import com.johan.evmap.MapsActivity
 import com.johan.evmap.R
 import com.johan.evmap.REQUEST_LOCATION_PERMISSION
@@ -40,9 +41,9 @@ import com.johan.evmap.adapter.GalleryAdapter
 import com.johan.evmap.api.goingelectric.ChargeLocation
 import com.johan.evmap.api.goingelectric.ChargeLocationCluster
 import com.johan.evmap.api.goingelectric.ChargepointListItem
-import com.johan.evmap.api.goingelectric.ChargerPhoto
 import com.johan.evmap.databinding.FragmentMapBinding
 import com.johan.evmap.ui.*
+import com.johan.evmap.viewmodel.GalleryViewModel
 import com.johan.evmap.viewmodel.MapPosition
 import com.johan.evmap.viewmodel.MapViewModel
 import com.johan.evmap.viewmodel.viewModelFactory
@@ -56,6 +57,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
     private val vm: MapViewModel by viewModels(factoryProducer = {
         viewModelFactory { MapViewModel(getString(R.string.goingelectric_key)) }
     })
+    private val galleryVm: GalleryViewModel by activityViewModels()
     private var map: GoogleMap? = null
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var bottomSheetBehavior: BottomSheetBehaviorGoogleMapsLike<View>
@@ -79,6 +81,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         chargerIconGenerator = ChargerIconGenerator(requireContext())
 
         setHasOptionsMenu(true)
+        postponeEnterTransition()
 
         return binding.root
     }
@@ -106,12 +109,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         hostActivity.fragmentCallback = this
     }
 
-    override fun onPause() {
-        super.onPause()
-        val hostActivity = activity as? MapsActivity ?: return
-        hostActivity.fragmentCallback = null
-    }
-
     private fun setupClickListeners() {
         binding.fabLocate.setOnClickListener {
             if (!hasLocationPermission()) {
@@ -120,7 +117,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                     REQUEST_LOCATION_PERMISSION
                 )
             } else {
-                enableLocation(true)
+                enableLocation(true, true)
             }
         }
         binding.fabDirections.setOnClickListener {
@@ -152,9 +149,21 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
     }
 
     private fun setupObservers() {
+        bottomSheetBehavior.addBottomSheetCallback(object :
+            BottomSheetBehaviorGoogleMapsLike.BottomSheetCallback() {
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+
+            }
+
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                vm.bottomSheetState.value = newState
+            }
+        })
         vm.chargerSparse.observe(viewLifecycleOwner, Observer {
             if (it != null) {
-                bottomSheetBehavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED
+                if (vm.bottomSheetState.value != BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT) {
+                    bottomSheetBehavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED
+                }
                 binding.fabDirections.show()
             } else {
                 bottomSheetBehavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN
@@ -170,21 +179,21 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         val galleryClickListener = object : GalleryAdapter.ItemClickListener {
             override fun onItemClick(view: View, position: Int) {
                 val photos = vm.charger.value?.data?.photos ?: return
-                val intent = Intent(context, GalleryActivity::class.java).apply {
-                    putExtra(GalleryActivity.EXTRA_PHOTOS, ArrayList<ChargerPhoto>(photos))
-                    putExtra(GalleryActivity.EXTRA_POSITION, position)
-                }
-                // TODO:
-                /*val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                    activity, view, view.transitionName
+                val extras = FragmentNavigatorExtras(view to view.transitionName)
+                view.findNavController().navigate(
+                    R.id.action_map_to_galleryFragment,
+                    GalleryFragment.buildArgs(photos, position),
+                    null,
+                    extras
                 )
-                startActivity(intent, options.toBundle())*/
-                startActivity(intent)
             }
         }
 
+        val galleryPosition = galleryVm.galleryPosition.value
         binding.gallery.apply {
-            adapter = GalleryAdapter(context, galleryClickListener)
+            adapter = GalleryAdapter(context, galleryClickListener, pageToLoad = galleryPosition) {
+                startPostponedEnterTransition()
+            }
             itemAnimator = null
             layoutManager =
                 LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
@@ -194,6 +203,11 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 ).apply {
                     setDrawable(context.getDrawable(R.drawable.gallery_divider)!!)
                 })
+        }
+        if (galleryPosition == null) {
+            startPostponedEnterTransition()
+        } else {
+            binding.gallery.scrollToPosition(galleryPosition)
         }
 
         binding.detailView.connectors.apply {
@@ -219,6 +233,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
     override fun onMapReady(map: GoogleMap) {
         this.map = map
+        map.uiSettings.isTiltGesturesEnabled = false;
         map.setOnCameraIdleListener {
             vm.mapPosition.value = MapPosition(
                 map.projection.visibleRegion.latLngBounds, map.cameraPosition.zoom
@@ -251,33 +266,42 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         )
 
 
+        val position = vm.mapPosition.value
         if (hasLocationPermission()) {
-            enableLocation(false)
-        } else {
+            enableLocation(position == null, false)
+        } else if (position == null) {
             // center the camera on Europe
             val cameraUpdate = CameraUpdateFactory.newLatLngZoom(LatLng(50.113388, 9.252536), 3.5f)
             map.moveCamera(cameraUpdate)
         }
 
-        vm.mapPosition.value = MapPosition(
-            map.projection.visibleRegion.latLngBounds, map.cameraPosition.zoom
-        )
+        if (position != null) {
+            val cameraUpdate =
+                CameraUpdateFactory.newLatLngZoom(position.bounds.center, position.zoom)
+            map.moveCamera(cameraUpdate)
+        } else {
+            vm.mapPosition.value = MapPosition(
+                map.projection.visibleRegion.latLngBounds, map.cameraPosition.zoom
+            )
+        }
     }
 
     @SuppressLint("MissingPermission")
-    private fun enableLocation(animate: Boolean) {
+    private fun enableLocation(moveTo: Boolean, animate: Boolean) {
         val map = this.map ?: return
         map.isMyLocationEnabled = true
         vm.myLocationEnabled.value = true
         map.uiSettings.isMyLocationButtonEnabled = false
-        fusedLocationClient.lastLocation.addOnSuccessListener { location ->
-            if (location != null) {
-                val latLng = LatLng(location.latitude, location.longitude)
-                val camUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 13f)
-                if (animate) {
-                    map.animateCamera(camUpdate)
-                } else {
-                    map.moveCamera(camUpdate)
+        if (moveTo) {
+            fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+                if (location != null) {
+                    val latLng = LatLng(location.latitude, location.longitude)
+                    val camUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 13f)
+                    if (animate) {
+                        map.animateCamera(camUpdate)
+                    } else {
+                        map.moveCamera(camUpdate)
+                    }
                 }
             }
         }
@@ -345,7 +369,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         when (requestCode) {
             REQUEST_LOCATION_PERMISSION -> {
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    enableLocation(true)
+                    enableLocation(true, true)
                 }
             }
             else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -394,13 +418,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         }
     }
 
-
-    companion object {
-        const val EXTRA_STARTING_GALLERY_POSITION = "extra_starting_item_position"
-        const val EXTRA_CURRENT_GALLERY_POSITION = "extra_current_item_position"
-    }
-
-    override fun getRootView(): CoordinatorLayout {
+    override fun getRootView(): View {
         return root
     }
 }

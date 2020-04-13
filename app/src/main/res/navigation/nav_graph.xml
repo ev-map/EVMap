@@ -11,16 +11,19 @@
         android:label="MapFragment"
         tools:layout="@layout/fragment_map">
         <action
-            android:id="@+id/action_mapFragment_to_galleryActivity"
-            app:destination="@id/gallery" />
+            android:id="@+id/action_map_to_galleryFragment"
+            app:destination="@id/galleryFragment"
+            app:enterAnim="@anim/fragment_fade_enter"
+            app:exitAnim="@anim/fragment_fade_exit"
+            app:popEnterAnim="@anim/fragment_fade_enter"
+            app:popExitAnim="@anim/fragment_fade_exit" />
     </fragment>
-    <activity
-        android:id="@+id/gallery"
-        android:name="com.johan.evmap.GalleryActivity"
-        android:label="GalleryActivity"
-        tools:layout="@layout/activity_gallery" />
     <fragment
         android:id="@+id/about"
         android:name="com.johan.evmap.fragment.AboutFragment"
         android:label="@string/about" />
+    <fragment
+        android:id="@+id/galleryFragment"
+        android:name="com.johan.evmap.fragment.GalleryFragment"
+        android:label="GalleryFragment"></fragment>
 </navigation>

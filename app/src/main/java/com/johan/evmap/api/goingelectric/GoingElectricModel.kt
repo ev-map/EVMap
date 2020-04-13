@@ -186,5 +186,7 @@ data class Chargepoint(val type: String, val power: Double, val count: Int) : Eq
         const val SCHUKO = "Schuko"
         const val CHADEMO = "CHAdeMO"
         const val SUPERCHARGER = "Tesla Supercharger"
+        const val CEE_BLAU = "CEE Blau"
+        const val CEE_ROT = "CEE Rot"
     }
 }

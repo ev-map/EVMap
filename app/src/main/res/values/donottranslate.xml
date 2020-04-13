@@ -2,4 +2,5 @@
 <resources>
     <string name="shared_element_picture">picture</string>
     <string name="github_link">https://github.com/johan12345/EVMap</string>
+    <string name="privacy_link">https://evmap.vonforst.net/privacy.html</string>
 </resources>

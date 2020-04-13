@@ -34,7 +34,11 @@ class AboutFragment : PreferenceFragmentCompat() {
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
         return when (preference?.key) {
             "github_link" -> {
-                (activity as? MapsActivity)?.openUrl(preference.summary.toString())
+                (activity as? MapsActivity)?.openUrl(getString(R.string.github_link))
+                true
+            }
+            "privacy" -> {
+                (activity as? MapsActivity)?.openUrl(getString(R.string.privacy_link))
                 true
             }
             "oss_licenses" -> {

@@ -10,10 +10,22 @@
             tools:summary="0.0.1" />
 
         <Preference
+            android:key="copyright"
+            android:title="@string/copyright"
+            android:summary="@string/copyright_summary" />
+
+
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/other">
+        <Preference
             android:key="github_link"
             android:title="@string/github_link_title"
             android:summary="@string/github_link" />
 
+        <Preference
+            android:key="privacy"
+            android:title="@string/privacy" />
+        
         <Preference
             android:key="oss_licenses"
             android:title="@string/oss_licenses" />

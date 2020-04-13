@@ -31,4 +31,8 @@
     <string name="github_link_title">Source code</string>
     <string name="oss_licenses">Open Source Licenses</string>
     <string name="settings">Settings</string>
+    <string name="copyright">Copyright</string>
+    <string name="copyright_summary">©2020 Johan von Forstner</string>
+    <string name="other">Other</string>
+    <string name="privacy">Privacy Notice</string>
 </resources>

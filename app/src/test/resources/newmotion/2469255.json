@@ -1,0 +1,192 @@
+{
+  "uid": 2469255,
+  "externalId": "5e21f3af-d179-11e4-a755-005056b332c9",
+  "coordinates": {
+    "latitude": 54.511612,
+    "longitude": 9.571052
+  },
+  "operatorName": "has.to.be",
+  "operatorId": "AT-HTB",
+  "address": {
+    "streetAndNumber": "Am Hafen 1",
+    "postalCode": "24837",
+    "city": "Schleswig",
+    "country": "DEU"
+  },
+  "accessibility": {
+    "status": "FreePublic"
+  },
+  "evses": [
+    {
+      "uid": 761531,
+      "externalId": "DE*SSW*E1000001",
+      "evseId": "DE*SSW*E1000001",
+      "status": "Available",
+      "connectors": [
+        {
+          "uid": 647702,
+          "externalId": "0",
+          "connectorType": "Domestic",
+          "electricalProperties": {
+            "powerType": "AC1Phase",
+            "voltage": 240,
+            "amperage": 16
+          },
+          "fixedCable": false,
+          "tariff": {
+            "perMinute": 0.1309,
+            "currency": "EUR",
+            "updated": "2020-04-13T09:54:33Z",
+            "updatedBy": "Default",
+            "structure": "Default"
+          },
+          "updated": "2020-01-29T15:32:02Z",
+          "updatedBy": "Feed"
+        }
+      ],
+      "authorizationMethods": [
+        "NewMotionApp",
+        "RFIDToken"
+      ],
+      "updated": "2020-04-12T14:11:18Z"
+    },
+    {
+      "uid": 761532,
+      "externalId": "DE*SSW*E1000002",
+      "evseId": "DE*SSW*E1000002",
+      "status": "Available",
+      "connectors": [
+        {
+          "uid": 647703,
+          "externalId": "0",
+          "connectorType": "Type2",
+          "electricalProperties": {
+            "powerType": "AC3Phase",
+            "voltage": 277,
+            "amperage": 32
+          },
+          "fixedCable": false,
+          "tariff": {
+            "perMinute": 0.1309,
+            "currency": "EUR",
+            "updated": "2020-04-13T09:54:33Z",
+            "updatedBy": "Default",
+            "structure": "Default"
+          },
+          "updated": "2020-01-29T15:32:02Z",
+          "updatedBy": "Feed"
+        }
+      ],
+      "authorizationMethods": [
+        "NewMotionApp",
+        "RFIDToken"
+      ],
+      "updated": "2020-04-12T14:11:18Z"
+    },
+    {
+      "uid": 761533,
+      "externalId": "DE*SSW*E1000003",
+      "evseId": "DE*SSW*E1000003",
+      "status": "Occupied",
+      "connectors": [
+        {
+          "uid": 647704,
+          "externalId": "0",
+          "connectorType": "Domestic",
+          "electricalProperties": {
+            "powerType": "AC1Phase",
+            "voltage": 240,
+            "amperage": 16
+          },
+          "fixedCable": false,
+          "tariff": {
+            "perMinute": 0.1309,
+            "currency": "EUR",
+            "updated": "2020-04-13T09:54:33Z",
+            "updatedBy": "Default",
+            "structure": "Default"
+          },
+          "updated": "2020-01-29T15:32:02Z",
+          "updatedBy": "Feed"
+        }
+      ],
+      "authorizationMethods": [
+        "NewMotionApp",
+        "RFIDToken"
+      ],
+      "updated": "2020-04-13T07:03:52Z"
+    },
+    {
+      "uid": 761534,
+      "externalId": "DE*SSW*E1000004",
+      "evseId": "DE*SSW*E1000004",
+      "status": "Occupied",
+      "connectors": [
+        {
+          "uid": 647705,
+          "externalId": "0",
+          "connectorType": "Type2",
+          "electricalProperties": {
+            "powerType": "AC3Phase",
+            "voltage": 277,
+            "amperage": 32
+          },
+          "fixedCable": false,
+          "tariff": {
+            "perMinute": 0.1309,
+            "currency": "EUR",
+            "updated": "2020-04-13T09:54:33Z",
+            "updatedBy": "Default",
+            "structure": "Default"
+          },
+          "updated": "2020-01-29T15:32:02Z",
+          "updatedBy": "Feed"
+        }
+      ],
+      "authorizationMethods": [
+        "NewMotionApp",
+        "RFIDToken"
+      ],
+      "updated": "2020-04-13T07:03:52Z"
+    }
+  ],
+  "openingHours": [
+    {
+      "weekDay": "Sun",
+      "startTime": "00:00",
+      "endTime": "23:59"
+    },
+    {
+      "weekDay": "Mon",
+      "startTime": "00:00",
+      "endTime": "23:59"
+    },
+    {
+      "weekDay": "Tue",
+      "startTime": "00:00",
+      "endTime": "23:59"
+    },
+    {
+      "weekDay": "Wed",
+      "startTime": "00:00",
+      "endTime": "23:59"
+    },
+    {
+      "weekDay": "Thu",
+      "startTime": "00:00",
+      "endTime": "23:59"
+    },
+    {
+      "weekDay": "Fri",
+      "startTime": "00:00",
+      "endTime": "23:59"
+    },
+    {
+      "weekDay": "Sat",
+      "startTime": "00:00",
+      "endTime": "23:59"
+    }
+  ],
+  "updated": "2020-01-29T15:32:02Z",
+  "operatorComment": "Please note that prices have increased.\nBitte beachten Sie, dass die Preise gestiegen sind.\nSi prega di notare che i prezzi sono aumentati.\nHoud er rekening mee dat de prijzen zijn gestegen."
+}

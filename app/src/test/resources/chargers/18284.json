@@ -1,0 +1,438 @@
+{
+  "status": "ok",
+  "chargelocations": [
+    {
+      "ge_id": 18284,
+      "name": "Autohof Wikingerland",
+      "address": {
+        "city": "Busdorf",
+        "country": "Deutschland",
+        "postcode": "24866",
+        "street": "Wittgenstein 2"
+      },
+      "coordinates": {
+        "lat": 54.476699,
+        "lng": 9.544284
+      },
+      "chargepoints": [
+        {
+          "type": "CCS",
+          "power": 320,
+          "count": 2
+        },
+        {
+          "type": "CCS",
+          "power": 160,
+          "count": 1
+        },
+        {
+          "type": "CHAdeMO",
+          "power": 50,
+          "count": 2
+        },
+        {
+          "type": "CCS",
+          "power": 50,
+          "count": 1
+        },
+        {
+          "type": "Typ2",
+          "power": 43,
+          "count": 1
+        }
+      ],
+      "network": "allego",
+      "operator": "Allego GmbH",
+      "cost": {
+        "freecharging": false,
+        "freeparking": true,
+        "description_short": false,
+        "description_long": false
+      },
+      "fault_report": {
+        "created": 1582412400,
+        "description": "Ausfall Ladesäule #16853,  Ladesäule #36103,  Ladepunkt #108227 - combo_typ2,  Ladepunkt #108228 - chademo\n"
+      },
+      "verified": true,
+      "barrierfree": false,
+      "openinghours": {
+        "24/7": true,
+        "description": false
+      },
+      "url": "//www.goingelectric.de/stromtankstellen/Deutschland/Busdorf/Autohof-Wikingerland-Wittgenstein-2/18284/",
+      "ladeweile": false,
+      "location_description": "Hinter der Tankstelle.",
+      "general_information": false,
+      "photos": [
+        {
+          "id": 83288
+        },
+        {
+          "id": 87397
+        },
+        {
+          "id": 48854
+        },
+        {
+          "id": 36436
+        },
+        {
+          "id": 65830
+        }
+      ],
+      "chargecards": [
+        {
+          "id": 274
+        },
+        {
+          "id": 11
+        },
+        {
+          "id": 30
+        },
+        {
+          "id": 7
+        },
+        {
+          "id": 335
+        },
+        {
+          "id": 349
+        },
+        {
+          "id": 9
+        },
+        {
+          "id": 75
+        },
+        {
+          "id": 114
+        },
+        {
+          "id": 319
+        },
+        {
+          "id": 8
+        },
+        {
+          "id": 57
+        },
+        {
+          "id": 36
+        },
+        {
+          "id": 229
+        },
+        {
+          "id": 368
+        },
+        {
+          "id": 230
+        },
+        {
+          "id": 207
+        },
+        {
+          "id": 211
+        },
+        {
+          "id": 124
+        },
+        {
+          "id": 261
+        },
+        {
+          "id": 43
+        },
+        {
+          "id": 155
+        },
+        {
+          "id": 56
+        },
+        {
+          "id": 169
+        },
+        {
+          "id": 186
+        },
+        {
+          "id": 119
+        },
+        {
+          "id": 251
+        },
+        {
+          "id": 222
+        },
+        {
+          "id": 142
+        },
+        {
+          "id": 200
+        },
+        {
+          "id": 224
+        },
+        {
+          "id": 13
+        },
+        {
+          "id": 203
+        },
+        {
+          "id": 44
+        },
+        {
+          "id": 177
+        },
+        {
+          "id": 350
+        },
+        {
+          "id": 82
+        },
+        {
+          "id": 201
+        },
+        {
+          "id": 242
+        },
+        {
+          "id": 226
+        },
+        {
+          "id": 170
+        },
+        {
+          "id": 322
+        },
+        {
+          "id": 96
+        },
+        {
+          "id": 277
+        },
+        {
+          "id": 97
+        },
+        {
+          "id": 332
+        },
+        {
+          "id": 187
+        },
+        {
+          "id": 167
+        },
+        {
+          "id": 338
+        },
+        {
+          "id": 216
+        },
+        {
+          "id": 303
+        },
+        {
+          "id": 132
+        },
+        {
+          "id": 352
+        },
+        {
+          "id": 102
+        },
+        {
+          "id": 312
+        },
+        {
+          "id": 125
+        },
+        {
+          "id": 248
+        },
+        {
+          "id": 291
+        },
+        {
+          "id": 402
+        },
+        {
+          "id": 139
+        },
+        {
+          "id": 376
+        },
+        {
+          "id": 249
+        },
+        {
+          "id": 111
+        },
+        {
+          "id": 112
+        },
+        {
+          "id": 236
+        },
+        {
+          "id": 28
+        },
+        {
+          "id": 120
+        },
+        {
+          "id": 91
+        },
+        {
+          "id": 326
+        },
+        {
+          "id": 107
+        },
+        {
+          "id": 246
+        },
+        {
+          "id": 171
+        },
+        {
+          "id": 204
+        },
+        {
+          "id": 288
+        },
+        {
+          "id": 304
+        },
+        {
+          "id": 263
+        },
+        {
+          "id": 301
+        },
+        {
+          "id": 318
+        },
+        {
+          "id": 336
+        },
+        {
+          "id": 254
+        },
+        {
+          "id": 275
+        },
+        {
+          "id": 192
+        },
+        {
+          "id": 302
+        },
+        {
+          "id": 225
+        },
+        {
+          "id": 297
+        },
+        {
+          "id": 333
+        },
+        {
+          "id": 358
+        },
+        {
+          "id": 356
+        },
+        {
+          "id": 257
+        },
+        {
+          "id": 351
+        },
+        {
+          "id": 282
+        },
+        {
+          "id": 103
+        },
+        {
+          "id": 394
+        },
+        {
+          "id": 243
+        },
+        {
+          "id": 343
+        },
+        {
+          "id": 334
+        },
+        {
+          "id": 190
+        },
+        {
+          "id": 316
+        },
+        {
+          "id": 346
+        },
+        {
+          "id": 256
+        },
+        {
+          "id": 386
+        },
+        {
+          "id": 311
+        },
+        {
+          "id": 238
+        },
+        {
+          "id": 408
+        },
+        {
+          "id": 290
+        },
+        {
+          "id": 392
+        },
+        {
+          "id": 340
+        },
+        {
+          "id": 337
+        },
+        {
+          "id": 285
+        },
+        {
+          "id": 347
+        },
+        {
+          "id": 330
+        },
+        {
+          "id": 281
+        },
+        {
+          "id": 369
+        },
+        {
+          "id": 366
+        },
+        {
+          "id": 342
+        },
+        {
+          "id": 317
+        },
+        {
+          "id": 412
+        }
+      ]
+    }
+  ]
+}

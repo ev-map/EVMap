@@ -1,0 +1,124 @@
+{
+  "uid": 2722151,
+  "externalId": "DEALLEGO020014",
+  "coordinates": {
+    "latitude": 54.476673,
+    "longitude": 9.544472
+  },
+  "operatorName": "Allego",
+  "operatorId": "DE-ALL",
+  "address": {
+    "streetAndNumber": "Wittgenstein 2",
+    "postalCode": "24866",
+    "city": "Schleswig-Busdorf",
+    "country": "DEU"
+  },
+  "accessibility": {
+    "status": "Unspecified",
+    "remark": ""
+  },
+  "evses": [
+    {
+      "uid": 1358404,
+      "externalId": "DEALLEGO0200141",
+      "evseId": "DE*ALL*EGO0200141",
+      "status": "Available",
+      "connectors": [
+        {
+          "uid": 1293518,
+          "externalId": "1",
+          "connectorType": "Type2Combo",
+          "electricalProperties": {
+            "powerType": "DC",
+            "voltage": 400,
+            "amperage": 200
+          },
+          "fixedCable": true,
+          "tariff": {
+            "perKWh": 0.59,
+            "currency": "EUR",
+            "updated": "2020-04-13T09:57:01Z",
+            "updatedBy": "Default",
+            "structure": "Default"
+          },
+          "updated": "2020-03-19T15:22:03Z",
+          "updatedBy": "Feed"
+        }
+      ],
+      "authorizationMethods": [
+        "RFIDToken"
+      ],
+      "updated": "2020-04-12T13:44:41Z"
+    },
+    {
+      "uid": 1357390,
+      "externalId": "DEALLEGO0200142",
+      "evseId": "DE*ALL*EGO0200142",
+      "status": "Available",
+      "connectors": [
+        {
+          "uid": 1292446,
+          "externalId": "1",
+          "connectorType": "Type2Combo",
+          "electricalProperties": {
+            "powerType": "DC",
+            "voltage": 400,
+            "amperage": 500
+          },
+          "fixedCable": true,
+          "tariff": {
+            "perKWh": 0.59,
+            "currency": "EUR",
+            "updated": "2020-04-13T09:57:01Z",
+            "updatedBy": "Default",
+            "structure": "Default"
+          },
+          "updated": "2020-03-19T15:22:03Z",
+          "updatedBy": "Feed"
+        }
+      ],
+      "authorizationMethods": [
+        "RFIDToken"
+      ],
+      "updated": "2020-04-12T13:44:41Z"
+    }
+  ],
+  "openingHours": [
+    {
+      "weekDay": "Sun",
+      "startTime": "00:00",
+      "endTime": "23:59"
+    },
+    {
+      "weekDay": "Mon",
+      "startTime": "00:00",
+      "endTime": "23:59"
+    },
+    {
+      "weekDay": "Tue",
+      "startTime": "00:00",
+      "endTime": "23:59"
+    },
+    {
+      "weekDay": "Wed",
+      "startTime": "00:00",
+      "endTime": "23:59"
+    },
+    {
+      "weekDay": "Thu",
+      "startTime": "00:00",
+      "endTime": "23:59"
+    },
+    {
+      "weekDay": "Fri",
+      "startTime": "00:00",
+      "endTime": "23:59"
+    },
+    {
+      "weekDay": "Sat",
+      "startTime": "00:00",
+      "endTime": "23:59"
+    }
+  ],
+  "updated": "2020-03-28T07:43:29Z"
+}

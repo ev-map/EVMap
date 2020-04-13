@@ -44,6 +44,7 @@ interface NewMotionApi {
 
     @JsonClass(generateAdapter = true)
     data class NMConnector(
+        val uid: Long,
         val connectorType: String,
         val electricalProperties: NMElectricalProperties
     )
@@ -72,9 +73,9 @@ interface NewMotionApi {
     }
 
     companion object {
-        fun create(client: OkHttpClient): NewMotionApi {
+        fun create(client: OkHttpClient, baseUrl: String? = null): NewMotionApi {
             val retrofit = Retrofit.Builder()
-                .baseUrl("https://my.newmotion.com/api/map/v2/")
+                .baseUrl(baseUrl ?: "https://my.newmotion.com/api/map/v2/")
                 .addConverterFactory(MoshiConverterFactory.create())
                 .client(client)
                 .build()
@@ -83,8 +84,9 @@ interface NewMotionApi {
     }
 }
 
-class NewMotionAvailabilityDetector(client: OkHttpClient) : BaseAvailabilityDetector(client) {
-    val api = NewMotionApi.create(client)
+class NewMotionAvailabilityDetector(client: OkHttpClient, baseUrl: String? = null) :
+    BaseAvailabilityDetector(client) {
+    val api = NewMotionApi.create(client, baseUrl)
 
     override suspend fun getAvailability(location: ChargeLocation): ChargeLocationStatus {
         val lat = location.coordinates.lat
@@ -121,8 +123,10 @@ class NewMotionAvailabilityDetector(client: OkHttpClient) : BaseAvailabilityDete
             }
         }
 
-        val chargepointStatus = mutableMapOf<Chargepoint, List<ChargepointStatus>>()
+        val nmConnectors = mutableMapOf<Long, Pair<Double, String>>()
+        val nmStatus = mutableMapOf<Long, ChargepointStatus>()
         connectorStatus.forEach { (connector, statusStr) ->
+            val id = connector.uid
             val power = connector.electricalProperties.getPower()
             val type = when (connector.connectorType) {
                 "Type2" -> Chargepoint.TYPE_2
@@ -138,47 +142,18 @@ class NewMotionAvailabilityDetector(client: OkHttpClient) : BaseAvailabilityDete
                 "Unspecified" -> ChargepointStatus.UNKNOWN
                 else -> ChargepointStatus.UNKNOWN
             }
-
-            var chargepoint = getCorrespondingChargepoint(chargepointStatus.keys, type, power)
-            val statusList: List<ChargepointStatus>
-            if (chargepoint == null) {
-                // find corresponding chargepoint from goingelectric to get correct power
-                val geChargepoint =
-                    getCorrespondingChargepoint(location.chargepoints, type, power)
-                        ?: throw AvailabilityDetectorException(
-                            "Chargepoints from NewMotion API and goingelectric do not match."
-                        )
-                chargepoint = Chargepoint(
-                    type,
-                    geChargepoint.power,
-                    1
-                )
-                statusList = listOf(status)
-            } else {
-                val previousStatus = chargepointStatus[chargepoint]!!
-                statusList = previousStatus + listOf(status)
-                chargepointStatus.remove(chargepoint)
-                chargepoint =
-                    Chargepoint(
-                        chargepoint.type,
-                        chargepoint.power,
-                        chargepoint.count + 1
-                    )
-            }
-
-            chargepointStatus[chargepoint] = statusList
+            nmConnectors.put(id, power to type)
+            nmStatus.put(id, status)
         }
 
-        if (chargepointStatus.keys == location.chargepoints.toSet()) {
-            return ChargeLocationStatus(
-                chargepointStatus,
-                "NewMotion"
-            )
-        } else {
-            throw AvailabilityDetectorException(
-                "Chargepoints from NewMotion API and goingelectric do not match."
-            )
+        val match = matchChargepoints(nmConnectors, location.chargepoints)
+        val chargepointStatus = match.mapValues { entry ->
+            entry.value.map { nmStatus[it]!! }
         }
+        return ChargeLocationStatus(
+            chargepointStatus,
+            "NewMotion"
+        )
     }
 
 }

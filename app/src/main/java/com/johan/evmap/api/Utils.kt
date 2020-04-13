@@ -1,6 +1,5 @@
 package com.johan.evmap.api
 
-import android.location.Location
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.suspendCancellableCoroutine
 import okhttp3.Call
@@ -37,11 +36,22 @@ suspend fun Call.await(): Response {
     }
 }
 
+const val earthRadiusKm: Double = 6372.8
+
 fun distanceBetween(
     startLatitude: Double, startLongitude: Double,
     endLatitude: Double, endLongitude: Double
-): Float {
-    val distance = floatArrayOf(0f)
-    Location.distanceBetween(startLatitude, startLongitude, endLatitude, endLongitude, distance)
-    return distance[0]
+): Double {
+    // see https://rosettacode.org/wiki/Haversine_formula#Java
+    val dLat = Math.toRadians(endLatitude - startLatitude);
+    val dLon = Math.toRadians(endLongitude - endLongitude);
+    val originLat = Math.toRadians(startLatitude);
+    val destinationLat = Math.toRadians(endLatitude);
+
+    val a = Math.pow(Math.sin(dLat / 2), 2.toDouble()) + Math.pow(
+        Math.sin(dLon / 2),
+        2.toDouble()
+    ) * Math.cos(originLat) * Math.cos(destinationLat);
+    val c = 2 * Math.asin(Math.sqrt(a));
+    return earthRadiusKm * c * 1000;
 }

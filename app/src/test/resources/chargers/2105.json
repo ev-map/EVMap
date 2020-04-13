@@ -1,0 +1,219 @@
+{
+  "status": "ok",
+  "chargelocations": [
+    {
+      "ge_id": 2105,
+      "name": "Hafen",
+      "address": {
+        "city": "Schleswig",
+        "country": "Deutschland",
+        "postcode": "24837",
+        "street": "Am Hafen 5"
+      },
+      "coordinates": {
+        "lat": 54.5116,
+        "lng": 9.57108
+      },
+      "chargepoints": [
+        {
+          "type": "Typ2",
+          "power": 22,
+          "count": 2
+        },
+        {
+          "type": "Schuko",
+          "power": 2.3,
+          "count": 2
+        }
+      ],
+      "network": "be.energised",
+      "operator": "Schleswiger Stadtwerke GmbH",
+      "cost": {
+        "freecharging": false,
+        "freeparking": true,
+        "description_short": false,
+        "description_long": "Mit Kundenkarte der Stadtwerke kostenlos, sonst abhängig vom Abrechnungspartner\r\nhttps://www.schleswiger-stadtwerke.de/content/unternehmen/emobilitaet/"
+      },
+      "fault_report": false,
+      "verified": true,
+      "barrierfree": true,
+      "openinghours": {
+        "24/7": true,
+        "description": false
+      },
+      "url": "//www.goingelectric.de/stromtankstellen/Deutschland/Schleswig/Hafen-Am-Hafen-5/2105/",
+      "ladeweile": "Schleswiger Stadthafen mit Fischbistro, Restaurant und Eisdiele. Schleswiger Dom und Fußgängerzone in fußläufiger Entfernung.",
+      "location_description": false,
+      "general_information": false,
+      "photos": [
+        {
+          "id": 3552
+        },
+        {
+          "id": 10268
+        },
+        {
+          "id": 3553
+        }
+      ],
+      "chargecards": [
+        {
+          "id": 274
+        },
+        {
+          "id": 11
+        },
+        {
+          "id": 7
+        },
+        {
+          "id": 335
+        },
+        {
+          "id": 349
+        },
+        {
+          "id": 9
+        },
+        {
+          "id": 75
+        },
+        {
+          "id": 319
+        },
+        {
+          "id": 8
+        },
+        {
+          "id": 36
+        },
+        {
+          "id": 229
+        },
+        {
+          "id": 368
+        },
+        {
+          "id": 207
+        },
+        {
+          "id": 124
+        },
+        {
+          "id": 43
+        },
+        {
+          "id": 251
+        },
+        {
+          "id": 200
+        },
+        {
+          "id": 13
+        },
+        {
+          "id": 44
+        },
+        {
+          "id": 242
+        },
+        {
+          "id": 322
+        },
+        {
+          "id": 96
+        },
+        {
+          "id": 338
+        },
+        {
+          "id": 216
+        },
+        {
+          "id": 132
+        },
+        {
+          "id": 312
+        },
+        {
+          "id": 248
+        },
+        {
+          "id": 139
+        },
+        {
+          "id": 402
+        },
+        {
+          "id": 249
+        },
+        {
+          "id": 120
+        },
+        {
+          "id": 223
+        },
+        {
+          "id": 326
+        },
+        {
+          "id": 288
+        },
+        {
+          "id": 355
+        },
+        {
+          "id": 336
+        },
+        {
+          "id": 195
+        },
+        {
+          "id": 333
+        },
+        {
+          "id": 356
+        },
+        {
+          "id": 351
+        },
+        {
+          "id": 343
+        },
+        {
+          "id": 103
+        },
+        {
+          "id": 346
+        },
+        {
+          "id": 375
+        },
+        {
+          "id": 256
+        },
+        {
+          "id": 386
+        },
+        {
+          "id": 408
+        },
+        {
+          "id": 392
+        },
+        {
+          "id": 347
+        },
+        {
+          "id": 330
+        },
+        {
+          "id": 342
+        },
+        {
+          "id": 366
+        }
+      ]
+    }
+  ]
+}

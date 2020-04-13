@@ -1,0 +1,156 @@
+{
+  "uid": 2459405,
+  "externalId": "DEALLEGO000826",
+  "coordinates": {
+    "latitude": 54.476667,
+    "longitude": 9.544566
+  },
+  "operatorName": "Allego",
+  "operatorId": "DE-ALL",
+  "address": {
+    "streetAndNumber": "Wittgenstein 2",
+    "postalCode": "24866",
+    "city": "Schleswig-Busdorf",
+    "country": "DEU"
+  },
+  "accessibility": {
+    "status": "Unspecified",
+    "remark": ""
+  },
+  "evses": [
+    {
+      "uid": 742093,
+      "externalId": "DEALLEGO0008261",
+      "evseId": "DE*ALL*EGO0008261",
+      "status": "Unknown",
+      "connectors": [
+        {
+          "uid": 625943,
+          "externalId": "1",
+          "connectorType": "Type2Combo",
+          "electricalProperties": {
+            "powerType": "DC",
+            "voltage": 400,
+            "amperage": 125
+          },
+          "fixedCable": true,
+          "tariff": {
+            "perKWh": 0.59,
+            "currency": "EUR",
+            "updated": "2020-04-13T09:57:18Z",
+            "updatedBy": "Default",
+            "structure": "Default"
+          },
+          "updated": "2018-06-13T13:28:06Z",
+          "updatedBy": "Feed"
+        }
+      ],
+      "authorizationMethods": [
+        "RFIDToken"
+      ],
+      "updated": "2020-04-08T23:33:18Z"
+    },
+    {
+      "uid": 742094,
+      "externalId": "DEALLEGO0008262",
+      "evseId": "DE*ALL*EGO0008262",
+      "status": "Unknown",
+      "connectors": [
+        {
+          "uid": 625944,
+          "externalId": "1",
+          "connectorType": "TepcoCHAdeMO",
+          "electricalProperties": {
+            "powerType": "DC",
+            "voltage": 400,
+            "amperage": 125
+          },
+          "fixedCable": true,
+          "tariff": {
+            "perKWh": 0.59,
+            "currency": "EUR",
+            "updated": "2020-04-13T09:57:18Z",
+            "updatedBy": "Default",
+            "structure": "Default"
+          },
+          "updated": "2018-06-13T13:28:06Z",
+          "updatedBy": "Feed"
+        }
+      ],
+      "authorizationMethods": [
+        "RFIDToken"
+      ],
+      "updated": "2020-04-08T23:33:18Z"
+    },
+    {
+      "uid": 742095,
+      "externalId": "DEALLEGO0008263",
+      "evseId": "DE*ALL*EGO0008263",
+      "status": "Unknown",
+      "connectors": [
+        {
+          "uid": 625945,
+          "externalId": "1",
+          "connectorType": "Type2",
+          "electricalProperties": {
+            "powerType": "AC3Phase",
+            "voltage": 230,
+            "amperage": 63
+          },
+          "fixedCable": true,
+          "tariff": {
+            "perKWh": 0.59,
+            "currency": "EUR",
+            "updated": "2020-04-13T09:57:18Z",
+            "updatedBy": "Default",
+            "structure": "Default"
+          },
+          "updated": "2017-11-21T14:38:49Z",
+          "updatedBy": "Feed"
+        }
+      ],
+      "authorizationMethods": [
+        "RFIDToken"
+      ],
+      "updated": "2020-04-08T23:33:18Z"
+    }
+  ],
+  "openingHours": [
+    {
+      "weekDay": "Sun",
+      "startTime": "00:00",
+      "endTime": "23:59"
+    },
+    {
+      "weekDay": "Mon",
+      "startTime": "00:00",
+      "endTime": "23:59"
+    },
+    {
+      "weekDay": "Tue",
+      "startTime": "00:00",
+      "endTime": "23:59"
+    },
+    {
+      "weekDay": "Wed",
+      "startTime": "00:00",
+      "endTime": "23:59"
+    },
+    {
+      "weekDay": "Thu",
+      "startTime": "00:00",
+      "endTime": "23:59"
+    },
+    {
+      "weekDay": "Fri",
+      "startTime": "00:00",
+      "endTime": "23:59"
+    },
+    {
+      "weekDay": "Sat",
+      "startTime": "00:00",
+      "endTime": "23:59"
+    }
+  ],
+  "updated": "2020-01-29T08:44:31Z"
+}

@@ -1,0 +1,84 @@
+[
+  {
+    "markerType": "SingleLocation",
+    "uniqueKey": "2469352_1",
+    "status": "Available",
+    "coordinates": {
+      "latitude": 54.489211,
+      "longitude": 9.55383
+    },
+    "evseCount": 2,
+    "geoHash": "u1wvcrky",
+    "locationUid": 2469352,
+    "authorizationMethods": [
+      "NewMotionApp",
+      "RFIDToken"
+    ],
+    "operatorId": "AT-HTB"
+  },
+  {
+    "markerType": "SingleLocation",
+    "uniqueKey": "2469608_1",
+    "status": "Available",
+    "coordinates": {
+      "latitude": 54.490386,
+      "longitude": 9.551067
+    },
+    "evseCount": 2,
+    "geoHash": "u1wvcrdv",
+    "locationUid": 2469608,
+    "authorizationMethods": [
+      "NewMotionApp",
+      "RFIDToken"
+    ],
+    "operatorId": "AT-HTB"
+  },
+  {
+    "markerType": "SingleLocation",
+    "uniqueKey": "2459405_1",
+    "status": "Unknown",
+    "coordinates": {
+      "latitude": 54.476667,
+      "longitude": 9.544566
+    },
+    "evseCount": 3,
+    "geoHash": "u1wvcjnj",
+    "locationUid": 2459405,
+    "authorizationMethods": [
+      "RFIDToken"
+    ],
+    "operatorId": "DE-ALL"
+  },
+  {
+    "markerType": "SingleLocation",
+    "uniqueKey": "2738212_1",
+    "status": "Unavailable",
+    "coordinates": {
+      "latitude": 54.476691,
+      "longitude": 9.544368
+    },
+    "evseCount": 2,
+    "geoHash": "u1wvcjjv",
+    "locationUid": 2738212,
+    "authorizationMethods": [
+      "RFIDToken"
+    ],
+    "operatorId": "DE-ALL"
+  },
+  {
+    "markerType": "SingleLocation",
+    "uniqueKey": "2722151_1",
+    "status": "Available",
+    "coordinates": {
+      "latitude": 54.476673,
+      "longitude": 9.544472
+    },
+    "evseCount": 2,
+    "geoHash": "u1wvcjnj",
+    "locationUid": 2722151,
+    "authorizationMethods": [
+      "RFIDToken"
+    ],
+    "operatorId": "DE-ALL"
+  }
+]

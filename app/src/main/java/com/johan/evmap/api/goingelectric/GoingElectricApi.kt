@@ -10,7 +10,7 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface GoingElectricApi {
-    @GET("/chargepoints/")
+    @GET("chargepoints/")
     fun getChargepoints(
         @Query("sw_lat") swlat: Double, @Query("sw_lng") sw_lng: Double,
         @Query("ne_lat") ne_lat: Double, @Query("ne_lng") ne_lng: Double,
@@ -19,11 +19,14 @@ interface GoingElectricApi {
         @Query("cluster_distance") clusterDistance: Int
     ): Call<ChargepointList>
 
-    @GET("/chargepoints/")
+    @GET("chargepoints/")
     fun getChargepointDetail(@Query("ge_id") id: Long): Call<ChargepointList>
 
     companion object {
-        fun create(apikey: String): GoingElectricApi {
+        fun create(
+            apikey: String,
+            baseurl: String = "https://api.goingelectric.de"
+        ): GoingElectricApi {
             val client = OkHttpClient.Builder()
                 .addInterceptor { chain ->
                     // add API key to every request
@@ -42,7 +45,7 @@ interface GoingElectricApi {
                 .build()
 
             val retrofit = Retrofit.Builder()
-                .baseUrl("https://api.goingelectric.de")
+                .baseUrl(baseurl)
                 .addConverterFactory(MoshiConverterFactory.create(moshi))
                 .client(client)
                 .build()

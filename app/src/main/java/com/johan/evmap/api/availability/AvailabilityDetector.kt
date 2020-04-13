@@ -45,6 +45,37 @@ abstract class BaseAvailabilityDetector(private val client: OkHttpClient) : Avai
         }
         return filter.getOrNull(0)
     }
+
+
+    protected fun matchChargepoints(
+        connectors: Map<Long, Pair<Double, String>>,
+        chargepoints: List<Chargepoint>
+    ): Map<Chargepoint, Set<Long>> {
+        // iterate over each connector type
+        val types = connectors.map { it.value.second }.distinct().toSet()
+        val geTypes = chargepoints.map { it.type }.distinct().toSet()
+        if (types != geTypes) throw AvailabilityDetectorException("chargepoints do not match")
+        return types.flatMap { type ->
+            // find connectors of this type
+            val connsOfType = connectors.filter { it.value.second == type }
+            // find powers this connector is available as
+            val powers = connsOfType.map { it.value.first }.distinct().sorted()
+            // find corresponding powers in GE data
+            val gePowers =
+                chargepoints.filter { it.type == type }.map { it.power }.distinct().sorted()
+
+            // if the distinct number of powers is the same, try to match.
+            if (powers.size == gePowers.size) {
+                gePowers.zip(powers).map { (gePower, power) ->
+                    val chargepoint = chargepoints.find { it.type == type && it.power == gePower }!!
+                    val ids = connsOfType.filter { it.value.first == power }.keys
+                    chargepoint to ids
+                }
+            } else {
+                throw AvailabilityDetectorException("chargepoints do not match")
+            }
+        }.toMap()
+    }
 }
 
 data class ChargeLocationStatus(

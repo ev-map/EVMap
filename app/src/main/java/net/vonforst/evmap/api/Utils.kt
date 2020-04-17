@@ -44,7 +44,7 @@ fun distanceBetween(
 ): Double {
     // see https://rosettacode.org/wiki/Haversine_formula#Java
     val dLat = Math.toRadians(endLatitude - startLatitude);
-    val dLon = Math.toRadians(endLongitude - endLongitude);
+    val dLon = Math.toRadians(endLongitude - startLongitude);
     val originLat = Math.toRadians(startLatitude);
     val destinationLat = Math.toRadians(endLatitude);
 

@@ -1,9 +1,7 @@
 package net.vonforst.evmap.viewmodel
 
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import android.app.Application
+import androidx.lifecycle.*
 import com.google.android.gms.maps.model.LatLngBounds
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -15,6 +13,7 @@ import net.vonforst.evmap.api.goingelectric.ChargeLocation
 import net.vonforst.evmap.api.goingelectric.ChargepointList
 import net.vonforst.evmap.api.goingelectric.ChargepointListItem
 import net.vonforst.evmap.api.goingelectric.GoingElectricApi
+import net.vonforst.evmap.storage.AppDatabase
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.HttpException
@@ -23,9 +22,9 @@ import java.io.IOException
 
 data class MapPosition(val bounds: LatLngBounds, val zoom: Float)
 
-class MapViewModel(geApiKey: String) : ViewModel() {
-    private var api: GoingElectricApi =
-        GoingElectricApi.create(geApiKey)
+class MapViewModel(application: Application, geApiKey: String) : AndroidViewModel(application) {
+    private var api = GoingElectricApi.create(geApiKey)
+    private var db = AppDatabase.getInstance(application)
 
     val bottomSheetState: MutableLiveData<Int> by lazy {
         MutableLiveData<Int>()
@@ -85,6 +84,18 @@ class MapViewModel(geApiKey: String) : ViewModel() {
     }
     val myLocationEnabled: MutableLiveData<Boolean> by lazy {
         MutableLiveData<Boolean>()
+    }
+
+    val favorites: LiveData<List<ChargeLocation>> by lazy {
+        db.chargeLocationsDao().getAllChargeLocations()
+    }
+
+    fun insertFavorite(charger: ChargeLocation) {
+        db.chargeLocationsDao().insert(charger)
+    }
+
+    fun deleteFavorite(charger: ChargeLocation) {
+        db.chargeLocationsDao().delete(charger)
     }
 
     private fun loadChargepoints(mapPosition: MapPosition) {

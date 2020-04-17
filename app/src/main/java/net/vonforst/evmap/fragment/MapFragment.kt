@@ -58,7 +58,12 @@ const val REQUEST_AUTOCOMPLETE = 2
 class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallback {
     private lateinit var binding: FragmentMapBinding
     private val vm: MapViewModel by viewModels(factoryProducer = {
-        viewModelFactory { MapViewModel(getString(R.string.goingelectric_key)) }
+        viewModelFactory {
+            MapViewModel(
+                requireActivity().application,
+                getString(R.string.goingelectric_key)
+            )
+        }
     })
     private val galleryVm: GalleryViewModel by activityViewModels()
     private var map: GoogleMap? = null

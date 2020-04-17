@@ -3,6 +3,9 @@ package net.vonforst.evmap.api.goingelectric
 import android.content.Context
 import android.os.Parcelable
 import androidx.core.text.HtmlCompat
+import androidx.room.Embedded
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import kotlinx.android.parcel.Parcelize
@@ -21,11 +24,12 @@ data class ChargepointList(
 sealed class ChargepointListItem
 
 @JsonClass(generateAdapter = true)
+@Entity
 data class ChargeLocation(
-    @Json(name = "ge_id") val id: Long,
+    @Json(name = "ge_id") @PrimaryKey val id: Long,
     val name: String,
-    val coordinates: Coordinate,
-    val address: Address,
+    @Embedded val coordinates: Coordinate,
+    @Embedded val address: Address,
     val chargepoints: List<Chargepoint>,
     @JsonObjectOrFalse val network: String?,
     val url: String,
@@ -38,8 +42,8 @@ data class ChargeLocation(
     @JsonObjectOrFalse @Json(name = "location_description") val locationDescription: String?,
     val photos: List<ChargerPhoto>?,
     //val chargecards: Boolean?
-    val openinghours: OpeningHours?,
-    val cost: Cost?
+    @Embedded val openinghours: OpeningHours?,
+    @Embedded val cost: Cost?
 ) : ChargepointListItem() {
     val maxPower: Double
         get() {
@@ -75,7 +79,7 @@ data class Cost(
 data class OpeningHours(
     @Json(name = "24/7") val twentyfourSeven: Boolean,
     @JsonObjectOrFalse val description: String?,
-    val days: OpeningHoursDays?
+    @Embedded val days: OpeningHoursDays?
 ) {
     fun getStatusText(ctx: Context): CharSequence {
         if (twentyfourSeven) {
@@ -114,14 +118,14 @@ data class OpeningHours(
 
 @JsonClass(generateAdapter = true)
 data class OpeningHoursDays(
-    val monday: Hours,
-    val tuesday: Hours,
-    val wednesday: Hours,
-    val thursday: Hours,
-    val friday: Hours,
-    val saturday: Hours,
-    val sunday: Hours,
-    val holiday: Hours
+    @Embedded(prefix = "mo") val monday: Hours,
+    @Embedded(prefix = "tu") val tuesday: Hours,
+    @Embedded(prefix = "we") val wednesday: Hours,
+    @Embedded(prefix = "th") val thursday: Hours,
+    @Embedded(prefix = "fr") val friday: Hours,
+    @Embedded(prefix = "sa") val saturday: Hours,
+    @Embedded(prefix = "su") val sunday: Hours,
+    @Embedded(prefix = "ho") val holiday: Hours
 ) {
     fun getHoursForDate(date: LocalDate): Hours {
         // TODO: check for holidays

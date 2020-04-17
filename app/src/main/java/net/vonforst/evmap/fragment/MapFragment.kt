@@ -44,7 +44,10 @@ import net.vonforst.evmap.api.goingelectric.ChargeLocation
 import net.vonforst.evmap.api.goingelectric.ChargeLocationCluster
 import net.vonforst.evmap.api.goingelectric.ChargepointListItem
 import net.vonforst.evmap.databinding.FragmentMapBinding
-import net.vonforst.evmap.ui.*
+import net.vonforst.evmap.ui.ChargerIconGenerator
+import net.vonforst.evmap.ui.ClusterIconGenerator
+import net.vonforst.evmap.ui.MarkerAnimator
+import net.vonforst.evmap.ui.getMarkerTint
 import net.vonforst.evmap.viewmodel.GalleryViewModel
 import net.vonforst.evmap.viewmodel.MapPosition
 import net.vonforst.evmap.viewmodel.MapViewModel
@@ -66,6 +69,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
     private lateinit var clusterIconGenerator: ClusterIconGenerator
     private lateinit var chargerIconGenerator: ChargerIconGenerator
+    private lateinit var animator: MarkerAnimator
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -79,6 +83,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
         clusterIconGenerator = ClusterIconGenerator(requireContext())
         chargerIconGenerator = ChargerIconGenerator(requireContext())
+        animator = MarkerAnimator(chargerIconGenerator)
 
         setHasOptionsMenu(true)
         postponeEnterTransition()
@@ -328,7 +333,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             if (!chargepointIds.contains(it.value.id)) {
                 val tint = getMarkerTint(it.value)
                 if (it.key.isVisible) {
-                    animateMarkerDisappear(it.key, tint, chargerIconGenerator)
+                    animator.animateMarkerDisappear(it.key, tint)
                 } else {
                     it.key.remove()
                 }
@@ -348,7 +353,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                         chargerIconGenerator.getBitmapDescriptor(tint)
                     )
             )
-            animateMarkerAppear(marker, tint, chargerIconGenerator)
+            animator.animateMarkerAppear(marker, tint)
 
             marker to charger
         }.toMap()

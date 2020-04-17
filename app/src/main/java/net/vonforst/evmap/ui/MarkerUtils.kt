@@ -16,47 +16,65 @@ fun getMarkerTint(charger: ChargeLocation): Int = when {
     else -> R.color.charger_low
 }
 
-fun animateMarkerAppear(
-    marker: Marker,
-    tint: Int,
-    gen: ChargerIconGenerator
-) {
-    ValueAnimator.ofInt(0, 20).apply {
-        duration = 250
-        interpolator = LinearOutSlowInInterpolator()
-        addUpdateListener { animationState ->
-            if (!marker.isVisible) {
-                cancel()
-                return@addUpdateListener
-            }
-            val scale = animationState.animatedValue as Int
-            marker.setIcon(
-                gen.getBitmapDescriptor(tint, scale = scale)
-            )
-        }
-    }.start()
-}
+class MarkerAnimator(val gen: ChargerIconGenerator) {
+    val animatingMarkers = hashMapOf<Marker, ValueAnimator>()
 
-fun animateMarkerDisappear(
-    marker: Marker,
-    tint: Int,
-    gen: ChargerIconGenerator
-) {
-    ValueAnimator.ofInt(20, 0).apply {
-        duration = 200
-        interpolator = FastOutLinearInInterpolator()
-        addUpdateListener { animationState ->
-            if (!marker.isVisible) {
-                cancel()
-                return@addUpdateListener
+    fun animateMarkerAppear(
+        marker: Marker,
+        tint: Int
+    ) {
+        animatingMarkers[marker]?.cancel()
+        animatingMarkers.remove(marker)
+
+        val anim = ValueAnimator.ofInt(0, 20).apply {
+            duration = 250
+            interpolator = LinearOutSlowInInterpolator()
+            addUpdateListener { animationState ->
+                if (!marker.isVisible) {
+                    cancel()
+                    animatingMarkers.remove(marker)
+                    return@addUpdateListener
+                }
+                val scale = animationState.animatedValue as Int
+                marker.setIcon(
+                    gen.getBitmapDescriptor(tint, scale = scale)
+                )
             }
-            val scale = animationState.animatedValue as Int
-            marker.setIcon(
-                gen.getBitmapDescriptor(tint, scale = scale)
-            )
+            addListener(onEnd = {
+                animatingMarkers.remove(marker)
+            })
         }
-        addListener(onEnd = {
-            marker.remove()
-        })
-    }.start()
+        animatingMarkers[marker] = anim
+        anim.start()
+    }
+
+    fun animateMarkerDisappear(
+        marker: Marker,
+        tint: Int
+    ) {
+        animatingMarkers[marker]?.cancel()
+        animatingMarkers.remove(marker)
+
+        val anim = ValueAnimator.ofInt(20, 0).apply {
+            duration = 200
+            interpolator = FastOutLinearInInterpolator()
+            addUpdateListener { animationState ->
+                if (!marker.isVisible) {
+                    cancel()
+                    animatingMarkers.remove(marker)
+                    return@addUpdateListener
+                }
+                val scale = animationState.animatedValue as Int
+                marker.setIcon(
+                    gen.getBitmapDescriptor(tint, scale = scale)
+                )
+            }
+            addListener(onEnd = {
+                animatingMarkers.remove(marker)
+                marker.remove()
+            })
+        }
+        animatingMarkers[marker] = anim
+        anim.start()
+    }
 }

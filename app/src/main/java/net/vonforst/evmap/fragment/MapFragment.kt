@@ -9,6 +9,7 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.view.*
 import androidx.core.content.ContextCompat
+import androidx.core.view.updateLayoutParams
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -33,6 +34,7 @@ import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.android.material.snackbar.Snackbar
 import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike
+import com.mahc.custombottomsheetbehavior.MergedAppBarLayoutBehavior
 import kotlinx.android.synthetic.main.fragment_map.*
 import net.vonforst.evmap.MapsActivity
 import net.vonforst.evmap.R
@@ -69,6 +71,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
     private var map: GoogleMap? = null
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var bottomSheetBehavior: BottomSheetBehaviorGoogleMapsLike<View>
+    private lateinit var detailAppBarBehavior: MergedAppBarLayoutBehavior
     private var markers: Map<Marker, ChargeLocation> = emptyMap()
     private var clusterMarkers: List<Marker> = emptyList()
 
@@ -93,6 +96,16 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         setHasOptionsMenu(true)
         postponeEnterTransition()
 
+        binding.toolbarContainer.viewTreeObserver.addOnGlobalLayoutListener {
+
+        }
+        binding.root.setOnApplyWindowInsetsListener { v, insets ->
+            binding.detailAppBar.toolbar.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                topMargin = insets.systemWindowInsetTop
+            }
+            insets
+        }
+
         return binding.root
     }
 
@@ -100,6 +113,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
         bottomSheetBehavior = BottomSheetBehaviorGoogleMapsLike.from(binding.bottomSheet)
+        detailAppBarBehavior = MergedAppBarLayoutBehavior.from(binding.detailAppBar)
 
         setupObservers()
         setupClickListeners()
@@ -156,6 +170,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 .addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
             startActivityForResult(intent, REQUEST_AUTOCOMPLETE)
         }
+        binding.detailAppBar.toolbar.setNavigationOnClickListener {
+            bottomSheetBehavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED
+        }
     }
 
     private fun setupObservers() {
@@ -175,6 +192,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                     bottomSheetBehavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED
                 }
                 binding.fabDirections.show()
+                detailAppBarBehavior.setToolbarTitle(it.name)
             } else {
                 bottomSheetBehavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN
             }

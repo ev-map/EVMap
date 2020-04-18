@@ -27,13 +27,13 @@
             tools:context=".MapsActivity" />
 
         <FrameLayout
+            android:id="@+id/toolbar_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fitsSystemWindows="true"
             app:layout_behavior="@string/ScrollingAppBarLayoutBehavior">
 
             <com.google.android.material.appbar.AppBarLayout
-                android:id="@+id/toolbar_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
@@ -141,10 +141,10 @@
             app:layout_anchorGravity="top|right|end"
             app:layout_behavior="@string/ScrollAwareFABBehavior" />
 
-        <!--<com.mahc.custombottomsheetbehavior.MergedAppBarLayout
-            android:id="@+id/mergedappbarlayout"
+        <com.mahc.custombottomsheetbehavior.MergedAppBarLayout
+            android:id="@+id/detail_app_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_behavior="@string/MergedAppBarLayoutBehavior"/>-->
+            app:layout_behavior="@string/MergedAppBarLayoutBehavior"></com.mahc.custombottomsheetbehavior.MergedAppBarLayout>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

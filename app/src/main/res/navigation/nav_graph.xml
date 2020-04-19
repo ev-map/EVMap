@@ -12,7 +12,7 @@
         tools:layout="@layout/fragment_map">
         <action
             android:id="@+id/action_map_to_galleryFragment"
-            app:destination="@id/galleryFragment"
+            app:destination="@id/gallery"
             app:enterAnim="@anim/fragment_fade_enter"
             app:exitAnim="@anim/fragment_fade_exit"
             app:popEnterAnim="@anim/fragment_fade_enter"
@@ -21,9 +21,16 @@
     <fragment
         android:id="@+id/about"
         android:name="net.vonforst.evmap.fragment.AboutFragment"
-        android:label="@string/about" />
+        android:label="@string/about"
+        tools:layout="@layout/fragment_preference" />
     <fragment
-        android:id="@+id/galleryFragment"
+        android:id="@+id/gallery"
         android:name="net.vonforst.evmap.fragment.GalleryFragment"
-        android:label="GalleryFragment"></fragment>
+        android:label="GalleryFragment"
+        tools:layout="@layout/fragment_gallery" />
+    <fragment
+        android:id="@+id/favs"
+        android:name="net.vonforst.evmap.fragment.FavoritesFragment"
+        android:label="@string/menu_favs"
+        tools:layout="@layout/fragment_favorites" />
 </navigation>

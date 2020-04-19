@@ -145,6 +145,7 @@
             android:id="@+id/detail_app_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_behavior="@string/MergedAppBarLayoutBehavior"></com.mahc.custombottomsheetbehavior.MergedAppBarLayout>
+            app:layout_behavior="@string/MergedAppBarLayoutBehavior"
+            android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

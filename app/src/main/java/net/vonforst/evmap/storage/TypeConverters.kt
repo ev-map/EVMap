@@ -19,23 +19,23 @@ class Converters {
     }
 
     @TypeConverter
-    fun fromChargepointList(value: List<Chargepoint>): String {
+    fun fromChargepointList(value: List<Chargepoint>?): String {
         return chargepointListAdapter.toJson(value)
     }
 
     @TypeConverter
-    fun toChargepointList(value: String): List<Chargepoint> {
-        return chargepointListAdapter.fromJson(value)!!
+    fun toChargepointList(value: String): List<Chargepoint>? {
+        return chargepointListAdapter.fromJson(value)
     }
 
     @TypeConverter
-    fun fromChargerPhotoList(value: List<ChargerPhoto>): String {
+    fun fromChargerPhotoList(value: List<ChargerPhoto>?): String {
         return chargerPhotoListAdapter.toJson(value)
     }
 
     @TypeConverter
-    fun toChargerPhotoList(value: String): List<ChargerPhoto> {
-        return chargerPhotoListAdapter.fromJson(value)!!
+    fun toChargerPhotoList(value: String): List<ChargerPhoto>? {
+        return chargerPhotoListAdapter.fromJson(value)
     }
 
     @TypeConverter

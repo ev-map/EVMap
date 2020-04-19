@@ -91,11 +91,15 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
     }
 
     fun insertFavorite(charger: ChargeLocation) {
-        db.chargeLocationsDao().insert(charger)
+        viewModelScope.launch {
+            db.chargeLocationsDao().insert(charger)
+        }
     }
 
     fun deleteFavorite(charger: ChargeLocation) {
-        db.chargeLocationsDao().delete(charger)
+        viewModelScope.launch {
+            db.chargeLocationsDao().delete(charger)
+        }
     }
 
     private fun loadChargepoints(mapPosition: MapPosition) {

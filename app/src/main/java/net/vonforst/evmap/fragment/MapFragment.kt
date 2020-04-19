@@ -78,6 +78,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
     private lateinit var clusterIconGenerator: ClusterIconGenerator
     private lateinit var chargerIconGenerator: ChargerIconGenerator
     private lateinit var animator: MarkerAnimator
+    private lateinit var favToggle: MenuItem
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -114,6 +115,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         mapFragment.getMapAsync(this)
         bottomSheetBehavior = BottomSheetBehaviorGoogleMapsLike.from(binding.bottomSheet)
         detailAppBarBehavior = MergedAppBarLayoutBehavior.from(binding.detailAppBar)
+
+        binding.detailAppBar.toolbar.inflateMenu(R.menu.detail)
+        favToggle = binding.detailAppBar.toolbar.menu.findItem(R.id.menu_fav)
 
         setupObservers()
         setupClickListeners()
@@ -173,6 +177,25 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         binding.detailAppBar.toolbar.setNavigationOnClickListener {
             bottomSheetBehavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED
         }
+        binding.detailAppBar.toolbar.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.menu_fav -> {
+                    toggleFavorite()
+                    true
+                }
+                else -> false
+            }
+        }
+    }
+
+    private fun toggleFavorite() {
+        val favs = vm.favorites.value ?: return
+        val charger = vm.chargerSparse.value ?: return
+        if (favs.find { it.id == charger.id } != null) {
+            vm.deleteFavorite(charger)
+        } else {
+            vm.insertFavorite(charger)
+        }
     }
 
     private fun setupObservers() {
@@ -193,6 +216,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 }
                 binding.fabDirections.show()
                 detailAppBarBehavior.setToolbarTitle(it.name)
+                updateFavoriteToggle()
             } else {
                 bottomSheetBehavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN
             }
@@ -201,6 +225,19 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             val chargepoints = it.data
             if (chargepoints != null) updateMap(chargepoints)
         })
+        vm.favorites.observe(viewLifecycleOwner, Observer {
+            updateFavoriteToggle()
+        })
+    }
+
+    private fun updateFavoriteToggle() {
+        val favs = vm.favorites.value ?: return
+        val charger = vm.chargerSparse.value ?: return
+        if (favs.find { it.id == charger.id } != null) {
+            favToggle.setIcon(R.drawable.ic_fav)
+        } else {
+            favToggle.setIcon(R.drawable.ic_fav_no)
+        }
     }
 
     private fun setupAdapters() {
@@ -340,8 +377,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         return ContextCompat.checkSelfPermission(
             context,
             Manifest.permission.ACCESS_FINE_LOCATION
-        ) ==
-                PackageManager.PERMISSION_GRANTED
+        ) == PackageManager.PERMISSION_GRANTED
     }
 
     private fun updateMap(chargepoints: List<ChargepointListItem>) {

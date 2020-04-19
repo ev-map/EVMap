@@ -13,6 +13,7 @@ import net.vonforst.evmap.R
 import net.vonforst.evmap.api.availability.ChargepointStatus
 import net.vonforst.evmap.api.goingelectric.ChargeLocation
 import net.vonforst.evmap.api.goingelectric.Chargepoint
+import net.vonforst.evmap.viewmodel.FavoritesViewModel
 
 interface Equatable {
     override fun equals(other: Any?): Boolean;
@@ -29,15 +30,15 @@ abstract class DataBindingAdapter<T : Equatable>() :
     }
 
     override fun onBindViewHolder(holder: ViewHolder<T>, position: Int) =
-        holder.bind(getItem(position))
+        bind(holder, getItem(position))
 
-    class ViewHolder<T>(private val binding: ViewDataBinding) :
+    class ViewHolder<T>(val binding: ViewDataBinding) :
         RecyclerView.ViewHolder(binding.root) {
+    }
 
-        fun bind(item: T) {
-            binding.setVariable(BR.item, item)
-            binding.executePendingBindings()
-        }
+    open fun bind(holder: ViewHolder<T>, item: T) {
+        holder.binding.setVariable(BR.item, item)
+        holder.binding.executePendingBindings()
     }
 
     class DiffCallback<T : Equatable> : DiffUtil.ItemCallback<T>() {
@@ -111,4 +112,14 @@ fun buildDetails(loc: ChargeLocation?, ctx: Context): List<DetailAdapter.Detail>
         )
         else null
     )
+}
+
+
+class FavoritesAdapter(val vm: FavoritesViewModel) : DataBindingAdapter<ChargeLocation>() {
+    override fun getItemViewType(position: Int): Int = R.layout.item_favorite
+
+    override fun bind(holder: ViewHolder<ChargeLocation>, item: ChargeLocation) {
+        holder.binding.setVariable(BR.vm, vm)
+        super.bind(holder, item)
+    }
 }

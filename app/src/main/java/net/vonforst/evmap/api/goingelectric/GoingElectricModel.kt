@@ -44,7 +44,7 @@ data class ChargeLocation(
     //val chargecards: Boolean?
     @Embedded val openinghours: OpeningHours?,
     @Embedded val cost: Cost?
-) : ChargepointListItem() {
+) : ChargepointListItem(), Equatable {
     val maxPower: Double
         get() {
             return chargepoints.map { it.power }.max() ?: 0.0

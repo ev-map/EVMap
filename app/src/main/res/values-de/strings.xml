@@ -36,4 +36,7 @@
     <string name="copyright_summary">©2020 Johan von Forstner</string>
     <string name="other">Sonstiges</string>
     <string name="privacy">Datenschutzerklärung</string>
+    <string name="fav_add">Zu Favoriten hinzufügen</string>
+    <string name="fav_remove">Aus Favoriten entfernen</string>
+    <string name="distance_format">%.1f km</string>
 </resources>

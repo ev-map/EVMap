@@ -13,6 +13,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import net.vonforst.evmap.api.goingelectric.ChargeLocation
+import net.vonforst.evmap.storage.PreferenceDataSource
 
 const val REQUEST_LOCATION_PERMISSION = 1
 
@@ -26,6 +27,7 @@ class MapsActivity : AppCompatActivity() {
     private lateinit var navController: NavController
     lateinit var appBarConfiguration: AppBarConfiguration
     var fragmentCallback: FragmentCallback? = null
+    private lateinit var prefs: PreferenceDataSource
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +44,8 @@ class MapsActivity : AppCompatActivity() {
             findViewById<DrawerLayout>(R.id.drawer_layout)
         )
         findViewById<NavigationView>(R.id.nav_view).setupWithNavController(navController)
+
+        prefs = PreferenceDataSource(this)
     }
 
     override fun onBackPressed() {
@@ -56,11 +60,11 @@ class MapsActivity : AppCompatActivity() {
         // google maps navigation
         intent.data = Uri.parse("google.navigation:q=${coord.lat},${coord.lng}")
         val pm = packageManager
-        if (intent.resolveActivity(pm) != null) {
+        if (intent.resolveActivity(pm) != null && prefs.navigateUseMaps) {
             startActivity(intent);
         } else {
             // fallback: generic geo intent
-            intent.data = Uri.parse("geo:${coord.lat},${coord.lng}")
+            intent.data = Uri.parse("geo:0,0?q=${coord.lat},${coord.lng}(${charger.name})")
             if (intent.resolveActivity(pm) != null) {
                 startActivity(intent);
             } else {

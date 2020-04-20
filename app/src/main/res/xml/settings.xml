@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/settings">
+
+        <CheckBoxPreference
+            android:key="navigate_use_maps"
+            android:title="@string/pref_navigate_use_maps"
+            android:summaryOn="@string/pref_navigate_use_maps_on"
+            android:summaryOff="@string/pref_navigate_use_maps_off"
+            android:defaultValue="true" />
+
+
+    </PreferenceCategory>
+</PreferenceScreen>

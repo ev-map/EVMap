@@ -24,6 +24,11 @@
         android:label="@string/about"
         tools:layout="@layout/fragment_preference" />
     <fragment
+        android:id="@+id/settings"
+        android:name="net.vonforst.evmap.fragment.SettingsFragment"
+        android:label="@string/settings"
+        tools:layout="@layout/fragment_preference" />
+    <fragment
         android:id="@+id/gallery"
         android:name="net.vonforst.evmap.fragment.GalleryFragment"
         android:label="GalleryFragment"

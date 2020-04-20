@@ -14,6 +14,9 @@ import net.vonforst.evmap.adapter.Equatable
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalTime
+import java.util.*
+import kotlin.math.abs
+import kotlin.math.floor
 
 @JsonClass(generateAdapter = true)
 data class ChargepointList(
@@ -159,7 +162,28 @@ data class ChargeLocationCluster(
 ) : ChargepointListItem()
 
 @JsonClass(generateAdapter = true)
-data class Coordinate(val lat: Double, val lng: Double)
+data class Coordinate(val lat: Double, val lng: Double) {
+    fun formatDMS(): String {
+        return "${dms(lat, false)}, ${dms(lng, true)}"
+    }
+
+    private fun dms(value: Double, lon: Boolean): String {
+        val hemisphere = if (lon) {
+            if (value >= 0) "E" else "W"
+        } else {
+            if (value >= 0) "N" else "S"
+        }
+        val d = abs(value)
+        val degrees = floor(d).toInt()
+        val minutes = floor((d - degrees) * 60).toInt()
+        val seconds = ((d - degrees) * 60 - minutes) * 60
+        return "%d°%02d'%02.1f\"%s".format(Locale.ENGLISH, degrees, minutes, seconds, hemisphere)
+    }
+
+    fun formatDecimal(): String {
+        return "%.6f, %.6f".format(Locale.ENGLISH, lat, lng)
+    }
+}
 
 @JsonClass(generateAdapter = true)
 data class Address(

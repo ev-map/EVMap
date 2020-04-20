@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <import type="android.text.util.Linkify" />
 
         <variable
             name="item"
@@ -54,7 +55,7 @@
             android:layout_marginBottom="14dp"
             android:text="@{item.detailText}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-            android:autoLink="phone|web"
+            android:autoLink="@{item.links ? Linkify.WEB_URLS | Linkify.PHONE_NUMBERS : 0}"
             app:goneUnless="@{item.detailText != null}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

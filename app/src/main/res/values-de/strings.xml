@@ -39,8 +39,8 @@
     <string name="fav_add">Zu Favoriten hinzufügen</string>
     <string name="fav_remove">Aus Favoriten entfernen</string>
     <string name="distance_format">%.1f km</string>
-    <string name="pref_navigate_use_maps">Mit Google Maps navigieren</string>
-    <string name="pref_navigate_use_maps_on">Google Maps-Navigation sofort starten</string>
-    <string name="pref_navigate_use_maps_off">Karten-App mit Position der Ladesäule starten</string>
+    <string name="pref_navigate_use_maps">Navigation sofort starten</string>
+    <string name="pref_navigate_use_maps_on">Navigationsbutton startet Navigation direkt</string>
+    <string name="pref_navigate_use_maps_off">Navigationsbutton startet Karten-App mit Position der Ladesäule</string>
     <string name="coordinates">Koordinaten</string>
 </resources>

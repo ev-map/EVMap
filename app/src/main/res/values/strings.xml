@@ -38,8 +38,8 @@
     <string name="fav_add">Add to favorites</string>
     <string name="fav_remove">Remove from favorites</string>
     <string name="distance_format">%.1f km</string>
-    <string name="pref_navigate_use_maps">Navigate using Google Maps</string>
-    <string name="pref_navigate_use_maps_on">Start Google Maps navigation immediately</string>
-    <string name="pref_navigate_use_maps_off">Launch Maps app with charger location</string>
+    <string name="pref_navigate_use_maps">Start navigation immediately</string>
+    <string name="pref_navigate_use_maps_on">Navigation button starts navigation immediately</string>
+    <string name="pref_navigate_use_maps_off">Navigation button launches maps app with charger location</string>
     <string name="coordinates">Coordinates</string>
 </resources>

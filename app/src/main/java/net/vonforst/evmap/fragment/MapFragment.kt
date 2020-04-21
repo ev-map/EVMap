@@ -3,11 +3,13 @@ package net.vonforst.evmap.fragment
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.*
+import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
 import androidx.core.view.updateLayoutParams
 import androidx.databinding.DataBindingUtil
@@ -173,6 +175,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 .build(requireContext())
                 .addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
             startActivityForResult(intent, REQUEST_AUTOCOMPLETE)
+
+            val imm =
+                requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.toggleSoftInput(0, 0)
         }
         binding.detailAppBar.toolbar.setNavigationOnClickListener {
             bottomSheetBehavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED

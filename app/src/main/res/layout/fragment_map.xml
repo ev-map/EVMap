@@ -74,7 +74,7 @@
         <FrameLayout
             android:id="@+id/gallery_container"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/gallery_height"
+            android:layout_height="@dimen/gallery_height_with_margin"
             android:background="?android:colorBackground"
             android:fitsSystemWindows="true"
             app:layout_behavior="@string/BackDropBottomSheetBehavior">
@@ -82,7 +82,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/gallery"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/gallery_height"
+                android:layout_height="match_parent"
                 app:data="@{vm.charger.data.photos}" />
 
             <ImageView

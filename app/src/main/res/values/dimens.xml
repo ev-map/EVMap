@@ -2,4 +2,5 @@
 <resources>
     <dimen name="peek_height">72dp</dimen>
     <dimen name="gallery_height">200dp</dimen>
+    <dimen name="gallery_height_with_margin">208dp</dimen>
 </resources>

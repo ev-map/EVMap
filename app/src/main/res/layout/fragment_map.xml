@@ -72,6 +72,7 @@
         </FrameLayout>
 
         <FrameLayout
+            android:id="@+id/gallery_container"
             android:layout_width="match_parent"
             android:layout_height="@dimen/gallery_height"
             android:background="?android:colorBackground"

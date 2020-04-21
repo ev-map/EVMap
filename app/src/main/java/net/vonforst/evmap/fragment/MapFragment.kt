@@ -99,9 +99,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         setHasOptionsMenu(true)
         postponeEnterTransition()
 
-        binding.toolbarContainer.viewTreeObserver.addOnGlobalLayoutListener {
-
-        }
         binding.root.setOnApplyWindowInsetsListener { v, insets ->
             binding.detailAppBar.toolbar.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 topMargin = insets.systemWindowInsetTop

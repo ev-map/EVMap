@@ -68,14 +68,23 @@
             android:layout_height="wrap_content"
             android:background="@drawable/rounded_rect"
             android:padding="2dp"
-            android:text="@{String.format(&quot;%d/%d&quot;, item.available, item.total)}"
+            android:text="@{String.format(&quot;%d/%d&quot;, item.available.data, item.total)}"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textColor="@android:color/white"
-            app:backgroundTintAvailability="@{item.available}"
-            app:goneUnless="@{item.available != null}"
+            app:backgroundTintAvailability="@{item.available.data}"
+            app:goneUnless="@{item.available.status == Status.SUCCESS}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             tools:backgroundTint="@color/available"
             tools:text="80/99" />
+
+        <ProgressBar
+            android:id="@+id/progressBar4"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            app:goneUnless="@{item.available.status == Status.LOADING}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -125,5 +125,11 @@ fun buildDetails(loc: ChargeLocation?, ctx: Context): List<DetailAdapter.Detail>
 
 class FavoritesAdapter(val vm: FavoritesViewModel) :
     DataBindingAdapter<FavoritesViewModel.FavoritesListItem>() {
+    init {
+        setHasStableIds(true)
+    }
+
     override fun getItemViewType(position: Int): Int = R.layout.item_favorite
+
+    override fun getItemId(position: Int): Long = getItem(position).charger.id
 }

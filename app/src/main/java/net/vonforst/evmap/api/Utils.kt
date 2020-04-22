@@ -38,6 +38,10 @@ suspend fun Call.await(): Response {
 
 const val earthRadiusKm: Double = 6372.8
 
+/**
+ * Calculates the distance between two points on Earth in meters.
+ * Latitude and longitude should be given in degrees.
+ */
 fun distanceBetween(
     startLatitude: Double, startLongitude: Double,
     endLatitude: Double, endLongitude: Double

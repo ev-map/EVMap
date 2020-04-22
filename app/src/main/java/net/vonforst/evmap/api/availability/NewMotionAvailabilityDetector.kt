@@ -129,7 +129,9 @@ class NewMotionAvailabilityDetector(client: OkHttpClient, baseUrl: String? = nul
             val id = connector.uid
             val power = connector.electricalProperties.getPower()
             val type = when (connector.connectorType) {
+                "Type3" -> Chargepoint.TYPE_3
                 "Type2" -> Chargepoint.TYPE_2
+                "Type1" -> Chargepoint.TYPE_1
                 "Domestic" -> Chargepoint.SCHUKO
                 "Type2Combo" -> Chargepoint.CCS
                 "TepcoCHAdeMO" -> Chargepoint.CHADEMO

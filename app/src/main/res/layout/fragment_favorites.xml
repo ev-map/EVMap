@@ -33,6 +33,6 @@
             android:id="@+id/favs_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:data="@{vm.favorites}" />
+            app:data="@{vm.listData}" />
     </LinearLayout>
 </layout>

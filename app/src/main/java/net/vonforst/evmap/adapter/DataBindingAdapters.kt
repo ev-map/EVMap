@@ -123,11 +123,7 @@ fun buildDetails(loc: ChargeLocation?, ctx: Context): List<DetailAdapter.Detail>
 }
 
 
-class FavoritesAdapter(val vm: FavoritesViewModel) : DataBindingAdapter<ChargeLocation>() {
+class FavoritesAdapter(val vm: FavoritesViewModel) :
+    DataBindingAdapter<FavoritesViewModel.FavoritesListItem>() {
     override fun getItemViewType(position: Int): Int = R.layout.item_favorite
-
-    override fun bind(holder: ViewHolder<ChargeLocation>, item: ChargeLocation) {
-        holder.binding.setVariable(BR.vm, vm)
-        super.bind(holder, item)
-    }
 }

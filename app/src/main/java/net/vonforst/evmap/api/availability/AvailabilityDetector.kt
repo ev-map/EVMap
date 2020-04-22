@@ -1,11 +1,15 @@
 package net.vonforst.evmap.api.availability
 
 import com.facebook.stetho.okhttp3.StethoInterceptor
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import net.vonforst.evmap.api.await
 import net.vonforst.evmap.api.goingelectric.ChargeLocation
 import net.vonforst.evmap.api.goingelectric.Chargepoint
+import net.vonforst.evmap.viewmodel.Resource
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import retrofit2.HttpException
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
@@ -105,3 +109,25 @@ val availabilityDetectors = listOf(
         "6336fe713f2eb7fa04b97ff6651b76f8"
     )  // SW Kiel*/
 )
+
+suspend fun getAvailability(charger: ChargeLocation): Resource<ChargeLocationStatus> {
+    var value: Resource<ChargeLocationStatus>? = null
+    withContext(Dispatchers.IO) {
+        for (ad in availabilityDetectors) {
+            try {
+                value = Resource.success(ad.getAvailability(charger))
+                break
+            } catch (e: IOException) {
+                value = Resource.error(e.message, null)
+                e.printStackTrace()
+            } catch (e: HttpException) {
+                value = Resource.error(e.message, null)
+                e.printStackTrace()
+            } catch (e: AvailabilityDetectorException) {
+                value = Resource.error(e.message, null)
+                e.printStackTrace()
+            }
+        }
+    }
+    return value ?: Resource.error(null, null)
+}

@@ -3,12 +3,9 @@ package net.vonforst.evmap.viewmodel
 import android.app.Application
 import androidx.lifecycle.*
 import com.google.android.gms.maps.model.LatLngBounds
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import net.vonforst.evmap.api.availability.AvailabilityDetectorException
 import net.vonforst.evmap.api.availability.ChargeLocationStatus
-import net.vonforst.evmap.api.availability.availabilityDetectors
+import net.vonforst.evmap.api.availability.getAvailability
 import net.vonforst.evmap.api.goingelectric.ChargeLocation
 import net.vonforst.evmap.api.goingelectric.ChargepointList
 import net.vonforst.evmap.api.goingelectric.ChargepointListItem
@@ -16,9 +13,7 @@ import net.vonforst.evmap.api.goingelectric.GoingElectricApi
 import net.vonforst.evmap.storage.AppDatabase
 import retrofit2.Call
 import retrofit2.Callback
-import retrofit2.HttpException
 import retrofit2.Response
-import java.io.IOException
 
 data class MapPosition(val bounds: LatLngBounds, val zoom: Float)
 
@@ -133,25 +128,7 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
 
     private suspend fun loadAvailability(charger: ChargeLocation) {
         availability.value = Resource.loading(null)
-        var value: Resource<ChargeLocationStatus>? = null
-        withContext(Dispatchers.IO) {
-            for (ad in availabilityDetectors) {
-                try {
-                    value = Resource.success(ad.getAvailability(charger))
-                    break
-                } catch (e: IOException) {
-                    value = Resource.error(e.message, null)
-                    e.printStackTrace()
-                } catch (e: HttpException) {
-                    value = Resource.error(e.message, null)
-                    e.printStackTrace()
-                } catch (e: AvailabilityDetectorException) {
-                    value = Resource.error(e.message, null)
-                    e.printStackTrace()
-                }
-            }
-        }
-        availability.value = value
+        availability.value = getAvailability(charger)
     }
 
     private fun loadChargerDetails(charger: ChargeLocation) {

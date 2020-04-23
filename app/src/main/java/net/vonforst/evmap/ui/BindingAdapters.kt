@@ -64,6 +64,7 @@ fun getConnectorItem(view: ImageView, type: String) {
             Chargepoint.TYPE_2 -> R.drawable.ic_connector_typ2
             Chargepoint.CEE_BLAU -> R.drawable.ic_connector_cee_blau
             Chargepoint.CEE_ROT -> R.drawable.ic_connector_cee_rot
+            Chargepoint.TYPE_1 -> R.drawable.ic_connector_typ1
             // TODO: add other connectors
             else -> 0
         }

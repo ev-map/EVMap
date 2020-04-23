@@ -2,6 +2,7 @@ package net.vonforst.evmap.fragment
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -86,8 +87,10 @@ class FavoritesFragment : Fragment() {
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         ) {
-            fusedLocationClient.lastLocation.addOnSuccessListener { location ->
-                vm.location.value = LatLng(location.latitude, location.longitude)
+            fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+                if (location != null) {
+                    vm.location.value = LatLng(location.latitude, location.longitude)
+                }
             }
         }
     }

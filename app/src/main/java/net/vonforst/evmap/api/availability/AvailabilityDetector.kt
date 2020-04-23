@@ -76,8 +76,26 @@ abstract class BaseAvailabilityDetector(private val client: OkHttpClient) : Avai
                         val chargepoint =
                             chargepoints.find { it.type == type && it.power == gePower }!!
                         val ids = connsOfType.filter { it.value.first == power }.keys
+                        if (chargepoint.count != ids.size) {
+                            throw AvailabilityDetectorException("chargepoints do not match")
+                        }
                         chargepoint to ids
                     }
+                } else if (powers.size == 1 && gePowers.size == 2
+                    && chargepoints.sumBy { it.count } == connsOfType.size
+                ) {
+                    // special case: dual charger(s) with load balancing
+                    // GoingElectric shows 2 different powers, NewMotion just one
+                    val allIds = connsOfType.keys.toList()
+                    var i = 0
+                    gePowers.map { gePower ->
+                        val chargepoint =
+                            chargepoints.find { it.type == type && it.power == gePower }!!
+                        val ids = allIds.subList(i, i + chargepoint.count).toSet()
+                        i += chargepoint.count
+                        chargepoint to ids
+                    }
+                    // TODO: this will not necessarily first fill up the higher-power chargepoint
                 } else {
                     throw AvailabilityDetectorException("chargepoints do not match")
                 }

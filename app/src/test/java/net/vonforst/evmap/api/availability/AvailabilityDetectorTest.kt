@@ -95,9 +95,32 @@ class AvailabilityDetectorTest {
 
         // both have 27 kW power in NewMotion
         assertEquals(
-            mapOf(chargepoints[0] to setOf(0L), chargepoints[1] to setOf(1L)),
+            mapOf(chargepoints[1] to setOf(0L), chargepoints[0] to setOf(1L)),
             BaseAvailabilityDetector.matchChargepoints(
                 mapOf(0L to (27.0 to "Typ2"), 1L to (27.0 to "Typ2")),
+                chargepoints
+            )
+        )
+    }
+
+    @Test
+    fun testMatchChargepointsDifferentPower2() {
+        // two chargers with 1 22kW and 1 11kW chargepoint (common when load balancing is applied)
+        val chargepoints = listOf(
+            Chargepoint("Typ2", 22.0, 2),
+            Chargepoint("Typ2", 11.0, 2)
+        )
+
+        // both have 27 kW power in NewMotion
+        assertEquals(
+            mapOf(chargepoints[1] to setOf(0L, 1L), chargepoints[0] to setOf(2L, 3L)),
+            BaseAvailabilityDetector.matchChargepoints(
+                mapOf(
+                    0L to (27.0 to "Typ2"),
+                    1L to (27.0 to "Typ2"),
+                    2L to (27.0 to "Typ2"),
+                    3L to (27.0 to "Typ2")
+                ),
                 chargepoints
             )
         )

@@ -1,7 +1,7 @@
 EVMap [![Build Status](https://travis-ci.org/johan12345/EVMap.svg?branch=master)](https://travis-ci.org/johan12345/EVMap)
 =====
 
-<img src="https://raw.githubusercontent.com/johan12345/EVMap/master/_img/appicon_cropped.svg?sanitize=true" width=150 alt="Logo"/>
+<img src="https://raw.githubusercontent.com/johan12345/EVMap/master/_img/appicon_cropped.svg?sanitize=true" width=80 alt="Logo"/>
 
 Android app to access the goingelectric.de electric vehicle charging station directory.
 
@@ -22,8 +22,7 @@ Features
 Screenshots
 -----------
 
-<img src="https://raw.githubusercontent.com/johan12345/EVMap/master/_img/screenshots/phone/01_main.png" width=250 alt="Screenshot 1"/>
-<img src="https://raw.githubusercontent.com/johan12345/EVMap/master/_img/screenshots/phone/02_detail.png" width=250 alt="Screenshot 2"/>
+<img src="https://raw.githubusercontent.com/johan12345/EVMap/master/_img/screenshots/phone/01_main.png" width=250 alt="Screenshot 1"/><img src="https://raw.githubusercontent.com/johan12345/EVMap/master/_img/screenshots/phone/02_detail.png" width=250 alt="Screenshot 2"/>
 
 Development setup
 -----------------

@@ -43,4 +43,5 @@
     <string name="pref_navigate_use_maps_on">Navigationsbutton startet Navigation direkt</string>
     <string name="pref_navigate_use_maps_off">Navigationsbutton startet Karten-App mit Position der Ladesäule</string>
     <string name="coordinates">Koordinaten</string>
+    <string name="share">Teilen</string>
 </resources>

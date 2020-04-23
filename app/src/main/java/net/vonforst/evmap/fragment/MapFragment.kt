@@ -186,6 +186,13 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                     toggleFavorite()
                     true
                 }
+                R.id.menu_share -> {
+                    val charger = vm.charger.value?.data
+                    if (charger != null) {
+                        (activity as? MapsActivity)?.shareUrl("https:${charger.url}")
+                    }
+                    true
+                }
                 else -> false
             }
         }

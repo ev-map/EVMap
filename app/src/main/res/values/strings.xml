@@ -42,4 +42,5 @@
     <string name="pref_navigate_use_maps_on">Navigation button starts navigation immediately</string>
     <string name="pref_navigate_use_maps_off">Navigation button launches maps app with charger location</string>
     <string name="coordinates">Coordinates</string>
+    <string name="share">Share</string>
 </resources>

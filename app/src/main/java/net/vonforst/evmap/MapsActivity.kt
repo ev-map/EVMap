@@ -82,4 +82,12 @@ class MapsActivity : AppCompatActivity() {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
         startActivity(intent)
     }
+
+    fun shareUrl(url: String) {
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            setType("text/plain")
+            putExtra(Intent.EXTRA_TEXT, url)
+        }
+        startActivity(intent)
+    }
 }

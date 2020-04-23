@@ -99,6 +99,16 @@ class NewMotionAvailabilityDetector(client: OkHttpClient, baseUrl: String? = nul
             distanceBetween(marker.coordinates.latitude, marker.coordinates.longitude, lat, lng)
         } ?: throw AvailabilityDetectorException("no candidates found.")
 
+        if (distanceBetween(
+                nearest.coordinates.latitude,
+                nearest.coordinates.longitude,
+                lat,
+                lng
+            ) > radius
+        ) {
+            throw AvailabilityDetectorException("no candidates found")
+        }
+
         // combine related stations
         markers = markers.filter { marker ->
             distanceBetween(

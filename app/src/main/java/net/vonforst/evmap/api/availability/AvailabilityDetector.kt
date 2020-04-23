@@ -18,6 +18,8 @@ interface AvailabilityDetector {
 }
 
 abstract class BaseAvailabilityDetector(private val client: OkHttpClient) : AvailabilityDetector {
+    protected val radius = 150  // max radius in meters
+
     protected suspend fun httpGet(url: String): String {
         val request = Request.Builder().url(url).build()
         val response = client.newCall(request).await()

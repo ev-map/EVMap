@@ -8,8 +8,6 @@ import okhttp3.OkHttpClient
 import org.json.JSONObject
 import java.io.IOException
 
-private const val radius = 200  // max radius in meters
-
 class ChargecloudAvailabilityDetector(
     client: OkHttpClient,
     private val operatorId: String

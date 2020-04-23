@@ -1,8 +1,7 @@
-package net.vonforst.evmap
+package net.vonforst.evmap.api.availability
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
-import net.vonforst.evmap.api.availability.NewMotionAvailabilityDetector
 import net.vonforst.evmap.api.goingelectric.ChargeLocation
 import net.vonforst.evmap.api.goingelectric.GoingElectricApi
 import okhttp3.OkHttpClient

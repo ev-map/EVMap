@@ -1,0 +1,19 @@
+<svg id="Ebene_5" data-name="Ebene 5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <defs>
+        <style>
+            .cls-1,.cls-2,.cls-3{fill:none;}.cls-2,.cls-3{stroke:#000;stroke-miterlimit:10;}.cls-2{stroke-width:2px;}.cls-3{stroke-width:0.5px;}
+        </style>
+    </defs>
+    <title>connector_typ1</title>
+    <path class="cls-1" d="M12,12H36V36H12Z" />
+    <circle cx="15.79" cy="8.26" r="1.89" />
+    <circle cx="16.74" cy="14" r="1.18" />
+    <circle cx="7.26" cy="14" r="1.18" />
+    <circle cx="8.21" cy="8.26" r="1.89" />
+    <circle cx="12" cy="17.74" r="1.89" />
+    <circle class="cls-2" cx="12" cy="12.05" r="9" />
+    <rect x="10.58" y="21.05" width="2.84" height="1.89" />
+    <line class="cls-3" x1="10.5" y1="1" x2="13.5" y2="1" />
+    <polygon points="13.5 0.4 13.5 2.5 15.5 3.5 14.5 0.5 13.5 0.4" />
+    <polygon points="10.5 0.4 10.5 2.5 8.5 3.5 9.5 0.5 10.5 0.4" />
+</svg>

@@ -145,6 +145,7 @@ class NewMotionAvailabilityDetector(client: OkHttpClient, baseUrl: String? = nul
                 "Domestic" -> Chargepoint.SCHUKO
                 "Type2Combo" -> Chargepoint.CCS
                 "TepcoCHAdeMO" -> Chargepoint.CHADEMO
+                "Unspecified" -> "unspecified"
                 else -> throw IllegalArgumentException("unrecognized type ${connector.connectorType}")
             }
             val status = when (statusStr) {

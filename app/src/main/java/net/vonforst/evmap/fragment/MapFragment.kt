@@ -10,6 +10,7 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.InputMethodManager
+import androidx.core.app.SharedElementCallback
 import androidx.core.content.ContextCompat
 import androidx.core.view.updateLayoutParams
 import androidx.databinding.DataBindingUtil
@@ -24,6 +25,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.transition.TransitionInflater
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -105,6 +107,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             }
             insets
         }
+
+        setExitSharedElementCallback(exitElementCallback)
+        exitTransition = TransitionInflater.from(requireContext())
+            .inflateTransition(R.transition.map_exit_transition)
 
         return binding.root
     }
@@ -494,5 +500,21 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
     override fun getRootView(): View {
         return root
+    }
+
+    private val exitElementCallback: SharedElementCallback = object : SharedElementCallback() {
+        override fun onMapSharedElements(
+            names: MutableList<String>,
+            sharedElements: MutableMap<String, View>
+        ) {
+            // Locate the ViewHolder for the clicked position.
+            val position = galleryVm.galleryPosition.value ?: return
+
+            val vh = binding.gallery.findViewHolderForAdapterPosition(position)
+            if (vh?.itemView == null) return
+
+            // Map the first shared element name to the child ImageView.
+            sharedElements[names[0]] = vh.itemView
+        }
     }
 }

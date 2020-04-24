@@ -14,7 +14,6 @@ import com.ortiz.touchview.TouchImageView
 import net.vonforst.evmap.MapsActivity
 import net.vonforst.evmap.R
 import net.vonforst.evmap.adapter.GalleryAdapter
-import net.vonforst.evmap.adapter.galleryTransitionName
 import net.vonforst.evmap.api.goingelectric.ChargerPhoto
 import net.vonforst.evmap.databinding.FragmentGalleryBinding
 import net.vonforst.evmap.viewmodel.GalleryViewModel
@@ -103,15 +102,7 @@ class GalleryFragment : Fragment(), MapsActivity.FragmentCallback {
         ) {
             if (isReturning) {
                 val currentPage = currentPage ?: return
-                val index = binding.gallery.currentItem
-
-                if (startingPosition != currentPosition) {
-                    names.clear()
-                    names.add(galleryTransitionName(index))
-
-                    sharedElements.clear()
-                    sharedElements[galleryTransitionName(index)] = currentPage
-                }
+                sharedElements[names[0]] = currentPage
             }
         }
     }

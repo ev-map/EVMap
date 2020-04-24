@@ -83,7 +83,7 @@
                 android:id="@+id/connectors"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:data="@{DataBindingAdaptersKt.chargepointWithAvailability(charger.data.chargepoints, availability.data.status)}"
+                app:data="@{DataBindingAdaptersKt.chargepointWithAvailability(charger.data.chargepointsMerged, availability.data.status)}"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/textView7"

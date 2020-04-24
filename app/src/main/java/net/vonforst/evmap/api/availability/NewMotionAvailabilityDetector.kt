@@ -159,7 +159,7 @@ class NewMotionAvailabilityDetector(client: OkHttpClient, baseUrl: String? = nul
             nmStatus.put(id, status)
         }
 
-        val match = matchChargepoints(nmConnectors, location.chargepoints)
+        val match = matchChargepoints(nmConnectors, location.chargepointsMerged)
         val chargepointStatus = match.mapValues { entry ->
             entry.value.map { nmStatus[it]!! }
         }

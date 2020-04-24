@@ -53,8 +53,25 @@ data class ChargeLocation(
             return chargepoints.map { it.power }.max() ?: 0.0
         }
 
+    /**
+     * Merges chargepoints if they have the same plug and power
+     *
+     * This occurs e.g. for Type2 sockets and plugs, which are distinct on the GE website, but not
+     * separable in the API
+     */
+    val chargepointsMerged: List<Chargepoint>
+        get() {
+            val variants = chargepoints.distinctBy { it.power to it.type }
+            return variants.map { variant ->
+                val count = chargepoints
+                    .filter { it.type == variant.type && it.power == variant.power }
+                    .sumBy { it.count }
+                Chargepoint(variant.type, variant.power, count)
+            }
+        }
+
     fun formatChargepoints(): String {
-        return chargepoints.map {
+        return chargepointsMerged.map {
             "${it.count} × ${it.type} ${it.formatPower()}"
         }.joinToString(" · ")
     }

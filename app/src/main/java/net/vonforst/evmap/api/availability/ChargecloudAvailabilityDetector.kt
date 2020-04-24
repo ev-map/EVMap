@@ -42,7 +42,7 @@ class ChargecloudAvailabilityDetector(
                 if (chargepoint == null) {
                     // find corresponding chargepoint from goingelectric to get correct power
                     val geChargepoint =
-                        getCorrespondingChargepoint(location.chargepoints, type, power)
+                        getCorrespondingChargepoint(location.chargepointsMerged, type, power)
                             ?: throw AvailabilityDetectorException(
                                 "Chargepoints from chargecloud API and goingelectric do not match."
                             )
@@ -70,7 +70,7 @@ class ChargecloudAvailabilityDetector(
 
 
 
-        if (chargepointStatus.keys == location.chargepoints.toSet()) {
+        if (chargepointStatus.keys == location.chargepointsMerged.toSet()) {
             return ChargeLocationStatus(
                 chargepointStatus,
                 "chargecloud.de"

@@ -13,7 +13,10 @@ import net.vonforst.evmap.R
 import net.vonforst.evmap.api.availability.ChargepointStatus
 import net.vonforst.evmap.api.goingelectric.ChargeLocation
 import net.vonforst.evmap.api.goingelectric.Chargepoint
+import net.vonforst.evmap.viewmodel.BooleanFilter
 import net.vonforst.evmap.viewmodel.FavoritesViewModel
+import net.vonforst.evmap.viewmodel.Filter
+import net.vonforst.evmap.viewmodel.MultipleChoiceFilter
 
 interface Equatable {
     override fun equals(other: Any?): Boolean;
@@ -132,4 +135,29 @@ class FavoritesAdapter(val vm: FavoritesViewModel) :
     override fun getItemViewType(position: Int): Int = R.layout.item_favorite
 
     override fun getItemId(position: Int): Long = getItem(position).charger.id
+}
+
+class FiltersAdapter : DataBindingAdapter<Filter>() {
+    init {
+        setHasStableIds(true)
+    }
+
+    val itemids = mutableMapOf<String, Long>()
+    var maxId = 0L
+
+    override fun getItemViewType(position: Int): Int = when (getItem(position)) {
+        is BooleanFilter -> R.layout.item_filter_boolean
+        is MultipleChoiceFilter -> R.layout.item_filter_boolean
+    }
+
+    override fun getItemId(position: Int): Long {
+        val key = getItem(position).key
+        var value = itemids[key]
+        if (value == null) {
+            maxId++
+            value = maxId
+            itemids[key] = maxId
+        }
+        return value
+    }
 }

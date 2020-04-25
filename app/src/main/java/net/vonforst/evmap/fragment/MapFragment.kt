@@ -36,7 +36,6 @@ import com.google.android.gms.maps.model.*
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
-import com.google.android.material.snackbar.Snackbar
 import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike
 import com.mahc.custombottomsheetbehavior.MergedAppBarLayoutBehavior
 import kotlinx.android.synthetic.main.fragment_map.*
@@ -462,12 +461,14 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
+        return when (item.itemId) {
             R.id.menu_filter -> {
-                Snackbar.make(root, R.string.not_implemented, Snackbar.LENGTH_SHORT).show()
-                return true
+                requireView().findNavController().navigate(
+                    R.id.action_map_to_filterFragment
+                )
+                true
             }
-            else -> return super.onOptionsItemSelected(item)
+            else -> super.onOptionsItemSelected(item)
         }
     }
 

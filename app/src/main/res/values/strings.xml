@@ -43,4 +43,5 @@
     <string name="pref_navigate_use_maps_off">Navigation button launches maps app with charger location</string>
     <string name="coordinates">Coordinates</string>
     <string name="share">Share</string>
+    <string name="filter_free">Only free chargers</string>
 </resources>

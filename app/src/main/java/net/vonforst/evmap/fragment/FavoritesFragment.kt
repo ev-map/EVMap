@@ -12,7 +12,6 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -77,10 +76,6 @@ class FavoritesFragment : Fragment() {
                 )
             )
         }
-
-        vm.favorites.observe(viewLifecycleOwner, Observer {
-            print(it.toString())
-        })
 
         if (ContextCompat.checkSelfPermission(
                 requireContext(),

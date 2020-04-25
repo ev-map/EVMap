@@ -10,6 +10,7 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.InputMethodManager
+import androidx.activity.OnBackPressedCallback
 import androidx.core.app.SharedElementCallback
 import androidx.core.content.ContextCompat
 import androidx.core.view.updateLayoutParams
@@ -37,6 +38,8 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike
+import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED
+import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN
 import com.mahc.custombottomsheetbehavior.MergedAppBarLayoutBehavior
 import kotlinx.android.synthetic.main.fragment_map.*
 import net.vonforst.evmap.MapsActivity
@@ -82,6 +85,16 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
     private lateinit var chargerIconGenerator: ChargerIconGenerator
     private lateinit var animator: MarkerAnimator
     private lateinit var favToggle: MenuItem
+    private val backPressedCallback = object : OnBackPressedCallback(false) {
+        override fun handleOnBackPressed() {
+            val state = bottomSheetBehavior.state
+            if (state != STATE_COLLAPSED && state != STATE_HIDDEN) {
+                bottomSheetBehavior.state = STATE_COLLAPSED
+            } else if (state == STATE_COLLAPSED) {
+                vm.chargerSparse.value = null
+            }
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -110,6 +123,11 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         setExitSharedElementCallback(exitElementCallback)
         exitTransition = TransitionInflater.from(requireContext())
             .inflateTransition(R.transition.map_exit_transition)
+
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            backPressedCallback
+        )
 
         return binding.root
     }
@@ -183,7 +201,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             imm.toggleSoftInput(0, 0)
         }
         binding.detailAppBar.toolbar.setNavigationOnClickListener {
-            bottomSheetBehavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED
+            bottomSheetBehavior.state = STATE_COLLAPSED
         }
         binding.detailAppBar.toolbar.setOnMenuItemClickListener {
             when (it.itemId) {
@@ -222,18 +240,19 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 vm.bottomSheetState.value = newState
+                backPressedCallback.isEnabled = newState != STATE_HIDDEN
             }
         })
         vm.chargerSparse.observe(viewLifecycleOwner, Observer {
             if (it != null) {
                 if (vm.bottomSheetState.value != BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT) {
-                    bottomSheetBehavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED
+                    bottomSheetBehavior.state = STATE_COLLAPSED
                 }
                 binding.fabDirections.show()
                 detailAppBarBehavior.setToolbarTitle(it.name)
                 updateFavoriteToggle()
             } else {
-                bottomSheetBehavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN
+                bottomSheetBehavior.state = STATE_HIDDEN
             }
         })
         vm.chargepoints.observe(viewLifecycleOwner, Observer {
@@ -482,20 +501,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 }
             }
             else -> super.onActivityResult(requestCode, resultCode, data)
-        }
-    }
-
-    override fun goBack(): Boolean {
-        return if (bottomSheetBehavior.state != BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED &&
-            bottomSheetBehavior.state != BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN
-        ) {
-            bottomSheetBehavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED
-            true
-        } else if (bottomSheetBehavior.state == BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED) {
-            vm.chargerSparse.value = null
-            true
-        } else {
-            false
         }
     }
 

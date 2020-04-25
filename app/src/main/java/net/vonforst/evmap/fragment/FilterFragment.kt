@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
@@ -22,7 +23,7 @@ import net.vonforst.evmap.ui.startCircularReveal
 import net.vonforst.evmap.viewmodel.FilterViewModel
 import net.vonforst.evmap.viewmodel.viewModelFactory
 
-class FilterFragment : DialogFragment(), MapsActivity.FragmentCallback {
+class FilterFragment : DialogFragment() {
     private lateinit var binding: FragmentFilterBinding
     private val vm: FilterViewModel by viewModels(factoryProducer = {
         viewModelFactory {
@@ -49,6 +50,13 @@ class FilterFragment : DialogFragment(), MapsActivity.FragmentCallback {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_filter, container, false)
         binding.lifecycleOwner = this
         binding.vm = vm
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object :
+            OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                exitAfterTransition()
+            }
+        })
 
         return binding.root
     }
@@ -90,20 +98,5 @@ class FilterFragment : DialogFragment(), MapsActivity.FragmentCallback {
         view?.exitCircularReveal {
             findNavController().popBackStack()
         }
-    }
-
-    override fun getRootView(): View {
-        return binding.root
-    }
-
-    override fun goBack(): Boolean {
-        exitAfterTransition()
-        return true
-    }
-
-    override fun onResume() {
-        super.onResume()
-        val hostActivity = activity as? MapsActivity ?: return
-        hostActivity.fragmentCallback = this
     }
 }

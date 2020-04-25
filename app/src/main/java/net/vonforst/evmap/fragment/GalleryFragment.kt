@@ -4,14 +4,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.core.app.SharedElementCallback
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.transition.TransitionInflater
 import androidx.viewpager2.widget.ViewPager2
 import com.ortiz.touchview.TouchImageView
-import net.vonforst.evmap.MapsActivity
 import net.vonforst.evmap.R
 import net.vonforst.evmap.adapter.GalleryAdapter
 import net.vonforst.evmap.api.goingelectric.ChargerPhoto
@@ -19,7 +20,7 @@ import net.vonforst.evmap.databinding.FragmentGalleryBinding
 import net.vonforst.evmap.viewmodel.GalleryViewModel
 
 
-class GalleryFragment : Fragment(), MapsActivity.FragmentCallback {
+class GalleryFragment : Fragment() {
     companion object {
         private const val EXTRA_POSITION = "position"
         private const val EXTRA_PHOTOS = "photos"
@@ -40,6 +41,20 @@ class GalleryFragment : Fragment(), MapsActivity.FragmentCallback {
     private lateinit var galleryAdapter: GalleryAdapter
     private var currentPage: TouchImageView? = null
     private val galleryVm: GalleryViewModel by activityViewModels()
+
+    private val backPressedCallback = object :
+        OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            val image = currentPage
+            if (image != null && image.currentZoom !in 0.95f..1.05f) {
+                image.setZoomAnimated(1f, 0.5f, 0.5f)
+            } else {
+                isReturning = true
+                galleryVm.galleryPosition.value = currentPosition
+                findNavController().popBackStack()
+            }
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -87,6 +102,11 @@ class GalleryFragment : Fragment(), MapsActivity.FragmentCallback {
             postponeEnterTransition();
         }
 
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            backPressedCallback
+        )
+
         return binding.root
     }
 
@@ -105,28 +125,6 @@ class GalleryFragment : Fragment(), MapsActivity.FragmentCallback {
                 sharedElements[names[0]] = currentPage
             }
         }
-    }
-
-    override fun getRootView(): View {
-        return binding.root
-    }
-
-    override fun goBack(): Boolean {
-        val image = currentPage
-        if (image != null && image.currentZoom !in 0.95f..1.05f) {
-            image.setZoomAnimated(1f, 0.5f, 0.5f)
-            return true
-        } else {
-            isReturning = true
-            galleryVm.galleryPosition.value = currentPosition
-            return false
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        val hostActivity = activity as? MapsActivity ?: return
-        hostActivity.fragmentCallback = this
     }
 
 }

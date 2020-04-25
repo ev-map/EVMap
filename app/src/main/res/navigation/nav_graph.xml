@@ -45,7 +45,7 @@
         android:name="net.vonforst.evmap.fragment.FavoritesFragment"
         android:label="@string/menu_favs"
         tools:layout="@layout/fragment_favorites" />
-    <dialog
+    <fragment
         android:id="@+id/filter"
         android:name="net.vonforst.evmap.fragment.FilterFragment"
         android:label="@string/menu_filter"

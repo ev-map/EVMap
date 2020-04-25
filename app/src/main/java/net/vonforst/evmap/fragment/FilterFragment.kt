@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
@@ -23,7 +23,7 @@ import net.vonforst.evmap.ui.startCircularReveal
 import net.vonforst.evmap.viewmodel.FilterViewModel
 import net.vonforst.evmap.viewmodel.viewModelFactory
 
-class FilterFragment : DialogFragment() {
+class FilterFragment : Fragment() {
     private lateinit var binding: FragmentFilterBinding
     private val vm: FilterViewModel by viewModels(factoryProducer = {
         viewModelFactory {
@@ -33,14 +33,6 @@ class FilterFragment : DialogFragment() {
             )
         }
     })
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setStyle(
-            STYLE_NORMAL,
-            R.style.FullScreenDialogStyle
-        );
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -88,7 +80,7 @@ class FilterFragment : DialogFragment() {
         return when (item.itemId) {
             android.R.id.home -> {
                 exitAfterTransition()
-                false
+                true
             }
             else -> super.onOptionsItemSelected(item)
         }

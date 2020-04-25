@@ -33,6 +33,7 @@ fun View.exitCircularReveal(block: () -> Unit) {
         interpolator = DecelerateInterpolator(1f)
         addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator?) {
+                visibility = View.INVISIBLE
                 block()
                 super.onAnimationEnd(animation)
             }

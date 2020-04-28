@@ -51,6 +51,10 @@ class AboutFragment : PreferenceFragmentCompat() {
                     .start(requireActivity())
                 true
             }
+            "donate" -> {
+                findNavController().navigate(R.id.action_about_to_donateFragment)
+                true
+            }
             else -> super.onPreferenceTreeClick(preference)
         }
     }

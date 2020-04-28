@@ -14,8 +14,12 @@
             android:title="@string/copyright"
             android:summary="@string/copyright_summary" />
 
+        <Preference
+            android:key="donate"
+            android:title="@string/donate" />
 
     </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/other">
         <Preference
             android:key="github_link"

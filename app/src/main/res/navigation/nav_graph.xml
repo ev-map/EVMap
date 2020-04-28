@@ -29,7 +29,11 @@
         android:id="@+id/about"
         android:name="net.vonforst.evmap.fragment.AboutFragment"
         android:label="@string/about"
-        tools:layout="@layout/fragment_preference" />
+        tools:layout="@layout/fragment_preference">
+        <action
+            android:id="@+id/action_about_to_donateFragment"
+            app:destination="@id/donate" />
+    </fragment>
     <fragment
         android:id="@+id/settings"
         android:name="net.vonforst.evmap.fragment.SettingsFragment"
@@ -54,4 +58,9 @@
         android:name="net.vonforst.evmap.fragment.FilterFragment"
         android:label="@string/menu_filter"
         tools:layout="@layout/fragment_filter" />
+    <fragment
+        android:id="@+id/donate"
+        android:name="net.vonforst.evmap.fragment.DonateFragment"
+        android:label="@string/donate"
+        tools:layout="@layout/fragment_donate" />
 </navigation>

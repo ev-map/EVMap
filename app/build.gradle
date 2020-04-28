@@ -112,6 +112,11 @@ dependencies {
     kapt "androidx.room:room-compiler:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
 
+    // billing library
+    def billing_version = "2.2.0"
+    implementation "com.android.billingclient:billing:$billing_version"
+    implementation "com.android.billingclient:billing-ktx:$billing_version"
+
     // debug tools
     implementation 'com.facebook.stetho:stetho:1.5.1'
     implementation 'com.facebook.stetho:stetho-okhttp3:1.5.1'

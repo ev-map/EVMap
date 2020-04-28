@@ -7,9 +7,13 @@
 
         <import type="net.vonforst.evmap.viewmodel.BooleanFilter" />
 
+        <import type="net.vonforst.evmap.viewmodel.BooleanFilterValue" />
+
+        <import type="net.vonforst.evmap.viewmodel.FilterWithValue" />
+
         <variable
             name="item"
-            type="BooleanFilter" />
+            type="FilterWithValue&lt;BooleanFilterValue&gt;" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -23,7 +27,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
-            android:text="@{item.name}"
+            android:text="@{item.filter.name}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/switch1"
@@ -38,6 +42,7 @@
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
+            android:checked="@={item.value.value}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

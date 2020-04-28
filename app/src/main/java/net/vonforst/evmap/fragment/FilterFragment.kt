@@ -1,19 +1,19 @@
 package net.vonforst.evmap.fragment
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import kotlinx.coroutines.launch
 import net.vonforst.evmap.MapsActivity
 import net.vonforst.evmap.R
 import net.vonforst.evmap.adapter.FiltersAdapter
@@ -43,6 +43,7 @@ class FilterFragment : Fragment() {
         binding.lifecycleOwner = this
         binding.vm = vm
 
+        setHasOptionsMenu(true)
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object :
             OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -55,6 +56,7 @@ class FilterFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val toolbar = view.findViewById(R.id.toolbar) as Toolbar
+        (requireActivity() as AppCompatActivity).setSupportActionBar(toolbar)
 
         val navController = findNavController()
         toolbar.setupWithNavController(
@@ -74,11 +76,23 @@ class FilterFragment : Fragment() {
         }
 
         view.startCircularReveal()
+
+        toolbar.setNavigationOnClickListener {
+            exitAfterTransition()
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.filter, menu)
+        super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            android.R.id.home -> {
+            R.id.menu_apply -> {
+                lifecycleScope.launch {
+                    vm.saveFilterValues()
+                }
                 exitAfterTransition()
                 true
             }

@@ -28,12 +28,19 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
     val mapPosition: MutableLiveData<MapPosition> by lazy {
         MutableLiveData<MapPosition>()
     }
+    private val filterValues: LiveData<List<FilterValue>> by lazy {
+        db.filterValueDao().getFilterValues()
+    }
     val chargepoints: MediatorLiveData<Resource<List<ChargepointListItem>>> by lazy {
         MediatorLiveData<Resource<List<ChargepointListItem>>>()
             .apply {
                 value = Resource.loading(emptyList())
-                addSource(mapPosition) {
-                    mapPosition.value?.let { pos -> loadChargepoints(pos) }
+                listOf(mapPosition, filterValues).forEach {
+                    addSource(it) {
+                        val pos = mapPosition.value ?: return@addSource
+                        val filterValues = filterValues.value ?: return@addSource
+                        loadChargepoints(pos, filterValues)
+                    }
                 }
             }
     }
@@ -97,16 +104,12 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
         }
     }
 
-    private fun loadChargepoints(mapPosition: MapPosition) {
+    private fun loadChargepoints(mapPosition: MapPosition, filterValues: List<FilterValue>) {
         chargepoints.value = Resource.loading(chargepoints.value?.data)
         val bounds = mapPosition.bounds
         val zoom = mapPosition.zoom
-        api.getChargepoints(
-            bounds.southwest.latitude, bounds.southwest.longitude,
-            bounds.northeast.latitude, bounds.northeast.longitude,
-            clustering = zoom < 13, zoom = zoom,
-            clusterDistance = 70
-        ).enqueue(object : Callback<ChargepointList> {
+        getChargepointsWithFilters(bounds, zoom, filterValues).enqueue(object :
+            Callback<ChargepointList> {
             override fun onFailure(call: Call<ChargepointList>, t: Throwable) {
                 chargepoints.value = Resource.error(t.message, chargepoints.value?.data)
                 t.printStackTrace()
@@ -124,6 +127,26 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
                 }
             }
         })
+    }
+
+    private fun getChargepointsWithFilters(
+        bounds: LatLngBounds,
+        zoom: Float,
+        filterValues: List<FilterValue>
+    ): Call<ChargepointList> {
+        var freecharging = false
+        filterValues.forEach {
+            when (it.key) {
+                "freecharging" -> freecharging = (it as BooleanFilterValue).value
+            }
+        }
+
+        return api.getChargepoints(
+            bounds.southwest.latitude, bounds.southwest.longitude,
+            bounds.northeast.latitude, bounds.northeast.longitude,
+            clustering = zoom < 13, zoom = zoom,
+            clusterDistance = 70, freecharging = freecharging
+        )
     }
 
     private suspend fun loadAvailability(charger: ChargeLocation) {

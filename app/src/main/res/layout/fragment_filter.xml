@@ -33,6 +33,6 @@
             android:id="@+id/filters_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:data="@{vm.filters}" />
+            app:data="@{vm.filtersWithValue}" />
     </LinearLayout>
 </layout>

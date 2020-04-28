@@ -17,6 +17,10 @@ class Converters {
         val type = Types.newParameterizedType(List::class.java, ChargerPhoto::class.java)
         moshi.adapter<List<ChargerPhoto>>(type)
     }
+    private val stringSetAdapter by lazy {
+        val type = Types.newParameterizedType(Set::class.java, String::class.java)
+        moshi.adapter<Set<String>>(type)
+    }
 
     @TypeConverter
     fun fromChargepointList(value: List<Chargepoint>?): String {
@@ -48,5 +52,15 @@ class Converters {
         return value.let {
             LocalTime.parse(it)
         }
+    }
+
+    @TypeConverter
+    fun fromStringSet(value: Set<String>?): String {
+        return stringSetAdapter.toJson(value)
+    }
+
+    @TypeConverter
+    fun toStringSet(value: String): Set<String>? {
+        return stringSetAdapter.fromJson(value)
     }
 }

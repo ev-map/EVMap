@@ -17,7 +17,7 @@ import net.vonforst.evmap.storage.AppDatabase
 
 class FavoritesViewModel(application: Application, geApiKey: String) :
     AndroidViewModel(application) {
-    private var api = GoingElectricApi.create(geApiKey)
+    private var api = GoingElectricApi.create(geApiKey, context = application)
     private var db = AppDatabase.getInstance(application)
 
     val favorites: LiveData<List<ChargeLocation>> by lazy {

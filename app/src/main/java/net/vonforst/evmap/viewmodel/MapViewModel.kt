@@ -19,7 +19,7 @@ import kotlin.reflect.full.cast
 data class MapPosition(val bounds: LatLngBounds, val zoom: Float)
 
 class MapViewModel(application: Application, geApiKey: String) : AndroidViewModel(application) {
-    private var api = GoingElectricApi.create(geApiKey)
+    private var api = GoingElectricApi.create(geApiKey, context = application)
     private var db = AppDatabase.getInstance(application)
 
     val bottomSheetState: MutableLiveData<Int> by lazy {

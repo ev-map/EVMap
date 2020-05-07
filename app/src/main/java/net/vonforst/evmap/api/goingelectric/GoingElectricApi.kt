@@ -1,7 +1,9 @@
 package net.vonforst.evmap.api.goingelectric
 
+import android.content.Context
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.squareup.moshi.Moshi
+import okhttp3.Cache
 import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Retrofit
@@ -26,20 +28,26 @@ interface GoingElectricApi {
     fun getChargepointDetail(@Query("ge_id") id: Long): Call<ChargepointList>
 
     companion object {
+        private val cacheSize = 10L * 1024 * 1024; // 10MB
+
         fun create(
             apikey: String,
-            baseurl: String = "https://api.goingelectric.de"
+            baseurl: String = "https://api.goingelectric.de",
+            context: Context? = null
         ): GoingElectricApi {
-            val client = OkHttpClient.Builder()
-                .addInterceptor { chain ->
+            val client = OkHttpClient.Builder().apply {
+                addInterceptor { chain ->
                     // add API key to every request
                     var original = chain.request()
                     val url = original.url().newBuilder().addQueryParameter("key", apikey).build()
                     original = original.newBuilder().url(url).build()
                     chain.proceed(original)
                 }
-                .addNetworkInterceptor(StethoInterceptor())
-                .build()
+                addNetworkInterceptor(StethoInterceptor())
+                if (context != null) {
+                    cache(Cache(context.getCacheDir(), cacheSize))
+                }
+            }.build()
 
             val moshi = Moshi.Builder()
                 .add(ChargepointListItemJsonAdapterFactory())

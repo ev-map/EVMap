@@ -24,7 +24,7 @@ fun getFilters(application: Application): List<Filter<FilterValue>> {
 
 class FilterViewModel(application: Application, geApiKey: String) :
     AndroidViewModel(application) {
-    private var api = GoingElectricApi.create(geApiKey)
+    private var api = GoingElectricApi.create(geApiKey, context = application)
     private var db = AppDatabase.getInstance(application)
 
     private val filters = getFilters(application)

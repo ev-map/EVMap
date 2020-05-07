@@ -10,12 +10,14 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import net.vonforst.evmap.api.goingelectric.ChargeLocation
 import net.vonforst.evmap.viewmodel.BooleanFilterValue
 import net.vonforst.evmap.viewmodel.MultipleChoiceFilterValue
+import net.vonforst.evmap.viewmodel.SliderFilterValue
 
 @Database(
     entities = [
         ChargeLocation::class,
         BooleanFilterValue::class,
-        MultipleChoiceFilterValue::class
+        MultipleChoiceFilterValue::class,
+        SliderFilterValue::class
     ], version = 2
 )
 @TypeConverters(Converters::class)
@@ -38,8 +40,10 @@ abstract class AppDatabase : RoomDatabase() {
 
         private val MIGRATION_2 = object : Migration(1, 2) {
             override fun migrate(db: SupportSQLiteDatabase) {
+                // SQL for creating tables copied from build/generated/source/kapt/debug/net/vonforst/evmap/storage/AppDatbase_Impl
                 db.execSQL("CREATE TABLE IF NOT EXISTS `BooleanFilterValue` (`key` TEXT NOT NULL, `value` INTEGER NOT NULL, PRIMARY KEY(`key`))")
                 db.execSQL("CREATE TABLE IF NOT EXISTS `MultipleChoiceFilterValue` (`key` TEXT NOT NULL, `values` TEXT NOT NULL, `all` INTEGER NOT NULL, PRIMARY KEY(`key`))")
+                db.execSQL("CREATE TABLE IF NOT EXISTS `SliderFilterValue` (`key` TEXT NOT NULL, `value` INTEGER NOT NULL, PRIMARY KEY(`key`))");
             }
         }
     }

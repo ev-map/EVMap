@@ -44,4 +44,6 @@
     <string name="coordinates">Coordinates</string>
     <string name="share">Share</string>
     <string name="filter_free">Only free chargers</string>
+    <string name="filter_min_power">Minimum power</string>
+    <string name="filter_free_parking">Only chargers with free parking</string>
 </resources>

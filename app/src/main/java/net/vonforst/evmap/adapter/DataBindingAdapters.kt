@@ -3,6 +3,7 @@ package net.vonforst.evmap.adapter
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.SeekBar
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.DiffUtil
@@ -13,6 +14,7 @@ import net.vonforst.evmap.R
 import net.vonforst.evmap.api.availability.ChargepointStatus
 import net.vonforst.evmap.api.goingelectric.ChargeLocation
 import net.vonforst.evmap.api.goingelectric.Chargepoint
+import net.vonforst.evmap.databinding.ItemFilterSliderBinding
 import net.vonforst.evmap.viewmodel.*
 
 interface Equatable {
@@ -145,6 +147,37 @@ class FiltersAdapter : DataBindingAdapter<FilterWithValue<FilterValue>>() {
     override fun getItemViewType(position: Int): Int = when (getItem(position).filter) {
         is BooleanFilter -> R.layout.item_filter_boolean
         is MultipleChoiceFilter -> R.layout.item_filter_boolean
+        is SliderFilter -> R.layout.item_filter_slider
+    }
+
+    override fun bind(
+        holder: ViewHolder<FilterWithValue<FilterValue>>,
+        item: FilterWithValue<FilterValue>
+    ) {
+        super.bind(holder, item)
+        when (item.value) {
+            is SliderFilterValue -> {
+                val binding = holder.binding as ItemFilterSliderBinding
+                binding.progress = item.value.value
+                binding.seekBar.setOnSeekBarChangeListener(object :
+                    SeekBar.OnSeekBarChangeListener {
+                    override fun onProgressChanged(
+                        seekBar: SeekBar,
+                        progress: Int,
+                        fromUser: Boolean
+                    ) {
+                        item.value.value = progress
+                        binding.progress = progress
+                    }
+
+                    override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                    }
+
+                    override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                    }
+                })
+            }
+        }
     }
 
     override fun getItemId(position: Int): Long {

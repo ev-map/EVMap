@@ -14,6 +14,7 @@ import net.vonforst.evmap.storage.AppDatabase
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import kotlin.reflect.full.cast
 
 data class MapPosition(val bounds: LatLngBounds, val zoom: Float)
 
@@ -31,15 +32,33 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
     private val filterValues: LiveData<List<FilterValue>> by lazy {
         db.filterValueDao().getFilterValues()
     }
+    private val filters = getFilters(application)
+
+    private val filtersWithValue: LiveData<List<FilterWithValue<out FilterValue>>> by lazy {
+        MediatorLiveData<List<FilterWithValue<out FilterValue>>>().apply {
+            addSource(filterValues) {
+                val values = filterValues.value
+                if (values != null) {
+                    value = filters.map { filter ->
+                        val value =
+                            values.find { it.key == filter.key } ?: filter.defaultValue()
+                        FilterWithValue(filter, filter.valueClass.cast(value))
+                    }
+                } else {
+                    value = null
+                }
+            }
+        }
+    }
     val chargepoints: MediatorLiveData<Resource<List<ChargepointListItem>>> by lazy {
         MediatorLiveData<Resource<List<ChargepointListItem>>>()
             .apply {
                 value = Resource.loading(emptyList())
-                listOf(mapPosition, filterValues).forEach {
+                listOf(mapPosition, filtersWithValue).forEach {
                     addSource(it) {
                         val pos = mapPosition.value ?: return@addSource
-                        val filterValues = filterValues.value ?: return@addSource
-                        loadChargepoints(pos, filterValues)
+                        val filters = filtersWithValue.value ?: return@addSource
+                        loadChargepoints(pos, filters)
                     }
                 }
             }
@@ -104,11 +123,14 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
         }
     }
 
-    private fun loadChargepoints(mapPosition: MapPosition, filterValues: List<FilterValue>) {
+    private fun loadChargepoints(
+        mapPosition: MapPosition,
+        filters: List<FilterWithValue<out FilterValue>>
+    ) {
         chargepoints.value = Resource.loading(chargepoints.value?.data)
         val bounds = mapPosition.bounds
         val zoom = mapPosition.zoom
-        getChargepointsWithFilters(bounds, zoom, filterValues).enqueue(object :
+        getChargepointsWithFilters(bounds, zoom, filters).enqueue(object :
             Callback<ChargepointList> {
             override fun onFailure(call: Call<ChargepointList>, t: Throwable) {
                 chargepoints.value = Resource.error(t.message, chargepoints.value?.data)
@@ -132,20 +154,21 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
     private fun getChargepointsWithFilters(
         bounds: LatLngBounds,
         zoom: Float,
-        filterValues: List<FilterValue>
+        filters: List<FilterWithValue<out FilterValue>>
     ): Call<ChargepointList> {
-        var freecharging = false
-        filterValues.forEach {
-            when (it.key) {
-                "freecharging" -> freecharging = (it as BooleanFilterValue).value
-            }
-        }
+        val freecharging =
+            (filters.find { it.value.key == "freecharging" }!!.value as BooleanFilterValue).value
+        val freeparking =
+            (filters.find { it.value.key == "freeparking" }!!.value as BooleanFilterValue).value
+        val minPower =
+            (filters.find { it.value.key == "min_power" }!!.value as SliderFilterValue).value
 
         return api.getChargepoints(
             bounds.southwest.latitude, bounds.southwest.longitude,
             bounds.northeast.latitude, bounds.northeast.longitude,
             clustering = zoom < 13, zoom = zoom,
-            clusterDistance = 70, freecharging = freecharging
+            clusterDistance = 70, freecharging = freecharging, minPower = minPower,
+            freeparking = freeparking
         )
     }
 

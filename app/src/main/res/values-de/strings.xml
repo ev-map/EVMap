@@ -45,4 +45,6 @@
     <string name="coordinates">Koordinaten</string>
     <string name="share">Teilen</string>
     <string name="filter_free">Nur kostenlose Ladesäulen</string>
+    <string name="filter_min_power">Minimale Leistung</string>
+    <string name="filter_free_parking">Nur Ladesäulen mit kostenlosem Parkplatz</string>
 </resources>

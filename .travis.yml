@@ -28,4 +28,5 @@ deploy:
   file: app/build/outputs/apk/release/app-release.apk
   on:
     repo: johan12345/EVMap
+    tags: true
   skip_cleanup: 'true'

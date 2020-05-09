@@ -206,11 +206,15 @@ data class Coordinate(val lat: Double, val lng: Double) {
 data class Address(
     val city: String,
     val country: String,
-    val postcode: String,
+    @JsonObjectOrFalse val postcode: String?,
     val street: String
 ) {
     override fun toString(): String {
-        return "$street, $postcode $city"
+        if (postcode != null) {
+            return "$street, $postcode $city"
+        } else {
+            return "$street $city"
+        }
     }
 }
 

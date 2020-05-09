@@ -18,7 +18,7 @@ import net.vonforst.evmap.viewmodel.SliderFilterValue
         BooleanFilterValue::class,
         MultipleChoiceFilterValue::class,
         SliderFilterValue::class
-    ], version = 2
+    ], version = 3
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -29,7 +29,7 @@ abstract class AppDatabase : RoomDatabase() {
         private lateinit var context: Context
         private val database: AppDatabase by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
             Room.databaseBuilder(context, AppDatabase::class.java, "evmap.db")
-                .addMigrations(MIGRATION_2)
+                .addMigrations(MIGRATION_2, MIGRATION_3)
                 .build()
         }
 
@@ -44,6 +44,18 @@ abstract class AppDatabase : RoomDatabase() {
                 db.execSQL("CREATE TABLE IF NOT EXISTS `BooleanFilterValue` (`key` TEXT NOT NULL, `value` INTEGER NOT NULL, PRIMARY KEY(`key`))")
                 db.execSQL("CREATE TABLE IF NOT EXISTS `MultipleChoiceFilterValue` (`key` TEXT NOT NULL, `values` TEXT NOT NULL, `all` INTEGER NOT NULL, PRIMARY KEY(`key`))")
                 db.execSQL("CREATE TABLE IF NOT EXISTS `SliderFilterValue` (`key` TEXT NOT NULL, `value` INTEGER NOT NULL, PRIMARY KEY(`key`))");
+            }
+        }
+
+        private val MIGRATION_3 = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                // recreate ChargeLocation table to make postcode nullable
+                db.beginTransaction()
+                db.execSQL("CREATE TABLE `ChargeLocationNew` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `chargepoints` TEXT NOT NULL, `network` TEXT, `url` TEXT NOT NULL, `verified` INTEGER NOT NULL, `operator` TEXT, `generalInformation` TEXT, `amenities` TEXT, `locationDescription` TEXT, `photos` TEXT, `lat` REAL NOT NULL, `lng` REAL NOT NULL, `city` TEXT NOT NULL, `country` TEXT NOT NULL, `postcode` TEXT, `street` TEXT NOT NULL, `twentyfourSeven` INTEGER, `description` TEXT, `mostart` TEXT, `moend` TEXT, `tustart` TEXT, `tuend` TEXT, `westart` TEXT, `weend` TEXT, `thstart` TEXT, `thend` TEXT, `frstart` TEXT, `frend` TEXT, `sastart` TEXT, `saend` TEXT, `sustart` TEXT, `suend` TEXT, `hostart` TEXT, `hoend` TEXT, `freecharging` INTEGER, `freeparking` INTEGER, `descriptionShort` TEXT, `descriptionLong` TEXT, PRIMARY KEY(`id`))");
+                db.execSQL("INSERT INTO `ChargeLocationNew` SELECT * FROM `ChargeLocation`");
+                db.execSQL("DROP TABLE `ChargeLocation`")
+                db.execSQL("ALTER TABLE `ChargeLocationNew` RENAME TO `ChargeLocation`")
+                db.endTransaction()
             }
         }
     }

@@ -18,7 +18,13 @@ fun getFilters(application: Application): List<Filter<FilterValue>> {
     return listOf(
         BooleanFilter(application.getString(R.string.filter_free), "freecharging"),
         BooleanFilter(application.getString(R.string.filter_free_parking), "freeparking"),
-        SliderFilter(application.getString(R.string.filter_min_power), "min_power", 350)
+        SliderFilter(application.getString(R.string.filter_min_power), "min_power", 350, "kW"),
+        SliderFilter(
+            application.getString(R.string.filter_min_connectors),
+            "min_connectors",
+            10,
+            ""
+        )
     )
 }
 
@@ -81,7 +87,8 @@ data class MultipleChoiceFilter(
 data class SliderFilter(
     override val name: String,
     override val key: String,
-    val max: Int
+    val max: Int,
+    val unit: String
 ) : Filter<SliderFilterValue>() {
     override val valueClass: KClass<SliderFilterValue> = SliderFilterValue::class
     override fun defaultValue() = SliderFilterValue(key, 0)

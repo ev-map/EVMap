@@ -6,6 +6,7 @@ import com.squareup.moshi.Moshi
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
@@ -13,7 +14,7 @@ import retrofit2.http.Query
 
 interface GoingElectricApi {
     @GET("chargepoints/")
-    fun getChargepoints(
+    suspend fun getChargepoints(
         @Query("sw_lat") swlat: Double, @Query("sw_lng") sw_lng: Double,
         @Query("ne_lat") ne_lat: Double, @Query("ne_lng") ne_lng: Double,
         @Query("clustering") clustering: Boolean,
@@ -22,7 +23,7 @@ interface GoingElectricApi {
         @Query("freecharging") freecharging: Boolean,
         @Query("freeparking") freeparking: Boolean,
         @Query("min_power") minPower: Int
-    ): Call<ChargepointList>
+    ): Response<ChargepointList>
 
     @GET("chargepoints/")
     fun getChargepointDetail(@Query("ge_id") id: Long): Call<ChargepointList>

@@ -130,46 +130,49 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
         chargepoints.value = Resource.loading(chargepoints.value?.data)
         val bounds = mapPosition.bounds
         val zoom = mapPosition.zoom
-        getChargepointsWithFilters(bounds, zoom, filters).enqueue(object :
-            Callback<ChargepointList> {
-            override fun onFailure(call: Call<ChargepointList>, t: Throwable) {
-                chargepoints.value = Resource.error(t.message, chargepoints.value?.data)
-                t.printStackTrace()
-            }
-
-            override fun onResponse(
-                call: Call<ChargepointList>,
-                response: Response<ChargepointList>
-            ) {
-                if (!response.isSuccessful || response.body()!!.status != "ok") {
-                    chargepoints.value =
-                        Resource.error(response.message(), chargepoints.value?.data)
-                } else {
-                    chargepoints.value = Resource.success(response.body()!!.chargelocations)
-                }
-            }
-        })
+        viewModelScope.launch {
+            chargepoints.value = getChargepointsWithFilters(bounds, zoom, filters)
+        }
     }
 
-    private fun getChargepointsWithFilters(
+    private suspend fun getChargepointsWithFilters(
         bounds: LatLngBounds,
         zoom: Float,
         filters: List<FilterWithValue<out FilterValue>>
-    ): Call<ChargepointList> {
+    ): Resource<List<ChargepointListItem>> {
         val freecharging =
             (filters.find { it.value.key == "freecharging" }!!.value as BooleanFilterValue).value
         val freeparking =
             (filters.find { it.value.key == "freeparking" }!!.value as BooleanFilterValue).value
         val minPower =
             (filters.find { it.value.key == "min_power" }!!.value as SliderFilterValue).value
+        val minConnectors =
+            (filters.find { it.value.key == "min_connectors" }!!.value as SliderFilterValue).value
 
-        return api.getChargepoints(
+        val response = api.getChargepoints(
             bounds.southwest.latitude, bounds.southwest.longitude,
             bounds.northeast.latitude, bounds.northeast.longitude,
             clustering = zoom < 13, zoom = zoom,
             clusterDistance = 70, freecharging = freecharging, minPower = minPower,
             freeparking = freeparking
         )
+
+        if (!response.isSuccessful || response.body()!!.status != "ok") {
+            return Resource.error(response.message(), chargepoints.value?.data)
+        } else {
+            val data = response.body()!!.chargelocations.filter { it ->
+                // apply filters which GoingElectric does not support natively
+                if (it is ChargeLocation) {
+                    it.chargepoints
+                        .filter { it.power >= minPower }
+                        .sumBy { it.count } >= minConnectors
+                } else {
+                    true
+                }
+            }
+
+            return Resource.success(data)
+        }
     }
 
     private suspend fun loadAvailability(charger: ChargeLocation) {

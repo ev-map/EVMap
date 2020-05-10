@@ -11,19 +11,31 @@ import net.vonforst.evmap.R
 import net.vonforst.evmap.adapter.Equatable
 import net.vonforst.evmap.api.goingelectric.GoingElectricApi
 import net.vonforst.evmap.storage.AppDatabase
+import kotlin.math.abs
 import kotlin.reflect.KClass
 import kotlin.reflect.full.cast
+
+val powerSteps = listOf(0, 2, 3, 7, 11, 22, 43, 50, 100, 150, 200, 250, 300, 350)
+internal fun mapPower(i: Int) = powerSteps[i]
+internal fun mapPowerInverse(power: Int) = powerSteps
+    .mapIndexed { index, v -> Pair(abs(v - power), index) }
+    .minBy { it.first }?.second ?: 0
 
 fun getFilters(application: Application): List<Filter<FilterValue>> {
     return listOf(
         BooleanFilter(application.getString(R.string.filter_free), "freecharging"),
         BooleanFilter(application.getString(R.string.filter_free_parking), "freeparking"),
-        SliderFilter(application.getString(R.string.filter_min_power), "min_power", 350, "kW"),
+        SliderFilter(
+            application.getString(R.string.filter_min_power), "min_power",
+            powerSteps.size - 1,
+            mapping = ::mapPower,
+            inverseMapping = ::mapPowerInverse,
+            unit = "kW"
+        ),
         SliderFilter(
             application.getString(R.string.filter_min_connectors),
             "min_connectors",
-            10,
-            ""
+            10
         )
     )
 }
@@ -88,7 +100,9 @@ data class SliderFilter(
     override val name: String,
     override val key: String,
     val max: Int,
-    val unit: String
+    val mapping: ((Int) -> Int) = { it },
+    val inverseMapping: ((Int) -> Int) = { it },
+    val unit: String? = ""
 ) : Filter<SliderFilterValue>() {
     override val valueClass: KClass<SliderFilterValue> = SliderFilterValue::class
     override fun defaultValue() = SliderFilterValue(key, 0)

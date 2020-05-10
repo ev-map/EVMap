@@ -3,8 +3,8 @@ package net.vonforst.evmap.adapter
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.SeekBar
 import androidx.databinding.DataBindingUtil
+import androidx.databinding.Observable
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -158,22 +158,21 @@ class FiltersAdapter : DataBindingAdapter<FilterWithValue<FilterValue>>() {
         when (item.value) {
             is SliderFilterValue -> {
                 val binding = holder.binding as ItemFilterSliderBinding
-                binding.progress = item.value.value
-                binding.seekBar.setOnSeekBarChangeListener(object :
-                    SeekBar.OnSeekBarChangeListener {
-                    override fun onProgressChanged(
-                        seekBar: SeekBar,
-                        progress: Int,
-                        fromUser: Boolean
-                    ) {
-                        item.value.value = progress
-                        binding.progress = progress
-                    }
+                val filter = item.filter as SliderFilter
 
-                    override fun onStartTrackingTouch(seekBar: SeekBar?) {
-                    }
+                binding.progress = filter.inverseMapping(item.value.value)
+                binding.mappedValue = item.value.value
 
-                    override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                binding.addOnPropertyChangedCallback(object :
+                    Observable.OnPropertyChangedCallback() {
+                    override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
+                        when (propertyId) {
+                            BR.progress -> {
+                                val mapped = filter.mapping(binding.progress)
+                                item.value.value = mapped
+                                binding.mappedValue = mapped
+                            }
+                        }
                     }
                 })
             }

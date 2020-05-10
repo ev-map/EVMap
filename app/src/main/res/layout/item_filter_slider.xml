@@ -18,6 +18,10 @@
         <variable
             name="progress"
             type="int" />
+
+        <variable
+            name="mappedValue"
+            type="int" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -46,7 +50,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="16dp"
             android:max="@{((SliderFilter) item.filter).max}"
-            android:progress="@={item.value.value}"
+            android:progress="@={progress}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/textView18"
             app:layout_constraintStart_toStartOf="parent"
@@ -57,7 +61,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:text="@{String.valueOf(progress) + ' ' + ((SliderFilter) item.filter).unit}"
+            android:text="@{String.valueOf(mappedValue) + ' ' + ((SliderFilter) item.filter).unit}"
             app:layout_constraintBottom_toBottomOf="@+id/seekBar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/seekBar"

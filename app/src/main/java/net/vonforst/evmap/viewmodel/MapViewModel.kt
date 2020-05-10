@@ -149,12 +149,16 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
         val minConnectors =
             (filters.find { it.value.key == "min_connectors" }!!.value as SliderFilterValue).value
 
+        val connectorsVal =
+            filters.find { it.value.key == "connectors" }!!.value as MultipleChoiceFilterValue
+        val connectors = if (connectorsVal.all) null else connectorsVal.values.joinToString(",")
+
         val response = api.getChargepoints(
             bounds.southwest.latitude, bounds.southwest.longitude,
             bounds.northeast.latitude, bounds.northeast.longitude,
             clustering = zoom < 13, zoom = zoom,
             clusterDistance = 70, freecharging = freecharging, minPower = minPower,
-            freeparking = freeparking
+            freeparking = freeparking, plugs = connectors
         )
 
         if (!response.isSuccessful || response.body()!!.status != "ok") {
@@ -165,6 +169,7 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
                 if (it is ChargeLocation) {
                     it.chargepoints
                         .filter { it.power >= minPower }
+                        .filter { if (connectors != null) it.type in connectors else true }
                         .sumBy { it.count } >= minConnectors
                 } else {
                     true

@@ -47,4 +47,14 @@
     <string name="filter_min_power">Minimum power</string>
     <string name="filter_free_parking">Only chargers with free parking</string>
     <string name="filter_min_connectors">Minimum number of connectors</string>
+    <string name="filter_connectors">Connectors</string>
+    <string name="plug_type_1">Type 1</string>
+    <string name="plug_type_2">Type 2</string>
+    <string name="plug_type_3">Type 3a</string>
+    <string name="plug_ccs">CCS</string>
+    <string name="plug_schuko">Schuko</string>
+    <string name="plug_chademo">CHAdeMO</string>
+    <string name="plug_supercharger">Tesla Supercharger</string>
+    <string name="plug_cee_blau">CEE Blue</string>
+    <string name="plug_cee_rot">CEE Red</string>
 </resources>

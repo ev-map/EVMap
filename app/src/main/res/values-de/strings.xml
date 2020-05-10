@@ -48,4 +48,14 @@
     <string name="filter_min_power">Minimale Leistung</string>
     <string name="filter_free_parking">Nur Ladesäulen mit kostenlosem Parkplatz</string>
     <string name="filter_min_connectors">Mindestzahl Anschlüsse</string>
+    <string name="filter_connectors">Anschlüsse</string>
+    <string name="plug_type_1">Typ 1</string>
+    <string name="plug_type_2">Typ 2</string>
+    <string name="plug_type_3">Typ 3a</string>
+    <string name="plug_ccs">CCS</string>
+    <string name="plug_schuko">Schuko</string>
+    <string name="plug_chademo">CHAdeMO</string>
+    <string name="plug_supercharger">Tesla Supercharger</string>
+    <string name="plug_cee_blau">CEE Blau</string>
+    <string name="plug_cee_rot">CEE Rot</string>
 </resources>

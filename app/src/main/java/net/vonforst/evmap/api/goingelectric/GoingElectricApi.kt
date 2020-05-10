@@ -22,7 +22,8 @@ interface GoingElectricApi {
         @Query("cluster_distance") clusterDistance: Int,
         @Query("freecharging") freecharging: Boolean,
         @Query("freeparking") freeparking: Boolean,
-        @Query("min_power") minPower: Int
+        @Query("min_power") minPower: Int,
+        @Query("plugs") plugs: String?
     ): Response<ChargepointList>
 
     @GET("chargepoints/")

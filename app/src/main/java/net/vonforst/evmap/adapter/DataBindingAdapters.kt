@@ -9,11 +9,13 @@ import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.chip.Chip
 import net.vonforst.evmap.BR
 import net.vonforst.evmap.R
 import net.vonforst.evmap.api.availability.ChargepointStatus
 import net.vonforst.evmap.api.goingelectric.ChargeLocation
 import net.vonforst.evmap.api.goingelectric.Chargepoint
+import net.vonforst.evmap.databinding.ItemFilterMultipleChoiceBinding
 import net.vonforst.evmap.databinding.ItemFilterSliderBinding
 import net.vonforst.evmap.viewmodel.*
 
@@ -146,7 +148,7 @@ class FiltersAdapter : DataBindingAdapter<FilterWithValue<FilterValue>>() {
 
     override fun getItemViewType(position: Int): Int = when (getItem(position).filter) {
         is BooleanFilter -> R.layout.item_filter_boolean
-        is MultipleChoiceFilter -> R.layout.item_filter_boolean
+        is MultipleChoiceFilter -> R.layout.item_filter_multiple_choice
         is SliderFilter -> R.layout.item_filter_slider
     }
 
@@ -157,26 +159,79 @@ class FiltersAdapter : DataBindingAdapter<FilterWithValue<FilterValue>>() {
         super.bind(holder, item)
         when (item.value) {
             is SliderFilterValue -> {
-                val binding = holder.binding as ItemFilterSliderBinding
-                val filter = item.filter as SliderFilter
-
-                binding.progress = filter.inverseMapping(item.value.value)
-                binding.mappedValue = item.value.value
-
-                binding.addOnPropertyChangedCallback(object :
-                    Observable.OnPropertyChangedCallback() {
-                    override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
-                        when (propertyId) {
-                            BR.progress -> {
-                                val mapped = filter.mapping(binding.progress)
-                                item.value.value = mapped
-                                binding.mappedValue = mapped
-                            }
-                        }
-                    }
-                })
+                setupSlider(
+                    holder.binding as ItemFilterSliderBinding,
+                    item.filter as SliderFilter, item.value
+                )
+            }
+            is MultipleChoiceFilterValue -> {
+                setupMultipleChoice(
+                    holder.binding as ItemFilterMultipleChoiceBinding,
+                    item.filter as MultipleChoiceFilter, item.value
+                )
             }
         }
+    }
+
+    private fun setupMultipleChoice(
+        binding: ItemFilterMultipleChoiceBinding,
+        filter: MultipleChoiceFilter,
+        value: MultipleChoiceFilterValue
+    ) {
+        val inflater = LayoutInflater.from(binding.root.context)
+        value.values.toList().forEach {
+            // delete values that cannot be selected anymore
+            if (it !in filter.choices.keys) value.values.remove(it)
+        }
+
+        binding.chipGroup.removeAllViews()
+        filter.choices.entries.sortedByDescending {
+            it.key in value.values
+        }.forEach { choice ->
+            val chip = inflater.inflate(
+                R.layout.item_filter_multiple_choice_chip,
+                binding.chipGroup,
+                false
+            ) as Chip
+            chip.text = choice.value
+            chip.isChecked = choice.key in value.values || value.all
+            if (value.all && choice.key !in value.values) value.values.add(choice.key)
+
+            chip.setOnCheckedChangeListener { _, isChecked ->
+                if (isChecked) {
+                    value.values.add(choice.key)
+                    if (value.values == filter.choices.keys) value.all = true
+                } else {
+                    value.values.remove(choice.key)
+                    value.all = false
+                }
+            }
+
+            binding.chipGroup.addView(chip)
+        }
+
+    }
+
+    private fun setupSlider(
+        binding: ItemFilterSliderBinding,
+        filter: SliderFilter,
+        value: SliderFilterValue
+    ) {
+        binding.progress = filter.inverseMapping(value.value)
+        binding.mappedValue = value.value
+
+        binding.addOnPropertyChangedCallback(object :
+            Observable.OnPropertyChangedCallback() {
+            override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
+                when (propertyId) {
+                    BR.progress -> {
+                        val mapped = filter.mapping(binding.progress)
+                        value.value = mapped
+                        binding.mappedValue = mapped
+                    }
+                }
+            }
+        })
     }
 
     override fun getItemId(position: Int): Long {

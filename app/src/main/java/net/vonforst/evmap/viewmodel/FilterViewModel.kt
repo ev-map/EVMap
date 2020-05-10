@@ -9,6 +9,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import net.vonforst.evmap.R
 import net.vonforst.evmap.adapter.Equatable
+import net.vonforst.evmap.api.goingelectric.Chargepoint
 import net.vonforst.evmap.api.goingelectric.GoingElectricApi
 import net.vonforst.evmap.storage.AppDatabase
 import kotlin.math.abs
@@ -18,7 +19,7 @@ import kotlin.reflect.full.cast
 val powerSteps = listOf(0, 2, 3, 7, 11, 22, 43, 50, 100, 150, 200, 250, 300, 350)
 internal fun mapPower(i: Int) = powerSteps[i]
 internal fun mapPowerInverse(power: Int) = powerSteps
-    .mapIndexed { index, v -> Pair(abs(v - power), index) }
+    .mapIndexed { index, v -> abs(v - power) to index }
     .minBy { it.first }?.second ?: 0
 
 fun getFilters(application: Application): List<Filter<FilterValue>> {
@@ -31,6 +32,20 @@ fun getFilters(application: Application): List<Filter<FilterValue>> {
             mapping = ::mapPower,
             inverseMapping = ::mapPowerInverse,
             unit = "kW"
+        ),
+        MultipleChoiceFilter(
+            application.getString(R.string.filter_connectors), "connectors",
+            mapOf(
+                Chargepoint.TYPE_1 to application.getString(R.string.plug_type_1),
+                Chargepoint.TYPE_2 to application.getString(R.string.plug_type_2),
+                Chargepoint.TYPE_3 to application.getString(R.string.plug_type_3),
+                Chargepoint.CCS to application.getString(R.string.plug_ccs),
+                Chargepoint.SCHUKO to application.getString(R.string.plug_schuko),
+                Chargepoint.CHADEMO to application.getString(R.string.plug_chademo),
+                Chargepoint.SUPERCHARGER to application.getString(R.string.plug_supercharger),
+                Chargepoint.CEE_BLAU to application.getString(R.string.plug_cee_blau),
+                Chargepoint.CEE_ROT to application.getString(R.string.plug_cee_rot)
+            )
         ),
         SliderFilter(
             application.getString(R.string.filter_min_connectors),
@@ -93,7 +108,7 @@ data class MultipleChoiceFilter(
     val choices: Map<String, String>
 ) : Filter<MultipleChoiceFilterValue>() {
     override val valueClass: KClass<MultipleChoiceFilterValue> = MultipleChoiceFilterValue::class
-    override fun defaultValue() = MultipleChoiceFilterValue(key, emptySet(), true)
+    override fun defaultValue() = MultipleChoiceFilterValue(key, mutableSetOf(), true)
 }
 
 data class SliderFilter(
@@ -121,7 +136,7 @@ data class BooleanFilterValue(
 @Entity
 data class MultipleChoiceFilterValue(
     @PrimaryKey override val key: String,
-    var values: Set<String>,
+    var values: MutableSet<String>,
     var all: Boolean
 ) : FilterValue()
 

@@ -5,6 +5,7 @@ import androidx.databinding.BaseObservable
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import net.vonforst.evmap.R
@@ -22,8 +23,12 @@ internal fun mapPowerInverse(power: Int) = powerSteps
     .mapIndexed { index, v -> abs(v - power) to index }
     .minBy { it.first }?.second ?: 0
 
-fun getFilters(application: Application): List<Filter<FilterValue>> {
-    return listOf(
+internal fun getFilters(
+    api: GoingElectricApi,
+    application: Application
+): LiveData<List<Filter<FilterValue>>> {
+    val liveData = MutableLiveData<List<Filter<FilterValue>>>()
+    liveData.value = listOf(
         BooleanFilter(application.getString(R.string.filter_free), "freecharging"),
         BooleanFilter(application.getString(R.string.filter_free_parking), "freeparking"),
         SliderFilter(
@@ -53,33 +58,43 @@ fun getFilters(application: Application): List<Filter<FilterValue>> {
             10
         )
     )
+    return liveData
 }
+
+
+internal fun filtersWithValue(
+    filters: LiveData<List<Filter<FilterValue>>>,
+    filterValues: LiveData<List<FilterValue>>
+): MediatorLiveData<List<FilterWithValue<out FilterValue>>> =
+    MediatorLiveData<List<FilterWithValue<out FilterValue>>>().apply {
+        listOf(filters, filterValues).forEach {
+            addSource(it) {
+                val filters = filters.value ?: return@addSource
+                val values = filterValues.value ?: return@addSource
+                value = filters.map { filter ->
+                    val value =
+                        values.find { it.key == filter.key } ?: filter.defaultValue()
+                    FilterWithValue(filter, filter.valueClass.cast(value))
+                }
+            }
+        }
+    }
 
 class FilterViewModel(application: Application, geApiKey: String) :
     AndroidViewModel(application) {
     private var api = GoingElectricApi.create(geApiKey, context = application)
     private var db = AppDatabase.getInstance(application)
 
-    private val filters = getFilters(application)
+    private val filters: LiveData<List<Filter<FilterValue>>> by lazy {
+        getFilters(api, application)
+    }
 
     private val filterValues: LiveData<List<FilterValue>> by lazy {
         db.filterValueDao().getFilterValues()
     }
 
     val filtersWithValue: LiveData<List<FilterWithValue<out FilterValue>>> by lazy {
-        MediatorLiveData<List<FilterWithValue<out FilterValue>>>().apply {
-            addSource(filterValues) { values ->
-                value = if (values != null) {
-                    filters.map { filter ->
-                        val value =
-                            values.find { it.key == filter.key } ?: filter.defaultValue()
-                        FilterWithValue(filter, filter.valueClass.cast(value))
-                    }
-                } else {
-                    null
-                }
-            }
-        }
+        filtersWithValue(filters, filterValues)
     }
 
     suspend fun saveFilterValues() {

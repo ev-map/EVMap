@@ -14,7 +14,6 @@ import net.vonforst.evmap.storage.AppDatabase
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import kotlin.reflect.full.cast
 
 data class MapPosition(val bounds: LatLngBounds, val zoom: Float)
 
@@ -32,23 +31,10 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
     private val filterValues: LiveData<List<FilterValue>> by lazy {
         db.filterValueDao().getFilterValues()
     }
-    private val filters = getFilters(application)
+    private val filters = getFilters(api, application)
 
     private val filtersWithValue: LiveData<List<FilterWithValue<out FilterValue>>> by lazy {
-        MediatorLiveData<List<FilterWithValue<out FilterValue>>>().apply {
-            addSource(filterValues) {
-                val values = filterValues.value
-                if (values != null) {
-                    value = filters.map { filter ->
-                        val value =
-                            values.find { it.key == filter.key } ?: filter.defaultValue()
-                        FilterWithValue(filter, filter.valueClass.cast(value))
-                    }
-                } else {
-                    value = null
-                }
-            }
-        }
+        filtersWithValue(filters, filterValues)
     }
     val chargepoints: MediatorLiveData<Resource<List<ChargepointListItem>>> by lazy {
         MediatorLiveData<Resource<List<ChargepointListItem>>>()

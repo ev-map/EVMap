@@ -24,6 +24,12 @@ data class ChargepointList(
     val chargelocations: List<ChargepointListItem>
 )
 
+@JsonClass(generateAdapter = true)
+data class StringList(
+    val status: String,
+    val result: List<String>
+)
+
 sealed class ChargepointListItem
 
 @JsonClass(generateAdapter = true)

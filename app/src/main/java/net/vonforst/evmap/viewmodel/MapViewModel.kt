@@ -11,6 +11,9 @@ import net.vonforst.evmap.api.goingelectric.ChargepointList
 import net.vonforst.evmap.api.goingelectric.ChargepointListItem
 import net.vonforst.evmap.api.goingelectric.GoingElectricApi
 import net.vonforst.evmap.storage.AppDatabase
+import net.vonforst.evmap.storage.Plug
+import net.vonforst.evmap.storage.PlugRepository
+import net.vonforst.evmap.storage.PreferenceDataSource
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -20,6 +23,7 @@ data class MapPosition(val bounds: LatLngBounds, val zoom: Float)
 class MapViewModel(application: Application, geApiKey: String) : AndroidViewModel(application) {
     private var api = GoingElectricApi.create(geApiKey, context = application)
     private var db = AppDatabase.getInstance(application)
+    private var prefs = PreferenceDataSource(application)
 
     val bottomSheetState: MutableLiveData<Int> by lazy {
         MutableLiveData<Int>()
@@ -31,7 +35,10 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
     private val filterValues: LiveData<List<FilterValue>> by lazy {
         db.filterValueDao().getFilterValues()
     }
-    private val filters = getFilters(api, application)
+    private val plugs: LiveData<List<Plug>> by lazy {
+        PlugRepository(api, viewModelScope, db.plugDao(), prefs).getPlugs()
+    }
+    private val filters = getFilters(application, plugs)
 
     private val filtersWithValue: LiveData<List<FilterWithValue<out FilterValue>>> by lazy {
         filtersWithValue(filters, filterValues)

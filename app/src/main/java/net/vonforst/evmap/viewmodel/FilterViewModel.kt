@@ -5,7 +5,7 @@ import androidx.databinding.BaseObservable
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import net.vonforst.evmap.R
@@ -13,6 +13,9 @@ import net.vonforst.evmap.adapter.Equatable
 import net.vonforst.evmap.api.goingelectric.Chargepoint
 import net.vonforst.evmap.api.goingelectric.GoingElectricApi
 import net.vonforst.evmap.storage.AppDatabase
+import net.vonforst.evmap.storage.Plug
+import net.vonforst.evmap.storage.PlugRepository
+import net.vonforst.evmap.storage.PreferenceDataSource
 import kotlin.math.abs
 import kotlin.reflect.KClass
 import kotlin.reflect.full.cast
@@ -24,41 +27,47 @@ internal fun mapPowerInverse(power: Int) = powerSteps
     .minBy { it.first }?.second ?: 0
 
 internal fun getFilters(
-    api: GoingElectricApi,
-    application: Application
+    application: Application,
+    plugs: LiveData<List<Plug>>
 ): LiveData<List<Filter<FilterValue>>> {
-    val liveData = MutableLiveData<List<Filter<FilterValue>>>()
-    liveData.value = listOf(
-        BooleanFilter(application.getString(R.string.filter_free), "freecharging"),
-        BooleanFilter(application.getString(R.string.filter_free_parking), "freeparking"),
-        SliderFilter(
-            application.getString(R.string.filter_min_power), "min_power",
-            powerSteps.size - 1,
-            mapping = ::mapPower,
-            inverseMapping = ::mapPowerInverse,
-            unit = "kW"
-        ),
-        MultipleChoiceFilter(
-            application.getString(R.string.filter_connectors), "connectors",
-            mapOf(
-                Chargepoint.TYPE_1 to application.getString(R.string.plug_type_1),
-                Chargepoint.TYPE_2 to application.getString(R.string.plug_type_2),
-                Chargepoint.TYPE_3 to application.getString(R.string.plug_type_3),
-                Chargepoint.CCS to application.getString(R.string.plug_ccs),
-                Chargepoint.SCHUKO to application.getString(R.string.plug_schuko),
-                Chargepoint.CHADEMO to application.getString(R.string.plug_chademo),
-                Chargepoint.SUPERCHARGER to application.getString(R.string.plug_supercharger),
-                Chargepoint.CEE_BLAU to application.getString(R.string.plug_cee_blau),
-                Chargepoint.CEE_ROT to application.getString(R.string.plug_cee_rot)
-            )
-        ),
-        SliderFilter(
-            application.getString(R.string.filter_min_connectors),
-            "min_connectors",
-            10
+    return MediatorLiveData<List<Filter<FilterValue>>>().apply {
+        val plugNames = mapOf(
+            Chargepoint.TYPE_1 to application.getString(R.string.plug_type_1),
+            Chargepoint.TYPE_2 to application.getString(R.string.plug_type_2),
+            Chargepoint.TYPE_3 to application.getString(R.string.plug_type_3),
+            Chargepoint.CCS to application.getString(R.string.plug_ccs),
+            Chargepoint.SCHUKO to application.getString(R.string.plug_schuko),
+            Chargepoint.CHADEMO to application.getString(R.string.plug_chademo),
+            Chargepoint.SUPERCHARGER to application.getString(R.string.plug_supercharger),
+            Chargepoint.CEE_BLAU to application.getString(R.string.plug_cee_blau),
+            Chargepoint.CEE_ROT to application.getString(R.string.plug_cee_rot)
         )
-    )
-    return liveData
+        addSource(plugs) { plugs ->
+            val plugMap = plugs.map { plug ->
+                plug.name to (plugNames[plug.name] ?: plug.name)
+            }.toMap()
+            value = listOf(
+                BooleanFilter(application.getString(R.string.filter_free), "freecharging"),
+                BooleanFilter(application.getString(R.string.filter_free_parking), "freeparking"),
+                SliderFilter(
+                    application.getString(R.string.filter_min_power), "min_power",
+                    powerSteps.size - 1,
+                    mapping = ::mapPower,
+                    inverseMapping = ::mapPowerInverse,
+                    unit = "kW"
+                ),
+                MultipleChoiceFilter(
+                    application.getString(R.string.filter_connectors), "connectors",
+                    plugMap
+                ),
+                SliderFilter(
+                    application.getString(R.string.filter_min_connectors),
+                    "min_connectors",
+                    10
+                )
+            )
+        }
+    }
 }
 
 
@@ -84,9 +93,14 @@ class FilterViewModel(application: Application, geApiKey: String) :
     AndroidViewModel(application) {
     private var api = GoingElectricApi.create(geApiKey, context = application)
     private var db = AppDatabase.getInstance(application)
+    private var prefs = PreferenceDataSource(application)
+
+    private val plugs: LiveData<List<Plug>> by lazy {
+        PlugRepository(api, viewModelScope, db.plugDao(), prefs).getPlugs()
+    }
 
     private val filters: LiveData<List<Filter<FilterValue>>> by lazy {
-        getFilters(api, application)
+        getFilters(application, plugs)
     }
 
     private val filterValues: LiveData<List<FilterValue>> by lazy {

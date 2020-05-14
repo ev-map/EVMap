@@ -17,19 +17,21 @@ import net.vonforst.evmap.viewmodel.SliderFilterValue
         ChargeLocation::class,
         BooleanFilterValue::class,
         MultipleChoiceFilterValue::class,
-        SliderFilterValue::class
-    ], version = 3
+        SliderFilterValue::class,
+        Plug::class
+    ], version = 4
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun chargeLocationsDao(): ChargeLocationsDao
     abstract fun filterValueDao(): FilterValueDao
+    abstract fun plugDao(): PlugDao
 
     companion object {
         private lateinit var context: Context
         private val database: AppDatabase by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
             Room.databaseBuilder(context, AppDatabase::class.java, "evmap.db")
-                .addMigrations(MIGRATION_2, MIGRATION_3)
+                .addMigrations(MIGRATION_2, MIGRATION_3, MIGRATION_4)
                 .build()
         }
 
@@ -57,6 +59,13 @@ abstract class AppDatabase : RoomDatabase() {
                 db.execSQL("ALTER TABLE `ChargeLocationNew` RENAME TO `ChargeLocation`")
                 db.endTransaction()
             }
+        }
+
+        private val MIGRATION_4 = object : Migration(3, 4) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("CREATE TABLE IF NOT EXISTS `Plug` (`name` TEXT NOT NULL, PRIMARY KEY(`name`))")
+            }
+
         }
     }
 }

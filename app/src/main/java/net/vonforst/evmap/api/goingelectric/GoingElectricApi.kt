@@ -29,6 +29,15 @@ interface GoingElectricApi {
     @GET("chargepoints/")
     fun getChargepointDetail(@Query("ge_id") id: Long): Call<ChargepointList>
 
+    @GET("chargepoints/pluglist/")
+    suspend fun getPlugs(): Response<StringList>
+
+    @GET("chargepoints/networklist/")
+    suspend fun getNetworks(): Response<StringList>
+
+    @GET("chargepoints/chargecardlist/")
+    suspend fun getChargeCards(): Response<StringList>
+
     companion object {
         private val cacheSize = 10L * 1024 * 1024; // 10MB
 

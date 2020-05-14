@@ -40,7 +40,7 @@ interface NewMotionApi {
     )
 
     @JsonClass(generateAdapter = true)
-    data class NMEvse(val evseId: String, val status: String, val connectors: List<NMConnector>)
+    data class NMEvse(val evseId: String?, val status: String, val connectors: List<NMConnector>)
 
     @JsonClass(generateAdapter = true)
     data class NMConnector(

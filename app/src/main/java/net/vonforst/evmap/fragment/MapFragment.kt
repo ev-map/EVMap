@@ -357,6 +357,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             vm.chargerSparse.value = null
         }
 
+        // set padding so that compass is not obstructed by toolbar
+        map.setPadding(0, binding.toolbarContainer.height, 0, 0)
+
         val mode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
         map.setMapStyle(
             if (mode == Configuration.UI_MODE_NIGHT_YES) {

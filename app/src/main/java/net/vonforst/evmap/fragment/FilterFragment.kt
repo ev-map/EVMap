@@ -92,8 +92,8 @@ class FilterFragment : Fragment() {
             R.id.menu_apply -> {
                 lifecycleScope.launch {
                     vm.saveFilterValues()
+                    exitAfterTransition()
                 }
-                exitAfterTransition()
                 true
             }
             else -> super.onOptionsItemSelected(item)

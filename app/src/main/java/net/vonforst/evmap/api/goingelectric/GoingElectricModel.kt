@@ -210,17 +210,13 @@ data class Coordinate(val lat: Double, val lng: Double) {
 
 @JsonClass(generateAdapter = true)
 data class Address(
-    val city: String,
-    val country: String,
+    @JsonObjectOrFalse val city: String?,
+    @JsonObjectOrFalse val country: String?,
     @JsonObjectOrFalse val postcode: String?,
-    val street: String
+    @JsonObjectOrFalse val street: String?
 ) {
     override fun toString(): String {
-        if (postcode != null) {
-            return "$street, $postcode $city"
-        } else {
-            return "$street $city"
-        }
+        return "${street ?: ""}, ${postcode ?: ""} ${city ?: ""}"
     }
 }
 

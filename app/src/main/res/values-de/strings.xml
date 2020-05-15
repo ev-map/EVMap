@@ -60,4 +60,6 @@
     <string name="plug_cee_rot">CEE Rot</string>
     <string name="all">alle</string>
     <string name="none">keine</string>
+    <string name="show_more">mehr…</string>
+    <string name="show_less">weniger…</string>
 </resources>

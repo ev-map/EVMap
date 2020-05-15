@@ -58,7 +58,8 @@ internal fun getFilters(
                 ),
                 MultipleChoiceFilter(
                     application.getString(R.string.filter_connectors), "connectors",
-                    plugMap
+                    plugMap,
+                    commonChoices = setOf(Chargepoint.TYPE_2, Chargepoint.CCS, Chargepoint.CHADEMO)
                 ),
                 SliderFilter(
                     application.getString(R.string.filter_min_connectors),
@@ -134,7 +135,8 @@ data class BooleanFilter(override val name: String, override val key: String) :
 data class MultipleChoiceFilter(
     override val name: String,
     override val key: String,
-    val choices: Map<String, String>
+    val choices: Map<String, String>,
+    val commonChoices: Set<String>? = null
 ) : Filter<MultipleChoiceFilterValue>() {
     override val valueClass: KClass<MultipleChoiceFilterValue> = MultipleChoiceFilterValue::class
     override fun defaultValue() = MultipleChoiceFilterValue(key, mutableSetOf(), true)

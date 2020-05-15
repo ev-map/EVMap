@@ -14,6 +14,10 @@
         <variable
             name="item"
             type="FilterWithValue&lt;MultipleChoiceFilterValue&gt;" />
+
+        <variable
+            name="showingAll"
+            type="boolean" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -40,12 +44,22 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
+            android:animateLayoutChanges="true"
             app:chipSpacingVertical="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btnAll" />
+            app:layout_constraintTop_toBottomOf="@+id/btnAll">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipMore"
+                style="@style/Widget.MaterialComponents.Chip.Action"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{showingAll ? @string/show_less : @string/show_more}"
+                app:chipMinTouchTargetSize="40dp" />
+        </com.google.android.material.chip.ChipGroup>
 
         <Button
             android:id="@+id/btnAll"

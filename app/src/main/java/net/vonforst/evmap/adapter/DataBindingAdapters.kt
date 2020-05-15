@@ -2,7 +2,9 @@ package net.vonforst.evmap.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.children
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.Observable
 import androidx.databinding.ViewDataBinding
@@ -185,9 +187,13 @@ class FiltersAdapter : DataBindingAdapter<FilterWithValue<FilterValue>>() {
         }
 
         val chips = mutableMapOf<String, Chip>()
-        binding.chipGroup.removeAllViews()
+        binding.chipGroup.children.forEach {
+            if (it.id != R.id.chipMore) binding.chipGroup.removeView(it)
+        }
         filter.choices.entries.sortedByDescending {
             it.key in value.values
+        }.sortedByDescending {
+            if (filter.commonChoices != null) it.key in filter.commonChoices else false
         }.forEach { choice ->
             val chip = inflater.inflate(
                 R.layout.item_filter_multiple_choice_chip,
@@ -208,7 +214,15 @@ class FiltersAdapter : DataBindingAdapter<FilterWithValue<FilterValue>>() {
                 }
             }
 
-            binding.chipGroup.addView(chip)
+            if (filter.commonChoices != null && choice.key !in filter.commonChoices
+                && !(chip.isChecked && !value.all) && !binding.showingAll
+            ) {
+                chip.visibility = View.GONE
+            } else {
+                chip.visibility = View.VISIBLE
+            }
+
+            binding.chipGroup.addView(chip, binding.chipGroup.childCount - 1)
             chips.put(choice.key, chip)
         }
 
@@ -221,6 +235,18 @@ class FiltersAdapter : DataBindingAdapter<FilterWithValue<FilterValue>>() {
             value.all = true
             value.values.addAll(filter.choices.keys)
             chips.values.forEach { it.isChecked = false }
+        }
+        binding.chipMore.setOnClickListener {
+            binding.showingAll = !binding.showingAll
+            chips.forEach { (key, chip) ->
+                if (filter.commonChoices != null && key !in filter.commonChoices
+                    && !(chip.isChecked && !value.all) && !binding.showingAll
+                ) {
+                    chip.visibility = View.GONE
+                } else {
+                    chip.visibility = View.VISIBLE
+                }
+            }
         }
     }
 

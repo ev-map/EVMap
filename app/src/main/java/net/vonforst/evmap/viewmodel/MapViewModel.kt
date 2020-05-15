@@ -146,10 +146,13 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
             filters.find { it.value.key == "connectors" }!!.value as MultipleChoiceFilterValue
         val connectors = if (connectorsVal.all) null else connectorsVal.values.joinToString(",")
 
+        // do not use clustering if filters need to be applied locally.
+        val useClustering = minConnectors <= 1
+
         val response = api.getChargepoints(
             bounds.southwest.latitude, bounds.southwest.longitude,
             bounds.northeast.latitude, bounds.northeast.longitude,
-            clustering = zoom < 13, zoom = zoom,
+            clustering = zoom < 13 && useClustering, zoom = zoom,
             clusterDistance = 70, freecharging = freecharging, minPower = minPower,
             freeparking = freeparking, plugs = connectors
         )
@@ -162,7 +165,7 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
                 if (it is ChargeLocation) {
                     it.chargepoints
                         .filter { it.power >= minPower }
-                        .filter { if (connectors != null) it.type in connectors else true }
+                        .filter { if (!connectorsVal.all) it.type in connectorsVal.values else true }
                         .sumBy { it.count } >= minConnectors
                 } else {
                     true

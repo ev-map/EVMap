@@ -45,7 +45,26 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView17" />
+            app:layout_constraintTop_toBottomOf="@+id/btnAll" />
+
+        <Button
+            android:id="@+id/btnAll"
+            style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/all"
+            app:layout_constraintBaseline_toBaselineOf="@+id/textView17"
+            app:layout_constraintEnd_toStartOf="@+id/btnNone" />
+
+        <Button
+            android:id="@+id/btnNone"
+            style="@style/Widget.MaterialComponents.Button.TextButton.Dialog.Flush"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:text="@string/none"
+            app:layout_constraintBaseline_toBaselineOf="@+id/textView17"
+            app:layout_constraintEnd_toEndOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

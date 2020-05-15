@@ -184,6 +184,7 @@ class FiltersAdapter : DataBindingAdapter<FilterWithValue<FilterValue>>() {
             if (it !in filter.choices.keys) value.values.remove(it)
         }
 
+        val chips = mutableMapOf<String, Chip>()
         binding.chipGroup.removeAllViews()
         filter.choices.entries.sortedByDescending {
             it.key in value.values
@@ -208,8 +209,19 @@ class FiltersAdapter : DataBindingAdapter<FilterWithValue<FilterValue>>() {
             }
 
             binding.chipGroup.addView(chip)
+            chips.put(choice.key, chip)
         }
 
+        binding.btnAll.setOnClickListener {
+            value.all = true
+            value.values.addAll(filter.choices.keys)
+            chips.values.forEach { it.isChecked = true }
+        }
+        binding.btnNone.setOnClickListener {
+            value.all = true
+            value.values.addAll(filter.choices.keys)
+            chips.values.forEach { it.isChecked = false }
+        }
     }
 
     private fun setupSlider(

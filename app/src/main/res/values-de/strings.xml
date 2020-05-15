@@ -58,4 +58,6 @@
     <string name="plug_supercharger">Tesla Supercharger</string>
     <string name="plug_cee_blau">CEE Blau</string>
     <string name="plug_cee_rot">CEE Rot</string>
+    <string name="all">alle</string>
+    <string name="none">keine</string>
 </resources>

@@ -28,6 +28,8 @@ interface Equatable {
 abstract class DataBindingAdapter<T : Equatable>() :
     ListAdapter<T, DataBindingAdapter.ViewHolder<T>>(DiffCallback()) {
 
+    var onClickListener: ((T) -> Unit)? = null
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder<T> {
         val layoutInflater = LayoutInflater.from(parent.context)
         val binding =
@@ -45,6 +47,10 @@ abstract class DataBindingAdapter<T : Equatable>() :
     open fun bind(holder: ViewHolder<T>, item: T) {
         holder.binding.setVariable(BR.item, item)
         holder.binding.executePendingBindings()
+        holder.binding.root.setOnClickListener {
+            val listener = onClickListener ?: return@setOnClickListener
+            listener(item)
+        }
     }
 
     class DiffCallback<T : Equatable> : DiffUtil.ItemCallback<T>() {

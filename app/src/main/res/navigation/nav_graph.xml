@@ -44,7 +44,11 @@
         android:id="@+id/favs"
         android:name="net.vonforst.evmap.fragment.FavoritesFragment"
         android:label="@string/menu_favs"
-        tools:layout="@layout/fragment_favorites" />
+        tools:layout="@layout/fragment_favorites">
+        <action
+            android:id="@+id/action_favs_to_map"
+            app:destination="@id/map" />
+    </fragment>
     <fragment
         android:id="@+id/filter"
         android:name="net.vonforst.evmap.fragment.FilterFragment"

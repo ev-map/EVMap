@@ -66,8 +66,13 @@ class FavoritesFragment : Fragment() {
             (requireActivity() as MapsActivity).appBarConfiguration
         )
 
+        val favAdapter = FavoritesAdapter(vm).apply {
+            onClickListener = {
+                navController.navigate(R.id.action_favs_to_map, MapFragment.showCharger(it.charger))
+            }
+        }
         binding.favsList.apply {
-            adapter = FavoritesAdapter(vm)
+            adapter = favAdapter
             layoutManager =
                 LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             addItemDecoration(

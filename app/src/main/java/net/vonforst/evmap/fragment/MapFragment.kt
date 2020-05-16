@@ -42,9 +42,7 @@ import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike.STAT
 import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN
 import com.mahc.custombottomsheetbehavior.MergedAppBarLayoutBehavior
 import kotlinx.android.synthetic.main.fragment_map.*
-import net.vonforst.evmap.MapsActivity
-import net.vonforst.evmap.R
-import net.vonforst.evmap.REQUEST_LOCATION_PERMISSION
+import net.vonforst.evmap.*
 import net.vonforst.evmap.adapter.ConnectorAdapter
 import net.vonforst.evmap.adapter.DetailAdapter
 import net.vonforst.evmap.adapter.GalleryAdapter
@@ -56,12 +54,12 @@ import net.vonforst.evmap.ui.ChargerIconGenerator
 import net.vonforst.evmap.ui.ClusterIconGenerator
 import net.vonforst.evmap.ui.MarkerAnimator
 import net.vonforst.evmap.ui.getMarkerTint
-import net.vonforst.evmap.viewmodel.GalleryViewModel
-import net.vonforst.evmap.viewmodel.MapPosition
-import net.vonforst.evmap.viewmodel.MapViewModel
-import net.vonforst.evmap.viewmodel.viewModelFactory
+import net.vonforst.evmap.viewmodel.*
 
 const val REQUEST_AUTOCOMPLETE = 2
+const val ARG_CHARGER_ID = "chargerId"
+const val ARG_LAT = "lat"
+const val ARG_LON = "lon"
 
 class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallback {
     private lateinit var binding: FragmentMapBinding
@@ -369,23 +367,51 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
 
         val position = vm.mapPosition.value
-        if (hasLocationPermission()) {
-            enableLocation(position == null, false)
-        } else if (position == null) {
-            // center the camera on Europe
-            val cameraUpdate = CameraUpdateFactory.newLatLngZoom(LatLng(50.113388, 9.252536), 3.5f)
-            map.moveCamera(cameraUpdate)
-        }
+        val lat = arguments?.optDouble(ARG_LAT)
+        val lon = arguments?.optDouble(ARG_LON)
+        var positionSet = false
 
         if (position != null) {
             val cameraUpdate =
                 CameraUpdateFactory.newLatLngZoom(position.bounds.center, position.zoom)
             map.moveCamera(cameraUpdate)
-        } else {
-            vm.mapPosition.value = MapPosition(
-                map.projection.visibleRegion.latLngBounds, map.cameraPosition.zoom
-            )
+            positionSet = true
+        } else if (lat != null && lon != null) {
+            // show given position
+            val cameraUpdate = CameraUpdateFactory.newLatLngZoom(LatLng(lat, lon), 16f)
+            map.moveCamera(cameraUpdate)
+
+            // show charger detail after chargers were loaded
+            val chargerId = arguments?.optLong(ARG_CHARGER_ID)
+            vm.chargepoints.observe(
+                viewLifecycleOwner,
+                object : Observer<Resource<List<ChargepointListItem>>> {
+                    override fun onChanged(res: Resource<List<ChargepointListItem>>) {
+                        if (res.data == null) return
+                        for (item in res.data) {
+                            if (item is ChargeLocation && item.id == chargerId) {
+                                vm.chargerSparse.value = item
+                                vm.chargepoints.removeObserver(this)
+                            }
+                        }
+                    }
+                })
+
+            positionSet = true
         }
+        if (hasLocationPermission()) {
+            enableLocation(!positionSet, false)
+            positionSet = true
+        }
+        if (!positionSet) {
+            // center the camera on Europe
+            val cameraUpdate = CameraUpdateFactory.newLatLngZoom(LatLng(50.113388, 9.252536), 3.5f)
+            map.moveCamera(cameraUpdate)
+        }
+
+        vm.mapPosition.value = MapPosition(
+            map.projection.visibleRegion.latLngBounds, map.cameraPosition.zoom
+        )
     }
 
     @SuppressLint("MissingPermission")
@@ -524,6 +550,16 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
             // Map the first shared element name to the child ImageView.
             sharedElements[names[0]] = vh.itemView
+        }
+    }
+
+    companion object {
+        fun showCharger(charger: ChargeLocation): Bundle {
+            return Bundle().apply {
+                putLong(ARG_CHARGER_ID, charger.id)
+                putDouble(ARG_LAT, charger.coordinates.lat)
+                putDouble(ARG_LON, charger.coordinates.lng)
+            }
         }
     }
 }

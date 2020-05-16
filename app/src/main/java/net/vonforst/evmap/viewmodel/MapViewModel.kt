@@ -3,6 +3,7 @@ package net.vonforst.evmap.viewmodel
 import android.app.Application
 import androidx.lifecycle.*
 import com.google.android.gms.maps.model.LatLngBounds
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import net.vonforst.evmap.api.availability.ChargeLocationStatus
 import net.vonforst.evmap.api.availability.getAvailability
@@ -24,6 +25,7 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
     private var api = GoingElectricApi.create(geApiKey, context = application)
     private var db = AppDatabase.getInstance(application)
     private var prefs = PreferenceDataSource(application)
+    private var chargepointLoader: Job? = null
 
     val bottomSheetState: MutableLiveData<Int> by lazy {
         MutableLiveData<Int>()
@@ -120,10 +122,12 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
         mapPosition: MapPosition,
         filters: List<FilterWithValue<out FilterValue>>
     ) {
+        chargepointLoader?.cancel()
+
         chargepoints.value = Resource.loading(chargepoints.value?.data)
         val bounds = mapPosition.bounds
         val zoom = mapPosition.zoom
-        viewModelScope.launch {
+        chargepointLoader = viewModelScope.launch {
             chargepoints.value = getChargepointsWithFilters(bounds, zoom, filters)
         }
     }

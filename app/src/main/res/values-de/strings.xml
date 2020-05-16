@@ -62,4 +62,5 @@
     <string name="none">keine</string>
     <string name="show_more">mehr…</string>
     <string name="show_less">weniger…</string>
+    <string name="favorites_empty_state">Wenn du Ladestationen als Favorit markierst, tauchen sie hier auf.</string>
 </resources>

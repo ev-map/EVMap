@@ -11,28 +11,73 @@
             type="FavoritesViewModel" />
     </data>
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/toolbar_container"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:fitsSystemWindows="true">
+            android:fitsSystemWindows="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="?android:actionBarSize" />
+                android:layout_height="wrap_content" />
 
         </com.google.android.material.appbar.AppBarLayout>
 
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/favs_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:data="@{vm.listData}" />
-    </LinearLayout>
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:data="@{vm.listData}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar_container" />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/animation_view"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp"
+            app:goneUnless="@{vm.listData.size() == 0}"
+            app:layout_constraintBottom_toTopOf="@+id/textView19"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.497"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar_container"
+            app:layout_constraintVertical_chainStyle="packed"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/ev_anim" />
+
+        <TextView
+            android:id="@+id/textView19"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:breakStrategy="balanced"
+            android:gravity="center_horizontal"
+            android:text="@string/favorites_empty_state"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+            android:textColor="?android:textColorSecondary"
+            app:goneUnless="@{vm.listData.size() == 0}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/animation_view" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

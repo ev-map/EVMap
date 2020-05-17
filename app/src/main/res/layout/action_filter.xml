@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="?attr/actionButtonStyle"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:clipToPadding="false"
+    android:focusable="true">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        app:srcCompat="@drawable/ic_filter" />
+
+    <TextView
+        android:id="@+id/filter_badge"
+        android:layout_width="wrap_content"
+        android:layout_height="16dp"
+        android:minWidth="15dp"
+        android:layout_gravity="right|end|bottom"
+        android:layout_marginEnd="-5dp"
+        android:layout_marginBottom="6dp"
+        android:background="@drawable/rounded_rect_4dp"
+        android:backgroundTint="?colorPrimary"
+        android:gravity="center"
+        android:padding="0dp"
+        android:textColor="@android:color/white"
+        android:visibility="gone"
+        tools:text="0"
+        android:textSize="10sp" />
+
+</FrameLayout>

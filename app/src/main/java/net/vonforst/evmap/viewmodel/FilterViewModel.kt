@@ -169,7 +169,18 @@ data class MultipleChoiceFilterValue(
     @PrimaryKey override val key: String,
     var values: MutableSet<String>,
     var all: Boolean
-) : FilterValue()
+) : FilterValue() {
+    override fun equals(other: Any?): Boolean {
+        if (other == null || other !is MultipleChoiceFilterValue) return false
+        if (key != other.key) return false
+
+        return if (all) {
+            other.all
+        } else {
+            !other.all && values == other.values
+        }
+    }
+}
 
 @Entity
 data class SliderFilterValue(

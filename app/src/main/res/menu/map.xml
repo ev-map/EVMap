@@ -6,5 +6,6 @@
         android:id="@+id/menu_filter"
         android:title="@string/menu_filter"
         android:icon="@drawable/ic_filter"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom"
+        app:actionLayout="@layout/action_filter" />
 </menu>

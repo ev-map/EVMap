@@ -45,6 +45,17 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
     private val filtersWithValue: LiveData<List<FilterWithValue<out FilterValue>>> by lazy {
         filtersWithValue(filters, filterValues)
     }
+
+    val filtersCount: LiveData<Int> by lazy {
+        MediatorLiveData<Int>().apply {
+            value = 0
+            addSource(filtersWithValue) { filtersWithValue ->
+                value = filtersWithValue.count {
+                    it.filter.defaultValue() != it.value
+                }
+            }
+        }
+    }
     val chargepoints: MediatorLiveData<Resource<List<ChargepointListItem>>> by lazy {
         MediatorLiveData<Resource<List<ChargepointListItem>>>()
             .apply {

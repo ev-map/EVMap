@@ -10,6 +10,7 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.InputMethodManager
+import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.core.app.SharedElementCallback
 import androidx.core.content.ContextCompat
@@ -505,7 +506,21 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.map, menu)
-        super.onCreateOptionsMenu(menu, inflater)
+
+        val filterItem = menu.findItem(R.id.menu_filter)
+        val filterView = filterItem.actionView
+
+        val filterBadge = filterView?.findViewById<TextView>(R.id.filter_badge)
+        if (filterBadge != null) {
+            // set up badge showing number of active filters
+            vm.filtersCount.observe(viewLifecycleOwner, Observer {
+                filterBadge.visibility = if (it > 0) View.VISIBLE else View.GONE
+                filterBadge.text = it.toString()
+            })
+        }
+        filterView?.setOnClickListener {
+            onOptionsItemSelected(filterItem)
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

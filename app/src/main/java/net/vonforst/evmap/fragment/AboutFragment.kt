@@ -29,6 +29,9 @@ class AboutFragment : PreferenceFragmentCompat() {
         setPreferencesFromResource(R.xml.about, rootKey)
 
         findPreference<Preference>("version")?.summary = BuildConfig.VERSION_NAME
+
+        //TODO: disable donations until fully implemented
+        findPreference<Preference>("donate")?.isVisible = false
     }
 
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {

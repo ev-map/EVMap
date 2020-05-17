@@ -194,6 +194,12 @@ class FiltersAdapter : DataBindingAdapter<FilterWithValue<FilterValue>>() {
             if (it !in filter.choices.keys) value.values.remove(it)
         }
 
+        fun updateButtons() {
+            value.all = value.values == filter.choices.keys
+            binding.btnAll.isEnabled = !value.all
+            binding.btnNone.isEnabled = value.values.isNotEmpty()
+        }
+
         val chips = mutableMapOf<String, Chip>()
         binding.chipGroup.children.forEach {
             if (it.id != R.id.chipMore) binding.chipGroup.removeView(it)
@@ -215,11 +221,11 @@ class FiltersAdapter : DataBindingAdapter<FilterWithValue<FilterValue>>() {
             chip.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
                     value.values.add(choice.key)
-                    if (value.values == filter.choices.keys) value.all = true
                 } else {
                     value.values.remove(choice.key)
                     value.all = false
                 }
+                updateButtons()
             }
 
             if (filter.commonChoices != null && choice.key !in filter.commonChoices
@@ -231,18 +237,20 @@ class FiltersAdapter : DataBindingAdapter<FilterWithValue<FilterValue>>() {
             }
 
             binding.chipGroup.addView(chip, binding.chipGroup.childCount - 1)
-            chips.put(choice.key, chip)
+            chips[choice.key] = chip
         }
 
         binding.btnAll.setOnClickListener {
             value.all = true
             value.values.addAll(filter.choices.keys)
             chips.values.forEach { it.isChecked = true }
+            updateButtons()
         }
         binding.btnNone.setOnClickListener {
             value.all = true
             value.values.addAll(filter.choices.keys)
             chips.values.forEach { it.isChecked = false }
+            updateButtons()
         }
         binding.chipMore.setOnClickListener {
             binding.showingAll = !binding.showingAll
@@ -256,6 +264,7 @@ class FiltersAdapter : DataBindingAdapter<FilterWithValue<FilterValue>>() {
                 }
             }
         }
+        updateButtons()
     }
 
     private fun setupSlider(

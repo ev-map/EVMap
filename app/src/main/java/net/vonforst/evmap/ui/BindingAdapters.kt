@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import net.vonforst.evmap.R
+import net.vonforst.evmap.api.availability.ChargepointStatus
 import net.vonforst.evmap.api.goingelectric.Chargepoint
 
 
@@ -82,25 +83,30 @@ fun setContentDescriptionResource(imageView: ImageView, resource: Int) {
 }
 
 @BindingAdapter("tintAvailability")
-fun setImageTintAvailability(view: ImageView, available: Int?) {
+fun setImageTintAvailability(view: ImageView, available: List<ChargepointStatus>?) {
     view.imageTintList = ColorStateList.valueOf(availabilityColor(available, view.context))
 }
 
 @BindingAdapter("textColorAvailability")
-fun setTextColorAvailability(view: TextView, available: Int?) {
+fun setTextColorAvailability(view: TextView, available: List<ChargepointStatus>?) {
     view.setTextColor(availabilityColor(available, view.context))
 }
 
 @BindingAdapter("backgroundTintAvailability")
-fun setBackgroundTintAvailability(view: View, available: Int?) {
+fun setBackgroundTintAvailability(view: View, available: List<ChargepointStatus>?) {
     view.backgroundTintList = ColorStateList.valueOf(availabilityColor(available, view.context))
 }
 
 private fun availabilityColor(
-    available: Int?,
+    status: List<ChargepointStatus>?,
     context: Context
-): Int = if (available != null) {
-    if (available > 0) {
+): Int = if (status != null) {
+    val unknown = status.any { it == ChargepointStatus.UNKNOWN }
+    val available = status.count { it == ChargepointStatus.AVAILABLE }
+
+    if (unknown) {
+        ContextCompat.getColor(context, R.color.unknown)
+    } else if (available > 0) {
         ContextCompat.getColor(context, R.color.available)
     } else {
         ContextCompat.getColor(context, R.color.unavailable)
@@ -108,4 +114,16 @@ private fun availabilityColor(
 } else {
     val ta = context.theme.obtainStyledAttributes(intArrayOf(R.attr.colorControlNormal))
     ta.getColor(0, 0)
+}
+
+fun availabilityText(status: List<ChargepointStatus>?): String? {
+    if (status == null) return null
+
+    val total = status.size
+    val unknown = status.count { it == ChargepointStatus.UNKNOWN }
+    val available = status.count { it == ChargepointStatus.AVAILABLE }
+
+    return if (unknown > 0) {
+        if (unknown == total) "?" else "$available?"
+    } else available.toString()
 }

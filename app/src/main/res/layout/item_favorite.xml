@@ -7,6 +7,7 @@
 
         <import type="net.vonforst.evmap.api.UtilsKt" />
         <import type="net.vonforst.evmap.viewmodel.Status" />
+        <import type="net.vonforst.evmap.ui.BindingAdaptersKt" />
 
         <variable
             name="item"
@@ -69,7 +70,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/rounded_rect"
             android:padding="2dp"
-            android:text="@{String.format(&quot;%d/%d&quot;, item.available.data, item.total)}"
+            android:text="@{String.format(&quot;%s/%d&quot;, BindingAdaptersKt.availabilityText(item.available.data), item.total)}"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textColor="@android:color/white"
             app:backgroundTintAvailability="@{item.available.data}"

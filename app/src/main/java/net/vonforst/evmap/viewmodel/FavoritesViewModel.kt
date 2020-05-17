@@ -81,18 +81,18 @@ class FavoritesViewModel(application: Application, geApiKey: String) :
 
     data class FavoritesListItem(
         val charger: ChargeLocation,
-        val available: Resource<Int>,
+        val available: Resource<List<ChargepointStatus>>,
         val total: Int,
         val distance: Double?
     ) : Equatable
 
-    private fun totalAvailable(id: Long): Resource<Int> {
+    private fun totalAvailable(id: Long): Resource<List<ChargepointStatus>> {
         val availability = availability.value?.get(id) ?: return Resource.error(null, null)
         if (availability.status != Status.SUCCESS) {
             return Resource(availability.status, null, availability.message)
         } else {
             val values = availability.data?.status?.values ?: return Resource.error(null, null)
-            return Resource.success(values.sumBy { it.filter { it == ChargepointStatus.AVAILABLE }.size })
+            return Resource.success(values.flatten())
         }
     }
 

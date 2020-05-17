@@ -65,14 +65,16 @@ fun chargepointWithAvailability(
     availability: Map<Chargepoint, List<ChargepointStatus>>?
 ): List<ConnectorAdapter.ChargepointWithAvailability>? {
     return chargepoints?.map {
-        ConnectorAdapter.ChargepointWithAvailability(
-            it, availability?.get(it)?.count { it == ChargepointStatus.AVAILABLE }
-        )
+        val status = availability?.get(it)
+        ConnectorAdapter.ChargepointWithAvailability(it, status)
     }
 }
 
 class ConnectorAdapter : DataBindingAdapter<ConnectorAdapter.ChargepointWithAvailability>() {
-    data class ChargepointWithAvailability(val chargepoint: Chargepoint, val available: Int?) :
+    data class ChargepointWithAvailability(
+        val chargepoint: Chargepoint,
+        val status: List<ChargepointStatus>?
+    ) :
         Equatable
 
     override fun getItemViewType(position: Int): Int = R.layout.item_connector

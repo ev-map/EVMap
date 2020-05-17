@@ -8,6 +8,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.os.Bundle
+import android.os.Handler
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
@@ -306,6 +307,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             startPostponedEnterTransition()
         } else {
             binding.gallery.scrollToPosition(galleryPosition)
+            // make sure that the app does not freeze waiting for a picture to load
+            Handler().postDelayed({
+                startPostponedEnterTransition()
+            }, 500)
         }
 
         binding.detailView.connectors.apply {

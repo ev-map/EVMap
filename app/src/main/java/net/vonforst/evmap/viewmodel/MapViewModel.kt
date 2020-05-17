@@ -149,6 +149,10 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
         val connectorsVal =
             filters.find { it.value.key == "connectors" }!!.value as MultipleChoiceFilterValue
         val connectors = if (connectorsVal.all) null else connectorsVal.values.joinToString(",")
+        if (connectorsVal.values.isEmpty() && !connectorsVal.all) {
+            // no connectors chosen
+            return Resource.success(emptyList())
+        }
 
         // do not use clustering if filters need to be applied locally.
         val useClustering = minConnectors <= 1

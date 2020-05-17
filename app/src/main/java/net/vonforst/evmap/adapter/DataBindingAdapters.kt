@@ -223,7 +223,6 @@ class FiltersAdapter : DataBindingAdapter<FilterWithValue<FilterValue>>() {
                     value.values.add(choice.key)
                 } else {
                     value.values.remove(choice.key)
-                    value.all = false
                 }
                 updateButtons()
             }

@@ -103,7 +103,7 @@
             android:clickable="true"
             android:focusable="true"
             android:src="@drawable/ic_location"
-            app:backgroundTint="@android:color/white"
+            app:backgroundTint="?android:colorBackground"
             app:borderWidth="0dp"
             app:isFabActive="@{ vm.myLocationEnabled }"
             app:layout_behavior=".ui.HideOnScrollFabBehavior" />

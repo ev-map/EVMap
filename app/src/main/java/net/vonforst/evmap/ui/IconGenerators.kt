@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
+import androidx.core.widget.TextViewCompat
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.maps.android.ui.IconGenerator
@@ -20,7 +21,6 @@ class ClusterIconGenerator(context: Context) : IconGenerator(context) {
     init {
         setBackground(context.getDrawable(R.drawable.marker_cluster_bg))
         setContentView(makeSquareTextView(context))
-        setTextAppearance(R.style.TextAppearance_AppCompat_Inverse)
     }
 
     private fun makeSquareTextView(context: Context): SquareTextView? {
@@ -34,6 +34,8 @@ class ClusterIconGenerator(context: Context) : IconGenerator(context) {
             )
             id = com.google.maps.android.R.id.amu_text
             setPadding(twelveDpi, twelveDpi, twelveDpi, twelveDpi)
+            TextViewCompat.setTextAppearance(this, R.style.TextAppearance_AppCompat)
+            setTextColor(ContextCompat.getColor(context, android.R.color.white))
         }
     }
 }

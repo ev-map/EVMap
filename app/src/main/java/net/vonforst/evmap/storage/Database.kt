@@ -53,11 +53,15 @@ abstract class AppDatabase : RoomDatabase() {
             override fun migrate(db: SupportSQLiteDatabase) {
                 // recreate ChargeLocation table to make postcode nullable
                 db.beginTransaction()
-                db.execSQL("CREATE TABLE `ChargeLocationNew` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `chargepoints` TEXT NOT NULL, `network` TEXT, `url` TEXT NOT NULL, `verified` INTEGER NOT NULL, `operator` TEXT, `generalInformation` TEXT, `amenities` TEXT, `locationDescription` TEXT, `photos` TEXT, `lat` REAL NOT NULL, `lng` REAL NOT NULL, `city` TEXT NOT NULL, `country` TEXT NOT NULL, `postcode` TEXT, `street` TEXT NOT NULL, `twentyfourSeven` INTEGER, `description` TEXT, `mostart` TEXT, `moend` TEXT, `tustart` TEXT, `tuend` TEXT, `westart` TEXT, `weend` TEXT, `thstart` TEXT, `thend` TEXT, `frstart` TEXT, `frend` TEXT, `sastart` TEXT, `saend` TEXT, `sustart` TEXT, `suend` TEXT, `hostart` TEXT, `hoend` TEXT, `freecharging` INTEGER, `freeparking` INTEGER, `descriptionShort` TEXT, `descriptionLong` TEXT, PRIMARY KEY(`id`))");
-                db.execSQL("INSERT INTO `ChargeLocationNew` SELECT * FROM `ChargeLocation`");
-                db.execSQL("DROP TABLE `ChargeLocation`")
-                db.execSQL("ALTER TABLE `ChargeLocationNew` RENAME TO `ChargeLocation`")
-                db.endTransaction()
+                try {
+                    db.execSQL("CREATE TABLE `ChargeLocationNew` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `chargepoints` TEXT NOT NULL, `network` TEXT, `url` TEXT NOT NULL, `verified` INTEGER NOT NULL, `operator` TEXT, `generalInformation` TEXT, `amenities` TEXT, `locationDescription` TEXT, `photos` TEXT, `lat` REAL NOT NULL, `lng` REAL NOT NULL, `city` TEXT NOT NULL, `country` TEXT NOT NULL, `postcode` TEXT, `street` TEXT NOT NULL, `twentyfourSeven` INTEGER, `description` TEXT, `mostart` TEXT, `moend` TEXT, `tustart` TEXT, `tuend` TEXT, `westart` TEXT, `weend` TEXT, `thstart` TEXT, `thend` TEXT, `frstart` TEXT, `frend` TEXT, `sastart` TEXT, `saend` TEXT, `sustart` TEXT, `suend` TEXT, `hostart` TEXT, `hoend` TEXT, `freecharging` INTEGER, `freeparking` INTEGER, `descriptionShort` TEXT, `descriptionLong` TEXT, PRIMARY KEY(`id`))");
+                    db.execSQL("INSERT INTO `ChargeLocationNew` SELECT * FROM `ChargeLocation`");
+                    db.execSQL("DROP TABLE `ChargeLocation`")
+                    db.execSQL("ALTER TABLE `ChargeLocationNew` RENAME TO `ChargeLocation`")
+                    db.setTransactionSuccessful()
+                } finally {
+                    db.endTransaction()
+                }
             }
         }
 
@@ -71,11 +75,15 @@ abstract class AppDatabase : RoomDatabase() {
             override fun migrate(db: SupportSQLiteDatabase) {
                 // recreate ChargeLocation table to make other address fields nullable
                 db.beginTransaction()
-                db.execSQL("CREATE TABLE `ChargeLocationNew` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `chargepoints` TEXT NOT NULL, `network` TEXT, `url` TEXT NOT NULL, `verified` INTEGER NOT NULL, `operator` TEXT, `generalInformation` TEXT, `amenities` TEXT, `locationDescription` TEXT, `photos` TEXT, `lat` REAL NOT NULL, `lng` REAL NOT NULL, `city` TEXT, `country` TEXT, `postcode` TEXT, `street` TEXT, `twentyfourSeven` INTEGER, `description` TEXT, `mostart` TEXT, `moend` TEXT, `tustart` TEXT, `tuend` TEXT, `westart` TEXT, `weend` TEXT, `thstart` TEXT, `thend` TEXT, `frstart` TEXT, `frend` TEXT, `sastart` TEXT, `saend` TEXT, `sustart` TEXT, `suend` TEXT, `hostart` TEXT, `hoend` TEXT, `freecharging` INTEGER, `freeparking` INTEGER, `descriptionShort` TEXT, `descriptionLong` TEXT, PRIMARY KEY(`id`))");
-                db.execSQL("INSERT INTO `ChargeLocationNew` SELECT * FROM `ChargeLocation`");
-                db.execSQL("DROP TABLE `ChargeLocation`")
-                db.execSQL("ALTER TABLE `ChargeLocationNew` RENAME TO `ChargeLocation`")
-                db.endTransaction()
+                try {
+                    db.execSQL("CREATE TABLE `ChargeLocationNew` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `chargepoints` TEXT NOT NULL, `network` TEXT, `url` TEXT NOT NULL, `verified` INTEGER NOT NULL, `operator` TEXT, `generalInformation` TEXT, `amenities` TEXT, `locationDescription` TEXT, `photos` TEXT, `lat` REAL NOT NULL, `lng` REAL NOT NULL, `city` TEXT, `country` TEXT, `postcode` TEXT, `street` TEXT, `twentyfourSeven` INTEGER, `description` TEXT, `mostart` TEXT, `moend` TEXT, `tustart` TEXT, `tuend` TEXT, `westart` TEXT, `weend` TEXT, `thstart` TEXT, `thend` TEXT, `frstart` TEXT, `frend` TEXT, `sastart` TEXT, `saend` TEXT, `sustart` TEXT, `suend` TEXT, `hostart` TEXT, `hoend` TEXT, `freecharging` INTEGER, `freeparking` INTEGER, `descriptionShort` TEXT, `descriptionLong` TEXT, PRIMARY KEY(`id`))");
+                    db.execSQL("INSERT INTO `ChargeLocationNew` SELECT * FROM `ChargeLocation`");
+                    db.execSQL("DROP TABLE `ChargeLocation`")
+                    db.execSQL("ALTER TABLE `ChargeLocationNew` RENAME TO `ChargeLocation`")
+                    db.setTransactionSuccessful()
+                } finally {
+                    db.endTransaction()
+                }
             }
         }
     }

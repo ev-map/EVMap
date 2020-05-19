@@ -106,7 +106,7 @@
             app:backgroundTint="?android:colorBackground"
             app:borderWidth="0dp"
             app:isFabActive="@{ vm.myLocationEnabled }"
-            app:layout_behavior=".ui.HideOnScrollFabBehavior" />
+            app:layout_behavior="net.vonforst.evmap.ui.HideOnScrollFabBehavior" />
 
         <androidx.core.widget.NestedScrollView
             android:id="@+id/bottom_sheet"

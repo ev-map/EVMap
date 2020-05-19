@@ -42,7 +42,7 @@ class ClusterIconGenerator(context: Context) : IconGenerator(context) {
 
 
 class ChargerIconGenerator(val context: Context) {
-    data class BitmapData(val tint: Int, val scale: Int, val alpha: Int)
+    data class BitmapData(val tint: Int, val scale: Int, val alpha: Int, val highlight: Boolean)
 
     val cacheSize = 4 * 1024 * 1024; // 4MiB
     val cache = object : LruCache<BitmapData, Bitmap>(cacheSize) {
@@ -52,6 +52,7 @@ class ChargerIconGenerator(val context: Context) {
     }
     val oversize = 1f  // increase to add padding for overshoot scale animation
     val icon = R.drawable.ic_map_marker_charging
+    val highlightIcon = R.drawable.ic_map_marker_highlight
 
     init {
         preloadCache()
@@ -66,10 +67,12 @@ class ChargerIconGenerator(val context: Context) {
             R.color.charger_11kw,
             R.color.charger_low
         )
-        for (tint in tints) {
-            for (scale in 0..20) {
-                val data = BitmapData(tint, scale, 255)
-                cache.put(data, generateBitmap(data))
+        for (highlight in listOf(false, true)) {
+            for (tint in tints) {
+                for (scale in 0..20) {
+                    val data = BitmapData(tint, scale, 255, highlight)
+                    cache.put(data, generateBitmap(data))
+                }
             }
         }
     }
@@ -77,9 +80,10 @@ class ChargerIconGenerator(val context: Context) {
     fun getBitmapDescriptor(
         @ColorRes tint: Int,
         scale: Int = 20,
-        alpha: Int = 255
+        alpha: Int = 255,
+        highlight: Boolean = false
     ): BitmapDescriptor? {
-        val data = BitmapData(tint, scale, alpha)
+        val data = BitmapData(tint, scale, alpha, highlight)
         val cachedImg = cache[data]
         return if (cachedImg != null) {
             BitmapDescriptorFactory.fromBitmap(cachedImg)
@@ -120,6 +124,18 @@ class ChargerIconGenerator(val context: Context) {
         )
 
         vd.draw(canvas)
+
+        if (data.highlight) {
+            val highlightDrawable = context.getDrawable(highlightIcon)!!
+            highlightDrawable.setBounds(
+                leftPadding.toInt(), topPadding.toInt(),
+                leftPadding.toInt() + vd.intrinsicWidth,
+                topPadding.toInt() + vd.intrinsicHeight
+            )
+            highlightDrawable.alpha = data.alpha
+            highlightDrawable.draw(canvas)
+        }
+
         return bm
     }
 }

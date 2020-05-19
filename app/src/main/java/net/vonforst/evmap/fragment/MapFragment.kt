@@ -15,7 +15,6 @@ import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.core.app.SharedElementCallback
 import androidx.core.content.ContextCompat
-import androidx.core.view.updateLayoutParams
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -25,7 +24,6 @@ import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.transition.TransitionInflater
@@ -43,6 +41,8 @@ import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike
 import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED
 import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN
 import com.mahc.custombottomsheetbehavior.MergedAppBarLayoutBehavior
+import io.michaelrocks.bimap.HashBiMap
+import io.michaelrocks.bimap.MutableBiMap
 import kotlinx.android.synthetic.main.fragment_map.*
 import net.vonforst.evmap.*
 import net.vonforst.evmap.adapter.ConnectorAdapter
@@ -78,7 +78,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var bottomSheetBehavior: BottomSheetBehaviorGoogleMapsLike<View>
     private lateinit var detailAppBarBehavior: MergedAppBarLayoutBehavior
-    private var markers: Map<Marker, ChargeLocation> = emptyMap()
+    private var markers: MutableBiMap<Marker, ChargeLocation> = HashBiMap()
     private var clusterMarkers: List<Marker> = emptyList()
 
     private lateinit var clusterIconGenerator: ClusterIconGenerator
@@ -251,8 +251,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 binding.fabDirections.show()
                 detailAppBarBehavior.setToolbarTitle(it.name)
                 updateFavoriteToggle()
+                highlightMarker(it)
             } else {
                 bottomSheetBehavior.state = STATE_HIDDEN
+                unhighlightAllMarkers()
             }
         })
         vm.chargepoints.observe(viewLifecycleOwner, Observer {
@@ -262,6 +264,37 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         vm.favorites.observe(viewLifecycleOwner, Observer {
             updateFavoriteToggle()
         })
+    }
+
+    private fun unhighlightAllMarkers() {
+        markers.forEach { (m, c) ->
+            m.setIcon(
+                chargerIconGenerator.getBitmapDescriptor(
+                    getMarkerTint(c)
+                )
+            )
+        }
+    }
+
+    private fun highlightMarker(charger: ChargeLocation) {
+        val marker = markers.inverse[charger] ?: return
+        // highlight this marker
+        marker.setIcon(
+            chargerIconGenerator.getBitmapDescriptor(
+                getMarkerTint(charger), highlight = true
+            )
+        )
+
+        // un-highlight all other markers
+        markers.forEach { (m, c) ->
+            if (m != marker) {
+                m.setIcon(
+                    chargerIconGenerator.getBitmapDescriptor(
+                        getMarkerTint(c)
+                    )
+                )
+            }
+        }
     }
 
     private fun updateFavoriteToggle() {
@@ -457,7 +490,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         val chargers = chargepoints.filterIsInstance<ChargeLocation>()
 
         val chargepointIds = chargers.map { it.id }.toSet()
-        markers = markers.filter {
+        // remove markers that disappeared
+        markers.entries.toList().forEach {
             if (!chargepointIds.contains(it.value.id)) {
                 val tint = getMarkerTint(it.value)
                 if (it.key.isVisible) {
@@ -465,14 +499,15 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 } else {
                     it.key.remove()
                 }
-                false
+                markers.remove(it.key)
             } else {
                 true
             }
         }
-        markers = markers + chargers.filter {
+        // add new markers
+        chargers.filter {
             !markers.containsValue(it)
-        }.map { charger ->
+        }.forEach { charger ->
             val tint = getMarkerTint(charger)
             val marker = map.addMarker(
                 MarkerOptions()
@@ -482,9 +517,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                     )
             )
             animator.animateMarkerAppear(marker, tint)
-
-            marker to charger
-        }.toMap()
+            markers[marker] = charger
+        }
         clusterMarkers = clusters.map { cluster ->
             map.addMarker(
                 MarkerOptions()

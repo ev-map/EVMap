@@ -95,6 +95,7 @@ dependencies {
     implementation "com.mikepenz:aboutlibraries-core:$about_libs_version"
     implementation "com.mikepenz:aboutlibraries:$about_libs_version"
     implementation 'com.airbnb.android:lottie:3.4.0'
+    implementation 'io.michaelrocks:bimap:1.0.2'
 
     // navigation library
     def nav_version = "2.3.0-alpha06"

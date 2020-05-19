@@ -23,7 +23,8 @@ class MarkerAnimator(val gen: ChargerIconGenerator) {
 
     fun animateMarkerAppear(
         marker: Marker,
-        tint: Int
+        tint: Int,
+        highlight: Boolean
     ) {
         animatingMarkers[marker]?.cancel()
         animatingMarkers.remove(marker)
@@ -39,7 +40,7 @@ class MarkerAnimator(val gen: ChargerIconGenerator) {
                 }
                 val scale = animationState.animatedValue as Int
                 marker.setIcon(
-                    gen.getBitmapDescriptor(tint, scale = scale)
+                    gen.getBitmapDescriptor(tint, scale = scale, highlight = highlight)
                 )
             }
             addListener(onEnd = {
@@ -52,7 +53,8 @@ class MarkerAnimator(val gen: ChargerIconGenerator) {
 
     fun animateMarkerDisappear(
         marker: Marker,
-        tint: Int
+        tint: Int,
+        highlight: Boolean
     ) {
         animatingMarkers[marker]?.cancel()
         animatingMarkers.remove(marker)
@@ -68,7 +70,7 @@ class MarkerAnimator(val gen: ChargerIconGenerator) {
                 }
                 val scale = animationState.animatedValue as Int
                 marker.setIcon(
-                    gen.getBitmapDescriptor(tint, scale = scale)
+                    gen.getBitmapDescriptor(tint, scale = scale, highlight = highlight)
                 )
             }
             addListener(onEnd = {

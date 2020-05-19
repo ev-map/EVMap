@@ -496,15 +496,14 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         // remove markers that disappeared
         markers.entries.toList().forEach {
             if (!chargepointIds.contains(it.value.id)) {
-                val tint = getMarkerTint(it.value)
                 if (it.key.isVisible) {
-                    animator.animateMarkerDisappear(it.key, tint)
+                    val tint = getMarkerTint(it.value)
+                    val highlight = it.value == vm.chargerSparse.value
+                    animator.animateMarkerDisappear(it.key, tint, highlight)
                 } else {
                     it.key.remove()
                 }
                 markers.remove(it.key)
-            } else {
-                true
             }
         }
         // add new markers
@@ -512,14 +511,15 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             !markers.containsValue(it)
         }.forEach { charger ->
             val tint = getMarkerTint(charger)
+            val highlight = charger == vm.chargerSparse.value
             val marker = map.addMarker(
                 MarkerOptions()
                     .position(LatLng(charger.coordinates.lat, charger.coordinates.lng))
                     .icon(
-                        chargerIconGenerator.getBitmapDescriptor(tint)
+                        chargerIconGenerator.getBitmapDescriptor(tint, highlight = highlight)
                     )
             )
-            animator.animateMarkerAppear(marker, tint)
+            animator.animateMarkerAppear(marker, tint, highlight)
             markers[marker] = charger
         }
         clusterMarkers = clusters.map { cluster ->

@@ -286,6 +286,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 getMarkerTint(charger), highlight = true
             )
         )
+        animator.animateMarkerBounce(marker)
 
         // un-highlight all other markers
         markers.forEach { (m, c) ->

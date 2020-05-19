@@ -1,12 +1,14 @@
 package net.vonforst.evmap.ui
 
 import android.animation.ValueAnimator
+import android.view.animation.BounceInterpolator
 import androidx.core.animation.addListener
 import androidx.interpolator.view.animation.FastOutLinearInInterpolator
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
 import com.google.android.gms.maps.model.Marker
 import net.vonforst.evmap.R
 import net.vonforst.evmap.api.goingelectric.ChargeLocation
+import kotlin.math.max
 
 fun getMarkerTint(charger: ChargeLocation): Int = when {
     charger.maxPower >= 100 -> R.color.charger_100kw
@@ -73,6 +75,27 @@ class MarkerAnimator(val gen: ChargerIconGenerator) {
                 animatingMarkers.remove(marker)
                 marker.remove()
             })
+        }
+        animatingMarkers[marker] = anim
+        anim.start()
+    }
+
+    fun animateMarkerBounce(marker: Marker) {
+        animatingMarkers[marker]?.cancel()
+        animatingMarkers.remove(marker)
+
+        val anim = ValueAnimator.ofFloat(0f, 1f).apply {
+            duration = 700
+            interpolator = BounceInterpolator()
+            addUpdateListener { state ->
+                if (!marker.isVisible) {
+                    cancel()
+                    animatingMarkers.remove(marker)
+                    return@addUpdateListener
+                }
+                val t = max(1f - state.animatedValue as Float, 0f) / 2
+                marker.setAnchor(0.5f, 1.0f + t)
+            }
         }
         animatingMarkers[marker] = anim
         anim.start()

@@ -15,6 +15,7 @@ import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.core.app.SharedElementCallback
 import androidx.core.content.ContextCompat
+import androidx.core.view.updateLayoutParams
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -24,6 +25,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.transition.TransitionInflater

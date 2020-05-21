@@ -172,7 +172,7 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
             bounds.southwest.latitude, bounds.southwest.longitude,
             bounds.northeast.latitude, bounds.northeast.longitude,
             clustering = zoom < 13 && useClustering, zoom = zoom,
-            clusterDistance = 70, freecharging = freecharging, minPower = minPower,
+            clusterDistance = 40, freecharging = freecharging, minPower = minPower,
             freeparking = freeparking, plugs = connectors
         )
 

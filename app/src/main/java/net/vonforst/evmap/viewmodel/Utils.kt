@@ -1,7 +1,10 @@
 package net.vonforst.evmap.viewmodel
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.annotation.MainThread
+import androidx.annotation.Nullable
+import androidx.lifecycle.*
+import java.util.concurrent.atomic.AtomicBoolean
+
 
 inline fun <VM : ViewModel> viewModelFactory(crossinline f: () -> VM) =
     object : ViewModelProvider.Factory {
@@ -31,5 +34,32 @@ data class Resource<out T>(val status: Status, val data: T?, val message: String
         fun <T> loading(data: T?): Resource<T> {
             return Resource(Status.LOADING, data, null)
         }
+    }
+}
+
+class SingleLiveEvent<T> : MutableLiveData<T>() {
+    private val mPending: AtomicBoolean = AtomicBoolean(false)
+
+    @MainThread
+    override fun observe(owner: LifecycleOwner, observer: Observer<in T>) {
+        super.observe(owner, Observer {
+            if (mPending.compareAndSet(true, false)) {
+                observer.onChanged(it)
+            }
+        })
+    }
+
+    @MainThread
+    override fun setValue(@Nullable t: T?) {
+        mPending.set(true)
+        super.setValue(t)
+    }
+
+    /**
+     * Used for cases where T is Void, to make calls cleaner.
+     */
+    @MainThread
+    fun call() {
+        value = null
     }
 }

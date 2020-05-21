@@ -299,3 +299,7 @@ class FiltersAdapter : DataBindingAdapter<FilterWithValue<FilterValue>>() {
         return value
     }
 }
+
+class DonationAdapter() : DataBindingAdapter<DonationItem>() {
+    override fun getItemViewType(position: Int): Int = R.layout.item_donation
+}

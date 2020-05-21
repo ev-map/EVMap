@@ -64,4 +64,7 @@
     <string name="show_less">weniger…</string>
     <string name="favorites_empty_state">Wenn du Ladestationen als Favorit markierst, tauchen sie hier auf.</string>
     <string name="donate">Spenden</string>
+    <string name="donations_info">Findest du EVMap nützlich? Unterstütze die Weiterentwicklung der App mit einer Spende an den Entwickler.\n\nGoogle zieht von der Spende 30% Gebühren ab.</string>
+    <string name="donation_successful">Vielen Dank! ❤️</string>
+    <string name="donation_failed">Etwas ist schiefgelaufen. 😕</string>
 </resources>

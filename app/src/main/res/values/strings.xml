@@ -63,7 +63,7 @@
     <string name="show_less">less…</string>
     <string name="favorites_empty_state">If you add chargers as favorites, they will show up here.</string>
     <string name="donate">Donate</string>
-    <string name="donations_info">Do you find EVMap useful? Support its development by sending a donation to the developer.\n\nGoogle takes 30% off every donation.</string>
+    <string name="donations_info" formatted="false">Do you find EVMap useful? Support its development by sending a donation to the developer.\n\nGoogle takes 30% off every donation.</string>
     <string name="donation_successful">Thank you! ❤️</string>
     <string name="donation_failed">Something went wrong. 😕</string>
 </resources>

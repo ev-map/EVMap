@@ -21,6 +21,16 @@ import retrofit2.Response
 
 data class MapPosition(val bounds: LatLngBounds, val zoom: Float)
 
+internal fun getClusterDistance(zoom: Float): Int? {
+    return when (zoom) {
+        in 0.0..7.0 -> 100
+        in 7.0..11.5 -> 75
+        in 11.5..12.5 -> 60
+        in 12.5..13.0 -> 45
+        else -> null
+    }
+}
+
 class MapViewModel(application: Application, geApiKey: String) : AndroidViewModel(application) {
     private var api = GoingElectricApi.create(geApiKey, context = application)
     private var db = AppDatabase.getInstance(application)
@@ -166,13 +176,16 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
         }
 
         // do not use clustering if filters need to be applied locally.
-        val useClustering = minConnectors <= 1
+        val useClustering = minConnectors <= 1 && zoom < 13
+        val clusterDistance = if (useClustering) getClusterDistance(zoom) else null
+
+        println("$zoom, $clusterDistance")
 
         val response = api.getChargepoints(
             bounds.southwest.latitude, bounds.southwest.longitude,
             bounds.northeast.latitude, bounds.northeast.longitude,
-            clustering = zoom < 13 && useClustering, zoom = zoom,
-            clusterDistance = 40, freecharging = freecharging, minPower = minPower,
+            clustering = useClustering, zoom = zoom,
+            clusterDistance = clusterDistance, freecharging = freecharging, minPower = minPower,
             freeparking = freeparking, plugs = connectors
         )
 

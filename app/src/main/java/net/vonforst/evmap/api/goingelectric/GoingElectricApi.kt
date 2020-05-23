@@ -19,7 +19,7 @@ interface GoingElectricApi {
         @Query("ne_lat") ne_lat: Double, @Query("ne_lng") ne_lng: Double,
         @Query("clustering") clustering: Boolean,
         @Query("zoom") zoom: Float,
-        @Query("cluster_distance") clusterDistance: Int,
+        @Query("cluster_distance") clusterDistance: Int?,
         @Query("freecharging") freecharging: Boolean,
         @Query("freeparking") freeparking: Boolean,
         @Query("min_power") minPower: Int,

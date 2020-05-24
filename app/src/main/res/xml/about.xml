@@ -15,6 +15,10 @@
             android:summary="@string/copyright_summary" />
 
         <Preference
+            android:key="faq"
+            android:title="@string/faq" />
+
+        <Preference
             android:key="donate"
             android:title="@string/donate" />
 

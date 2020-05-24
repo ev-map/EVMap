@@ -41,6 +41,10 @@ class AboutFragment : PreferenceFragmentCompat() {
                 (activity as? MapsActivity)?.openUrl(getString(R.string.privacy_link))
                 true
             }
+            "faq" -> {
+                (activity as? MapsActivity)?.openUrl(getString(R.string.faq_link))
+                true
+            }
             "oss_licenses" -> {
                 LibsBuilder()
                     .withLicenseShown(true)

@@ -72,4 +72,5 @@
     <string name="map_type">Map type</string>
     <string name="map_details">Map details</string>
     <string name="map_traffic">Traffic</string>
+    <string name="faq">FAQ</string>
 </resources>

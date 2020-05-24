@@ -5,6 +5,8 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -73,8 +75,10 @@ class MapsActivity : AppCompatActivity() {
     }
 
     fun openUrl(url: String) {
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-        startActivity(intent)
+        val intent = CustomTabsIntent.Builder()
+            .setToolbarColor(ContextCompat.getColor(this, R.color.colorPrimary))
+            .build()
+        intent.launchUrl(this, Uri.parse(url))
     }
 
     fun shareUrl(url: String) {

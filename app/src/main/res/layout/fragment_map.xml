@@ -165,7 +165,7 @@
 
         <androidx.cardview.widget.CardView
             android:id="@+id/layers_sheet"
-            android:layout_height="200dp"
+            android:layout_height="wrap_content"
             android:layout_width="200dp"
             android:layout_gravity="top|end"
             android:layout_marginEnd="8dp"

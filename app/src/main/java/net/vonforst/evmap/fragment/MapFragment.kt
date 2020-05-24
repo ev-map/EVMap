@@ -331,6 +331,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         vm.mapType.observe(viewLifecycleOwner, Observer {
             map?.mapType = it
         })
+        vm.mapTrafficEnabled.observe(viewLifecycleOwner, Observer {
+            map?.isTrafficEnabled = it
+        })
     }
 
     private fun updateBackPressedCallback() {
@@ -443,7 +446,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
     override fun onMapReady(map: GoogleMap) {
         this.map = map
-        map.uiSettings.isTiltGesturesEnabled = false;
+        map.uiSettings.isTiltGesturesEnabled = false
+        map.isIndoorEnabled = false
+        map.uiSettings.isIndoorLevelPickerEnabled = false
         map.setOnCameraIdleListener {
             vm.mapPosition.value = MapPosition(
                 map.projection.visibleRegion.latLngBounds, map.cameraPosition.zoom

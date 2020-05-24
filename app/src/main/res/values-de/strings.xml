@@ -71,4 +71,6 @@
     <string name="map_type_satellite">Satellit</string>
     <string name="map_type_terrain">Gelände</string>
     <string name="map_type">Kartentyp</string>
+    <string name="map_details">Kartendetails</string>
+    <string name="map_traffic">Verkehr</string>
 </resources>

@@ -70,4 +70,6 @@
     <string name="map_type_satellite">Satellite</string>
     <string name="map_type_terrain">Terrain</string>
     <string name="map_type">Map type</string>
+    <string name="map_details">Map details</string>
+    <string name="map_traffic">Traffic</string>
 </resources>

@@ -144,6 +144,12 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
         }
     }
 
+    val mapTrafficEnabled: MutableLiveData<Boolean> by lazy {
+        MutableLiveData<Boolean>().apply {
+            value = false
+        }
+    }
+
     fun setMapType(type: Int) {
         mapType.value = type
     }

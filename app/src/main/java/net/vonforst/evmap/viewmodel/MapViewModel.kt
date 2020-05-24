@@ -206,8 +206,6 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
         val useClustering = minConnectors <= 1 && zoom < 13
         val clusterDistance = if (useClustering) getClusterDistance(zoom) else null
 
-        println("$zoom, $clusterDistance")
-
         val response = api.getChargepoints(
             bounds.southwest.latitude, bounds.southwest.longitude,
             bounds.northeast.latitude, bounds.northeast.longitude,

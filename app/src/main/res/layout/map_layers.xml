@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="net.vonforst.evmap.viewmodel.MapViewModel" />
+
+        <import type="com.google.android.gms.maps.GoogleMap" />
+
+        <variable
+            name="vm"
+            type="MapViewModel" />
+    </data>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:colorBackground"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp">
+
+
+        <TextView
+            android:id="@+id/textView22"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:text="@string/map_type"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <RadioGroup
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView22">
+
+            <RadioButton
+                android:id="@+id/rbStandard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="@{vm.mapType.equals(GoogleMap.MAP_TYPE_NORMAL)}"
+                android:onClick="@{() -> vm.setMapType(GoogleMap.MAP_TYPE_NORMAL)}"
+                android:text="@string/map_type_normal" />
+
+            <RadioButton
+                android:id="@+id/rbSatellite"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="@{vm.mapType.equals(GoogleMap.MAP_TYPE_HYBRID)}"
+                android:onClick="@{() -> vm.setMapType(GoogleMap.MAP_TYPE_HYBRID)}"
+                android:text="@string/map_type_satellite" />
+
+            <RadioButton
+                android:id="@+id/rbTerrain"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="@{vm.mapType.equals(GoogleMap.MAP_TYPE_TERRAIN)}"
+                android:onClick="@{() -> vm.setMapType(GoogleMap.MAP_TYPE_TERRAIN)}"
+                android:text="@string/map_type_terrain" />
+        </RadioGroup>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -2,6 +2,7 @@ package net.vonforst.evmap.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.*
+import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.libraries.places.api.model.Place
 import kotlinx.coroutines.Job
@@ -123,6 +124,11 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
     val myLocationEnabled: MutableLiveData<Boolean> by lazy {
         MutableLiveData<Boolean>()
     }
+    val layersMenuOpen: MutableLiveData<Boolean> by lazy {
+        MutableLiveData<Boolean>().apply {
+            value = false
+        }
+    }
 
     val favorites: LiveData<List<ChargeLocation>> by lazy {
         db.chargeLocationsDao().getAllChargeLocations()
@@ -130,6 +136,16 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
 
     val searchResult: MutableLiveData<Place> by lazy {
         MutableLiveData<Place>()
+    }
+
+    val mapType: MutableLiveData<Int> by lazy {
+        MutableLiveData<Int>().apply {
+            value = GoogleMap.MAP_TYPE_NORMAL
+        }
+    }
+
+    fun setMapType(type: Int) {
+        mapType.value = type
     }
 
     fun insertFavorite(charger: ChargeLocation) {

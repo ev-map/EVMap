@@ -120,7 +120,7 @@
             app:behavior_peekHeight="@dimen/peek_height"
             app:bottomsheetbehavior_defaultState="stateHidden"
             app:layout_behavior="@string/BottomSheetBehaviorGoogleMapsLike"
-            tools:bottomsheetbehavior_defaultState="stateAnchorPoint">
+            tools:bottomsheetbehavior_defaultState="stateHidden">
 
             <include
                 android:id="@+id/detail_view"
@@ -148,5 +148,35 @@
             android:layout_height="wrap_content"
             app:layout_behavior="@string/MergedAppBarLayoutBehavior"
             android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_layers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_gravity="top|end"
+            android:layout_marginEnd="12dp"
+            android:layout_marginTop="96dp"
+            app:backgroundTint="?android:colorBackground"
+            app:borderWidth="0dp"
+            app:fabSize="mini"
+            app:srcCompat="@drawable/ic_layers" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/layers_sheet"
+            android:layout_height="200dp"
+            android:layout_width="200dp"
+            android:layout_gravity="top|end"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="96dp"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <include
+                android:id="@+id/layers"
+                layout="@layout/map_layers"
+                app:vm="@{vm}" />
+        </androidx.cardview.widget.CardView>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

@@ -7,8 +7,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
+import android.transition.TransitionManager
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
@@ -39,6 +41,8 @@ import com.google.android.gms.maps.model.*
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
+import com.google.android.material.transition.MaterialArcMotion
+import com.google.android.material.transition.MaterialContainerTransform
 import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike
 import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED
 import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN
@@ -90,6 +94,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
     private lateinit var favToggle: MenuItem
     private val backPressedCallback = object : OnBackPressedCallback(false) {
         override fun handleOnBackPressed() {
+            val value = vm.layersMenuOpen.value
+            if (value != null && value) {
+                closeLayersMenu()
+                return
+            }
+
             val state = bottomSheetBehavior.state
             if (state != STATE_COLLAPSED && state != STATE_HIDDEN) {
                 bottomSheetBehavior.state = STATE_COLLAPSED
@@ -183,6 +193,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 }
             }
         }
+        binding.fabLayers.setOnClickListener {
+            openLayersMenu()
+        }
         binding.detailView.goingelectricButton.setOnClickListener {
             val charger = vm.charger.value?.data
             if (charger != null) {
@@ -226,6 +239,30 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         }
     }
 
+    private fun openLayersMenu() {
+        val materialTransform = MaterialContainerTransform().apply {
+            startView = binding.fabLayers
+            endView = binding.layersSheet
+            pathMotion = MaterialArcMotion()
+            duration = 250
+            scrimColor = Color.TRANSPARENT
+        }
+        TransitionManager.beginDelayedTransition(binding.root, materialTransform)
+        vm.layersMenuOpen.value = true
+    }
+
+    private fun closeLayersMenu() {
+        val materialTransform = MaterialContainerTransform().apply {
+            startView = binding.layersSheet
+            endView = binding.fabLayers
+            pathMotion = MaterialArcMotion()
+            duration = 200
+            scrimColor = Color.TRANSPARENT
+        }
+        TransitionManager.beginDelayedTransition(binding.root, materialTransform)
+        vm.layersMenuOpen.value = false
+    }
+
     private fun toggleFavorite() {
         val favs = vm.favorites.value ?: return
         val charger = vm.chargerSparse.value ?: return
@@ -245,8 +282,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 vm.bottomSheetState.value = newState
-                backPressedCallback.isEnabled =
-                    newState != STATE_HIDDEN || vm.searchResult.value != null
+                updateBackPressedCallback()
             }
         })
         vm.chargerSparse.observe(viewLifecycleOwner, Observer {
@@ -285,9 +321,22 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 searchResultMarker = map.addMarker(MarkerOptions().position(place.latLng!!))
             }
 
-            backPressedCallback.isEnabled = vm.bottomSheetState.value != STATE_HIDDEN ||
-                    place != null
+            updateBackPressedCallback()
         })
+        vm.layersMenuOpen.observe(viewLifecycleOwner, Observer { open ->
+            binding.fabLayers.visibility = if (open) View.GONE else View.VISIBLE
+            binding.layersSheet.visibility = if (open) View.VISIBLE else View.GONE
+            updateBackPressedCallback()
+        })
+        vm.mapType.observe(viewLifecycleOwner, Observer {
+            map?.mapType = it
+        })
+    }
+
+    private fun updateBackPressedCallback() {
+        backPressedCallback.isEnabled =
+            vm.bottomSheetState.value != STATE_HIDDEN || vm.searchResult.value != null
+                    || (vm.layersMenuOpen.value ?: false)
     }
 
     private fun unhighlightAllMarkers() {
@@ -416,7 +465,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
         }
         map.setOnMapClickListener {
-            vm.chargerSparse.value = null
+            if (backPressedCallback.isEnabled) {
+                backPressedCallback.handleOnBackPressed()
+            }
         }
 
         // set padding so that compass is not obstructed by toolbar

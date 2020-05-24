@@ -50,27 +50,31 @@ class MapsActivity : AppCompatActivity() {
     }
 
     fun navigateTo(charger: ChargeLocation) {
-        val intent = Intent(Intent.ACTION_VIEW)
-        val coord = charger.coordinates
-
         // google maps navigation
+        val coord = charger.coordinates
+        val intent = Intent(Intent.ACTION_VIEW)
         intent.data = Uri.parse("google.navigation:q=${coord.lat},${coord.lng}")
-        val pm = packageManager
-        if (intent.resolveActivity(pm) != null && prefs.navigateUseMaps) {
+        if (prefs.navigateUseMaps && intent.resolveActivity(packageManager) != null) {
             startActivity(intent);
         } else {
             // fallback: generic geo intent
-            intent.data = Uri.parse("geo:0,0?q=${coord.lat},${coord.lng}(${charger.name})")
-            if (intent.resolveActivity(pm) != null) {
-                startActivity(intent);
-            } else {
-                val cb = fragmentCallback ?: return
-                Snackbar.make(
-                    cb.getRootView(),
-                    R.string.no_maps_app_found,
-                    Snackbar.LENGTH_SHORT
-                )
-            }
+            showLocation(charger)
+        }
+    }
+
+    fun showLocation(charger: ChargeLocation) {
+        val coord = charger.coordinates
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = Uri.parse("geo:0,0?q=${coord.lat},${coord.lng}(${charger.name})")
+        if (intent.resolveActivity(packageManager) != null) {
+            startActivity(intent);
+        } else {
+            val cb = fragmentCallback ?: return
+            Snackbar.make(
+                cb.getRootView(),
+                R.string.no_maps_app_found,
+                Snackbar.LENGTH_SHORT
+            )
         }
     }
 

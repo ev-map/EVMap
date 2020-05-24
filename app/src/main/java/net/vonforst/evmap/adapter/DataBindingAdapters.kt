@@ -86,7 +86,8 @@ class DetailAdapter : DataBindingAdapter<DetailAdapter.Detail>() {
         val contentDescription: Int,
         val text: CharSequence,
         val detailText: CharSequence? = null,
-        val links: Boolean = true
+        val links: Boolean = true,
+        val clickable: Boolean = false
     ) : Equatable
 
     override fun getItemViewType(position: Int): Int = R.layout.item_detail
@@ -131,7 +132,8 @@ fun buildDetails(loc: ChargeLocation?, ctx: Context): List<DetailAdapter.Detail>
             R.string.coordinates,
             loc.coordinates.formatDMS(),
             loc.coordinates.formatDecimal(),
-            false
+            links = false,
+            clickable = true
         )
     )
 }

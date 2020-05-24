@@ -431,7 +431,18 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         }
 
         binding.detailView.details.apply {
-            adapter = DetailAdapter()
+            adapter = DetailAdapter().apply {
+                onClickListener = {
+                    when (it.icon) {
+                        R.drawable.ic_location -> {
+                            val charger = vm.chargerSparse.value
+                            if (charger != null) {
+                                (activity as? MapsActivity)?.showLocation(charger)
+                            }
+                        }
+                    }
+                }
+            }
             itemAnimator = null
             layoutManager =
                 LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)

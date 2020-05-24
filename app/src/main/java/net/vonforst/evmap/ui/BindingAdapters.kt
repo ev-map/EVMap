@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.use
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -95,6 +96,17 @@ fun setTextColorAvailability(view: TextView, available: List<ChargepointStatus>?
 @BindingAdapter("backgroundTintAvailability")
 fun setBackgroundTintAvailability(view: View, available: List<ChargepointStatus>?) {
     view.backgroundTintList = ColorStateList.valueOf(availabilityColor(available, view.context))
+}
+
+@BindingAdapter("selectableItemBackground")
+fun applySelectableItemBackground(view: View, apply: Boolean) {
+    if (apply) {
+        view.context.obtainStyledAttributes(intArrayOf(R.attr.selectableItemBackground)).use {
+            view.background = it.getDrawable(0)
+        }
+    } else {
+        view.background = null
+    }
 }
 
 private fun availabilityColor(

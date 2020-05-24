@@ -55,7 +55,7 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
     private val filters = getFilters(application, plugs)
 
     private val filtersWithValue: LiveData<List<FilterWithValue<out FilterValue>>> by lazy {
-        filtersWithValue(filters, filterValues)
+        filtersWithValue(filters, filterValues, filtersActive)
     }
 
     val filtersCount: LiveData<Int> by lazy {
@@ -147,6 +147,12 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
     val mapTrafficEnabled: MutableLiveData<Boolean> by lazy {
         MutableLiveData<Boolean>().apply {
             value = false
+        }
+    }
+
+    val filtersActive: MutableLiveData<Boolean> by lazy {
+        MutableLiveData<Boolean>().apply {
+            value = true
         }
     }
 

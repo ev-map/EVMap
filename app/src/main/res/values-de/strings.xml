@@ -74,4 +74,6 @@
     <string name="map_details">Kartendetails</string>
     <string name="map_traffic">Verkehr</string>
     <string name="faq">FAQ</string>
+    <string name="menu_filters_active">Filter aktiv</string>
+    <string name="menu_edit_filters">Filter bearbeiten…</string>
 </resources>

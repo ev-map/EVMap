@@ -74,17 +74,25 @@ internal fun getFilters(
 
 internal fun filtersWithValue(
     filters: LiveData<List<Filter<FilterValue>>>,
-    filterValues: LiveData<List<FilterValue>>
+    filterValues: LiveData<List<FilterValue>>,
+    active: LiveData<Boolean>? = null
 ): MediatorLiveData<List<FilterWithValue<out FilterValue>>> =
     MediatorLiveData<List<FilterWithValue<out FilterValue>>>().apply {
-        listOf(filters, filterValues).forEach {
+        listOf(filters, filterValues, active).forEach {
+            if (it == null) return@forEach
             addSource(it) {
                 val filters = filters.value ?: return@addSource
-                val values = filterValues.value ?: return@addSource
-                value = filters.map { filter ->
-                    val value =
-                        values.find { it.key == filter.key } ?: filter.defaultValue()
-                    FilterWithValue(filter, filter.valueClass.cast(value))
+                value = if (active != null && !active.value!!) {
+                    filters.map { filter ->
+                        FilterWithValue(filter, filter.defaultValue())
+                    }
+                } else {
+                    val values = filterValues.value ?: return@addSource
+                    filters.map { filter ->
+                        val value =
+                            values.find { it.key == filter.key } ?: filter.defaultValue()
+                        FilterWithValue(filter, filter.valueClass.cast(value))
+                    }
                 }
             }
         }

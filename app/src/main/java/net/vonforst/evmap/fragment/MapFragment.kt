@@ -15,6 +15,7 @@ import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.widget.PopupMenu
 import androidx.core.app.SharedElementCallback
 import androidx.core.content.ContextCompat
 import androidx.core.view.updateLayoutParams
@@ -650,19 +651,36 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             })
         }
         filterView?.setOnClickListener {
-            onOptionsItemSelected(filterItem)
-        }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.menu_filter -> {
-                requireView().findNavController().navigate(
-                    R.id.action_map_to_filterFragment
-                )
-                true
+            val popup = PopupMenu(requireContext(), it, Gravity.END)
+            popup.menuInflater.inflate(R.menu.popup_filter, popup.menu)
+            popup.setOnMenuItemClickListener {
+                when (it.itemId) {
+                    R.id.menu_edit_filters -> {
+                        requireView().findNavController().navigate(
+                            R.id.action_map_to_filterFragment
+                        )
+                        true
+                    }
+                    R.id.menu_filters_active -> {
+                        vm.filtersActive.value = !vm.filtersActive.value!!
+                        true
+                    }
+                    else -> false
+                }
             }
-            else -> super.onOptionsItemSelected(item)
+
+            val checkItem = popup.menu.findItem(R.id.menu_filters_active)
+            vm.filtersActive.observe(viewLifecycleOwner, Observer {
+                checkItem.isChecked = it
+            })
+            popup.show()
+        }
+
+        filterView?.setOnLongClickListener {
+            requireView().findNavController().navigate(
+                R.id.action_map_to_filterFragment
+            )
+            true
         }
     }
 

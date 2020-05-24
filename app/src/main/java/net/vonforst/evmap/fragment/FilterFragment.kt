@@ -2,7 +2,6 @@ package net.vonforst.evmap.fragment
 
 import android.os.Bundle
 import android.view.*
-import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
@@ -18,8 +17,6 @@ import net.vonforst.evmap.MapsActivity
 import net.vonforst.evmap.R
 import net.vonforst.evmap.adapter.FiltersAdapter
 import net.vonforst.evmap.databinding.FragmentFilterBinding
-import net.vonforst.evmap.ui.exitCircularReveal
-import net.vonforst.evmap.ui.startCircularReveal
 import net.vonforst.evmap.viewmodel.FilterViewModel
 import net.vonforst.evmap.viewmodel.viewModelFactory
 
@@ -44,12 +41,6 @@ class FilterFragment : Fragment() {
         binding.vm = vm
 
         setHasOptionsMenu(true)
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object :
-            OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                exitAfterTransition()
-            }
-        })
 
         return binding.root
     }
@@ -75,10 +66,8 @@ class FilterFragment : Fragment() {
             )
         }
 
-        view.startCircularReveal()
-
         toolbar.setNavigationOnClickListener {
-            exitAfterTransition()
+            findNavController().popBackStack()
         }
     }
 
@@ -92,17 +81,11 @@ class FilterFragment : Fragment() {
             R.id.menu_apply -> {
                 lifecycleScope.launch {
                     vm.saveFilterValues()
-                    exitAfterTransition()
+                    findNavController().popBackStack()
                 }
                 true
             }
             else -> super.onOptionsItemSelected(item)
-        }
-    }
-
-    private fun exitAfterTransition() {
-        view?.exitCircularReveal {
-            findNavController().popBackStack()
         }
     }
 }

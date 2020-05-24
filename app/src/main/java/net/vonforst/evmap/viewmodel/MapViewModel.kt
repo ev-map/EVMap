@@ -3,6 +3,7 @@ package net.vonforst.evmap.viewmodel
 import android.app.Application
 import androidx.lifecycle.*
 import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.libraries.places.api.model.Place
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import net.vonforst.evmap.api.availability.ChargeLocationStatus
@@ -125,6 +126,10 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
 
     val favorites: LiveData<List<ChargeLocation>> by lazy {
         db.chargeLocationsDao().getAllChargeLocations()
+    }
+
+    val searchResult: MutableLiveData<Place> by lazy {
+        MutableLiveData<Place>()
     }
 
     fun insertFavorite(charger: ChargeLocation) {

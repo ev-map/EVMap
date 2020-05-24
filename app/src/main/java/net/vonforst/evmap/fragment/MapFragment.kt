@@ -82,6 +82,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
     private lateinit var detailAppBarBehavior: MergedAppBarLayoutBehavior
     private var markers: MutableBiMap<Marker, ChargeLocation> = HashBiMap()
     private var clusterMarkers: List<Marker> = emptyList()
+    private var searchResultMarker: Marker? = null
 
     private lateinit var clusterIconGenerator: ClusterIconGenerator
     private lateinit var chargerIconGenerator: ChargerIconGenerator
@@ -94,6 +95,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 bottomSheetBehavior.state = STATE_COLLAPSED
             } else if (state == STATE_COLLAPSED) {
                 vm.chargerSparse.value = null
+            } else if (state == STATE_HIDDEN) {
+                vm.searchResult.value = null
             }
         }
     }
@@ -190,7 +193,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             bottomSheetBehavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT
         }
         binding.search.setOnClickListener {
-            val fields = listOf(Place.Field.LAT_LNG)
+            val fields = listOf(Place.Field.LAT_LNG, Place.Field.VIEWPORT)
             val intent: Intent = Autocomplete.IntentBuilder(
                 AutocompleteActivityMode.OVERLAY, fields
             )
@@ -242,7 +245,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 vm.bottomSheetState.value = newState
-                backPressedCallback.isEnabled = newState != STATE_HIDDEN
+                backPressedCallback.isEnabled =
+                    newState != STATE_HIDDEN || vm.searchResult.value != null
             }
         })
         vm.chargerSparse.observe(viewLifecycleOwner, Observer {
@@ -265,6 +269,24 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         })
         vm.favorites.observe(viewLifecycleOwner, Observer {
             updateFavoriteToggle()
+        })
+        vm.searchResult.observe(viewLifecycleOwner, Observer { place ->
+            val map = this.map ?: return@Observer
+            searchResultMarker?.remove()
+            searchResultMarker = null
+
+            if (place != null) {
+                if (place.viewport != null) {
+                    map.animateCamera(CameraUpdateFactory.newLatLngBounds(place.viewport, 0))
+                } else {
+                    map.animateCamera(CameraUpdateFactory.newLatLngZoom(place.latLng, 12f))
+                }
+
+                searchResultMarker = map.addMarker(MarkerOptions().position(place.latLng!!))
+            }
+
+            backPressedCallback.isEnabled = vm.bottomSheetState.value != STATE_HIDDEN ||
+                    place != null
         })
     }
 
@@ -581,9 +603,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         when (requestCode) {
             REQUEST_AUTOCOMPLETE -> {
                 if (resultCode == Activity.RESULT_OK) {
-                    val place = Autocomplete.getPlaceFromIntent(data!!)
-                    val zoom = 12f
-                    map?.animateCamera(CameraUpdateFactory.newLatLngZoom(place.latLng, zoom))
+                    vm.searchResult.value = Autocomplete.getPlaceFromIntent(data!!)
                 }
             }
             else -> super.onActivityResult(requestCode, resultCode, data)

@@ -246,6 +246,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
     }
 
     private fun openLayersMenu() {
+        binding.fabLayers.tag = false
         val materialTransform = MaterialContainerTransform().apply {
             startView = binding.fabLayers
             endView = binding.layersSheet
@@ -258,6 +259,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
     }
 
     private fun closeLayersMenu() {
+        binding.fabLayers.tag = true
         val materialTransform = MaterialContainerTransform().apply {
             startView = binding.layersSheet
             endView = binding.fabLayers
@@ -289,6 +291,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 vm.bottomSheetState.value = newState
                 updateBackPressedCallback()
+
+                if (vm.layersMenuOpen.value!! && newState !in listOf(BottomSheetBehaviorGoogleMapsLike.STATE_SETTLING, BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN, BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED)) {
+                    closeLayersMenu()
+                }
             }
         })
         vm.chargerSparse.observe(viewLifecycleOwner, Observer {

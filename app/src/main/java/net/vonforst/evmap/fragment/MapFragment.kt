@@ -203,6 +203,11 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 (activity as? MapsActivity)?.openUrl("https:${charger.url}")
             }
         }
+        binding.detailView.btnChargeprice.setOnClickListener {
+            val charger = vm.charger.value?.data ?: return@setOnClickListener
+            (activity as? MapsActivity)?.openUrl(
+                "https://www.chargeprice.app/?poi_id=${charger.id}&poi_source=going_electric")
+        }
         binding.detailView.topPart.setOnClickListener {
             bottomSheetBehavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT
         }

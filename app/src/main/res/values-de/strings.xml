@@ -76,4 +76,5 @@
     <string name="faq">FAQ</string>
     <string name="menu_filters_active">Filter aktiv</string>
     <string name="menu_edit_filters">Filter bearbeiten…</string>
+    <string name="go_to_chargeprice"><![CDATA[Preisvergleich<br/><small>mit Chargeprice.app</small>]]></string>
 </resources>

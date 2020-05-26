@@ -75,4 +75,5 @@
     <string name="faq">FAQ</string>
     <string name="menu_filters_active">Filters active</string>
     <string name="menu_edit_filters">Edit filters…</string>
+    <string name="go_to_chargeprice">Compare prices</string>
 </resources>

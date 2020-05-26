@@ -2,11 +2,15 @@ package net.vonforst.evmap.ui
 
 import android.content.Context
 import android.content.res.ColorStateList
+import android.os.Build
+import android.text.Html
+import android.text.Spanned
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.use
+import androidx.core.text.HtmlCompat
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -106,6 +110,15 @@ fun applySelectableItemBackground(view: View, apply: Boolean) {
         }
     } else {
         view.background = null
+    }
+}
+
+@BindingAdapter("htmlText")
+fun setHtmlTextValue(textView: TextView, htmlText: String?) {
+    if (htmlText == null) {
+        textView.text = null
+    } else {
+        textView.text = HtmlCompat.fromHtml(htmlText, HtmlCompat.FROM_HTML_MODE_LEGACY)
     }
 }
 

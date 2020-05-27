@@ -445,11 +445,14 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         binding.detailView.details.apply {
             adapter = DetailAdapter().apply {
                 onClickListener = {
-                    when (it.icon) {
-                        R.drawable.ic_location -> {
-                            val charger = vm.chargerSparse.value
-                            if (charger != null) {
+                    val charger = vm.chargerSparse.value
+                    if (charger != null) {
+                        when (it.icon) {
+                            R.drawable.ic_location -> {
                                 (activity as? MapsActivity)?.showLocation(charger)
+                            }
+                            R.drawable.ic_fault_report -> {
+                                (activity as? MapsActivity)?.openUrl("https:${charger.url}")
                             }
                         }
                     }

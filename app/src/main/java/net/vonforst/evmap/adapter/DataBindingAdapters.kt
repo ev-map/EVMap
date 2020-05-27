@@ -20,6 +20,9 @@ import net.vonforst.evmap.api.goingelectric.Chargepoint
 import net.vonforst.evmap.databinding.ItemFilterMultipleChoiceBinding
 import net.vonforst.evmap.databinding.ItemFilterSliderBinding
 import net.vonforst.evmap.viewmodel.*
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 interface Equatable {
     override fun equals(other: Any?): Boolean;
@@ -112,6 +115,18 @@ fun buildDetails(loc: ChargeLocation?, ctx: Context): List<DetailAdapter.Detail>
             R.drawable.ic_network,
             R.string.network,
             loc.network
+        ) else null,
+        if (loc.faultReport != null) DetailAdapter.Detail(
+            R.drawable.ic_fault_report,
+            R.string.fault_report,
+            loc.faultReport.created?.let {
+                ctx.getString(R.string.fault_report_date,
+                    loc.faultReport.created
+                        .atZone(ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)))
+            } ?: "",
+            loc.faultReport.description ?: "",
+            clickable = true
         ) else null,
         // TODO: separate layout for opening hours with expandable details
         if (loc.openinghours != null && !loc.openinghours.isEmpty) DetailAdapter.Detail(

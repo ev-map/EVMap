@@ -64,6 +64,7 @@ interface GoingElectricApi {
                 .add(ChargepointListItemJsonAdapterFactory())
                 .add(JsonObjectOrFalseAdapter.Factory())
                 .add(HoursAdapter())
+                .add(InstantAdapter())
                 .build()
 
             val retrofit = Retrofit.Builder()

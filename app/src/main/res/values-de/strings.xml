@@ -77,4 +77,6 @@
     <string name="menu_filters_active">Filter aktiv</string>
     <string name="menu_edit_filters">Filter bearbeiten…</string>
     <string name="go_to_chargeprice"><![CDATA[Preisvergleich<br/><small>mit Chargeprice.app</small>]]></string>
+    <string name="fault_report">Störungsmeldung</string>
+    <string name="fault_report_date">Störungsmeldung (Letztes Update: %s)</string>
 </resources>

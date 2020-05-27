@@ -12,6 +12,7 @@ import kotlinx.android.parcel.Parcelize
 import net.vonforst.evmap.R
 import net.vonforst.evmap.adapter.Equatable
 import java.time.DayOfWeek
+import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
 import java.util.*
@@ -42,7 +43,7 @@ data class ChargeLocation(
     val chargepoints: List<Chargepoint>,
     @JsonObjectOrFalse val network: String?,
     val url: String,
-    // @Json(name = "fault_report") val faultReport: Boolean, <- Object or false in detail, true or false in overview
+    @Embedded(prefix="fault_report_") @JsonObjectOrFalse @Json(name = "fault_report") val faultReport: FaultReport?,
     val verified: Boolean,
     // only shown in details:
     @JsonObjectOrFalse val operator: String?,
@@ -245,3 +246,6 @@ data class Chargepoint(val type: String, val power: Double, val count: Int) : Eq
         const val CEE_ROT = "CEE Rot"
     }
 }
+
+@JsonClass(generateAdapter = true)
+data class FaultReport(val created: Instant?, val description: String?)

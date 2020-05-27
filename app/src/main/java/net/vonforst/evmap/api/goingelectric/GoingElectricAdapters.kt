@@ -2,6 +2,7 @@ package net.vonforst.evmap.api.goingelectric
 
 import com.squareup.moshi.*
 import java.lang.reflect.Type
+import java.time.Instant
 import java.time.LocalTime
 
 
@@ -65,7 +66,8 @@ internal class ChargepointListItemJsonAdapter(val moshi: Moshi) :
 }
 
 internal class JsonObjectOrFalseAdapter<T> private constructor(
-    private val objectDelegate: JsonAdapter<T>?
+    private val objectDelegate: JsonAdapter<T>,
+    private val clazz: Class<*>
 ) : JsonAdapter<T>() {
 
     class Factory() : JsonAdapter.Factory {
@@ -80,27 +82,32 @@ internal class JsonObjectOrFalseAdapter<T> private constructor(
             )) {
                 false -> null
                 true -> JsonObjectOrFalseAdapter(
-                    moshi.adapter(clazz)
+                    moshi.adapter(clazz), clazz
                 )
             }
         }
     }
 
-    override fun fromJson(reader: JsonReader) = when (reader.peek()) {
+    @Suppress("UNCHECKED_CAST")
+    override fun fromJson(reader: JsonReader): T? = when (reader.peek()) {
         JsonReader.Token.BOOLEAN -> when (reader.nextBoolean()) {
             false -> null // Response was false
-            else ->
-                throw IllegalStateException("Non-false boolean for @JsonObjectOrFalse field")
+            else -> {
+                if (this.clazz == FaultReport::class.java) {
+                    FaultReport(null, null) as T
+                } else {
+                    throw IllegalStateException("Non-false boolean for @JsonObjectOrFalse field")
+                }
+            }
         }
-        JsonReader.Token.BEGIN_OBJECT -> objectDelegate?.fromJson(reader)
-        JsonReader.Token.STRING -> objectDelegate?.fromJson(reader)
-        JsonReader.Token.NUMBER -> objectDelegate?.fromJson(reader)
+        JsonReader.Token.BEGIN_OBJECT -> objectDelegate.fromJson(reader)
+        JsonReader.Token.STRING -> objectDelegate.fromJson(reader)
+        JsonReader.Token.NUMBER -> objectDelegate.fromJson(reader)
         else ->
             throw IllegalStateException("Non-object-non-boolean value for @JsonObjectOrFalse field")
     }
 
-    override fun toJson(writer: JsonWriter, value: T?) =
-        objectDelegate?.toJson(writer, value) ?: Unit
+    override fun toJson(writer: JsonWriter, value: T?) = objectDelegate.toJson(writer, value)
 }
 
 private fun hasJsonObjectOrFalseAnnotation(annotations: Set<Annotation>?) =
@@ -139,4 +146,14 @@ internal class HoursAdapter {
         }
     }
 
+}
+
+internal class InstantAdapter {
+    @FromJson
+    fun fromJson(value: Long?): Instant? = value?.let {
+        Instant.ofEpochSecond(it)
+    }
+
+    @ToJson
+    fun toJson(value: Instant?): Long? = value?.epochSecond
 }

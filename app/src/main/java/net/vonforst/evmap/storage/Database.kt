@@ -19,7 +19,7 @@ import net.vonforst.evmap.viewmodel.SliderFilterValue
         MultipleChoiceFilterValue::class,
         SliderFilterValue::class,
         Plug::class
-    ], version = 5
+    ], version = 6
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -31,7 +31,7 @@ abstract class AppDatabase : RoomDatabase() {
         private lateinit var context: Context
         private val database: AppDatabase by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
             Room.databaseBuilder(context, AppDatabase::class.java, "evmap.db")
-                .addMigrations(MIGRATION_2, MIGRATION_3, MIGRATION_4, MIGRATION_5)
+                .addMigrations(MIGRATION_2, MIGRATION_3, MIGRATION_4, MIGRATION_5, MIGRATION_6)
                 .build()
         }
 
@@ -80,6 +80,19 @@ abstract class AppDatabase : RoomDatabase() {
                     db.execSQL("INSERT INTO `ChargeLocationNew` SELECT * FROM `ChargeLocation`");
                     db.execSQL("DROP TABLE `ChargeLocation`")
                     db.execSQL("ALTER TABLE `ChargeLocationNew` RENAME TO `ChargeLocation`")
+                    db.setTransactionSuccessful()
+                } finally {
+                    db.endTransaction()
+                }
+            }
+        }
+
+        private val MIGRATION_6 = object : Migration(5, 6) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.beginTransaction()
+                try {
+                    db.execSQL("ALTER TABLE `ChargeLocation` ADD `fault_report_created` INTEGER")
+                    db.execSQL("ALTER TABLE `ChargeLocation` ADD `fault_report_description` TEXT")
                     db.setTransactionSuccessful()
                 } finally {
                     db.endTransaction()

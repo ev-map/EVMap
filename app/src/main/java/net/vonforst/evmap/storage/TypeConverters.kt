@@ -5,6 +5,7 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import net.vonforst.evmap.api.goingelectric.Chargepoint
 import net.vonforst.evmap.api.goingelectric.ChargerPhoto
+import java.time.Instant
 import java.time.LocalTime
 
 class Converters {
@@ -49,8 +50,20 @@ class Converters {
 
     @TypeConverter
     fun toLocalTime(value: String?): LocalTime? {
-        return value.let {
+        return value?.let {
             LocalTime.parse(it)
+        }
+    }
+
+    @TypeConverter
+    fun fromInstant(value: Instant?): Long? {
+        return value?.toEpochMilli()
+    }
+
+    @TypeConverter
+    fun toInstant(value: Long?): Instant? {
+        return value?.let {
+            Instant.ofEpochMilli(it)
         }
     }
 

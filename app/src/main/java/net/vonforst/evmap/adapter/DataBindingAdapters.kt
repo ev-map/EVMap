@@ -114,7 +114,7 @@ fun buildDetails(loc: ChargeLocation?, ctx: Context): List<DetailAdapter.Detail>
             loc.network
         ) else null,
         // TODO: separate layout for opening hours with expandable details
-        if (loc.openinghours != null) DetailAdapter.Detail(
+        if (loc.openinghours != null && !loc.openinghours.isEmpty) DetailAdapter.Detail(
             R.drawable.ic_hours,
             R.string.hours,
             loc.openinghours.getStatusText(ctx),

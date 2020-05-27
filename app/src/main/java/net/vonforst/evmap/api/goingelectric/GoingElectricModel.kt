@@ -107,6 +107,10 @@ data class OpeningHours(
     @JsonObjectOrFalse val description: String?,
     @Embedded val days: OpeningHoursDays?
 ) {
+    val isEmpty: Boolean
+        get() = description == "Leider noch keine Informationen zu Öffnungszeiten vorhanden."
+                && days == null && !twentyfourSeven
+
     fun getStatusText(ctx: Context): CharSequence {
         if (twentyfourSeven) {
             return HtmlCompat.fromHtml(ctx.getString(R.string.open_247), 0)
@@ -134,8 +138,6 @@ data class OpeningHours(
                     ), 0
                 )
             }
-        } else if (description != null) {
-            return description
         } else {
             return ""
         }

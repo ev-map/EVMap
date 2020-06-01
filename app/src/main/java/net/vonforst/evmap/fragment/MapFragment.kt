@@ -10,7 +10,7 @@ import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
-import android.transition.TransitionManager
+import androidx.transition.TransitionManager
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
@@ -250,7 +250,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         val materialTransform = MaterialContainerTransform().apply {
             startView = binding.fabLayers
             endView = binding.layersSheet
-            pathMotion = MaterialArcMotion()
+            setPathMotion(MaterialArcMotion())
             duration = 250
             scrimColor = Color.TRANSPARENT
         }
@@ -263,7 +263,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         val materialTransform = MaterialContainerTransform().apply {
             startView = binding.layersSheet
             endView = binding.fabLayers
-            pathMotion = MaterialArcMotion()
+            setPathMotion(MaterialArcMotion())
             duration = 200
             scrimColor = Color.TRANSPARENT
         }

@@ -11,6 +11,8 @@
     <string name="closed"><![CDATA[<b>Closed</b>]]></string>
     <string name="open_closesat"><![CDATA[<b>Open</b> · Closes at %s]]></string>
     <string name="closed_opensat"><![CDATA[<b>Closed</b> · Opens at %s]]></string>
+    <string name="closed_unfmt">Closed</string>
+    <string name="holiday">Holiday</string>
     <string name="cost">Cost</string>
     <string name="cost_detail"><![CDATA[<b>Charging:</b> %s · <b>Parking:</b> %s]]></string>
     <string name="free">Free</string>

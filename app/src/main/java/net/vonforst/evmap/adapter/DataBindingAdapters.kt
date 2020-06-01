@@ -17,6 +17,7 @@ import net.vonforst.evmap.R
 import net.vonforst.evmap.api.availability.ChargepointStatus
 import net.vonforst.evmap.api.goingelectric.ChargeLocation
 import net.vonforst.evmap.api.goingelectric.Chargepoint
+import net.vonforst.evmap.api.goingelectric.OpeningHoursDays
 import net.vonforst.evmap.databinding.ItemFilterMultipleChoiceBinding
 import net.vonforst.evmap.databinding.ItemFilterSliderBinding
 import net.vonforst.evmap.viewmodel.*
@@ -90,10 +91,18 @@ class DetailAdapter : DataBindingAdapter<DetailAdapter.Detail>() {
         val text: CharSequence,
         val detailText: CharSequence? = null,
         val links: Boolean = true,
-        val clickable: Boolean = false
+        val clickable: Boolean = false,
+        val hoursDays: OpeningHoursDays? = null
     ) : Equatable
 
-    override fun getItemViewType(position: Int): Int = R.layout.item_detail
+    override fun getItemViewType(position: Int): Int {
+        val item = getItem(position)
+        if (item.hoursDays != null) {
+            return R.layout.item_detail_openinghours
+        } else {
+            return R.layout.item_detail
+        }
+    }
 }
 
 fun buildDetails(loc: ChargeLocation?, ctx: Context): List<DetailAdapter.Detail> {
@@ -133,7 +142,8 @@ fun buildDetails(loc: ChargeLocation?, ctx: Context): List<DetailAdapter.Detail>
             R.drawable.ic_hours,
             R.string.hours,
             loc.openinghours.getStatusText(ctx),
-            loc.openinghours.description
+            loc.openinghours.description,
+            hoursDays = loc.openinghours.days
         ) else null,
         if (loc.cost != null) DetailAdapter.Detail(
             R.drawable.ic_cost,

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <import type="java.time.format.TextStyle" />
+
+        <import type="java.util.Locale" />
+
+        <variable
+            name="hours"
+            type="net.vonforst.evmap.api.goingelectric.OpeningHoursDays" />
+
+        <variable
+            name="dayOfWeek"
+            type="java.time.DayOfWeek" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/textView24"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{dayOfWeek != null ? dayOfWeek.getDisplayName(TextStyle.FULL, context.resources.configuration.locale) : @string/holiday}"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Montag" />
+
+        <TextView
+            android:id="@+id/textView25"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="100dp"
+            android:text="@{hours.getHoursForDayOfWeek(dayOfWeek).toString().equals(&quot;closed&quot;) ? @string/closed_unfmt : hours.getHoursForDayOfWeek(dayOfWeek).toString()}"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="07:00-21:00" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

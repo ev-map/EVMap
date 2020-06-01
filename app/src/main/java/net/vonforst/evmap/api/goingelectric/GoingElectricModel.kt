@@ -15,6 +15,8 @@ import java.time.DayOfWeek
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import java.util.*
 import kotlin.math.abs
 import kotlin.math.floor
@@ -158,9 +160,12 @@ data class OpeningHoursDays(
 ) {
     fun getHoursForDate(date: LocalDate): Hours {
         // TODO: check for holidays
+        return getHoursForDayOfWeek(date.dayOfWeek)
+    }
 
+    fun getHoursForDayOfWeek(dayOfWeek: DayOfWeek?): Hours {
         @Suppress("WHEN_ENUM_CAN_BE_NULL_IN_JAVA")
-        return when (date.dayOfWeek) {
+        return when (dayOfWeek) {
             DayOfWeek.MONDAY -> monday
             DayOfWeek.TUESDAY -> tuesday
             DayOfWeek.WEDNESDAY -> wednesday
@@ -168,6 +173,7 @@ data class OpeningHoursDays(
             DayOfWeek.FRIDAY -> friday
             DayOfWeek.SATURDAY -> saturday
             DayOfWeek.SUNDAY -> sunday
+            null -> holiday
         }
     }
 }
@@ -175,7 +181,16 @@ data class OpeningHoursDays(
 data class Hours(
     val start: LocalTime?,
     val end: LocalTime?
-)
+) {
+    override fun toString(): String {
+        if (start != null && end != null) {
+            val fmt = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
+            return "${start.format(fmt)} - ${end.format(fmt)}"
+        } else {
+            return "closed"
+        }
+    }
+}
 
 @JsonClass(generateAdapter = true)
 @Parcelize

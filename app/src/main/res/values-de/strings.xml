@@ -10,6 +10,8 @@
     <string name="hours">Öffnungszeiten</string>
     <string name="open_247"><![CDATA[<b>24 Stunden geöffnet</b>]]></string>
     <string name="closed"><![CDATA[<b>Geschlossen</b>]]></string>
+    <string name="closed_unfmt">Geschlossen</string>
+    <string name="holiday">Feiertag</string>
     <string name="open_closesat"><![CDATA[<b>Geöffnet</b> · Schließt um %s]]></string>
     <string name="closed_opensat"><![CDATA[<b>Geschlossen</b> · Öffnet um %s]]></string>
     <string name="cost">Kosten</string>

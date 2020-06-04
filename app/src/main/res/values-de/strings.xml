@@ -83,4 +83,9 @@
     <string name="fault_report_date">Störungsmeldung (Letztes Update: %s)</string>
     <string name="filter_networks">Verbünde</string>
     <string name="filter_chargecards">Ladetarife</string>
+    <string name="all_selected">Alle ausgewählt</string>
+    <string name="number_selected">%d ausgewählt</string>
+    <string name="edit">bearbeiten</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="ok">OK</string>
 </resources>

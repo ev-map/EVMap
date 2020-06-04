@@ -2,9 +2,6 @@ package net.vonforst.evmap.ui
 
 import android.content.Context
 import android.content.res.ColorStateList
-import android.os.Build
-import android.text.Html
-import android.text.Spanned
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView

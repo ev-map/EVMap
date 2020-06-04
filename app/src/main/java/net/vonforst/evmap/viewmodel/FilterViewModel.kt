@@ -84,11 +84,11 @@ private fun MediatorLiveData<List<Filter<FilterValue>>>.buildFilters(
         ),
         MultipleChoiceFilter(
             application.getString(R.string.filter_networks), "networks",
-            networkMap
+            networkMap, manyChoices = true
         ),
         MultipleChoiceFilter(
             application.getString(R.string.filter_chargecards), "chargecards",
-            chargecardMap
+            chargecardMap, manyChoices = true
         )
     )
 }
@@ -171,7 +171,8 @@ data class MultipleChoiceFilter(
     override val name: String,
     override val key: String,
     val choices: Map<String, String>,
-    val commonChoices: Set<String>? = null
+    val commonChoices: Set<String>? = null,
+    val manyChoices: Boolean = false
 ) : Filter<MultipleChoiceFilterValue>() {
     override val valueClass: KClass<MultipleChoiceFilterValue> = MultipleChoiceFilterValue::class
     override fun defaultValue() = MultipleChoiceFilterValue(key, mutableSetOf(), true)

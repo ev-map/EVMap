@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="net.vonforst.evmap.fragment.MultiSelectItem" />
+
+        <variable
+            name="item"
+            type="MultiSelectItem" />
+    </data>
+
+    <CheckBox
+        android:id="@android:id/text1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="?attr/listPreferredItemHeightSmall"
+        android:layout_marginStart="?attr/dialogPreferredPadding"
+        android:layout_marginEnd="?attr/dialogPreferredPadding"
+        android:paddingStart="20dp"
+        android:ellipsize="marquee"
+        android:text="@{item.name}"
+        android:checked="@={item.selected}"
+        tools:text="Item"
+        tools:ignore="RtlSymmetry" />
+</layout>

@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.children
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.Observable
@@ -19,7 +20,9 @@ import net.vonforst.evmap.api.goingelectric.ChargeLocation
 import net.vonforst.evmap.api.goingelectric.Chargepoint
 import net.vonforst.evmap.api.goingelectric.OpeningHoursDays
 import net.vonforst.evmap.databinding.ItemFilterMultipleChoiceBinding
+import net.vonforst.evmap.databinding.ItemFilterMultipleChoiceLargeBinding
 import net.vonforst.evmap.databinding.ItemFilterSliderBinding
+import net.vonforst.evmap.fragment.MultiSelectDialog
 import net.vonforst.evmap.viewmodel.*
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -29,8 +32,8 @@ interface Equatable {
     override fun equals(other: Any?): Boolean;
 }
 
-abstract class DataBindingAdapter<T : Equatable>() :
-    ListAdapter<T, DataBindingAdapter.ViewHolder<T>>(DiffCallback()) {
+abstract class DataBindingAdapter<T : Equatable>(getKey: ((T) -> Any)? = null) :
+    ListAdapter<T, DataBindingAdapter.ViewHolder<T>>(DiffCallback(getKey)) {
 
     var onClickListener: ((T) -> Unit)? = null
 
@@ -51,14 +54,20 @@ abstract class DataBindingAdapter<T : Equatable>() :
     open fun bind(holder: ViewHolder<T>, item: T) {
         holder.binding.setVariable(BR.item, item)
         holder.binding.executePendingBindings()
-        holder.binding.root.setOnClickListener {
-            val listener = onClickListener ?: return@setOnClickListener
-            listener(item)
+        if (onClickListener != null) {
+            holder.binding.root.setOnClickListener {
+                val listener = onClickListener ?: return@setOnClickListener
+                listener(item)
+            }
         }
     }
 
-    class DiffCallback<T : Equatable> : DiffUtil.ItemCallback<T>() {
-        override fun areItemsTheSame(oldItem: T, newItem: T): Boolean = oldItem === newItem
+    class DiffCallback<T : Equatable>(val getKey: ((T) -> Any)?) : DiffUtil.ItemCallback<T>() {
+        override fun areItemsTheSame(oldItem: T, newItem: T): Boolean = if (getKey != null) {
+            (getKey)(oldItem) == (getKey)(newItem)
+        } else {
+            oldItem === newItem
+        }
 
         override fun areContentsTheSame(oldItem: T, newItem: T): Boolean = oldItem == newItem
     }
@@ -183,11 +192,18 @@ class FiltersAdapter : DataBindingAdapter<FilterWithValue<FilterValue>>() {
     val itemids = mutableMapOf<String, Long>()
     var maxId = 0L
 
-    override fun getItemViewType(position: Int): Int = when (getItem(position).filter) {
-        is BooleanFilter -> R.layout.item_filter_boolean
-        is MultipleChoiceFilter -> R.layout.item_filter_multiple_choice
-        is SliderFilter -> R.layout.item_filter_slider
-    }
+    override fun getItemViewType(position: Int): Int =
+        when (val filter = getItem(position).filter) {
+            is BooleanFilter -> R.layout.item_filter_boolean
+            is MultipleChoiceFilter -> {
+                if (filter.manyChoices) {
+                    R.layout.item_filter_multiple_choice_large
+                } else {
+                    R.layout.item_filter_multiple_choice
+                }
+            }
+            is SliderFilter -> R.layout.item_filter_slider
+        }
 
     override fun bind(
         holder: ViewHolder<FilterWithValue<FilterValue>>,
@@ -202,10 +218,18 @@ class FiltersAdapter : DataBindingAdapter<FilterWithValue<FilterValue>>() {
                 )
             }
             is MultipleChoiceFilterValue -> {
-                setupMultipleChoice(
-                    holder.binding as ItemFilterMultipleChoiceBinding,
-                    item.filter as MultipleChoiceFilter, item.value
-                )
+                val filter = item.filter as MultipleChoiceFilter
+                if (filter.manyChoices) {
+                    setupMultipleChoiceMany(
+                        holder.binding as ItemFilterMultipleChoiceLargeBinding,
+                        filter, item.value
+                    )
+                } else {
+                    setupMultipleChoice(
+                        holder.binding as ItemFilterMultipleChoiceBinding,
+                        filter, item.value
+                    )
+                }
             }
         }
     }
@@ -291,6 +315,27 @@ class FiltersAdapter : DataBindingAdapter<FilterWithValue<FilterValue>>() {
             }
         }
         updateButtons()
+    }
+
+    private fun setupMultipleChoiceMany(
+        binding: ItemFilterMultipleChoiceLargeBinding,
+        filter: MultipleChoiceFilter,
+        value: MultipleChoiceFilterValue
+    ) {
+        if (value.all) {
+            value.values = filter.choices.keys.toMutableSet()
+            binding.notifyPropertyChanged(BR.item)
+        }
+
+        binding.btnEdit.setOnClickListener {
+            val dialog = MultiSelectDialog.getInstance(filter.name, filter.choices, value.values)
+            dialog.okListener = { selected ->
+                value.values = selected.toMutableSet()
+                value.all = value.values == filter.choices.keys
+                binding.item = binding.item
+            }
+            dialog.show((binding.root.context as AppCompatActivity).supportFragmentManager, null)
+        }
     }
 
     private fun setupSlider(

@@ -23,7 +23,9 @@ interface GoingElectricApi {
         @Query("freecharging") freecharging: Boolean,
         @Query("freeparking") freeparking: Boolean,
         @Query("min_power") minPower: Int,
-        @Query("plugs") plugs: String?
+        @Query("plugs") plugs: String?,
+        @Query("chargecards") chargecards: String?,
+        @Query("networks") networks: String?
     ): Response<ChargepointList>
 
     @GET("chargepoints/")
@@ -36,7 +38,7 @@ interface GoingElectricApi {
     suspend fun getNetworks(): Response<StringList>
 
     @GET("chargepoints/chargecardlist/")
-    suspend fun getChargeCards(): Response<StringList>
+    suspend fun getChargeCards(): Response<ChargeCardList>
 
     companion object {
         private val cacheSize = 10L * 1024 * 1024; // 10MB

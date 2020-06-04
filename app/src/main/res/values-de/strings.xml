@@ -81,4 +81,6 @@
     <string name="go_to_chargeprice">Preisvergleich</string>
     <string name="fault_report">Störungsmeldung</string>
     <string name="fault_report_date">Störungsmeldung (Letztes Update: %s)</string>
+    <string name="filter_networks">Verbünde</string>
+    <string name="filter_chargecards">Ladetarife</string>
 </resources>

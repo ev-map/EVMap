@@ -18,4 +18,16 @@ class PreferenceDataSource(context: Context) {
         set(value) {
             sp.edit().putLong("last_plug_update", value.toEpochMilli()).apply()
         }
+
+    var lastNetworkUpdate: Instant
+        get() = Instant.ofEpochMilli(sp.getLong("last_network_update", 0L))
+        set(value) {
+            sp.edit().putLong("last_network_update", value.toEpochMilli()).apply()
+        }
+
+    var lastChargeCardUpdate: Instant
+        get() = Instant.ofEpochMilli(sp.getLong("last_chargecard_update", 0L))
+        set(value) {
+            sp.edit().putLong("last_chargecard_update", value.toEpochMilli()).apply()
+        }
 }

@@ -9,14 +9,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import net.vonforst.evmap.api.availability.ChargeLocationStatus
 import net.vonforst.evmap.api.availability.getAvailability
-import net.vonforst.evmap.api.goingelectric.ChargeLocation
-import net.vonforst.evmap.api.goingelectric.ChargepointList
-import net.vonforst.evmap.api.goingelectric.ChargepointListItem
-import net.vonforst.evmap.api.goingelectric.GoingElectricApi
-import net.vonforst.evmap.storage.AppDatabase
-import net.vonforst.evmap.storage.Plug
-import net.vonforst.evmap.storage.PlugRepository
-import net.vonforst.evmap.storage.PreferenceDataSource
+import net.vonforst.evmap.api.goingelectric.*
+import net.vonforst.evmap.storage.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -52,7 +46,13 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
     private val plugs: LiveData<List<Plug>> by lazy {
         PlugRepository(api, viewModelScope, db.plugDao(), prefs).getPlugs()
     }
-    private val filters = getFilters(application, plugs)
+    private val networks: LiveData<List<Network>> by lazy {
+        NetworkRepository(api, viewModelScope, db.networkDao(), prefs).getNetworks()
+    }
+    private val chargeCards: LiveData<List<ChargeCard>> by lazy {
+        ChargeCardRepository(api, viewModelScope, db.chargeCardDao(), prefs).getChargeCards()
+    }
+    private val filters = getFilters(application, plugs, networks, chargeCards)
 
     private val filtersWithValue: LiveData<List<FilterWithValue<out FilterValue>>> by lazy {
         filtersWithValue(filters, filterValues, filtersActive)
@@ -191,22 +191,31 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
         zoom: Float,
         filters: List<FilterWithValue<out FilterValue>>
     ): Resource<List<ChargepointListItem>> {
-        val freecharging =
-            (filters.find { it.value.key == "freecharging" }!!.value as BooleanFilterValue).value
-        val freeparking =
-            (filters.find { it.value.key == "freeparking" }!!.value as BooleanFilterValue).value
-        val minPower =
-            (filters.find { it.value.key == "min_power" }!!.value as SliderFilterValue).value
-        val minConnectors =
-            (filters.find { it.value.key == "min_connectors" }!!.value as SliderFilterValue).value
+        val freecharging = getBooleanValue(filters, "freecharging")
+        val freeparking = getBooleanValue(filters, "freeparking")
+        val minPower = getSliderValue(filters, "min_power")
+        val minConnectors = getSliderValue(filters, "min_connectors")
 
-        val connectorsVal =
-            filters.find { it.value.key == "connectors" }!!.value as MultipleChoiceFilterValue
-        val connectors = if (connectorsVal.all) null else connectorsVal.values.joinToString(",")
+        val connectorsVal = getMultipleChoiceValue(filters, "connectors")
         if (connectorsVal.values.isEmpty() && !connectorsVal.all) {
             // no connectors chosen
             return Resource.success(emptyList())
         }
+        val connectors = formatMultipleChoice(connectorsVal)
+
+        val chargeCardsVal = getMultipleChoiceValue(filters, "chargecards")
+        if (chargeCardsVal.values.isEmpty() && !chargeCardsVal.all) {
+            // no chargeCards chosen
+            return Resource.success(emptyList())
+        }
+        val chargeCards = formatMultipleChoice(chargeCardsVal)
+
+        val networksVal = getMultipleChoiceValue(filters, "networks")
+        if (networksVal.values.isEmpty() && !networksVal.all) {
+            // no networks chosen
+            return Resource.success(emptyList())
+        }
+        val networks = formatMultipleChoice(networksVal)
 
         // do not use clustering if filters need to be applied locally.
         val useClustering = minConnectors <= 1 && zoom < 13
@@ -217,7 +226,8 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
             bounds.northeast.latitude, bounds.northeast.longitude,
             clustering = useClustering, zoom = zoom,
             clusterDistance = clusterDistance, freecharging = freecharging, minPower = minPower,
-            freeparking = freeparking, plugs = connectors
+            freeparking = freeparking, plugs = connectors, chargecards = chargeCards,
+            networks = networks
         )
 
         if (!response.isSuccessful || response.body()!!.status != "ok") {
@@ -238,6 +248,24 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
             return Resource.success(data)
         }
     }
+
+    private fun formatMultipleChoice(connectorsVal: MultipleChoiceFilterValue) =
+        if (connectorsVal.all) null else connectorsVal.values.joinToString(",")
+
+    private fun getBooleanValue(
+        filters: List<FilterWithValue<out FilterValue>>,
+        key: String
+    ) = (filters.find { it.value.key == key }!!.value as BooleanFilterValue).value
+
+    private fun getSliderValue(
+        filters: List<FilterWithValue<out FilterValue>>,
+        key: String
+    ) = (filters.find { it.value.key == key }!!.value as SliderFilterValue).value
+
+    private fun getMultipleChoiceValue(
+        filters: List<FilterWithValue<out FilterValue>>,
+        key: String
+    ) = filters.find { it.value.key == key }!!.value as MultipleChoiceFilterValue
 
     private suspend fun loadAvailability(charger: ChargeLocation) {
         availability.value = Resource.loading(null)

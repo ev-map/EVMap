@@ -33,6 +33,12 @@ data class StringList(
     val result: List<String>
 )
 
+@JsonClass(generateAdapter = true)
+data class ChargeCardList(
+    val status: String,
+    val result: List<ChargeCard>
+)
+
 sealed class ChargepointListItem
 
 @JsonClass(generateAdapter = true)
@@ -264,3 +270,11 @@ data class Chargepoint(val type: String, val power: Double, val count: Int) : Eq
 
 @JsonClass(generateAdapter = true)
 data class FaultReport(val created: Instant?, val description: String?)
+
+@Entity
+@JsonClass(generateAdapter = true)
+data class ChargeCard(
+    @Json(name = "card_id") @PrimaryKey val id: Long,
+    val name: String,
+    val url: String
+)

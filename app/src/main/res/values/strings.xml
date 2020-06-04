@@ -80,4 +80,6 @@
     <string name="go_to_chargeprice">Compare prices</string>
     <string name="fault_report">Fault report</string>
     <string name="fault_report_date">Fault report (last update: %s)</string>
+    <string name="filter_networks">Networks</string>
+    <string name="filter_chargecards">Payment methods</string>
 </resources>

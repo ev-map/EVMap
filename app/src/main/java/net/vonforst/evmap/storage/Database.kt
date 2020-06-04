@@ -7,6 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import net.vonforst.evmap.api.goingelectric.ChargeCard
 import net.vonforst.evmap.api.goingelectric.ChargeLocation
 import net.vonforst.evmap.viewmodel.BooleanFilterValue
 import net.vonforst.evmap.viewmodel.MultipleChoiceFilterValue
@@ -18,20 +19,27 @@ import net.vonforst.evmap.viewmodel.SliderFilterValue
         BooleanFilterValue::class,
         MultipleChoiceFilterValue::class,
         SliderFilterValue::class,
-        Plug::class
-    ], version = 6
+        Plug::class,
+        Network::class,
+        ChargeCard::class
+    ], version = 7
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun chargeLocationsDao(): ChargeLocationsDao
     abstract fun filterValueDao(): FilterValueDao
     abstract fun plugDao(): PlugDao
+    abstract fun networkDao(): NetworkDao
+    abstract fun chargeCardDao(): ChargeCardDao
 
     companion object {
         private lateinit var context: Context
         private val database: AppDatabase by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
             Room.databaseBuilder(context, AppDatabase::class.java, "evmap.db")
-                .addMigrations(MIGRATION_2, MIGRATION_3, MIGRATION_4, MIGRATION_5, MIGRATION_6)
+                .addMigrations(
+                    MIGRATION_2, MIGRATION_3, MIGRATION_4, MIGRATION_5, MIGRATION_6,
+                    MIGRATION_7
+                )
                 .build()
         }
 
@@ -97,6 +105,13 @@ abstract class AppDatabase : RoomDatabase() {
                 } finally {
                     db.endTransaction()
                 }
+            }
+        }
+
+        private val MIGRATION_7 = object : Migration(6, 7) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("CREATE TABLE IF NOT EXISTS `Network` (`name` TEXT NOT NULL, PRIMARY KEY(`name`))")
+                db.execSQL("CREATE TABLE IF NOT EXISTS `ChargeCard` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `url` TEXT NOT NULL, PRIMARY KEY(`id`))")
             }
         }
     }

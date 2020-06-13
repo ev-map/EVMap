@@ -42,6 +42,7 @@ import com.google.android.gms.maps.model.*
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialArcMotion
 import com.google.android.material.transition.MaterialContainerTransform
 import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike
@@ -691,7 +692,21 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         }
 
         filterView?.setOnLongClickListener {
+            // enable/disable filters
             vm.filtersActive.value = !vm.filtersActive.value!!
+            // haptic feedback
+            filterView.performHapticFeedback(
+                HapticFeedbackConstants.LONG_PRESS,
+                HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
+            )
+            // show snackbar
+            Snackbar.make(
+                requireView(), if (vm.filtersActive.value!!) {
+                    R.string.filters_activated
+                } else {
+                    R.string.filters_deactivated
+                }, Snackbar.LENGTH_SHORT
+            ).show()
             true
         }
     }

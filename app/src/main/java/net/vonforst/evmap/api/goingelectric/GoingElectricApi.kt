@@ -3,6 +3,7 @@ package net.vonforst.evmap.api.goingelectric
 import android.content.Context
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.squareup.moshi.Moshi
+import net.vonforst.evmap.BuildConfig
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import retrofit2.Call
@@ -56,7 +57,9 @@ interface GoingElectricApi {
                     original = original.newBuilder().url(url).build()
                     chain.proceed(original)
                 }
-                addNetworkInterceptor(StethoInterceptor())
+                if (BuildConfig.DEBUG) {
+                    addNetworkInterceptor(StethoInterceptor())
+                }
                 if (context != null) {
                     cache(Cache(context.getCacheDir(), cacheSize))
                 }

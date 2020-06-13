@@ -347,11 +347,14 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         vm.mapTrafficEnabled.observe(viewLifecycleOwner, Observer {
             map?.isTrafficEnabled = it
         })
+
+        updateBackPressedCallback()
     }
 
     private fun updateBackPressedCallback() {
         backPressedCallback.isEnabled =
-            vm.bottomSheetState.value != STATE_HIDDEN || vm.searchResult.value != null
+            vm.bottomSheetState.value != null && vm.bottomSheetState.value != STATE_HIDDEN
+                    || vm.searchResult.value != null
                     || (vm.layersMenuOpen.value ?: false)
     }
 

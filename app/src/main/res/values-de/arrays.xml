@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="pref_language_names">
+        <item>Gerätesprache verwenden</item>
+        <item>Englisch</item>
+        <item>Deutsch</item>
+    </string-array>
+</resources>

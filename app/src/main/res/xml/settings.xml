@@ -10,6 +10,13 @@
             android:summaryOff="@string/pref_navigate_use_maps_off"
             android:defaultValue="true" />
 
+        <ListPreference
+            android:key="language"
+            android:title="@string/pref_language"
+            android:entries="@array/pref_language_names"
+            android:entryValues="@array/pref_language_values"
+            android:defaultValue="default"
+            android:summary="@string/pref_language_summary" />
 
     </PreferenceCategory>
 </PreferenceScreen>

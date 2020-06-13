@@ -1,5 +1,6 @@
 package net.vonforst.evmap
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -19,6 +20,7 @@ import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import net.vonforst.evmap.api.goingelectric.ChargeLocation
 import net.vonforst.evmap.storage.PreferenceDataSource
+import net.vonforst.evmap.utils.LocaleContextWrapper
 
 
 const val REQUEST_LOCATION_PERMISSION = 1
@@ -33,6 +35,14 @@ class MapsActivity : AppCompatActivity() {
     lateinit var appBarConfiguration: AppBarConfiguration
     var fragmentCallback: FragmentCallback? = null
     private lateinit var prefs: PreferenceDataSource
+
+    override fun attachBaseContext(newBase: Context) {
+        return super.attachBaseContext(
+            LocaleContextWrapper.wrap(
+                newBase, PreferenceDataSource(newBase).language
+            )
+        );
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

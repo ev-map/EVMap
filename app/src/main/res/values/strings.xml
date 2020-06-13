@@ -89,4 +89,6 @@
     <string name="edit">edit</string>
     <string name="cancel">Cancel</string>
     <string name="ok">OK</string>
+    <string name="pref_language">Language</string>
+    <string name="pref_language_summary">Change the app language</string>
 </resources>

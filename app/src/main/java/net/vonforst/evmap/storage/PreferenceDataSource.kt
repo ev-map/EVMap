@@ -30,4 +30,7 @@ class PreferenceDataSource(context: Context) {
         set(value) {
             sp.edit().putLong("last_chargecard_update", value.toEpochMilli()).apply()
         }
+
+    val language: String
+        get() = sp.getString("language", "default")!!
 }

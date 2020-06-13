@@ -10,7 +10,6 @@ import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
-import androidx.transition.TransitionManager
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
@@ -32,6 +31,7 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.transition.TransitionInflater
+import androidx.transition.TransitionManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -691,9 +691,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         }
 
         filterView?.setOnLongClickListener {
-            requireView().findNavController().navigate(
-                R.id.action_map_to_filterFragment
-            )
+            vm.filtersActive.value = !vm.filtersActive.value!!
             true
         }
     }

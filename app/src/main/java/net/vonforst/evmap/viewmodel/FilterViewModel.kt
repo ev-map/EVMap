@@ -61,7 +61,7 @@ private fun MediatorLiveData<List<Filter<FilterValue>>>.buildFilters(
         plug.name to (plugNames[plug.name] ?: plug.name)
     }?.toMap() ?: return
     val networkMap = networks.value?.map { it.name to it.name }?.toMap() ?: return
-    val chargecardMap = chargeCards.value?.map { it.name to it.name }?.toMap() ?: return
+    val chargecardMap = chargeCards.value?.map { it.id.toString() to it.name }?.toMap() ?: return
     value = listOf(
         BooleanFilter(application.getString(R.string.filter_free), "freecharging"),
         BooleanFilter(application.getString(R.string.filter_free_parking), "freeparking"),

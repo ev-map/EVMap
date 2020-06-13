@@ -146,7 +146,6 @@ fun buildDetails(loc: ChargeLocation?, ctx: Context): List<DetailAdapter.Detail>
             loc.faultReport.description ?: "",
             clickable = true
         ) else null,
-        // TODO: separate layout for opening hours with expandable details
         if (loc.openinghours != null && !loc.openinghours.isEmpty) DetailAdapter.Detail(
             R.drawable.ic_hours,
             R.string.hours,

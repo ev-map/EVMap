@@ -16,6 +16,7 @@ import net.vonforst.evmap.ui.cluster
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.IOException
 
 data class MapPosition(val bounds: LatLngBounds, val zoom: Float)
 
@@ -76,9 +77,7 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
                 value = Resource.loading(emptyList())
                 listOf(mapPosition, filtersWithValue).forEach {
                     addSource(it) {
-                        val pos = mapPosition.value ?: return@addSource
-                        val filters = filtersWithValue.value ?: return@addSource
-                        loadChargepoints(pos, filters)
+                        reloadChargepoints()
                     }
                 }
             }
@@ -174,6 +173,12 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
         }
     }
 
+    fun reloadChargepoints() {
+        val pos = mapPosition.value ?: return
+        val filters = filtersWithValue.value ?: return
+        loadChargepoints(pos, filters)
+    }
+
     private fun loadChargepoints(
         mapPosition: MapPosition,
         filters: List<FilterWithValue<out FilterValue>>
@@ -229,20 +234,32 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
         val data = mutableListOf<ChargepointListItem>()
         do {
             // load all pages of the response
-            val response = api.getChargepoints(
-                bounds.southwest.latitude, bounds.southwest.longitude,
-                bounds.northeast.latitude, bounds.northeast.longitude,
-                clustering = useGeClustering, zoom = zoom,
-                clusterDistance = clusterDistance, freecharging = freecharging, minPower = minPower,
-                freeparking = freeparking, plugs = connectors, chargecards = chargeCards,
-                networks = networks, startkey = startkey
-            )
-            if (!response.isSuccessful || response.body()!!.status != "ok") {
-                return Resource.error(response.message(), chargepoints.value?.data)
-            } else {
-                val body = response.body()!!
-                data.addAll(body.chargelocations)
-                startkey = body.startkey
+            try {
+                val response = api.getChargepoints(
+                    bounds.southwest.latitude,
+                    bounds.southwest.longitude,
+                    bounds.northeast.latitude,
+                    bounds.northeast.longitude,
+                    clustering = useGeClustering,
+                    zoom = zoom,
+                    clusterDistance = clusterDistance,
+                    freecharging = freecharging,
+                    minPower = minPower,
+                    freeparking = freeparking,
+                    plugs = connectors,
+                    chargecards = chargeCards,
+                    networks = networks,
+                    startkey = startkey
+                )
+                if (!response.isSuccessful || response.body()!!.status != "ok") {
+                    return Resource.error(response.message(), chargepoints.value?.data)
+                } else {
+                    val body = response.body()!!
+                    data.addAll(body.chargelocations)
+                    startkey = body.startkey
+                }
+            } catch (e: IOException) {
+                return Resource.error(e.message, chargepoints.value?.data)
             }
         } while (startkey != null && startkey < 10000)
 

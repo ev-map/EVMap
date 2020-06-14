@@ -89,6 +89,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
     private var markers: MutableBiMap<Marker, ChargeLocation> = HashBiMap()
     private var clusterMarkers: List<Marker> = emptyList()
     private var searchResultMarker: Marker? = null
+    private var connectionErrorSnackbar: Snackbar? = null
 
     private lateinit var clusterIconGenerator: ClusterIconGenerator
     private lateinit var chargerIconGenerator: ChargerIconGenerator
@@ -312,9 +313,31 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 unhighlightAllMarkers()
             }
         })
-        vm.chargepoints.observe(viewLifecycleOwner, Observer {
-            val chargepoints = it.data
-            if (chargepoints != null) updateMap(chargepoints)
+        vm.chargepoints.observe(viewLifecycleOwner, Observer { res ->
+            when (res.status) {
+                Status.ERROR -> {
+                    val view = view ?: return@Observer
+
+                    connectionErrorSnackbar?.dismiss()
+                    connectionErrorSnackbar = Snackbar
+                        .make(view, R.string.connection_error, Snackbar.LENGTH_INDEFINITE)
+                        .setAction(R.string.retry) {
+                            connectionErrorSnackbar?.dismiss()
+                            vm.reloadChargepoints()
+                        }
+                    connectionErrorSnackbar!!.show()
+                }
+                Status.SUCCESS -> {
+                    connectionErrorSnackbar?.dismiss()
+                }
+                Status.LOADING -> {
+                }
+            }
+
+            val chargepoints = res.data
+            if (chargepoints != null) {
+                updateMap(chargepoints)
+            }
         })
         vm.favorites.observe(viewLifecycleOwner, Observer {
             updateFavoriteToggle()

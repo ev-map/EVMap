@@ -1,0 +1,60 @@
+{
+  "status": "ok",
+  "chargelocations": [
+    {
+      "chargepoints": [
+        {
+          "type": "Typ2",
+          "power": 22,
+          "count": 2
+        }
+      ],
+      "ge_id": 41161,
+      "name": "BMW Autohaus B&K",
+      "address": {
+        "city": "Hamburg",
+        "country": "Deutschland",
+        "postcode": "21073",
+        "street": "Buxtehuder Straße 112"
+      },
+      "coordinates": {
+        "lat": 53.469542,
+        "lng": 9.964063
+      },
+      "network": "Digital Energy Solutions",
+      "url": "//www.goingelectric.de/stromtankstellen/Deutschland/Hamburg/BMW-Autohaus-B-K-Buxtehuder-Strasse-112/41161/",
+      "fault_report": false,
+      "verified": false
+    },
+    {
+      "chargepoints": [
+        {
+          "type": "Typ2",
+          "power": 22,
+          "count": 2
+        },
+        {
+          "type": "Schuko",
+          "power": 3.6,
+          "count": 2
+        }
+      ],
+      "ge_id": 41226,
+      "name": "Saseler Chaussee",
+      "address": {
+        "city": "Hamburg",
+        "country": "Deutschland",
+        "postcode": "22393",
+        "street": "Saseler Chaussee 94a"
+      },
+      "coordinates": {
+        "lat": 53.644021,
+        "lng": 10.099783
+      },
+      "network": "Stromnetz Hamburg",
+      "url": "//www.goingelectric.de/stromtankstellen/Deutschland/Hamburg/Saseler-Chaussee-Saseler-Chaussee-94a/41226/",
+      "fault_report": false,
+      "verified": false
+    }
+  ]
+}

@@ -18,16 +18,16 @@ interface GoingElectricApi {
     suspend fun getChargepoints(
         @Query("sw_lat") swlat: Double, @Query("sw_lng") sw_lng: Double,
         @Query("ne_lat") ne_lat: Double, @Query("ne_lng") ne_lng: Double,
-        @Query("clustering") clustering: Boolean,
         @Query("zoom") zoom: Float,
-        @Query("cluster_distance") clusterDistance: Int?,
-        @Query("freecharging") freecharging: Boolean,
-        @Query("freeparking") freeparking: Boolean,
-        @Query("min_power") minPower: Int,
-        @Query("plugs") plugs: String?,
-        @Query("chargecards") chargecards: String?,
-        @Query("networks") networks: String?,
-        @Query("startkey") startkey: Int?
+        @Query("clustering") clustering: Boolean = false,
+        @Query("cluster_distance") clusterDistance: Int? = null,
+        @Query("freecharging") freecharging: Boolean = false,
+        @Query("freeparking") freeparking: Boolean = false,
+        @Query("min_power") minPower: Int = 0,
+        @Query("plugs") plugs: String? = null,
+        @Query("chargecards") chargecards: String? = null,
+        @Query("networks") networks: String? = null,
+        @Query("startkey") startkey: Int? = null
     ): Response<ChargepointList>
 
     @GET("chargepoints/")

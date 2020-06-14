@@ -4,6 +4,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import net.vonforst.evmap.api.goingelectric.ChargeLocation
 import net.vonforst.evmap.api.goingelectric.GoingElectricApi
+import net.vonforst.evmap.okResponse
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
@@ -37,9 +38,7 @@ class NewMotionAvailabilityDetectorTest {
                 when (urlHead) {
                     "ge/chargepoints" -> {
                         val id = request.requestUrl.queryParameter("ge_id")
-                        val body = readResource("/chargers/$id.json") ?: return notFoundResponse
-                        return MockResponse().setResponseCode(HttpURLConnection.HTTP_OK)
-                            .setBody(body)
+                        return okResponse("/chargers/$id.json")
                     }
                     "nm/markers" -> {
                         val urlTail = segments.subList(2, segments.size).joinToString("/")
@@ -48,16 +47,11 @@ class NewMotionAvailabilityDetectorTest {
                             "9.444284/9.644283999999999/54.376699/54.576699000000005" -> 18284
                             else -> -1
                         }
-                        val body =
-                            readResource("/newmotion/$id/markers.json") ?: return notFoundResponse
-                        return MockResponse().setResponseCode(HttpURLConnection.HTTP_OK)
-                            .setBody(body)
+                        return okResponse("/newmotion/$id/markers.json")
                     }
                     "nm/locations" -> {
                         val id = segments.last()
-                        val body = readResource("/newmotion/$id.json") ?: return notFoundResponse
-                        return MockResponse().setResponseCode(HttpURLConnection.HTTP_OK)
-                            .setBody(body)
+                        return okResponse("/newmotion/$id.json")
                     }
                     else -> return notFoundResponse
                 }

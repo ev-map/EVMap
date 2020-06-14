@@ -5,12 +5,14 @@ import androidx.lifecycle.*
 import com.google.android.libraries.maps.GoogleMap
 import com.google.android.libraries.maps.model.LatLngBounds
 import com.google.android.libraries.places.api.model.Place
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import net.vonforst.evmap.api.availability.ChargeLocationStatus
 import net.vonforst.evmap.api.availability.getAvailability
 import net.vonforst.evmap.api.goingelectric.*
 import net.vonforst.evmap.storage.*
+import net.vonforst.evmap.ui.cluster
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -218,35 +220,51 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
         val networks = formatMultipleChoice(networksVal)
 
         // do not use clustering if filters need to be applied locally.
-        val useClustering = minConnectors <= 1 && zoom < 13
+        val useClustering = zoom < 13
+        val geClusteringAvailable = minConnectors <= 1
+        val useGeClustering = useClustering && geClusteringAvailable
         val clusterDistance = if (useClustering) getClusterDistance(zoom) else null
 
-        val response = api.getChargepoints(
-            bounds.southwest.latitude, bounds.southwest.longitude,
-            bounds.northeast.latitude, bounds.northeast.longitude,
-            clustering = useClustering, zoom = zoom,
-            clusterDistance = clusterDistance, freecharging = freecharging, minPower = minPower,
-            freeparking = freeparking, plugs = connectors, chargecards = chargeCards,
-            networks = networks
-        )
-
-        if (!response.isSuccessful || response.body()!!.status != "ok") {
-            return Resource.error(response.message(), chargepoints.value?.data)
-        } else {
-            val data = response.body()!!.chargelocations.filter { it ->
-                // apply filters which GoingElectric does not support natively
-                if (it is ChargeLocation) {
-                    it.chargepoints
-                        .filter { it.power >= minPower }
-                        .filter { if (!connectorsVal.all) it.type in connectorsVal.values else true }
-                        .sumBy { it.count } >= minConnectors
-                } else {
-                    true
-                }
+        var startkey: Int? = null
+        val data = mutableListOf<ChargepointListItem>()
+        do {
+            // load all pages of the response
+            val response = api.getChargepoints(
+                bounds.southwest.latitude, bounds.southwest.longitude,
+                bounds.northeast.latitude, bounds.northeast.longitude,
+                clustering = useGeClustering, zoom = zoom,
+                clusterDistance = clusterDistance, freecharging = freecharging, minPower = minPower,
+                freeparking = freeparking, plugs = connectors, chargecards = chargeCards,
+                networks = networks, startkey = startkey
+            )
+            if (!response.isSuccessful || response.body()!!.status != "ok") {
+                return Resource.error(response.message(), chargepoints.value?.data)
+            } else {
+                val body = response.body()!!
+                data.addAll(body.chargelocations)
+                startkey = body.startkey
             }
+        } while (startkey != null && startkey < 10000)
 
-            return Resource.success(data)
+        var result = data.filter { it ->
+            // apply filters which GoingElectric does not support natively
+            if (it is ChargeLocation) {
+                it.chargepoints
+                    .filter { it.power >= minPower }
+                    .filter { if (!connectorsVal.all) it.type in connectorsVal.values else true }
+                    .sumBy { it.count } >= minConnectors
+            } else {
+                true
+            }
         }
+        if (!geClusteringAvailable && useClustering) {
+            // apply local clustering if server side clustering is not available
+            Dispatchers.IO.run {
+                result = cluster(result, zoom, clusterDistance!!)
+            }
+        }
+
+        return Resource.success(result)
     }
 
     private fun formatMultipleChoice(connectorsVal: MultipleChoiceFilterValue) =

@@ -26,7 +26,8 @@ interface GoingElectricApi {
         @Query("min_power") minPower: Int,
         @Query("plugs") plugs: String?,
         @Query("chargecards") chargecards: String?,
-        @Query("networks") networks: String?
+        @Query("networks") networks: String?,
+        @Query("startkey") startkey: Int?
     ): Response<ChargepointList>
 
     @GET("chargepoints/")

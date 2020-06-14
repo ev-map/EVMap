@@ -24,7 +24,8 @@ import kotlin.math.floor
 @JsonClass(generateAdapter = true)
 data class ChargepointList(
     val status: String,
-    val chargelocations: List<ChargepointListItem>
+    val chargelocations: List<ChargepointListItem>,
+    val startkey: Int?
 )
 
 @JsonClass(generateAdapter = true)

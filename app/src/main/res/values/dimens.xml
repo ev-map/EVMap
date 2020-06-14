@@ -3,4 +3,6 @@
     <dimen name="peek_height">72dp</dimen>
     <dimen name="gallery_height">200dp</dimen>
     <dimen name="gallery_height_with_margin">208dp</dimen>
+    <dimen name="detail_corner_radius">8dp</dimen>
+    <dimen name="detail_corner_radius_negative">-8dp</dimen>
 </resources>

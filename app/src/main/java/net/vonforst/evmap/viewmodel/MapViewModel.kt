@@ -2,8 +2,8 @@ package net.vonforst.evmap.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.*
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.libraries.maps.GoogleMap
+import com.google.android.libraries.maps.model.LatLngBounds
 import com.google.android.libraries.places.api.model.Place
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch

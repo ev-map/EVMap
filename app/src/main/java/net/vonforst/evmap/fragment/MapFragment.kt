@@ -34,11 +34,11 @@ import androidx.transition.TransitionInflater
 import androidx.transition.TransitionManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.*
+import com.google.android.libraries.maps.CameraUpdateFactory
+import com.google.android.libraries.maps.GoogleMap
+import com.google.android.libraries.maps.OnMapReadyCallback
+import com.google.android.libraries.maps.SupportMapFragment
+import com.google.android.libraries.maps.model.*
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode

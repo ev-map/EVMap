@@ -11,8 +11,8 @@ import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.widget.TextViewCompat
-import com.google.android.gms.maps.model.BitmapDescriptor
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.libraries.maps.model.BitmapDescriptor
+import com.google.android.libraries.maps.model.BitmapDescriptorFactory
 import com.google.maps.android.ui.IconGenerator
 import com.google.maps.android.ui.SquareTextView
 import net.vonforst.evmap.R

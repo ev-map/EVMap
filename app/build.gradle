@@ -87,11 +87,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.browser:browser:1.2.0'
-    implementation 'com.google.maps.android:android-maps-utils:0.5'
     implementation 'com.github.johan12345:CustomBottomSheetBehavior:f69f532660'
-    implementation 'com.google.android.gms:play-services-maps:17.0.0'
-    implementation 'com.google.android.gms:play-services-location:17.0.0'
-    implementation 'com.google.android.libraries.places:places:2.3.0'
     implementation 'com.squareup.retrofit2:retrofit:2.7.2'
     implementation 'com.squareup.retrofit2:converter-moshi:2.7.2'
     implementation 'com.squareup.moshi:moshi-kotlin:1.9.2'
@@ -101,6 +97,15 @@ dependencies {
     implementation "com.mikepenz:aboutlibraries:$about_libs_version"
     implementation 'com.airbnb.android:lottie:3.4.0'
     implementation 'io.michaelrocks:bimap:1.0.2'
+
+    // Google Maps v3 Beta
+    implementation name:'maps-sdk-3.0.0-beta', ext:'aar'
+    implementation name:'places-maps-sdk-3.0.0-beta', ext:'aar'
+    implementation 'com.google.maps.android:android-maps-utils-v3:1.3.3'
+    implementation 'com.google.android.gms:play-services-basement:17.3.0'
+    implementation 'com.google.android.gms:play-services-base:17.3.0'
+    implementation 'com.google.android.gms:play-services-gcm:17.0.0'
+    implementation 'com.google.android.gms:play-services-location:17.0.0'
 
     // navigation library
     def nav_version = "2.3.0-beta01"

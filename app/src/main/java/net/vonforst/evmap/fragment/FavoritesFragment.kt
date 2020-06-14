@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.model.LatLng
+import com.google.android.libraries.maps.model.LatLng
 import net.vonforst.evmap.MapsActivity
 import net.vonforst.evmap.R
 import net.vonforst.evmap.adapter.FavoritesAdapter

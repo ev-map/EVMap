@@ -5,7 +5,7 @@ import android.view.animation.BounceInterpolator
 import androidx.core.animation.addListener
 import androidx.interpolator.view.animation.FastOutLinearInInterpolator
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
-import com.google.android.gms.maps.model.Marker
+import com.google.android.libraries.maps.model.Marker
 import net.vonforst.evmap.R
 import net.vonforst.evmap.api.goingelectric.ChargeLocation
 import kotlin.math.max

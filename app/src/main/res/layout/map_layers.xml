@@ -6,7 +6,7 @@
 
         <import type="net.vonforst.evmap.viewmodel.MapViewModel" />
 
-        <import type="com.google.android.gms.maps.GoogleMap" />
+        <import type="com.google.android.libraries.maps.GoogleMap" />
 
         <variable
             name="vm"

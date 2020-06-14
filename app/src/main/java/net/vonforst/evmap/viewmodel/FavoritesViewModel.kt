@@ -2,7 +2,7 @@ package net.vonforst.evmap.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.*
-import com.google.android.gms.maps.model.LatLng
+import com.google.android.libraries.maps.model.LatLng
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch

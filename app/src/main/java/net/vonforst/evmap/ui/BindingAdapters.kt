@@ -3,6 +3,7 @@ package net.vonforst.evmap.ui
 import android.content.Context
 import android.content.res.ColorStateList
 import android.view.View
+import android.view.ViewGroup.MarginLayoutParams
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -16,6 +17,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import net.vonforst.evmap.R
 import net.vonforst.evmap.api.availability.ChargepointStatus
 import net.vonforst.evmap.api.goingelectric.Chargepoint
+import kotlin.math.roundToInt
 
 
 @BindingAdapter("goneUnless")
@@ -117,6 +119,16 @@ fun setHtmlTextValue(textView: TextView, htmlText: String?) {
     } else {
         textView.text = HtmlCompat.fromHtml(htmlText, HtmlCompat.FROM_HTML_MODE_LEGACY)
     }
+}
+
+@BindingAdapter("android:layout_marginTop")
+fun setTopMargin(view: View, topMargin: Float) {
+    val layoutParams = view.layoutParams as MarginLayoutParams
+    layoutParams.setMargins(
+        layoutParams.leftMargin, topMargin.roundToInt(),
+        layoutParams.rightMargin, layoutParams.bottomMargin
+    )
+    view.layoutParams = layoutParams
 }
 
 private fun availabilityColor(

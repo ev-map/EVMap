@@ -80,11 +80,11 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
+            app:dayOfWeek="@{DayOfWeek.MONDAY}"
             app:goneUnless="@{expandToggle.checked}"
             app:hours="@{item.hoursDays}"
-            app:dayOfWeek="@{DayOfWeek.MONDAY}"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/textView8"
+            app:layout_constraintStart_toStartOf="@+id/textView9"
             app:layout_constraintTop_toBottomOf="@+id/textView8" />
 
         <include
@@ -98,7 +98,7 @@
             app:dayOfWeek="@{DayOfWeek.TUESDAY}"
             app:hours="@{item.hoursDays}"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/textView8"
+            app:layout_constraintStart_toStartOf="@+id/textView9"
             app:layout_constraintTop_toBottomOf="@id/hours_mon" />
 
         <include
@@ -112,7 +112,7 @@
             app:dayOfWeek="@{DayOfWeek.WEDNESDAY}"
             app:hours="@{item.hoursDays}"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/textView8"
+            app:layout_constraintStart_toStartOf="@+id/textView9"
             app:layout_constraintTop_toBottomOf="@id/hours_tue" />
 
         <include
@@ -126,7 +126,7 @@
             app:dayOfWeek="@{DayOfWeek.THURSDAY}"
             app:hours="@{item.hoursDays}"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/textView8"
+            app:layout_constraintStart_toStartOf="@+id/textView9"
             app:layout_constraintTop_toBottomOf="@id/hours_wed" />
 
         <include
@@ -140,7 +140,7 @@
             app:dayOfWeek="@{DayOfWeek.FRIDAY}"
             app:hours="@{item.hoursDays}"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/textView8"
+            app:layout_constraintStart_toStartOf="@+id/textView9"
             app:layout_constraintTop_toBottomOf="@id/hours_thu" />
 
         <include
@@ -154,7 +154,7 @@
             app:dayOfWeek="@{DayOfWeek.SATURDAY}"
             app:hours="@{item.hoursDays}"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/textView8"
+            app:layout_constraintStart_toStartOf="@+id/textView9"
             app:layout_constraintTop_toBottomOf="@id/hours_fri" />
 
         <include
@@ -168,7 +168,7 @@
             app:dayOfWeek="@{DayOfWeek.SUNDAY}"
             app:hours="@{item.hoursDays}"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/textView8"
+            app:layout_constraintStart_toStartOf="@+id/textView9"
             app:layout_constraintTop_toBottomOf="@id/hours_sat" />
 
         <include
@@ -184,19 +184,19 @@
             app:hours="@{item.hoursDays}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/textView8"
+            app:layout_constraintStart_toStartOf="@+id/textView9"
             app:layout_constraintTop_toBottomOf="@id/hours_sun" />
 
         <ToggleButton
             android:id="@+id/expandToggle"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="@{item.detailText != null ? @dimen/expand_toggle_padding_large : @dimen/expand_toggle_padding_small}"
             android:layout_marginEnd="16dp"
             android:background="@drawable/expand_toggle"
+            android:onClick="@{() -> TransitionManager.beginDelayedTransition(container)}"
             android:textOff=""
             android:textOn=""
-            android:onClick="@{() -> TransitionManager.beginDelayedTransition(container)}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

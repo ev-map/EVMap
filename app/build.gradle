@@ -106,6 +106,10 @@ dependencies {
     implementation 'com.google.android.gms:play-services-base:17.3.0'
     implementation 'com.google.android.gms:play-services-gcm:17.0.0'
     implementation 'com.google.android.gms:play-services-location:17.0.0'
+    implementation 'com.google.android.gms:play-services-clearcut:17.0.0'
+    implementation 'com.android.volley:volley:1.1.1'
+    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
 
     // navigation library
     def nav_version = "2.3.0-beta01"

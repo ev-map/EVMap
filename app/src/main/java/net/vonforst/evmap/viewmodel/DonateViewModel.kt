@@ -20,12 +20,12 @@ class DonateViewModel(application: Application) : AndroidViewModel(application),
             override fun onBillingServiceDisconnected() {
             }
 
-            override fun onBillingSetupFinished(p0: BillingResult?) {
+            override fun onBillingSetupFinished(p0: BillingResult) {
                 loadProducts()
 
                 // consume pending purchases
                 val purchases = billingClient.queryPurchases(BillingClient.SkuType.INAPP)
-                purchases.purchasesList.forEach {
+                purchases.purchasesList?.forEach {
                     if (!it.isAcknowledged) {
                         consumePurchase(it.purchaseToken, false)
                     }
@@ -53,7 +53,7 @@ class DonateViewModel(application: Application) : AndroidViewModel(application),
             )
             .build()
         billingClient.querySkuDetailsAsync(params) { result, details ->
-            if (result.responseCode == BillingClient.BillingResponseCode.OK) {
+            if (result.responseCode == BillingClient.BillingResponseCode.OK && details != null) {
                 products.value = Resource.success(details
                     .sortedBy { it.priceAmountMicros }
                     .map { DonationItem(it) }

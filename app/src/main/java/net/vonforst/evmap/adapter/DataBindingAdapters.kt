@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.text.HtmlCompat
 import androidx.core.view.children
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.Observable
@@ -138,12 +139,16 @@ fun buildDetails(loc: ChargeLocation?, ctx: Context): List<DetailAdapter.Detail>
             R.drawable.ic_fault_report,
             R.string.fault_report,
             loc.faultReport.created?.let {
-                ctx.getString(R.string.fault_report_date,
+                ctx.getString(
+                    R.string.fault_report_date,
                     loc.faultReport.created
                         .atZone(ZoneId.systemDefault())
-                        .format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)))
+                        .format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT))
+                )
             } ?: "",
-            loc.faultReport.description ?: "",
+            loc.faultReport.description?.let {
+                HtmlCompat.fromHtml(it, HtmlCompat.FROM_HTML_MODE_LEGACY)
+            } ?: "",
             clickable = true
         ) else null,
         if (loc.openinghours != null && !loc.openinghours.isEmpty) DetailAdapter.Detail(

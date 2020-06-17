@@ -200,6 +200,8 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
     ): Resource<List<ChargepointListItem>> {
         val freecharging = getBooleanValue(filters, "freecharging")
         val freeparking = getBooleanValue(filters, "freeparking")
+        val open247 = getBooleanValue(filters, "open_247")
+        val barrierfree = getBooleanValue(filters, "barrierfree")
         val minPower = getSliderValue(filters, "min_power")
         val minConnectors = getSliderValue(filters, "min_connectors")
 
@@ -246,6 +248,8 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
                     freecharging = freecharging,
                     minPower = minPower,
                     freeparking = freeparking,
+                    open247 = open247,
+                    barrierfree = barrierfree,
                     plugs = connectors,
                     chargecards = chargeCards,
                     networks = networks,

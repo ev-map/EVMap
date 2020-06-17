@@ -27,7 +27,9 @@ interface GoingElectricApi {
         @Query("plugs") plugs: String? = null,
         @Query("chargecards") chargecards: String? = null,
         @Query("networks") networks: String? = null,
-        @Query("startkey") startkey: Int? = null
+        @Query("startkey") startkey: Int? = null,
+        @Query("open_twentyfourseven") open247: Boolean = false,
+        @Query("barrierfree") barrierfree: Boolean = false
     ): Response<ChargepointList>
 
     @GET("chargepoints/")

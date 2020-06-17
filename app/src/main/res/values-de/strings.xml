@@ -94,4 +94,6 @@
     <string name="pref_language_summary">App-Sprache ändern</string>
     <string name="connection_error">Ladesäulen konnten nicht geladen werden</string>
     <string name="retry">Wiederholen</string>
+    <string name="filter_open_247">24 Stunden geöffnet</string>
+    <string name="filter_barrierfree">Ohne Vertrag / Registrierung nutzbar</string>
 </resources>

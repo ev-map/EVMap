@@ -65,6 +65,7 @@ private fun MediatorLiveData<List<Filter<FilterValue>>>.buildFilters(
     value = listOf(
         BooleanFilter(application.getString(R.string.filter_free), "freecharging"),
         BooleanFilter(application.getString(R.string.filter_free_parking), "freeparking"),
+        BooleanFilter(application.getString(R.string.filter_open_247), "open_247"),
         SliderFilter(
             application.getString(R.string.filter_min_power), "min_power",
             powerSteps.size - 1,
@@ -86,6 +87,7 @@ private fun MediatorLiveData<List<Filter<FilterValue>>>.buildFilters(
             application.getString(R.string.filter_networks), "networks",
             networkMap, manyChoices = true
         ),
+        BooleanFilter(application.getString(R.string.filter_barrierfree), "barrierfree"),
         MultipleChoiceFilter(
             application.getString(R.string.filter_chargecards), "chargecards",
             chargecardMap, manyChoices = true

@@ -93,4 +93,6 @@
     <string name="pref_language_summary">Change the app language</string>
     <string name="connection_error">Could not load charging stations</string>
     <string name="retry">Retry</string>
+    <string name="filter_open_247">Available 24/7</string>
+    <string name="filter_barrierfree">Usable without registration</string>
 </resources>

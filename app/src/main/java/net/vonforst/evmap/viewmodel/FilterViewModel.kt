@@ -18,7 +18,7 @@ import kotlin.math.abs
 import kotlin.reflect.KClass
 import kotlin.reflect.full.cast
 
-val powerSteps = listOf(0, 2, 3, 7, 11, 22, 43, 50, 100, 150, 200, 250, 300, 350)
+val powerSteps = listOf(0, 2, 3, 7, 11, 22, 43, 50, 75, 100, 150, 200, 250, 300, 350)
 internal fun mapPower(i: Int) = powerSteps[i]
 internal fun mapPowerInverse(power: Int) = powerSteps
     .mapIndexed { index, v -> abs(v - power) to index }

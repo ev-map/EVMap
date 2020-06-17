@@ -96,4 +96,5 @@
     <string name="retry">Wiederholen</string>
     <string name="filter_open_247">24 Stunden geöffnet</string>
     <string name="filter_barrierfree">Ohne Vertrag / Registrierung nutzbar</string>
+    <string name="filter_exclude_faults">Ladesäulen mit Störung ausschließen</string>
 </resources>

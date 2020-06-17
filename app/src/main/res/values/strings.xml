@@ -95,4 +95,5 @@
     <string name="retry">Retry</string>
     <string name="filter_open_247">Available 24/7</string>
     <string name="filter_barrierfree">Usable without registration</string>
+    <string name="filter_exclude_faults">Exclude chargers with reported faults</string>
 </resources>

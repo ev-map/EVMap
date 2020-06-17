@@ -202,6 +202,7 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
         val freeparking = getBooleanValue(filters, "freeparking")
         val open247 = getBooleanValue(filters, "open_247")
         val barrierfree = getBooleanValue(filters, "barrierfree")
+        val excludeFaults = getBooleanValue(filters, "exclude_faults")
         val minPower = getSliderValue(filters, "min_power")
         val minConnectors = getSliderValue(filters, "min_connectors")
 
@@ -250,6 +251,7 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
                     freeparking = freeparking,
                     open247 = open247,
                     barrierfree = barrierfree,
+                    excludeFaults = excludeFaults,
                     plugs = connectors,
                     chargecards = chargeCards,
                     networks = networks,

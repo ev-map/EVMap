@@ -91,7 +91,8 @@ private fun MediatorLiveData<List<Filter<FilterValue>>>.buildFilters(
         MultipleChoiceFilter(
             application.getString(R.string.filter_chargecards), "chargecards",
             chargecardMap, manyChoices = true
-        )
+        ),
+        BooleanFilter(application.getString(R.string.filter_exclude_faults), "exclude_faults")
     )
 }
 

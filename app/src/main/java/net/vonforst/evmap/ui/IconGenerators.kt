@@ -42,17 +42,24 @@ class ClusterIconGenerator(context: Context) : IconGenerator(context) {
 
 
 class ChargerIconGenerator(val context: Context) {
-    data class BitmapData(val tint: Int, val scale: Int, val alpha: Int, val highlight: Boolean)
+    data class BitmapData(
+        val tint: Int,
+        val scale: Int,
+        val alpha: Int,
+        val highlight: Boolean,
+        val fault: Boolean
+    )
 
-    val cacheSize = 4 * 1024 * 1024; // 4MiB
+    val cacheSize = 8 * 1024 * 1024; // 8MiB
     val cache = object : LruCache<BitmapData, Bitmap>(cacheSize) {
         override fun sizeOf(key: BitmapData, value: Bitmap): Int {
             return value.byteCount
         }
     }
-    val oversize = 1f  // increase to add padding for overshoot scale animation
+    val oversize = 1.4f  // increase to add padding for fault icon or scale > 1
     val icon = R.drawable.ic_map_marker_charging
     val highlightIcon = R.drawable.ic_map_marker_highlight
+    val faultIcon = R.drawable.ic_map_marker_fault
 
     init {
         preloadCache()
@@ -67,11 +74,13 @@ class ChargerIconGenerator(val context: Context) {
             R.color.charger_11kw,
             R.color.charger_low
         )
-        for (highlight in listOf(false, true)) {
-            for (tint in tints) {
-                for (scale in 0..20) {
-                    val data = BitmapData(tint, scale, 255, highlight)
-                    cache.put(data, generateBitmap(data))
+        for (fault in listOf(false, true)) {
+            for (highlight in listOf(false, true)) {
+                for (tint in tints) {
+                    for (scale in 0..20) {
+                        val data = BitmapData(tint, scale, 255, highlight, fault)
+                        cache.put(data, generateBitmap(data))
+                    }
                 }
             }
         }
@@ -81,9 +90,10 @@ class ChargerIconGenerator(val context: Context) {
         @ColorRes tint: Int,
         scale: Int = 20,
         alpha: Int = 255,
-        highlight: Boolean = false
+        highlight: Boolean = false,
+        fault: Boolean = false
     ): BitmapDescriptor? {
-        val data = BitmapData(tint, scale, alpha, highlight)
+        val data = BitmapData(tint, scale, alpha, highlight, fault)
         val cachedImg = cache[data]
         return if (cachedImg != null) {
             BitmapDescriptorFactory.fromBitmap(cachedImg)
@@ -134,6 +144,21 @@ class ChargerIconGenerator(val context: Context) {
             )
             highlightDrawable.alpha = data.alpha
             highlightDrawable.draw(canvas)
+        }
+
+        if (data.fault) {
+            val faultDrawable = context.getDrawable(faultIcon)!!
+            val faultSize = 0.75
+            val faultShift = 0.25
+            val base = vd.intrinsicWidth
+            faultDrawable.setBounds(
+                (leftPadding.toInt() + base * (1 - faultSize + faultShift)).toInt(),
+                (topPadding.toInt() - base * faultShift).toInt(),
+                (leftPadding.toInt() + base * (1 + faultShift)).toInt(),
+                (topPadding.toInt() + base * (faultSize - faultShift)).toInt()
+            )
+            faultDrawable.alpha = data.alpha
+            faultDrawable.draw(canvas)
         }
 
         return bm

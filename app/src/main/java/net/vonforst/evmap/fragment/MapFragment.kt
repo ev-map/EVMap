@@ -385,7 +385,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         markers.forEach { (m, c) ->
             m.setIcon(
                 chargerIconGenerator.getBitmapDescriptor(
-                    getMarkerTint(c)
+                    getMarkerTint(c), fault = c.faultReport != null
                 )
             )
         }
@@ -396,7 +396,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         // highlight this marker
         marker.setIcon(
             chargerIconGenerator.getBitmapDescriptor(
-                getMarkerTint(charger), highlight = true
+                getMarkerTint(charger), highlight = true, fault = charger.faultReport != null
             )
         )
         animator.animateMarkerBounce(marker)
@@ -406,7 +406,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             if (m != marker) {
                 m.setIcon(
                     chargerIconGenerator.getBitmapDescriptor(
-                        getMarkerTint(c)
+                        getMarkerTint(c), fault = c.faultReport != null
                     )
                 )
             }
@@ -630,7 +630,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 if (it.key.isVisible) {
                     val tint = getMarkerTint(it.value)
                     val highlight = it.value == vm.chargerSparse.value
-                    animator.animateMarkerDisappear(it.key, tint, highlight)
+                    val fault = it.value.faultReport != null
+                    animator.animateMarkerDisappear(it.key, tint, highlight, fault)
                 } else {
                     it.key.remove()
                 }
@@ -643,14 +644,18 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         }.forEach { charger ->
             val tint = getMarkerTint(charger)
             val highlight = charger == vm.chargerSparse.value
+            val fault = charger.faultReport != null
             val marker = map.addMarker(
                 MarkerOptions()
                     .position(LatLng(charger.coordinates.lat, charger.coordinates.lng))
                     .icon(
-                        chargerIconGenerator.getBitmapDescriptor(tint, highlight = highlight)
+                        chargerIconGenerator.getBitmapDescriptor(
+                            tint, highlight = highlight,
+                            fault = charger.faultReport != null
+                        )
                     )
             )
-            animator.animateMarkerAppear(marker, tint, highlight)
+            animator.animateMarkerAppear(marker, tint, highlight, fault)
             markers[marker] = charger
         }
         clusterMarkers = clusters.map { cluster ->

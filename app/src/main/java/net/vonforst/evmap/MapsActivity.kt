@@ -45,6 +45,8 @@ class MapsActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // set theme to AppTheme to end launch screen
+        setTheme(R.style.AppTheme)
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_maps)

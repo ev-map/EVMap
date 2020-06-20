@@ -27,7 +27,8 @@
 
         <activity
             android:name=".MapsActivity"
-            android:label="@string/title_activity_maps">
+            android:label="@string/title_activity_maps"
+            android:theme="@style/AppTheme.LaunchScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -153,7 +153,10 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
 
     val filtersActive: MutableLiveData<Boolean> by lazy {
         MutableLiveData<Boolean>().apply {
-            value = true
+            value = prefs.filtersActive
+            observeForever {
+                prefs.filtersActive = it
+            }
         }
     }
 

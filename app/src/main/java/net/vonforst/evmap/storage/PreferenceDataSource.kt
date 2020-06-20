@@ -31,6 +31,12 @@ class PreferenceDataSource(context: Context) {
             sp.edit().putLong("last_chargecard_update", value.toEpochMilli()).apply()
         }
 
+    var filtersActive: Boolean
+        get() = sp.getBoolean("filters_active", true)
+        set(value) {
+            sp.edit().putBoolean("filters_active", value).apply()
+        }
+
     val language: String
         get() = sp.getString("language", "default")!!
 }

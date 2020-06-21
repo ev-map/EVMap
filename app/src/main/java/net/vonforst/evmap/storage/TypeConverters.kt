@@ -54,8 +54,8 @@ class Converters {
     }
 
     @TypeConverter
-    fun toChargeCardIdList(value: String): List<ChargeCardId>? {
-        return chargeCardIdListAdapter.fromJson(value)
+    fun toChargeCardIdList(value: String?): List<ChargeCardId>? {
+        return value?.let { chargeCardIdListAdapter.fromJson(it) }
     }
 
     @TypeConverter

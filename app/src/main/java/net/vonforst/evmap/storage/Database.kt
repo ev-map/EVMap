@@ -22,7 +22,7 @@ import net.vonforst.evmap.viewmodel.SliderFilterValue
         Plug::class,
         Network::class,
         ChargeCard::class
-    ], version = 7
+    ], version = 8
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -38,7 +38,7 @@ abstract class AppDatabase : RoomDatabase() {
             Room.databaseBuilder(context, AppDatabase::class.java, "evmap.db")
                 .addMigrations(
                     MIGRATION_2, MIGRATION_3, MIGRATION_4, MIGRATION_5, MIGRATION_6,
-                    MIGRATION_7
+                    MIGRATION_7, MIGRATION_8
                 )
                 .build()
         }
@@ -112,6 +112,12 @@ abstract class AppDatabase : RoomDatabase() {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("CREATE TABLE IF NOT EXISTS `Network` (`name` TEXT NOT NULL, PRIMARY KEY(`name`))")
                 db.execSQL("CREATE TABLE IF NOT EXISTS `ChargeCard` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `url` TEXT NOT NULL, PRIMARY KEY(`id`))")
+            }
+        }
+
+        private val MIGRATION_8 = object : Migration(7, 8) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE `ChargeLocation` ADD `chargecards` TEXT")
             }
         }
     }

@@ -52,7 +52,7 @@ data class ChargeLocation(
     val chargepoints: List<Chargepoint>,
     @JsonObjectOrFalse val network: String?,
     val url: String,
-    @Embedded(prefix="fault_report_") @JsonObjectOrFalse @Json(name = "fault_report") val faultReport: FaultReport?,
+    @Embedded(prefix = "fault_report_") @JsonObjectOrFalse @Json(name = "fault_report") val faultReport: FaultReport?,
     val verified: Boolean,
     // only shown in details:
     @JsonObjectOrFalse val operator: String?,
@@ -60,7 +60,7 @@ data class ChargeLocation(
     @JsonObjectOrFalse @Json(name = "ladeweile") val amenities: String?,
     @JsonObjectOrFalse @Json(name = "location_description") val locationDescription: String?,
     val photos: List<ChargerPhoto>?,
-    //val chargecards: Boolean?
+    @JsonObjectOrFalse val chargecards: List<ChargeCardId>?,
     @Embedded val openinghours: OpeningHours?,
     @Embedded val cost: Cost?
 ) : ChargepointListItem(), Equatable {
@@ -278,4 +278,9 @@ data class ChargeCard(
     @Json(name = "card_id") @PrimaryKey val id: Long,
     val name: String,
     val url: String
+)
+
+@JsonClass(generateAdapter = true)
+data class ChargeCardId(
+    val id: Long
 )

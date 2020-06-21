@@ -9,6 +9,8 @@
 
         <import type="net.vonforst.evmap.api.goingelectric.Chargepoint" />
 
+        <import type="net.vonforst.evmap.api.goingelectric.ChargeCard" />
+
         <import type="net.vonforst.evmap.api.availability.ChargeLocationStatus" />
 
         <import type="net.vonforst.evmap.adapter.DataBindingAdaptersKt" />
@@ -24,6 +26,10 @@
         <variable
             name="availability"
             type="Resource&lt;ChargeLocationStatus&gt;" />
+
+        <variable
+            name="chargeCards"
+            type="java.util.Map&lt;Long, ChargeCard&gt;" />
 
     </data>
 
@@ -182,7 +188,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:nestedScrollingEnabled="false"
-                app:data="@{DataBindingAdaptersKt.buildDetails(charger.data, context)}"
+                app:data="@{DataBindingAdaptersKt.buildDetails(charger.data, chargeCards, context)}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"

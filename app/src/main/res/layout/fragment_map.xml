@@ -126,7 +126,8 @@
                 android:id="@+id/detail_view"
                 layout="@layout/detail_view"
                 app:charger="@{vm.charger}"
-                app:availability="@{vm.availability}" />
+                app:availability="@{vm.availability}"
+                app:chargeCards="@{vm.chargeCardMap}" />
 
         </androidx.core.widget.NestedScrollView>
 

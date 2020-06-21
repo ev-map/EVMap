@@ -96,4 +96,10 @@
     <string name="filter_open_247">Available 24/7</string>
     <string name="filter_barrierfree">Usable without registration</string>
     <string name="filter_exclude_faults">Exclude chargers with reported faults</string>
+    <string name="charge_cards">Payment methods</string>
+    <string name="and_n_others">and %d others</string>
+    <plurals name="charge_cards_compatible_num">
+        <item quantity="one">%d compatible payment method</item>
+        <item quantity="other">%d compatible payment methods</item>
+    </plurals>
 </resources>

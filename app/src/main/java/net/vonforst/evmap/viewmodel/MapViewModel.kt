@@ -61,6 +61,17 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
         filtersWithValue(filters, filterValues, filtersActive)
     }
 
+    val chargeCardMap: LiveData<Map<Long, ChargeCard>> by lazy {
+        MediatorLiveData<Map<Long, ChargeCard>>().apply {
+            value = null
+            addSource(chargeCards) {
+                value = chargeCards.value?.map {
+                    it.id to it
+                }?.toMap()
+            }
+        }
+    }
+
     val filtersCount: LiveData<Int> by lazy {
         MediatorLiveData<Int>().apply {
             value = 0

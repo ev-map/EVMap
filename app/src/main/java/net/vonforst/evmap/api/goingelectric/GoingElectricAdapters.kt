@@ -75,14 +75,14 @@ internal class JsonObjectOrFalseAdapter<T> private constructor(
             type: Type,
             annotations: Set<Annotation>?,
             moshi: Moshi
-        ): JsonAdapter<*>? {
+        ): JsonAdapter<Any>? {
             val clazz = Types.getRawType(type)
             return when (hasJsonObjectOrFalseAnnotation(
                 annotations
             )) {
                 false -> null
                 true -> JsonObjectOrFalseAdapter(
-                    moshi.adapter(clazz), clazz
+                    moshi.adapter(type), clazz
                 )
             }
         }
@@ -101,6 +101,7 @@ internal class JsonObjectOrFalseAdapter<T> private constructor(
             }
         }
         JsonReader.Token.BEGIN_OBJECT -> objectDelegate.fromJson(reader)
+        JsonReader.Token.BEGIN_ARRAY -> objectDelegate.fromJson(reader)
         JsonReader.Token.STRING -> objectDelegate.fromJson(reader)
         JsonReader.Token.NUMBER -> objectDelegate.fromJson(reader)
         else ->

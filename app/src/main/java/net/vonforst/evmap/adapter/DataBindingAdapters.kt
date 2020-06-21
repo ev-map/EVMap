@@ -17,9 +17,7 @@ import com.google.android.material.chip.Chip
 import net.vonforst.evmap.BR
 import net.vonforst.evmap.R
 import net.vonforst.evmap.api.availability.ChargepointStatus
-import net.vonforst.evmap.api.goingelectric.ChargeLocation
-import net.vonforst.evmap.api.goingelectric.Chargepoint
-import net.vonforst.evmap.api.goingelectric.OpeningHoursDays
+import net.vonforst.evmap.api.goingelectric.*
 import net.vonforst.evmap.databinding.ItemFilterMultipleChoiceBinding
 import net.vonforst.evmap.databinding.ItemFilterMultipleChoiceLargeBinding
 import net.vonforst.evmap.databinding.ItemFilterSliderBinding
@@ -115,7 +113,11 @@ class DetailAdapter : DataBindingAdapter<DetailAdapter.Detail>() {
     }
 }
 
-fun buildDetails(loc: ChargeLocation?, ctx: Context): List<DetailAdapter.Detail> {
+fun buildDetails(
+    loc: ChargeLocation?,
+    chargeCards: Map<Long, ChargeCard>?,
+    ctx: Context
+): List<DetailAdapter.Detail> {
     if (loc == null) return emptyList()
 
     return listOfNotNull(
@@ -165,6 +167,15 @@ fun buildDetails(loc: ChargeLocation?, ctx: Context): List<DetailAdapter.Detail>
             loc.cost.descriptionLong ?: loc.cost.descriptionShort
         )
         else null,
+        if (loc.chargecards != null && loc.chargecards.isNotEmpty()) DetailAdapter.Detail(
+            R.drawable.ic_payment,
+            R.string.charge_cards,
+            ctx.resources.getQuantityString(
+                R.plurals.charge_cards_compatible_num,
+                loc.chargecards.size, loc.chargecards.size
+            ),
+            formatChargeCards(loc.chargecards, chargeCards, ctx)
+        ) else null,
         DetailAdapter.Detail(
             R.drawable.ic_location,
             R.string.coordinates,
@@ -174,6 +185,25 @@ fun buildDetails(loc: ChargeLocation?, ctx: Context): List<DetailAdapter.Detail>
             clickable = true
         )
     )
+}
+
+fun formatChargeCards(
+    chargecards: List<ChargeCardId>,
+    chargecardData: Map<Long, ChargeCard>?,
+    ctx: Context
+): String {
+    if (chargecardData == null) return ""
+
+    val maxItems = 5
+    var result = chargecards
+        .take(maxItems)
+        .mapNotNull { chargecardData[it.id]?.name }
+        .joinToString()
+    if (chargecards.size > maxItems) {
+        result += " " + ctx.getString(R.string.and_n_others, chargecards.size - maxItems)
+    }
+
+    return result
 }
 
 

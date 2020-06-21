@@ -14,6 +14,7 @@ import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.app.SharedElementCallback
 import androidx.core.content.ContextCompat
@@ -472,7 +473,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         binding.detailView.details.apply {
             adapter = DetailAdapter().apply {
                 onClickListener = {
-                    val charger = vm.chargerSparse.value
+                    val charger = vm.chargerDetails.value?.data
                     if (charger != null) {
                         when (it.icon) {
                             R.drawable.ic_location -> {
@@ -480,6 +481,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                             }
                             R.drawable.ic_fault_report -> {
                                 (activity as? MapsActivity)?.openUrl("https:${charger.url}")
+                            }
+                            R.drawable.ic_payment -> {
+                                showPaymentMethodsDialog(charger)
                             }
                         }
                     }
@@ -495,6 +499,21 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 )
             )
         }
+    }
+
+    private fun showPaymentMethodsDialog(charger: ChargeLocation) {
+        val activity = activity ?: return
+        val chargecardData = vm.chargeCardMap.value ?: return
+        val chargecards = charger.chargecards ?: return
+
+        val data = chargecards.map { chargecardData[it.id] }.sortedBy { it?.name }
+        val names = data.map { it?.name ?: "" }
+        AlertDialog.Builder(activity)
+            .setTitle(R.string.charge_cards)
+            .setItems(names.toTypedArray()) { _, i ->
+                val card = data[i] ?: return@setItems
+                (activity as? MapsActivity)?.openUrl("https:${card.url}")
+            }.show()
     }
 
     override fun onMapReady(map: GoogleMap) {

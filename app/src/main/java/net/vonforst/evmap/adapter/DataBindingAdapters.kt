@@ -174,7 +174,8 @@ fun buildDetails(
                 R.plurals.charge_cards_compatible_num,
                 loc.chargecards.size, loc.chargecards.size
             ),
-            formatChargeCards(loc.chargecards, chargeCards, ctx)
+            formatChargeCards(loc.chargecards, chargeCards, ctx),
+            clickable = true
         ) else null,
         DetailAdapter.Detail(
             R.drawable.ic_location,

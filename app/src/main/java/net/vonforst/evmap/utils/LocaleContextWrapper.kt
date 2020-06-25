@@ -1,6 +1,5 @@
 package net.vonforst.evmap.utils
 
-import android.annotation.TargetApi
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.res.Configuration
@@ -32,11 +31,6 @@ class LocaleContextWrapper(base: Context?) : ContextWrapper(base) {
                 ctx = context.createConfigurationContext(config)
             }
             return LocaleContextWrapper(ctx)
-        }
-
-        @TargetApi(Build.VERSION_CODES.N)
-        fun setSystemLocale(config: Configuration, locale: Locale?) {
-            config.setLocale(locale)
         }
     }
 }

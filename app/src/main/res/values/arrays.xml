@@ -10,4 +10,14 @@
         <item>en</item>
         <item>de</item>
     </string-array>
+    <string-array name="pref_darkmode_names">
+        <item>Device default</item>
+        <item>always on</item>
+        <item>always off</item>
+    </string-array>
+    <string-array name="pref_darkmode_values" tranlatable="false">
+        <item>default</item>
+        <item>on</item>
+        <item>off</item>
+    </string-array>
 </resources>

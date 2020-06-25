@@ -5,4 +5,9 @@
         <item>Englisch</item>
         <item>Deutsch</item>
     </string-array>
+    <string-array name="pref_darkmode_names">
+        <item>Geräteeinstellung verwenden</item>
+        <item>immer an</item>
+        <item>immer aus</item>
+    </string-array>
 </resources>

@@ -92,6 +92,8 @@
     <string name="ok">OK</string>
     <string name="pref_language">Sprache</string>
     <string name="pref_language_summary">App-Sprache ändern</string>
+    <string name="pref_darkmode">Dunkles Design</string>
+    <string name="pref_darkmode_summary">Einstellen, wann der Nachtmodus genutzt wird</string>
     <string name="connection_error">Ladesäulen konnten nicht geladen werden</string>
     <string name="retry">Wiederholen</string>
     <string name="filter_open_247">24 Stunden geöffnet</string>

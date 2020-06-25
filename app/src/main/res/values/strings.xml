@@ -91,6 +91,8 @@
     <string name="ok">OK</string>
     <string name="pref_language">Language</string>
     <string name="pref_language_summary">Change the app language</string>
+    <string name="pref_darkmode">Dark mode</string>
+    <string name="pref_darkmode_summary">Set when dark mode is activated</string>
     <string name="connection_error">Could not load charging stations</string>
     <string name="retry">Retry</string>
     <string name="filter_open_247">Available 24/7</string>

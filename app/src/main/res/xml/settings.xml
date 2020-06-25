@@ -18,5 +18,13 @@
             android:defaultValue="default"
             android:summary="@string/pref_language_summary" />
 
+        <ListPreference
+            android:key="darkmode"
+            android:title="@string/pref_darkmode"
+            android:entries="@array/pref_darkmode_names"
+            android:entryValues="@array/pref_darkmode_values"
+            android:defaultValue="default"
+            android:summary="@string/pref_darkmode_summary" />
+
     </PreferenceCategory>
 </PreferenceScreen>

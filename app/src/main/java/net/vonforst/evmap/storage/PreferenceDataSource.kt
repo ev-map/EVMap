@@ -39,4 +39,7 @@ class PreferenceDataSource(context: Context) {
 
     val language: String
         get() = sp.getString("language", "default")!!
+
+    val darkmode: String
+        get() = sp.getString("darkmode", "default")!!
 }

@@ -3,7 +3,6 @@ package net.vonforst.evmap.fragment
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
@@ -12,6 +11,7 @@ import androidx.preference.PreferenceFragmentCompat
 import net.vonforst.evmap.MapsActivity
 import net.vonforst.evmap.R
 import net.vonforst.evmap.storage.PreferenceDataSource
+import net.vonforst.evmap.ui.updateNightMode
 
 
 class SettingsFragment : PreferenceFragmentCompat(),
@@ -49,13 +49,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
                 }
             }
             "darkmode" -> {
-                AppCompatDelegate.setDefaultNightMode(
-                    when (prefs.darkmode) {
-                        "on" -> AppCompatDelegate.MODE_NIGHT_YES
-                        "off" -> AppCompatDelegate.MODE_NIGHT_NO
-                        else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
-                    }
-                )
+                updateNightMode(prefs)
             }
         }
     }

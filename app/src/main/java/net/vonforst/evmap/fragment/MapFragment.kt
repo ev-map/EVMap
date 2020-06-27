@@ -91,6 +91,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
     private var clusterMarkers: List<Marker> = emptyList()
     private var searchResultMarker: Marker? = null
     private var connectionErrorSnackbar: Snackbar? = null
+    private var previousChargepointIds: Set<Long>? = null
 
     private lateinit var clusterIconGenerator: ClusterIconGenerator
     private lateinit var chargerIconGenerator: ChargerIconGenerator
@@ -643,39 +644,41 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         val chargers = chargepoints.filterIsInstance<ChargeLocation>()
 
         val chargepointIds = chargers.map { it.id }.toSet()
-        // remove markers that disappeared
-        markers.entries.toList().forEach {
-            if (!chargepointIds.contains(it.value.id)) {
-                if (it.key.isVisible) {
-                    val tint = getMarkerTint(it.value)
-                    val highlight = it.value == vm.chargerSparse.value
-                    val fault = it.value.faultReport != null
-                    animator.animateMarkerDisappear(it.key, tint, highlight, fault)
-                } else {
-                    it.key.remove()
+
+        if (chargers != markers.values) {
+            // remove markers that disappeared
+            val bounds = map.projection.visibleRegion.latLngBounds
+            markers.entries.toList().forEach {
+                if (!chargepointIds.contains(it.value.id)) {
+                    // animate marker if it is visible, otherwise remove immediately
+                    if (bounds.contains(it.key.position)) {
+                        val tint = getMarkerTint(it.value)
+                        val highlight = it.value == vm.chargerSparse.value
+                        val fault = it.value.faultReport != null
+                        animator.animateMarkerDisappear(it.key, tint, highlight, fault)
+                    } else {
+                        it.key.remove()
+                    }
+                    markers.remove(it.key)
                 }
-                markers.remove(it.key)
             }
-        }
-        // add new markers
-        chargers.filter {
-            !markers.containsValue(it)
-        }.forEach { charger ->
-            val tint = getMarkerTint(charger)
-            val highlight = charger == vm.chargerSparse.value
-            val fault = charger.faultReport != null
-            val marker = map.addMarker(
-                MarkerOptions()
-                    .position(LatLng(charger.coordinates.lat, charger.coordinates.lng))
-                    .icon(
-                        chargerIconGenerator.getBitmapDescriptor(
-                            tint, highlight = highlight,
-                            fault = charger.faultReport != null
-                        )
+            // add new markers
+            val map1 = markers.values.map { it.id }
+            chargers.forEach { charger ->
+                if (!map1.contains(charger.id)) {
+                    val tint = getMarkerTint(charger)
+                    val highlight = charger == vm.chargerSparse.value
+                    val fault = charger.faultReport != null
+                    val marker = map.addMarker(
+                        MarkerOptions()
+                            .position(LatLng(charger.coordinates.lat, charger.coordinates.lng))
+                            .visible(false)
                     )
-            )
-            animator.animateMarkerAppear(marker, tint, highlight, fault)
-            markers[marker] = charger
+                    animator.animateMarkerAppear(marker, tint, highlight, fault)
+                    markers[marker] = charger
+                }
+            }
+            previousChargepointIds = chargepointIds
         }
         clusterMarkers = clusters.map { cluster ->
             map.addMarker(

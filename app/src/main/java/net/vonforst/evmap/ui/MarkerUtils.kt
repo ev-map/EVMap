@@ -19,7 +19,7 @@ fun getMarkerTint(charger: ChargeLocation): Int = when {
 }
 
 class MarkerAnimator(val gen: ChargerIconGenerator) {
-    val animatingMarkers = hashMapOf<Marker, ValueAnimator>()
+    private val animatingMarkers = hashMapOf<String, ValueAnimator>()
 
     fun animateMarkerAppear(
         marker: Marker,
@@ -27,18 +27,13 @@ class MarkerAnimator(val gen: ChargerIconGenerator) {
         highlight: Boolean,
         fault: Boolean
     ) {
-        animatingMarkers[marker]?.cancel()
-        animatingMarkers.remove(marker)
+        animatingMarkers[marker.id]?.cancel()
+        animatingMarkers.remove(marker.id)
 
         val anim = ValueAnimator.ofInt(0, 20).apply {
             duration = 250
             interpolator = LinearOutSlowInInterpolator()
             addUpdateListener { animationState ->
-                if (!marker.isVisible) {
-                    cancel()
-                    animatingMarkers.remove(marker)
-                    return@addUpdateListener
-                }
                 val scale = animationState.animatedValue as Int
                 marker.setIcon(
                     gen.getBitmapDescriptor(
@@ -48,12 +43,15 @@ class MarkerAnimator(val gen: ChargerIconGenerator) {
                         fault = fault
                     )
                 )
+                marker.isVisible = true
             }
             addListener(onEnd = {
-                animatingMarkers.remove(marker)
+                animatingMarkers.remove(marker.id)
+            }, onCancel = {
+                animatingMarkers.remove(marker.id)
             })
         }
-        animatingMarkers[marker] = anim
+        animatingMarkers[marker.id] = anim
         anim.start()
     }
 
@@ -63,18 +61,13 @@ class MarkerAnimator(val gen: ChargerIconGenerator) {
         highlight: Boolean,
         fault: Boolean
     ) {
-        animatingMarkers[marker]?.cancel()
-        animatingMarkers.remove(marker)
+        animatingMarkers[marker.id]?.cancel()
+        animatingMarkers.remove(marker.id)
 
         val anim = ValueAnimator.ofInt(20, 0).apply {
             duration = 200
             interpolator = FastOutLinearInInterpolator()
             addUpdateListener { animationState ->
-                if (!marker.isVisible) {
-                    cancel()
-                    animatingMarkers.remove(marker)
-                    return@addUpdateListener
-                }
                 val scale = animationState.animatedValue as Int
                 marker.setIcon(
                     gen.getBitmapDescriptor(
@@ -86,32 +79,35 @@ class MarkerAnimator(val gen: ChargerIconGenerator) {
                 )
             }
             addListener(onEnd = {
-                animatingMarkers.remove(marker)
                 marker.remove()
+                animatingMarkers.remove(marker.id)
+            }, onCancel = {
+                marker.remove()
+                animatingMarkers.remove(marker.id)
             })
         }
-        animatingMarkers[marker] = anim
+        animatingMarkers[marker.id] = anim
         anim.start()
     }
 
     fun animateMarkerBounce(marker: Marker) {
-        animatingMarkers[marker]?.cancel()
-        animatingMarkers.remove(marker)
+        animatingMarkers[marker.id]?.cancel()
+        animatingMarkers.remove(marker.id)
 
         val anim = ValueAnimator.ofFloat(0f, 1f).apply {
             duration = 700
             interpolator = BounceInterpolator()
             addUpdateListener { state ->
-                if (!marker.isVisible) {
-                    cancel()
-                    animatingMarkers.remove(marker)
-                    return@addUpdateListener
-                }
                 val t = max(1f - state.animatedValue as Float, 0f) / 2
                 marker.setAnchor(0.5f, 1.0f + t)
             }
+            addListener(onEnd = {
+                animatingMarkers.remove(marker.id)
+            }, onCancel = {
+                animatingMarkers.remove(marker.id)
+            })
         }
-        animatingMarkers[marker] = anim
+        animatingMarkers[marker.id] = anim
         anim.start()
     }
 }

@@ -50,7 +50,7 @@ class ChargerIconGenerator(val context: Context) {
         val fault: Boolean
     )
 
-    val cacheSize = 8 * 1024 * 1024; // 8MiB
+    val cacheSize = 32 * 1024 * 1024; // 32MiB
     val cache = object : LruCache<BitmapData, Bitmap>(cacheSize) {
         override fun sizeOf(key: BitmapData, value: Bitmap): Int {
             return value.byteCount

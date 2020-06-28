@@ -50,12 +50,8 @@ class ChargerIconGenerator(val context: Context) {
         val fault: Boolean
     )
 
-    val cacheSize = 32 * 1024 * 1024; // 32MiB
-    val cache = object : LruCache<BitmapData, Bitmap>(cacheSize) {
-        override fun sizeOf(key: BitmapData, value: Bitmap): Int {
-            return value.byteCount
-        }
-    }
+    val cacheSize = 420; // 420 items: 21 sizes, 5 colors, highlight on/off, fault on/off
+    val cache = LruCache<BitmapData, BitmapDescriptor>(cacheSize)
     val oversize = 1.4f  // increase to add padding for fault icon or scale > 1
     val icon = R.drawable.ic_map_marker_charging
     val highlightIcon = R.drawable.ic_map_marker_highlight
@@ -65,7 +61,7 @@ class ChargerIconGenerator(val context: Context) {
         preloadCache()
     }
 
-    fun preloadCache() {
+    private fun preloadCache() {
         // pre-generates images for scale from 0 to 255 for all possible tint colors
         val tints = listOf(
             R.color.charger_100kw,
@@ -78,8 +74,7 @@ class ChargerIconGenerator(val context: Context) {
             for (highlight in listOf(false, true)) {
                 for (tint in tints) {
                     for (scale in 0..20) {
-                        val data = BitmapData(tint, scale, 255, highlight, fault)
-                        cache.put(data, generateBitmap(data))
+                        getBitmapDescriptor(tint, scale, 255, highlight, fault)
                     }
                 }
             }
@@ -96,11 +91,12 @@ class ChargerIconGenerator(val context: Context) {
         val data = BitmapData(tint, scale, alpha, highlight, fault)
         val cachedImg = cache[data]
         return if (cachedImg != null) {
-            BitmapDescriptorFactory.fromBitmap(cachedImg)
+            cachedImg
         } else {
             val bitmap = generateBitmap(data)
-            cache.put(data, bitmap)
-            BitmapDescriptorFactory.fromBitmap(bitmap)
+            val bmd = BitmapDescriptorFactory.fromBitmap(bitmap)
+            cache.put(data, bmd)
+            bmd
         }
     }
 

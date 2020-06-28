@@ -27,8 +27,10 @@ class MarkerAnimator(val gen: ChargerIconGenerator) {
         highlight: Boolean,
         fault: Boolean
     ) {
-        animatingMarkers[marker.id]?.cancel()
-        animatingMarkers.remove(marker.id)
+        animatingMarkers[marker.id]?.let {
+            it.cancel()
+            animatingMarkers.remove(marker.id)
+        }
 
         val anim = ValueAnimator.ofInt(0, 20).apply {
             duration = 250
@@ -61,8 +63,10 @@ class MarkerAnimator(val gen: ChargerIconGenerator) {
         highlight: Boolean,
         fault: Boolean
     ) {
-        animatingMarkers[marker.id]?.cancel()
-        animatingMarkers.remove(marker.id)
+        animatingMarkers[marker.id]?.let {
+            it.cancel()
+            animatingMarkers.remove(marker.id)
+        }
 
         val anim = ValueAnimator.ofInt(20, 0).apply {
             duration = 200
@@ -90,9 +94,19 @@ class MarkerAnimator(val gen: ChargerIconGenerator) {
         anim.start()
     }
 
+    fun deleteMarker(marker: Marker) {
+        animatingMarkers[marker.id]?.let {
+            it.cancel()
+            animatingMarkers.remove(marker.id)
+        }
+        marker.remove()
+    }
+
     fun animateMarkerBounce(marker: Marker) {
-        animatingMarkers[marker.id]?.cancel()
-        animatingMarkers.remove(marker.id)
+        animatingMarkers[marker.id]?.let {
+            it.cancel()
+            animatingMarkers.remove(marker.id)
+        }
 
         val anim = ValueAnimator.ofFloat(0f, 1f).apply {
             duration = 700

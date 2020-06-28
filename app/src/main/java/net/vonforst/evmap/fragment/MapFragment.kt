@@ -636,6 +636,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         ) == PackageManager.PERMISSION_GRANTED
     }
 
+    @Synchronized
     private fun updateMap(chargepoints: List<ChargepointListItem>) {
         val map = this.map ?: return
         clusterMarkers.forEach { it.remove() }
@@ -645,21 +646,22 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
         val chargepointIds = chargers.map { it.id }.toSet()
 
-        if (chargers != markers.values) {
+        if (chargers.toSet() != markers.values) {
             // remove markers that disappeared
             val bounds = map.projection.visibleRegion.latLngBounds
             markers.entries.toList().forEach {
                 if (!chargepointIds.contains(it.value.id)) {
                     // animate marker if it is visible, otherwise remove immediately
-                    if (bounds.contains(it.key.position)) {
+                    val marker = it.key
+                    if (bounds.contains(marker.position)) {
                         val tint = getMarkerTint(it.value)
                         val highlight = it.value == vm.chargerSparse.value
                         val fault = it.value.faultReport != null
-                        animator.animateMarkerDisappear(it.key, tint, highlight, fault)
+                        animator.animateMarkerDisappear(marker, tint, highlight, fault)
                     } else {
-                        it.key.remove()
+                        animator.deleteMarker(marker)
                     }
-                    markers.remove(it.key)
+                    markers.remove(marker)
                 }
             }
             // add new markers

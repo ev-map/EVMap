@@ -64,7 +64,7 @@ class MultiSelectDialog : AppCompatDialogFragment() {
         list.adapter = adapter
         list.layoutManager = LinearLayoutManager(view.context)
 
-        items = data.entries.toList().sortedBy { it.key }.map {
+        items = data.entries.toList().sortedBy { it.value }.map {
             MultiSelectItem(it.key, it.value, it.key in selected)
         }
         adapter.submitList(items)

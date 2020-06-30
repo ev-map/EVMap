@@ -64,10 +64,21 @@ data class ChargeLocation(
     @Embedded val openinghours: OpeningHours?,
     @Embedded val cost: Cost?
 ) : ChargepointListItem(), Equatable {
+    /**
+     * maximum power available from this charger.
+     */
     val maxPower: Double
         get() {
-            return chargepoints.map { it.power }.max() ?: 0.0
+            return maxPower()
         }
+
+    /**
+     * Gets the maximum power available from certain connectors of this charger.
+     */
+    fun maxPower(connectors: Set<String>? = null): Double {
+        return chargepoints.filter { connectors?.contains(it.type) ?: true }
+            .map { it.power }.max() ?: 0.0
+    }
 
     /**
      * Merges chargepoints if they have the same plug and power

@@ -387,7 +387,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         markers.forEach { (m, c) ->
             m.setIcon(
                 chargerIconGenerator.getBitmapDescriptor(
-                    getMarkerTint(c), fault = c.faultReport != null
+                    getMarkerTint(c, vm.filteredConnectors.value), fault = c.faultReport != null
                 )
             )
         }
@@ -398,7 +398,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         // highlight this marker
         marker.setIcon(
             chargerIconGenerator.getBitmapDescriptor(
-                getMarkerTint(charger), highlight = true, fault = charger.faultReport != null
+                getMarkerTint(charger, vm.filteredConnectors.value),
+                highlight = true,
+                fault = charger.faultReport != null
             )
         )
         animator.animateMarkerBounce(marker)
@@ -408,7 +410,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             if (m != marker) {
                 m.setIcon(
                     chargerIconGenerator.getBitmapDescriptor(
-                        getMarkerTint(c), fault = c.faultReport != null
+                        getMarkerTint(c, vm.filteredConnectors.value), fault = c.faultReport != null
                     )
                 )
             }
@@ -646,17 +648,29 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
         val chargepointIds = chargers.map { it.id }.toSet()
 
+        // update icons of existing markers (connector filter may have changed)
+        for ((marker, charger) in markers) {
+            marker.setIcon(
+                chargerIconGenerator.getBitmapDescriptor(
+                    getMarkerTint(charger, vm.filteredConnectors.value),
+                    highlight = charger == vm.chargerSparse.value,
+                    fault = charger.faultReport != null
+                )
+            )
+        }
+
         if (chargers.toSet() != markers.values) {
             // remove markers that disappeared
             val bounds = map.projection.visibleRegion.latLngBounds
             markers.entries.toList().forEach {
-                if (!chargepointIds.contains(it.value.id)) {
+                val marker = it.key
+                val charger = it.value
+                if (!chargepointIds.contains(charger.id)) {
                     // animate marker if it is visible, otherwise remove immediately
-                    val marker = it.key
                     if (bounds.contains(marker.position)) {
-                        val tint = getMarkerTint(it.value)
-                        val highlight = it.value == vm.chargerSparse.value
-                        val fault = it.value.faultReport != null
+                        val tint = getMarkerTint(charger, vm.filteredConnectors.value)
+                        val highlight = charger == vm.chargerSparse.value
+                        val fault = charger.faultReport != null
                         animator.animateMarkerDisappear(marker, tint, highlight, fault)
                     } else {
                         animator.deleteMarker(marker)
@@ -666,9 +680,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             }
             // add new markers
             val map1 = markers.values.map { it.id }
-            chargers.forEach { charger ->
+            for (charger in chargers) {
                 if (!map1.contains(charger.id)) {
-                    val tint = getMarkerTint(charger)
+                    val tint = getMarkerTint(charger, vm.filteredConnectors.value)
                     val highlight = charger == vm.chargerSparse.value
                     val fault = charger.faultReport != null
                     val marker = map.addMarker(

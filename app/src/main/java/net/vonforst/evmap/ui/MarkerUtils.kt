@@ -10,11 +10,14 @@ import net.vonforst.evmap.R
 import net.vonforst.evmap.api.goingelectric.ChargeLocation
 import kotlin.math.max
 
-fun getMarkerTint(charger: ChargeLocation): Int = when {
-    charger.maxPower >= 100 -> R.color.charger_100kw
-    charger.maxPower >= 43 -> R.color.charger_43kw
-    charger.maxPower >= 20 -> R.color.charger_20kw
-    charger.maxPower >= 11 -> R.color.charger_11kw
+fun getMarkerTint(
+    charger: ChargeLocation,
+    connectors: Set<String>?
+): Int = when {
+    charger.maxPower(connectors) >= 100 -> R.color.charger_100kw
+    charger.maxPower(connectors) >= 43 -> R.color.charger_43kw
+    charger.maxPower(connectors) >= 20 -> R.color.charger_20kw
+    charger.maxPower(connectors) >= 11 -> R.color.charger_11kw
     else -> R.color.charger_low
 }
 

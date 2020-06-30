@@ -26,6 +26,7 @@ import net.vonforst.evmap.viewmodel.*
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
+import kotlin.math.max
 
 interface Equatable {
     override fun equals(other: Any?): Boolean;
@@ -378,15 +379,15 @@ class FiltersAdapter : DataBindingAdapter<FilterWithValue<FilterValue>>() {
         filter: SliderFilter,
         value: SliderFilterValue
     ) {
-        binding.progress = filter.inverseMapping(value.value)
-        binding.mappedValue = value.value
+        binding.progress = max(filter.inverseMapping(value.value) - filter.min, 0)
+        binding.mappedValue = filter.mapping(binding.progress + filter.min)
 
         binding.addOnPropertyChangedCallback(object :
             Observable.OnPropertyChangedCallback() {
             override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
                 when (propertyId) {
                     BR.progress -> {
-                        val mapped = filter.mapping(binding.progress)
+                        val mapped = filter.mapping(binding.progress + filter.min)
                         value.value = mapped
                         binding.mappedValue = mapped
                     }

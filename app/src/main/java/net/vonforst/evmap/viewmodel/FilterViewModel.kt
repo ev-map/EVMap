@@ -81,7 +81,8 @@ private fun MediatorLiveData<List<Filter<FilterValue>>>.buildFilters(
         SliderFilter(
             application.getString(R.string.filter_min_connectors),
             "min_connectors",
-            10
+            10,
+            min = 1
         ),
         MultipleChoiceFilter(
             application.getString(R.string.filter_networks), "networks",
@@ -185,6 +186,7 @@ data class SliderFilter(
     override val name: String,
     override val key: String,
     val max: Int,
+    val min: Int = 0,
     val mapping: ((Int) -> Int) = { it },
     val inverseMapping: ((Int) -> Int) = { it },
     val unit: String? = ""

@@ -1,6 +1,10 @@
 package net.vonforst.evmap.adapter
 
 import android.content.Context
+import android.graphics.Typeface
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,6 +26,8 @@ import net.vonforst.evmap.databinding.ItemFilterMultipleChoiceBinding
 import net.vonforst.evmap.databinding.ItemFilterMultipleChoiceLargeBinding
 import net.vonforst.evmap.databinding.ItemFilterSliderBinding
 import net.vonforst.evmap.fragment.MultiSelectDialog
+import net.vonforst.evmap.joinToSpannedString
+import net.vonforst.evmap.plus
 import net.vonforst.evmap.viewmodel.*
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -117,6 +123,7 @@ class DetailAdapter : DataBindingAdapter<DetailAdapter.Detail>() {
 fun buildDetails(
     loc: ChargeLocation?,
     chargeCards: Map<Long, ChargeCard>?,
+    filteredChargeCards: Set<Long>?,
     ctx: Context
 ): List<DetailAdapter.Detail> {
     if (loc == null) return emptyList()
@@ -175,7 +182,7 @@ fun buildDetails(
                 R.plurals.charge_cards_compatible_num,
                 loc.chargecards.size, loc.chargecards.size
             ),
-            formatChargeCards(loc.chargecards, chargeCards, ctx),
+            formatChargeCards(loc.chargecards, chargeCards, filteredChargeCards, ctx),
             clickable = true
         ) else null,
         DetailAdapter.Detail(
@@ -192,15 +199,28 @@ fun buildDetails(
 fun formatChargeCards(
     chargecards: List<ChargeCardId>,
     chargecardData: Map<Long, ChargeCard>?,
+    filteredChargeCards: Set<Long>?,
     ctx: Context
-): String {
+): CharSequence {
     if (chargecardData == null) return ""
 
     val maxItems = 5
     var result = chargecards
+        .sortedByDescending { filteredChargeCards?.contains(it.id) }
         .take(maxItems)
-        .mapNotNull { chargecardData[it.id]?.name }
-        .joinToString()
+        .mapNotNull {
+            val name = chargecardData[it.id]?.name ?: return@mapNotNull null
+            if (filteredChargeCards?.contains(it.id) == true) {
+                SpannableString(name).apply {
+                    setSpan(
+                        StyleSpan(Typeface.BOLD), 0, this.length,
+                        Spannable.SPAN_INCLUSIVE_EXCLUSIVE
+                    )
+                }
+            } else {
+                name
+            }
+        }.joinToSpannedString()
     if (chargecards.size > maxItems) {
         result += " " + ctx.getString(R.string.and_n_others, chargecards.size - maxItems)
     }

@@ -31,6 +31,10 @@
             name="chargeCards"
             type="java.util.Map&lt;Long, ChargeCard&gt;" />
 
+        <variable
+            name="filteredChargeCards"
+            type="java.util.Set&lt;Long&gt;" />
+
     </data>
 
     <androidx.cardview.widget.CardView
@@ -188,7 +192,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:nestedScrollingEnabled="false"
-                app:data="@{DataBindingAdaptersKt.buildDetails(charger.data, chargeCards, context)}"
+                app:data="@{DataBindingAdaptersKt.buildDetails(charger.data, chargeCards, filteredChargeCards, context)}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"

@@ -96,6 +96,9 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
     val filteredConnectors: MutableLiveData<Set<String>> by lazy {
         MutableLiveData<Set<String>>()
     }
+    val filteredChargeCards: MutableLiveData<Set<Long>> by lazy {
+        MutableLiveData<Set<Long>>()
+    }
 
     val chargerSparse: MutableLiveData<ChargeLocation> by lazy {
         MutableLiveData<ChargeLocation>()
@@ -204,11 +207,13 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
 
         chargepoints.value = Resource.loading(chargepoints.value?.data)
         filteredConnectors.value = null
+        filteredChargeCards.value = null
         val bounds = mapPosition.bounds
         val zoom = mapPosition.zoom
         chargepointLoader = viewModelScope.launch {
             val result = getChargepointsWithFilters(bounds, zoom, filters)
             filteredConnectors.value = result.second
+            filteredChargeCards.value = result.third
             chargepoints.value = result.first
         }
     }
@@ -217,7 +222,7 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
         bounds: LatLngBounds,
         zoom: Float,
         filters: List<FilterWithValue<out FilterValue>>
-    ): Pair<Resource<List<ChargepointListItem>>, Set<String>?> {
+    ): Triple<Resource<List<ChargepointListItem>>, Set<String>?, Set<Long>?> {
         val freecharging = getBooleanValue(filters, "freecharging")
         val freeparking = getBooleanValue(filters, "freeparking")
         val open247 = getBooleanValue(filters, "open_247")
@@ -229,7 +234,7 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
         val connectorsVal = getMultipleChoiceValue(filters, "connectors")
         if (connectorsVal.values.isEmpty() && !connectorsVal.all) {
             // no connectors chosen
-            return Resource.success<List<ChargepointListItem>>(emptyList()) to null
+            return Triple(Resource.success(emptyList()), null, null)
         }
         val connectors = formatMultipleChoice(connectorsVal)
         val filteredConnectors = if (connectorsVal.all) null else connectorsVal.values
@@ -237,14 +242,16 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
         val chargeCardsVal = getMultipleChoiceValue(filters, "chargecards")
         if (chargeCardsVal.values.isEmpty() && !chargeCardsVal.all) {
             // no chargeCards chosen
-            return Resource.success<List<ChargepointListItem>>(emptyList()) to filteredConnectors
+            return Triple(Resource.success(emptyList()), filteredConnectors, null)
         }
         val chargeCards = formatMultipleChoice(chargeCardsVal)
+        val filteredChargeCards =
+            if (chargeCardsVal.all) null else chargeCardsVal.values.map { it.toLong() }.toSet()
 
         val networksVal = getMultipleChoiceValue(filters, "networks")
         if (networksVal.values.isEmpty() && !networksVal.all) {
             // no networks chosen
-            return Resource.success<List<ChargepointListItem>>(emptyList()) to filteredConnectors
+            return Triple(Resource.success(emptyList()), filteredConnectors, filteredChargeCards)
         }
         val networks = formatMultipleChoice(networksVal)
 
@@ -279,14 +286,22 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
                     startkey = startkey
                 )
                 if (!response.isSuccessful || response.body()!!.status != "ok") {
-                    return Resource.error(response.message(), chargepoints.value?.data) to null
+                    return Triple(
+                        Resource.error(response.message(), chargepoints.value?.data),
+                        null,
+                        null
+                    )
                 } else {
                     val body = response.body()!!
                     data.addAll(body.chargelocations)
                     startkey = body.startkey
                 }
             } catch (e: IOException) {
-                return Resource.error(e.message, chargepoints.value?.data) to null
+                return Triple(
+                    Resource.error(e.message, chargepoints.value?.data),
+                    filteredConnectors,
+                    filteredChargeCards
+                )
             }
         } while (startkey != null && startkey < 10000)
 
@@ -308,7 +323,7 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
             }
         }
 
-        return Resource.success(result) to filteredConnectors
+        return Triple(Resource.success(result), filteredConnectors, filteredChargeCards)
     }
 
     private fun formatMultipleChoice(connectorsVal: MultipleChoiceFilterValue) =

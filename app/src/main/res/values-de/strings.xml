@@ -25,8 +25,8 @@
     <string name="realtime_data_source">Quelle Echtzeitdaten (beta): %s</string>
     <string name="go_to_goingelectric">Quelle: goingelectric.de</string>
     <string name="search">Suche</string>
-    <string name="menu_map">Map</string>
-    <string name="menu_favs">Favorites</string>
+    <string name="menu_map">Karte</string>
+    <string name="menu_favs">Favoriten</string>
     <string name="menu_filter">Filtern</string>
     <string name="not_implemented">noch nicht implementiert</string>
     <string name="about">Über EVMap</string>

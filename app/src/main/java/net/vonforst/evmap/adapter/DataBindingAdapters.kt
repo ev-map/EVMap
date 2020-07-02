@@ -1,10 +1,6 @@
 package net.vonforst.evmap.adapter
 
 import android.content.Context
-import android.graphics.Typeface
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,16 +14,13 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.chip.Chip
-import net.vonforst.evmap.BR
-import net.vonforst.evmap.R
+import net.vonforst.evmap.*
 import net.vonforst.evmap.api.availability.ChargepointStatus
 import net.vonforst.evmap.api.goingelectric.*
 import net.vonforst.evmap.databinding.ItemFilterMultipleChoiceBinding
 import net.vonforst.evmap.databinding.ItemFilterMultipleChoiceLargeBinding
 import net.vonforst.evmap.databinding.ItemFilterSliderBinding
 import net.vonforst.evmap.fragment.MultiSelectDialog
-import net.vonforst.evmap.joinToSpannedString
-import net.vonforst.evmap.plus
 import net.vonforst.evmap.viewmodel.*
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -211,12 +204,7 @@ fun formatChargeCards(
         .mapNotNull {
             val name = chargecardData[it.id]?.name ?: return@mapNotNull null
             if (filteredChargeCards?.contains(it.id) == true) {
-                SpannableString(name).apply {
-                    setSpan(
-                        StyleSpan(Typeface.BOLD), 0, this.length,
-                        Spannable.SPAN_INCLUSIVE_EXCLUSIVE
-                    )
-                }
+                name.bold()
             } else {
                 name
             }

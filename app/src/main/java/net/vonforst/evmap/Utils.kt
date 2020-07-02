@@ -1,9 +1,9 @@
 package net.vonforst.evmap
 
+import android.graphics.Typeface
 import android.os.Bundle
-import android.text.SpannableStringBuilder
-import android.text.SpannedString
-import android.text.TextUtils
+import android.text.*
+import android.text.style.StyleSpan
 
 fun Bundle.optDouble(name: String): Double? {
     if (!this.containsKey(name)) return null
@@ -42,4 +42,13 @@ fun <T> Iterable<T>.joinToSpannedString(
 
 operator fun CharSequence.plus(other: CharSequence): CharSequence {
     return TextUtils.concat(this, other)
+}
+
+fun String.bold(): CharSequence {
+    return SpannableString(this).apply {
+        setSpan(
+            StyleSpan(Typeface.BOLD), 0, this.length,
+            Spannable.SPAN_INCLUSIVE_EXCLUSIVE
+        )
+    }
 }

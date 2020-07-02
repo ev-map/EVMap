@@ -508,13 +508,22 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         val activity = activity ?: return
         val chargecardData = vm.chargeCardMap.value ?: return
         val chargecards = charger.chargecards ?: return
+        val filteredChargeCards = vm.filteredChargeCards.value
 
-        val data = chargecards.map { chargecardData[it.id] }.sortedBy { it?.name }
-        val names = data.map { it?.name ?: "" }
+        val data = chargecards.mapNotNull { chargecardData[it.id] }
+            .sortedBy { it.name }
+            .sortedByDescending { filteredChargeCards?.contains(it.id) }
+        val names = data.map {
+            if (filteredChargeCards?.contains(it.id) == true) {
+                it.name.bold()
+            } else {
+                it.name
+            }
+        }
         AlertDialog.Builder(activity)
             .setTitle(R.string.charge_cards)
             .setItems(names.toTypedArray()) { _, i ->
-                val card = data[i] ?: return@setItems
+                val card = data[i]
                 (activity as? MapsActivity)?.openUrl("https:${card.url}")
             }.show()
     }

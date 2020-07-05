@@ -70,6 +70,7 @@ class FiltersAdapter : DataBindingAdapter<FilterWithValue<FilterValue>>() {
         filter: MultipleChoiceFilter,
         value: MultipleChoiceFilterValue
     ) {
+        // TODO: this implementation seems to be buggy
         val inflater = LayoutInflater.from(binding.root.context)
         value.values.toList().forEach {
             // delete values that cannot be selected anymore
@@ -83,6 +84,11 @@ class FiltersAdapter : DataBindingAdapter<FilterWithValue<FilterValue>>() {
         }
 
         val chips = mutableMapOf<String, Chip>()
+
+        // reuse existing chips in layout
+        val reuseChips = binding.chipGroup.children.filter {
+            it.id != R.id.chipMore
+        }.toMutableList()
         binding.chipGroup.children.forEach {
             if (it.id != R.id.chipMore) binding.chipGroup.removeView(it)
         }
@@ -91,11 +97,17 @@ class FiltersAdapter : DataBindingAdapter<FilterWithValue<FilterValue>>() {
         }.sortedByDescending {
             if (filter.commonChoices != null) it.key in filter.commonChoices else false
         }.forEach { choice ->
-            val chip = inflater.inflate(
-                R.layout.item_filter_multiple_choice_chip,
-                binding.chipGroup,
-                false
-            ) as Chip
+            var reused = false
+            val chip = if (reuseChips.size > 0) {
+                reused = true
+                reuseChips.removeAt(0) as Chip
+            } else {
+                inflater.inflate(
+                    R.layout.item_filter_multiple_choice_chip,
+                    binding.chipGroup,
+                    false
+                ) as Chip
+            }
             chip.text = choice.value
             chip.isChecked = choice.key in value.values || value.all
             if (value.all && choice.key !in value.values) value.values.add(choice.key)
@@ -117,8 +129,12 @@ class FiltersAdapter : DataBindingAdapter<FilterWithValue<FilterValue>>() {
                 chip.visibility = View.VISIBLE
             }
 
-            binding.chipGroup.addView(chip, binding.chipGroup.childCount - 1)
+            if (!reused) binding.chipGroup.addView(chip, binding.chipGroup.childCount - 1)
             chips[choice.key] = chip
+        }
+        // delete surplus reusable chips
+        reuseChips.forEach {
+            binding.chipGroup.removeView(it)
         }
 
         binding.btnAll.setOnClickListener {

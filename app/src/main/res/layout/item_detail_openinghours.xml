@@ -13,7 +13,7 @@
 
         <variable
             name="item"
-            type="net.vonforst.evmap.adapter.DetailAdapter.Detail" />
+            type="net.vonforst.evmap.adapter.DetailsAdapter.Detail" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

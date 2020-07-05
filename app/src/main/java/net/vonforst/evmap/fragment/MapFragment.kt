@@ -55,7 +55,7 @@ import io.michaelrocks.bimap.MutableBiMap
 import kotlinx.android.synthetic.main.fragment_map.*
 import net.vonforst.evmap.*
 import net.vonforst.evmap.adapter.ConnectorAdapter
-import net.vonforst.evmap.adapter.DetailAdapter
+import net.vonforst.evmap.adapter.DetailsAdapter
 import net.vonforst.evmap.adapter.GalleryAdapter
 import net.vonforst.evmap.api.goingelectric.ChargeLocation
 import net.vonforst.evmap.api.goingelectric.ChargeLocationCluster
@@ -474,7 +474,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         }
 
         binding.detailView.details.apply {
-            adapter = DetailAdapter().apply {
+            adapter = DetailsAdapter().apply {
                 onClickListener = {
                     val charger = vm.chargerDetails.value?.data
                     if (charger != null) {

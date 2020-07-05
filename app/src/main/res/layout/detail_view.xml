@@ -15,6 +15,8 @@
 
         <import type="net.vonforst.evmap.adapter.DataBindingAdaptersKt" />
 
+        <import type="net.vonforst.evmap.adapter.DetailsAdapterKt" />
+
         <import type="net.vonforst.evmap.viewmodel.Resource" />
 
         <import type="net.vonforst.evmap.viewmodel.Status" />
@@ -192,7 +194,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:nestedScrollingEnabled="false"
-                app:data="@{DataBindingAdaptersKt.buildDetails(charger.data, chargeCards, filteredChargeCards, context)}"
+                app:data="@{DetailsAdapterKt.buildDetails(charger.data, chargeCards, filteredChargeCards, context)}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"

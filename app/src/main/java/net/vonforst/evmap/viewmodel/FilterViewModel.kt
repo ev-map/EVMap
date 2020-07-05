@@ -76,7 +76,8 @@ private fun MediatorLiveData<List<Filter<FilterValue>>>.buildFilters(
         MultipleChoiceFilter(
             application.getString(R.string.filter_connectors), "connectors",
             plugMap,
-            commonChoices = setOf(Chargepoint.TYPE_2, Chargepoint.CCS, Chargepoint.CHADEMO)
+            commonChoices = setOf(Chargepoint.TYPE_2, Chargepoint.CCS, Chargepoint.CHADEMO),
+            manyChoices = true
         ),
         SliderFilter(
             application.getString(R.string.filter_min_connectors),

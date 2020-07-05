@@ -179,7 +179,8 @@ class FiltersAdapter : DataBindingAdapter<FilterWithValue<FilterValue>>() {
                 MultiSelectDialog.getInstance(
                     filter.name,
                     filter.choices,
-                    value.values
+                    value.values,
+                    commonChoices = filter.commonChoices
                 )
             dialog.okListener = { selected ->
                 value.values = selected.toMutableSet()

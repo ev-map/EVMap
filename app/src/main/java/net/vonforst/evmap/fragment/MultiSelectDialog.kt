@@ -20,13 +20,15 @@ class MultiSelectDialog : AppCompatDialogFragment() {
         fun getInstance(
             title: String,
             data: Map<String, String>,
-            selected: Set<String>
+            selected: Set<String>,
+            commonChoices: Set<String>?
         ): MultiSelectDialog {
             val dialog = MultiSelectDialog()
             dialog.arguments = Bundle().apply {
                 putString("title", title)
                 putSerializable("data", HashMap(data))
                 putSerializable("selected", HashSet(selected))
+                if (commonChoices != null) putSerializable("commonChoices", HashSet(commonChoices))
             }
             return dialog
         }
@@ -55,18 +57,23 @@ class MultiSelectDialog : AppCompatDialogFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val data = requireArguments().getSerializable("data") as HashMap<String, String>
-        val selected = requireArguments().getSerializable("selected") as HashSet<String>
-        val title = requireArguments().getString("title")
+        val args = requireArguments()
+        val data = args.getSerializable("data") as HashMap<String, String>
+        val selected = args.getSerializable("selected") as HashSet<String>
+        val title = args.getString("title")
+        val commonChoices = if (args.containsKey("commonChoices")) {
+            args.getSerializable("commonChoices") as HashSet<String>
+        } else null
 
         dialogTitle.text = title
         val adapter = Adapter()
         list.adapter = adapter
         list.layoutManager = LinearLayoutManager(view.context)
 
-        items = data.entries.toList().sortedBy { it.value }.map {
-            MultiSelectItem(it.key, it.value, it.key in selected)
-        }
+        items = data.entries.toList()
+            .sortedBy { it.value }
+            .sortedByDescending { commonChoices?.contains(it.key) == true }
+            .map { MultiSelectItem(it.key, it.value, it.key in selected) }
         adapter.submitList(items)
 
         etSearch.doAfterTextChanged { text ->
@@ -95,20 +102,20 @@ class MultiSelectDialog : AppCompatDialogFragment() {
             adapter.submitList(search(items, etSearch.text.toString()))
         }
     }
+}
 
-    private fun search(
-        items: List<MultiSelectItem>,
-        text: String
-    ): List<MultiSelectItem> {
-        return items.filter { item ->
-            // search for string within name
-            text.toLowerCase(Locale.getDefault()) in item.name.toLowerCase(Locale.getDefault())
-        }
+private fun search(
+    items: List<MultiSelectItem>,
+    text: String
+): List<MultiSelectItem> {
+    return items.filter { item ->
+        // search for string within name
+        text.toLowerCase(Locale.getDefault()) in item.name.toLowerCase(Locale.getDefault())
     }
+}
 
-    class Adapter() : DataBindingAdapter<MultiSelectItem>({ it.key }) {
-        override fun getItemViewType(position: Int) = R.layout.dialog_multi_select_item
-    }
+class Adapter() : DataBindingAdapter<MultiSelectItem>({ it.key }) {
+    override fun getItemViewType(position: Int) = R.layout.dialog_multi_select_item
 }
 
 data class MultiSelectItem(val key: String, val name: String, var selected: Boolean) : Equatable

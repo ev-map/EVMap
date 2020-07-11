@@ -6,6 +6,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import net.vonforst.evmap.api.goingelectric.ChargeCard
 import net.vonforst.evmap.api.goingelectric.GoingElectricApi
+import java.io.IOException
 import java.time.Duration
 import java.time.Instant
 
@@ -35,13 +36,19 @@ class ChargeCardRepository(
     private suspend fun updateChargeCards() {
         if (Duration.between(prefs.lastChargeCardUpdate, Instant.now()) < Duration.ofDays(1)) return
 
-        val response = api.getChargeCards()
-        if (!response.isSuccessful) return
+        try {
+            val response = api.getChargeCards()
+            if (!response.isSuccessful) return
 
-        for (card in response.body()!!.result) {
-            dao.insert(card)
+            for (card in response.body()!!.result) {
+                dao.insert(card)
+            }
+
+            prefs.lastChargeCardUpdate = Instant.now()
+        } catch (e: IOException) {
+            // ignore, and retry next time
+            e.printStackTrace()
+            return
         }
-
-        prefs.lastChargeCardUpdate = Instant.now()
     }
 }

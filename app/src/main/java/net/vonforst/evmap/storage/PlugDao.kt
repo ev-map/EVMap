@@ -5,6 +5,7 @@ import androidx.room.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import net.vonforst.evmap.api.goingelectric.GoingElectricApi
+import java.io.IOException
 import java.time.Duration
 import java.time.Instant
 
@@ -37,13 +38,19 @@ class PlugRepository(
     private suspend fun updatePlugs() {
         if (Duration.between(prefs.lastPlugUpdate, Instant.now()) < Duration.ofDays(1)) return
 
-        val response = api.getPlugs()
-        if (!response.isSuccessful) return
+        try {
+            val response = api.getPlugs()
+            if (!response.isSuccessful) return
 
-        for (name in response.body()!!.result) {
-            dao.insert(Plug(name))
+            for (name in response.body()!!.result) {
+                dao.insert(Plug(name))
+            }
+
+            prefs.lastPlugUpdate = Instant.now()
+        } catch (e: IOException) {
+            // ignore, and retry next time
+            e.printStackTrace()
+            return
         }
-
-        prefs.lastPlugUpdate = Instant.now()
     }
 }

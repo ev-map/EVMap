@@ -5,6 +5,7 @@ import androidx.room.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import net.vonforst.evmap.api.goingelectric.GoingElectricApi
+import java.io.IOException
 import java.time.Duration
 import java.time.Instant
 
@@ -37,13 +38,19 @@ class NetworkRepository(
     private suspend fun updateNetworks() {
         if (Duration.between(prefs.lastNetworkUpdate, Instant.now()) < Duration.ofDays(1)) return
 
-        val response = api.getNetworks()
-        if (!response.isSuccessful) return
+        try {
+            val response = api.getNetworks()
+            if (!response.isSuccessful) return
 
-        for (name in response.body()!!.result) {
-            dao.insert(Network(name))
+            for (name in response.body()!!.result) {
+                dao.insert(Network(name))
+            }
+
+            prefs.lastNetworkUpdate = Instant.now()
+        } catch (e: IOException) {
+            // ignore, and retry next time
+            e.printStackTrace()
+            return
         }
-
-        prefs.lastNetworkUpdate = Instant.now()
     }
 }

@@ -19,15 +19,17 @@ import net.vonforst.evmap.viewmodel.SliderFilterValue
         BooleanFilterValue::class,
         MultipleChoiceFilterValue::class,
         SliderFilterValue::class,
+        FilterProfile::class,
         Plug::class,
         Network::class,
         ChargeCard::class
-    ], version = 8
+    ], version = 9
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun chargeLocationsDao(): ChargeLocationsDao
     abstract fun filterValueDao(): FilterValueDao
+    abstract fun filterProfileDao(): FilterProfileDao
     abstract fun plugDao(): PlugDao
     abstract fun networkDao(): NetworkDao
     abstract fun chargeCardDao(): ChargeCardDao
@@ -38,7 +40,7 @@ abstract class AppDatabase : RoomDatabase() {
             Room.databaseBuilder(context, AppDatabase::class.java, "evmap.db")
                 .addMigrations(
                     MIGRATION_2, MIGRATION_3, MIGRATION_4, MIGRATION_5, MIGRATION_6,
-                    MIGRATION_7, MIGRATION_8
+                    MIGRATION_7, MIGRATION_8, MIGRATION_9
                 )
                 .build()
         }
@@ -119,6 +121,34 @@ abstract class AppDatabase : RoomDatabase() {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("ALTER TABLE `ChargeLocation` ADD `chargecards` TEXT")
             }
+        }
+
+        private val MIGRATION_9 = object : Migration(8, 9) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.beginTransaction()
+                try {
+                    // create tables with profile
+                    db.execSQL("CREATE TABLE `BooleanFilterValueNew` (`key` TEXT NOT NULL, `value` INTEGER NOT NULL, `profile` INTEGER, PRIMARY KEY(`key`), FOREIGN KEY(`profile`) REFERENCES `FilterProfile`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )")
+                    db.execSQL("CREATE TABLE `MultipleChoiceFilterValueNew` (`key` TEXT NOT NULL, `values` TEXT NOT NULL, `all` INTEGER NOT NULL, `profile` INTEGER, PRIMARY KEY(`key`), FOREIGN KEY(`profile`) REFERENCES `FilterProfile`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )")
+                    db.execSQL("CREATE TABLE `SliderFilterValueNew` (`key` TEXT NOT NULL, `value` INTEGER NOT NULL, `profile` INTEGER, PRIMARY KEY(`key`), FOREIGN KEY(`profile`) REFERENCES `FilterProfile`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )")
+
+                    for (table in listOf(
+                        "BooleanFilterValue",
+                        "MultipleChoiceFilterValue",
+                        "SliderFilterValue"
+                    )) {
+                        db.execSQL("INSERT INTO `${table}New` SELECT * FROM `${table}`");
+                        db.execSQL("ALTER TABLE `${table}New` RENAME TO `${table}`");
+                        db.execSQL("UPDATE `${table}` SET profile=0")
+                    }
+
+                    db.execSQL("CREATE TABLE IF NOT EXISTS `FilterProfile` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, PRIMARY KEY(`id`))")
+                    db.setTransactionSuccessful()
+                } finally {
+                    db.endTransaction()
+                }
+            }
+
         }
     }
 }

@@ -7,6 +7,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.ForeignKey.CASCADE
 import androidx.room.PrimaryKey
 import net.vonforst.evmap.R
 import net.vonforst.evmap.adapter.Equatable
@@ -232,15 +234,34 @@ data class SliderFilter(
 
 sealed class FilterValue : BaseObservable(), Equatable {
     abstract val key: String
+    var profile: Long? = null
 }
 
-@Entity
+@Entity(
+    foreignKeys = arrayOf(
+        ForeignKey(
+            entity = FilterProfile::class,
+            parentColumns = arrayOf("id"),
+            childColumns = arrayOf("profile"),
+            onDelete = CASCADE
+        )
+    )
+)
 data class BooleanFilterValue(
     @PrimaryKey override val key: String,
     var value: Boolean
 ) : FilterValue()
 
-@Entity
+@Entity(
+    foreignKeys = arrayOf(
+        ForeignKey(
+            entity = FilterProfile::class,
+            parentColumns = arrayOf("id"),
+            childColumns = arrayOf("profile"),
+            onDelete = CASCADE
+        )
+    )
+)
 data class MultipleChoiceFilterValue(
     @PrimaryKey override val key: String,
     var values: MutableSet<String>,
@@ -265,7 +286,16 @@ data class MultipleChoiceFilterValue(
     }
 }
 
-@Entity
+@Entity(
+    foreignKeys = arrayOf(
+        ForeignKey(
+            entity = FilterProfile::class,
+            parentColumns = arrayOf("id"),
+            childColumns = arrayOf("profile"),
+            onDelete = CASCADE
+        )
+    )
+)
 data class SliderFilterValue(
     @PrimaryKey override val key: String,
     var value: Int

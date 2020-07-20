@@ -98,6 +98,12 @@ dependencies {
     implementation 'com.airbnb.android:lottie:3.4.0'
     implementation 'io.michaelrocks:bimap:1.0.2'
 
+    // AnyMaps
+    def anyMapsVersion = 'd48b22df9f'
+    implementation "com.github.johan12345.AnyMaps:anymaps-base:$anyMapsVersion"
+    implementation "com.github.johan12345.AnyMaps:anymaps-google:$anyMapsVersion"
+    implementation "com.github.johan12345.AnyMaps:anymaps-osm:$anyMapsVersion"
+
     // Google Maps v3 Beta
     implementation 'com.google.android.libraries.maps:maps:3.1.0-beta'
     implementation name:'places-maps-sdk-3.1.0-beta', ext:'aar'

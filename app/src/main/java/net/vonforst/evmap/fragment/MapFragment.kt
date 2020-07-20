@@ -33,13 +33,15 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.transition.TransitionInflater
 import androidx.transition.TransitionManager
+import com.car2go.maps.AnyMap
+import com.car2go.maps.MapFragment
+import com.car2go.maps.OnMapReadyCallback
+import com.car2go.maps.model.LatLng
+import com.car2go.maps.model.Marker
+import com.car2go.maps.model.MarkerOptions
+import com.car2go.maps.osm.MapsConfiguration
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.libraries.maps.CameraUpdateFactory
-import com.google.android.libraries.maps.GoogleMap
-import com.google.android.libraries.maps.OnMapReadyCallback
-import com.google.android.libraries.maps.SupportMapFragment
-import com.google.android.libraries.maps.model.*
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
@@ -83,7 +85,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         }
     })
     private val galleryVm: GalleryViewModel by activityViewModels()
-    private var map: GoogleMap? = null
+    private var map: AnyMap? = null
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var bottomSheetBehavior: BottomSheetBehaviorGoogleMapsLike<View>
     private lateinit var detailAppBarBehavior: MergedAppBarLayoutBehavior
@@ -116,6 +118,11 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        MapsConfiguration.getInstance().initialize(context)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -127,8 +134,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
         clusterIconGenerator = ClusterIconGenerator(requireContext())
-        chargerIconGenerator = ChargerIconGenerator(requireContext())
-        animator = MarkerAnimator(chargerIconGenerator)
 
         setHasOptionsMenu(true)
         postponeEnterTransition()
@@ -153,7 +158,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as MapFragment
         mapFragment.getMapAsync(this)
         bottomSheetBehavior = BottomSheetBehaviorGoogleMapsLike.from(binding.bottomSheet)
         detailAppBarBehavior = MergedAppBarLayoutBehavior.from(binding.detailAppBar)
@@ -344,33 +349,33 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         vm.favorites.observe(viewLifecycleOwner, Observer {
             updateFavoriteToggle()
         })
-        vm.searchResult.observe(viewLifecycleOwner, Observer { place ->
+        /* TODO: vm.searchResult.observe(viewLifecycleOwner, Observer { place ->
             val map = this.map ?: return@Observer
             searchResultMarker?.remove()
             searchResultMarker = null
 
             if (place != null) {
                 if (place.viewport != null) {
-                    map.animateCamera(CameraUpdateFactory.newLatLngBounds(place.viewport, 0))
+                    map.animateCamera(map.cameraUpdateFactory.newLatLngBounds(AnyMapAdapter.adapt(place.viewport), 0))
                 } else {
-                    map.animateCamera(CameraUpdateFactory.newLatLngZoom(place.latLng, 12f))
+                    map.animateCamera(map.cameraUpdateFactory.newLatLngZoom(AnyMapAdapter.adapt(place.latLng), 12f))
                 }
 
-                searchResultMarker = map.addMarker(MarkerOptions().position(place.latLng!!))
+                searchResultMarker = map.addMarker(MarkerOptions().position(AnyMapAdapter.adapt(place.latLng!!))).anchor(0.5f, 1f)
             }
 
             updateBackPressedCallback()
-        })
+        })*/
         vm.layersMenuOpen.observe(viewLifecycleOwner, Observer { open ->
             binding.fabLayers.visibility = if (open) View.GONE else View.VISIBLE
             binding.layersSheet.visibility = if (open) View.VISIBLE else View.GONE
             updateBackPressedCallback()
         })
         vm.mapType.observe(viewLifecycleOwner, Observer {
-            map?.mapType = it
+            map?.setMapType(it)
         })
         vm.mapTrafficEnabled.observe(viewLifecycleOwner, Observer {
-            map?.isTrafficEnabled = it
+            map?.setTrafficEnabled(it)
         })
 
         updateBackPressedCallback()
@@ -528,11 +533,13 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             }.show()
     }
 
-    override fun onMapReady(map: GoogleMap) {
+    override fun onMapReady(map: AnyMap) {
         this.map = map
-        map.uiSettings.isTiltGesturesEnabled = false
-        map.isIndoorEnabled = false
-        map.uiSettings.isIndoorLevelPickerEnabled = false
+        chargerIconGenerator = ChargerIconGenerator(requireContext(), map.bitmapDescriptorFactory)
+        animator = MarkerAnimator(chargerIconGenerator)
+        map.uiSettings.setTiltGesturesEnabled(false)
+        map.setIndoorEnabled(false)
+        map.uiSettings.setIndoorLevelPickerEnabled(false)
         map.setOnCameraIdleListener {
             vm.mapPosition.value = MapPosition(
                 map.projection.visibleRegion.latLngBounds, map.cameraPosition.zoom
@@ -546,7 +553,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 }
                 in clusterMarkers -> {
                     val newZoom = map.cameraPosition.zoom + 2
-                    map.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.position, newZoom))
+                    map.animateCamera(
+                        map.cameraUpdateFactory.newLatLngZoom(
+                            marker.position,
+                            newZoom
+                        )
+                    )
                     true
                 }
                 else -> false
@@ -563,11 +575,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         map.setPadding(0, binding.toolbarContainer.height, 0, 0)
 
         val mode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        /* TODO:
         map.setMapStyle(
             if (mode == Configuration.UI_MODE_NIGHT_YES) {
                 MapStyleOptions.loadRawResourceStyle(context, R.raw.maps_night_mode)
             } else null
-        )
+        )*/
 
 
         val position = vm.mapPosition.value
@@ -577,12 +590,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
         if (position != null) {
             val cameraUpdate =
-                CameraUpdateFactory.newLatLngZoom(position.bounds.center, position.zoom)
+                map.cameraUpdateFactory.newLatLngZoom(position.bounds.center, position.zoom)
             map.moveCamera(cameraUpdate)
             positionSet = true
         } else if (lat != null && lon != null) {
             // show given position
-            val cameraUpdate = CameraUpdateFactory.newLatLngZoom(LatLng(lat, lon), 16f)
+            val cameraUpdate = map.cameraUpdateFactory.newLatLngZoom(LatLng(lat, lon), 16f)
             map.moveCamera(cameraUpdate)
 
             // show charger detail after chargers were loaded
@@ -609,7 +622,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         }
         if (!positionSet) {
             // center the camera on Europe
-            val cameraUpdate = CameraUpdateFactory.newLatLngZoom(LatLng(50.113388, 9.252536), 3.5f)
+            val cameraUpdate =
+                map.cameraUpdateFactory.newLatLngZoom(LatLng(50.113388, 9.252536), 3.5f)
             map.moveCamera(cameraUpdate)
         }
 
@@ -621,14 +635,14 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
     @SuppressLint("MissingPermission")
     private fun enableLocation(moveTo: Boolean, animate: Boolean) {
         val map = this.map ?: return
-        map.isMyLocationEnabled = true
+        map.setMyLocationEnabled(true)
         vm.myLocationEnabled.value = true
-        map.uiSettings.isMyLocationButtonEnabled = false
+        map.uiSettings.setMyLocationButtonEnabled(false)
         if (moveTo) {
             fusedLocationClient.lastLocation.addOnSuccessListener { location ->
                 if (location != null) {
                     val latLng = LatLng(location.latitude, location.longitude)
-                    val camUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 13f)
+                    val camUpdate = map.cameraUpdateFactory.newLatLngZoom(latLng, 13f)
                     if (animate) {
                         map.animateCamera(camUpdate)
                     } else {
@@ -697,7 +711,16 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                     val marker = map.addMarker(
                         MarkerOptions()
                             .position(LatLng(charger.coordinates.lat, charger.coordinates.lng))
-                            .visible(false)
+                            .icon(
+                                chargerIconGenerator.getBitmapDescriptor(
+                                    tint,
+                                    0,
+                                    255,
+                                    highlight,
+                                    fault
+                                )
+                            )
+                            .anchor(0.5f, 1f)
                     )
                     animator.animateMarkerAppear(marker, tint, highlight, fault)
                     markers[marker] = charger
@@ -709,7 +732,14 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             map.addMarker(
                 MarkerOptions()
                     .position(LatLng(cluster.coordinates.lat, cluster.coordinates.lng))
-                    .icon(BitmapDescriptorFactory.fromBitmap(clusterIconGenerator.makeIcon(cluster.clusterCount.toString())))
+                    .icon(
+                        map.bitmapDescriptorFactory.fromBitmap(
+                            clusterIconGenerator.makeIcon(
+                                cluster.clusterCount.toString()
+                            )
+                        )
+                    )
+                    .anchor(0.5f, 0.5f)
             )
         }
     }

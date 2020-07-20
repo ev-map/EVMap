@@ -5,7 +5,7 @@ import android.view.animation.BounceInterpolator
 import androidx.core.animation.addListener
 import androidx.interpolator.view.animation.FastOutLinearInInterpolator
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
-import com.google.android.libraries.maps.model.Marker
+import com.car2go.maps.model.Marker
 import net.vonforst.evmap.R
 import net.vonforst.evmap.api.goingelectric.ChargeLocation
 import kotlin.math.max
@@ -22,7 +22,7 @@ fun getMarkerTint(
 }
 
 class MarkerAnimator(val gen: ChargerIconGenerator) {
-    private val animatingMarkers = hashMapOf<String, ValueAnimator>()
+    private val animatingMarkers = hashMapOf<Marker, ValueAnimator>()
 
     fun animateMarkerAppear(
         marker: Marker,
@@ -30,9 +30,9 @@ class MarkerAnimator(val gen: ChargerIconGenerator) {
         highlight: Boolean,
         fault: Boolean
     ) {
-        animatingMarkers[marker.id]?.let {
+        animatingMarkers[marker]?.let {
             it.cancel()
-            animatingMarkers.remove(marker.id)
+            animatingMarkers.remove(marker)
         }
 
         val anim = ValueAnimator.ofInt(0, 20).apply {
@@ -48,15 +48,14 @@ class MarkerAnimator(val gen: ChargerIconGenerator) {
                         fault = fault
                     )
                 )
-                marker.isVisible = true
             }
             addListener(onEnd = {
-                animatingMarkers.remove(marker.id)
+                animatingMarkers.remove(marker)
             }, onCancel = {
-                animatingMarkers.remove(marker.id)
+                animatingMarkers.remove(marker)
             })
         }
-        animatingMarkers[marker.id] = anim
+        animatingMarkers[marker] = anim
         anim.start()
     }
 
@@ -66,9 +65,9 @@ class MarkerAnimator(val gen: ChargerIconGenerator) {
         highlight: Boolean,
         fault: Boolean
     ) {
-        animatingMarkers[marker.id]?.let {
+        animatingMarkers[marker]?.let {
             it.cancel()
-            animatingMarkers.remove(marker.id)
+            animatingMarkers.remove(marker)
         }
 
         val anim = ValueAnimator.ofInt(20, 0).apply {
@@ -87,28 +86,28 @@ class MarkerAnimator(val gen: ChargerIconGenerator) {
             }
             addListener(onEnd = {
                 marker.remove()
-                animatingMarkers.remove(marker.id)
+                animatingMarkers.remove(marker)
             }, onCancel = {
                 marker.remove()
-                animatingMarkers.remove(marker.id)
+                animatingMarkers.remove(marker)
             })
         }
-        animatingMarkers[marker.id] = anim
+        animatingMarkers[marker] = anim
         anim.start()
     }
 
     fun deleteMarker(marker: Marker) {
-        animatingMarkers[marker.id]?.let {
+        animatingMarkers[marker]?.let {
             it.cancel()
-            animatingMarkers.remove(marker.id)
+            animatingMarkers.remove(marker)
         }
         marker.remove()
     }
 
     fun animateMarkerBounce(marker: Marker) {
-        animatingMarkers[marker.id]?.let {
+        animatingMarkers[marker]?.let {
             it.cancel()
-            animatingMarkers.remove(marker.id)
+            animatingMarkers.remove(marker)
         }
 
         val anim = ValueAnimator.ofFloat(0f, 1f).apply {
@@ -119,12 +118,12 @@ class MarkerAnimator(val gen: ChargerIconGenerator) {
                 marker.setAnchor(0.5f, 1.0f + t)
             }
             addListener(onEnd = {
-                animatingMarkers.remove(marker.id)
+                animatingMarkers.remove(marker)
             }, onCancel = {
-                animatingMarkers.remove(marker.id)
+                animatingMarkers.remove(marker)
             })
         }
-        animatingMarkers[marker.id] = anim
+        animatingMarkers[marker] = anim
         anim.start()
     }
 }

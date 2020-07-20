@@ -6,7 +6,7 @@
 
         <import type="net.vonforst.evmap.viewmodel.MapViewModel" />
 
-        <import type="com.google.android.libraries.maps.GoogleMap" />
+        <import type="com.car2go.maps.AnyMap" />
 
         <variable
             name="vm"
@@ -51,24 +51,24 @@
                 android:id="@+id/rbStandard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:checked="@{vm.mapType.equals(GoogleMap.MAP_TYPE_NORMAL)}"
-                android:onClick="@{() -> vm.setMapType(GoogleMap.MAP_TYPE_NORMAL)}"
+                android:checked="@{vm.mapType.equals(AnyMap.Type.NORMAL)}"
+                android:onClick="@{() -> vm.setMapType(AnyMap.Type.NORMAL)}"
                 android:text="@string/map_type_normal" />
 
             <RadioButton
                 android:id="@+id/rbSatellite"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:checked="@{vm.mapType.equals(GoogleMap.MAP_TYPE_HYBRID)}"
-                android:onClick="@{() -> vm.setMapType(GoogleMap.MAP_TYPE_HYBRID)}"
+                android:checked="@{vm.mapType.equals(AnyMap.Type.HYBRID)}"
+                android:onClick="@{() -> vm.setMapType(AnyMap.Type.HYBRID)}"
                 android:text="@string/map_type_satellite" />
 
             <RadioButton
                 android:id="@+id/rbTerrain"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:checked="@{vm.mapType.equals(GoogleMap.MAP_TYPE_TERRAIN)}"
-                android:onClick="@{() -> vm.setMapType(GoogleMap.MAP_TYPE_TERRAIN)}"
+                android:checked="@{vm.mapType.equals(AnyMap.Type.TERRAIN)}"
+                android:onClick="@{() -> vm.setMapType(AnyMap.Type.TERRAIN)}"
                 android:text="@string/map_type_terrain" />
         </RadioGroup>
 

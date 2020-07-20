@@ -2,8 +2,8 @@ package net.vonforst.evmap.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.*
-import com.google.android.libraries.maps.GoogleMap
-import com.google.android.libraries.maps.model.LatLngBounds
+import com.car2go.maps.AnyMap
+import com.car2go.maps.model.LatLngBounds
 import com.google.android.libraries.places.api.model.Place
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -156,9 +156,9 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
         MutableLiveData<Place>()
     }
 
-    val mapType: MutableLiveData<Int> by lazy {
-        MutableLiveData<Int>().apply {
-            value = GoogleMap.MAP_TYPE_NORMAL
+    val mapType: MutableLiveData<AnyMap.Type> by lazy {
+        MutableLiveData<AnyMap.Type>().apply {
+            value = AnyMap.Type.NORMAL
         }
     }
 
@@ -177,7 +177,7 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
         }
     }
 
-    fun setMapType(type: Int) {
+    fun setMapType(type: AnyMap.Type) {
         mapType.value = type
     }
 

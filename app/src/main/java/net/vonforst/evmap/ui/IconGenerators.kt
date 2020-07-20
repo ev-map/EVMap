@@ -11,8 +11,8 @@ import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.widget.TextViewCompat
-import com.google.android.libraries.maps.model.BitmapDescriptor
-import com.google.android.libraries.maps.model.BitmapDescriptorFactory
+import com.car2go.maps.BitmapDescriptorFactory
+import com.car2go.maps.model.BitmapDescriptor
 import com.google.maps.android.ui.IconGenerator
 import com.google.maps.android.ui.SquareTextView
 import net.vonforst.evmap.R
@@ -41,7 +41,7 @@ class ClusterIconGenerator(context: Context) : IconGenerator(context) {
 }
 
 
-class ChargerIconGenerator(val context: Context) {
+class ChargerIconGenerator(val context: Context, val factory: BitmapDescriptorFactory) {
     data class BitmapData(
         val tint: Int,
         val scale: Int,
@@ -94,7 +94,7 @@ class ChargerIconGenerator(val context: Context) {
             cachedImg
         } else {
             val bitmap = generateBitmap(data)
-            val bmd = BitmapDescriptorFactory.fromBitmap(bitmap)
+            val bmd = factory.fromBitmap(bitmap)
             cache.put(data, bmd)
             bmd
         }

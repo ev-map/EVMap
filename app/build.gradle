@@ -99,7 +99,7 @@ dependencies {
     implementation 'io.michaelrocks:bimap:1.0.2'
 
     // AnyMaps
-    def anyMapsVersion = 'd48b22df9f'
+    def anyMapsVersion = '29b06e4837'
     implementation "com.github.johan12345.AnyMaps:anymaps-base:$anyMapsVersion"
     implementation "com.github.johan12345.AnyMaps:anymaps-google:$anyMapsVersion"
     implementation "com.github.johan12345.AnyMaps:anymaps-osm:$anyMapsVersion"

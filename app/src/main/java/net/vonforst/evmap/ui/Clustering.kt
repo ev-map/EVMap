@@ -1,6 +1,6 @@
 package net.vonforst.evmap.ui;
 
-import com.google.android.libraries.maps.model.LatLng
+import com.car2go.maps.model.LatLng
 import com.google.maps.android.clustering.ClusterItem
 import com.google.maps.android.clustering.algo.NonHierarchicalDistanceBasedAlgorithm
 import net.vonforst.evmap.api.goingelectric.ChargeLocation

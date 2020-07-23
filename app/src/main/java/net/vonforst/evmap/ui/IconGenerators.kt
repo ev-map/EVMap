@@ -32,7 +32,7 @@ class ClusterIconGenerator(context: Context) : IconGenerator(context) {
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
             )
-            id = com.google.maps.android.R.id.amu_text
+            id = R.id.amu_text
             setPadding(twelveDpi, twelveDpi, twelveDpi, twelveDpi)
             TextViewCompat.setTextAppearance(this, R.style.TextAppearance_AppCompat)
             setTextColor(ContextCompat.getColor(context, android.R.color.white))

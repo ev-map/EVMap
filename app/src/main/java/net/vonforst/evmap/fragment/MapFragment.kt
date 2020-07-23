@@ -3,7 +3,6 @@ package net.vonforst.evmap.fragment
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
@@ -11,7 +10,6 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.view.*
-import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
@@ -40,11 +38,6 @@ import com.car2go.maps.model.LatLng
 import com.car2go.maps.model.Marker
 import com.car2go.maps.model.MarkerOptions
 import com.car2go.maps.osm.MapsConfiguration
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
-import com.google.android.libraries.places.api.model.Place
-import com.google.android.libraries.places.widget.Autocomplete
-import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialArcMotion
 import com.google.android.material.transition.MaterialContainerTransform
@@ -52,6 +45,8 @@ import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike
 import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED
 import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN
 import com.mahc.custombottomsheetbehavior.MergedAppBarLayoutBehavior
+import com.mapzen.android.lost.api.LocationServices
+import com.mapzen.android.lost.api.LostApiClient
 import io.michaelrocks.bimap.HashBiMap
 import io.michaelrocks.bimap.MutableBiMap
 import kotlinx.android.synthetic.main.fragment_map.*
@@ -86,7 +81,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
     })
     private val galleryVm: GalleryViewModel by activityViewModels()
     private var map: AnyMap? = null
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var locationClient: LostApiClient
     private lateinit var bottomSheetBehavior: BottomSheetBehaviorGoogleMapsLike<View>
     private lateinit var detailAppBarBehavior: MergedAppBarLayoutBehavior
     private var markers: MutableBiMap<Marker, ChargeLocation> = HashBiMap()
@@ -132,7 +127,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         binding.lifecycleOwner = this
         binding.vm = vm
 
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
+        locationClient = LostApiClient.Builder(requireContext()).build()
         clusterIconGenerator = ClusterIconGenerator(requireContext())
 
         setHasOptionsMenu(true)
@@ -221,7 +216,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             bottomSheetBehavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT
         }
         binding.search.setOnClickListener {
-            val fields = listOf(Place.Field.LAT_LNG, Place.Field.VIEWPORT)
+            /*TODO: val fields = listOf(Place.Field.LAT_LNG, Place.Field.VIEWPORT)
             val intent: Intent = Autocomplete.IntentBuilder(
                 AutocompleteActivityMode.OVERLAY, fields
             )
@@ -231,7 +226,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
             val imm =
                 requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.toggleSoftInput(0, 0)
+            imm.toggleSoftInput(0, 0)*/
         }
         binding.detailAppBar.toolbar.setNavigationOnClickListener {
             bottomSheetBehavior.state = STATE_COLLAPSED
@@ -638,16 +633,15 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         map.setMyLocationEnabled(true)
         vm.myLocationEnabled.value = true
         map.uiSettings.setMyLocationButtonEnabled(false)
-        if (moveTo) {
-            fusedLocationClient.lastLocation.addOnSuccessListener { location ->
-                if (location != null) {
-                    val latLng = LatLng(location.latitude, location.longitude)
-                    val camUpdate = map.cameraUpdateFactory.newLatLngZoom(latLng, 13f)
-                    if (animate) {
-                        map.animateCamera(camUpdate)
-                    } else {
-                        map.moveCamera(camUpdate)
-                    }
+        if (moveTo && locationClient.isConnected) {
+            val location = LocationServices.FusedLocationApi.getLastLocation(locationClient)
+            if (location != null) {
+                val latLng = LatLng(location.latitude, location.longitude)
+                val camUpdate = map.cameraUpdateFactory.newLatLngZoom(latLng, 13f)
+                if (animate) {
+                    map.animateCamera(camUpdate)
+                } else {
+                    map.moveCamera(camUpdate)
                 }
             }
         }
@@ -823,7 +817,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         when (requestCode) {
             REQUEST_AUTOCOMPLETE -> {
                 if (resultCode == Activity.RESULT_OK) {
-                    vm.searchResult.value = Autocomplete.getPlaceFromIntent(data!!)
+                    // TODO: vm.searchResult.value = Autocomplete.getPlaceFromIntent(data!!)
                 }
             }
             else -> super.onActivityResult(requestCode, resultCode, data)

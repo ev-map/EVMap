@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.browser.customtabs.CustomTabsIntent
@@ -14,8 +13,6 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
-import com.google.android.gms.common.ConnectionResult
-import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import net.vonforst.evmap.api.goingelectric.ChargeLocation
@@ -109,20 +106,5 @@ class MapsActivity : AppCompatActivity() {
             putExtra(Intent.EXTRA_TEXT, url)
         }
         startActivity(intent)
-    }
-
-    private fun checkPlayServices(): Boolean {
-        val request = 9000
-        val apiAvailability = GoogleApiAvailability.getInstance()
-        val resultCode = apiAvailability.isGooglePlayServicesAvailable(this)
-        if (resultCode != ConnectionResult.SUCCESS) {
-            if (apiAvailability.isUserResolvableError(resultCode)) {
-                apiAvailability.getErrorDialog(this, resultCode, request).show()
-            } else {
-                Log.d("EVMap", "This device is not supported.")
-            }
-            return false
-        }
-        return true
     }
 }

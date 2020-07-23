@@ -11,7 +11,6 @@ import net.vonforst.evmap.BR
 import net.vonforst.evmap.R
 import net.vonforst.evmap.api.availability.ChargepointStatus
 import net.vonforst.evmap.api.goingelectric.Chargepoint
-import net.vonforst.evmap.viewmodel.DonationItem
 import net.vonforst.evmap.viewmodel.FavoritesViewModel
 
 interface Equatable {
@@ -89,8 +88,4 @@ class FavoritesAdapter(val vm: FavoritesViewModel) :
     override fun getItemViewType(position: Int): Int = R.layout.item_favorite
 
     override fun getItemId(position: Int): Long = getItem(position).charger.id
-}
-
-class DonationAdapter() : DataBindingAdapter<DonationItem>() {
-    override fun getItemViewType(position: Int): Int = R.layout.item_donation
 }

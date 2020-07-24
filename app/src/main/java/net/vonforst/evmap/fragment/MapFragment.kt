@@ -57,6 +57,8 @@ import net.vonforst.evmap.adapter.GalleryAdapter
 import net.vonforst.evmap.api.goingelectric.ChargeLocation
 import net.vonforst.evmap.api.goingelectric.ChargeLocationCluster
 import net.vonforst.evmap.api.goingelectric.ChargepointListItem
+import net.vonforst.evmap.autocomplete.handleAutocompleteResult
+import net.vonforst.evmap.autocomplete.launchAutocomplete
 import net.vonforst.evmap.databinding.FragmentMapBinding
 import net.vonforst.evmap.ui.ChargerIconGenerator
 import net.vonforst.evmap.ui.ClusterIconGenerator
@@ -128,6 +130,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         binding.vm = vm
 
         locationClient = LostApiClient.Builder(requireContext()).build()
+        locationClient.connect()
         clusterIconGenerator = ClusterIconGenerator(requireContext())
 
         setHasOptionsMenu(true)
@@ -216,17 +219,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             bottomSheetBehavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT
         }
         binding.search.setOnClickListener {
-            /*TODO: val fields = listOf(Place.Field.LAT_LNG, Place.Field.VIEWPORT)
-            val intent: Intent = Autocomplete.IntentBuilder(
-                AutocompleteActivityMode.OVERLAY, fields
-            )
-                .build(requireContext())
-                .addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
-            startActivityForResult(intent, REQUEST_AUTOCOMPLETE)
-
-            val imm =
-                requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.toggleSoftInput(0, 0)*/
+            launchAutocomplete(requireContext())
         }
         binding.detailAppBar.toolbar.setNavigationOnClickListener {
             bottomSheetBehavior.state = STATE_COLLAPSED
@@ -344,23 +337,27 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         vm.favorites.observe(viewLifecycleOwner, Observer {
             updateFavoriteToggle()
         })
-        /* TODO: vm.searchResult.observe(viewLifecycleOwner, Observer { place ->
+        vm.searchResult.observe(viewLifecycleOwner, Observer { place ->
             val map = this.map ?: return@Observer
             searchResultMarker?.remove()
             searchResultMarker = null
 
             if (place != null) {
                 if (place.viewport != null) {
-                    map.animateCamera(map.cameraUpdateFactory.newLatLngBounds(AnyMapAdapter.adapt(place.viewport), 0))
+                    map.animateCamera(map.cameraUpdateFactory.newLatLngBounds(place.viewport, 0))
                 } else {
-                    map.animateCamera(map.cameraUpdateFactory.newLatLngZoom(AnyMapAdapter.adapt(place.latLng), 12f))
+                    map.animateCamera(map.cameraUpdateFactory.newLatLngZoom(place.latLng, 12f))
                 }
 
-                searchResultMarker = map.addMarker(MarkerOptions().position(AnyMapAdapter.adapt(place.latLng!!))).anchor(0.5f, 1f)
+                searchResultMarker = map.addMarker(
+                    MarkerOptions()
+                        .position(place.latLng)
+                        .anchor(0.5f, 1f)
+                )
             }
 
             updateBackPressedCallback()
-        })*/
+        })
         vm.layersMenuOpen.observe(viewLifecycleOwner, Observer { open ->
             binding.fabLayers.visibility = if (open) View.GONE else View.VISIBLE
             binding.layersSheet.visibility = if (open) View.VISIBLE else View.GONE
@@ -570,12 +567,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         map.setPadding(0, binding.toolbarContainer.height, 0, 0)
 
         val mode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-        /* TODO:
         map.setMapStyle(
-            if (mode == Configuration.UI_MODE_NIGHT_YES) {
-                MapStyleOptions.loadRawResourceStyle(context, R.raw.maps_night_mode)
-            } else null
-        )*/
+            if (mode == Configuration.UI_MODE_NIGHT_YES) AnyMap.Style.DARK else AnyMap.Style.NORMAL
+        )
 
 
         val position = vm.mapPosition.value
@@ -816,8 +810,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
             REQUEST_AUTOCOMPLETE -> {
-                if (resultCode == Activity.RESULT_OK) {
-                    // TODO: vm.searchResult.value = Autocomplete.getPlaceFromIntent(data!!)
+                if (resultCode == Activity.RESULT_OK && data != null) {
+                    vm.searchResult.value = handleAutocompleteResult(data)
                 }
             }
             else -> super.onActivityResult(requestCode, resultCode, data)

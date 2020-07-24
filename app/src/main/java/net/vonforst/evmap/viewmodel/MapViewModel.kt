@@ -3,8 +3,8 @@ package net.vonforst.evmap.viewmodel
 import android.app.Application
 import androidx.lifecycle.*
 import com.car2go.maps.AnyMap
+import com.car2go.maps.model.LatLng
 import com.car2go.maps.model.LatLngBounds
-import com.google.android.libraries.places.api.model.Place
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -19,6 +19,8 @@ import retrofit2.Response
 import java.io.IOException
 
 data class MapPosition(val bounds: LatLngBounds, val zoom: Float)
+
+data class PlaceWithBounds(val latLng: LatLng, val viewport: LatLngBounds?)
 
 internal fun getClusterDistance(zoom: Float): Int? {
     return when (zoom) {
@@ -152,8 +154,8 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
         db.chargeLocationsDao().getAllChargeLocations()
     }
 
-    val searchResult: MutableLiveData<Place> by lazy {
-        MutableLiveData<Place>()
+    val searchResult: MutableLiveData<PlaceWithBounds> by lazy {
+        MutableLiveData<PlaceWithBounds>()
     }
 
     val mapType: MutableLiveData<AnyMap.Type> by lazy {

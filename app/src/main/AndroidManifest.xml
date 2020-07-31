@@ -25,6 +25,9 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
+        <meta-data
+            android:name="com.mapbox.ACCESS_TOKEN"
+            android:value="@string/mapbox_key" />
 
         <activity
             android:name=".MapsActivity"

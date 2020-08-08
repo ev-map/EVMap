@@ -112,7 +112,7 @@ dependencies {
     implementation 'com.mapzen.android:lost:3.0.2'
 
     // AnyMaps
-    def anyMapsVersion = 'ef532876f0'
+    def anyMapsVersion = 'a8c270b4ea'
     implementation "com.github.johan12345.AnyMaps:anymaps-base:$anyMapsVersion"
     googleImplementation "com.github.johan12345.AnyMaps:anymaps-google:$anyMapsVersion"
     fossImplementation "com.github.johan12345.AnyMaps:anymaps-mapbox:$anyMapsVersion"

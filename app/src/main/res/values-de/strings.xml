@@ -34,6 +34,8 @@
     <string name="github_link_title">Quellcode</string>
     <string name="oss_licenses">Open Source-Lizenzen</string>
     <string name="settings">Einstellungen</string>
+    <string name="settings_ui">Oberfläche</string>
+    <string name="settings_map">Karte</string>
     <string name="copyright">Copyright</string>
     <string name="copyright_summary">©2020 Johan von Forstner</string>
     <string name="other">Sonstiges</string>
@@ -101,6 +103,7 @@
     <string name="filter_exclude_faults">Ladesäulen mit Störung ausschließen</string>
     <string name="charge_cards">Ladetarife</string>
     <string name="and_n_others">und %d weitere</string>
+    <string name="pref_map_provider">Kartenanbieter</string>
     <plurals name="charge_cards_compatible_num">
         <item quantity="one">%d kompatibler Ladetarif</item>
         <item quantity="other">%d kompatible Ladetarife</item>

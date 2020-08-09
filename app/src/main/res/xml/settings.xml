@@ -1,14 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="@string/settings">
-
-        <CheckBoxPreference
-            android:key="navigate_use_maps"
-            android:title="@string/pref_navigate_use_maps"
-            android:summaryOn="@string/pref_navigate_use_maps_on"
-            android:summaryOff="@string/pref_navigate_use_maps_off"
-            android:defaultValue="true" />
+    <PreferenceCategory android:title="@string/settings_ui">
 
         <ListPreference
             android:key="language"
@@ -25,6 +18,24 @@
             android:entryValues="@array/pref_darkmode_values"
             android:defaultValue="default"
             android:summary="@string/pref_darkmode_summary" />
+
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/settings_map">
+
+        <ListPreference
+            android:key="map_provider"
+            android:title="@string/pref_map_provider"
+            android:entries="@array/pref_map_provider_names"
+            android:entryValues="@array/pref_map_provider_values"
+            android:defaultValue="@string/pref_map_provider_default"
+            android:summary="%s" />
+
+        <CheckBoxPreference
+            android:key="navigate_use_maps"
+            android:title="@string/pref_navigate_use_maps"
+            android:summaryOn="@string/pref_navigate_use_maps_on"
+            android:summaryOff="@string/pref_navigate_use_maps_off"
+            android:defaultValue="true" />
 
     </PreferenceCategory>
 </PreferenceScreen>

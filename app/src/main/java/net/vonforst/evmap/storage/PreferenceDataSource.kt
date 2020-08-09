@@ -2,9 +2,10 @@ package net.vonforst.evmap.storage
 
 import android.content.Context
 import androidx.preference.PreferenceManager
+import net.vonforst.evmap.R
 import java.time.Instant
 
-class PreferenceDataSource(context: Context) {
+class PreferenceDataSource(val context: Context) {
     val sp = PreferenceManager.getDefaultSharedPreferences(context)
 
     var navigateUseMaps: Boolean
@@ -42,4 +43,10 @@ class PreferenceDataSource(context: Context) {
 
     val darkmode: String
         get() = sp.getString("darkmode", "default")!!
+
+    val mapProvider: String
+        get() = sp.getString(
+            "map_provider",
+            context.getString(R.string.pref_map_provider_default)
+        )!!
 }

@@ -61,6 +61,7 @@ import net.vonforst.evmap.api.goingelectric.ChargepointListItem
 import net.vonforst.evmap.autocomplete.handleAutocompleteResult
 import net.vonforst.evmap.autocomplete.launchAutocomplete
 import net.vonforst.evmap.databinding.FragmentMapBinding
+import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.ui.ChargerIconGenerator
 import net.vonforst.evmap.ui.ClusterIconGenerator
 import net.vonforst.evmap.ui.MarkerAnimator
@@ -84,6 +85,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         }
     })
     private val galleryVm: GalleryViewModel by activityViewModels()
+    private lateinit var mapFragment: MapFragment
     private var map: AnyMap? = null
     private lateinit var locationClient: LostApiClient
     private lateinit var bottomSheetBehavior: BottomSheetBehaviorGoogleMapsLike<View>
@@ -117,10 +119,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -129,6 +127,29 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_map, container, false)
         binding.lifecycleOwner = this
         binding.vm = vm
+
+        mapFragment = MapFragment()
+        val provider = PreferenceDataSource(requireContext()).mapProvider
+        mapFragment.setPriority(
+            arrayOf(
+                when (provider) {
+                    "mapbox" -> MapFragment.MAPBOX
+                    "google" -> MapFragment.GOOGLE
+                    else -> null
+                }
+            )
+        )
+        requireActivity().supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.map, mapFragment)
+            .commit()
+
+        // reset map-related stuff (map provider may have changed)
+        map = null
+        markers.clear()
+        clusterMarkers = emptyList()
+        searchResultMarker = null
+
 
         locationClient = LostApiClient.Builder(requireContext())
             .addConnectionCallbacks(this)
@@ -159,7 +180,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as MapFragment
         mapFragment.getMapAsync(this)
         bottomSheetBehavior = BottomSheetBehaviorGoogleMapsLike.from(binding.bottomSheet)
         detailAppBarBehavior = MergedAppBarLayoutBehavior.from(binding.detailAppBar)

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="pref_map_provider_names">
+        <item>Google Maps</item>
+        <item>OpenStreetMap (Mapbox)</item>
+    </string-array>
+</resources>

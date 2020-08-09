@@ -61,7 +61,7 @@ class MapsActivity : AppCompatActivity() {
 
         prefs = PreferenceDataSource(this)
 
-        checkPlayServices()
+        checkPlayServices(this)
     }
 
     fun navigateTo(charger: ChargeLocation) {

@@ -1,6 +1,6 @@
 package net.vonforst.evmap.fragment
 
-import android.Manifest
+import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
@@ -12,8 +12,10 @@ import android.os.Handler
 import android.view.*
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
+import androidx.annotation.RequiresPermission
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.app.ActivityCompat
 import androidx.core.app.SharedElementCallback
 import androidx.core.content.ContextCompat
 import androidx.core.view.updateLayoutParams
@@ -34,7 +36,6 @@ import androidx.transition.TransitionManager
 import com.car2go.maps.AnyMap
 import com.car2go.maps.MapFragment
 import com.car2go.maps.OnMapReadyCallback
-import com.car2go.maps.mapbox.MapsConfiguration
 import com.car2go.maps.model.LatLng
 import com.car2go.maps.model.Marker
 import com.car2go.maps.model.MarkerOptions
@@ -71,7 +72,8 @@ const val ARG_CHARGER_ID = "chargerId"
 const val ARG_LAT = "lat"
 const val ARG_LON = "lon"
 
-class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallback {
+class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallback,
+    LostApiClient.ConnectionCallbacks {
     private lateinit var binding: FragmentMapBinding
     private val vm: MapViewModel by viewModels(factoryProducer = {
         viewModelFactory {
@@ -117,7 +119,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        MapsConfiguration.getInstance().initialize(context)
     }
 
     override fun onCreateView(
@@ -129,7 +130,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         binding.lifecycleOwner = this
         binding.vm = vm
 
-        locationClient = LostApiClient.Builder(requireContext()).build()
+        locationClient = LostApiClient.Builder(requireContext())
+            .addConnectionCallbacks(this)
+            .build()
         locationClient.connect()
         clusterIconGenerator = ClusterIconGenerator(requireContext())
 
@@ -184,13 +187,17 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
     private fun setupClickListeners() {
         binding.fabLocate.setOnClickListener {
-            if (!hasLocationPermission()) {
+            if (ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
                 requestPermissions(
-                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                    arrayOf(ACCESS_FINE_LOCATION),
                     REQUEST_LOCATION_PERMISSION
                 )
             } else {
-                enableLocation(true, true)
+                enableLocation(moveTo = true, animate = true)
             }
         }
         binding.fabDirections.setOnClickListener {
@@ -219,7 +226,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             bottomSheetBehavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT
         }
         binding.search.setOnClickListener {
-            launchAutocomplete(requireContext())
+            launchAutocomplete(requireActivity())
         }
         binding.detailAppBar.toolbar.setNavigationOnClickListener {
             bottomSheetBehavior.state = STATE_COLLAPSED
@@ -605,7 +612,11 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
             positionSet = true
         }
-        if (hasLocationPermission()) {
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
             enableLocation(!positionSet, false)
             positionSet = true
         }
@@ -621,32 +632,29 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         )
     }
 
-    @SuppressLint("MissingPermission")
+    @RequiresPermission(ACCESS_FINE_LOCATION)
     private fun enableLocation(moveTo: Boolean, animate: Boolean) {
         val map = this.map ?: return
         map.setMyLocationEnabled(true)
         vm.myLocationEnabled.value = true
         map.uiSettings.setMyLocationButtonEnabled(false)
         if (moveTo && locationClient.isConnected) {
-            val location = LocationServices.FusedLocationApi.getLastLocation(locationClient)
-            if (location != null) {
-                val latLng = LatLng(location.latitude, location.longitude)
-                val camUpdate = map.cameraUpdateFactory.newLatLngZoom(latLng, 13f)
-                if (animate) {
-                    map.animateCamera(camUpdate)
-                } else {
-                    map.moveCamera(camUpdate)
-                }
-            }
+            moveToCurrentLocation(map, animate)
         }
     }
 
-    private fun hasLocationPermission(): Boolean {
-        val context = context ?: return false
-        return ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED
+    @RequiresPermission(ACCESS_FINE_LOCATION)
+    private fun moveToCurrentLocation(map: AnyMap, animate: Boolean) {
+        val location = LocationServices.FusedLocationApi.getLastLocation(locationClient)
+        if (location != null) {
+            val latLng = LatLng(location.latitude, location.longitude)
+            val camUpdate = map.cameraUpdateFactory.newLatLngZoom(latLng, 13f)
+            if (animate) {
+                map.animateCamera(camUpdate)
+            } else {
+                map.moveCamera(camUpdate)
+            }
+        }
     }
 
     @Synchronized
@@ -732,6 +740,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         }
     }
 
+    @SuppressLint("MissingPermission")
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -740,7 +749,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         when (requestCode) {
             REQUEST_LOCATION_PERMISSION -> {
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    enableLocation(true, true)
+                    enableLocation(moveTo = true, animate = true)
                 }
             }
             else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -846,5 +855,21 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 putDouble(ARG_LON, charger.coordinates.lng)
             }
         }
+    }
+
+    override fun onConnected() {
+        val map = this.map ?: return
+        if (vm.myLocationEnabled.value == true) {
+            if (ActivityCompat.checkSelfPermission(
+                    requireContext(),
+                    ACCESS_FINE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                moveToCurrentLocation(map, false)
+            }
+        }
+    }
+
+    override fun onConnectionSuspended() {
     }
 }

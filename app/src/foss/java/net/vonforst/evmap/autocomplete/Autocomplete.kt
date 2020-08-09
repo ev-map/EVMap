@@ -1,10 +1,10 @@
 package net.vonforst.evmap.autocomplete
 
-import android.content.Context
+import android.app.Activity
 import android.content.Intent
 import net.vonforst.evmap.viewmodel.PlaceWithBounds
 
-fun launchAutocomplete(context: Context) {
+fun launchAutocomplete(activity: Activity) {
     // TODO:
 
 }

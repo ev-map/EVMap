@@ -36,6 +36,7 @@ import androidx.transition.TransitionManager
 import com.car2go.maps.AnyMap
 import com.car2go.maps.MapFragment
 import com.car2go.maps.OnMapReadyCallback
+import com.car2go.maps.model.BitmapDescriptor
 import com.car2go.maps.model.LatLng
 import com.car2go.maps.model.Marker
 import com.car2go.maps.model.MarkerOptions
@@ -93,6 +94,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
     private var markers: MutableBiMap<Marker, ChargeLocation> = HashBiMap()
     private var clusterMarkers: List<Marker> = emptyList()
     private var searchResultMarker: Marker? = null
+    private var searchResultIcon: BitmapDescriptor? = null
     private var connectionErrorSnackbar: Snackbar? = null
     private var previousChargepointIds: Set<Long>? = null
 
@@ -136,7 +138,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                     "mapbox" -> MapFragment.MAPBOX
                     "google" -> MapFragment.GOOGLE
                     else -> null
-                }
+                },
+                MapFragment.GOOGLE,
+                MapFragment.MAPBOX
             )
         )
         requireActivity().supportFragmentManager
@@ -149,6 +153,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         markers.clear()
         clusterMarkers = emptyList()
         searchResultMarker = null
+        searchResultIcon = null
 
 
         locationClient = LostApiClient.Builder(requireContext())
@@ -246,7 +251,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             bottomSheetBehavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT
         }
         binding.search.setOnClickListener {
-            launchAutocomplete(requireActivity())
+            launchAutocomplete(this)
         }
         binding.detailAppBar.toolbar.setNavigationOnClickListener {
             bottomSheetBehavior.state = STATE_COLLAPSED
@@ -376,9 +381,14 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                     map.animateCamera(map.cameraUpdateFactory.newLatLngZoom(place.latLng, 12f))
                 }
 
+                if (searchResultIcon == null) {
+                    searchResultIcon =
+                        map.bitmapDescriptorFactory.fromResource(R.drawable.ic_map_marker)
+                }
                 searchResultMarker = map.addMarker(
                     MarkerOptions()
                         .position(place.latLng)
+                        .icon(searchResultIcon)
                         .anchor(0.5f, 1f)
                 )
             }

@@ -116,7 +116,7 @@ dependencies {
     implementation 'com.mapzen.android:lost:3.0.2'
 
     // AnyMaps
-    def anyMapsVersion = 'cc613d7a29'
+    def anyMapsVersion = 'cc2a044656'
     implementation "com.github.johan12345.AnyMaps:anymaps-base:$anyMapsVersion"
     googleImplementation "com.github.johan12345.AnyMaps:anymaps-google:$anyMapsVersion"
     implementation "com.github.johan12345.AnyMaps:anymaps-mapbox:$anyMapsVersion"
@@ -134,6 +134,9 @@ dependencies {
     googleImplementation 'com.google.code.gson:gson:2.8.6'
     googleImplementation 'com.google.android.datatransport:transport-runtime:2.2.3'
     googleImplementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+
+    // Mapbox places (autocomplete)
+    implementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-places-v9:0.12.0'
 
     // navigation library
     def nav_version = "2.3.0"

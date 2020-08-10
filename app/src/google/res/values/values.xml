@@ -9,4 +9,5 @@
         <item>mapbox</item>
     </string-array>
     <string name="pref_map_provider_default" translatable="false">mapbox</string>
+    <string name="donations_info" formatted="false">Do you find EVMap useful? Support its development by sending a donation to the developer.\n\nGoogle takes 30% off every donation.</string>
 </resources>

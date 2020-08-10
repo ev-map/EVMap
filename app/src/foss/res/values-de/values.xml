@@ -3,4 +3,6 @@
     <string-array name="pref_map_provider_names">
         <item>OpenStreetMap (Mapbox)</item>
     </string-array>
+    <string name="donations_info" formatted="false">Findest du EVMap nützlich? Unterstütze die Weiterentwicklung der App mit einer Spende an den Entwickler.\n\nGoogle zieht von der Spende 30% Gebühren ab.</string>
+    <string name="donate_paypal">Mit PayPal spenden</string>
 </resources>

@@ -7,4 +7,7 @@
         <item>mapbox</item>
     </string-array>
     <string name="pref_map_provider_default" translatable="false">mapbox</string>
+    <string name="donations_info" formatted="false">Do you find EVMap useful? Support its development by sending a donation to the developer.</string>
+    <string name="donate_paypal">Donate with PayPal</string>
+    <string name="paypal_link" translatable="false">https://paypal.me/johan98</string>
 </resources>

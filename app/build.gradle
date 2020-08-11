@@ -21,7 +21,14 @@ android {
 
     signingConfigs {
         release {
-
+            def isRunningOnTravis = System.getenv("CI") == "true"
+            if (isRunningOnTravis) {
+                // configure keystore
+                storeFile = file("../_ci/keystore.jks")
+                storePassword = System.getenv("keystore_password")
+                keyAlias = System.getenv("keystore_alias")
+                keyPassword = System.getenv("keystore_alias_password")
+            }
         }
     }
 
@@ -47,15 +54,6 @@ android {
             dimension "dependencies"
             versionNameSuffix "-google"
         }
-    }
-
-    def isRunningOnTravis = System.getenv("CI") == "true"
-    if (isRunningOnTravis) {
-        // configure keystore
-        signingConfigs.release.storeFile = file("../_ci/keystore.jks")
-        signingConfigs.release.storePassword = System.getenv("keystore_password")
-        signingConfigs.release.keyAlias = System.getenv("keystore_alias")
-        signingConfigs.release.keyPassword = System.getenv("keystore_alias_password")
     }
 
     compileOptions {

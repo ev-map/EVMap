@@ -193,7 +193,7 @@ data class SliderFilter(
     val unit: String? = ""
 ) : Filter<SliderFilterValue>() {
     override val valueClass: KClass<SliderFilterValue> = SliderFilterValue::class
-    override fun defaultValue() = SliderFilterValue(key, 0)
+    override fun defaultValue() = SliderFilterValue(key, min)
 }
 
 sealed class FilterValue : BaseObservable(), Equatable {

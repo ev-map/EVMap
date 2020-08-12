@@ -73,15 +73,15 @@ android {
     // add API keys from environment variable if not set in apikeys.xml
     applicationVariants.all { variant ->
         ext.env = System.getenv()
-        def goingelectricKey = env.GOINGELECTRIC_API_KEY
+        def goingelectricKey = env.GOINGELECTRIC_API_KEY ?: project.findProperty("GOINGELECTRIC_API_KEY")
         if (goingelectricKey != null) {
             variant.resValue "string", "goingelectric_key", goingelectricKey
         }
-        def googleMapsKey = env.GOOGLE_MAPS_API_KEY
+        def googleMapsKey = env.GOOGLE_MAPS_API_KEY ?: project.findProperty("GOOGLE_MAPS_API_KEY")
         if (googleMapsKey != null) {
             variant.resValue "string", "google_maps_key", googleMapsKey
         }
-        def mapboxKey = env.MAPBOX_API_KEY
+        def mapboxKey = env.MAPBOX_API_KEY ?: project.findProperty("MAPBOX_API_KEY")
         if (mapboxKey != null) {
             variant.resValue "string", "mapbox_key", mapboxKey
         }

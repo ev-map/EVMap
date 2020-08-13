@@ -1,0 +1,4 @@
+Verbesserungen:
+- Verändertes Layout für Filter nach Anschluss (bessere Stabilität)
+- Absturz bei fehlender Internetverbindung behoben
+- Fehlende Übersetzungen eingefügt

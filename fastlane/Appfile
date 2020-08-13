@@ -1,0 +1,2 @@
+json_key_file("api-7125266970515251116-798419-8e2dda660c80.json") # Path to the json secret file - Follow https://docs.fastlane.tools/actions/supply/#setup to get one
+package_name("net.vonforst.evmap") # e.g. com.krausefx.app

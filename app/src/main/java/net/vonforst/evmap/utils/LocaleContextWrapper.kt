@@ -4,32 +4,40 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.res.Configuration
 import android.os.Build
+import androidx.core.os.ConfigurationCompat
 import java.util.*
 
 
 class LocaleContextWrapper(base: Context?) : ContextWrapper(base) {
     companion object {
         fun wrap(context: Context, language: String): ContextWrapper {
-            val config: Configuration = context.resources.configuration
-            var sysLocale: Locale? = null
-            sysLocale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                config.locales.get(0)
-            } else {
-                @Suppress("DEPRECATION")
-                config.locale
-            }
+            val sysConfig: Configuration = context.applicationContext.resources.configuration
+            val appConfig: Configuration = context.resources.configuration
             var ctx = context
-            if (language != "" && language != "default" && sysLocale.language != language) {
+
+
+            if (language == "" || language == "default") {
+                // set default locale
+                Locale.setDefault(ConfigurationCompat.getLocales(sysConfig)[0])
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    appConfig.setLocales(sysConfig.locales)
+                } else {
+                    @Suppress("DEPRECATION")
+                    appConfig.locale = sysConfig.locale
+                }
+            } else {
+                // set selected locale
                 val locale = Locale(language)
                 Locale.setDefault(locale)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    config.setLocale(locale)
+                    appConfig.setLocale(locale)
                 } else {
                     @Suppress("DEPRECATION")
-                    config.locale = locale
+                    appConfig.locale = locale
                 }
-                ctx = context.createConfigurationContext(config)
             }
+
+            ctx = context.createConfigurationContext(appConfig)
             return LocaleContextWrapper(ctx)
         }
     }

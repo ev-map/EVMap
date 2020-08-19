@@ -127,22 +127,17 @@ abstract class AppDatabase : RoomDatabase() {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.beginTransaction()
                 try {
-                    // create tables with profile
-                    db.execSQL("CREATE TABLE `BooleanFilterValueNew` (`key` TEXT NOT NULL, `value` INTEGER NOT NULL, `profile` INTEGER, PRIMARY KEY(`key`), FOREIGN KEY(`profile`) REFERENCES `FilterProfile`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )")
-                    db.execSQL("CREATE TABLE `MultipleChoiceFilterValueNew` (`key` TEXT NOT NULL, `values` TEXT NOT NULL, `all` INTEGER NOT NULL, `profile` INTEGER, PRIMARY KEY(`key`), FOREIGN KEY(`profile`) REFERENCES `FilterProfile`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )")
-                    db.execSQL("CREATE TABLE `SliderFilterValueNew` (`key` TEXT NOT NULL, `value` INTEGER NOT NULL, `profile` INTEGER, PRIMARY KEY(`key`), FOREIGN KEY(`profile`) REFERENCES `FilterProfile`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )")
+                    // create filter profiles table
+                    db.execSQL("CREATE TABLE IF NOT EXISTS `FilterProfile` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, PRIMARY KEY(`id`))")
 
                     for (table in listOf(
                         "BooleanFilterValue",
                         "MultipleChoiceFilterValue",
                         "SliderFilterValue"
                     )) {
-                        db.execSQL("INSERT INTO `${table}New` SELECT * FROM `${table}`");
-                        db.execSQL("ALTER TABLE `${table}New` RENAME TO `${table}`");
-                        db.execSQL("UPDATE `${table}` SET profile=0")
+                        db.execSQL("ALTER TABLE `$table` ADD COLUMN `profile` INTEGER REFERENCES `FilterProfile`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE")
                     }
 
-                    db.execSQL("CREATE TABLE IF NOT EXISTS `FilterProfile` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, PRIMARY KEY(`id`))")
                     db.setTransactionSuccessful()
                 } finally {
                     db.endTransaction()

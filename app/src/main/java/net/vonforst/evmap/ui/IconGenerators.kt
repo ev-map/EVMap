@@ -107,7 +107,7 @@ class ChargerIconGenerator(val context: Context, val factory: BitmapDescriptorFa
         DrawableCompat.setTintMode(vd, PorterDuff.Mode.MULTIPLY);
 
         val leftPadding = vd.intrinsicWidth * (oversize - 1) / 2
-        val topPadding = vd.intrinsicWidth * (oversize - 1)
+        val topPadding = vd.intrinsicHeight * (oversize - 1)
         vd.setBounds(
             leftPadding.toInt(), topPadding.toInt(),
             leftPadding.toInt() + vd.intrinsicWidth,

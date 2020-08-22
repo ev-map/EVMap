@@ -136,6 +136,8 @@
     <string name="category_parking_underground">Tiefgarage</string>
     <string name="category_zoo">Tierpark</string>
     <string name="category_caravan_site">Wohnmobilstellplatz</string>
+    <string name="menu_apply">Filter anwenden</string>
+    <string name="menu_save_profile">Als Profil speichern</string>
     <plurals name="charge_cards_compatible_num">
         <item quantity="one">%d kompatibler Ladetarif</item>
         <item quantity="other">%d kompatible Ladetarife</item>

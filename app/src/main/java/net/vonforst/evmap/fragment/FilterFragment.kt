@@ -85,6 +85,10 @@ class FilterFragment : Fragment() {
                 }
                 true
             }
+            R.id.menu_save_profile -> {
+                // TODO: implement
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }

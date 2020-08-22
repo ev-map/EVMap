@@ -135,6 +135,8 @@
     <string name="category_parking_underground">Underground car park</string>
     <string name="category_zoo">Zoo</string>
     <string name="category_caravan_site">Caravan site</string>
+    <string name="menu_apply">Apply filters</string>
+    <string name="menu_save_profile">Save as profile</string>
     <plurals name="charge_cards_compatible_num">
         <item quantity="one">%d compatible payment method</item>
         <item quantity="other">%d compatible payment methods</item>

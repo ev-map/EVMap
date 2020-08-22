@@ -28,7 +28,8 @@ class MarkerAnimator(val gen: ChargerIconGenerator) {
         marker: Marker,
         tint: Int,
         highlight: Boolean,
-        fault: Boolean
+        fault: Boolean,
+        multi: Boolean
     ) {
         animatingMarkers[marker]?.let {
             it.cancel()
@@ -45,7 +46,8 @@ class MarkerAnimator(val gen: ChargerIconGenerator) {
                         tint,
                         scale = scale,
                         highlight = highlight,
-                        fault = fault
+                        fault = fault,
+                        multi = multi
                     )
                 )
             }
@@ -63,7 +65,8 @@ class MarkerAnimator(val gen: ChargerIconGenerator) {
         marker: Marker,
         tint: Int,
         highlight: Boolean,
-        fault: Boolean
+        fault: Boolean,
+        multi: Boolean
     ) {
         animatingMarkers[marker]?.let {
             it.cancel()
@@ -80,7 +83,8 @@ class MarkerAnimator(val gen: ChargerIconGenerator) {
                         tint,
                         scale = scale,
                         highlight = highlight,
-                        fault = fault
+                        fault = fault,
+                        multi = multi
                     )
                 )
             }

@@ -47,14 +47,17 @@ class ChargerIconGenerator(val context: Context, val factory: BitmapDescriptorFa
         val scale: Int,
         val alpha: Int,
         val highlight: Boolean,
-        val fault: Boolean
+        val fault: Boolean,
+        val multi: Boolean
     )
 
-    val cacheSize = 420; // 420 items: 21 sizes, 5 colors, highlight on/off, fault on/off
+    val cacheSize = 840; // 840 items: 21 sizes, 5 colors, highlight, fault, multi on/off
     val cache = LruCache<BitmapData, BitmapDescriptor>(cacheSize)
     val oversize = 1.4f  // increase to add padding for fault icon or scale > 1
     val icon = R.drawable.ic_map_marker_charging
+    val multiIcon = R.drawable.ic_map_marker_charging_multiple
     val highlightIcon = R.drawable.ic_map_marker_highlight
+    val highlightIconMulti = R.drawable.ic_map_marker_charging_highlight_multiple
     val faultIcon = R.drawable.ic_map_marker_fault
 
     init {
@@ -72,9 +75,11 @@ class ChargerIconGenerator(val context: Context, val factory: BitmapDescriptorFa
         )
         for (fault in listOf(false, true)) {
             for (highlight in listOf(false, true)) {
-                for (tint in tints) {
-                    for (scale in 0..20) {
-                        getBitmapDescriptor(tint, scale, 255, highlight, fault)
+                for (multi in listOf(false, true)) {
+                    for (tint in tints) {
+                        for (scale in 0..20) {
+                            getBitmapDescriptor(tint, scale, 255, highlight, fault, multi)
+                        }
                     }
                 }
             }
@@ -86,9 +91,10 @@ class ChargerIconGenerator(val context: Context, val factory: BitmapDescriptorFa
         scale: Int = 20,
         alpha: Int = 255,
         highlight: Boolean = false,
-        fault: Boolean = false
+        fault: Boolean = false,
+        multi: Boolean = false
     ): BitmapDescriptor? {
-        val data = BitmapData(tint, scale, alpha, highlight, fault)
+        val data = BitmapData(tint, scale, alpha, highlight, fault, multi)
         val cachedImg = cache[data]
         return if (cachedImg != null) {
             cachedImg
@@ -101,7 +107,8 @@ class ChargerIconGenerator(val context: Context, val factory: BitmapDescriptorFa
     }
 
     private fun generateBitmap(data: BitmapData): Bitmap {
-        val vd: Drawable = context.getDrawable(icon)!!
+        val icon = if (data.multi) multiIcon else icon
+        val vd: Drawable = ContextCompat.getDrawable(context, icon)!!
 
         DrawableCompat.setTint(vd, ContextCompat.getColor(context, data.tint));
         DrawableCompat.setTintMode(vd, PorterDuff.Mode.MULTIPLY);
@@ -132,7 +139,8 @@ class ChargerIconGenerator(val context: Context, val factory: BitmapDescriptorFa
         vd.draw(canvas)
 
         if (data.highlight) {
-            val highlightDrawable = context.getDrawable(highlightIcon)!!
+            val hIcon = if (data.multi) highlightIconMulti else highlightIcon
+            val highlightDrawable = ContextCompat.getDrawable(context, hIcon)!!
             highlightDrawable.setBounds(
                 leftPadding.toInt(), topPadding.toInt(),
                 leftPadding.toInt() + vd.intrinsicWidth,
@@ -143,7 +151,7 @@ class ChargerIconGenerator(val context: Context, val factory: BitmapDescriptorFa
         }
 
         if (data.fault) {
-            val faultDrawable = context.getDrawable(faultIcon)!!
+            val faultDrawable = ContextCompat.getDrawable(context, faultIcon)!!
             val faultSize = 0.75
             val faultShift = 0.25
             val base = vd.intrinsicWidth

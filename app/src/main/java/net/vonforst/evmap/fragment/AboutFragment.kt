@@ -59,6 +59,14 @@ class AboutFragment : PreferenceFragmentCompat() {
                 findNavController().navigate(R.id.action_about_to_donateFragment)
                 true
             }
+            "twitter" -> {
+                (activity as? MapsActivity)?.openUrl(getString(R.string.twitter_url))
+                true
+            }
+            "goingelectric" -> {
+                (activity as? MapsActivity)?.openUrl(getString(R.string.goingelectric_forum_url))
+                true
+            }
             else -> super.onPreferenceTreeClick(preference)
         }
     }

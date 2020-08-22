@@ -102,6 +102,9 @@
     <string name="charge_cards">Payment methods</string>
     <string name="and_n_others">and %d others</string>
     <string name="pref_map_provider">Map provider</string>
+    <string name="twitter">Twitter</string>
+    <string name="goingelectric_forum">Forum thread at GoingElectric.de</string>
+    <string name="contact">Contact</string>
     <plurals name="charge_cards_compatible_num">
         <item quantity="one">%d compatible payment method</item>
         <item quantity="other">%d compatible payment methods</item>

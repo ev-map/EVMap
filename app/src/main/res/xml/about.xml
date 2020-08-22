@@ -21,6 +21,18 @@
         <Preference
             android:key="donate"
             android:title="@string/donate" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/contact">
+
+        <Preference
+            android:key="twitter"
+            android:title="@string/twitter"
+            android:summary="@string/twitter_handle" />
+
+        <Preference
+            android:key="goingelectric"
+            android:title="@string/goingelectric_forum" />
 
     </PreferenceCategory>
 

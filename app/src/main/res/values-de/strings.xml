@@ -103,6 +103,9 @@
     <string name="charge_cards">Ladetarife</string>
     <string name="and_n_others">und %d weitere</string>
     <string name="pref_map_provider">Kartenanbieter</string>
+    <string name="twitter">Twitter</string>
+    <string name="goingelectric_forum">Forenthread bei GoingElectric.de</string>
+    <string name="contact">Kontakt</string>
     <plurals name="charge_cards_compatible_num">
         <item quantity="one">%d kompatibler Ladetarif</item>
         <item quantity="other">%d kompatible Ladetarife</item>

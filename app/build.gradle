@@ -78,7 +78,7 @@ android {
             variant.resValue "string", "goingelectric_key", goingelectricKey
         }
         def googleMapsKey = env.GOOGLE_MAPS_API_KEY ?: project.findProperty("GOOGLE_MAPS_API_KEY")
-        if (googleMapsKey != null) {
+        if (googleMapsKey != null && variant.flavorName == 'google') {
             variant.resValue "string", "google_maps_key", googleMapsKey
         }
         def mapboxKey = env.MAPBOX_API_KEY ?: project.findProperty("MAPBOX_API_KEY")

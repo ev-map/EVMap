@@ -238,32 +238,30 @@ sealed class FilterValue : BaseObservable(), Equatable {
 }
 
 @Entity(
-    foreignKeys = arrayOf(
-        ForeignKey(
-            entity = FilterProfile::class,
-            parentColumns = arrayOf("id"),
-            childColumns = arrayOf("profile"),
-            onDelete = CASCADE
-        )
-    )
+    foreignKeys = [ForeignKey(
+        entity = FilterProfile::class,
+        parentColumns = arrayOf("id"),
+        childColumns = arrayOf("profile"),
+        onDelete = CASCADE
+    )],
+    primaryKeys = ["key", "profile"]
 )
 data class BooleanFilterValue(
-    @PrimaryKey override val key: String,
+    override val key: String,
     var value: Boolean
 ) : FilterValue()
 
 @Entity(
-    foreignKeys = arrayOf(
-        ForeignKey(
-            entity = FilterProfile::class,
-            parentColumns = arrayOf("id"),
-            childColumns = arrayOf("profile"),
-            onDelete = CASCADE
-        )
-    )
+    foreignKeys = [ForeignKey(
+        entity = FilterProfile::class,
+        parentColumns = arrayOf("id"),
+        childColumns = arrayOf("profile"),
+        onDelete = CASCADE
+    )],
+    primaryKeys = ["key", "profile"]
 )
 data class MultipleChoiceFilterValue(
-    @PrimaryKey override val key: String,
+    override val key: String,
     var values: MutableSet<String>,
     var all: Boolean
 ) : FilterValue() {
@@ -287,17 +285,16 @@ data class MultipleChoiceFilterValue(
 }
 
 @Entity(
-    foreignKeys = arrayOf(
-        ForeignKey(
-            entity = FilterProfile::class,
-            parentColumns = arrayOf("id"),
-            childColumns = arrayOf("profile"),
-            onDelete = CASCADE
-        )
-    )
+    foreignKeys = [ForeignKey(
+        entity = FilterProfile::class,
+        parentColumns = arrayOf("id"),
+        childColumns = arrayOf("profile"),
+        onDelete = CASCADE
+    )],
+    primaryKeys = ["key", "profile"]
 )
 data class SliderFilterValue(
-    @PrimaryKey override val key: String,
+    override val key: String,
     var value: Int
 ) : FilterValue()
 

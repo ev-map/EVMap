@@ -9,7 +9,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.ForeignKey.CASCADE
-import androidx.room.PrimaryKey
 import net.vonforst.evmap.R
 import net.vonforst.evmap.adapter.Equatable
 import net.vonforst.evmap.api.goingelectric.ChargeCard
@@ -192,6 +191,10 @@ class FilterViewModel(application: Application, geApiKey: String) :
         filtersWithValue.value?.forEach {
             db.filterValueDao().insert(it.value)
         }
+    }
+
+    suspend fun saveAsProfile(name: String) {
+
     }
 }
 

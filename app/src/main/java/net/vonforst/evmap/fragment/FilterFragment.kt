@@ -2,6 +2,8 @@ package net.vonforst.evmap.fragment
 
 import android.os.Bundle
 import android.view.*
+import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
@@ -86,6 +88,21 @@ class FilterFragment : Fragment() {
                 true
             }
             R.id.menu_save_profile -> {
+                val input = EditText(requireContext());
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Save as profile")
+                    .setMessage("Enter the name of the filter profile")
+                    .setView(input)
+                    .setPositiveButton(R.string.ok) { di, button ->
+                        lifecycleScope.launch {
+                            vm.saveAsProfile(input.text.toString())
+                            findNavController().popBackStack()
+                        }
+                    }
+                    .setNegativeButton(R.string.cancel) { di, button ->
+
+                    }.show()
+
                 // TODO: implement
                 true
             }

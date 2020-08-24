@@ -63,4 +63,7 @@
         android:name="net.vonforst.evmap.fragment.DonateFragment"
         android:label="@string/donate"
         tools:layout="@layout/fragment_donate" />
+    <chrome
+        android:id="@+id/report_new_charger"
+        app:url="@string/report_new_charger_url" />
 </navigation>

@@ -106,6 +106,7 @@
     <string name="twitter">Twitter</string>
     <string name="goingelectric_forum">Forenthread bei GoingElectric.de</string>
     <string name="contact">Kontakt</string>
+    <string name="menu_report_new_charger">Ladesäule melden</string>
     <plurals name="charge_cards_compatible_num">
         <item quantity="one">%d kompatibler Ladetarif</item>
         <item quantity="other">%d kompatible Ladetarife</item>

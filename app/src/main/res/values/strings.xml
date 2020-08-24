@@ -105,6 +105,7 @@
     <string name="twitter">Twitter</string>
     <string name="goingelectric_forum">Forum thread at GoingElectric.de</string>
     <string name="contact">Contact</string>
+    <string name="menu_report_new_charger">Report new charger</string>
     <plurals name="charge_cards_compatible_num">
         <item quantity="one">%d compatible payment method</item>
         <item quantity="other">%d compatible payment methods</item>

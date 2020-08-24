@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/nav_host_fragment"
-        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:name="net.vonforst.evmap.navigation.NavHostFragment"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
         android:fitsSystemWindows="true"

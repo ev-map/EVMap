@@ -14,6 +14,14 @@
             android:title="@string/menu_favs" />
     </group>
     <group
+        android:id="@+id/nav_group_links"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/report_new_charger"
+            android:icon="@drawable/ic_add"
+            android:title="@string/menu_report_new_charger" />
+    </group>
+    <group
         android:id="@+id/nav_group_settings"
         android:checkableBehavior="single">
         <item

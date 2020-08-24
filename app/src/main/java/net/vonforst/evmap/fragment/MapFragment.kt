@@ -169,6 +169,18 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             binding.detailAppBar.toolbar.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 topMargin = insets.systemWindowInsetTop
             }
+
+            // margin of layers button
+            val density = resources.displayMetrics.density
+            // status bar height + toolbar height + margin
+            val margin =
+                insets.systemWindowInsetTop + (48 * density).toInt() + (24 * density).toInt()
+            binding.fabLayers.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                topMargin = margin
+            }
+            binding.layersSheet.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                topMargin = margin
+            }
             insets
         }
 

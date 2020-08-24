@@ -1,0 +1,6 @@
+Improvements:
+- Sorting of filter dialogs is case-insensitive
+- Vertical positions of map markers fixed
+- New icon for chargers with more than one connector (for fast chargers: more than one fast-charging connector)
+- "About EVMap": Added links to Twitter account @ev_map and GoingElectric.de forum thread
+- Added button "rerport new charger" in main menu

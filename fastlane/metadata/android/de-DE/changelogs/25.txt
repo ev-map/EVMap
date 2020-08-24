@@ -1,0 +1,6 @@
+Verbesserungen:
+- Sortierung in Filterdialogen unabhängig von Groß- und Kleinschreibung
+- Vertikale Position der Marker auf der Karte korrigiert
+- Neues Icon für Ladestationen mit mehr als einem Anschluss (bei Schnelladern: mehr als ein schnelladefähiger Anschluss)
+- "Über EVMap": Links zu Twitter-Account @ev_map und Thread im GoingElectric-Forum hinzugefügt
+- Button "Ladesäule melden" im Hauptmenü hinzugefügt

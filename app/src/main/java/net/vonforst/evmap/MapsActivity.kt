@@ -53,7 +53,8 @@ class MapsActivity : AppCompatActivity() {
             setOf(
                 R.id.map,
                 R.id.favs,
-                R.id.about
+                R.id.about,
+                R.id.settings
             ),
             findViewById<DrawerLayout>(R.id.drawer_layout)
         )

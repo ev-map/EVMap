@@ -1,0 +1,2 @@
+Crash fixed
+Fix wrong position of layers button on devices with camera cutout

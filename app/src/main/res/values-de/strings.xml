@@ -62,6 +62,7 @@
     <string name="plug_supercharger">Tesla Supercharger</string>
     <string name="plug_cee_blau">CEE Blau</string>
     <string name="plug_cee_rot">CEE Rot</string>
+    <string name="plug_roadster_hpc">Tesla Roadster (2008) HPC</string>
     <string name="all">alle</string>
     <string name="none">keine</string>
     <string name="show_more">mehr…</string>

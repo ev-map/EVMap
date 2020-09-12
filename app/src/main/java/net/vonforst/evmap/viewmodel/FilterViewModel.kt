@@ -40,7 +40,8 @@ internal fun getFilters(
             Chargepoint.CHADEMO to application.getString(R.string.plug_chademo),
             Chargepoint.SUPERCHARGER to application.getString(R.string.plug_supercharger),
             Chargepoint.CEE_BLAU to application.getString(R.string.plug_cee_blau),
-            Chargepoint.CEE_ROT to application.getString(R.string.plug_cee_rot)
+            Chargepoint.CEE_ROT to application.getString(R.string.plug_cee_rot),
+            Chargepoint.TESLA_ROADSTER_HPC to application.getString(R.string.plug_roadster_hpc)
         )
         listOf(plugs, networks, chargeCards).forEach { source ->
             addSource(source) { _ ->

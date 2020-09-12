@@ -79,8 +79,11 @@ fun buildDetails(
         if (loc.openinghours != null && !loc.openinghours.isEmpty) DetailsAdapter.Detail(
             R.drawable.ic_hours,
             R.string.hours,
-            loc.openinghours.getStatusText(ctx),
-            loc.openinghours.description,
+            if (loc.openinghours.days != null)
+                loc.openinghours.getStatusText(ctx)
+            else
+                loc.openinghours.description ?: "",
+            if (loc.openinghours.days != null) loc.openinghours.description else null,
             hoursDays = loc.openinghours.days
         ) else null,
         if (loc.cost != null) DetailsAdapter.Detail(

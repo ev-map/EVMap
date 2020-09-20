@@ -24,18 +24,18 @@ class GoingElectricApiTest {
 
         webServer.dispatcher = object : Dispatcher() {
             override fun dispatch(request: RecordedRequest): MockResponse {
-                val segments = request.requestUrl.pathSegments
+                val segments = request.requestUrl!!.pathSegments
                 val urlHead = segments.subList(0, 2).joinToString("/")
                 when (urlHead) {
                     "ge/chargepoints" -> {
-                        val id = request.requestUrl.queryParameter("ge_id")
+                        val id = request.requestUrl!!.queryParameter("ge_id")
                         if (id != null) {
                             return okResponse("/chargers/$id.json")
                         } else {
                             val freeparking =
-                                request.requestUrl.queryParameter("freeparking")!!.toBoolean()
+                                request.requestUrl!!.queryParameter("freeparking")!!.toBoolean()
                             val freecharging =
-                                request.requestUrl.queryParameter("freecharging")!!.toBoolean()
+                                request.requestUrl!!.queryParameter("freecharging")!!.toBoolean()
                             return if (freeparking && freecharging) {
                                 okResponse("/chargers/list-empty.json")
                             } else if (freecharging) {

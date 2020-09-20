@@ -169,7 +169,7 @@ dependencies {
     implementation 'com.facebook.stetho:stetho:1.5.1'
     implementation 'com.facebook.stetho:stetho-okhttp3:1.5.1'
     testImplementation 'junit:junit:4.13'
-    testImplementation "com.squareup.okhttp3:mockwebserver:3.14.7"
+    testImplementation "com.squareup.okhttp3:mockwebserver:4.9.0"
     //noinspection GradleDependency
     testImplementation 'org.json:json:20080701'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'

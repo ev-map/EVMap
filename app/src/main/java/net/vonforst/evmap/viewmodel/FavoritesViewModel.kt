@@ -71,7 +71,7 @@ class FavoritesViewModel(application: Application, geApiKey: String) :
                                 ) / 1000
                             }
                         })
-                }
+                }?.sortedBy { it.distance }
             }
             addSource(favorites, callback)
             addSource(location, callback)

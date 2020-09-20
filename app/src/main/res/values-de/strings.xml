@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">EV Map</string>
-    <string name="title_activity_maps">EV Map</string>
+    <string name="app_name">EVMap</string>
+    <string name="title_activity_maps">EVMap</string>
     <string name="connectors">Anschlüsse</string>
     <string name="no_maps_app_found">Keine Navigations-App gefunden</string>
     <string name="address">Adresse</string>

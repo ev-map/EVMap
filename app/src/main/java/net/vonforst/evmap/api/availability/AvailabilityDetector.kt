@@ -7,10 +7,13 @@ import net.vonforst.evmap.api.await
 import net.vonforst.evmap.api.goingelectric.ChargeLocation
 import net.vonforst.evmap.api.goingelectric.Chargepoint
 import net.vonforst.evmap.viewmodel.Resource
+import okhttp3.JavaNetCookieJar
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import retrofit2.HttpException
 import java.io.IOException
+import java.net.CookieManager
+import java.net.CookiePolicy
 import java.util.concurrent.TimeUnit
 
 interface AvailabilityDetector {
@@ -115,10 +118,15 @@ enum class ChargepointStatus {
 
 class AvailabilityDetectorException(message: String) : Exception(message)
 
+private val cookieManager = CookieManager().apply {
+    setCookiePolicy(CookiePolicy.ACCEPT_ALL)
+}
+
 private val okhttp = OkHttpClient.Builder()
     .addNetworkInterceptor(StethoInterceptor())
     .readTimeout(10, TimeUnit.SECONDS)
     .connectTimeout(10, TimeUnit.SECONDS)
+    .cookieJar(JavaNetCookieJar(cookieManager))
     .build()
 val availabilityDetectors = listOf(
     NewMotionAvailabilityDetector(okhttp)

@@ -116,6 +116,7 @@ dependencies {
     implementation 'com.airbnb.android:lottie:3.4.0'
     implementation 'io.michaelrocks:bimap:1.0.2'
     implementation 'com.mapzen.android:lost:3.0.2'
+    implementation 'com.google.guava:guava:29.0-android'
 
     // AnyMaps
     def anyMapsVersion = '894f6d62ac'

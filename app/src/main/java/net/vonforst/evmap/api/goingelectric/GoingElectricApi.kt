@@ -57,7 +57,7 @@ interface GoingElectricApi {
                 addInterceptor { chain ->
                     // add API key to every request
                     var original = chain.request()
-                    val url = original.url().newBuilder().addQueryParameter("key", apikey).build()
+                    val url = original.url.newBuilder().addQueryParameter("key", apikey).build()
                     original = original.newBuilder().url(url).build()
                     chain.proceed(original)
                 }

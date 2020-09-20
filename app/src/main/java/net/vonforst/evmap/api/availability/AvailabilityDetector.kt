@@ -24,9 +24,9 @@ abstract class BaseAvailabilityDetector(private val client: OkHttpClient) : Avai
         val request = Request.Builder().url(url).build()
         val response = client.newCall(request).await()
 
-        if (!response.isSuccessful) throw IOException(response.message())
+        if (!response.isSuccessful) throw IOException(response.message)
 
-        val str = response.body()!!.string()
+        val str = response.body!!.string()
         return str
     }
 

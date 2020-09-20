@@ -33,7 +33,7 @@ class NewMotionAvailabilityDetectorTest {
             val notFoundResponse = MockResponse().setResponseCode(HttpURLConnection.HTTP_NOT_FOUND)
 
             override fun dispatch(request: RecordedRequest): MockResponse {
-                val segments = request.requestUrl.pathSegments()
+                val segments = request.requestUrl.pathSegments
                 val urlHead = segments.subList(0, 2).joinToString("/")
                 when (urlHead) {
                     "ge/chargepoints" -> {

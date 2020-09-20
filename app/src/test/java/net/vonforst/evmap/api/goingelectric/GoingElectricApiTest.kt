@@ -24,7 +24,7 @@ class GoingElectricApiTest {
 
         webServer.dispatcher = object : Dispatcher() {
             override fun dispatch(request: RecordedRequest): MockResponse {
-                val segments = request.requestUrl.pathSegments()
+                val segments = request.requestUrl.pathSegments
                 val urlHead = segments.subList(0, 2).joinToString("/")
                 when (urlHead) {
                     "ge/chargepoints" -> {

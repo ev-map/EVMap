@@ -16,9 +16,30 @@ import retrofit2.http.Query
 interface GoingElectricApi {
     @GET("chargepoints/")
     suspend fun getChargepoints(
-        @Query("sw_lat") swlat: Double, @Query("sw_lng") sw_lng: Double,
+        @Query("sw_lat") sw_lat: Double, @Query("sw_lng") sw_lng: Double,
         @Query("ne_lat") ne_lat: Double, @Query("ne_lng") ne_lng: Double,
         @Query("zoom") zoom: Float,
+        @Query("clustering") clustering: Boolean = false,
+        @Query("cluster_distance") clusterDistance: Int? = null,
+        @Query("freecharging") freecharging: Boolean = false,
+        @Query("freeparking") freeparking: Boolean = false,
+        @Query("min_power") minPower: Int = 0,
+        @Query("plugs") plugs: String? = null,
+        @Query("chargecards") chargecards: String? = null,
+        @Query("networks") networks: String? = null,
+        @Query("categories") categories: String? = null,
+        @Query("startkey") startkey: Int? = null,
+        @Query("open_twentyfourseven") open247: Boolean = false,
+        @Query("barrierfree") barrierfree: Boolean = false,
+        @Query("exclude_faults") excludeFaults: Boolean = false
+    ): Response<ChargepointList>
+
+    @GET("chargepoints/")
+    suspend fun getChargepointsRadius(
+        @Query("lat") lat: Double, @Query("lng") lng: Double,
+        @Query("radius") radius: Int,
+        @Query("zoom") zoom: Float,
+        @Query("orderby") orderby: String = "distance",
         @Query("clustering") clustering: Boolean = false,
         @Query("cluster_distance") clusterDistance: Int? = null,
         @Query("freecharging") freecharging: Boolean = false,

@@ -38,27 +38,3 @@ suspend fun Call.await(): Response {
         }
     }
 }
-
-const val earthRadiusKm: Double = 6372.8
-
-/**
- * Calculates the distance between two points on Earth in meters.
- * Latitude and longitude should be given in degrees.
- */
-fun distanceBetween(
-    startLatitude: Double, startLongitude: Double,
-    endLatitude: Double, endLongitude: Double
-): Double {
-    // see https://rosettacode.org/wiki/Haversine_formula#Java
-    val dLat = Math.toRadians(endLatitude - startLatitude);
-    val dLon = Math.toRadians(endLongitude - startLongitude);
-    val originLat = Math.toRadians(startLatitude);
-    val destinationLat = Math.toRadians(endLatitude);
-
-    val a = Math.pow(Math.sin(dLat / 2), 2.toDouble()) + Math.pow(
-        Math.sin(dLon / 2),
-        2.toDouble()
-    ) * Math.cos(originLat) * Math.cos(destinationLat);
-    val c = 2 * Math.asin(Math.sqrt(a));
-    return earthRadiusKm * c * 1000;
-}

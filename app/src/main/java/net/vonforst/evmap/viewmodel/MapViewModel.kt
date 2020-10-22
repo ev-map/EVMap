@@ -9,10 +9,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import net.vonforst.evmap.api.availability.ChargeLocationStatus
 import net.vonforst.evmap.api.availability.getAvailability
-import net.vonforst.evmap.api.distanceBetween
 import net.vonforst.evmap.api.goingelectric.*
 import net.vonforst.evmap.storage.*
 import net.vonforst.evmap.ui.cluster
+import net.vonforst.evmap.utils.distanceBetween
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

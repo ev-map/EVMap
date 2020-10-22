@@ -119,7 +119,7 @@ dependencies {
     implementation 'com.google.guava:guava:29.0-android'
 
     // AnyMaps
-    def anyMapsVersion = '894f6d62ac'
+    def anyMapsVersion = '1bc0174e7c'
     implementation "com.github.johan12345.AnyMaps:anymaps-base:$anyMapsVersion"
     googleImplementation "com.github.johan12345.AnyMaps:anymaps-google:$anyMapsVersion"
     implementation "com.github.johan12345.AnyMaps:anymaps-mapbox:$anyMapsVersion"

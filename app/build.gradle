@@ -117,9 +117,10 @@ dependencies {
     implementation 'io.michaelrocks:bimap:1.0.2'
     implementation 'com.mapzen.android:lost:3.0.2'
     implementation 'com.google.guava:guava:29.0-android'
+    implementation 'com.github.pengrad:mapscaleview:1.6.0'
 
     // AnyMaps
-    def anyMapsVersion = '1bc0174e7c'
+    def anyMapsVersion = '631708a156'
     implementation "com.github.johan12345.AnyMaps:anymaps-base:$anyMapsVersion"
     googleImplementation "com.github.johan12345.AnyMaps:anymaps-google:$anyMapsVersion"
     implementation "com.github.johan12345.AnyMaps:anymaps-mapbox:$anyMapsVersion"

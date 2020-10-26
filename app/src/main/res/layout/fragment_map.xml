@@ -25,6 +25,20 @@
             android:layout_height="match_parent" />
 
         <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_anchor="@id/fab_locate"
+            app:layout_anchorGravity="start|center_vertical"
+            android:layout_gravity="start|center_vertical">
+
+            <com.github.pengrad.mapscaleview.MapScaleView
+                android:id="@+id/scaleView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp" />
+        </FrameLayout>
+
+        <FrameLayout
             android:id="@+id/toolbar_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

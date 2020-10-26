@@ -607,6 +607,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             vm.mapPosition.value = MapPosition(
                 map.projection.visibleRegion.latLngBounds, map.cameraPosition.zoom
             )
+            scaleView.update(map.cameraPosition.zoom, map.cameraPosition.target.latitude)
+        }
+        map.setOnCameraMoveListener {
+            scaleView.update(map.cameraPosition.zoom, map.cameraPosition.target.latitude)
         }
         map.setOnMarkerClickListener { marker ->
             when (marker) {

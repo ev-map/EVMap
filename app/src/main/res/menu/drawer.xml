@@ -15,7 +15,7 @@
     </group>
     <group
         android:id="@+id/nav_group_links"
-        android:checkableBehavior="single">
+        android:checkableBehavior="none">
         <item
             android:id="@+id/report_new_charger"
             android:icon="@drawable/ic_add"

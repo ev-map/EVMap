@@ -26,6 +26,10 @@
             type="Resource&lt;ChargeLocation&gt;" />
 
         <variable
+            name="distance"
+            type="Double" />
+
+        <variable
             name="availability"
             type="Resource&lt;ChargeLocationStatus&gt;" />
 
@@ -81,14 +85,30 @@
                 tools:text="Beispielstraße 10, 12345 Berlin" />
 
             <TextView
+                android:id="@+id/textView27"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:ellipsize="end"
+                android:gravity="end"
+                android:maxLines="1"
+                android:minWidth="50dp"
+                android:text="@{@string/distance_format(distance)}"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+                app:layout_constraintEnd_toStartOf="@+id/guideline2"
+                app:layout_constraintTop_toTopOf="@+id/textView3"
+                tools:text="10 km" />
+
+            <TextView
                 android:id="@+id/textView3"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:text="@{charger.data.formatChargepoints()}"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-                app:layout_constraintEnd_toStartOf="@+id/guideline2"
+                app:layout_constraintEnd_toStartOf="@+id/textView27"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/textView2"
                 tools:text="2x Typ 2 22 kW" />

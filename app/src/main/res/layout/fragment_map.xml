@@ -132,7 +132,7 @@
             app:behavior_peekHeight="@dimen/peek_height"
             app:bottomsheetbehavior_defaultState="stateHidden"
             app:layout_behavior="@string/BottomSheetBehaviorGoogleMapsLike"
-            tools:bottomsheetbehavior_defaultState="stateExpanded">
+            tools:bottomsheetbehavior_defaultState="stateCollapsed">
 
             <include
                 android:id="@+id/detail_view"
@@ -140,7 +140,8 @@
                 app:charger="@{vm.charger}"
                 app:availability="@{vm.availability}"
                 app:chargeCards="@{vm.chargeCardMap}"
-                app:filteredChargeCards="@{vm.filteredChargeCards}" />
+                app:filteredChargeCards="@{vm.filteredChargeCards}"
+                app:distance="@{vm.chargerDistance}" />
 
         </androidx.core.widget.NestedScrollView>
 

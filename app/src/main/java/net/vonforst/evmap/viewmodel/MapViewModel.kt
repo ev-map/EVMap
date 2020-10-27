@@ -10,6 +10,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import net.vonforst.evmap.api.availability.ChargeLocationStatus
 import net.vonforst.evmap.api.availability.getAvailability
+import net.vonforst.evmap.api.distanceBetween
 import net.vonforst.evmap.api.goingelectric.*
 import net.vonforst.evmap.storage.*
 import net.vonforst.evmap.ui.cluster
@@ -127,6 +128,28 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
                 }
             }
         }
+    }
+    val chargerDistance: MediatorLiveData<Double> by lazy {
+        MediatorLiveData<Double>().apply {
+            val callback = { _: Any? ->
+                val loc = location.value
+                val charger = chargerSparse.value
+                value = if (loc != null && charger != null && myLocationEnabled.value == true) {
+                    distanceBetween(
+                        loc.latitude,
+                        loc.longitude,
+                        charger.coordinates.lat,
+                        charger.coordinates.lng
+                    ) / 1000
+                } else null
+            }
+            addSource(chargerSparse, callback)
+            addSource(location, callback)
+            addSource(myLocationEnabled, callback)
+        }
+    }
+    val location: MutableLiveData<LatLng> by lazy {
+        MutableLiveData<LatLng>()
     }
     val availability: MediatorLiveData<Resource<ChargeLocationStatus>> by lazy {
         MediatorLiveData<Resource<ChargeLocationStatus>>().apply {

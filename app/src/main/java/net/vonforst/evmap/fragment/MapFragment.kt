@@ -723,6 +723,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         val location = LocationServices.FusedLocationApi.getLastLocation(locationClient)
         if (location != null) {
             val latLng = LatLng(location.latitude, location.longitude)
+            vm.location.value = latLng
             val camUpdate = map.cameraUpdateFactory.newLatLngZoom(latLng, 13f)
             if (animate) {
                 map.animateCamera(camUpdate)

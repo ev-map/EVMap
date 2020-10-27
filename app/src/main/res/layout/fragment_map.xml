@@ -132,7 +132,7 @@
             app:behavior_peekHeight="@dimen/peek_height"
             app:bottomsheetbehavior_defaultState="stateHidden"
             app:layout_behavior="@string/BottomSheetBehaviorGoogleMapsLike"
-            tools:bottomsheetbehavior_defaultState="stateHidden">
+            tools:bottomsheetbehavior_defaultState="stateExpanded">
 
             <include
                 android:id="@+id/detail_view"

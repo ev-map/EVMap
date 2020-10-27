@@ -3,6 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/menu_edit"
+        android:icon="@drawable/ic_edit"
+        android:title="@string/edit_on_goingelectric"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/menu_share"
         android:icon="@drawable/ic_share"
         android:title="@string/share"

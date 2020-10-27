@@ -281,6 +281,13 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                     }
                     true
                 }
+                R.id.menu_edit -> {
+                    val charger = vm.charger.value?.data
+                    if (charger != null) {
+                        (activity as? MapsActivity)?.openUrl("https:${charger.url}edit/")
+                    }
+                    true
+                }
                 else -> false
             }
         }

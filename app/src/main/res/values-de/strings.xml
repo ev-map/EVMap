@@ -108,6 +108,7 @@
     <string name="goingelectric_forum">Forenthread bei GoingElectric.de</string>
     <string name="contact">Kontakt</string>
     <string name="menu_report_new_charger">Ladesäule melden</string>
+    <string name="edit_on_goingelectric">bei GoingElectric.de bearbeiten</string>
     <plurals name="charge_cards_compatible_num">
         <item quantity="one">%d kompatibler Ladetarif</item>
         <item quantity="other">%d kompatible Ladetarife</item>

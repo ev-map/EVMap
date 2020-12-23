@@ -51,7 +51,6 @@ import com.mapzen.android.lost.api.LocationServices
 import com.mapzen.android.lost.api.LostApiClient
 import io.michaelrocks.bimap.HashBiMap
 import io.michaelrocks.bimap.MutableBiMap
-import kotlinx.android.synthetic.main.fragment_map.*
 import net.vonforst.evmap.*
 import net.vonforst.evmap.adapter.ConnectorAdapter
 import net.vonforst.evmap.adapter.DetailsAdapter
@@ -614,10 +613,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             vm.mapPosition.value = MapPosition(
                 map.projection.visibleRegion.latLngBounds, map.cameraPosition.zoom
             )
-            scaleView.update(map.cameraPosition.zoom, map.cameraPosition.target.latitude)
+            binding.scaleView.update(map.cameraPosition.zoom, map.cameraPosition.target.latitude)
         }
         map.setOnCameraMoveListener {
-            scaleView.update(map.cameraPosition.zoom, map.cameraPosition.target.latitude)
+            binding.scaleView.update(map.cameraPosition.zoom, map.cameraPosition.target.latitude)
         }
         map.setOnMarkerClickListener { marker ->
             when (marker) {
@@ -908,7 +907,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
     }
 
     override fun getRootView(): View {
-        return root
+        return binding.root
     }
 
     private val exitElementCallback: SharedElementCallback = object : SharedElementCallback() {

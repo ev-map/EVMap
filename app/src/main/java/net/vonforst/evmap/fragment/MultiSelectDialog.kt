@@ -7,10 +7,10 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.android.synthetic.main.dialog_multi_select.*
 import net.vonforst.evmap.R
 import net.vonforst.evmap.adapter.DataBindingAdapter
 import net.vonforst.evmap.adapter.Equatable
+import net.vonforst.evmap.databinding.DialogMultiSelectBinding
 import java.util.*
 import kotlin.collections.HashMap
 import kotlin.collections.HashSet
@@ -37,13 +37,15 @@ class MultiSelectDialog : AppCompatDialogFragment() {
     var okListener: ((Set<String>) -> Unit)? = null
     var cancelListener: (() -> Unit)? = null
     private lateinit var items: List<MultiSelectItem>
+    private lateinit var binding: DialogMultiSelectBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.dialog_multi_select, container)
+    ): View {
+        binding = DialogMultiSelectBinding.inflate(inflater, container, true)
+        return binding.root
     }
 
     override fun onStart() {
@@ -65,10 +67,10 @@ class MultiSelectDialog : AppCompatDialogFragment() {
             args.getSerializable("commonChoices") as HashSet<String>
         } else null
 
-        dialogTitle.text = title
+        binding.dialogTitle.text = title
         val adapter = Adapter()
-        list.adapter = adapter
-        list.layoutManager = LinearLayoutManager(view.context)
+        binding.list.adapter = adapter
+        binding.list.layoutManager = LinearLayoutManager(view.context)
 
         items = data.entries.toList()
             .sortedBy { it.value.toLowerCase(Locale.getDefault()) }
@@ -76,30 +78,30 @@ class MultiSelectDialog : AppCompatDialogFragment() {
             .map { MultiSelectItem(it.key, it.value, it.key in selected) }
         adapter.submitList(items)
 
-        etSearch.doAfterTextChanged { text ->
+        binding.etSearch.doAfterTextChanged { text ->
             adapter.submitList(search(items, text.toString()))
         }
 
-        btnCancel.setOnClickListener {
+        binding.btnCancel.setOnClickListener {
             cancelListener?.let { listener ->
                 listener()
             }
             dismiss()
         }
-        btnOK.setOnClickListener {
+        binding.btnOK.setOnClickListener {
             okListener?.let { listener ->
                 val result = items.filter { it.selected }.map { it.key }.toSet()
                 listener(result)
             }
             dismiss()
         }
-        btnAll.setOnClickListener {
+        binding.btnAll.setOnClickListener {
             items = items.map { MultiSelectItem(it.key, it.name, true) }
-            adapter.submitList(search(items, etSearch.text.toString()))
+            adapter.submitList(search(items, binding.etSearch.text.toString()))
         }
-        btnNone.setOnClickListener {
+        binding.btnNone.setOnClickListener {
             items = items.map { MultiSelectItem(it.key, it.name, false) }
-            adapter.submitList(search(items, etSearch.text.toString()))
+            adapter.submitList(search(items, binding.etSearch.text.toString()))
         }
     }
 }

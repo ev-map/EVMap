@@ -10,7 +10,10 @@ import java.io.IOException
 import kotlin.coroutines.resumeWithException
 
 operator fun <T> JSONArray.iterator(): Iterator<T> =
-    (0 until length()).asSequence().map { get(it) as T }.iterator()
+    (0 until length()).asSequence().map {
+        @Suppress("UNCHECKED_CAST")
+        get(it) as T
+    }.iterator()
 
 @ExperimentalCoroutinesApi
 suspend fun Call.await(): Response {

@@ -12,3 +12,4 @@ apikeys.xml
 /app/**/*.apk
 /_img/connectors/*.ai
 api-7125266970515251116-798419-8e2dda660c80.json
+output-metadata.json

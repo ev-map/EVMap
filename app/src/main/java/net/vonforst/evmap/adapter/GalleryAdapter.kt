@@ -37,11 +37,11 @@ class GalleryAdapter(
         val view: ImageView
         if (detailView) {
             view = inflater.inflate(R.layout.gallery_item_fullscreen, parent, false) as ImageView
-            view.setOnTouchListener { view, event ->
+            view.setOnTouchListener { v, event ->
                 var result = true
                 //can scroll horizontally checks if there's still a part of the image
                 //that can be scrolled until you reach the edge
-                if (event.pointerCount >= 2 || view.canScrollHorizontally(1) && view.canScrollHorizontally(
+                if (event.pointerCount >= 2 || v.canScrollHorizontally(1) && v.canScrollHorizontally(
                         -1
                     )
                 ) {

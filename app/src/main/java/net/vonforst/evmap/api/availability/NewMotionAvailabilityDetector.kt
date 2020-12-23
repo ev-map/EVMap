@@ -95,7 +95,7 @@ class NewMotionAvailabilityDetector(client: OkHttpClient, baseUrl: String? = nul
         // find nearest station to this position
         var markers =
             api.getMarkers(lng - coordRange, lng + coordRange, lat - coordRange, lat + coordRange)
-        val nearest = markers.minBy { marker ->
+        val nearest = markers.minByOrNull { marker ->
             distanceBetween(marker.coordinates.latitude, marker.coordinates.longitude, lat, lng)
         } ?: throw AvailabilityDetectorException("no candidates found.")
 

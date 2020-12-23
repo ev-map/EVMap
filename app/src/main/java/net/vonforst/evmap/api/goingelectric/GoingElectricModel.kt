@@ -77,7 +77,7 @@ data class ChargeLocation(
      */
     fun maxPower(connectors: Set<String>? = null): Double {
         return chargepoints.filter { connectors?.contains(it.type) ?: true }
-            .map { it.power }.max() ?: 0.0
+            .map { it.power }.maxOrNull() ?: 0.0
     }
 
     /**

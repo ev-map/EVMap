@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -96,7 +97,11 @@ class MapsActivity : AppCompatActivity() {
 
     fun openUrl(url: String) {
         val intent = CustomTabsIntent.Builder()
-            .setToolbarColor(ContextCompat.getColor(this, R.color.colorPrimary))
+            .setDefaultColorSchemeParams(
+                CustomTabColorSchemeParams.Builder()
+                    .setToolbarColor(ContextCompat.getColor(this, R.color.colorPrimary))
+                    .build()
+            )
             .build()
         intent.launchUrl(this, Uri.parse(url))
     }

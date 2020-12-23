@@ -22,7 +22,7 @@ val powerSteps = listOf(0, 2, 3, 7, 11, 22, 43, 50, 75, 100, 150, 200, 250, 300,
 internal fun mapPower(i: Int) = powerSteps[i]
 internal fun mapPowerInverse(power: Int) = powerSteps
     .mapIndexed { index, v -> abs(v - power) to index }
-    .minBy { it.first }?.second ?: 0
+    .minByOrNull { it.first }?.second ?: 0
 
 internal fun getFilters(
     application: Application,
@@ -109,14 +109,14 @@ internal fun filtersWithValue(
         listOf(filters, filterValues, active).forEach {
             if (it == null) return@forEach
             addSource(it) {
-                val filters = filters.value ?: return@addSource
+                val f = filters.value ?: return@addSource
                 value = if (active != null && !active.value!!) {
-                    filters.map { filter ->
+                    f.map { filter ->
                         FilterWithValue(filter, filter.defaultValue())
                     }
                 } else {
                     val values = filterValues.value ?: return@addSource
-                    filters.map { filter ->
+                    f.map { filter ->
                         val value =
                             values.find { it.key == filter.key } ?: filter.defaultValue()
                         FilterWithValue(filter, filter.valueClass.cast(value))

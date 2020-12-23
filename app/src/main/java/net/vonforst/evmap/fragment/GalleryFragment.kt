@@ -76,7 +76,7 @@ class GalleryFragment : Fragment() {
             GalleryAdapter(requireContext(), detailView = true, pageToLoad = currentPosition) {
                 startPostponedEnterTransition()
             }
-        binding.gallery.setPageTransformer { page, position ->
+        binding.gallery.setPageTransformer { page, _ ->
             val v = page as TouchImageView
             currentPage = v
         }

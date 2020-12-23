@@ -5,6 +5,7 @@ import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.util.AttributeSet
+import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
 import androidx.core.content.withStyledAttributes
@@ -28,7 +29,11 @@ class ChromeCustomTabsNavigator(
         navigatorExtras: Extras?
     ): NavDestination? {
         val intent = CustomTabsIntent.Builder()
-            .setToolbarColor(ContextCompat.getColor(context, R.color.colorPrimary))
+            .setDefaultColorSchemeParams(
+                CustomTabColorSchemeParams.Builder()
+                    .setToolbarColor(ContextCompat.getColor(context, R.color.colorPrimary))
+                    .build()
+            )
             .build()
         intent.launchUrl(context, destination.url!!)
         return null // Do not add to the back stack, managed by Chrome Custom Tabs

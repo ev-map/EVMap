@@ -17,7 +17,7 @@ fun checkPlayServices(activity: Activity): Boolean {
     val resultCode = apiAvailability.isGooglePlayServicesAvailable(activity)
     if (resultCode != ConnectionResult.SUCCESS) {
         if (apiAvailability.isUserResolvableError(resultCode)) {
-            apiAvailability.getErrorDialog(activity, resultCode, request).show()
+            apiAvailability.getErrorDialog(activity, resultCode, request)?.show()
         } else {
             Log.d("EVMap", "This device is not supported.")
         }

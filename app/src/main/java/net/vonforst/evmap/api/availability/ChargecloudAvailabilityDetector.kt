@@ -8,6 +8,7 @@ import okhttp3.OkHttpClient
 import org.json.JSONObject
 import java.io.IOException
 
+@ExperimentalCoroutinesApi
 class ChargecloudAvailabilityDetector(
     client: OkHttpClient,
     private val operatorId: String

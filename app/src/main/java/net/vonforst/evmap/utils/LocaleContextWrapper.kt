@@ -13,8 +13,6 @@ class LocaleContextWrapper(base: Context?) : ContextWrapper(base) {
         fun wrap(context: Context, language: String): ContextWrapper {
             val sysConfig: Configuration = context.applicationContext.resources.configuration
             val appConfig: Configuration = context.resources.configuration
-            var ctx = context
-
 
             if (language == "" || language == "default") {
                 // set default locale
@@ -37,8 +35,7 @@ class LocaleContextWrapper(base: Context?) : ContextWrapper(base) {
                 }
             }
 
-            ctx = context.createConfigurationContext(appConfig)
-            return LocaleContextWrapper(ctx)
+            return LocaleContextWrapper(context.createConfigurationContext(appConfig))
         }
     }
 }

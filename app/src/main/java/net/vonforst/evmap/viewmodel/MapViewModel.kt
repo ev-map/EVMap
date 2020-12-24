@@ -280,6 +280,13 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
         }
         val networks = formatMultipleChoice(networksVal)
 
+        val categoriesVal = getMultipleChoiceValue(filters, "categories")
+        if (categoriesVal.values.isEmpty() && !categoriesVal.all) {
+            // no categories chosen
+            return Triple(Resource.success(emptyList()), filteredConnectors, filteredChargeCards)
+        }
+        val categories = formatMultipleChoice(categoriesVal)
+
         // do not use clustering if filters need to be applied locally.
         val useClustering = zoom < 13
         val geClusteringAvailable = minConnectors <= 1
@@ -308,6 +315,7 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
                     plugs = connectors,
                     chargecards = chargeCards,
                     networks = networks,
+                    categories = categories,
                     startkey = startkey
                 )
                 if (!response.isSuccessful || response.body()!!.status != "ok") {

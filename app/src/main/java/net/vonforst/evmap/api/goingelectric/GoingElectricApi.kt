@@ -27,6 +27,7 @@ interface GoingElectricApi {
         @Query("plugs") plugs: String? = null,
         @Query("chargecards") chargecards: String? = null,
         @Query("networks") networks: String? = null,
+        @Query("categories") categories: String? = null,
         @Query("startkey") startkey: Int? = null,
         @Query("open_twentyfourseven") open247: Boolean = false,
         @Query("barrierfree") barrierfree: Boolean = false,
@@ -46,7 +47,7 @@ interface GoingElectricApi {
     suspend fun getChargeCards(): Response<ChargeCardList>
 
     companion object {
-        private val cacheSize = 10L * 1024 * 1024; // 10MB
+        private val cacheSize = 10L * 1024 * 1024 // 10MB
 
         fun create(
             apikey: String,

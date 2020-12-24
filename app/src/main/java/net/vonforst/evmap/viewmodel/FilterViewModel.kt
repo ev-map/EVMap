@@ -63,6 +63,34 @@ private fun MediatorLiveData<List<Filter<FilterValue>>>.buildFilters(
     }?.toMap() ?: return
     val networkMap = networks.value?.map { it.name to it.name }?.toMap() ?: return
     val chargecardMap = chargeCards.value?.map { it.id.toString() to it.name }?.toMap() ?: return
+    val categoryMap = mapOf(
+        "Autohaus" to application.getString(R.string.category_car_dealership),
+        "Autobahnraststätte" to application.getString(R.string.category_service_on_motorway),
+        "Autohof" to application.getString(R.string.category_service_off_motorway),
+        "Bahnhof" to application.getString(R.string.category_railway_station),
+        "Behörde" to application.getString(R.string.category_public_authorities),
+        "Campingplatz" to application.getString(R.string.category_camping),
+        "Einkaufszentrum" to application.getString(R.string.category_shopping_mall),
+        "Ferienwohnung" to application.getString(R.string.category_holiday_home),
+        "Flughafen" to application.getString(R.string.category_airport),
+        "Freizeitpark" to application.getString(R.string.category_amusement_park),
+        "Hotel" to application.getString(R.string.category_hotel),
+        "Kino" to application.getString(R.string.category_cinema),
+        "Kirche" to application.getString(R.string.category_church),
+        "Krankenhaus" to application.getString(R.string.category_hospital),
+        "Museum" to application.getString(R.string.category_museum),
+        "Parkhaus" to application.getString(R.string.category_parking_multi),
+        "Parkplatz" to application.getString(R.string.category_parking),
+        "Privater Ladepunkt" to application.getString(R.string.category_private_charger),
+        "Rastplatz" to application.getString(R.string.category_rest_area),
+        "Restaurant" to application.getString(R.string.category_restaurant),
+        "Schwimmbad" to application.getString(R.string.category_swimming_pool),
+        "Supermarkt" to application.getString(R.string.category_supermarket),
+        "Tankstelle" to application.getString(R.string.category_petrol_station),
+        "Tiefgarage" to application.getString(R.string.category_parking_underground),
+        "Tierpark" to application.getString(R.string.category_zoo),
+        "Wohnmobilstellplatz" to application.getString(R.string.category_caravan_site)
+    )
     value = listOf(
         BooleanFilter(application.getString(R.string.filter_free), "freecharging"),
         BooleanFilter(application.getString(R.string.filter_free_parking), "freeparking"),
@@ -89,6 +117,11 @@ private fun MediatorLiveData<List<Filter<FilterValue>>>.buildFilters(
         MultipleChoiceFilter(
             application.getString(R.string.filter_networks), "networks",
             networkMap, manyChoices = true
+        ),
+        MultipleChoiceFilter(
+            application.getString(R.string.categories), "categories",
+            categoryMap,
+            manyChoices = true
         ),
         BooleanFilter(application.getString(R.string.filter_barrierfree), "barrierfree"),
         MultipleChoiceFilter(

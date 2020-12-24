@@ -44,7 +44,7 @@ class MultiSelectDialog : AppCompatDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = DialogMultiSelectBinding.inflate(inflater, container, true)
+        binding = DialogMultiSelectBinding.inflate(inflater, container, false)
         return binding.root
     }
 

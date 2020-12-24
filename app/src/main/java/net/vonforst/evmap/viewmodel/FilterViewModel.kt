@@ -256,6 +256,13 @@ data class MultipleChoiceFilterValue(
             !other.all && values == other.values
         }
     }
+
+    override fun hashCode(): Int {
+        var result = key.hashCode()
+        result = 31 * result + all.hashCode()
+        result = 31 * result + if (all) 0 else values.hashCode()
+        return result
+    }
 }
 
 @Entity

@@ -137,6 +137,8 @@
     <string name="category_caravan_site">Caravan site</string>
     <string name="menu_apply">Apply filters</string>
     <string name="menu_save_profile">Save as profile</string>
+    <string name="no_filters">No filters</string>
+    <string name="filter_custom">Modified filter</string>
     <plurals name="charge_cards_compatible_num">
         <item quantity="one">%d compatible payment method</item>
         <item quantity="other">%d compatible payment methods</item>

@@ -850,6 +850,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             })
         }
         filterView?.setOnClickListener {
+            var profilesMap: MutableBiMap<Long, MenuItem> = HashBiMap()
+
             val popup = PopupMenu(requireContext(), it, Gravity.END)
             popup.menuInflater.inflate(R.menu.popup_filter, popup.menu)
             popup.setOnMenuItemClickListener {
@@ -860,24 +862,71 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                         )
                         true
                     }
-                    R.id.menu_filters_active -> {
-                        vm.filtersActive.value = !vm.filtersActive.value!!
+                    else -> {
+                        val profileId = profilesMap.inverse[it]
+                        if (profileId != null) {
+                            vm.filterStatus.value = profileId
+                        }
                         true
                     }
-                    else -> false
                 }
             }
 
-            val checkItem = popup.menu.findItem(R.id.menu_filters_active)
-            vm.filtersActive.observe(viewLifecycleOwner, Observer {
-                checkItem.isChecked = it
+            vm.filterProfiles.observe(viewLifecycleOwner, { profiles ->
+                popup.menu.removeGroup(R.id.menu_group_filter_profiles)
+
+                val noFiltersItem = popup.menu.add(
+                    R.id.menu_group_filter_profiles,
+                    Menu.NONE, Menu.NONE, R.string.no_filters
+                )
+                profiles.forEach { profile ->
+                    val item = popup.menu.add(
+                        R.id.menu_group_filter_profiles,
+                        Menu.NONE,
+                        Menu.NONE,
+                        profile.name
+                    )
+                    profilesMap[profile.id] = item
+                }
+                val customItem = popup.menu.add(
+                    R.id.menu_group_filter_profiles,
+                    Menu.NONE, Menu.NONE, R.string.filter_custom
+                )
+
+                profilesMap[FILTERS_DISABLED] = noFiltersItem
+                profilesMap[FILTERS_CUSTOM] = customItem
+
+                popup.menu.setGroupCheckable(R.id.menu_group_filter_profiles, true, true);
+
+                vm.filterStatus.observe(viewLifecycleOwner, Observer { id ->
+                    when (id) {
+                        FILTERS_DISABLED -> {
+                            customItem.isVisible = false
+                            noFiltersItem.isChecked = true
+                        }
+                        FILTERS_CUSTOM -> {
+                            customItem.isVisible = true
+                            customItem.isChecked = true
+                        }
+                        else -> {
+                            customItem.isVisible = false
+                            val item = profilesMap[id]
+                            if (item != null) {
+                                item.isChecked = true
+                            } else {
+                                // unknown ID
+                                vm.filterStatus.value = FILTERS_DISABLED
+                            }
+                        }
+                    }
+                })
             })
             popup.show()
         }
 
         filterView?.setOnLongClickListener {
             // enable/disable filters
-            vm.filtersActive.value = !vm.filtersActive.value!!
+            vm.toggleFilters()
             // haptic feedback
             filterView.performHapticFeedback(
                 HapticFeedbackConstants.LONG_PRESS,
@@ -885,7 +934,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             )
             // show snackbar
             Snackbar.make(
-                requireView(), if (vm.filtersActive.value!!) {
+                requireView(), if (vm.filterStatus.value != FILTERS_DISABLED) {
                     R.string.filters_activated
                 } else {
                     R.string.filters_deactivated

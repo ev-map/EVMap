@@ -138,6 +138,8 @@
     <string name="category_caravan_site">Wohnmobilstellplatz</string>
     <string name="menu_apply">Filter anwenden</string>
     <string name="menu_save_profile">Als Profil speichern</string>
+    <string name="no_filters">Keine Filter</string>
+    <string name="filter_custom">Verändertes Filterprofil</string>
     <plurals name="charge_cards_compatible_num">
         <item quantity="one">%d kompatibler Ladetarif</item>
         <item quantity="other">%d kompatible Ladetarife</item>

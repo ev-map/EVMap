@@ -139,7 +139,7 @@ abstract class AppDatabase : RoomDatabase() {
                     db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_FilterProfile_name` ON `FilterProfile` (`name`)")
 
                     // create default filter profile
-                    db.execSQL("INSERT INTO `FilterProfile` (`name`, `id`) VALUES (`FILTERS_CUSTOM`, `$FILTERS_CUSTOM`)")
+                    db.execSQL("INSERT INTO `FilterProfile` (`name`, `id`) VALUES ('FILTERS_CUSTOM', $FILTERS_CUSTOM)")
 
                     // add profile column to existing filtervalue tables
                     db.execSQL("CREATE TABLE `BooleanFilterValueNew` (`key` TEXT NOT NULL, `value` INTEGER NOT NULL, `profile` INTEGER NOT NULL, PRIMARY KEY(`key`, `profile`), FOREIGN KEY(`profile`) REFERENCES `FilterProfile`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )")

@@ -46,7 +46,7 @@ abstract class AppDatabase : RoomDatabase() {
                 .addCallback(object : Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
                         // create default filter profile
-                        db.execSQL("INSERT INTO `FilterProfile` (`name`, `id`) VALUES ('FILTERS_CUSTOM', $FILTERS_CUSTOM)")
+                        db.execSQL("INSERT INTO `FilterProfile` (`name`, `id`, `order`) VALUES ('FILTERS_CUSTOM', $FILTERS_CUSTOM, 0)")
                     }
                 })
                 .build()

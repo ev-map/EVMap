@@ -47,7 +47,16 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
         MutableLiveData<MapPosition>()
     }
     private val filterValues: LiveData<List<FilterValue>> by lazy {
-        db.filterValueDao().getFilterValues()
+        MediatorLiveData<List<FilterValue>>().apply {
+            var source: LiveData<List<FilterValue>>? = null
+            addSource(filterStatus) { status ->
+                source?.let { removeSource(it) }
+                source = db.filterValueDao().getFilterValues(status)
+                addSource(source!!) { result ->
+                    value = result
+                }
+            }
+        }
     }
     private val plugs: LiveData<List<Plug>> by lazy {
         PlugRepository(api, viewModelScope, db.plugDao(), prefs).getPlugs()
@@ -61,7 +70,11 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
     private val filters = getFilters(application, plugs, networks, chargeCards)
 
     private val filtersWithValue: LiveData<List<FilterWithValue<out FilterValue>>> by lazy {
-        filtersWithValue(filters, filterValues, filtersActive)
+        filtersWithValue(filters, filterValues)
+    }
+
+    val filterProfiles: LiveData<List<FilterProfile>> by lazy {
+        db.filterProfileDao().getProfiles()
     }
 
     val chargeCardMap: LiveData<Map<Long, ChargeCard>> by lazy {
@@ -193,12 +206,35 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
         }
     }
 
-    val filtersActive: MutableLiveData<Boolean> by lazy {
-        MutableLiveData<Boolean>().apply {
-            value = prefs.filtersActive
+    val filterStatus: MutableLiveData<Long> by lazy {
+        MutableLiveData<Long>().apply {
+            value = prefs.filterStatus
             observeForever {
-                prefs.filtersActive = it
+                prefs.filterStatus = it
+                if (it != FILTERS_DISABLED) prefs.lastFilterProfile = it
             }
+        }
+    }
+
+    fun reloadPrefs() {
+        filterStatus.value = prefs.filterStatus
+    }
+
+    fun toggleFilters() {
+        if (filterStatus.value == FILTERS_DISABLED) {
+            filterStatus.value = prefs.lastFilterProfile
+        } else {
+            filterStatus.value = FILTERS_DISABLED
+        }
+    }
+
+    suspend fun copyFiltersToCustom() {
+        if (filterStatus.value == FILTERS_CUSTOM) return
+
+        db.filterValueDao().deleteFilterValuesForProfile(FILTERS_CUSTOM)
+        filterValues.value?.forEach {
+            it.profile = FILTERS_CUSTOM
+            db.filterValueDao().insert(it)
         }
     }
 

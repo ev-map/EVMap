@@ -80,7 +80,8 @@
     <string name="menu_filters_active">Filters active</string>
     <string name="filters_activated">Filters activated</string>
     <string name="filters_deactivated">Filters deactivated</string>
-    <string name="menu_edit_filters">Edit filters…</string>
+    <string name="menu_edit_filters">Edit filters</string>
+    <string name="menu_manage_filter_profiles">Manage filter profiles</string>
     <string name="go_to_chargeprice">Compare prices</string>
     <string name="fault_report">Fault report</string>
     <string name="fault_report_date">Fault report (last update: %s)</string>
@@ -135,6 +136,15 @@
     <string name="category_parking_underground">Underground car park</string>
     <string name="category_zoo">Zoo</string>
     <string name="category_caravan_site">Caravan site</string>
+    <string name="menu_apply">Apply filters</string>
+    <string name="menu_save_profile">Save as profile</string>
+    <string name="no_filters">No filters</string>
+    <string name="filter_custom">Modified filter</string>
+    <string name="reorder">reorder</string>
+    <string name="delete">Delete</string>
+    <string name="save_as_profile">Save as profile</string>
+    <string name="save_profile_enter_name">Enter the name of the filter profile:</string>
+    <string name="filterprofiles_empty_state">You have not yet saved any filter profiles.</string>
     <plurals name="charge_cards_compatible_num">
         <item quantity="one">%d compatible payment method</item>
         <item quantity="other">%d compatible payment methods</item>

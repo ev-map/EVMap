@@ -2,12 +2,11 @@ package net.vonforst.evmap.viewmodel
 
 import android.app.Application
 import androidx.databinding.BaseObservable
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room.ForeignKey
+import androidx.room.ForeignKey.CASCADE
+import kotlinx.coroutines.launch
 import net.vonforst.evmap.R
 import net.vonforst.evmap.adapter.Equatable
 import net.vonforst.evmap.api.goingelectric.ChargeCard
@@ -135,25 +134,17 @@ private fun MediatorLiveData<List<Filter<FilterValue>>>.buildFilters(
 
 internal fun filtersWithValue(
     filters: LiveData<List<Filter<FilterValue>>>,
-    filterValues: LiveData<List<FilterValue>>,
-    active: LiveData<Boolean>? = null
+    filterValues: LiveData<List<FilterValue>>
 ): MediatorLiveData<List<FilterWithValue<out FilterValue>>> =
     MediatorLiveData<List<FilterWithValue<out FilterValue>>>().apply {
-        listOf(filters, filterValues, active).forEach {
-            if (it == null) return@forEach
+        listOf(filters, filterValues).forEach {
             addSource(it) {
                 val f = filters.value ?: return@addSource
-                value = if (active != null && !active.value!!) {
-                    f.map { filter ->
-                        FilterWithValue(filter, filter.defaultValue())
-                    }
-                } else {
-                    val values = filterValues.value ?: return@addSource
-                    f.map { filter ->
-                        val value =
-                            values.find { it.key == filter.key } ?: filter.defaultValue()
-                        FilterWithValue(filter, filter.valueClass.cast(value))
-                    }
+                val values = filterValues.value ?: return@addSource
+                value = f.map { filter ->
+                    val value =
+                        values.find { it.key == filter.key } ?: filter.defaultValue()
+                    FilterWithValue(filter, filter.valueClass.cast(value))
                 }
             }
         }
@@ -179,17 +170,59 @@ class FilterViewModel(application: Application, geApiKey: String) :
     }
 
     private val filterValues: LiveData<List<FilterValue>> by lazy {
-        db.filterValueDao().getFilterValues()
+        db.filterValueDao().getFilterValues(FILTERS_CUSTOM)
     }
 
     val filtersWithValue: LiveData<List<FilterWithValue<out FilterValue>>> by lazy {
         filtersWithValue(filters, filterValues)
     }
 
+    private val filterStatus: LiveData<Long> by lazy {
+        MutableLiveData<Long>().apply {
+            value = prefs.filterStatus
+        }
+    }
+
+    val filterProfile: LiveData<FilterProfile> by lazy {
+        MediatorLiveData<FilterProfile>().apply {
+            addSource(filterStatus) { id ->
+                when (id) {
+                    FILTERS_CUSTOM, FILTERS_DISABLED -> value = null
+                    else -> viewModelScope.launch {
+                        value = db.filterProfileDao().getProfileById(id)
+                    }
+                }
+            }
+        }
+    }
+
     suspend fun saveFilterValues() {
         filtersWithValue.value?.forEach {
-            db.filterValueDao().insert(it.value)
+            val value = it.value
+            value.profile = FILTERS_CUSTOM
+            db.filterValueDao().insert(value)
         }
+
+        // set selected profile
+        prefs.filterStatus = FILTERS_CUSTOM
+    }
+
+    suspend fun saveAsProfile(name: String) {
+        // get or create profile
+        var profileId = db.filterProfileDao().getProfileByName(name)?.id
+        if (profileId == null) {
+            profileId = db.filterProfileDao().insert(FilterProfile(name))
+        }
+
+        // save filter values
+        filtersWithValue.value?.forEach {
+            val value = it.value
+            value.profile = profileId
+            db.filterValueDao().insert(value)
+        }
+
+        // set selected profile
+        prefs.filterStatus = profileId
     }
 }
 
@@ -232,17 +265,34 @@ data class SliderFilter(
 
 sealed class FilterValue : BaseObservable(), Equatable {
     abstract val key: String
+    var profile: Long = FILTERS_CUSTOM
 }
 
-@Entity
+@Entity(
+    foreignKeys = [ForeignKey(
+        entity = FilterProfile::class,
+        parentColumns = arrayOf("id"),
+        childColumns = arrayOf("profile"),
+        onDelete = CASCADE
+    )],
+    primaryKeys = ["key", "profile"]
+)
 data class BooleanFilterValue(
-    @PrimaryKey override val key: String,
+    override val key: String,
     var value: Boolean
 ) : FilterValue()
 
-@Entity
+@Entity(
+    foreignKeys = [ForeignKey(
+        entity = FilterProfile::class,
+        parentColumns = arrayOf("id"),
+        childColumns = arrayOf("profile"),
+        onDelete = CASCADE
+    )],
+    primaryKeys = ["key", "profile"]
+)
 data class MultipleChoiceFilterValue(
-    @PrimaryKey override val key: String,
+    override val key: String,
     var values: MutableSet<String>,
     var all: Boolean
 ) : FilterValue() {
@@ -265,10 +315,21 @@ data class MultipleChoiceFilterValue(
     }
 }
 
-@Entity
+@Entity(
+    foreignKeys = [ForeignKey(
+        entity = FilterProfile::class,
+        parentColumns = arrayOf("id"),
+        childColumns = arrayOf("profile"),
+        onDelete = CASCADE
+    )],
+    primaryKeys = ["key", "profile"]
+)
 data class SliderFilterValue(
-    @PrimaryKey override val key: String,
+    override val key: String,
     var value: Int
 ) : FilterValue()
 
 data class FilterWithValue<T : FilterValue>(val filter: Filter<T>, val value: T) : Equatable
+
+const val FILTERS_DISABLED = -2L
+const val FILTERS_CUSTOM = -1L

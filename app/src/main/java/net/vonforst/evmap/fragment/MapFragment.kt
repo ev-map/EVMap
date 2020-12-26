@@ -18,6 +18,7 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.core.app.ActivityCompat
 import androidx.core.app.SharedElementCallback
 import androidx.core.content.ContextCompat
+import androidx.core.view.MenuCompat
 import androidx.core.view.updateLayoutParams
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -25,6 +26,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
@@ -51,6 +53,7 @@ import com.mapzen.android.lost.api.LocationServices
 import com.mapzen.android.lost.api.LostApiClient
 import io.michaelrocks.bimap.HashBiMap
 import io.michaelrocks.bimap.MutableBiMap
+import kotlinx.coroutines.launch
 import net.vonforst.evmap.*
 import net.vonforst.evmap.adapter.ConnectorAdapter
 import net.vonforst.evmap.adapter.DetailsAdapter
@@ -219,6 +222,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         super.onResume()
         val hostActivity = activity as? MapsActivity ?: return
         hostActivity.fragmentCallback = this
+        vm.reloadPrefs()
     }
 
     private fun setupClickListeners() {
@@ -850,34 +854,94 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             })
         }
         filterView?.setOnClickListener {
+            var profilesMap: MutableBiMap<Long, MenuItem> = HashBiMap()
+
             val popup = PopupMenu(requireContext(), it, Gravity.END)
             popup.menuInflater.inflate(R.menu.popup_filter, popup.menu)
+            MenuCompat.setGroupDividerEnabled(popup.menu, true)
             popup.setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.menu_edit_filters -> {
+                        lifecycleScope.launch {
+                            vm.copyFiltersToCustom()
+                            requireView().findNavController().navigate(
+                                R.id.action_map_to_filterFragment
+                            )
+                        }
+                        true
+                    }
+                    R.id.menu_manage_filter_profiles -> {
                         requireView().findNavController().navigate(
-                            R.id.action_map_to_filterFragment
+                            R.id.action_map_to_filterProfilesFragment
                         )
                         true
                     }
-                    R.id.menu_filters_active -> {
-                        vm.filtersActive.value = !vm.filtersActive.value!!
+                    else -> {
+                        val profileId = profilesMap.inverse[it]
+                        if (profileId != null) {
+                            vm.filterStatus.value = profileId
+                        }
                         true
                     }
-                    else -> false
                 }
             }
 
-            val checkItem = popup.menu.findItem(R.id.menu_filters_active)
-            vm.filtersActive.observe(viewLifecycleOwner, Observer {
-                checkItem.isChecked = it
+            vm.filterProfiles.observe(viewLifecycleOwner, { profiles ->
+                popup.menu.removeGroup(R.id.menu_group_filter_profiles)
+
+                val noFiltersItem = popup.menu.add(
+                    R.id.menu_group_filter_profiles,
+                    Menu.NONE, Menu.NONE, R.string.no_filters
+                )
+                profiles.forEach { profile ->
+                    val item = popup.menu.add(
+                        R.id.menu_group_filter_profiles,
+                        Menu.NONE,
+                        Menu.NONE,
+                        profile.name
+                    )
+                    profilesMap[profile.id] = item
+                }
+                val customItem = popup.menu.add(
+                    R.id.menu_group_filter_profiles,
+                    Menu.NONE, Menu.NONE, R.string.filter_custom
+                )
+
+                profilesMap[FILTERS_DISABLED] = noFiltersItem
+                profilesMap[FILTERS_CUSTOM] = customItem
+
+                popup.menu.setGroupCheckable(R.id.menu_group_filter_profiles, true, true);
+
+                val manageFiltersItem = popup.menu.findItem(R.id.menu_manage_filter_profiles)
+                manageFiltersItem.isVisible = !profiles.isEmpty()
+
+                vm.filterStatus.observe(viewLifecycleOwner, Observer { id ->
+                    when (id) {
+                        FILTERS_DISABLED -> {
+                            customItem.isVisible = false
+                            noFiltersItem.isChecked = true
+                        }
+                        FILTERS_CUSTOM -> {
+                            customItem.isVisible = true
+                            customItem.isChecked = true
+                        }
+                        else -> {
+                            customItem.isVisible = false
+                            val item = profilesMap[id]
+                            if (item != null) {
+                                item.isChecked = true
+                            }
+                            // else unknown ID -> wait for filterProfiles to update
+                        }
+                    }
+                })
             })
             popup.show()
         }
 
         filterView?.setOnLongClickListener {
             // enable/disable filters
-            vm.filtersActive.value = !vm.filtersActive.value!!
+            vm.toggleFilters()
             // haptic feedback
             filterView.performHapticFeedback(
                 HapticFeedbackConstants.LONG_PRESS,
@@ -885,7 +949,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             )
             // show snackbar
             Snackbar.make(
-                requireView(), if (vm.filtersActive.value!!) {
+                requireView(), if (vm.filterStatus.value != FILTERS_DISABLED) {
                     R.string.filters_activated
                 } else {
                     R.string.filters_deactivated

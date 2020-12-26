@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/menu_filters_active"
-        android:title="@string/menu_filters_active"
-        android:checkable="true"
-        android:checked="true" />
+    <group
+        android:checkableBehavior="single"
+        android:id="@+id/menu_group_filter_profiles">
+
+    </group>
     <item
         android:id="@+id/menu_edit_filters"
-        android:title="@string/menu_edit_filters" />
+        android:title="@string/menu_edit_filters"
+        android:menuCategory="secondary" />
+    <item
+        android:id="@+id/menu_manage_filter_profiles"
+        android:title="@string/menu_manage_filter_profiles"
+        android:menuCategory="secondary" />
 </menu>

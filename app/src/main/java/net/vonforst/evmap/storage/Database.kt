@@ -10,6 +10,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import net.vonforst.evmap.api.goingelectric.ChargeCard
 import net.vonforst.evmap.api.goingelectric.ChargeLocation
 import net.vonforst.evmap.viewmodel.BooleanFilterValue
+import net.vonforst.evmap.viewmodel.FILTERS_CUSTOM
 import net.vonforst.evmap.viewmodel.MultipleChoiceFilterValue
 import net.vonforst.evmap.viewmodel.SliderFilterValue
 
@@ -19,15 +20,17 @@ import net.vonforst.evmap.viewmodel.SliderFilterValue
         BooleanFilterValue::class,
         MultipleChoiceFilterValue::class,
         SliderFilterValue::class,
+        FilterProfile::class,
         Plug::class,
         Network::class,
         ChargeCard::class
-    ], version = 8
+    ], version = 10
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun chargeLocationsDao(): ChargeLocationsDao
     abstract fun filterValueDao(): FilterValueDao
+    abstract fun filterProfileDao(): FilterProfileDao
     abstract fun plugDao(): PlugDao
     abstract fun networkDao(): NetworkDao
     abstract fun chargeCardDao(): ChargeCardDao
@@ -38,8 +41,14 @@ abstract class AppDatabase : RoomDatabase() {
             Room.databaseBuilder(context, AppDatabase::class.java, "evmap.db")
                 .addMigrations(
                     MIGRATION_2, MIGRATION_3, MIGRATION_4, MIGRATION_5, MIGRATION_6,
-                    MIGRATION_7, MIGRATION_8
+                    MIGRATION_7, MIGRATION_8, MIGRATION_9, MIGRATION_10
                 )
+                .addCallback(object : Callback() {
+                    override fun onCreate(db: SupportSQLiteDatabase) {
+                        // create default filter profile
+                        db.execSQL("INSERT INTO `FilterProfile` (`name`, `id`) VALUES ('FILTERS_CUSTOM', $FILTERS_CUSTOM)")
+                    }
+                })
                 .build()
         }
 
@@ -118,6 +127,47 @@ abstract class AppDatabase : RoomDatabase() {
         private val MIGRATION_8 = object : Migration(7, 8) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("ALTER TABLE `ChargeLocation` ADD `chargecards` TEXT")
+            }
+        }
+
+        private val MIGRATION_9 = object : Migration(8, 9) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.beginTransaction()
+                try {
+                    // create filter profiles table
+                    db.execSQL("CREATE TABLE IF NOT EXISTS `FilterProfile` (`name` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)")
+                    db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_FilterProfile_name` ON `FilterProfile` (`name`)")
+
+                    // create default filter profile
+                    db.execSQL("INSERT INTO `FilterProfile` (`name`, `id`) VALUES (`FILTERS_CUSTOM`, `$FILTERS_CUSTOM`)")
+
+                    // add profile column to existing filtervalue tables
+                    db.execSQL("CREATE TABLE `BooleanFilterValueNew` (`key` TEXT NOT NULL, `value` INTEGER NOT NULL, `profile` INTEGER NOT NULL, PRIMARY KEY(`key`, `profile`), FOREIGN KEY(`profile`) REFERENCES `FilterProfile`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )")
+                    db.execSQL("CREATE TABLE `MultipleChoiceFilterValueNew` (`key` TEXT NOT NULL, `values` TEXT NOT NULL, `all` INTEGER NOT NULL, `profile` INTEGER NOT NULL, PRIMARY KEY(`key`, `profile`), FOREIGN KEY(`profile`) REFERENCES `FilterProfile`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )")
+                    db.execSQL("CREATE TABLE IF NOT EXISTS `SliderFilterValueNew` (`key` TEXT NOT NULL, `value` INTEGER NOT NULL, `profile` INTEGER NOT NULL, PRIMARY KEY(`key`, `profile`), FOREIGN KEY(`profile`) REFERENCES `FilterProfile`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )");
+
+                    for (table in listOf(
+                        "BooleanFilterValue",
+                        "MultipleChoiceFilterValue",
+                        "SliderFilterValue"
+                    )) {
+                        db.execSQL("ALTER TABLE `$table` ADD COLUMN `profile` INTEGER NOT NULL DEFAULT $FILTERS_CUSTOM")
+                        db.execSQL("INSERT INTO `${table}New` SELECT * FROM `$table`")
+                        db.execSQL("DROP TABLE `$table`")
+                        db.execSQL("ALTER TABLE `${table}New` RENAME TO `$table`")
+                    }
+
+                    db.setTransactionSuccessful()
+                } finally {
+                    db.endTransaction()
+                }
+            }
+
+        }
+
+        private val MIGRATION_10 = object : Migration(9, 10) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE `FilterProfile` ADD `order` INTEGER NOT NULL DEFAULT 0")
             }
         }
     }

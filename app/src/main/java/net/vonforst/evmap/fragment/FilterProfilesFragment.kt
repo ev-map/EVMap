@@ -69,6 +69,19 @@ class FilterProfilesFragment : Fragment() {
             ): Boolean {
                 val fromPos = viewHolder.adapterPosition;
                 val toPos = target.adapterPosition;
+
+                val list = vm.filterProfiles.value?.toMutableList()
+                if (list != null) {
+                    val item = list[fromPos]
+                    list.removeAt(fromPos)
+                    list.add(toPos, item)
+                    list.forEachIndexed { index, filterProfile ->
+                        filterProfile.order = index
+                    }
+                    vm.reorderProfiles(list)
+                }
+
+
                 return true
             }
 

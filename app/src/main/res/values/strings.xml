@@ -144,6 +144,7 @@
     <string name="delete">Delete</string>
     <string name="save_as_profile">Save as profile</string>
     <string name="save_profile_enter_name">Enter the name of the filter profile:</string>
+    <string name="filterprofiles_empty_state">You have not yet saved any filter profiles.</string>
     <plurals name="charge_cards_compatible_num">
         <item quantity="one">%d compatible payment method</item>
         <item quantity="other">%d compatible payment methods</item>

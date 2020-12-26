@@ -145,6 +145,7 @@
     <string name="delete">Löschen</string>
     <string name="save_as_profile">Als Profil speichern</string>
     <string name="save_profile_enter_name">Geben Sie den Namen des Filterprofils ein:</string>
+    <string name="filterprofiles_empty_state">Du hast noch keine Filterprofile gespeichert.</string>
     <plurals name="charge_cards_compatible_num">
         <item quantity="one">%d kompatibler Ladetarif</item>
         <item quantity="other">%d kompatible Ladetarife</item>

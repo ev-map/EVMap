@@ -2,9 +2,11 @@ package net.vonforst.evmap.fragment
 
 import android.graphics.Canvas
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
@@ -75,10 +77,12 @@ class FilterProfilesFragment : Fragment() {
             }
 
             override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
-                if (viewHolder != null) {
-                    val foregroundView: View =
-                        ((viewHolder as DataBindingAdapter.ViewHolder<*>).binding as ItemFilterProfileBinding).foreground
-                    getDefaultUIUtil().onSelected(foregroundView)
+                if (viewHolder != null && actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+                    val binding =
+                        (viewHolder as DataBindingAdapter.ViewHolder<*>).binding as ItemFilterProfileBinding
+                    getDefaultUIUtil().onSelected(binding.foreground)
+                } else {
+                    super.onSelectedChanged(viewHolder, actionState)
                 }
             }
 
@@ -87,21 +91,40 @@ class FilterProfilesFragment : Fragment() {
                 viewHolder: RecyclerView.ViewHolder, dX: Float, dY: Float,
                 actionState: Int, isCurrentlyActive: Boolean
             ) {
-                val foregroundView: View =
-                    ((viewHolder as DataBindingAdapter.ViewHolder<*>).binding as ItemFilterProfileBinding).foreground
-                getDefaultUIUtil().onDrawOver(
-                    c, recyclerView, foregroundView, dX, dY,
-                    actionState, isCurrentlyActive
-                )
+                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+                    val binding =
+                        (viewHolder as DataBindingAdapter.ViewHolder<*>).binding as ItemFilterProfileBinding
+                    getDefaultUIUtil().onDrawOver(
+                        c, recyclerView, binding.foreground, dX, dY,
+                        actionState, isCurrentlyActive
+                    )
+                    val lp = (binding.deleteIcon.layoutParams as FrameLayout.LayoutParams)
+                    lp.gravity = Gravity.CENTER_VERTICAL or if (dX > 0) {
+                        Gravity.START
+                    } else {
+                        Gravity.END
+                    }
+                    binding.deleteIcon.layoutParams = lp
+                } else {
+                    super.onChildDrawOver(
+                        c,
+                        recyclerView,
+                        viewHolder,
+                        dX,
+                        dY,
+                        actionState,
+                        isCurrentlyActive
+                    )
+                }
             }
 
             override fun clearView(
                 recyclerView: RecyclerView,
                 viewHolder: RecyclerView.ViewHolder
             ) {
-                val foregroundView =
-                    ((viewHolder as DataBindingAdapter.ViewHolder<*>).binding as ItemFilterProfileBinding).foreground
-                getDefaultUIUtil().clearView(foregroundView)
+                val binding =
+                    (viewHolder as DataBindingAdapter.ViewHolder<*>).binding as ItemFilterProfileBinding
+                getDefaultUIUtil().clearView(binding.foreground)
             }
 
             override fun onChildDraw(
@@ -109,12 +132,24 @@ class FilterProfilesFragment : Fragment() {
                 viewHolder: RecyclerView.ViewHolder, dX: Float, dY: Float,
                 actionState: Int, isCurrentlyActive: Boolean
             ) {
-                val foregroundView =
-                    ((viewHolder as DataBindingAdapter.ViewHolder<*>).binding as ItemFilterProfileBinding).foreground
-                getDefaultUIUtil().onDraw(
-                    c, recyclerView, foregroundView, dX, dY,
-                    actionState, isCurrentlyActive
-                )
+                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+                    val binding =
+                        (viewHolder as DataBindingAdapter.ViewHolder<*>).binding as ItemFilterProfileBinding
+                    getDefaultUIUtil().onDraw(
+                        c, recyclerView, binding.foreground, dX, dY,
+                        actionState, isCurrentlyActive
+                    )
+                } else {
+                    super.onChildDraw(
+                        c,
+                        recyclerView,
+                        viewHolder,
+                        dX,
+                        dY,
+                        actionState,
+                        isCurrentlyActive
+                    )
+                }
             }
         })
 

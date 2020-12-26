@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <RelativeLayout
+        <FrameLayout
             android:id="@+id/background"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -22,22 +22,14 @@
 
             <ImageView
                 android:id="@+id/delete_icon"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="10dp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center_vertical|end"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                app:tint="@android:color/white"
                 app:srcCompat="@drawable/ic_delete" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="10dp"
-                android:layout_toStartOf="@id/delete_icon"
-                android:text="@string/delete"
-                android:textColor="#fff" />
-        </RelativeLayout>
+        </FrameLayout>
 
 
         <androidx.constraintlayout.widget.ConstraintLayout

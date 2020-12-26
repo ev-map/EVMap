@@ -912,6 +912,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
                 popup.menu.setGroupCheckable(R.id.menu_group_filter_profiles, true, true);
 
+                val manageFiltersItem = popup.menu.findItem(R.id.menu_manage_filter_profiles)
+                manageFiltersItem.isVisible = !profiles.isEmpty()
+
                 vm.filterStatus.observe(viewLifecycleOwner, Observer { id ->
                     when (id) {
                         FILTERS_DISABLED -> {

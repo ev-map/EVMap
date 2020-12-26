@@ -143,6 +143,8 @@
     <string name="filter_custom">Verändertes Filterprofil</string>
     <string name="reorder">Reihenfolge ändern</string>
     <string name="delete">Löschen</string>
+    <string name="save_as_profile">Als Profil speichern</string>
+    <string name="save_profile_enter_name">Geben Sie den Namen des Filterprofils ein:</string>
     <plurals name="charge_cards_compatible_num">
         <item quantity="one">%d kompatibler Ladetarif</item>
         <item quantity="other">%d kompatible Ladetarife</item>

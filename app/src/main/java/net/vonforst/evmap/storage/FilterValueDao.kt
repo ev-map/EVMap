@@ -26,6 +26,15 @@ abstract class FilterValueDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     protected abstract suspend fun insert(vararg values: SliderFilterValue)
 
+    @Query("DELETE FROM booleanfiltervalue WHERE profile = :profile")
+    protected abstract suspend fun deleteBooleanFilterValuesForProfile(profile: Long)
+
+    @Query("DELETE FROM multiplechoicefiltervalue WHERE profile = :profile")
+    protected abstract suspend fun deleteMultipleChoiceFilterValuesForProfile(profile: Long)
+
+    @Query("DELETE FROM sliderfiltervalue WHERE profile = :profile")
+    protected abstract suspend fun deleteSliderFilterValuesForProfile(profile: Long)
+
     open fun getFilterValues(filterStatus: Long): LiveData<List<FilterValue>> =
         if (filterStatus == FILTERS_DISABLED) {
             MutableLiveData(emptyList())
@@ -54,4 +63,12 @@ abstract class FilterValueDao {
             }
         }
     }
+
+    @Transaction
+    open suspend fun deleteFilterValuesForProfile(profile: Long) {
+        deleteBooleanFilterValuesForProfile(profile)
+        deleteMultipleChoiceFilterValuesForProfile(profile)
+        deleteSliderFilterValuesForProfile(profile)
+    }
+
 }

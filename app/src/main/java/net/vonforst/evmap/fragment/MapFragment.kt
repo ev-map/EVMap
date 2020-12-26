@@ -18,6 +18,7 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.core.app.ActivityCompat
 import androidx.core.app.SharedElementCallback
 import androidx.core.content.ContextCompat
+import androidx.core.view.MenuCompat
 import androidx.core.view.updateLayoutParams
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -25,6 +26,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
@@ -51,6 +53,7 @@ import com.mapzen.android.lost.api.LocationServices
 import com.mapzen.android.lost.api.LostApiClient
 import io.michaelrocks.bimap.HashBiMap
 import io.michaelrocks.bimap.MutableBiMap
+import kotlinx.coroutines.launch
 import net.vonforst.evmap.*
 import net.vonforst.evmap.adapter.ConnectorAdapter
 import net.vonforst.evmap.adapter.DetailsAdapter
@@ -219,6 +222,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         super.onResume()
         val hostActivity = activity as? MapsActivity ?: return
         hostActivity.fragmentCallback = this
+        vm.reloadPrefs()
     }
 
     private fun setupClickListeners() {
@@ -854,12 +858,16 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
             val popup = PopupMenu(requireContext(), it, Gravity.END)
             popup.menuInflater.inflate(R.menu.popup_filter, popup.menu)
+            MenuCompat.setGroupDividerEnabled(popup.menu, true)
             popup.setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.menu_edit_filters -> {
-                        requireView().findNavController().navigate(
-                            R.id.action_map_to_filterFragment
-                        )
+                        lifecycleScope.launch {
+                            vm.copyFiltersToCustom()
+                            requireView().findNavController().navigate(
+                                R.id.action_map_to_filterFragment
+                            )
+                        }
                         true
                     }
                     else -> {
@@ -913,10 +921,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                             val item = profilesMap[id]
                             if (item != null) {
                                 item.isChecked = true
-                            } else {
-                                // unknown ID
-                                vm.filterStatus.value = FILTERS_DISABLED
                             }
+                            // else unknown ID -> wait for filterProfiles to update
                         }
                     }
                 })

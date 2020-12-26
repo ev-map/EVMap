@@ -81,7 +81,7 @@
     <string name="menu_filters_active">Filter aktiv</string>
     <string name="filters_activated">Filter aktiviert</string>
     <string name="filters_deactivated">Filter deaktiviert</string>
-    <string name="menu_edit_filters">Filter bearbeiten…</string>
+    <string name="menu_edit_filters">Filter bearbeiten</string>
     <string name="go_to_chargeprice">Preisvergleich</string>
     <string name="fault_report">Störungsmeldung</string>
     <string name="fault_report_date">Störungsmeldung (Letztes Update: %s)</string>

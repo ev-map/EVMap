@@ -216,11 +216,25 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
         }
     }
 
+    fun reloadPrefs() {
+        filterStatus.value = prefs.filterStatus
+    }
+
     fun toggleFilters() {
         if (filterStatus.value == FILTERS_DISABLED) {
             filterStatus.value = prefs.lastFilterProfile
         } else {
             filterStatus.value = FILTERS_DISABLED
+        }
+    }
+
+    suspend fun copyFiltersToCustom() {
+        if (filterStatus.value == FILTERS_CUSTOM) return
+
+        db.filterValueDao().deleteFilterValuesForProfile(FILTERS_CUSTOM)
+        filterValues.value?.forEach {
+            it.profile = FILTERS_CUSTOM
+            db.filterValueDao().insert(it)
         }
     }
 

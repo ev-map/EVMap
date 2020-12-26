@@ -102,8 +102,6 @@ class FilterFragment : Fragment() {
                     .setNegativeButton(R.string.cancel) { di, button ->
 
                     }.show()
-
-                // TODO: implement
                 true
             }
             else -> super.onOptionsItemSelected(item)

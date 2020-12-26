@@ -7,5 +7,6 @@
     </group>
     <item
         android:id="@+id/menu_edit_filters"
-        android:title="@string/menu_edit_filters" />
+        android:title="@string/menu_edit_filters"
+        android:menuCategory="secondary" />
 </menu>

@@ -2,12 +2,14 @@ package net.vonforst.evmap.storage
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
+import net.vonforst.evmap.adapter.Equatable
 import net.vonforst.evmap.viewmodel.FILTERS_CUSTOM
 
 @Entity(
     indices = [Index(value = ["name"], unique = true)]
 )
-data class FilterProfile(val name: String, @PrimaryKey(autoGenerate = true) val id: Long = 0)
+data class FilterProfile(val name: String, @PrimaryKey(autoGenerate = true) val id: Long = 0) :
+    Equatable
 
 @Dao
 interface FilterProfileDao {

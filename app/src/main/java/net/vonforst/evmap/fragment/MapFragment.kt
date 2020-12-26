@@ -870,6 +870,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                         }
                         true
                     }
+                    R.id.menu_manage_filter_profiles -> {
+                        requireView().findNavController().navigate(
+                            R.id.action_map_to_filterProfilesFragment
+                        )
+                        true
+                    }
                     else -> {
                         val profileId = profilesMap.inverse[it]
                         if (profileId != null) {

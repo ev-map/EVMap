@@ -24,6 +24,13 @@
             app:enterAnim="@anim/fragment_fade_enter"
             app:popEnterAnim="@anim/fragment_fade_enter"
             app:popExitAnim="@anim/fragment_fade_exit" />
+        <action
+            android:id="@+id/action_map_to_filterProfilesFragment"
+            app:destination="@id/filter_profiles"
+            app:exitAnim="@anim/fragment_fade_exit"
+            app:enterAnim="@anim/fragment_fade_enter"
+            app:popEnterAnim="@anim/fragment_fade_enter"
+            app:popExitAnim="@anim/fragment_fade_exit" />
     </fragment>
     <fragment
         android:id="@+id/about"
@@ -58,6 +65,11 @@
         android:name="net.vonforst.evmap.fragment.FilterFragment"
         android:label="@string/menu_filter"
         tools:layout="@layout/fragment_filter" />
+    <fragment
+        android:id="@+id/filter_profiles"
+        android:name="net.vonforst.evmap.fragment.FilterProfilesFragment"
+        android:label="@string/menu_manage_filter_profiles"
+        tools:layout="@layout/fragment_filter_profiles" />
     <fragment
         android:id="@+id/donate"
         android:name="net.vonforst.evmap.fragment.DonateFragment"

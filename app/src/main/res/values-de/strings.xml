@@ -82,6 +82,7 @@
     <string name="filters_activated">Filter aktiviert</string>
     <string name="filters_deactivated">Filter deaktiviert</string>
     <string name="menu_edit_filters">Filter bearbeiten</string>
+    <string name="menu_manage_filter_profiles">Filterprofile verwalten</string>
     <string name="go_to_chargeprice">Preisvergleich</string>
     <string name="fault_report">Störungsmeldung</string>
     <string name="fault_report_date">Störungsmeldung (Letztes Update: %s)</string>
@@ -140,6 +141,8 @@
     <string name="menu_save_profile">Als Profil speichern</string>
     <string name="no_filters">Keine Filter</string>
     <string name="filter_custom">Verändertes Filterprofil</string>
+    <string name="reorder">Reihenfolge ändern</string>
+    <string name="delete">Löschen</string>
     <plurals name="charge_cards_compatible_num">
         <item quantity="one">%d kompatibler Ladetarif</item>
         <item quantity="other">%d kompatible Ladetarife</item>

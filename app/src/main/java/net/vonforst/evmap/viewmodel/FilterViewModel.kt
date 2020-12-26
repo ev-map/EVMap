@@ -6,6 +6,7 @@ import androidx.lifecycle.*
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.ForeignKey.CASCADE
+import kotlinx.coroutines.launch
 import net.vonforst.evmap.R
 import net.vonforst.evmap.adapter.Equatable
 import net.vonforst.evmap.api.goingelectric.ChargeCard
@@ -174,6 +175,25 @@ class FilterViewModel(application: Application, geApiKey: String) :
 
     val filtersWithValue: LiveData<List<FilterWithValue<out FilterValue>>> by lazy {
         filtersWithValue(filters, filterValues)
+    }
+
+    private val filterStatus: LiveData<Long> by lazy {
+        MutableLiveData<Long>().apply {
+            value = prefs.filterStatus
+        }
+    }
+
+    val filterProfile: LiveData<FilterProfile> by lazy {
+        MediatorLiveData<FilterProfile>().apply {
+            addSource(filterStatus) { id ->
+                when (id) {
+                    FILTERS_CUSTOM, FILTERS_DISABLED -> value = null
+                    else -> viewModelScope.launch {
+                        value = db.filterProfileDao().getProfileById(id)
+                    }
+                }
+            }
+        }
     }
 
     suspend fun saveFilterValues() {

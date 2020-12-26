@@ -44,6 +44,8 @@ class FilterFragment : Fragment() {
 
         setHasOptionsMenu(true)
 
+        vm.filterProfile.observe(viewLifecycleOwner) {}
+
         return binding.root
     }
 
@@ -89,6 +91,9 @@ class FilterFragment : Fragment() {
             }
             R.id.menu_save_profile -> {
                 val input = EditText(requireContext());
+                vm.filterProfile.value?.let { profile ->
+                    input.setText(profile.name)
+                }
                 AlertDialog.Builder(requireContext())
                     .setTitle("Save as profile")
                     .setMessage("Enter the name of the filter profile")

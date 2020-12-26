@@ -22,4 +22,7 @@ interface FilterProfileDao {
 
     @Query("SELECT * FROM filterProfile WHERE name = :name")
     suspend fun getProfileByName(name: String): FilterProfile?
+
+    @Query("SELECT * FROM filterProfile WHERE id = :id")
+    suspend fun getProfileById(id: Long): FilterProfile?
 }

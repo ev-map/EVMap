@@ -88,7 +88,6 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/gallery_height_with_margin"
             android:background="?android:colorBackground"
-            android:fitsSystemWindows="true"
             app:layout_behavior="@string/BackDropBottomSheetBehavior">
 
             <androidx.recyclerview.widget.RecyclerView
@@ -124,7 +123,6 @@
             android:id="@+id/bottom_sheet"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:fitsSystemWindows="true"
             android:fillViewport="true"
             android:orientation="vertical"
             app:bottomsheetbehavior_anchorPoint="@dimen/gallery_height"

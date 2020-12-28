@@ -7,9 +7,8 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
 import com.ortiz.touchview.TouchImageView
-import com.squareup.picasso.Callback
-import com.squareup.picasso.Picasso
 import net.vonforst.evmap.R
 import net.vonforst.evmap.api.goingelectric.ChargerPhoto
 
@@ -73,18 +72,17 @@ class GalleryAdapter(
         if (detailView) {
             (holder.view as TouchImageView).resetZoom()
         }
-        Picasso.get()
-            .load(
-                "https://api.goingelectric.de/chargepoints/photo/?key=${apikey}" +
-                        "&id=${getItem(position).id}" +
-                        if (detailView) {
-                            "&size=1000"
-                        } else {
-                            "&height=${holder.view.height}"
-                        }
-            )
-            .into(holder.view, object : Callback {
-                override fun onSuccess() {
+        holder.view.load(
+            "https://api.goingelectric.de/chargepoints/photo/?key=${apikey}" +
+                    "&id=${getItem(position).id}" +
+                    if (detailView) {
+                        "&size=1000"
+                    } else {
+                        "&height=${holder.view.height}"
+                    }
+        ) {
+            listener(
+                onSuccess = { _, _ ->
                     if (!loaded && loadedListener != null && pageToLoad == position) {
                         holder.view.viewTreeObserver.addOnPreDrawListener(object :
                             ViewTreeObserver.OnPreDrawListener {
@@ -96,16 +94,15 @@ class GalleryAdapter(
                         })
                         loaded = true
                     }
-                }
-
-                override fun onError(e: Exception?) {
+                },
+                onError = { _, _ ->
                     if (!loaded && loadedListener != null && pageToLoad == position) {
                         loadedListener.invoke()
                         loaded = true
                     }
                 }
-
-            })
+            )
+        }
         holder.view.transitionName = galleryTransitionName(position)
         if (itemClickListener != null) {
             holder.view.setOnClickListener {

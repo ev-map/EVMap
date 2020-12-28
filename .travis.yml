@@ -2,7 +2,7 @@ language: android
 dist: trusty
 android:
   components:
-    - build-tools;30.0.3
+    - build-tools-30.0.3
     - android-30
 env:
   global:
@@ -11,6 +11,8 @@ env:
     - secure: RsN/2nBVv0byMzwchuAhDti1AWKECg3Uzqk6Ahgaqg02zx8GHj60j0qNax7KuMUg70X3G4b3m8ZzndAU0wcJ98UyIku7ofUYgXHm0XYKTJwiyyhrKJ8pZ4qoeCoRkitIGIitlb84fSufVamcoLyLNbLUsO5OzL+Uscyhq/BwAhyOhj5FB9DM+GE9ntanQ4m3k4guMyMctR9CGS6Tk4LKJ1WCm0AnjTPalc+we+7yORY2J/9d6VHLKfaFXbpuWmrdnFfDZqxqcUODsxPVE0LuUtXyKQDTjjfQc8106Z/z19AJS+oLm/2UND84PD3MqsjX6EX0/9k3fY0OsoCuQAivDRmtevQ0bDQrTAyeBLcfnPCw/MYiJWyBcaYBAYK42EAfsFTDBRIduFB/Dpvg+8GuLZSdm4xVYpTlQ2pMtlGNWIGIRQsjk9LZ8swq8QBMiiF/bpMGKdfmnyQj8jkEOCWaAzkR9O+4E4Y7PuBENef9XuV0hLMryCrML2YXigxAKkEUOPhfnG+AbEY+g2kAMp+2EtXaG3tsGxoMhEYA+uRd3o2cacQMMwRpnePH5DYg6F05mrvdHPpt+P9UR1iHaHmjBPAYeksmrdP8bS088zcnePgiL6+6N0m3+l8Krihmxg5RyWjnH18IwX4RO+xg4x3cW+zaScCDbbotDMEYtChF+Hs=
 before_install:
   - openssl aes-256-cbc -K $encrypted_53968681344a_key -iv $encrypted_53968681344a_iv -in _ci/keystore.jks.enc -out _ci/keystore.jks -d
+  - mkdir "$ANDROID_HOME/licenses" || true
+  - echo "8933bad161af4178b1185d1a37fbf41ea5269c55\nd56f5187479451eabf01fb78af6dfcb131a6481e\n24333f8a63b6825ea9c5514f83c2829b004d1fee" > "$ANDROID_HOME/licenses/android-sdk-license"
 script:
   - "./gradlew lintFossDebug testFossDebugUnitTest lintGoogleDebug testGoogleDebugUnitTest"
   - "./gradlew assembleRelease"

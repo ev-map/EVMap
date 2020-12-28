@@ -1,16 +1,22 @@
 package net.vonforst.evmap.auto
 
 import android.content.*
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.location.Location
+import android.net.Uri
 import android.os.IBinder
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import coil.imageLoader
+import coil.request.ImageRequest
 import com.google.android.libraries.car.app.CarContext
 import com.google.android.libraries.car.app.Screen
 import com.google.android.libraries.car.app.model.*
@@ -114,7 +120,7 @@ class MapScreen(ctx: CarContext) : Screen(ctx) {
             setTitle("EVMap")
             location?.let {
                 setAnchor(Place.builder(LatLng.create(it)).build())
-            }
+            } ?: setIsLoading(true)
             chargers?.take(maxRows)?.let { chargerList ->
                 val builder = ItemList.Builder()
                 chargerList.forEach { charger ->
@@ -122,8 +128,7 @@ class MapScreen(ctx: CarContext) : Screen(ctx) {
                 }
                 builder.setNoItemsMessage(carContext.getString(R.string.auto_no_chargers_found))
                 setItemList(builder.build())
-            }
-            if (chargers == null || location == null) setIsLoading(true)
+            } ?: setIsLoading(true)
             setCurrentLocationEnabled(true)
             build()
         }.build()
@@ -179,6 +184,10 @@ class MapScreen(ctx: CarContext) : Screen(ctx) {
 
             addText(text)
             setMetadata(Metadata.ofPlace(place))
+
+            setOnClickListener {
+                screenManager.push(ChargerDetailScreen(carContext, charger))
+            }
         }.build()
     }
 
@@ -228,6 +237,85 @@ class MapScreen(ctx: CarContext) : Screen(ctx) {
 
                 invalidate()
             }
+        }
+    }
+}
+
+class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : Screen(ctx) {
+    var charger: ChargeLocation? = null
+    var photo: Bitmap? = null
+    val apikey = ctx.getString(R.string.goingelectric_key)
+    private val api by lazy {
+        GoingElectricApi.create(apikey, context = ctx)
+    }
+
+    override fun getTemplate(): Template {
+        if (charger == null) loadCharger()
+
+        return PaneTemplate.builder(
+            Pane.Builder().apply {
+                charger?.let {
+                    addRow(Row.builder().apply {
+                        setTitle(it.address.toString())
+                        photo?.let {
+                            setImage(
+                                CarIcon.of(IconCompat.createWithBitmap(photo)),
+                                Row.IMAGE_TYPE_LARGE
+                            )
+                        }
+                    }.build())
+                    setActions(listOf(
+                        Action.builder()
+                            .setIcon(
+                                CarIcon.of(
+                                    IconCompat.createWithResource(
+                                        carContext,
+                                        R.drawable.ic_navigation
+                                    )
+                                )
+                            )
+                            .setTitle(carContext.getString(R.string.navigate))
+                            .setBackgroundColor(CarColor.PRIMARY)
+                            .setOnClickListener {
+                                navigateToCharger(it)
+                            }
+                            .build()
+                    ))
+                } ?: setIsLoading(true)
+            }.build()
+        ).apply {
+            setTitle(chargerSparse.name)
+            setHeaderAction(Action.BACK)
+        }.build()
+    }
+
+    private fun navigateToCharger(charger: ChargeLocation) {
+        val coord = charger.coordinates
+        val intent =
+            Intent(
+                CarContext.ACTION_NAVIGATE,
+                Uri.parse("geo:0,0?q=${coord.lat},${coord.lng}(${charger.name})")
+            )
+        carContext.startCarApp(intent)
+    }
+
+    private fun loadCharger() {
+        lifecycleScope.launch {
+            val response = api.getChargepointDetail(chargerSparse.id)
+            charger = response.body()?.chargelocations?.get(0) as ChargeLocation
+
+            val photo = charger?.photos?.get(0)
+            photo?.let {
+                val size = (carContext.resources.displayMetrics.density * 64).roundToInt()
+                val url = "https://api.goingelectric.de/chargepoints/photo/?key=${apikey}" +
+                        "&id=${photo.id}&size=${size}"
+                val request = ImageRequest.Builder(carContext).data(url).build()
+                this@ChargerDetailScreen.photo =
+                    (carContext.imageLoader.execute(request).drawable as BitmapDrawable).bitmap
+            }
+
+
+            invalidate()
         }
     }
 }

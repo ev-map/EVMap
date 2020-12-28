@@ -155,4 +155,5 @@
         <item quantity="one">%d compatible payment method</item>
         <item quantity="other">%d compatible payment methods</item>
     </plurals>
+    <string name="navigate">Navigate</string>
 </resources>

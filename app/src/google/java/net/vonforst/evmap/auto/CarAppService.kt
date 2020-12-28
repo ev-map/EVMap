@@ -18,18 +18,21 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import coil.imageLoader
 import coil.request.ImageRequest
 import com.google.android.libraries.car.app.CarContext
+import com.google.android.libraries.car.app.CarToast
 import com.google.android.libraries.car.app.Screen
 import com.google.android.libraries.car.app.model.*
 import com.google.android.libraries.car.app.model.Distance.UNIT_KILOMETERS
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
+import net.vonforst.evmap.MapsActivity
 import net.vonforst.evmap.R
 import net.vonforst.evmap.api.availability.ChargeLocationStatus
 import net.vonforst.evmap.api.availability.ChargepointStatus
 import net.vonforst.evmap.api.availability.getAvailability
 import net.vonforst.evmap.api.goingelectric.ChargeLocation
 import net.vonforst.evmap.api.goingelectric.GoingElectricApi
+import net.vonforst.evmap.api.nameForPlugType
 import net.vonforst.evmap.ui.availabilityText
 import net.vonforst.evmap.ui.getMarkerTint
 import net.vonforst.evmap.utils.distanceBetween
@@ -46,6 +49,7 @@ class CarAppService : com.google.android.libraries.car.app.CarAppService(), Life
         override fun onServiceConnected(name: ComponentName, ibinder: IBinder) {
             val binder: CarLocationService.LocalBinder = ibinder as CarLocationService.LocalBinder
             locationService = binder.service
+            // TODO: check for location permission
             locationService?.requestLocationUpdates()
         }
 
@@ -130,6 +134,7 @@ class MapScreen(ctx: CarContext) : Screen(ctx) {
                 setItemList(builder.build())
             } ?: setIsLoading(true)
             setCurrentLocationEnabled(true)
+            setHeaderAction(Action.APP_ICON)
             build()
         }.build()
     }
@@ -244,6 +249,8 @@ class MapScreen(ctx: CarContext) : Screen(ctx) {
 class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : Screen(ctx) {
     var charger: ChargeLocation? = null
     var photo: Bitmap? = null
+    private var availability: ChargeLocationStatus? = null
+
     val apikey = ctx.getString(R.string.goingelectric_key)
     private val api by lazy {
         GoingElectricApi.create(apikey, context = ctx)
@@ -254,15 +261,55 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
 
         return PaneTemplate.builder(
             Pane.Builder().apply {
-                charger?.let {
+                charger?.let { charger ->
                     addRow(Row.builder().apply {
-                        setTitle(it.address.toString())
+                        setTitle(charger.address.toString())
                         photo?.let {
                             setImage(
                                 CarIcon.of(IconCompat.createWithBitmap(photo)),
                                 Row.IMAGE_TYPE_LARGE
                             )
                         }
+
+                        val chargepointsText = SpannableStringBuilder()
+                        charger.chargepointsMerged.forEachIndexed { i, cp ->
+                            if (i > 0) chargepointsText.append(" · ")
+                            chargepointsText.append(
+                                "${cp.count}× ${
+                                    nameForPlugType(
+                                        carContext,
+                                        cp.type
+                                    )
+                                } ${cp.formatPower()}"
+                            )
+                            availability?.status?.get(cp)?.let { status ->
+                                chargepointsText.append(
+                                    " (${availabilityText(status)}/${cp.count})",
+                                    ForegroundCarColorSpan.create(carAvailabilityColor(status)),
+                                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                                )
+                            }
+                        }
+                        addText(chargepointsText)
+                    }.build())
+                    addRow(Row.builder().apply {
+                        val operatorText = StringBuilder().apply {
+                            charger.operator?.let { append(it) }
+                            charger.network?.let {
+                                if (isNotEmpty()) append(" · ")
+                                append(it)
+                            }
+                        }
+                        setTitle(operatorText)
+
+                        charger.cost?.let { addText(it.getStatusText(carContext, emoji = true)) }
+
+                        /*val types = charger.chargepoints.map { it.type }.distinct()
+                        if (types.size == 1) {
+                            setImage(
+                                CarIcon.of(IconCompat.createWithResource(carContext, iconForPlugType(types[0]))),
+                                Row.IMAGE_TYPE_ICON)
+                        }*/
                     }.build())
                     setActions(listOf(
                         Action.builder()
@@ -277,10 +324,25 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
                             .setTitle(carContext.getString(R.string.navigate))
                             .setBackgroundColor(CarColor.PRIMARY)
                             .setOnClickListener {
-                                navigateToCharger(it)
+                                navigateToCharger(charger)
                             }
+                            .build(),
+                        Action.builder()
+                            .setTitle(carContext.getString(R.string.open_in_app))
+                            .setOnClickListener(ParkedOnlyOnClickListener.create {
+                                val intent = Intent(carContext, MapsActivity::class.java)
+                                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                carContext.startActivity(intent)
+                                CarToast.makeText(
+                                    carContext,
+                                    R.string.opened_on_phone,
+                                    CarToast.LENGTH_LONG
+                                ).show()
+                                // TODO: pass options to open this specific charger
+                            })
                             .build()
-                    ))
+                    )
+                    )
                 } ?: setIsLoading(true)
             }.build()
         ).apply {
@@ -314,6 +376,7 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
                     (carContext.imageLoader.execute(request).drawable as BitmapDrawable).bitmap
             }
 
+            availability = charger?.let { getAvailability(it).data }
 
             invalidate()
         }

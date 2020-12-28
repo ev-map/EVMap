@@ -12,4 +12,6 @@
     <string name="donations_info" formatted="false">Do you find EVMap useful? Support its development by sending a donation to the developer.\n\nGoogle takes 30% off every donation.</string>
     <string name="auto_location_service">EVMap is running on Android Auto and using your location.</string>
     <string name="auto_no_chargers_found">No nearby chargers found</string>
+    <string name="open_in_app">Open in app</string>
+    <string name="opened_on_phone">Opened on phone</string>
 </resources>

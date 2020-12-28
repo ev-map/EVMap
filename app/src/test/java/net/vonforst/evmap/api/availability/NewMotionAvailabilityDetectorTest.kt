@@ -66,8 +66,7 @@ class NewMotionAvailabilityDetectorTest {
     @Test
     fun apiTest() {
         for (chargepoint in listOf(2105L, 18284L)) {
-            val charger = api.getChargepointDetail(chargepoint)
-                .execute().body()!!
+            val charger = runBlocking { api.getChargepointDetail(chargepoint).body()!! }
                 .chargelocations[0] as ChargeLocation
             println(charger)
 

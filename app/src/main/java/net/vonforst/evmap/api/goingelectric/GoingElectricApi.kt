@@ -6,7 +6,6 @@ import com.squareup.moshi.Moshi
 import net.vonforst.evmap.BuildConfig
 import okhttp3.Cache
 import okhttp3.OkHttpClient
-import retrofit2.Call
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -56,7 +55,7 @@ interface GoingElectricApi {
     ): Response<ChargepointList>
 
     @GET("chargepoints/")
-    fun getChargepointDetail(@Query("ge_id") id: Long): Call<ChargepointList>
+    suspend fun getChargepointDetail(@Query("ge_id") id: Long): Response<ChargepointList>
 
     @GET("chargepoints/pluglist/")
     suspend fun getPlugs(): Response<StringList>

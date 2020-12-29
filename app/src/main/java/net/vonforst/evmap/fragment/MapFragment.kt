@@ -35,6 +35,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.transition.TransitionInflater
 import androidx.transition.TransitionManager
+import coil.memory.MemoryCache
 import com.car2go.maps.AnyMap
 import com.car2go.maps.MapFragment
 import com.car2go.maps.OnMapReadyCallback
@@ -507,12 +508,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
     private fun setupAdapters() {
         val galleryClickListener = object : GalleryAdapter.ItemClickListener {
-            override fun onItemClick(view: View, position: Int) {
+            override fun onItemClick(view: View, position: Int, imageCacheKey: MemoryCache.Key?) {
                 val photos = vm.charger.value?.data?.photos ?: return
                 val extras = FragmentNavigatorExtras(view to view.transitionName)
                 view.findNavController().navigate(
                     R.id.action_map_to_galleryFragment,
-                    GalleryFragment.buildArgs(photos, position),
+                    GalleryFragment.buildArgs(photos, position, imageCacheKey),
                     null,
                     extras
                 )

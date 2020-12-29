@@ -12,6 +12,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.transition.TransitionInflater
 import androidx.viewpager2.widget.ViewPager2
+import coil.memory.MemoryCache
 import com.ortiz.touchview.TouchImageView
 import net.vonforst.evmap.R
 import net.vonforst.evmap.adapter.GalleryAdapter
@@ -24,12 +25,18 @@ class GalleryFragment : Fragment() {
     companion object {
         private const val EXTRA_POSITION = "position"
         private const val EXTRA_PHOTOS = "photos"
+        private const val EXTRA_IMAGE_CACHE_KEY = "image_cache_key"
         private const val SAVED_CURRENT_PAGE_POSITION = "current_page_position"
 
-        fun buildArgs(photos: List<ChargerPhoto>, position: Int): Bundle {
+        fun buildArgs(
+            photos: List<ChargerPhoto>,
+            position: Int,
+            imageCacheKey: MemoryCache.Key?
+        ): Bundle {
             return Bundle().apply {
                 putParcelableArrayList(EXTRA_PHOTOS, ArrayList(photos))
                 putInt(EXTRA_POSITION, position)
+                putParcelable(EXTRA_IMAGE_CACHE_KEY, imageCacheKey)
             }
         }
     }
@@ -73,7 +80,10 @@ class GalleryFragment : Fragment() {
             savedInstanceState?.getInt(SAVED_CURRENT_PAGE_POSITION) ?: startingPosition
 
         galleryAdapter =
-            GalleryAdapter(requireContext(), detailView = true, pageToLoad = currentPosition) {
+            GalleryAdapter(
+                requireContext(), detailView = true, pageToLoad = currentPosition,
+                imageCacheKey = args.getParcelable(EXTRA_IMAGE_CACHE_KEY)
+            ) {
                 startPostponedEnterTransition()
             }
         binding.gallery.setPageTransformer { page, _ ->

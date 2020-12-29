@@ -9,6 +9,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Path
+import java.util.*
 
 private const val coordRange = 0.1  // range of latitude and longitude for loading the map
 private const val maxDistance = 15  // max distance between reported positions in meters
@@ -138,14 +139,17 @@ class NewMotionAvailabilityDetector(client: OkHttpClient, baseUrl: String? = nul
         connectorStatus.forEach { (connector, statusStr) ->
             val id = connector.uid
             val power = connector.electricalProperties.getPower()
-            val type = when (connector.connectorType) {
-                "Type3" -> Chargepoint.TYPE_3
-                "Type2" -> Chargepoint.TYPE_2
-                "Type1" -> Chargepoint.TYPE_1
-                "Domestic" -> Chargepoint.SCHUKO
-                "Type2Combo" -> Chargepoint.CCS
-                "TepcoCHAdeMO" -> Chargepoint.CHADEMO
-                "Unspecified" -> "unspecified"
+            val type = when (connector.connectorType.toLowerCase(Locale.ROOT)) {
+                "type3" -> Chargepoint.TYPE_3
+                "type2" -> Chargepoint.TYPE_2
+                "type1" -> Chargepoint.TYPE_1
+                "domestic" -> Chargepoint.SCHUKO
+                "type1combo" -> Chargepoint.CCS  // US CCS, aka type1_combo
+                "type2combo" -> Chargepoint.CCS  // EU CCS, aka type2_combo
+                "tepcochademo" -> Chargepoint.CHADEMO
+                "unspecified" -> "unknown"
+                "unknown" -> "unknown"
+                "saej1772" -> "unknown"
                 else -> throw IllegalArgumentException("unrecognized type ${connector.connectorType}")
             }
             val status = when (statusStr) {

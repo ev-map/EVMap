@@ -23,6 +23,9 @@ import net.vonforst.evmap.utils.LocaleContextWrapper
 
 
 const val REQUEST_LOCATION_PERMISSION = 1
+const val EXTRA_CHARGER_ID = "chargerId"
+const val EXTRA_LAT = "lat"
+const val EXTRA_LON = "lon"
 
 class MapsActivity : AppCompatActivity() {
     interface FragmentCallback {
@@ -92,6 +95,18 @@ class MapsActivity : AppCompatActivity() {
                     .createPendingIntent()
                 deepLink.send()
             }
+        } else if (intent.hasExtra(EXTRA_CHARGER_ID)) {
+            navController.createDeepLink()
+                .setDestination(R.id.map)
+                .setArguments(
+                    MapFragment.showCharger(
+                        intent.getLongExtra(EXTRA_CHARGER_ID, 0),
+                        intent.getDoubleExtra(EXTRA_LAT, 0.0),
+                        intent.getDoubleExtra(EXTRA_LON, 0.0)
+                    )
+                )
+                .createPendingIntent()
+                .send()
         }
     }
 

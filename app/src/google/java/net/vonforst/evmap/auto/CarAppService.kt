@@ -25,8 +25,7 @@ import com.google.android.libraries.car.app.model.Distance.UNIT_KILOMETERS
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
-import net.vonforst.evmap.MapsActivity
-import net.vonforst.evmap.R
+import net.vonforst.evmap.*
 import net.vonforst.evmap.api.availability.ChargeLocationStatus
 import net.vonforst.evmap.api.availability.ChargepointStatus
 import net.vonforst.evmap.api.availability.getAvailability
@@ -332,6 +331,9 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
                             .setOnClickListener(ParkedOnlyOnClickListener.create {
                                 val intent = Intent(carContext, MapsActivity::class.java)
                                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                    .putExtra(EXTRA_CHARGER_ID, charger.id)
+                                    .putExtra(EXTRA_LAT, charger.coordinates.lat)
+                                    .putExtra(EXTRA_LON, charger.coordinates.lng)
                                 carContext.startActivity(intent)
                                 CarToast.makeText(
                                     carContext,

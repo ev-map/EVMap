@@ -1125,6 +1125,14 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 putLong(ARG_CHARGER_ID, id)
             }
         }
+
+        fun showCharger(id: Long, lat: Double, lon: Double): Bundle {
+            return Bundle().apply {
+                putLong(ARG_CHARGER_ID, id)
+                putDouble(ARG_LAT, lat)
+                putDouble(ARG_LON, lon)
+            }
+        }
     }
 
     override fun onConnected() {

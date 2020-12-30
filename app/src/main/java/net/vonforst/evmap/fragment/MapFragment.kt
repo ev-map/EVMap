@@ -641,11 +641,20 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
     override fun onMapReady(map: AnyMap) {
         this.map = map
         chargerIconGenerator = ChargerIconGenerator(requireContext(), map.bitmapDescriptorFactory)
-        lifecycleScope.launch {
-            withContext(Dispatchers.IO) {
-                chargerIconGenerator.preloadCache()
+
+        if (BuildConfig.FLAVOR == "google" && mapFragment!!.priority[0] == MapFragment.GOOGLE) {
+            // Google Maps: icons can be generated in background thread
+            lifecycleScope.launch {
+                withContext(Dispatchers.IO) {
+                    chargerIconGenerator.preloadCache()
+                }
             }
+        } else {
+            // Mapbox: needs to be run on main thread
+            chargerIconGenerator.preloadCache()
         }
+
+
 
         animator = MarkerAnimator(chargerIconGenerator)
         map.uiSettings.setTiltGesturesEnabled(false)

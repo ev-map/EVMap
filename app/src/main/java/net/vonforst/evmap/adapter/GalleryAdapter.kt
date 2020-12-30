@@ -2,16 +2,15 @@ package net.vonforst.evmap.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.drawable.ColorDrawable
 import android.view.*
 import android.widget.ImageView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import coil.ImageLoader
 import coil.load
 import coil.memory.MemoryCache
-import coil.util.DebugLogger
+import coil.size.OriginalSize
+import coil.size.SizeResolver
 import com.ortiz.touchview.TouchImageView
 import net.vonforst.evmap.R
 import net.vonforst.evmap.api.goingelectric.ChargerPhoto
@@ -88,14 +87,12 @@ class GalleryAdapter(
                 }
 
         holder.view.load(
-            url,
-            imageLoader = ImageLoader.Builder(holder.view.context).logger(DebugLogger()).build()
+            url
         ) {
             if (pageToLoad == position && imageCacheKey != null) {
                 placeholderMemoryCacheKey(imageCacheKey)
-            } else {
-                placeholder(ColorDrawable(0))
             }
+            size(SizeResolver(OriginalSize))
             allowHardware(false)
             listener(
                 onSuccess = { _, metadata ->
@@ -107,11 +104,6 @@ class GalleryAdapter(
                         loadedListener.invoke()
                         loaded = true
                     }
-                },
-                onStart = {
-
-                },
-                onCancel = {
                 }
             )
         }

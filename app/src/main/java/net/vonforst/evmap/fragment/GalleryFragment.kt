@@ -42,7 +42,6 @@ class GalleryFragment : Fragment() {
     }
 
     private lateinit var binding: FragmentGalleryBinding
-    private var isReturning: Boolean = false
     private var startingPosition: Int = 0
     private var currentPosition: Int = 0
     private lateinit var galleryAdapter: GalleryAdapter
@@ -56,7 +55,6 @@ class GalleryFragment : Fragment() {
             if (image != null && image.currentZoom !in 0.95f..1.05f) {
                 image.setZoomAnimated(1f, 0.5f, 0.5f)
             } else {
-                isReturning = true
                 galleryVm.galleryPosition.value = currentPosition
                 findNavController().popBackStack()
             }
@@ -130,10 +128,8 @@ class GalleryFragment : Fragment() {
             names: MutableList<String>,
             sharedElements: MutableMap<String, View>
         ) {
-            if (isReturning) {
-                val currentPage = currentPage ?: return
-                sharedElements[names[0]] = currentPage
-            }
+            val currentPage = currentPage ?: return
+            sharedElements[names[0]] = currentPage
         }
     }
 

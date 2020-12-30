@@ -89,7 +89,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         }
     })
     private val galleryVm: GalleryViewModel by activityViewModels()
-    private lateinit var mapFragment: MapFragment
+    private var mapFragment: MapFragment? = null
     private var map: AnyMap? = null
     private lateinit var locationClient: LostApiClient
     private lateinit var bottomSheetBehavior: BottomSheetBehaviorGoogleMapsLike<View>
@@ -124,19 +124,29 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        locationClient = LostApiClient.Builder(requireContext())
+            .addConnectionCallbacks(this)
+            .build()
+        locationClient.connect()
+        clusterIconGenerator = ClusterIconGenerator(requireContext())
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_map, container, false)
         binding.lifecycleOwner = this
         binding.vm = vm
 
-        mapFragment = MapFragment()
         val provider = PreferenceDataSource(requireContext()).mapProvider
-        mapFragment.setPriority(
-            arrayOf(
+        if (mapFragment == null || mapFragment!!.priority[0] != provider) {
+            mapFragment = MapFragment()
+            mapFragment!!.priority = arrayOf(
                 when (provider) {
                     "mapbox" -> MapFragment.MAPBOX
                     "google" -> MapFragment.GOOGLE
@@ -145,25 +155,18 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 MapFragment.GOOGLE,
                 MapFragment.MAPBOX
             )
-        )
-        requireActivity().supportFragmentManager
-            .beginTransaction()
-            .replace(R.id.map, mapFragment)
-            .commit()
+            requireActivity().supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.map, mapFragment!!)
+                .commit()
 
-        // reset map-related stuff (map provider may have changed)
-        map = null
-        markers.clear()
-        clusterMarkers = emptyList()
-        searchResultMarker = null
-        searchResultIcon = null
-
-
-        locationClient = LostApiClient.Builder(requireContext())
-            .addConnectionCallbacks(this)
-            .build()
-        locationClient.connect()
-        clusterIconGenerator = ClusterIconGenerator(requireContext())
+            // reset map-related stuff (map provider may have changed)
+            map = null
+            markers.clear()
+            clusterMarkers = emptyList()
+            searchResultMarker = null
+            searchResultIcon = null
+        }
 
         setHasOptionsMenu(true)
         postponeEnterTransition()
@@ -187,7 +190,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             insets
         }
 
-        setExitSharedElementCallback(exitElementCallback)
+        setExitSharedElementCallback(reenterSharedElementCallback)
         exitTransition = TransitionInflater.from(requireContext())
             .inflateTransition(R.transition.map_exit_transition)
 
@@ -200,7 +203,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        mapFragment.getMapAsync(this)
+        mapFragment!!.getMapAsync(this)
         bottomSheetBehavior = BottomSheetBehaviorGoogleMapsLike.from(binding.bottomSheet)
         detailAppBarBehavior = MergedAppBarLayoutBehavior.from(binding.detailAppBar)
 
@@ -532,17 +535,43 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 DividerItemDecoration(
                     context, LinearLayoutManager.HORIZONTAL
                 ).apply {
-                    setDrawable(context.getDrawable(R.drawable.gallery_divider)!!)
+                    setDrawable(ContextCompat.getDrawable(context, R.drawable.gallery_divider)!!)
                 })
         }
         if (galleryPosition == null) {
             startPostponedEnterTransition()
         } else {
-            binding.gallery.scrollToPosition(galleryPosition)
+            binding.gallery.addOnLayoutChangeListener(object : View.OnLayoutChangeListener {
+                override fun onLayoutChange(
+                    v: View,
+                    left: Int,
+                    top: Int,
+                    right: Int,
+                    bottom: Int,
+                    oldLeft: Int,
+                    oldTop: Int,
+                    oldRight: Int,
+                    oldBottom: Int
+                ) {
+                    v.removeOnLayoutChangeListener(this)
+                    val layoutManager = binding.gallery.layoutManager!!
+                    val viewAtPosition = layoutManager.findViewByPosition(galleryPosition)
+                    if (viewAtPosition == null || layoutManager.isViewPartiallyVisible(
+                            viewAtPosition,
+                            false,
+                            true
+                        )
+                    ) {
+                        binding.gallery.post {
+                            layoutManager.scrollToPosition(galleryPosition)
+                        }
+                    }
+                }
+            })
             // make sure that the app does not freeze waiting for a picture to load
             Handler().postDelayed({
                 startPostponedEnterTransition()
-            }, 500)
+            }, 100)
         }
 
         binding.detailView.connectors.apply {
@@ -975,16 +1004,17 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         return binding.root
     }
 
-    private val exitElementCallback: SharedElementCallback = object : SharedElementCallback() {
-        override fun onMapSharedElements(
-            names: MutableList<String>,
-            sharedElements: MutableMap<String, View>
-        ) {
-            // Locate the ViewHolder for the clicked position.
-            val position = galleryVm.galleryPosition.value ?: return
+    private val reenterSharedElementCallback: SharedElementCallback =
+        object : SharedElementCallback() {
+            override fun onMapSharedElements(
+                names: MutableList<String>,
+                sharedElements: MutableMap<String, View>
+            ) {
+                // Locate the ViewHolder for the clicked position.
+                val position = galleryVm.galleryPosition.value ?: return
 
-            val vh = binding.gallery.findViewHolderForAdapterPosition(position)
-            if (vh?.itemView == null) return
+                val vh = binding.gallery.findViewHolderForAdapterPosition(position)
+                if (vh?.itemView == null) return
 
             // Map the first shared element name to the child ImageView.
             sharedElements[names[0]] = vh.itemView

@@ -48,7 +48,6 @@ android {
     productFlavors {
         foss {
             dimension "dependencies"
-            versionNameSuffix "-foss"
         }
         google {
             dimension "dependencies"

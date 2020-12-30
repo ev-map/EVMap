@@ -36,11 +36,11 @@ class MarkerAnimator(val gen: ChargerIconGenerator) {
             animatingMarkers.remove(marker)
         }
 
-        val anim = ValueAnimator.ofInt(0, 20).apply {
+        val anim = ValueAnimator.ofFloat(0f, 1f).apply {
             duration = 250
             interpolator = LinearOutSlowInInterpolator()
             addUpdateListener { animationState ->
-                val scale = animationState.animatedValue as Int
+                val scale = animationState.animatedValue as Float
                 marker.setIcon(
                     gen.getBitmapDescriptor(
                         tint,
@@ -73,11 +73,11 @@ class MarkerAnimator(val gen: ChargerIconGenerator) {
             animatingMarkers.remove(marker)
         }
 
-        val anim = ValueAnimator.ofInt(20, 0).apply {
+        val anim = ValueAnimator.ofFloat(1f, 0f).apply {
             duration = 200
             interpolator = FastOutLinearInInterpolator()
             addUpdateListener { animationState ->
-                val scale = animationState.animatedValue as Int
+                val scale = animationState.animatedValue as Float
                 marker.setIcon(
                     gen.getBitmapDescriptor(
                         tint,

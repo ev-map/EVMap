@@ -16,6 +16,7 @@ import com.car2go.maps.model.BitmapDescriptor
 import com.google.maps.android.ui.IconGenerator
 import com.google.maps.android.ui.SquareTextView
 import net.vonforst.evmap.R
+import kotlin.math.roundToInt
 
 class ClusterIconGenerator(context: Context) : IconGenerator(context) {
     init {
@@ -41,8 +42,11 @@ class ClusterIconGenerator(context: Context) : IconGenerator(context) {
 }
 
 
-class ChargerIconGenerator(val context: Context, val factory: BitmapDescriptorFactory) {
-    data class BitmapData(
+class ChargerIconGenerator(
+    val context: Context, val factory: BitmapDescriptorFactory,
+    val scaleResolution: Int = 20
+) {
+    private data class BitmapData(
         val tint: Int,
         val scale: Int,
         val alpha: Int,
@@ -51,20 +55,17 @@ class ChargerIconGenerator(val context: Context, val factory: BitmapDescriptorFa
         val multi: Boolean
     )
 
-    val cacheSize = 840; // 840 items: 21 sizes, 5 colors, highlight, fault, multi on/off
-    val cache = LruCache<BitmapData, BitmapDescriptor>(cacheSize)
-    val oversize = 1.4f  // increase to add padding for fault icon or scale > 1
-    val icon = R.drawable.ic_map_marker_charging
-    val multiIcon = R.drawable.ic_map_marker_charging_multiple
-    val highlightIcon = R.drawable.ic_map_marker_highlight
-    val highlightIconMulti = R.drawable.ic_map_marker_charging_highlight_multiple
-    val faultIcon = R.drawable.ic_map_marker_fault
+    // 230 items: (21 sizes, 5 colors, multi on/off) + highlight + fault (only with scale = 1)
+    private val cacheSize = (scaleResolution + 3) * 5 * 2;
+    private val cache = LruCache<BitmapData, BitmapDescriptor>(cacheSize)
+    private val oversize = 1.4f  // increase to add padding for fault icon or scale > 1
+    private val icon = R.drawable.ic_map_marker_charging
+    private val multiIcon = R.drawable.ic_map_marker_charging_multiple
+    private val highlightIcon = R.drawable.ic_map_marker_highlight
+    private val highlightIconMulti = R.drawable.ic_map_marker_charging_highlight_multiple
+    private val faultIcon = R.drawable.ic_map_marker_fault
 
-    init {
-        preloadCache()
-    }
-
-    private fun preloadCache() {
+    fun preloadCache() {
         // pre-generates images for scale from 0 to 255 for all possible tint colors
         val tints = listOf(
             R.color.charger_100kw,
@@ -77,8 +78,11 @@ class ChargerIconGenerator(val context: Context, val factory: BitmapDescriptorFa
             for (highlight in listOf(false, true)) {
                 for (multi in listOf(false, true)) {
                     for (tint in tints) {
-                        for (scale in 0..20) {
-                            getBitmapDescriptor(tint, scale, 255, highlight, fault, multi)
+                        for (scale in 0..scaleResolution) {
+                            getBitmapDescriptor(
+                                tint, scale.toFloat() / scaleResolution,
+                                255, highlight, fault, multi
+                            )
                         }
                     }
                 }
@@ -88,13 +92,19 @@ class ChargerIconGenerator(val context: Context, val factory: BitmapDescriptorFa
 
     fun getBitmapDescriptor(
         @ColorRes tint: Int,
-        scale: Int = 20,
+        scale: Float = 1f,
         alpha: Int = 255,
         highlight: Boolean = false,
         fault: Boolean = false,
         multi: Boolean = false
     ): BitmapDescriptor? {
-        val data = BitmapData(tint, scale, alpha, highlight, fault, multi)
+        val data = BitmapData(
+            tint, (scale * scaleResolution).roundToInt(),
+            alpha,
+            if (scale == 1f) highlight else false,
+            if (scale == 1f) fault else false,
+            multi
+        )
         val cachedImg = cache[data]
         return if (cachedImg != null) {
             cachedImg
@@ -128,7 +138,7 @@ class ChargerIconGenerator(val context: Context, val factory: BitmapDescriptorFa
         )
         val canvas = Canvas(bm)
 
-        val scale = data.scale / 20f
+        val scale = data.scale.toFloat() / scaleResolution
         canvas.scale(
             scale,
             scale,

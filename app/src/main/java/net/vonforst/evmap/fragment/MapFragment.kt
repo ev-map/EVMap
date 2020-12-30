@@ -54,7 +54,9 @@ import com.mapzen.android.lost.api.LocationServices
 import com.mapzen.android.lost.api.LostApiClient
 import io.michaelrocks.bimap.HashBiMap
 import io.michaelrocks.bimap.MutableBiMap
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import net.vonforst.evmap.*
 import net.vonforst.evmap.adapter.ConnectorAdapter
 import net.vonforst.evmap.adapter.DetailsAdapter
@@ -639,6 +641,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
     override fun onMapReady(map: AnyMap) {
         this.map = map
         chargerIconGenerator = ChargerIconGenerator(requireContext(), map.bitmapDescriptorFactory)
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                chargerIconGenerator.preloadCache()
+            }
+        }
+
         animator = MarkerAnimator(chargerIconGenerator)
         map.uiSettings.setTiltGesturesEnabled(false)
         map.setIndoorEnabled(false)
@@ -822,7 +830,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                             .icon(
                                 chargerIconGenerator.getBitmapDescriptor(
                                     tint,
-                                    0,
+                                    0f,
                                     255,
                                     highlight,
                                     fault,

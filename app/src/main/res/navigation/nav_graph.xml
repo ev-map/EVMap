@@ -31,6 +31,9 @@
             app:enterAnim="@anim/fragment_fade_enter"
             app:popEnterAnim="@anim/fragment_fade_enter"
             app:popExitAnim="@anim/fragment_fade_exit" />
+        <action
+            android:id="@+id/action_map_to_welcome"
+            app:destination="@id/welcome" />
     </fragment>
     <fragment
         android:id="@+id/about"
@@ -75,6 +78,11 @@
         android:name="net.vonforst.evmap.fragment.DonateFragment"
         android:label="@string/donate"
         tools:layout="@layout/fragment_donate" />
+    <dialog
+        android:id="@+id/welcome"
+        android:name="net.vonforst.evmap.fragment.WelcomeDialogFragment"
+        android:label="@string/welcome_to_evmap"
+        tools:layout="@layout/dialog_welcome" />
     <chrome
         android:id="@+id/report_new_charger"
         app:url="@string/report_new_charger_url" />

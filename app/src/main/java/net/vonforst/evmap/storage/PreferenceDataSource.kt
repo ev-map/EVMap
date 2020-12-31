@@ -72,4 +72,10 @@ class PreferenceDataSource(val context: Context) {
             "map_provider",
             context.getString(R.string.pref_map_provider_default)
         )!!
+
+    var welcomeDialogShown: Boolean
+        get() = sp.getBoolean("welcome_dialog_shown", false)
+        set(value) {
+            sp.edit().putBoolean("welcome_dialog_shown", value).apply()
+        }
 }

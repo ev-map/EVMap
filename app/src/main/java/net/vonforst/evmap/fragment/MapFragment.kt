@@ -222,6 +222,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             navController,
             (requireActivity() as MapsActivity).appBarConfiguration
         )
+
+        if (!PreferenceDataSource(requireContext()).welcomeDialogShown) {
+            navController.navigate(R.id.action_map_to_welcome)
+        }
     }
 
     override fun onResume() {

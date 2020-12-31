@@ -1,0 +1,14 @@
+Happy new year! 🎆
+
+New features:
+- save collections of filter settings as a filter profile
+- filter by categories (restaurant, hotel, car park etc.)
+- show scale on map
+- button to edit charger information on GoingElectric.de (only works when logged in)
+- welcome dialog on first start
+
+Fixes:
+- favorites list sorted by distance
+- improved stability of real-time availability info loading
+- app name "EV Map" -> "EVMap"
+- crashes fixed

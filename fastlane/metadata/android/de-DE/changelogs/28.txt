@@ -1,0 +1,14 @@
+Frohes neues Jahr! 🎆
+
+Neue Features:
+- Sammlung von Filtern als Filterprofil speichern
+- Filter nach Kategorien (Restaurant, Hotel, Parkhaus etc.)
+- Maßstab wird auf der Karte angezeigt
+- Knopf zum Bearbeiten eines Ladepunkts bei GoingElectric
+- Willkommensdialog beim ersten Start
+
+Korrekturen:
+- Favoriten werden nach Abstand zur aktuellen Position sortiert
+- Stabilitätsverbesserung beim Laden der Verfügbarkeit (v.a. in der Favoritenliste)
+- App-Name "EV Map" -> "EVMap"
+- Abstürze behoben

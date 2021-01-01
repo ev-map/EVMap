@@ -14,4 +14,7 @@ interface ChargeLocationsDao {
 
     @Query("SELECT * FROM chargelocation")
     fun getAllChargeLocations(): LiveData<List<ChargeLocation>>
+
+    @Query("SELECT * FROM chargelocation")
+    suspend fun getAllChargeLocationsAsync(): List<ChargeLocation>
 }

@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="net.vonforst.evmap">
 
-<uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <uses-sdk tools:overrideLibrary="com.google.android.libraries.car.app" />
 
@@ -36,5 +36,7 @@
             android:name=".auto.CarLocationService"
             android:foregroundServiceType="location"
             android:enabled="true" />
+
+        <activity android:name=".auto.PermissionActivity" />
     </application>
 </manifest>

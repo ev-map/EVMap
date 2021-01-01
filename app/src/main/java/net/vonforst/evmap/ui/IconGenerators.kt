@@ -43,8 +43,10 @@ class ClusterIconGenerator(context: Context) : IconGenerator(context) {
 
 
 class ChargerIconGenerator(
-    val context: Context, val factory: BitmapDescriptorFactory,
-    val scaleResolution: Int = 20
+    val context: Context,
+    val factory: BitmapDescriptorFactory?,
+    val scaleResolution: Int = 20,
+    val oversize: Float = 1.4f // increase to add padding for fault icon or scale > 1
 ) {
     private data class BitmapData(
         val tint: Int,
@@ -58,7 +60,6 @@ class ChargerIconGenerator(
     // 230 items: (21 sizes, 5 colors, multi on/off) + highlight + fault (only with scale = 1)
     private val cacheSize = (scaleResolution + 3) * 5 * 2;
     private val cache = LruCache<BitmapData, BitmapDescriptor>(cacheSize)
-    private val oversize = 1.4f  // increase to add padding for fault icon or scale > 1
     private val icon = R.drawable.ic_map_marker_charging
     private val multiIcon = R.drawable.ic_map_marker_charging_multiple
     private val highlightIcon = R.drawable.ic_map_marker_highlight
@@ -110,10 +111,28 @@ class ChargerIconGenerator(
             cachedImg
         } else {
             val bitmap = generateBitmap(data)
-            val bmd = factory.fromBitmap(bitmap)
+            val bmd = factory!!.fromBitmap(bitmap)
             cache.put(data, bmd)
             bmd
         }
+    }
+
+    fun getBitmap(
+        @ColorRes tint: Int,
+        scale: Float = 1f,
+        alpha: Int = 255,
+        highlight: Boolean = false,
+        fault: Boolean = false,
+        multi: Boolean = false
+    ): Bitmap {
+        val data = BitmapData(
+            tint, (scale * scaleResolution).roundToInt(),
+            alpha,
+            if (scale == 1f) highlight else false,
+            if (scale == 1f) fault else false,
+            multi
+        )
+        return generateBitmap(data)
     }
 
     private fun generateBitmap(data: BitmapData): Bitmap {

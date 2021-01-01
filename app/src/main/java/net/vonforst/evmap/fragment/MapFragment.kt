@@ -480,7 +480,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                     getMarkerTint(c, vm.filteredConnectors.value),
                     highlight = false,
                     fault = c.faultReport != null,
-                    multi = getMarkerMulti(c, vm.filteredConnectors.value)
+                    multi = c.isMulti(vm.filteredConnectors.value)
                 )
             )
         }
@@ -494,7 +494,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 getMarkerTint(charger, vm.filteredConnectors.value),
                 highlight = true,
                 fault = charger.faultReport != null,
-                multi = getMarkerMulti(charger, vm.filteredConnectors.value)
+                multi = charger.isMulti(vm.filteredConnectors.value)
             )
         )
         animator.animateMarkerBounce(marker)
@@ -507,26 +507,11 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                         getMarkerTint(c, vm.filteredConnectors.value),
                         highlight = false,
                         fault = c.faultReport != null,
-                        multi = getMarkerMulti(c, vm.filteredConnectors.value)
+                        multi = c.isMulti(vm.filteredConnectors.value)
                     )
                 )
             }
         }
-    }
-
-    private fun getMarkerMulti(charger: ChargeLocation, filteredConnectors: Set<String>?): Boolean {
-        var chargepoints = charger.chargepointsMerged
-            .filter { filteredConnectors?.contains(it.type) ?: true }
-        if (charger.maxPower(filteredConnectors) >= 43) {
-            // fast charger -> only count fast chargers
-            chargepoints = chargepoints.filter { it.power >= 43 }
-        }
-        val connectors = chargepoints.map { it.type }.distinct().toSet()
-
-        // check if there is more than one plug for any connector type
-        val chargepointsPerConnector =
-            connectors.map { conn -> chargepoints.filter { it.type == conn }.sumBy { it.count } }
-        return chargepointsPerConnector.any { it > 1 }
     }
 
     private fun updateFavoriteToggle() {
@@ -866,7 +851,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                     getMarkerTint(charger, vm.filteredConnectors.value),
                     highlight = charger == vm.chargerSparse.value,
                     fault = charger.faultReport != null,
-                    multi = getMarkerMulti(charger, vm.filteredConnectors.value)
+                    multi = charger.isMulti(vm.filteredConnectors.value)
                 )
             )
         }
@@ -883,7 +868,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                         val tint = getMarkerTint(charger, vm.filteredConnectors.value)
                         val highlight = charger == vm.chargerSparse.value
                         val fault = charger.faultReport != null
-                        val multi = getMarkerMulti(charger, vm.filteredConnectors.value)
+                        val multi = charger.isMulti(vm.filteredConnectors.value)
                         animator.animateMarkerDisappear(marker, tint, highlight, fault, multi)
                     } else {
                         animator.deleteMarker(marker)
@@ -898,7 +883,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                     val tint = getMarkerTint(charger, vm.filteredConnectors.value)
                     val highlight = charger == vm.chargerSparse.value
                     val fault = charger.faultReport != null
-                    val multi = getMarkerMulti(charger, vm.filteredConnectors.value)
+                    val multi = charger.isMulti(vm.filteredConnectors.value)
                     val marker = map.addMarker(
                         MarkerOptions()
                             .position(LatLng(charger.coordinates.lat, charger.coordinates.lng))

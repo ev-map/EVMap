@@ -37,6 +37,7 @@ import net.vonforst.evmap.api.goingelectric.ChargeLocation
 import net.vonforst.evmap.api.goingelectric.GoingElectricApi
 import net.vonforst.evmap.api.nameForPlugType
 import net.vonforst.evmap.storage.AppDatabase
+import net.vonforst.evmap.ui.ChargerIconGenerator
 import net.vonforst.evmap.ui.availabilityText
 import net.vonforst.evmap.ui.getMarkerTint
 import net.vonforst.evmap.utils.distanceBetween
@@ -292,9 +293,6 @@ class MapScreen(ctx: CarContext, val cas: CarAppService, val favorites: Boolean 
     }
 
     private fun formatCharger(charger: ChargeLocation): Row {
-        /*val icon = CarIcon.builder(IconCompat.createWithResource(carContext, R.drawable.ic_map_marker_charging))
-            .setTint(CarColor.BLUE)
-            .build()*/
         val color = ContextCompat.getColor(carContext, getMarkerTint(charger))
         val place = Place.builder(LatLng.create(charger.coordinates.lat, charger.coordinates.lng))
             .setMarker(
@@ -423,6 +421,9 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
         GoingElectricApi.create(apikey, context = ctx)
     }
 
+    private val iconScale = 64f / 44
+    private val iconGen = ChargerIconGenerator(carContext, null, oversize = iconScale)
+
     override fun getTemplate(): Template {
         if (charger == null) loadCharger()
 
@@ -431,12 +432,17 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
                 charger?.let { charger ->
                     addRow(Row.builder().apply {
                         setTitle(charger.address.toString())
-                        photo?.let {
-                            setImage(
-                                CarIcon.of(IconCompat.createWithBitmap(photo)),
-                                Row.IMAGE_TYPE_LARGE
-                            )
-                        }
+
+                        val icon = iconGen.getBitmap(
+                            tint = getMarkerTint(charger),
+                            fault = charger.faultReport != null,
+                            multi = charger.isMulti(),
+                            scale = iconScale
+                        )
+                        setImage(
+                            CarIcon.of(IconCompat.createWithBitmap(icon)),
+                            Row.IMAGE_TYPE_LARGE
+                        )
 
                         val chargepointsText = SpannableStringBuilder()
                         charger.chargepointsMerged.forEachIndexed { i, cp ->
@@ -460,6 +466,12 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
                         addText(chargepointsText)
                     }.build())
                     addRow(Row.builder().apply {
+                        photo?.let {
+                            setImage(
+                                CarIcon.of(IconCompat.createWithBitmap(photo)),
+                                Row.IMAGE_TYPE_LARGE
+                            )
+                        }
                         val operatorText = StringBuilder().apply {
                             charger.operator?.let { append(it) }
                             charger.network?.let {

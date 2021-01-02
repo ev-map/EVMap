@@ -19,4 +19,5 @@
     <string name="grant_on_phone">Grant on phone</string>
     <string name="auto_chargers_closeby">Nearby chargers</string>
     <string name="auto_favorites">Favorites</string>
+    <string name="auto_fault_report_date">⚠️ Fault report (%s)</string>
 </resources>

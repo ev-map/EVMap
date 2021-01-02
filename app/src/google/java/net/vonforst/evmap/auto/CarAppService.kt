@@ -42,7 +42,10 @@ import net.vonforst.evmap.ui.availabilityText
 import net.vonforst.evmap.ui.getMarkerTint
 import net.vonforst.evmap.utils.distanceBetween
 import java.time.Duration
+import java.time.ZoneId
 import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import kotlin.math.roundToInt
 
 interface LocationAwareScreen {
@@ -421,8 +424,7 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
         GoingElectricApi.create(apikey, context = ctx)
     }
 
-    private val iconScale = 64f / 44
-    private val iconGen = ChargerIconGenerator(carContext, null, oversize = iconScale)
+    private val iconGen = ChargerIconGenerator(carContext, null, oversize = 1.4f, height = 64)
 
     override fun getTemplate(): Template {
         if (charger == null) loadCharger()
@@ -436,8 +438,7 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
                         val icon = iconGen.getBitmap(
                             tint = getMarkerTint(charger),
                             fault = charger.faultReport != null,
-                            multi = charger.isMulti(),
-                            scale = iconScale
+                            multi = charger.isMulti()
                         )
                         setImage(
                             CarIcon.of(IconCompat.createWithBitmap(icon)),
@@ -482,6 +483,15 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
                         setTitle(operatorText)
 
                         charger.cost?.let { addText(it.getStatusText(carContext, emoji = true)) }
+                        charger.faultReport?.created?.let {
+                            addText(
+                                carContext.getString(
+                                    R.string.auto_fault_report_date,
+                                    it.atZone(ZoneId.systemDefault())
+                                        .format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT))
+                                )
+                            )
+                        }
 
                         /*val types = charger.chargepoints.map { it.type }.distinct()
                         if (types.size == 1) {

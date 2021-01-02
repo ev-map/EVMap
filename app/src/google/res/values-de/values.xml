@@ -14,4 +14,5 @@
     <string name="grant_on_phone">Auf Telefon zulassen</string>
     <string name="auto_chargers_closeby">In der Nähe</string>
     <string name="auto_favorites">Favoriten</string>
+    <string name="auto_fault_report_date">⚠️ Störungsmeldung (%s)</string>
 </resources>

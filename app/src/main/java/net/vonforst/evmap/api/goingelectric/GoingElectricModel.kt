@@ -135,7 +135,7 @@ data class Cost(
         val parking =
             if (freeparking) ctx.getString(R.string.free) else ctx.getString(R.string.paid)
         return if (emoji) {
-            "⚡ $charging \uD83C\uDD7F️ · $parking"
+            "⚡ $charging · \uD83C\uDD7F️ $parking"
         } else {
             HtmlCompat.fromHtml(ctx.getString(R.string.cost_detail, charging, parking), 0)
         }

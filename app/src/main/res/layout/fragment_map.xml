@@ -9,6 +9,8 @@
 
         <import type="net.vonforst.evmap.viewmodel.Status" />
 
+        <import type="com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike" />
+
         <variable
             name="vm"
             type="net.vonforst.evmap.viewmodel.MapViewModel" />
@@ -139,7 +141,8 @@
                 app:availability="@{vm.availability}"
                 app:chargeCards="@{vm.chargeCardMap}"
                 app:filteredChargeCards="@{vm.filteredChargeCards}"
-                app:distance="@{vm.chargerDistance}" />
+                app:distance="@{vm.chargerDistance}"
+                app:expanded="@{vm.bottomSheetState != BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED &amp;&amp; vm.bottomSheetState != BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN}" />
 
         </androidx.core.widget.NestedScrollView>
 

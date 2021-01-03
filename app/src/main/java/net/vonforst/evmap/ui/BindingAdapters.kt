@@ -25,6 +25,25 @@ fun goneUnless(view: View, visible: Boolean) {
     view.visibility = if (visible) View.VISIBLE else View.GONE
 }
 
+@BindingAdapter("goneUnlessAnimated")
+fun goneUnlessAnimated(view: View, oldValue: Boolean, newValue: Boolean) {
+    if (oldValue == newValue) return
+
+    view.animate().cancel()
+    if (newValue) {
+        view.visibility = View.VISIBLE
+        view.alpha = 0f
+        view.animate().alpha(1f).withEndAction {
+            view.alpha = 1f
+        }
+    } else {
+        view.animate().alpha(0f).withEndAction {
+            view.alpha = 1f
+            view.visibility = View.GONE
+        }
+    }
+}
+
 @BindingAdapter("invisibleUnless")
 fun invisibleUnless(view: View, visible: Boolean) {
     view.visibility = if (visible) View.VISIBLE else View.INVISIBLE
@@ -160,4 +179,8 @@ fun availabilityText(status: List<ChargepointStatus>?): String? {
     return if (unknown > 0) {
         if (unknown == total) "?" else "$available?"
     } else available.toString()
+}
+
+fun flatten(it: Iterable<Iterable<ChargepointStatus>>?): List<ChargepointStatus>? {
+    return it?.flatten()
 }

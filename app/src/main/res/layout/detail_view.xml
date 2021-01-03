@@ -21,6 +21,8 @@
 
         <import type="net.vonforst.evmap.viewmodel.Status" />
 
+        <import type="net.vonforst.evmap.ui.BindingAdaptersKt" />
+
         <variable
             name="charger"
             type="Resource&lt;ChargeLocation&gt;" />
@@ -41,6 +43,10 @@
             name="filteredChargeCards"
             type="java.util.Set&lt;Long&gt;" />
 
+        <variable
+            name="expanded"
+            type="Boolean" />
+
     </data>
 
     <androidx.cardview.widget.CardView
@@ -59,14 +65,15 @@
             android:paddingBottom="8dp">
 
             <TextView
-                android:id="@+id/textView"
+                android:id="@+id/txtName"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:text="@{charger.data.name}"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-                app:layout_constraintEnd_toStartOf="@+id/guideline2"
+                app:layout_constraintEnd_toStartOf="@+id/txtAvailability"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="Parkhaus" />
@@ -81,11 +88,11 @@
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
-                app:layout_constraintTop_toBottomOf="@+id/textView"
+                app:layout_constraintTop_toBottomOf="@+id/txtName"
                 tools:text="Beispielstraße 10, 12345 Berlin" />
 
             <TextView
-                android:id="@+id/textView27"
+                android:id="@+id/txtDistance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
@@ -95,12 +102,33 @@
                 android:minWidth="50dp"
                 android:text="@{@string/distance_format(distance)}"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+                app:layout_constraintBottom_toBottomOf="@+id/topPart"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
-                app:layout_constraintTop_toTopOf="@+id/textView3"
                 tools:text="10 km" />
 
             <TextView
-                android:id="@+id/textView3"
+                android:id="@+id/txtAvailability"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="72dp"
+                android:background="@drawable/rounded_rect"
+                android:ellipsize="end"
+                android:gravity="end"
+                android:maxLines="1"
+                android:padding="2dp"
+                android:text="@{String.format(&quot;%s/%d&quot;, BindingAdaptersKt.availabilityText(BindingAdaptersKt.flatten(availability.data.status.values())), charger.data.totalChargepoints)}"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+                android:textColor="@android:color/white"
+                app:backgroundTintAvailability="@{BindingAdaptersKt.flatten(availability.data.status.values())}"
+                app:goneUnlessAnimated="@{availability.data != null &amp;&amp; !expanded}"
+                app:goneUnless="@{availability.data != null}"
+                app:layout_constraintEnd_toStartOf="@+id/guideline2"
+                app:layout_constraintTop_toTopOf="@+id/txtName"
+                tools:backgroundTint="@color/available"
+                tools:text="2/2" />
+
+            <TextView
+                android:id="@+id/txtConnectors"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
@@ -108,7 +136,7 @@
                 android:maxLines="1"
                 android:text="@{charger.data.formatChargepoints()}"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-                app:layout_constraintEnd_toStartOf="@+id/textView27"
+                app:layout_constraintEnd_toStartOf="@+id/txtDistance"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/textView2"
                 tools:text="2x Typ 2 22 kW" />
@@ -136,7 +164,7 @@
                 android:textColor="?colorPrimary"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
-                app:layout_constraintTop_toBottomOf="@+id/textView3" />
+                app:layout_constraintTop_toBottomOf="@+id/txtConnectors" />
 
             <TextView
                 android:id="@+id/textView12"
@@ -263,10 +291,10 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:text="TextView"
-                app:layout_constraintBottom_toBottomOf="@+id/textView3"
+                app:layout_constraintBottom_toBottomOf="@+id/txtConnectors"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
-                app:layout_constraintTop_toTopOf="@+id/textView" />
+                app:layout_constraintTop_toTopOf="@+id/txtName" />
 
             <Button
                 android:id="@+id/btnChargeprice"

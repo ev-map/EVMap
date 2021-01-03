@@ -97,6 +97,9 @@ data class ChargeLocation(
             }
         }
 
+    val totalChargepoints: Int
+        get() = chargepoints.sumBy { it.count }
+
     fun formatChargepoints(): String {
         return chargepointsMerged.map {
             "${it.count} × ${it.type} ${it.formatPower()}"

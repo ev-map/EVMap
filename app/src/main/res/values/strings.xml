@@ -148,6 +148,9 @@
     <string name="welcome_to_evmap">Welcome to EVMap!</string>
     <string name="welcome_1">Using EVMap, you can find electric vehicle chargers around you. EVMap uses the community-maintained database from GoingElectric.de, which focuses on chargers in Europe and the German-speaking countries. You can contribute to this database on the GoingElectric.de website.\n\nChargers are shown on the map in different colors, which correspond to their maximum charging power:</string>
     <string name="welcome_2">EVMap is free and Open Source software. You can contribute to the development on GitHub or support me through donations. The corresponding links can be found under “About EVMap” in the menu.</string>
+    <string name="deleted_filterprofile">Deleted “%s”</string>
+    <string name="undo">Undo</string>
+    <string name="rename">Rename</string>
     <plurals name="charge_cards_compatible_num">
         <item quantity="one">%d compatible payment method</item>
         <item quantity="other">%d compatible payment methods</item>

@@ -11,18 +11,23 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.launch
 import net.vonforst.evmap.MapsActivity
 import net.vonforst.evmap.R
 import net.vonforst.evmap.adapter.DataBindingAdapter
 import net.vonforst.evmap.adapter.FilterProfilesAdapter
 import net.vonforst.evmap.databinding.FragmentFilterProfilesBinding
 import net.vonforst.evmap.databinding.ItemFilterProfileBinding
+import net.vonforst.evmap.storage.FilterProfile
+import net.vonforst.evmap.ui.showEditTextDialog
 import net.vonforst.evmap.viewmodel.FilterProfilesViewModel
 import net.vonforst.evmap.viewmodel.viewModelFactory
 
@@ -34,6 +39,7 @@ class FilterProfilesFragment : Fragment() {
             FilterProfilesViewModel(requireActivity().application)
         }
     })
+    private var deleteSnackbar: Snackbar? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -86,7 +92,8 @@ class FilterProfilesFragment : Fragment() {
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                vm.delete(viewHolder.itemId)
+                val fp = vm.filterProfiles.value?.find { it.id == viewHolder.itemId }
+                fp?.let { delete(it) }
             }
 
             override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
@@ -166,7 +173,24 @@ class FilterProfilesFragment : Fragment() {
             }
         })
 
-        val adapter = FilterProfilesAdapter(touchHelper)
+        val adapter = FilterProfilesAdapter(touchHelper, onDelete = { fp ->
+            delete(fp)
+        }, onRename = { fp ->
+            showEditTextDialog(requireContext()) { dialog, input ->
+                input.setText(fp.name)
+
+                dialog.setTitle(R.string.rename)
+                    .setMessage(R.string.save_profile_enter_name)
+                    .setPositiveButton(R.string.ok) { di, button ->
+                        lifecycleScope.launch {
+                            vm.insert(fp.copy(name = input.text.toString()))
+                        }
+                    }
+                    .setNegativeButton(R.string.cancel) { di, button ->
+
+                    }
+            }
+        })
         binding.filterProfilesList.apply {
             this.adapter = adapter
             layoutManager =
@@ -182,6 +206,23 @@ class FilterProfilesFragment : Fragment() {
 
         toolbar.setNavigationOnClickListener {
             findNavController().popBackStack()
+        }
+    }
+
+    fun delete(fp: FilterProfile) {
+        vm.delete(fp.id)
+
+        deleteSnackbar?.dismiss()
+        view?.let {
+            val snackbar = Snackbar.make(
+                it,
+                getString(R.string.deleted_filterprofile, fp.name),
+                Snackbar.LENGTH_LONG
+            ).setAction(R.string.undo) {
+                vm.insert(fp.copy(id = 0))
+            }
+            deleteSnackbar = snackbar
+            snackbar.show()
         }
     }
 }

@@ -27,6 +27,12 @@ class FilterProfilesViewModel(application: Application) : AndroidViewModel(appli
         }
     }
 
+    fun insert(item: FilterProfile) {
+        viewModelScope.launch {
+            db.filterProfileDao().insert(item)
+        }
+    }
+
     fun reorderProfiles(list: List<FilterProfile>) {
         viewModelScope.launch {
             db.filterProfileDao().update(*list.toTypedArray())

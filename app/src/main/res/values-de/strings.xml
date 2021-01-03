@@ -149,6 +149,9 @@
     <string name="welcome_to_evmap">Willkommen bei EVMap!</string>
     <string name="welcome_1">Mit EVMap kannst du Ladestationen für Elektroautos in deiner Nähe finden. EVMap nutzt dafür die Community-gepflegte Datenbank von GoingElectric.de, die sich vor allem auf Europa und den deutschsprachigen Raum konzentriert. Über die Website GoingElectric.de kannst du selbst zum Verzeichnis beitragen.\n\nDie Ladestationen werden auf der Karte mit verschiedenen Farben angezeigt, die die maximale Ladeleistung angeben:</string>
     <string name="welcome_2">EVMap ist kostenlos und Open Source. Du kannst bei GitHub zur Weiterentwicklung beitragen oder die Entwicklung mit Spenden unterstützen. Die entsprechenden Links findest du unter „Über EVMap” im Menü.</string>
+    <string name="deleted_filterprofile">„%s” gelöscht</string>
+    <string name="undo">Rückgängig</string>
+    <string name="rename">Umbenennen</string>
     <plurals name="charge_cards_compatible_num">
         <item quantity="one">%d kompatibler Ladetarif</item>
         <item quantity="other">%d kompatible Ladetarife</item>

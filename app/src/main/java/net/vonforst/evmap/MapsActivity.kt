@@ -91,7 +91,7 @@ class MapsActivity : AppCompatActivity() {
                 cb.getRootView(),
                 R.string.no_maps_app_found,
                 Snackbar.LENGTH_SHORT
-            )
+            ).show()
         }
     }
 

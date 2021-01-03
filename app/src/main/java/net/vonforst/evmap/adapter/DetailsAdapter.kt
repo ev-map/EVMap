@@ -48,7 +48,8 @@ fun buildDetails(
             R.drawable.ic_address,
             R.string.address,
             loc.address.toString(),
-            loc.locationDescription
+            loc.locationDescription,
+            clickable = true
         ),
         if (loc.operator != null) DetailsAdapter.Detail(
             R.drawable.ic_operator,

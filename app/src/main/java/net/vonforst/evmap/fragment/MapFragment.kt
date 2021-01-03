@@ -593,7 +593,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                     val charger = vm.chargerDetails.value?.data
                     if (charger != null) {
                         when (it.icon) {
-                            R.drawable.ic_location -> {
+                            R.drawable.ic_location, R.drawable.ic_address -> {
                                 (activity as? MapsActivity)?.showLocation(charger)
                             }
                             R.drawable.ic_fault_report -> {

@@ -18,7 +18,7 @@
         app:selectableItemBackground="@{item.clickable}">
 
         <TextView
-            android:id="@+id/textView9"
+            android:id="@+id/txtTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
@@ -48,7 +48,7 @@
             tools:srcCompat="@drawable/ic_address" />
 
         <TextView
-            android:id="@+id/textView8"
+            android:id="@+id/txtContent"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
@@ -56,13 +56,12 @@
             android:layout_marginBottom="14dp"
             android:text="@{item.detailText}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-            android:autoLink="@{item.links ? Linkify.WEB_URLS | Linkify.PHONE_NUMBERS : 0}"
-            android:linksClickable="@{item.links}"
+            app:linkify="@{item.links ? Linkify.WEB_URLS | Linkify.PHONE_NUMBERS : 0}"
             app:goneUnless="@{item.detailText != null}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/textView9"
-            app:layout_constraintTop_toBottomOf="@+id/textView9"
+            app:layout_constraintStart_toStartOf="@+id/txtTitle"
+            app:layout_constraintTop_toBottomOf="@+id/txtTitle"
             tools:text="Lorem ipsum" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

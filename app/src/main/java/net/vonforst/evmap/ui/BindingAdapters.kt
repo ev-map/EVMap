@@ -2,6 +2,7 @@ package net.vonforst.evmap.ui
 
 import android.content.Context
 import android.content.res.ColorStateList
+import android.text.SpannableString
 import android.view.View
 import android.view.ViewGroup.MarginLayoutParams
 import android.widget.ImageView
@@ -148,6 +149,26 @@ fun setTopMargin(view: View, topMargin: Float) {
         layoutParams.rightMargin, layoutParams.bottomMargin
     )
     view.layoutParams = layoutParams
+}
+
+/**
+ * Linkify is already possible using the autoLink and linksClickable attributes, but this does not
+ * remove spans correctly. So we implement a new version that manually removes the spans.
+ */
+@BindingAdapter("linkify")
+fun setLinkify(textView: TextView, oldValue: Int, newValue: Int) {
+    if (oldValue == newValue) return
+
+    textView.autoLinkMask = newValue
+    textView.linksClickable = newValue != 0
+
+    // remove spans
+    if (newValue == 0) {
+        val text = textView.text as SpannableString
+        text.getSpans(0, text.length, Any::class.java).forEach {
+            text.removeSpan(it)
+        }
+    }
 }
 
 private fun availabilityColor(

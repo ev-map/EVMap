@@ -1,0 +1,9 @@
+Neue Funktionen:
+- Filterprofile verwalten: Möglichkeit zum Löschen und Umbennenen der angelegten Filterprofile
+- Verfügbarkeit der Ladestationen wird auch direkt in der Schnellansicht angezeigt
+
+Verbesserungen:
+- Fehlender OK-Button beim Willkommensdialog auf kleinen Bildschirmen behoben
+- Nicht funktionierender Navigationsbutton auf Android 11 behoben
+- Tippfehler behoben
+- Fehlerhafte Links bei den Koordinaten behoben

@@ -1,0 +1,9 @@
+New features:
+- Manage filter profiles: Buttons to delete and rename filter profiles
+- Real-time availability also displayed in quick view
+
+Improvements:
+- Fixed missing OK button of welcome dialog on small screens
+- Fixed not working navigation button on Android 11
+- Fixed typos
+- Removed incorrect links on charger coordinates

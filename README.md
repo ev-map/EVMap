@@ -20,6 +20,7 @@ Features
 - Favorites list, also with availability information
 - No ads, fully open source
 - Compatible with Android 5.0 and above
+- Can use Google Maps or Mapbox (OpenStreetMap) as map backends - the version available on F-Droid only uses Mapbox.
 
 Screenshots
 -----------

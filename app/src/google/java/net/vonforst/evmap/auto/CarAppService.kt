@@ -26,9 +26,7 @@ import com.google.android.libraries.car.app.CarToast
 import com.google.android.libraries.car.app.Screen
 import com.google.android.libraries.car.app.model.*
 import com.google.android.libraries.car.app.model.Distance.UNIT_KILOMETERS
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import net.vonforst.evmap.*
 import net.vonforst.evmap.api.availability.ChargeLocationStatus
 import net.vonforst.evmap.api.availability.ChargepointStatus
@@ -245,6 +243,10 @@ class PermissionScreen(ctx: CarContext, val cas: CarAppService) : Screen(ctx) {
  */
 class MapScreen(ctx: CarContext, val cas: CarAppService, val favorites: Boolean = false) :
     Screen(ctx), LocationAwareScreen {
+    private var updateCoroutine: Job? = null
+    private var numUpdates = 0
+    private val maxNumUpdates = 3
+
     private var location: Location? = null
     private var lastUpdateLocation: Location? = null
     private var chargers: List<ChargeLocation>? = null
@@ -252,7 +254,7 @@ class MapScreen(ctx: CarContext, val cas: CarAppService, val favorites: Boolean 
         GoingElectricApi.create(ctx.getString(R.string.goingelectric_key), context = ctx)
     }
     private val searchRadius = 5 // kilometers
-    private val updateThreshold = 50 // meters
+    private val updateThreshold = 2000 // meters
     private val availabilityUpdateThreshold = Duration.ofMinutes(1)
     private var availabilities: MutableMap<Long, Pair<ZonedDateTime, ChargeLocationStatus>> =
         HashMap()
@@ -351,14 +353,17 @@ class MapScreen(ctx: CarContext, val cas: CarAppService, val favorites: Boolean 
 
     override fun updateLocation(location: Location) {
         this.location = location
+        if (updateCoroutine != null) {
+            // don't update while still loading last update
+            return
+        }
 
-        if (lastUpdateLocation == null) invalidate()
+        invalidate()
 
         if (lastUpdateLocation == null ||
             location.distanceTo(lastUpdateLocation) > updateThreshold
         ) {
             lastUpdateLocation = location
-
             // update displayed chargers
             loadChargers(location)
         }
@@ -367,7 +372,14 @@ class MapScreen(ctx: CarContext, val cas: CarAppService, val favorites: Boolean 
     private val db = AppDatabase.getInstance(carContext)
 
     private fun loadChargers(location: Location) {
-        lifecycleScope.launch {
+        numUpdates++
+        println(numUpdates)
+        if (numUpdates > maxNumUpdates) {
+            CarToast.makeText(carContext, R.string.auto_no_refresh_possible, CarToast.LENGTH_LONG)
+                .show()
+            return
+        }
+        updateCoroutine = lifecycleScope.launch {
             // load chargers
             if (favorites) {
                 chargers = db.chargeLocationsDao().getAllChargeLocationsAsync().sortedBy {
@@ -409,6 +421,7 @@ class MapScreen(ctx: CarContext, val cas: CarAppService, val favorites: Boolean 
                 }
             }?.awaitAll()
 
+            updateCoroutine = null
             invalidate()
         }
     }

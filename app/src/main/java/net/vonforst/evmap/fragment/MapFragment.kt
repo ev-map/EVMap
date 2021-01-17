@@ -224,7 +224,11 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         )
 
         if (!PreferenceDataSource(requireContext()).welcomeDialogShown) {
-            navController.navigate(R.id.action_map_to_welcome)
+            try {
+                navController.navigate(R.id.action_map_to_welcome)
+            } catch (ignored: IllegalArgumentException) {
+                // when there is already another navigation going on
+            }
         }
     }
 

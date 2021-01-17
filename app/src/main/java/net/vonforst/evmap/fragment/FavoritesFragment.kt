@@ -86,8 +86,9 @@ class FavoritesFragment : Fragment(), LostApiClient.ConnectionCallbacks {
     }
 
     override fun onConnected() {
+        val context = this.context ?: return
         if (ContextCompat.checkSelfPermission(
-                requireContext(),
+                context,
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         ) {

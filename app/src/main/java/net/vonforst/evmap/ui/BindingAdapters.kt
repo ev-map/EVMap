@@ -163,8 +163,8 @@ fun setLinkify(textView: TextView, oldValue: Int, newValue: Int) {
     textView.linksClickable = newValue != 0
 
     // remove spans
-    if (newValue == 0) {
-        val text = textView.text as SpannableString
+    val text = textView.text
+    if (newValue == 0 && text != null && text is SpannableString) {
         text.getSpans(0, text.length, Any::class.java).forEach {
             text.removeSpan(it)
         }

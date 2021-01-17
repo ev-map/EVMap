@@ -1054,9 +1054,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
     override fun onConnected() {
         val map = this.map ?: return
+        val context = this.context ?: return
         if (vm.myLocationEnabled.value == true) {
             if (ActivityCompat.checkSelfPermission(
-                    requireContext(),
+                    context,
                     ACCESS_FINE_LOCATION
                 ) == PackageManager.PERMISSION_GRANTED
             ) {

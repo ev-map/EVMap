@@ -33,6 +33,8 @@ import net.vonforst.evmap.viewmodel.viewModelFactory
 
 
 class FilterProfilesFragment : Fragment() {
+    private lateinit var touchHelper: ItemTouchHelper
+    private lateinit var adapter: FilterProfilesAdapter
     private lateinit var binding: FragmentFilterProfilesBinding
     private val vm: FilterProfilesViewModel by viewModels(factoryProducer = {
         viewModelFactory {
@@ -40,6 +42,7 @@ class FilterProfilesFragment : Fragment() {
         }
     })
     private var deleteSnackbar: Snackbar? = null
+    private var toDelete: FilterProfile? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -64,7 +67,7 @@ class FilterProfilesFragment : Fragment() {
         )
 
 
-        val touchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
+        touchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
             ItemTouchHelper.UP or ItemTouchHelper.DOWN,
             ItemTouchHelper.RIGHT or ItemTouchHelper.LEFT
         ) {
@@ -173,7 +176,7 @@ class FilterProfilesFragment : Fragment() {
             }
         })
 
-        val adapter = FilterProfilesAdapter(touchHelper, onDelete = { fp ->
+        adapter = FilterProfilesAdapter(touchHelper, onDelete = { fp ->
             delete(fp)
         }, onRename = { fp ->
             showEditTextDialog(requireContext()) { dialog, input ->
@@ -192,7 +195,7 @@ class FilterProfilesFragment : Fragment() {
             }
         })
         binding.filterProfilesList.apply {
-            this.adapter = adapter
+            this.adapter = this@FilterProfilesFragment.adapter
             layoutManager =
                 LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             addItemDecoration(
@@ -210,19 +213,43 @@ class FilterProfilesFragment : Fragment() {
     }
 
     fun delete(fp: FilterProfile) {
-        vm.delete(fp.id)
-
+        val position = vm.filterProfiles.value?.indexOf(fp) ?: return
+        // if there is already a profile to delete, delete it now
+        actuallyDelete()
         deleteSnackbar?.dismiss()
+
+        toDelete = fp
+
         view?.let {
             val snackbar = Snackbar.make(
                 it,
                 getString(R.string.deleted_filterprofile, fp.name),
                 Snackbar.LENGTH_LONG
             ).setAction(R.string.undo) {
-                vm.insert(fp.copy(id = 0))
-            }
+                toDelete = null
+                adapter.notifyItemChanged(position)
+            }.addCallback(object : Snackbar.Callback() {
+                override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                    // if undo was not clicked, actually delete
+                    if (event == DISMISS_EVENT_TIMEOUT || event == DISMISS_EVENT_SWIPE) {
+                        actuallyDelete()
+                    }
+                }
+            })
             deleteSnackbar = snackbar
             snackbar.show()
+        } ?: run {
+            actuallyDelete()
         }
+    }
+
+    private fun actuallyDelete() {
+        toDelete?.let { vm.delete(it.id) }
+        toDelete = null
+    }
+
+    override fun onStop() {
+        super.onStop()
+        actuallyDelete()
     }
 }

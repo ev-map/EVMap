@@ -183,7 +183,7 @@ class FilterProfilesFragment : Fragment() {
                     .setMessage(R.string.save_profile_enter_name)
                     .setPositiveButton(R.string.ok) { di, button ->
                         lifecycleScope.launch {
-                            vm.insert(fp.copy(name = input.text.toString()))
+                            vm.update(fp.copy(name = input.text.toString()))
                         }
                     }
                     .setNegativeButton(R.string.cancel) { di, button ->

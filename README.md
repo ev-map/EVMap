@@ -32,10 +32,10 @@ Development setup
 
 The App is developed using Android Studio.
 
-For testing the app, you need to obtain API Keys for the 
+For testing the app, you need to obtain free API Keys for the 
 [GoingElectric API](https://www.goingelectric.de/stromtankstellen/api/)
 as well as for [Google APIs](https://console.developers.google.com/)
-("Maps SDK for Android" and "Places API" need to be activated). These APIs need to be put into the
+("Maps SDK for Android" and "Places API" need to be activated) and/or [Mapbox](https://www.mapbox.com/). These APIs need to be put into the
 app in the form of a resource file called `apikeys.xml` under `app/src/main/res/values`, with the
 following content:
 
@@ -43,6 +43,9 @@ following content:
 <resources>
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
         insert your Google Maps key here
+    </string>
+    <string name="mapbox_key" translatable="false">
+        insert your Mapbox key here
     </string>
     <string name="goingelectric_key" translatable="false">
         insert your GoingElectric key here

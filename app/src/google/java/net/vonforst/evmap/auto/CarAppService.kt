@@ -2,6 +2,7 @@ package net.vonforst.evmap.auto
 
 import android.Manifest
 import android.content.*
+import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
@@ -12,6 +13,13 @@ import android.os.IBinder
 import android.os.ResultReceiver
 import android.text.SpannableStringBuilder
 import android.text.Spanned
+import androidx.car.app.CarContext
+import androidx.car.app.CarToast
+import androidx.car.app.Screen
+import androidx.car.app.Session
+import androidx.car.app.model.*
+import androidx.car.app.model.Distance.UNIT_KILOMETERS
+import androidx.car.app.validation.HostValidator
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.Lifecycle
@@ -21,11 +29,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import coil.imageLoader
 import coil.request.ImageRequest
-import com.google.android.libraries.car.app.CarContext
-import com.google.android.libraries.car.app.CarToast
-import com.google.android.libraries.car.app.Screen
-import com.google.android.libraries.car.app.model.*
-import com.google.android.libraries.car.app.model.Distance.UNIT_KILOMETERS
 import kotlinx.coroutines.*
 import net.vonforst.evmap.*
 import net.vonforst.evmap.api.availability.ChargeLocationStatus
@@ -46,11 +49,28 @@ import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import kotlin.math.roundToInt
 
+
 interface LocationAwareScreen {
     fun updateLocation(location: Location)
 }
 
-class CarAppService : com.google.android.libraries.car.app.CarAppService(), LifecycleObserver {
+class CarAppService : androidx.car.app.CarAppService() {
+    override fun createHostValidator(): HostValidator {
+        return if (applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0) {
+            HostValidator.ALLOW_ALL_HOSTS_VALIDATOR
+        } else {
+            HostValidator.Builder(applicationContext)
+                .addAllowedHosts(androidx.car.app.R.array.hosts_allowlist_sample)
+                .build()
+        }
+    }
+
+    override fun onCreateSession(): Session {
+        return EVMapSession(this)
+    }
+}
+
+class EVMapSession(val cas: CarAppService) : Session(), LifecycleObserver {
     var mapScreen: LocationAwareScreen? = null
         set(value) {
             field = value
@@ -72,18 +92,7 @@ class CarAppService : com.google.android.libraries.car.app.CarAppService(), Life
         }
     }
 
-    private val locationReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            val location = intent.getParcelableExtra(CarLocationService.EXTRA_LOCATION) as Location?
-            val mapScreen = this@CarAppService.mapScreen
-            if (location != null && mapScreen != null) {
-                mapScreen.updateLocation(location)
-            }
-            this@CarAppService.location = location
-        }
-    }
-
-    override fun onCreate() {
+    init {
         lifecycle.addObserver(this)
     }
 
@@ -101,11 +110,22 @@ class CarAppService : com.google.android.libraries.car.app.CarAppService(), Life
             Manifest.permission.ACCESS_FINE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
 
+    private val locationReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            val location = intent.getParcelableExtra(CarLocationService.EXTRA_LOCATION) as Location?
+            val mapScreen = this@EVMapSession.mapScreen
+            if (location != null && mapScreen != null) {
+                mapScreen.updateLocation(location)
+            }
+            this@EVMapSession.location = location
+        }
+    }
+
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun bindLocationService() {
         if (!locationPermissionGranted()) return
-        bindService(
-            Intent(this, CarLocationService::class.java),
+        cas.bindService(
+            Intent(cas, CarLocationService::class.java),
             serviceConnection,
             Context.BIND_AUTO_CREATE
         )
@@ -114,12 +134,12 @@ class CarAppService : com.google.android.libraries.car.app.CarAppService(), Life
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     private fun unbindLocationService() {
         locationService?.removeLocationUpdates()
-        unbindService(serviceConnection)
+        cas.unbindService(serviceConnection)
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     private fun registerBroadcastReceiver() {
-        LocalBroadcastManager.getInstance(this).registerReceiver(
+        LocalBroadcastManager.getInstance(cas).registerReceiver(
             locationReceiver,
             IntentFilter(CarLocationService.ACTION_BROADCAST)
         );
@@ -127,28 +147,28 @@ class CarAppService : com.google.android.libraries.car.app.CarAppService(), Life
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     private fun unregisterBroadcastReceiver() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(locationReceiver)
+        LocalBroadcastManager.getInstance(cas).unregisterReceiver(locationReceiver)
     }
 }
 
 /**
  * Welcome screen with selection between favorites and nearby chargers
  */
-class WelcomeScreen(ctx: CarContext, val cas: CarAppService) : Screen(ctx), LocationAwareScreen {
+class WelcomeScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx), LocationAwareScreen {
     private var location: Location? = null
 
-    override fun getTemplate(): Template {
-        cas.mapScreen = this
-        return PlaceListMapTemplate.builder().apply {
+    override fun onGetTemplate(): Template {
+        session.mapScreen = this
+        return PlaceListMapTemplate.Builder().apply {
             setTitle(carContext.getString(R.string.app_name))
             location?.let {
-                setAnchor(Place.builder(LatLng.create(it)).build())
+                setAnchor(Place.Builder(CarLocation.create(it)).build())
             }
-            setItemList(ItemList.builder().apply {
-                addItem(Row.builder()
+            setItemList(ItemList.Builder().apply {
+                addItem(Row.Builder()
                     .setTitle(carContext.getString(R.string.auto_chargers_closeby))
                     .setImage(
-                        CarIcon.builder(
+                        CarIcon.Builder(
                             IconCompat.createWithResource(
                                 carContext,
                                 R.drawable.ic_address
@@ -156,27 +176,28 @@ class WelcomeScreen(ctx: CarContext, val cas: CarAppService) : Screen(ctx), Loca
                         )
                             .setTint(CarColor.DEFAULT).build()
                     )
-                    .setIsBrowsable(true)
+                    .setBrowsable(true)
                     .setOnClickListener {
-                        screenManager.push(MapScreen(carContext, cas, favorites = false))
+                        screenManager.push(MapScreen(carContext, session, favorites = false))
                     }
                     .build())
-                addItem(Row.builder()
-                    .setTitle(carContext.getString(R.string.auto_favorites))
-                    .setImage(
-                        CarIcon.builder(
-                            IconCompat.createWithResource(
-                                carContext,
-                                R.drawable.ic_fav
+                addItem(
+                    Row.Builder()
+                        .setTitle(carContext.getString(R.string.auto_favorites))
+                        .setImage(
+                            CarIcon.Builder(
+                                IconCompat.createWithResource(
+                                    carContext,
+                                    R.drawable.ic_fav
+                                )
                             )
+                                .setTint(CarColor.DEFAULT).build()
                         )
-                            .setTint(CarColor.DEFAULT).build()
-                    )
-                    .setIsBrowsable(true)
-                    .setOnClickListener {
-                        screenManager.push(MapScreen(carContext, cas, favorites = true))
-                    }
-                    .build())
+                        .setBrowsable(true)
+                        .setOnClickListener {
+                            screenManager.push(MapScreen(carContext, session, favorites = true))
+                        }
+                        .build())
             }.build())
             setCurrentLocationEnabled(true)
             setHeaderAction(Action.APP_ICON)
@@ -193,13 +214,13 @@ class WelcomeScreen(ctx: CarContext, val cas: CarAppService) : Screen(ctx), Loca
 /**
  * Screen to grant location permission
  */
-class PermissionScreen(ctx: CarContext, val cas: CarAppService) : Screen(ctx) {
-    override fun getTemplate(): Template {
-        return MessageTemplate.builder(carContext.getString(R.string.auto_location_permission_needed))
+class PermissionScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx) {
+    override fun onGetTemplate(): Template {
+        return MessageTemplate.Builder(carContext.getString(R.string.auto_location_permission_needed))
             .setTitle(carContext.getString(R.string.app_name))
             .setHeaderAction(Action.APP_ICON)
-            .setActions(listOf(
-                Action.builder()
+            .addAction(
+                Action.Builder()
                     .setTitle(carContext.getString(R.string.grant_on_phone))
                     .setBackgroundColor(CarColor.PRIMARY)
                     .setOnClickListener(ParkedOnlyOnClickListener.create {
@@ -213,8 +234,13 @@ class PermissionScreen(ctx: CarContext, val cas: CarAppService) : Screen(ctx) {
                                         resultData: Bundle?
                                     ) {
                                         if (resultData!!.getBoolean(PermissionActivity.RESULT_GRANTED)) {
-                                            cas.bindLocationService()
-                                            screenManager.push(WelcomeScreen(carContext, cas))
+                                            session.bindLocationService()
+                                            screenManager.push(
+                                                WelcomeScreen(
+                                                    carContext,
+                                                    session
+                                                )
+                                            )
                                         }
                                     }
                                 })
@@ -225,15 +251,16 @@ class PermissionScreen(ctx: CarContext, val cas: CarAppService) : Screen(ctx) {
                             CarToast.LENGTH_LONG
                         ).show()
                     })
-                    .build(),
-                Action.builder()
+                    .build()
+            )
+            .addAction(
+                Action.Builder()
                     .setTitle(carContext.getString(R.string.cancel))
                     .setOnClickListener {
-                        cas.stopSelf()
+                        carContext.finishCarApp()
                     }
                     .build(),
-
-                ))
+            )
             .build()
     }
 }
@@ -241,7 +268,7 @@ class PermissionScreen(ctx: CarContext, val cas: CarAppService) : Screen(ctx) {
 /**
  * Main map screen showing either nearby chargers or favorites
  */
-class MapScreen(ctx: CarContext, val cas: CarAppService, val favorites: Boolean = false) :
+class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boolean = false) :
     Screen(ctx), LocationAwareScreen {
     private var updateCoroutine: Job? = null
     private var numUpdates = 0
@@ -260,9 +287,9 @@ class MapScreen(ctx: CarContext, val cas: CarAppService, val favorites: Boolean 
         HashMap()
     private val maxRows = 6
 
-    override fun getTemplate(): Template {
-        cas.mapScreen = this
-        return PlaceListMapTemplate.builder().apply {
+    override fun onGetTemplate(): Template {
+        session.mapScreen = this
+        return PlaceListMapTemplate.Builder().apply {
             setTitle(
                 carContext.getString(
                     if (favorites) {
@@ -273,8 +300,8 @@ class MapScreen(ctx: CarContext, val cas: CarAppService, val favorites: Boolean 
                 )
             )
             location?.let {
-                setAnchor(Place.builder(LatLng.create(it)).build())
-            } ?: setIsLoading(true)
+                setAnchor(Place.Builder(CarLocation.create(it)).build())
+            } ?: setLoading(true)
             chargers?.take(maxRows)?.let { chargerList ->
                 val builder = ItemList.Builder()
                 chargerList.forEach { charger ->
@@ -290,7 +317,7 @@ class MapScreen(ctx: CarContext, val cas: CarAppService, val favorites: Boolean 
                     )
                 )
                 setItemList(builder.build())
-            } ?: setIsLoading(true)
+            } ?: setLoading(true)
             setCurrentLocationEnabled(true)
             setHeaderAction(Action.BACK)
             build()
@@ -299,15 +326,16 @@ class MapScreen(ctx: CarContext, val cas: CarAppService, val favorites: Boolean 
 
     private fun formatCharger(charger: ChargeLocation): Row {
         val color = ContextCompat.getColor(carContext, getMarkerTint(charger))
-        val place = Place.builder(LatLng.create(charger.coordinates.lat, charger.coordinates.lng))
-            .setMarker(
-                PlaceMarker.builder()
-                    .setColor(CarColor.createCustom(color, color))
-                    .build()
-            )
-            .build()
+        val place =
+            Place.Builder(CarLocation.create(charger.coordinates.lat, charger.coordinates.lng))
+                .setMarker(
+                    PlaceMarker.Builder()
+                        .setColor(CarColor.createCustom(color, color))
+                        .build()
+                )
+                .build()
 
-        return Row.builder().apply {
+        return Row.Builder().apply {
             setTitle(charger.name)
             val text = SpannableStringBuilder()
 
@@ -343,7 +371,11 @@ class MapScreen(ctx: CarContext, val cas: CarAppService, val favorites: Boolean 
             }
 
             addText(text)
-            setMetadata(Metadata.ofPlace(place))
+            setMetadata(
+                Metadata.Builder()
+                    .setPlace(place)
+                    .build()
+            )
 
             setOnClickListener {
                 screenManager.push(ChargerDetailScreen(carContext, charger))
@@ -439,13 +471,13 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
 
     private val iconGen = ChargerIconGenerator(carContext, null, oversize = 1.4f, height = 64)
 
-    override fun getTemplate(): Template {
+    override fun onGetTemplate(): Template {
         if (charger == null) loadCharger()
 
-        return PaneTemplate.builder(
+        return PaneTemplate.Builder(
             Pane.Builder().apply {
                 charger?.let { charger ->
-                    addRow(Row.builder().apply {
+                    addRow(Row.Builder().apply {
                         setTitle(charger.address.toString())
 
                         val icon = iconGen.getBitmap(
@@ -454,7 +486,7 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
                             multi = charger.isMulti()
                         )
                         setImage(
-                            CarIcon.of(IconCompat.createWithBitmap(icon)),
+                            CarIcon.Builder(IconCompat.createWithBitmap(icon)).build(),
                             Row.IMAGE_TYPE_LARGE
                         )
 
@@ -479,10 +511,10 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
                         }
                         addText(chargepointsText)
                     }.build())
-                    addRow(Row.builder().apply {
+                    addRow(Row.Builder().apply {
                         photo?.let {
                             setImage(
-                                CarIcon.of(IconCompat.createWithBitmap(photo)),
+                                CarIcon.Builder(IconCompat.createWithBitmap(photo)).build(),
                                 Row.IMAGE_TYPE_LARGE
                             )
                         }
@@ -513,23 +545,23 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
                                 Row.IMAGE_TYPE_ICON)
                         }*/
                     }.build())
-                    setActions(listOf(
-                        Action.builder()
-                            .setIcon(
-                                CarIcon.of(
-                                    IconCompat.createWithResource(
-                                        carContext,
-                                        R.drawable.ic_navigation
-                                    )
+                    addAction(Action.Builder()
+                        .setIcon(
+                            CarIcon.Builder(
+                                IconCompat.createWithResource(
+                                    carContext,
+                                    R.drawable.ic_navigation
                                 )
-                            )
-                            .setTitle(carContext.getString(R.string.navigate))
-                            .setBackgroundColor(CarColor.PRIMARY)
-                            .setOnClickListener {
-                                navigateToCharger(charger)
-                            }
-                            .build(),
-                        Action.builder()
+                            ).build()
+                        )
+                        .setTitle(carContext.getString(R.string.navigate))
+                        .setBackgroundColor(CarColor.PRIMARY)
+                        .setOnClickListener {
+                            navigateToCharger(charger)
+                        }
+                        .build())
+                    addAction(
+                        Action.Builder()
                             .setTitle(carContext.getString(R.string.open_in_app))
                             .setOnClickListener(ParkedOnlyOnClickListener.create {
                                 val intent = Intent(carContext, MapsActivity::class.java)
@@ -546,8 +578,7 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
                             })
                             .build()
                     )
-                    )
-                } ?: setIsLoading(true)
+                } ?: setLoading(true)
             }.build()
         ).apply {
             setTitle(chargerSparse.name)

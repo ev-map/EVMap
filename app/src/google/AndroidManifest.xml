@@ -4,8 +4,9 @@
     package="net.vonforst.evmap">
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="androidx.car.app.MAP_TEMPLATES" />
 
-    <uses-sdk tools:overrideLibrary="com.google.android.libraries.car.app" />
+    <uses-sdk tools:overrideLibrary="androidx.car.app" />
 
     <application>
         <meta-data
@@ -17,7 +18,7 @@
             android:resource="@xml/automotive_app_desc" />
 
         <meta-data
-            android:name="com.google.android.libraries.car.app.theme"
+            android:name="androidx.car.app.theme"
             android:resource="@style/CarAppTheme" />
 
         <service
@@ -27,8 +28,8 @@
             android:exported="true">
             <intent-filter>
                 <action
-                    android:name="com.google.android.car.action.CAR_APP"
-                    android:category="com.google.android.car.category.CHARGING" />
+                    android:name="androidx.car.app.CarAppService"
+                    android:category="androidx.car.app.category.CHARGING" />
             </intent-filter>
         </service>
 

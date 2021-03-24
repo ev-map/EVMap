@@ -36,7 +36,7 @@
     <string name="settings_ui">User Interface</string>
     <string name="settings_map">Map</string>
     <string name="copyright">Copyright</string>
-    <string name="copyright_summary">©2020 Johan von Forstner</string>
+    <string name="copyright_summary">©2020–2021 Johan von Forstner</string>
     <string name="other">Other</string>
     <string name="privacy">Privacy Notice</string>
     <string name="fav_add">Add to favorites</string>

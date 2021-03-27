@@ -69,7 +69,7 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
     }
     private val filters = getFilters(application, plugs, networks, chargeCards)
 
-    private val filtersWithValue: LiveData<List<FilterWithValue<out FilterValue>>> by lazy {
+    private val filtersWithValue: LiveData<FilterValues> by lazy {
         filtersWithValue(filters, filterValues)
     }
 
@@ -262,7 +262,7 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
 
     private fun loadChargepoints(
         mapPosition: MapPosition,
-        filters: List<FilterWithValue<out FilterValue>>
+        filters: FilterValues
     ) {
         chargepointLoader?.cancel()
 
@@ -282,17 +282,17 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
     private suspend fun getChargepointsWithFilters(
         bounds: LatLngBounds,
         zoom: Float,
-        filters: List<FilterWithValue<out FilterValue>>
+        filters: FilterValues
     ): Triple<Resource<List<ChargepointListItem>>, Set<String>?, Set<Long>?> {
-        val freecharging = getBooleanValue(filters, "freecharging")
-        val freeparking = getBooleanValue(filters, "freeparking")
-        val open247 = getBooleanValue(filters, "open_247")
-        val barrierfree = getBooleanValue(filters, "barrierfree")
-        val excludeFaults = getBooleanValue(filters, "exclude_faults")
-        val minPower = getSliderValue(filters, "min_power")
-        val minConnectors = getSliderValue(filters, "min_connectors")
+        val freecharging = filters.getBooleanValue("freecharging")
+        val freeparking = filters.getBooleanValue("freeparking")
+        val open247 = filters.getBooleanValue("open_247")
+        val barrierfree = filters.getBooleanValue("barrierfree")
+        val excludeFaults = filters.getBooleanValue("exclude_faults")
+        val minPower = filters.getSliderValue("min_power")
+        val minConnectors = filters.getSliderValue("min_connectors")
 
-        val connectorsVal = getMultipleChoiceValue(filters, "connectors")
+        val connectorsVal = filters.getMultipleChoiceValue("connectors")
         if (connectorsVal.values.isEmpty() && !connectorsVal.all) {
             // no connectors chosen
             return Triple(Resource.success(emptyList()), null, null)
@@ -300,7 +300,7 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
         val connectors = formatMultipleChoice(connectorsVal)
         val filteredConnectors = if (connectorsVal.all) null else connectorsVal.values
 
-        val chargeCardsVal = getMultipleChoiceValue(filters, "chargecards")
+        val chargeCardsVal = filters.getMultipleChoiceValue("chargecards")
         if (chargeCardsVal.values.isEmpty() && !chargeCardsVal.all) {
             // no chargeCards chosen
             return Triple(Resource.success(emptyList()), filteredConnectors, null)
@@ -309,14 +309,14 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
         val filteredChargeCards =
             if (chargeCardsVal.all) null else chargeCardsVal.values.map { it.toLong() }.toSet()
 
-        val networksVal = getMultipleChoiceValue(filters, "networks")
+        val networksVal = filters.getMultipleChoiceValue("networks")
         if (networksVal.values.isEmpty() && !networksVal.all) {
             // no networks chosen
             return Triple(Resource.success(emptyList()), filteredConnectors, filteredChargeCards)
         }
         val networks = formatMultipleChoice(networksVal)
 
-        val categoriesVal = getMultipleChoiceValue(filters, "categories")
+        val categoriesVal = filters.getMultipleChoiceValue("categories")
         if (categoriesVal.values.isEmpty() && !categoriesVal.all) {
             // no categories chosen
             return Triple(Resource.success(emptyList()), filteredConnectors, filteredChargeCards)
@@ -397,26 +397,6 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
 
     private fun formatMultipleChoice(connectorsVal: MultipleChoiceFilterValue) =
         if (connectorsVal.all) null else connectorsVal.values.joinToString(",")
-
-    private fun getBooleanValue(
-        filters: List<FilterWithValue<out FilterValue>>,
-        key: String
-    ) = (filters.find { it.value.key == key }!!.value as BooleanFilterValue).value
-
-    private fun getSliderValue(
-        filters: List<FilterWithValue<out FilterValue>>,
-        key: String
-    ) = (filters.find { it.value.key == key }!!.value as SliderFilterValue).value
-
-    private fun getMultipleChoiceFilter(
-        filters: List<FilterWithValue<out FilterValue>>,
-        key: String
-    ) = filters.find { it.value.key == key }!!.filter as MultipleChoiceFilter
-
-    private fun getMultipleChoiceValue(
-        filters: List<FilterWithValue<out FilterValue>>,
-        key: String
-    ) = filters.find { it.value.key == key }!!.value as MultipleChoiceFilterValue
 
     private suspend fun loadAvailability(charger: ChargeLocation) {
         availability.value = Resource.loading(null)

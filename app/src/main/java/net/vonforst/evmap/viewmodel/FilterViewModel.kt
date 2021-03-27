@@ -135,8 +135,8 @@ private fun MediatorLiveData<List<Filter<FilterValue>>>.buildFilters(
 internal fun filtersWithValue(
     filters: LiveData<List<Filter<FilterValue>>>,
     filterValues: LiveData<List<FilterValue>>
-): MediatorLiveData<List<FilterWithValue<out FilterValue>>> =
-    MediatorLiveData<List<FilterWithValue<out FilterValue>>>().apply {
+): MediatorLiveData<FilterValues> =
+    MediatorLiveData<FilterValues>().apply {
         listOf(filters, filterValues).forEach {
             addSource(it) {
                 val f = filters.value ?: return@addSource
@@ -173,7 +173,7 @@ class FilterViewModel(application: Application, geApiKey: String) :
         db.filterValueDao().getFilterValues(FILTERS_CUSTOM)
     }
 
-    val filtersWithValue: LiveData<List<FilterWithValue<out FilterValue>>> by lazy {
+    val filtersWithValue: LiveData<FilterValues> by lazy {
         filtersWithValue(filters, filterValues)
     }
 
@@ -330,6 +330,20 @@ data class SliderFilterValue(
 ) : FilterValue()
 
 data class FilterWithValue<T : FilterValue>(val filter: Filter<T>, val value: T) : Equatable
+
+typealias FilterValues = List<FilterWithValue<out FilterValue>>
+
+fun FilterValues.getBooleanValue(key: String) =
+    (this.find { it.value.key == key }!!.value as BooleanFilterValue).value
+
+fun FilterValues.getSliderValue(key: String) =
+    (this.find { it.value.key == key }!!.value as SliderFilterValue).value
+
+fun FilterValues.getMultipleChoiceFilter(key: String) =
+    this.find { it.value.key == key }!!.filter as MultipleChoiceFilter
+
+fun FilterValues.getMultipleChoiceValue(key: String) =
+    this.find { it.value.key == key }!!.value as MultipleChoiceFilterValue
 
 const val FILTERS_DISABLED = -2L
 const val FILTERS_CUSTOM = -1L

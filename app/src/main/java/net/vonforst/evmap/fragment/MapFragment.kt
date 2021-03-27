@@ -727,21 +727,26 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             val cameraUpdate = map.cameraUpdateFactory.newLatLngZoom(LatLng(lat, lon), 16f)
             map.moveCamera(cameraUpdate)
 
-            // show charger detail after chargers were loaded
             val chargerId = arguments?.optLong(ARG_CHARGER_ID)
-            vm.chargepoints.observe(
-                viewLifecycleOwner,
-                object : Observer<Resource<List<ChargepointListItem>>> {
-                    override fun onChanged(res: Resource<List<ChargepointListItem>>) {
-                        if (res.data == null) return
-                        for (item in res.data) {
-                            if (item is ChargeLocation && item.id == chargerId) {
-                                vm.chargerSparse.value = item
-                                vm.chargepoints.removeObserver(this)
+            if (chargerId != null) {
+                // show charger detail after chargers were loaded
+                vm.chargepoints.observe(
+                    viewLifecycleOwner,
+                    object : Observer<Resource<List<ChargepointListItem>>> {
+                        override fun onChanged(res: Resource<List<ChargepointListItem>>) {
+                            if (res.data == null) return
+                            for (item in res.data) {
+                                if (item is ChargeLocation && item.id == chargerId) {
+                                    vm.chargerSparse.value = item
+                                    vm.chargepoints.removeObserver(this)
+                                }
                             }
                         }
-                    }
-                })
+                    })
+            } else {
+                // mark location as search result
+                vm.searchResult.value = PlaceWithBounds(LatLng(lat, lon), null)
+            }
 
             positionSet = true
         }
@@ -1052,6 +1057,13 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 putLong(ARG_CHARGER_ID, charger.id)
                 putDouble(ARG_LAT, charger.coordinates.lat)
                 putDouble(ARG_LON, charger.coordinates.lng)
+            }
+        }
+
+        fun showLocation(lat: Double, lon: Double): Bundle {
+            return Bundle().apply {
+                putDouble(ARG_LAT, lat)
+                putDouble(ARG_LON, lon)
             }
         }
     }

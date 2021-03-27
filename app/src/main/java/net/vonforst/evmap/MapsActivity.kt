@@ -17,6 +17,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import net.vonforst.evmap.api.goingelectric.ChargeLocation
+import net.vonforst.evmap.fragment.MapFragment
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.utils.LocaleContextWrapper
 
@@ -64,6 +65,24 @@ class MapsActivity : AppCompatActivity() {
         prefs = PreferenceDataSource(this)
 
         checkPlayServices(this)
+
+        if (intent?.scheme == "geo") {
+            val pos = intent.data?.schemeSpecificPart?.split("?")?.get(0)
+            val coords = pos?.split(",")?.map { it.toDoubleOrNull() }
+
+            if (coords != null && coords.size == 2) {
+                val lat = coords[0]
+                val lon = coords[1]
+                if (lat != null && lon != null) {
+                    val deepLink = navController.createDeepLink()
+                        .setGraph(R.navigation.nav_graph)
+                        .setDestination(R.id.map)
+                        .setArguments(MapFragment.showLocation(lat, lon))
+                        .createPendingIntent()
+                    deepLink.send()
+                }
+            }
+        }
     }
 
     fun navigateTo(charger: ChargeLocation) {

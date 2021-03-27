@@ -139,6 +139,7 @@
                 layout="@layout/detail_view"
                 app:charger="@{vm.charger}"
                 app:availability="@{vm.availability}"
+                app:filteredAvailability="@{vm.filteredAvailability}"
                 app:chargeCards="@{vm.chargeCardMap}"
                 app:filteredChargeCards="@{vm.filteredChargeCards}"
                 app:distance="@{vm.chargerDistance}"

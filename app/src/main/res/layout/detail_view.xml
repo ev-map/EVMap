@@ -36,6 +36,10 @@
             type="Resource&lt;ChargeLocationStatus&gt;" />
 
         <variable
+            name="filteredAvailability"
+            type="Resource&lt;ChargeLocationStatus&gt;" />
+
+        <variable
             name="chargeCards"
             type="java.util.Map&lt;Long, ChargeCard&gt;" />
 
@@ -116,7 +120,7 @@
                 android:gravity="end"
                 android:maxLines="1"
                 android:padding="2dp"
-                android:text="@{String.format(&quot;%s/%d&quot;, BindingAdaptersKt.availabilityText(BindingAdaptersKt.flatten(availability.data.status.values())), charger.data.totalChargepoints)}"
+                android:text="@{String.format(&quot;%s/%d&quot;, BindingAdaptersKt.availabilityText(BindingAdaptersKt.flatten(filteredAvailability.data.status.values())), filteredAvailability.data.status.keySet().size())}"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
                 android:textColor="@android:color/white"
                 app:backgroundTintAvailability="@{BindingAdaptersKt.flatten(availability.data.status.values())}"

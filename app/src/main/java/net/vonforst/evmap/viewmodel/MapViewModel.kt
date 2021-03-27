@@ -177,6 +177,21 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
             }
         }
     }
+    val filteredAvailability: MediatorLiveData<Resource<ChargeLocationStatus>> by lazy {
+        MediatorLiveData<Resource<ChargeLocationStatus>>().apply {
+            val callback = { _: Any? ->
+                val av = availability.value
+                val filters = filtersWithValue.value
+                if (av?.status == Status.SUCCESS && filters != null) {
+                    value = Resource.success(av.data!!.applyFilters(filters))
+                } else {
+                    value = av
+                }
+            }
+            addSource(availability, callback)
+            addSource(filtersWithValue, callback)
+        }
+    }
     val myLocationEnabled: MutableLiveData<Boolean> by lazy {
         MutableLiveData<Boolean>()
     }

@@ -8,7 +8,10 @@ import net.vonforst.evmap.api.RateLimitInterceptor
 import net.vonforst.evmap.api.await
 import net.vonforst.evmap.api.goingelectric.ChargeLocation
 import net.vonforst.evmap.api.goingelectric.Chargepoint
+import net.vonforst.evmap.viewmodel.FilterValues
 import net.vonforst.evmap.viewmodel.Resource
+import net.vonforst.evmap.viewmodel.getMultipleChoiceValue
+import net.vonforst.evmap.viewmodel.getSliderValue
 import okhttp3.JavaNetCookieJar
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -113,7 +116,19 @@ abstract class BaseAvailabilityDetector(private val client: OkHttpClient) : Avai
 data class ChargeLocationStatus(
     val status: Map<Chargepoint, List<ChargepointStatus>>,
     val source: String
-)
+) {
+    fun applyFilters(filters: FilterValues?): ChargeLocationStatus {
+        if (filters == null) return this
+
+        val connectorsVal = filters.getMultipleChoiceValue("connectors")
+        val minPower = filters.getSliderValue("min_power")
+
+        val statusFiltered = status.filterKeys {
+            (connectorsVal.all || it.type in connectorsVal.values) && it.power > minPower
+        }
+        return this.copy(status = statusFiltered)
+    }
+}
 
 enum class ChargepointStatus {
     AVAILABLE, UNKNOWN, CHARGING, OCCUPIED, FAULTED

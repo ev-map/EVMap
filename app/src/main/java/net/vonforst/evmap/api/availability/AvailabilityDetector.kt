@@ -128,6 +128,8 @@ data class ChargeLocationStatus(
         }
         return this.copy(status = statusFiltered)
     }
+
+    val totalChargepoints = status.map { it.key.count }.sum()
 }
 
 enum class ChargepointStatus {

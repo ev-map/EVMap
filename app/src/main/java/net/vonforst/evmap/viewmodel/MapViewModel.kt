@@ -210,7 +210,10 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
 
     val mapType: MutableLiveData<AnyMap.Type> by lazy {
         MutableLiveData<AnyMap.Type>().apply {
-            value = AnyMap.Type.NORMAL
+            value = prefs.mapType
+            observeForever {
+                prefs.mapType = it
+            }
         }
     }
 

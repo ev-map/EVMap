@@ -2,6 +2,7 @@ package net.vonforst.evmap.storage
 
 import android.content.Context
 import androidx.preference.PreferenceManager
+import com.car2go.maps.AnyMap
 import net.vonforst.evmap.R
 import net.vonforst.evmap.viewmodel.FILTERS_CUSTOM
 import net.vonforst.evmap.viewmodel.FILTERS_DISABLED
@@ -72,6 +73,12 @@ class PreferenceDataSource(val context: Context) {
             "map_provider",
             context.getString(R.string.pref_map_provider_default)
         )!!
+
+    var mapType: AnyMap.Type
+        get() = AnyMap.Type.valueOf(sp.getString("map_type", null) ?: AnyMap.Type.NORMAL.toString())
+        set(type) {
+            sp.edit().putString("map_type", type.toString()).apply()
+        }
 
     var welcomeDialogShown: Boolean
         get() = sp.getBoolean("welcome_dialog_shown", false)

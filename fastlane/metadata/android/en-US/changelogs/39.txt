@@ -1,0 +1,10 @@
+New Features:
+- Map follows current location
+- Availability indicator in map view only shows currently filtered connectors (e.g. only CCS)
+- Links to https://www.goingelectric.de/stromtankstellen can be opened in EVMap
+- Shared locations (e.g. from messenger apps) can be opened in EVMap
+
+Bugfixes:
+- Filter settings would be deleted when renaming a saved filter profile
+- Selected map type (Default, Satellite, Terrain) will be kept across app restarts
+- Updated copyright year

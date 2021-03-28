@@ -1,0 +1,10 @@
+Neue Features:
+- Kartenausschnitt folgt der aktuellen Position
+- Verfügbarkeitsanzeige in der Kartenansicht beinhaltet nur die per Filter gewählten Anschlüsse (z.B. nur CCS)
+- Links zu https://www.goingelectric.de/stromtankstellen können in EVMap geöffnet werden
+- Geteilte Standorte (z.B. aus Messenger-Apps) können in EVMap geöffnet werden
+
+Fehlerkorrekturen:
+- Filtereinstellungen wurden bei Umbenennen eines Filterprofils fälschlicherweise gelöscht
+- Ausgewählter Kartentyp (Satellit, Gelände, Standard) bleibt beim App-Neustart erhalten
+- Copyright-Jahr aktualisiert

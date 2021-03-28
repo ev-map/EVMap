@@ -3,6 +3,10 @@ package net.vonforst.evmap.viewmodel
 import androidx.annotation.MainThread
 import androidx.annotation.Nullable
 import androidx.lifecycle.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicBoolean
 
 
@@ -62,5 +66,28 @@ class SingleLiveEvent<T> : MutableLiveData<T>() {
     @MainThread
     fun call() {
         value = null
+    }
+}
+
+fun <T> throttleLatest(
+    skipMs: Long = 300L,
+    coroutineScope: CoroutineScope,
+    destinationFunction: suspend (T) -> Unit
+): (T) -> Unit {
+    var throttleJob: Job? = null
+    var waitingParam: T? = null
+    return { param: T ->
+        if (throttleJob?.isCompleted != false) {
+            throttleJob = coroutineScope.launch {
+                destinationFunction(param)
+                delay(skipMs)
+                waitingParam?.let { wParam ->
+                    waitingParam = null
+                    destinationFunction(wParam)
+                }
+            }
+        } else {
+            waitingParam = param
+        }
     }
 }

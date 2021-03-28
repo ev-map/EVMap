@@ -6,7 +6,6 @@ import com.car2go.maps.AnyMap
 import com.car2go.maps.model.LatLng
 import com.car2go.maps.model.LatLngBounds
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import net.vonforst.evmap.api.availability.ChargeLocationStatus
 import net.vonforst.evmap.api.availability.getAvailability
@@ -37,7 +36,6 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
     private var api = GoingElectricApi.create(geApiKey, context = application)
     private var db = AppDatabase.getInstance(application)
     private var prefs = PreferenceDataSource(application)
-    private var chargepointLoader: Job? = null
 
     val bottomSheetState: MutableLiveData<Int> by lazy {
         MutableLiveData<Int>()
@@ -277,23 +275,25 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
         loadChargepoints(pos, filters)
     }
 
-    private fun loadChargepoints(
-        mapPosition: MapPosition,
-        filters: FilterValues
-    ) {
-        chargepointLoader?.cancel()
+    private var chargepointLoader =
+        throttleLatest(500L, viewModelScope) { data: Pair<MapPosition, FilterValues> ->
+            chargepoints.value = Resource.loading(chargepoints.value?.data)
+            filteredConnectors.value = null
+            filteredChargeCards.value = null
 
-        chargepoints.value = Resource.loading(chargepoints.value?.data)
-        filteredConnectors.value = null
-        filteredChargeCards.value = null
-        val bounds = mapPosition.bounds
-        val zoom = mapPosition.zoom
-        chargepointLoader = viewModelScope.launch {
-            val result = getChargepointsWithFilters(bounds, zoom, filters)
+            val mapPosition = data.first
+            val filters = data.second
+            val result = getChargepointsWithFilters(mapPosition.bounds, mapPosition.zoom, filters)
             filteredConnectors.value = result.second
             filteredChargeCards.value = result.third
             chargepoints.value = result.first
         }
+
+    private fun loadChargepoints(
+        mapPosition: MapPosition,
+        filters: FilterValues
+    ) {
+        chargepointLoader(Pair(mapPosition, filters))
     }
 
     private suspend fun getChargepointsWithFilters(

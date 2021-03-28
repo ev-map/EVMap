@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Color
+import android.location.Location
 import android.os.Bundle
 import android.os.Handler
 import android.view.*
@@ -50,6 +51,8 @@ import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike
 import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED
 import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN
 import com.mahc.custombottomsheetbehavior.MergedAppBarLayoutBehavior
+import com.mapzen.android.lost.api.LocationListener
+import com.mapzen.android.lost.api.LocationRequest
 import com.mapzen.android.lost.api.LocationServices
 import com.mapzen.android.lost.api.LostApiClient
 import io.michaelrocks.bimap.HashBiMap
@@ -74,13 +77,14 @@ import net.vonforst.evmap.ui.MarkerAnimator
 import net.vonforst.evmap.ui.getMarkerTint
 import net.vonforst.evmap.viewmodel.*
 
+
 const val REQUEST_AUTOCOMPLETE = 2
 const val ARG_CHARGER_ID = "chargerId"
 const val ARG_LAT = "lat"
 const val ARG_LON = "lon"
 
 class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallback,
-    LostApiClient.ConnectionCallbacks {
+    LostApiClient.ConnectionCallbacks, LocationListener {
     private lateinit var binding: FragmentMapBinding
     private val vm: MapViewModel by viewModels(factoryProducer = {
         viewModelFactory {
@@ -94,6 +98,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
     private var mapFragment: MapFragment? = null
     private var map: AnyMap? = null
     private lateinit var locationClient: LostApiClient
+    private var requestingLocationUpdates = false
     private lateinit var bottomSheetBehavior: BottomSheetBehaviorGoogleMapsLike<View>
     private lateinit var detailAppBarBehavior: MergedAppBarLayoutBehavior
     private var markers: MutableBiMap<Marker, ChargeLocation> = HashBiMap()
@@ -237,6 +242,13 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         val hostActivity = activity as? MapsActivity ?: return
         hostActivity.fragmentCallback = this
         vm.reloadPrefs()
+        if (requestingLocationUpdates && ContextCompat.checkSelfPermission(
+                requireContext(),
+                ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            requestLocationUpdates()
+        }
     }
 
     private fun setupClickListeners() {
@@ -274,7 +286,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         binding.detailView.btnChargeprice.setOnClickListener {
             val charger = vm.charger.value?.data ?: return@setOnClickListener
             (activity as? MapsActivity)?.openUrl(
-                "https://www.chargeprice.app/?poi_id=${charger.id}&poi_source=going_electric")
+                "https://www.chargeprice.app/?poi_id=${charger.id}&poi_source=going_electric"
+            )
         }
         binding.detailView.topPart.setOnClickListener {
             bottomSheetBehavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT
@@ -357,7 +370,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 vm.bottomSheetState.value = newState
                 updateBackPressedCallback()
 
-                if (vm.layersMenuOpen.value!! && newState !in listOf(BottomSheetBehaviorGoogleMapsLike.STATE_SETTLING, BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN, BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED)) {
+                if (vm.layersMenuOpen.value!! && newState !in listOf(
+                        BottomSheetBehaviorGoogleMapsLike.STATE_SETTLING,
+                        BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN,
+                        BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED
+                    )
+                ) {
                     closeLayersMenu()
                 }
             }
@@ -677,6 +695,15 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         map.setOnCameraMoveListener {
             binding.scaleView.update(map.cameraPosition.zoom, map.cameraPosition.target.latitude)
         }
+        map.setOnCameraMoveStartedListener { reason ->
+            if (reason == AnyMap.OnCameraMoveStartedListener.REASON_GESTURE
+                && vm.myLocationEnabled.value == true
+            ) {
+                // disable location following when manually scrolling the map
+                vm.myLocationEnabled.value = false
+                removeLocationUpdates()
+            }
+        }
         map.setOnMarkerClickListener { marker ->
             when (marker) {
                 in markers -> {
@@ -774,15 +801,18 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
     private fun enableLocation(moveTo: Boolean, animate: Boolean) {
         val map = this.map ?: return
         map.setMyLocationEnabled(true)
-        vm.myLocationEnabled.value = true
         map.uiSettings.setMyLocationButtonEnabled(false)
-        if (moveTo && locationClient.isConnected) {
-            moveToCurrentLocation(map, animate)
+        if (moveTo) {
+            vm.myLocationEnabled.value = true
+            if (locationClient.isConnected) {
+                moveToLastLocation(map, animate)
+                requestLocationUpdates()
+            }
         }
     }
 
     @RequiresPermission(ACCESS_FINE_LOCATION)
-    private fun moveToCurrentLocation(map: AnyMap, animate: Boolean) {
+    private fun moveToLastLocation(map: AnyMap, animate: Boolean) {
         val location = LocationServices.FusedLocationApi.getLastLocation(locationClient)
         if (location != null) {
             val latLng = LatLng(location.latitude, location.longitude)
@@ -1077,11 +1107,40 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                     ACCESS_FINE_LOCATION
                 ) == PackageManager.PERMISSION_GRANTED
             ) {
-                moveToCurrentLocation(map, false)
+                moveToLastLocation(map, false)
+                requestLocationUpdates()
             }
         }
     }
 
+    @RequiresPermission(ACCESS_FINE_LOCATION)
+    private fun requestLocationUpdates() {
+        val request: LocationRequest = LocationRequest.create()
+            .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+            .setInterval(5000)
+        LocationServices.FusedLocationApi.requestLocationUpdates(locationClient, request, this)
+        requestingLocationUpdates = true
+    }
+
+    private fun removeLocationUpdates() {
+        LocationServices.FusedLocationApi.removeLocationUpdates(locationClient, this)
+    }
+
     override fun onConnectionSuspended() {
+    }
+
+    override fun onLocationChanged(location: Location?) {
+        val map = this.map ?: return
+        if (location == null || vm.myLocationEnabled.value == false) return
+
+        val latLng = LatLng(location.latitude, location.longitude)
+        vm.location.value = latLng
+        val camUpdate = map.cameraUpdateFactory.newLatLng(latLng)
+        map.animateCamera(camUpdate)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        removeLocationUpdates()
     }
 }

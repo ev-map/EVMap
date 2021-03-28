@@ -120,7 +120,7 @@ dependencies {
     implementation 'com.github.pengrad:mapscaleview:1.6.0'
 
     // AnyMaps
-    def anyMapsVersion = '7753eeb7b0'
+    def anyMapsVersion = '1f050d860f'
     implementation "com.github.johan12345.AnyMaps:anymaps-base:$anyMapsVersion"
     googleImplementation "com.github.johan12345.AnyMaps:anymaps-google:$anyMapsVersion"
     implementation "com.github.johan12345.AnyMaps:anymaps-mapbox:$anyMapsVersion"

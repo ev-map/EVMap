@@ -147,7 +147,7 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
             val callback = { _: Any? ->
                 val loc = location.value
                 val charger = chargerSparse.value
-                value = if (loc != null && charger != null && myLocationEnabled.value == true) {
+                value = if (loc != null && charger != null) {
                     distanceBetween(
                         loc.latitude,
                         loc.longitude,
@@ -158,7 +158,6 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
             }
             addSource(chargerSparse, callback)
             addSource(location, callback)
-            addSource(myLocationEnabled, callback)
         }
     }
     val location: MutableLiveData<LatLng> by lazy {

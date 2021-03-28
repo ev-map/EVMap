@@ -43,6 +43,16 @@
                 <data android:scheme="geo" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <data
+                    android:scheme="https"
+                    android:host="www.goingelectric.de"
+                    android:pathPrefix="/stromtankstellen/" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+            </intent-filter>
         </activity>
     </application>
 

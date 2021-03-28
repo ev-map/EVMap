@@ -743,6 +743,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         val position = vm.mapPosition.value
         val lat = arguments?.optDouble(ARG_LAT)
         val lon = arguments?.optDouble(ARG_LON)
+        val chargerId = arguments?.optLong(ARG_CHARGER_ID)
+
         var positionSet = false
 
         if (position != null) {
@@ -750,12 +752,29 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 map.cameraUpdateFactory.newLatLngZoom(position.bounds.center, position.zoom)
             map.moveCamera(cameraUpdate)
             positionSet = true
+        } else if (chargerId != null && (lat == null || lon == null)) {
+            // show given charger ID
+            vm.loadChargerById(chargerId)
+            vm.chargerSparse.observe(
+                viewLifecycleOwner,
+                object : Observer<ChargeLocation> {
+                    override fun onChanged(item: ChargeLocation?) {
+                        if (item?.id == chargerId) {
+                            val cameraUpdate = map.cameraUpdateFactory.newLatLngZoom(
+                                LatLng(item.coordinates.lat, item.coordinates.lng), 16f
+                            )
+                            map.moveCamera(cameraUpdate)
+                            vm.chargerSparse.removeObserver(this)
+                        }
+                    }
+                })
+
+            positionSet = true
         } else if (lat != null && lon != null) {
             // show given position
             val cameraUpdate = map.cameraUpdateFactory.newLatLngZoom(LatLng(lat, lon), 16f)
             map.moveCamera(cameraUpdate)
 
-            val chargerId = arguments?.optLong(ARG_CHARGER_ID)
             if (chargerId != null) {
                 // show charger detail after chargers were loaded
                 vm.chargepoints.observe(
@@ -1095,6 +1114,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             return Bundle().apply {
                 putDouble(ARG_LAT, lat)
                 putDouble(ARG_LON, lon)
+            }
+        }
+
+        fun showChargerById(id: Long): Bundle? {
+            return Bundle().apply {
+                putLong(ARG_CHARGER_ID, id)
             }
         }
     }

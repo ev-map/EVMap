@@ -82,6 +82,16 @@ class MapsActivity : AppCompatActivity() {
                     deepLink.send()
                 }
             }
+        } else if (intent?.scheme == "https" && intent?.data?.host == "www.goingelectric.de") {
+            val id = intent.data?.pathSegments?.last()?.toLongOrNull()
+            if (id != null) {
+                val deepLink = navController.createDeepLink()
+                    .setGraph(R.navigation.nav_graph)
+                    .setDestination(R.id.map)
+                    .setArguments(MapFragment.showChargerById(id))
+                    .createPendingIntent()
+                deepLink.send()
+            }
         }
     }
 

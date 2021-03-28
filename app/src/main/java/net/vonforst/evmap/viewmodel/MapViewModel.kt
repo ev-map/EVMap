@@ -442,4 +442,32 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
             }
         })
     }
+
+    fun loadChargerById(chargerId: Long) {
+        chargerDetails.value = Resource.loading(null)
+        chargerSparse.value = null
+        api.getChargepointDetail(chargerId).enqueue(object :
+            Callback<ChargepointList> {
+            override fun onFailure(call: Call<ChargepointList>, t: Throwable) {
+                chargerSparse.value = null
+                chargerDetails.value = Resource.error(t.message, null)
+                t.printStackTrace()
+            }
+
+            override fun onResponse(
+                call: Call<ChargepointList>,
+                response: Response<ChargepointList>
+            ) {
+                if (!response.isSuccessful || response.body()!!.status != "ok") {
+                    chargerDetails.value = Resource.error(response.message(), null)
+                    chargerSparse.value = null
+                } else {
+                    val charger = response.body()!!.chargelocations[0] as ChargeLocation
+                    chargerDetails.value =
+                        Resource.success(charger)
+                    chargerSparse.value = charger
+                }
+            }
+        })
+    }
 }

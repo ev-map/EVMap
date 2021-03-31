@@ -1,0 +1,1287 @@
+{
+  "data": [
+    {
+      "id": "a7a44895-b23a-47b0-9674-f08039a4af9e",
+      "type": "charge_price",
+      "attributes": {
+        "provider": "EnBW ODR",
+        "tariff_name": "MobilityMe Privat",
+        "url": "https://www.odr.de/Mobility_Me/mobilityme.html",
+        "monthly_min_sales": 0.0,
+        "total_monthly_fee": 2.95,
+        "flat_rate": false,
+        "direct_payment": false,
+        "provider_customer_tariff": false,
+        "currency": "EUR",
+        "start_time": 720,
+        "tags": [
+          {
+            "kind": "info",
+            "text": "New tariffs for new customers!",
+            "url": null
+          }
+        ],
+        "charge_point_prices": [
+          {
+            "power": 22.0,
+            "plug": "Typ2",
+            "price": 8.58,
+            "price_distribution": {
+              "kwh": 1.0,
+              "minute": 0.0
+            },
+            "blocking_fee_start": 240,
+            "no_price_reason": null
+          },
+          {
+            "power": 2.3,
+            "plug": "Schuko",
+            "price": 8.58,
+            "price_distribution": {
+              "kwh": 1.0,
+              "minute": 0.0
+            },
+            "blocking_fee_start": 240,
+            "no_price_reason": null
+          }
+        ]
+      },
+      "relationships": {
+        "tariff": {
+          "data": {
+            "type": "tariff",
+            "id": "0b6d0281-0b2f-484e-8f1a-1aed19ef9a82"
+          }
+        }
+      }
+    },
+    {
+      "id": "a1aea427-53b6-4fee-9852-6b77359b9f4b",
+      "type": "charge_price",
+      "attributes": {
+        "provider": "eins",
+        "tariff_name": "E-Mobil",
+        "url": "https://www.eins.de/privatkunden/elektromobilitaet/oeffentliches-laden/",
+        "monthly_min_sales": 0.0,
+        "total_monthly_fee": 0.0,
+        "flat_rate": false,
+        "direct_payment": false,
+        "provider_customer_tariff": false,
+        "currency": "EUR",
+        "start_time": 720,
+        "tags": [],
+        "charge_point_prices": [
+          {
+            "power": 22.0,
+            "plug": "Typ2",
+            "price": 8.8,
+            "price_distribution": {
+              "kwh": 1.0
+            },
+            "blocking_fee_start": null,
+            "no_price_reason": null
+          },
+          {
+            "power": 2.3,
+            "plug": "Schuko",
+            "price": 8.8,
+            "price_distribution": {
+              "kwh": 1.0
+            },
+            "blocking_fee_start": null,
+            "no_price_reason": null
+          }
+        ]
+      },
+      "relationships": {
+        "tariff": {
+          "data": {
+            "type": "tariff",
+            "id": "9a10db7b-3738-4dd6-b040-9f6bf25ac2da"
+          }
+        }
+      }
+    },
+    {
+      "id": "b19c3df3-bda9-45c6-9c69-ad92acd57381",
+      "type": "charge_price",
+      "attributes": {
+        "provider": "Enel X",
+        "tariff_name": "JuicePass",
+        "url": "https://www.enelx.com/it/en/electric-mobility/products/privates/juicepass-app",
+        "monthly_min_sales": 0.0,
+        "total_monthly_fee": 0.0,
+        "flat_rate": false,
+        "direct_payment": false,
+        "provider_customer_tariff": false,
+        "currency": "EUR",
+        "start_time": 720,
+        "tags": [],
+        "charge_point_prices": [
+          {
+            "power": 22.0,
+            "plug": "Typ2",
+            "price": 11.0,
+            "price_distribution": {
+              "kwh": 1.0
+            },
+            "blocking_fee_start": null,
+            "no_price_reason": null
+          },
+          {
+            "power": 2.3,
+            "plug": "Schuko",
+            "price": 11.0,
+            "price_distribution": {
+              "kwh": 1.0
+            },
+            "blocking_fee_start": null,
+            "no_price_reason": null
+          }
+        ]
+      },
+      "relationships": {
+        "tariff": {
+          "data": {
+            "type": "tariff",
+            "id": "7221b94b-4128-470e-befd-9f96ada009ef"
+          }
+        }
+      }
+    },
+    {
+      "id": "466090c2-0d6c-4856-85c3-bb2ef4127ca5",
+      "type": "charge_price",
+      "attributes": {
+        "provider": "EV Rodau",
+        "tariff_name": "Rodaustrom",
+        "url": "https://www.ev-rodau.de/Navigation/E-Mobilitaet/",
+        "monthly_min_sales": 0.0,
+        "total_monthly_fee": 0.0,
+        "flat_rate": false,
+        "direct_payment": false,
+        "provider_customer_tariff": false,
+        "currency": "EUR",
+        "start_time": 720,
+        "tags": [
+          {
+            "kind": "info",
+            "text": "Existing customers (registriert before 15.02.2021): 0.49/kWh",
+            "url": null
+          }
+        ],
+        "charge_point_prices": [
+          {
+            "power": 22.0,
+            "plug": "Typ2",
+            "price": 20.68,
+            "price_distribution": {
+              "kwh": 1.0
+            },
+            "blocking_fee_start": null,
+            "no_price_reason": null
+          },
+          {
+            "power": 2.3,
+            "plug": "Schuko",
+            "price": 20.68,
+            "price_distribution": {
+              "kwh": 1.0
+            },
+            "blocking_fee_start": null,
+            "no_price_reason": null
+          }
+        ]
+      },
+      "relationships": {
+        "tariff": {
+          "data": {
+            "type": "tariff",
+            "id": "6640c45d-0704-4adb-9a7a-a1afea17b3eb"
+          }
+        }
+      }
+    },
+    {
+      "id": "e87a391f-b8f6-4581-a190-7e4c542928e9",
+      "type": "charge_price",
+      "attributes": {
+        "provider": "MVV eMotion",
+        "tariff_name": "MVV eMotion",
+        "url": "https://mvv.chargecloud.de/",
+        "monthly_min_sales": 0.0,
+        "total_monthly_fee": 0.0,
+        "flat_rate": false,
+        "direct_payment": false,
+        "provider_customer_tariff": false,
+        "currency": "EUR",
+        "start_time": 720,
+        "tags": [],
+        "charge_point_prices": [
+          {
+            "power": 22.0,
+            "plug": "Typ2",
+            "price": 8.58,
+            "price_distribution": {
+              "kwh": 1.0
+            },
+            "blocking_fee_start": null,
+            "no_price_reason": null
+          },
+          {
+            "power": 2.3,
+            "plug": "Schuko",
+            "price": 8.58,
+            "price_distribution": {
+              "kwh": 1.0
+            },
+            "blocking_fee_start": null,
+            "no_price_reason": null
+          }
+        ]
+      },
+      "relationships": {
+        "tariff": {
+          "data": {
+            "type": "tariff",
+            "id": "091adf0a-ae49-4c53-bb11-2eccb409685c"
+          }
+        }
+      }
+    },
+    {
+      "id": "dfbf56b7-424a-4f1b-8749-9a4edca3eef3",
+      "type": "charge_price",
+      "attributes": {
+        "provider": "EnBW",
+        "tariff_name": "mobility+ Viellader",
+        "url": "https://www.enbw.com/elektromobilitaet/produkte/mobilityplus-app/laden-und-bezahlen",
+        "monthly_min_sales": 0.0,
+        "total_monthly_fee": 4.99,
+        "flat_rate": false,
+        "direct_payment": false,
+        "provider_customer_tariff": false,
+        "currency": "EUR",
+        "start_time": 720,
+        "tags": [],
+        "charge_point_prices": [
+          {
+            "power": 22.0,
+            "plug": "Typ2",
+            "price": 6.38,
+            "price_distribution": {
+              "kwh": 1.0,
+              "minute": 0.0
+            },
+            "blocking_fee_start": 240,
+            "no_price_reason": null
+          },
+          {
+            "power": 2.3,
+            "plug": "Schuko",
+            "price": 6.38,
+            "price_distribution": {
+              "kwh": 1.0,
+              "minute": 0.0
+            },
+            "blocking_fee_start": 240,
+            "no_price_reason": null
+          }
+        ]
+      },
+      "relationships": {
+        "tariff": {
+          "data": {
+            "type": "tariff",
+            "id": "14037a35-45d8-46ab-b348-187f7e23eba4"
+          }
+        }
+      }
+    },
+    {
+      "id": "9f6a2795-0319-4200-b871-7af040a27f14",
+      "type": "charge_price",
+      "attributes": {
+        "provider": "EnBW",
+        "tariff_name": "ADAC e-CHARGE",
+        "url": "https://www.adac.de/rund-ums-fahrzeug/e-mobilitaet/laden/adac-e-charge/",
+        "monthly_min_sales": 0.0,
+        "total_monthly_fee": 0.0,
+        "flat_rate": false,
+        "direct_payment": false,
+        "provider_customer_tariff": false,
+        "currency": "EUR",
+        "start_time": 720,
+        "tags": [
+          {
+            "kind": "lock",
+            "text": "Club members only",
+            "url": "https://www.adac.de/mitgliedschaft/mitglied-werden/"
+          }
+        ],
+        "charge_point_prices": [
+          {
+            "power": 22.0,
+            "plug": "Typ2",
+            "price": 6.38,
+            "price_distribution": {
+              "kwh": 1.0,
+              "minute": 0.0
+            },
+            "blocking_fee_start": 240,
+            "no_price_reason": null
+          },
+          {
+            "power": 2.3,
+            "plug": "Schuko",
+            "price": 6.38,
+            "price_distribution": {
+              "kwh": 1.0,
+              "minute": 0.0
+            },
+            "blocking_fee_start": 240,
+            "no_price_reason": null
+          }
+        ]
+      },
+      "relationships": {
+        "tariff": {
+          "data": {
+            "type": "tariff",
+            "id": "36c2017a-097a-4072-9a58-6ef904b6173d"
+          }
+        }
+      }
+    },
+    {
+      "id": "ba713da6-a97d-48d7-89c8-f49b529faec0",
+      "type": "charge_price",
+      "attributes": {
+        "provider": "EnBW",
+        "tariff_name": "mobility+ Standard",
+        "url": "https://www.enbw.com/elektromobilitaet/produkte/mobilityplus-app/laden-und-bezahlen",
+        "monthly_min_sales": 0.0,
+        "total_monthly_fee": 0.0,
+        "flat_rate": false,
+        "direct_payment": false,
+        "provider_customer_tariff": false,
+        "currency": "EUR",
+        "start_time": 720,
+        "tags": [],
+        "charge_point_prices": [
+          {
+            "power": 22.0,
+            "plug": "Typ2",
+            "price": 8.58,
+            "price_distribution": {
+              "kwh": 1.0,
+              "minute": 0.0
+            },
+            "blocking_fee_start": 240,
+            "no_price_reason": null
+          },
+          {
+            "power": 2.3,
+            "plug": "Schuko",
+            "price": 8.58,
+            "price_distribution": {
+              "kwh": 1.0,
+              "minute": 0.0
+            },
+            "blocking_fee_start": 240,
+            "no_price_reason": null
+          }
+        ]
+      },
+      "relationships": {
+        "tariff": {
+          "data": {
+            "type": "tariff",
+            "id": "dba260fc-f006-4ea8-881e-6b9f3f4e0528"
+          }
+        }
+      }
+    },
+    {
+      "id": "3bf34f4c-de37-45e9-83e9-0300cc09b604",
+      "type": "charge_price",
+      "attributes": {
+        "provider": "Lichtblick SE",
+        "tariff_name": "FahrStrom",
+        "url": "https://www.lichtblick.de/e-mobilitaet/fahrstrom-unterwegs#fahrstrom-calculator",
+        "monthly_min_sales": 0.0,
+        "total_monthly_fee": 0.0,
+        "flat_rate": false,
+        "direct_payment": false,
+        "provider_customer_tariff": false,
+        "currency": "EUR",
+        "start_time": 720,
+        "tags": [],
+        "charge_point_prices": [
+          {
+            "power": 22.0,
+            "plug": "Typ2",
+            "price": 10.78,
+            "price_distribution": {
+              "kwh": 1.0
+            },
+            "blocking_fee_start": null,
+            "no_price_reason": null
+          },
+          {
+            "power": 2.3,
+            "plug": "Schuko",
+            "price": 10.78,
+            "price_distribution": {
+              "kwh": 1.0
+            },
+            "blocking_fee_start": null,
+            "no_price_reason": null
+          }
+        ]
+      },
+      "relationships": {
+        "tariff": {
+          "data": {
+            "type": "tariff",
+            "id": "21a10712-bd10-4f91-89b6-15d20890a0d0"
+          }
+        }
+      }
+    },
+    {
+      "id": "85e5162a-4306-45a7-82a9-f3a9e6d3d5fc",
+      "type": "charge_price",
+      "attributes": {
+        "provider": "Plugsurfing",
+        "tariff_name": "Plugsurfing",
+        "url": "https://www.plugsurfing.com/",
+        "monthly_min_sales": 0.0,
+        "total_monthly_fee": 0.0,
+        "flat_rate": false,
+        "direct_payment": false,
+        "provider_customer_tariff": false,
+        "currency": "EUR",
+        "start_time": 720,
+        "tags": [],
+        "charge_point_prices": [
+          {
+            "power": 22.0,
+            "plug": "Typ2",
+            "price": 10.78,
+            "price_distribution": {
+              "kwh": 1.0
+            },
+            "blocking_fee_start": null,
+            "no_price_reason": null
+          },
+          {
+            "power": 2.3,
+            "plug": "Schuko",
+            "price": 10.78,
+            "price_distribution": {
+              "kwh": 1.0
+            },
+            "blocking_fee_start": null,
+            "no_price_reason": null
+          }
+        ]
+      },
+      "relationships": {
+        "tariff": {
+          "data": {
+            "type": "tariff",
+            "id": "88257a81-924b-49ee-945b-304f1660343b"
+          }
+        }
+      }
+    },
+    {
+      "id": "dc3be456-3167-4d3c-9d43-ec3ec99b8086",
+      "type": "charge_price",
+      "attributes": {
+        "provider": "evpass",
+        "tariff_name": "evpass explorer",
+        "url": "https://www.evpass.ch/",
+        "monthly_min_sales": 0.0,
+        "total_monthly_fee": 4.441433303221921,
+        "flat_rate": false,
+        "direct_payment": false,
+        "provider_customer_tariff": false,
+        "currency": "EUR",
+        "start_time": 720,
+        "tags": [],
+        "charge_point_prices": [
+          {
+            "power": 22.0,
+            "plug": "Typ2",
+            "price": 24.390243902439025,
+            "price_distribution": {
+              "minute": 1.0
+            },
+            "blocking_fee_start": null,
+            "no_price_reason": null
+          },
+          {
+            "power": 2.3,
+            "plug": "Schuko",
+            "price": 24.390243902439025,
+            "price_distribution": {
+              "minute": 1.0
+            },
+            "blocking_fee_start": null,
+            "no_price_reason": null
+          }
+        ]
+      },
+      "relationships": {
+        "tariff": {
+          "data": {
+            "type": "tariff",
+            "id": "ea1454d2-5944-4723-9e98-6918ffc14ac0"
+          }
+        }
+      }
+    },
+    {
+      "id": "880a67b9-df4c-4fd7-8292-c3292f06d38b",
+      "type": "charge_price",
+      "attributes": {
+        "provider": "evpass",
+        "tariff_name": "evpass Day Flat",
+        "url": "https://www.evpass.ch/",
+        "monthly_min_sales": 0.0,
+        "total_monthly_fee": 81.30081300813008,
+        "flat_rate": false,
+        "direct_payment": false,
+        "provider_customer_tariff": false,
+        "currency": "EUR",
+        "start_time": 720,
+        "tags": [],
+        "charge_point_prices": [
+          {
+            "power": 22.0,
+            "plug": "Typ2",
+            "price": 24.390243902439025,
+            "price_distribution": {
+              "minute": 1.0
+            },
+            "blocking_fee_start": null,
+            "no_price_reason": null
+          },
+          {
+            "power": 2.3,
+            "plug": "Schuko",
+            "price": 24.390243902439025,
+            "price_distribution": {
+              "minute": 1.0
+            },
+            "blocking_fee_start": null,
+            "no_price_reason": null
+          }
+        ]
+      },
+      "relationships": {
+        "tariff": {
+          "data": {
+            "type": "tariff",
+            "id": "2c361bb5-6caf-48a9-b769-682c0389164c"
+          }
+        }
+      }
+    },
+    {
+      "id": "a0f464ee-b508-4ef7-962f-54ac61291435",
+      "type": "charge_price",
+      "attributes": {
+        "provider": "evpass",
+        "tariff_name": "evpass Anytime Flat",
+        "url": "https://www.evpass.ch/",
+        "monthly_min_sales": 0.0,
+        "total_monthly_fee": 108.40108401084011,
+        "flat_rate": false,
+        "direct_payment": false,
+        "provider_customer_tariff": false,
+        "currency": "EUR",
+        "start_time": 720,
+        "tags": [],
+        "charge_point_prices": [
+          {
+            "power": 22.0,
+            "plug": "Typ2",
+            "price": 24.390243902439025,
+            "price_distribution": {
+              "minute": 1.0
+            },
+            "blocking_fee_start": null,
+            "no_price_reason": null
+          },
+          {
+            "power": 2.3,
+            "plug": "Schuko",
+            "price": 24.390243902439025,
+            "price_distribution": {
+              "minute": 1.0
+            },
+            "blocking_fee_start": null,
+            "no_price_reason": null
+          }
+        ]
+      },
+      "relationships": {
+        "tariff": {
+          "data": {
+            "type": "tariff",
+            "id": "02cd2e4b-0a27-4f67-a680-65be6b2ed8d7"
+          }
+        }
+      }
+    },
+    {
+      "id": "e82421e5-bb97-4d4f-bfaa-275e6183148a",
+      "type": "charge_price",
+      "attributes": {
+        "provider": "evpass",
+        "tariff_name": "evpass Night Flat",
+        "url": "https://www.evpass.ch/",
+        "monthly_min_sales": 0.0,
+        "total_monthly_fee": 45.16711833785005,
+        "flat_rate": false,
+        "direct_payment": false,
+        "provider_customer_tariff": false,
+        "currency": "EUR",
+        "start_time": 720,
+        "tags": [],
+        "charge_point_prices": [
+          {
+            "power": 22.0,
+            "plug": "Typ2",
+            "price": 24.390243902439025,
+            "price_distribution": {
+              "minute": 1.0
+            },
+            "blocking_fee_start": null,
+            "no_price_reason": null
+          },
+          {
+            "power": 2.3,
+            "plug": "Schuko",
+            "price": 24.390243902439025,
+            "price_distribution": {
+              "minute": 1.0
+            },
+            "blocking_fee_start": null,
+            "no_price_reason": null
+          }
+        ]
+      },
+      "relationships": {
+        "tariff": {
+          "data": {
+            "type": "tariff",
+            "id": "a6be130c-ed42-4d09-b4b3-d5ff018ece44"
+          }
+        }
+      }
+    },
+    {
+      "id": "36d1692a-1eea-4ca9-a753-06fe0a9b74da",
+      "type": "charge_price",
+      "attributes": {
+        "provider": "Stadtwerke Ingolstadt",
+        "tariff_name": "SWI e-Motion",
+        "url": "https://sw-i.de/mobilitaet/elektromobilitaet/oeffentliches-laden/",
+        "monthly_min_sales": 0.0,
+        "total_monthly_fee": 0.0,
+        "flat_rate": false,
+        "direct_payment": false,
+        "provider_customer_tariff": false,
+        "currency": "EUR",
+        "start_time": 720,
+        "tags": [],
+        "charge_point_prices": [
+          {
+            "power": 22.0,
+            "plug": "Typ2",
+            "price": 10.1978,
+            "price_distribution": {
+              "session": 0.2451509149032144,
+              "kwh": 0.7548490850967855
+            },
+            "blocking_fee_start": null,
+            "no_price_reason": null
+          },
+          {
+            "power": 2.3,
+            "plug": "Schuko",
+            "price": 10.1978,
+            "price_distribution": {
+              "session": 0.2451509149032144,
+              "kwh": 0.7548490850967855
+            },
+            "blocking_fee_start": null,
+            "no_price_reason": null
+          }
+        ]
+      },
+      "relationships": {
+        "tariff": {
+          "data": {
+            "type": "tariff",
+            "id": "0efd4ffd-cc9d-4ddd-8a74-5dca40728ff4"
+          }
+        }
+      }
+    },
+    {
+      "id": "2babdda3-c2b9-4d3e-8bdc-794c10d73b6b",
+      "type": "charge_price",
+      "attributes": {
+        "provider": "evway",
+        "tariff_name": "evway",
+        "url": "https://evway.net/de/tarif/",
+        "monthly_min_sales": 0.0,
+        "total_monthly_fee": 0.0,
+        "flat_rate": false,
+        "direct_payment": false,
+        "provider_customer_tariff": false,
+        "currency": "EUR",
+        "start_time": 720,
+        "tags": [
+          {
+            "kind": "info",
+            "text": "Transparent provider",
+            "url": null
+          }
+        ],
+        "charge_point_prices": [
+          {
+            "power": 22.0,
+            "plug": "Typ2",
+            "price": 8.8,
+            "price_distribution": {
+              "kwh": 1.0
+            },
+            "blocking_fee_start": null,
+            "no_price_reason": null
+          },
+          {
+            "power": 2.3,
+            "plug": "Schuko",
+            "price": 8.8,
+            "price_distribution": {
+              "kwh": 1.0
+            },
+            "blocking_fee_start": null,
+            "no_price_reason": null
+          }
+        ]
+      },
+      "relationships": {
+        "tariff": {
+          "data": {
+            "type": "tariff",
+            "id": "c9fa56cc-6365-467c-b46f-eba2d13f9849"
+          }
+        }
+      }
+    },
+    {
+      "id": "5e0a3e4d-8657-481a-8483-e6cf2053ee50",
+      "type": "charge_price",
+      "attributes": {
+        "provider": "Move",
+        "tariff_name": "Move light",
+        "url": "https://www.move.ch/en/",
+        "monthly_min_sales": 0.0,
+        "total_monthly_fee": 0.0,
+        "flat_rate": false,
+        "direct_payment": false,
+        "provider_customer_tariff": false,
+        "currency": "EUR",
+        "start_time": 720,
+        "tags": [
+          {
+            "kind": "info",
+            "text": "New prices: No minute fee on AC!",
+            "url": null
+          }
+        ],
+        "charge_point_prices": [
+          {
+            "power": 22.0,
+            "plug": "Typ2",
+            "price": 14.272809394760616,
+            "price_distribution": {
+              "kwh": 0.9050632911392406,
+              "session": 0.09493670886075949
+            },
+            "blocking_fee_start": null,
+            "no_price_reason": null
+          },
+          {
+            "power": 2.3,
+            "plug": "Schuko",
+            "price": 14.272809394760616,
+            "price_distribution": {
+              "kwh": 0.9050632911392406,
+              "session": 0.09493670886075949
+            },
+            "blocking_fee_start": null,
+            "no_price_reason": null
+          }
+        ]
+      },
+      "relationships": {
+        "tariff": {
+          "data": {
+            "type": "tariff",
+            "id": "3b564f24-182f-4cbf-8390-7957f4f9eaa5"
+          }
+        }
+      }
+    },
+    {
+      "id": "c2bc99d2-ea36-44fa-9279-977ced74a309",
+      "type": "charge_price",
+      "attributes": {
+        "provider": "Move",
+        "tariff_name": "Move comfort",
+        "url": "https://www.move.ch/en/",
+        "monthly_min_sales": 0.0,
+        "total_monthly_fee": 4.441433303221921,
+        "flat_rate": false,
+        "direct_payment": false,
+        "provider_customer_tariff": false,
+        "currency": "EUR",
+        "start_time": 720,
+        "tags": [
+          {
+            "kind": "info",
+            "text": "New prices: No minute fee on AC!",
+            "url": null
+          }
+        ],
+        "charge_point_prices": [
+          {
+            "power": 22.0,
+            "plug": "Typ2",
+            "price": 12.285456187895214,
+            "price_distribution": {
+              "kwh": 0.8897058823529412,
+              "session": 0.1102941176470588
+            },
+            "blocking_fee_start": null,
+            "no_price_reason": null
+          },
+          {
+            "power": 2.3,
+            "plug": "Schuko",
+            "price": 12.285456187895214,
+            "price_distribution": {
+              "kwh": 0.8897058823529412,
+              "session": 0.1102941176470588
+            },
+            "blocking_fee_start": null,
+            "no_price_reason": null
+          }
+        ]
+      },
+      "relationships": {
+        "tariff": {
+          "data": {
+            "type": "tariff",
+            "id": "e7cfcc90-5ff7-4821-b315-ab1e9a46cd70"
+          }
+        }
+      }
+    },
+    {
+      "id": "f413f87c-2b0b-480a-93d0-4c831a367389",
+      "type": "charge_price",
+      "attributes": {
+        "provider": "e-laden",
+        "tariff_name": "e-laden (Stadtwerke Bruchsal)",
+        "url": "https://www.e-laden.info/html/page.php?page_id=8",
+        "monthly_min_sales": 0.0,
+        "total_monthly_fee": 0.0,
+        "flat_rate": false,
+        "direct_payment": false,
+        "provider_customer_tariff": false,
+        "currency": "EUR",
+        "start_time": 720,
+        "tags": [],
+        "charge_point_prices": [
+          {
+            "power": 22.0,
+            "plug": "Typ2",
+            "price": 7.6,
+            "price_distribution": {
+              "session": 0.13157894736842105,
+              "kwh": 0.868421052631579,
+              "minute": 0.0
+            },
+            "blocking_fee_start": 120,
+            "no_price_reason": null
+          },
+          {
+            "power": 2.3,
+            "plug": "Schuko",
+            "price": 7.6,
+            "price_distribution": {
+              "session": 0.13157894736842105,
+              "kwh": 0.868421052631579,
+              "minute": 0.0
+            },
+            "blocking_fee_start": 120,
+            "no_price_reason": null
+          }
+        ]
+      },
+      "relationships": {
+        "tariff": {
+          "data": {
+            "type": "tariff",
+            "id": "7bc071d3-a170-4755-9b71-bc87642e3a2e"
+          }
+        }
+      }
+    },
+    {
+      "id": "3bc056aa-dc28-4493-930c-f5ec00aca00b",
+      "type": "charge_price",
+      "attributes": {
+        "provider": "e-laden",
+        "tariff_name": "e-laden (Stadtwerke Baden-Baden)",
+        "url": "https://www.e-laden.info/html/page.php?page_id=8",
+        "monthly_min_sales": 0.0,
+        "total_monthly_fee": 0.0,
+        "flat_rate": false,
+        "direct_payment": false,
+        "provider_customer_tariff": false,
+        "currency": "EUR",
+        "start_time": 720,
+        "tags": [
+          {
+            "kind": "info",
+            "text": "New prices with 01.03.!",
+            "url": null
+          }
+        ],
+        "charge_point_prices": [
+          {
+            "power": 22.0,
+            "plug": "Typ2",
+            "price": 8.58,
+            "price_distribution": {
+              "kwh": 1.0,
+              "minute": 0.0
+            },
+            "blocking_fee_start": 60,
+            "no_price_reason": null
+          },
+          {
+            "power": 2.3,
+            "plug": "Schuko",
+            "price": 8.58,
+            "price_distribution": {
+              "kwh": 1.0,
+              "minute": 0.0
+            },
+            "blocking_fee_start": 60,
+            "no_price_reason": null
+          }
+        ]
+      },
+      "relationships": {
+        "tariff": {
+          "data": {
+            "type": "tariff",
+            "id": "b9f932f5-dd09-46f5-862e-3d031963d08f"
+          }
+        }
+      }
+    },
+    {
+      "id": "8e86ed49-d143-4f6a-9340-a27c7ffc6c70",
+      "type": "charge_price",
+      "attributes": {
+        "provider": "swisscharge",
+        "tariff_name": "Swisscharge",
+        "url": "https://www.swisscharge.ch/",
+        "monthly_min_sales": 0.0,
+        "total_monthly_fee": 0.0,
+        "flat_rate": false,
+        "direct_payment": false,
+        "provider_customer_tariff": false,
+        "currency": "EUR",
+        "start_time": 720,
+        "tags": [],
+        "charge_point_prices": [
+          {
+            "power": 22.0,
+            "plug": "Typ2",
+            "price": 16.25,
+            "price_distribution": {
+              "kwh": 0.6363076923076924,
+              "minute": 0.3636923076923077
+            },
+            "blocking_fee_start": null,
+            "no_price_reason": null
+          },
+          {
+            "power": 2.3,
+            "plug": "Schuko",
+            "price": 16.25,
+            "price_distribution": {
+              "kwh": 0.6363076923076924,
+              "minute": 0.3636923076923077
+            },
+            "blocking_fee_start": null,
+            "no_price_reason": null
+          }
+        ]
+      },
+      "relationships": {
+        "tariff": {
+          "data": {
+            "type": "tariff",
+            "id": "04aab3f1-1b4b-4c6b-abb8-6e5d38f5237e"
+          }
+        }
+      }
+    },
+    {
+      "id": "8c0ba631-7c48-4d11-80bd-e2bb61e95f48",
+      "type": "charge_price",
+      "attributes": {
+        "provider": "Stadtwerke Tübingen",
+        "tariff_name": "Lade TüStrom",
+        "url": "https://www.swtue.de/e-mobilitaet/ladestationen-in-tuebingen.html",
+        "monthly_min_sales": 0.0,
+        "total_monthly_fee": 0.0,
+        "flat_rate": false,
+        "direct_payment": false,
+        "provider_customer_tariff": false,
+        "currency": "EUR",
+        "start_time": 720,
+        "tags": [],
+        "charge_point_prices": [
+          {
+            "power": 22.0,
+            "plug": "Typ2",
+            "price": 9.68,
+            "price_distribution": {
+              "kwh": 1.0
+            },
+            "blocking_fee_start": null,
+            "no_price_reason": null
+          },
+          {
+            "power": 2.3,
+            "plug": "Schuko",
+            "price": 9.68,
+            "price_distribution": {
+              "kwh": 1.0
+            },
+            "blocking_fee_start": null,
+            "no_price_reason": null
+          }
+        ]
+      },
+      "relationships": {
+        "tariff": {
+          "data": {
+            "type": "tariff",
+            "id": "599dce51-072a-4265-b866-e5941491329a"
+          }
+        }
+      }
+    },
+    {
+      "id": "e1b6ea8b-8b9b-4b84-9e8a-ed2d978de830",
+      "type": "charge_price",
+      "attributes": {
+        "provider": "E.ON",
+        "tariff_name": "Drive",
+        "url": "https://www.eon.de/de/pk/e-mobility/unterwegs.html",
+        "monthly_min_sales": 0.0,
+        "total_monthly_fee": 4.95,
+        "flat_rate": false,
+        "direct_payment": false,
+        "provider_customer_tariff": false,
+        "currency": "EUR",
+        "start_time": 720,
+        "tags": [
+          {
+            "kind": "info",
+            "text": "From 01.01.2021",
+            "url": null
+          }
+        ],
+        "charge_point_prices": [
+          {
+            "power": 22.0,
+            "plug": "Typ2",
+            "price": 5.95,
+            "price_distribution": {
+              "session": 1.0
+            },
+            "blocking_fee_start": null,
+            "no_price_reason": null
+          },
+          {
+            "power": 2.3,
+            "plug": "Schuko",
+            "price": 5.95,
+            "price_distribution": {
+              "session": 1.0
+            },
+            "blocking_fee_start": null,
+            "no_price_reason": null
+          }
+        ]
+      },
+      "relationships": {
+        "tariff": {
+          "data": {
+            "type": "tariff",
+            "id": "ae2e27d5-b74f-418c-b345-b53ac40c241f"
+          }
+        }
+      }
+    },
+    {
+      "id": "8f221fdb-af5a-4b83-a54a-a176c3f969a4",
+      "type": "charge_price",
+      "attributes": {
+        "provider": "Maingau Energie",
+        "tariff_name": "EinfachStromLaden (Business)",
+        "url": "https://www.maingau-energie.de/e-mobilit%C3%A4t/autostrom-tarif",
+        "monthly_min_sales": 0.0,
+        "total_monthly_fee": 0.0,
+        "flat_rate": false,
+        "direct_payment": false,
+        "provider_customer_tariff": false,
+        "currency": "EUR",
+        "start_time": 720,
+        "tags": [
+          {
+            "kind": "alert",
+            "text": "Higher prices might apply if used often!",
+            "url": null
+          }
+        ],
+        "charge_point_prices": [
+          {
+            "power": 22.0,
+            "plug": "Typ2",
+            "price": 10.559999999999999,
+            "price_distribution": {
+              "kwh": 1.0,
+              "minute": 0.0
+            },
+            "blocking_fee_start": 240,
+            "no_price_reason": null
+          },
+          {
+            "power": 2.3,
+            "plug": "Schuko",
+            "price": 10.559999999999999,
+            "price_distribution": {
+              "kwh": 1.0,
+              "minute": 0.0
+            },
+            "blocking_fee_start": 240,
+            "no_price_reason": null
+          }
+        ]
+      },
+      "relationships": {
+        "tariff": {
+          "data": {
+            "type": "tariff",
+            "id": "82314aed-b2bc-406f-9343-5b0ce9c9ad03"
+          }
+        }
+      },
+      "links": {
+        "open_app_at_station": "https://api.chargeprice.app/v1/companies/f7acbbc7-3247-4298-b3ed-9c61c4860a13/deeplinks?filter[longitude]=9.57108&filter[latitude]=54.5116"
+      }
+    },
+    {
+      "id": "60691e0f-1e71-4027-a431-de7543bb2464",
+      "type": "charge_price",
+      "attributes": {
+        "provider": "Maingau Energie",
+        "tariff_name": "EinfachStromLaden (Privat)",
+        "url": "https://www.maingau-energie.de/e-mobilit%C3%A4t/autostrom-tarif",
+        "monthly_min_sales": 0.0,
+        "total_monthly_fee": 0.0,
+        "flat_rate": false,
+        "direct_payment": false,
+        "provider_customer_tariff": false,
+        "currency": "EUR",
+        "start_time": 720,
+        "tags": [
+          {
+            "kind": "alert",
+            "text": "Higher prices might apply if used often!",
+            "url": null
+          }
+        ],
+        "charge_point_prices": [
+          {
+            "power": 22.0,
+            "plug": "Typ2",
+            "price": 8.36,
+            "price_distribution": {
+              "kwh": 1.0,
+              "minute": 0.0
+            },
+            "blocking_fee_start": 240,
+            "no_price_reason": null
+          },
+          {
+            "power": 2.3,
+            "plug": "Schuko",
+            "price": 8.36,
+            "price_distribution": {
+              "kwh": 1.0,
+              "minute": 0.0
+            },
+            "blocking_fee_start": 240,
+            "no_price_reason": null
+          }
+        ]
+      },
+      "relationships": {
+        "tariff": {
+          "data": {
+            "type": "tariff",
+            "id": "8fdeb6b4-2d72-4cff-87d8-081fa0ac4688"
+          }
+        }
+      },
+      "links": {
+        "open_app_at_station": "https://api.chargeprice.app/v1/companies/f7acbbc7-3247-4298-b3ed-9c61c4860a13/deeplinks?filter[longitude]=9.57108&filter[latitude]=54.5116"
+      }
+    }
+  ],
+  "meta": {
+    "charge_points": [
+      {
+        "power": 22.0,
+        "plug": "Typ2",
+        "energy": 22,
+        "duration": 60
+      },
+      {
+        "power": 2.3,
+        "plug": "Schuko",
+        "energy": 22,
+        "duration": 60
+      }
+    ]
+  }
+}

@@ -108,6 +108,8 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:4.9.0'
     implementation 'com.squareup.okhttp3:okhttp-urlconnection:4.9.0'
     implementation 'com.squareup.moshi:moshi-kotlin:1.9.2'
+    implementation 'moe.banana:moshi-jsonapi:3.5.0'
+    implementation 'moe.banana:moshi-jsonapi-retrofit-converter:3.5.0'
     implementation 'io.coil-kt:coil:1.1.0'
     implementation 'com.github.MikeOrtiz:TouchImageView:3.0.3'
     implementation "com.mikepenz:aboutlibraries-core:$about_libs_version"

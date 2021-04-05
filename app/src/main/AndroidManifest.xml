@@ -48,7 +48,7 @@
                 <data
                     android:scheme="https"
                     android:host="www.goingelectric.de"
-                    android:pathPrefix="/stromtankstellen/" />
+                    android:pathPattern="/stromtankstellen/..*/..*/..*/..*/" />
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />

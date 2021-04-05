@@ -429,6 +429,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             searchResultMarker = null
 
             if (place != null) {
+                // disable location following when search result is shown
+                vm.myLocationEnabled.value = false
                 if (place.viewport != null) {
                     map.animateCamera(map.cameraUpdateFactory.newLatLngBounds(place.viewport, 0))
                 } else {

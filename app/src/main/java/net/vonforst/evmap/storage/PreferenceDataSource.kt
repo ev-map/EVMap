@@ -80,6 +80,12 @@ class PreferenceDataSource(val context: Context) {
             sp.edit().putString("map_type", type.toString()).apply()
         }
 
+    var mapTrafficEnabled: Boolean
+        get() = sp.getBoolean("map_traffic_enabled", false)
+        set(value) {
+            sp.edit().putBoolean("map_traffic_enabled", value).apply()
+        }
+
     var welcomeDialogShown: Boolean
         get() = sp.getBoolean("welcome_dialog_shown", false)
         set(value) {

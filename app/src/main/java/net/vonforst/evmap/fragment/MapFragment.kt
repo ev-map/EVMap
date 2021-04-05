@@ -732,6 +732,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             }
         }
         map.setMapType(vm.mapType.value)
+        map.setTrafficEnabled(vm.mapTrafficEnabled.value ?: false)
 
         // set padding so that compass is not obstructed by toolbar
         map.setPadding(0, binding.toolbarContainer.height, 0, 0)

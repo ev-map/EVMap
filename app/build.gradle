@@ -119,6 +119,9 @@ dependencies {
     implementation 'com.google.guava:guava:29.0-android'
     implementation 'com.github.pengrad:mapscaleview:1.6.0'
 
+    // Android Auto
+    googleImplementation 'androidx.car.app:app:1.0.0-rc01'
+
     // AnyMaps
     def anyMapsVersion = '1f050d860f'
     implementation "com.github.johan12345.AnyMaps:anymaps-base:$anyMapsVersion"

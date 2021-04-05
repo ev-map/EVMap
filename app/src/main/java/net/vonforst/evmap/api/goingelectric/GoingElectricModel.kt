@@ -80,6 +80,21 @@ data class ChargeLocation(
             .map { it.power }.maxOrNull() ?: 0.0
     }
 
+    fun isMulti(filteredConnectors: Set<String>? = null): Boolean {
+        var chargepoints = chargepointsMerged
+            .filter { filteredConnectors?.contains(it.type) ?: true }
+        if (maxPower(filteredConnectors) >= 43) {
+            // fast charger -> only count fast chargers
+            chargepoints = chargepoints.filter { it.power >= 43 }
+        }
+        val connectors = chargepoints.map { it.type }.distinct().toSet()
+
+        // check if there is more than one plug for any connector type
+        val chargepointsPerConnector =
+            connectors.map { conn -> chargepoints.filter { it.type == conn }.sumBy { it.count } }
+        return chargepointsPerConnector.any { it > 1 }
+    }
+
     /**
      * Merges chargepoints if they have the same plug and power
      *
@@ -114,14 +129,16 @@ data class Cost(
     @JsonObjectOrFalse @Json(name = "description_short") val descriptionShort: String?,
     @JsonObjectOrFalse @Json(name = "description_long") val descriptionLong: String?
 ) {
-    fun getStatusText(ctx: Context): CharSequence {
-        return HtmlCompat.fromHtml(
-            ctx.getString(
-                R.string.cost_detail,
-                if (freecharging) ctx.getString(R.string.free) else ctx.getString(R.string.paid),
-                if (freeparking) ctx.getString(R.string.free) else ctx.getString(R.string.paid)
-            ), 0
-        )
+    fun getStatusText(ctx: Context, emoji: Boolean = false): CharSequence {
+        val charging =
+            if (freecharging) ctx.getString(R.string.free) else ctx.getString(R.string.paid)
+        val parking =
+            if (freeparking) ctx.getString(R.string.free) else ctx.getString(R.string.paid)
+        return if (emoji) {
+            "⚡ $charging · \uD83C\uDD7F️ $parking"
+        } else {
+            HtmlCompat.fromHtml(ctx.getString(R.string.cost_detail, charging, parking), 0)
+        }
     }
 }
 

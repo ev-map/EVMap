@@ -43,8 +43,11 @@ class ClusterIconGenerator(context: Context) : IconGenerator(context) {
 
 
 class ChargerIconGenerator(
-    val context: Context, val factory: BitmapDescriptorFactory,
-    val scaleResolution: Int = 20
+    val context: Context,
+    val factory: BitmapDescriptorFactory?,
+    val scaleResolution: Int = 20,
+    val oversize: Float = 1.4f, // increase to add padding for fault icon or scale > 1
+    val height: Int = 44
 ) {
     private data class BitmapData(
         val tint: Int,
@@ -58,7 +61,6 @@ class ChargerIconGenerator(
     // 230 items: (21 sizes, 5 colors, multi on/off) + highlight + fault (only with scale = 1)
     private val cacheSize = (scaleResolution + 3) * 5 * 2;
     private val cache = LruCache<BitmapData, BitmapDescriptor>(cacheSize)
-    private val oversize = 1.4f  // increase to add padding for fault icon or scale > 1
     private val icon = R.drawable.ic_map_marker_charging
     private val multiIcon = R.drawable.ic_map_marker_charging_multiple
     private val highlightIcon = R.drawable.ic_map_marker_highlight
@@ -110,10 +112,28 @@ class ChargerIconGenerator(
             cachedImg
         } else {
             val bitmap = generateBitmap(data)
-            val bmd = factory.fromBitmap(bitmap)
+            val bmd = factory!!.fromBitmap(bitmap)
             cache.put(data, bmd)
             bmd
         }
+    }
+
+    fun getBitmap(
+        @ColorRes tint: Int,
+        scale: Float = 1f,
+        alpha: Int = 255,
+        highlight: Boolean = false,
+        fault: Boolean = false,
+        multi: Boolean = false
+    ): Bitmap {
+        val data = BitmapData(
+            tint, (scale * scaleResolution).roundToInt(),
+            alpha,
+            if (scale == 1f) highlight else false,
+            if (scale == 1f) fault else false,
+            multi
+        )
+        return generateBitmap(data)
     }
 
     private fun generateBitmap(data: BitmapData): Bitmap {
@@ -123,17 +143,22 @@ class ChargerIconGenerator(
         DrawableCompat.setTint(vd, ContextCompat.getColor(context, data.tint));
         DrawableCompat.setTintMode(vd, PorterDuff.Mode.MULTIPLY);
 
-        val leftPadding = vd.intrinsicWidth * (oversize - 1) / 2
-        val topPadding = vd.intrinsicHeight * (oversize - 1)
+        val density = context.resources.displayMetrics.density
+        val width =
+            (height.toFloat() * density / vd.intrinsicHeight * vd.intrinsicWidth).roundToInt()
+        val height = (height * density).roundToInt()
+
+        val leftPadding = width * (oversize - 1) / 2
+        val topPadding = height * (oversize - 1)
         vd.setBounds(
             leftPadding.toInt(), topPadding.toInt(),
-            leftPadding.toInt() + vd.intrinsicWidth,
-            topPadding.toInt() + vd.intrinsicHeight
+            leftPadding.toInt() + width,
+            topPadding.toInt() + height
         )
         vd.alpha = data.alpha
 
         val bm = Bitmap.createBitmap(
-            (vd.intrinsicWidth * oversize).toInt(), (vd.intrinsicHeight * oversize).toInt(),
+            (width * oversize).toInt(), (height * oversize).toInt(),
             Bitmap.Config.ARGB_8888
         )
         val canvas = Canvas(bm)
@@ -142,8 +167,8 @@ class ChargerIconGenerator(
         canvas.scale(
             scale,
             scale,
-            leftPadding + vd.intrinsicWidth / 2f,
-            topPadding + vd.intrinsicHeight.toFloat()
+            leftPadding + width / 2f,
+            topPadding + height.toFloat()
         )
 
         vd.draw(canvas)
@@ -153,8 +178,8 @@ class ChargerIconGenerator(
             val highlightDrawable = ContextCompat.getDrawable(context, hIcon)!!
             highlightDrawable.setBounds(
                 leftPadding.toInt(), topPadding.toInt(),
-                leftPadding.toInt() + vd.intrinsicWidth,
-                topPadding.toInt() + vd.intrinsicHeight
+                leftPadding.toInt() + width,
+                topPadding.toInt() + height
             )
             highlightDrawable.alpha = data.alpha
             highlightDrawable.draw(canvas)
@@ -164,7 +189,7 @@ class ChargerIconGenerator(
             val faultDrawable = ContextCompat.getDrawable(context, faultIcon)!!
             val faultSize = 0.75
             val faultShift = 0.25
-            val base = vd.intrinsicWidth
+            val base = width
             faultDrawable.setBounds(
                 (leftPadding.toInt() + base * (1 - faultSize + faultShift)).toInt(),
                 (topPadding.toInt() - base * faultShift).toInt(),

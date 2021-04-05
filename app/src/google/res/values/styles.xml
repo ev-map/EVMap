@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="CarAppTheme">
+        <item name="carColorPrimary">@color/colorPrimary</item>
+        <item name="carColorPrimaryDark">@color/colorPrimaryVariant</item>
+        <item name="carColorSecondary">@color/colorSecondary</item>
+        <item name="carColorSecondaryDark">@color/colorSecondaryVariant</item>
+    </style>
+</resources>

@@ -12,7 +12,7 @@ import kotlin.math.max
 
 fun getMarkerTint(
     charger: ChargeLocation,
-    connectors: Set<String>?
+    connectors: Set<String>? = null
 ): Int = when {
     charger.maxPower(connectors) >= 100 -> R.color.charger_100kw
     charger.maxPower(connectors) >= 43 -> R.color.charger_43kw

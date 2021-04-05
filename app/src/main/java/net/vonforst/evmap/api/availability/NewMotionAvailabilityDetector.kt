@@ -1,9 +1,9 @@
 package net.vonforst.evmap.api.availability
 
 import com.squareup.moshi.JsonClass
-import net.vonforst.evmap.api.distanceBetween
 import net.vonforst.evmap.api.goingelectric.ChargeLocation
 import net.vonforst.evmap.api.goingelectric.Chargepoint
+import net.vonforst.evmap.utils.distanceBetween
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory

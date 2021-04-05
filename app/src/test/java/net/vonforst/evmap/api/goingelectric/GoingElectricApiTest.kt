@@ -53,7 +53,7 @@ class GoingElectricApiTest {
 
     @Test
     fun testLoadChargepointDetail() {
-        val response = api.getChargepointDetail(2105).execute()
+        val response = runBlocking { api.getChargepointDetail(2105) }
         assertTrue(response.isSuccessful)
         val body = response.body()!!
         assertEquals("ok", body.status)

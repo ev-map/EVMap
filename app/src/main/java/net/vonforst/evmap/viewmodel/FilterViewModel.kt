@@ -12,6 +12,7 @@ import net.vonforst.evmap.adapter.Equatable
 import net.vonforst.evmap.api.goingelectric.ChargeCard
 import net.vonforst.evmap.api.goingelectric.Chargepoint
 import net.vonforst.evmap.api.goingelectric.GoingElectricApi
+import net.vonforst.evmap.api.nameForPlugType
 import net.vonforst.evmap.storage.*
 import kotlin.math.abs
 import kotlin.reflect.KClass
@@ -30,21 +31,9 @@ internal fun getFilters(
     chargeCards: LiveData<List<ChargeCard>>
 ): LiveData<List<Filter<FilterValue>>> {
     return MediatorLiveData<List<Filter<FilterValue>>>().apply {
-        val plugNames = mapOf(
-            Chargepoint.TYPE_1 to application.getString(R.string.plug_type_1),
-            Chargepoint.TYPE_2 to application.getString(R.string.plug_type_2),
-            Chargepoint.TYPE_3 to application.getString(R.string.plug_type_3),
-            Chargepoint.CCS to application.getString(R.string.plug_ccs),
-            Chargepoint.SCHUKO to application.getString(R.string.plug_schuko),
-            Chargepoint.CHADEMO to application.getString(R.string.plug_chademo),
-            Chargepoint.SUPERCHARGER to application.getString(R.string.plug_supercharger),
-            Chargepoint.CEE_BLAU to application.getString(R.string.plug_cee_blau),
-            Chargepoint.CEE_ROT to application.getString(R.string.plug_cee_rot),
-            Chargepoint.TESLA_ROADSTER_HPC to application.getString(R.string.plug_roadster_hpc)
-        )
         listOf(plugs, networks, chargeCards).forEach { source ->
             addSource(source) { _ ->
-                buildFilters(plugs, plugNames, networks, chargeCards, application)
+                buildFilters(plugs, networks, chargeCards, application)
             }
         }
     }
@@ -52,13 +41,12 @@ internal fun getFilters(
 
 private fun MediatorLiveData<List<Filter<FilterValue>>>.buildFilters(
     plugs: LiveData<List<Plug>>,
-    plugNames: Map<String, String>,
     networks: LiveData<List<Network>>,
     chargeCards: LiveData<List<ChargeCard>>,
     application: Application
 ) {
     val plugMap = plugs.value?.map { plug ->
-        plug.name to (plugNames[plug.name] ?: plug.name)
+        plug.name to nameForPlugType(application, plug.name)
     }?.toMap() ?: return
     val networkMap = networks.value?.map { it.name to it.name }?.toMap() ?: return
     val chargecardMap = chargeCards.value?.map { it.id.toString() to it.name }?.toMap() ?: return

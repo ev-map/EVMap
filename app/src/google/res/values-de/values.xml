@@ -5,4 +5,15 @@
         <item>OpenStreetMap (Mapbox)</item>
     </string-array>
     <string name="donations_info" formatted="false">Findest du EVMap nützlich? Unterstütze die Weiterentwicklung der App mit einer Spende an den Entwickler.\n\nGoogle zieht von der Spende 30% Gebühren ab.</string>
+    <string name="auto_location_service">EVMap läuft unter Android Auto und nutzt dafür deinen Standort.</string>
+    <string name="auto_no_chargers_found">Keine Ladestationen in der Nähe gefunden</string>
+    <string name="auto_no_favorites_found">Keine Favoriten gefunden</string>
+    <string name="open_in_app">In App öffnen</string>
+    <string name="opened_on_phone">Auf dem Telefon geöffnet</string>
+    <string name="auto_location_permission_needed">Um EVMap auf Android Auto zu nutzen, braucht die App Zugriff auf deinen Standort.</string>
+    <string name="grant_on_phone">Auf Telefon zulassen</string>
+    <string name="auto_chargers_closeby">In der Nähe</string>
+    <string name="auto_favorites">Favoriten</string>
+    <string name="auto_fault_report_date">⚠️ Störungsmeldung (%s)</string>
+    <string name="auto_no_refresh_possible">Weitere Aktualisierung nicht möglich. Bitte zurück gehen und neu starten.</string>
 </resources>

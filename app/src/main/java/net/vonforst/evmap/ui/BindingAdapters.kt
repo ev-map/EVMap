@@ -17,7 +17,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import net.vonforst.evmap.R
 import net.vonforst.evmap.api.availability.ChargepointStatus
-import net.vonforst.evmap.api.goingelectric.Chargepoint
+import net.vonforst.evmap.api.iconForPlugType
 import kotlin.math.roundToInt
 
 
@@ -80,20 +80,7 @@ fun <T> setRecyclerViewData(recyclerView: ViewPager2, items: List<T>?) {
 
 @BindingAdapter("connectorIcon")
 fun getConnectorItem(view: ImageView, type: String) {
-    view.setImageResource(
-        when (type) {
-            Chargepoint.CCS -> R.drawable.ic_connector_ccs
-            Chargepoint.CHADEMO -> R.drawable.ic_connector_chademo
-            Chargepoint.SCHUKO -> R.drawable.ic_connector_schuko
-            Chargepoint.SUPERCHARGER -> R.drawable.ic_connector_supercharger
-            Chargepoint.TYPE_2 -> R.drawable.ic_connector_typ2
-            Chargepoint.CEE_BLAU -> R.drawable.ic_connector_cee_blau
-            Chargepoint.CEE_ROT -> R.drawable.ic_connector_cee_rot
-            Chargepoint.TYPE_1 -> R.drawable.ic_connector_typ1
-            // TODO: add other connectors
-            else -> 0
-        }
-    )
+    view.setImageResource(iconForPlugType(type))
 }
 
 @BindingAdapter("srcCompat")

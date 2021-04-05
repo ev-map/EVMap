@@ -1,0 +1,7 @@
+Neue Features:
+- Unterstützung für Android Auto
+- Von der GoingElectric.de-Community verifizierte Ladestationen werden markiert
+
+Verbesserungen:
+- Aktivierte Verkehrsdaten auf der Karte werden nach App-Neustart beibehalten
+- Abstürze behoben

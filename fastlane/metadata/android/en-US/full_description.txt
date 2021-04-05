@@ -9,6 +9,7 @@ Features:
 - Search places
 - Favorites list, also with availability information
 - Advanced filtering options
+- Android Auto support
 - No ads, fully open source
 
 EVMap is an open source project and can be found at https://github.com/johan12345/EVMap.

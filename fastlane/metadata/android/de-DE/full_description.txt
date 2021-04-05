@@ -10,6 +10,7 @@ Funktionen:
 - Suche nach Orten
 - Erweiterte Filterfunktionen
 - Favoritenliste, auch mit Anzeige der Verfügbarkeit
+- Unterstützung für Android Auto
 - Keine nervige Werbung
 
 EVMap ist ein Open-Source-Projekt und unter https://github.com/johan12345/EVMap zu finden.

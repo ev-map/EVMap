@@ -13,8 +13,8 @@ android {
         applicationId "net.vonforst.evmap"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 39
-        versionName "0.5.0"
+        versionCode 42
+        versionName "0.6.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

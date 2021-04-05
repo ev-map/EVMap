@@ -1,0 +1,7 @@
+New Features:
+- Android Auto support
+- Chargers verified by the GoingElectric.de community are marked
+
+Improvements:
+- Enabled traffic data on map is preserved after app restart
+- Fixed crashes

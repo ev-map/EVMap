@@ -465,10 +465,15 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
                     chargerDetails.value = Resource.error(response.message(), null)
                     chargerSparse.value = null
                 } else {
-                    val charger = response.body()!!.chargelocations[0] as ChargeLocation
-                    chargerDetails.value =
-                        Resource.success(charger)
-                    chargerSparse.value = charger
+                    val chargers = response.body()!!.chargelocations
+                    if (chargers.isNotEmpty()) {
+                        val charger = chargers[0] as ChargeLocation
+                        chargerDetails.value = Resource.success(charger)
+                        chargerSparse.value = charger
+                    } else {
+                        chargerDetails.value = Resource.error("not found", null)
+                        chargerSparse.value = null
+                    }
                 }
             }
         })

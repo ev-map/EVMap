@@ -70,14 +70,16 @@
 
             <TextView
                 android:id="@+id/txtName"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
+                android:layout_marginEnd="30dp"
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:text="@{charger.data.name}"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                app:layout_constrainedWidth="true"
                 app:layout_constraintEnd_toStartOf="@+id/txtAvailability"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="Parkhaus" />
@@ -311,6 +313,23 @@
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/textView13" />
+
+            <ImageView
+                android:id="@+id/imgVerified"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="2dp"
+                android:contentDescription="@string/verified"
+                android:tooltipText="@string/verified_desc"
+                app:goneUnless="@{ charger.data.verified &amp;&amp; charger.data.faultReport == null }"
+                app:layout_constraintBottom_toBottomOf="@+id/txtName"
+                app:layout_constraintStart_toEndOf="@+id/txtName"
+                app:layout_constraintTop_toTopOf="@+id/txtName"
+                app:srcCompat="@drawable/ic_verified"
+                app:tint="@color/available"
+                tools:targetApi="o" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

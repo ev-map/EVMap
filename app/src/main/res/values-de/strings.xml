@@ -157,4 +157,6 @@
         <item quantity="other">%d kompatible Ladetarife</item>
     </plurals>
     <string name="navigate">Navigieren</string>
+    <string name="verified">Verifiziert</string>
+    <string name="verified_desc">Verifiziert von der GoingElectric.de Community – nicht zwangsläufig auch aktuell verfügbar.</string>
 </resources>

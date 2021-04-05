@@ -156,4 +156,6 @@
         <item quantity="other">%d compatible payment methods</item>
     </plurals>
     <string name="navigate">Navigate</string>
+    <string name="verified">verified</string>
+    <string name="verified_desc">Charger verified by a member at the GoingElectric.de community — not necessarily working right now.</string>
 </resources>

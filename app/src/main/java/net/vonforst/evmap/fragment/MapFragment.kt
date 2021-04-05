@@ -1152,7 +1152,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
     }
 
     private fun removeLocationUpdates() {
-        LocationServices.FusedLocationApi.removeLocationUpdates(locationClient, this)
+        if (locationClient.isConnected) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(locationClient, this)
+        }
     }
 
     override fun onConnectionSuspended() {

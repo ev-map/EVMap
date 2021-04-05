@@ -34,6 +34,9 @@
         <action
             android:id="@+id/action_map_to_welcome"
             app:destination="@id/welcome" />
+        <action
+            android:id="@+id/action_map_to_update_060_androidauto"
+            app:destination="@id/update_060_androidauto" />
     </fragment>
     <fragment
         android:id="@+id/about"
@@ -83,6 +86,11 @@
         android:name="net.vonforst.evmap.fragment.WelcomeDialogFragment"
         android:label="@string/welcome_to_evmap"
         tools:layout="@layout/dialog_welcome" />
+    <dialog
+        android:id="@+id/update_060_androidauto"
+        android:name="net.vonforst.evmap.fragment.updatedialogs.Update060AndroidAutoDialogFramgent"
+        android:label="@string/welcome_to_evmap"
+        tools:layout="@layout/dialog_update_060_androidauto" />
     <chrome
         android:id="@+id/report_new_charger"
         app:url="@string/report_new_charger_url" />

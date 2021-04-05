@@ -1,4 +1,4 @@
-package net.vonforst.evmap.fragment
+package net.vonforst.evmap.fragment.updatedialogs
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,18 +6,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatDialogFragment
-import net.vonforst.evmap.databinding.DialogWelcomeBinding
+import net.vonforst.evmap.databinding.DialogUpdate060AndroidautoBinding
 import net.vonforst.evmap.storage.PreferenceDataSource
 
-class WelcomeDialogFragment : AppCompatDialogFragment() {
-    private lateinit var binding: DialogWelcomeBinding
+class Update060AndroidAutoDialogFramgent : AppCompatDialogFragment() {
+    private lateinit var binding: DialogUpdate060AndroidautoBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = DialogWelcomeBinding.inflate(inflater, container, false)
+        binding = DialogUpdate060AndroidautoBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -25,9 +25,7 @@ class WelcomeDialogFragment : AppCompatDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnOk.setOnClickListener {
-            val prefs = PreferenceDataSource(requireContext())
-            prefs.welcomeDialogShown = true
-            prefs.update060AndroidAutoDialogShown = true
+            PreferenceDataSource(requireContext()).update060AndroidAutoDialogShown = true
             dismiss()
         }
     }

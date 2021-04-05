@@ -228,9 +228,16 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             (requireActivity() as MapsActivity).appBarConfiguration
         )
 
-        if (!PreferenceDataSource(requireContext()).welcomeDialogShown) {
+        val prefs = PreferenceDataSource(requireContext())
+        if (!prefs.welcomeDialogShown) {
             try {
                 navController.navigate(R.id.action_map_to_welcome)
+            } catch (ignored: IllegalArgumentException) {
+                // when there is already another navigation going on
+            }
+        } else if (!prefs.update060AndroidAutoDialogShown) {
+            try {
+                navController.navigate(R.id.action_map_to_update_060_androidauto)
             } catch (ignored: IllegalArgumentException) {
                 // when there is already another navigation going on
             }

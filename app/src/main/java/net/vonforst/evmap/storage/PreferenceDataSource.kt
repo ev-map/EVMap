@@ -91,4 +91,10 @@ class PreferenceDataSource(val context: Context) {
         set(value) {
             sp.edit().putBoolean("welcome_dialog_shown", value).apply()
         }
+
+    var update060AndroidAutoDialogShown: Boolean
+        get() = sp.getBoolean("update_0.6.0_androidauto_dialog_shown", false)
+        set(value) {
+            sp.edit().putBoolean("update_0.6.0_androidauto_dialog_shown", value).apply()
+        }
 }

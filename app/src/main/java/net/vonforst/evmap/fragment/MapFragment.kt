@@ -690,12 +690,16 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             binding.scaleView.update(map.cameraPosition.zoom, map.cameraPosition.target.latitude)
         }
         map.setOnCameraMoveStartedListener { reason ->
-            if (reason == AnyMap.OnCameraMoveStartedListener.REASON_GESTURE
-                && vm.myLocationEnabled.value == true
-            ) {
-                // disable location following when manually scrolling the map
-                vm.myLocationEnabled.value = false
-                removeLocationUpdates()
+            if (reason == AnyMap.OnCameraMoveStartedListener.REASON_GESTURE) {
+                if (vm.myLocationEnabled.value == true) {
+                    // disable location following when manually scrolling the map
+                    vm.myLocationEnabled.value = false
+                    removeLocationUpdates()
+                }
+                if (vm.layersMenuOpen.value == true) {
+                    // close layers menu if open
+                    closeLayersMenu()
+                }
             }
         }
         map.setOnMarkerClickListener { marker ->

@@ -75,6 +75,7 @@ import net.vonforst.evmap.ui.ChargerIconGenerator
 import net.vonforst.evmap.ui.ClusterIconGenerator
 import net.vonforst.evmap.ui.MarkerAnimator
 import net.vonforst.evmap.ui.getMarkerTint
+import net.vonforst.evmap.utils.distanceBetween
 import net.vonforst.evmap.viewmodel.*
 
 
@@ -1169,9 +1170,19 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         if (location == null || vm.myLocationEnabled.value == false) return
 
         val latLng = LatLng(location.latitude, location.longitude)
-        vm.location.value = latLng
-        val camUpdate = map.cameraUpdateFactory.newLatLng(latLng)
-        map.animateCamera(camUpdate)
+        val oldLoc = vm.location.value
+        if (latLng != oldLoc && (oldLoc == null || distanceBetween(
+                latLng.latitude,
+                latLng.longitude,
+                oldLoc.latitude,
+                oldLoc.longitude
+            ) > 1)
+        ) {
+            // only update map if location changed by more than 1 meter
+            vm.location.value = latLng
+            val camUpdate = map.cameraUpdateFactory.newLatLng(latLng)
+            map.animateCamera(camUpdate)
+        }
     }
 
     override fun onPause() {

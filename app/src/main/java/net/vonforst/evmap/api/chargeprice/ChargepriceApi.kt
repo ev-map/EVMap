@@ -41,7 +41,6 @@ interface ChargepriceApi {
             .add(jsonApiAdapterFactory)
             .add(KotlinJsonAdapterFactory())
             .build()
-
         fun create(
             apikey: String,
             baseurl: String = "https://api.chargeprice.app/v1/",

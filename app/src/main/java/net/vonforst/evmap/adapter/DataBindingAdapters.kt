@@ -1,16 +1,24 @@
 package net.vonforst.evmap.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import net.vonforst.evmap.BR
 import net.vonforst.evmap.R
 import net.vonforst.evmap.api.availability.ChargepointStatus
+import net.vonforst.evmap.api.chargeprice.ChargePrice
+import net.vonforst.evmap.api.chargeprice.ChargepriceChargepointMeta
+import net.vonforst.evmap.api.chargeprice.ChargepriceTag
 import net.vonforst.evmap.api.goingelectric.Chargepoint
+import net.vonforst.evmap.databinding.ItemChargepriceBinding
+import net.vonforst.evmap.databinding.ItemConnectorButtonBinding
+import net.vonforst.evmap.ui.CheckableConstraintLayout
 import net.vonforst.evmap.viewmodel.FavoritesViewModel
 
 interface Equatable {
@@ -88,4 +96,73 @@ class FavoritesAdapter(val vm: FavoritesViewModel) :
     override fun getItemViewType(position: Int): Int = R.layout.item_favorite
 
     override fun getItemId(position: Int): Long = getItem(position).charger.id
+}
+
+class ChargepriceAdapter() :
+    DataBindingAdapter<ChargePrice>() {
+
+    val viewPool = RecyclerView.RecycledViewPool();
+    var meta: ChargepriceChargepointMeta? = null
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
+
+    override fun getItemViewType(position: Int): Int = R.layout.item_chargeprice
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder<ChargePrice> {
+        val holder = super.onCreateViewHolder(parent, viewType)
+        val binding = holder.binding as ItemChargepriceBinding
+        binding.rvTags.apply {
+            adapter = ChargepriceTagsAdapter()
+            layoutManager =
+                LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false).apply {
+                    recycleChildrenOnDetach = true
+                }
+            itemAnimator = null
+            setRecycledViewPool(viewPool)
+        }
+        return holder
+    }
+
+    override fun bind(holder: ViewHolder<ChargePrice>, item: ChargePrice) {
+        super.bind(holder, item)
+        (holder.binding as ItemChargepriceBinding).meta = meta
+    }
+}
+
+class CheckableConnectorAdapter : DataBindingAdapter<Chargepoint>() {
+    private var checkedItem: Int = 0
+
+    override fun getItemViewType(position: Int): Int = R.layout.item_connector_button
+
+    override fun onBindViewHolder(holder: ViewHolder<Chargepoint>, position: Int) {
+        super.bind(holder, getItem(position))
+        val binding = holder.binding as ItemConnectorButtonBinding
+        val root = binding.root as CheckableConstraintLayout
+        root.isChecked = checkedItem == position
+        root.setOnClickListener {
+            root.isChecked = true
+        }
+        root.setOnCheckedChangeListener { v: View, checked: Boolean ->
+            if (checked) {
+                checkedItem = position
+                notifyDataSetChanged()
+                onCheckedItemChangedListener?.invoke(getCheckedItem())
+            }
+        }
+    }
+
+    fun getCheckedItem(): Chargepoint = getItem(checkedItem)
+
+    fun setCheckedItem(item: Chargepoint) {
+        checkedItem = currentList.indexOf(item)
+    }
+
+    var onCheckedItemChangedListener: ((Chargepoint) -> Unit)? = null
+}
+
+class ChargepriceTagsAdapter() :
+    DataBindingAdapter<ChargepriceTag>() {
+    override fun getItemViewType(position: Int): Int = R.layout.item_chargeprice_tag
 }

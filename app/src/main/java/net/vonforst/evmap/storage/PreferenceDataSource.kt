@@ -97,4 +97,22 @@ class PreferenceDataSource(val context: Context) {
         set(value) {
             sp.edit().putBoolean("update_0.6.0_androidauto_dialog_shown", value).apply()
         }
+
+    var chargepriceMyVehicle: String?
+        get() = sp.getString("chargeprice_my_vehicle", null)
+        set(value) {
+            sp.edit().putString("chargeprice_my_vehicle", value).apply()
+        }
+
+    var chargepriceNoBaseFee: Boolean
+        get() = sp.getBoolean("chargeprice_no_base_fee", false)
+        set(value) {
+            sp.edit().putBoolean("chargeprice_no_base_fee", value).apply()
+        }
+
+    var chargepriceShowProviderCustomerTariffs: Boolean
+        get() = sp.getBoolean("chargeprice_show_provider_customer_tariffs", false)
+        set(value) {
+            sp.edit().putBoolean("chargeprice_show_provider_customer_tariffs", value).apply()
+        }
 }

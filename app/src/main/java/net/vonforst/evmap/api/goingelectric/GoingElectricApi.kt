@@ -69,6 +69,13 @@ interface GoingElectricApi {
     companion object {
         private val cacheSize = 10L * 1024 * 1024 // 10MB
 
+        val moshi = Moshi.Builder()
+            .add(ChargepointListItemJsonAdapterFactory())
+            .add(JsonObjectOrFalseAdapter.Factory())
+            .add(HoursAdapter())
+            .add(InstantAdapter())
+            .build()
+
         fun create(
             apikey: String,
             baseurl: String = "https://api.goingelectric.de",
@@ -89,13 +96,6 @@ interface GoingElectricApi {
                     cache(Cache(context.getCacheDir(), cacheSize))
                 }
             }.build()
-
-            val moshi = Moshi.Builder()
-                .add(ChargepointListItemJsonAdapterFactory())
-                .add(JsonObjectOrFalseAdapter.Factory())
-                .add(HoursAdapter())
-                .add(InstantAdapter())
-                .build()
 
             val retrofit = Retrofit.Builder()
                 .baseUrl(baseurl)

@@ -15,4 +15,9 @@
     <color name="status_bar_scrim">#C3000000</color>
     <color name="delete_red">#f44336</color>
     <color name="android_auto_accent">#039be5</color>
+    <color name="chargeprice_alert">#DD2C00</color>
+    <color name="chargeprice_info">#2979FF</color>
+    <color name="chargeprice_lock">#546E7A</color>
+    <color name="chargeprice_star">#00C853</color>
+    <color name="chip_background">#1F000000</color>
 </resources>

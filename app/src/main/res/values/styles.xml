@@ -26,4 +26,9 @@
         <item name="android:windowIsFloating">false</item>
     </style>
 
+    <style name="ChargepriceDialogAnimation">
+        <item name="android:windowEnterAnimation">@anim/chargeprice_dialog_enter</item>
+        <item name="android:windowExitAnimation">@anim/chargeprice_dialog_exit</item>
+    </style>
+
 </resources>

@@ -429,6 +429,19 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
                 )
                 chargers =
                     response.body()?.chargelocations?.filterIsInstance(ChargeLocation::class.java)
+                chargers?.let {
+                    if (it.size < 6) {
+                        // try again with larger radius
+                        val response = api.getChargepointsRadius(
+                            location.latitude,
+                            location.longitude,
+                            searchRadius * 5,
+                            zoom = 16f
+                        )
+                        chargers =
+                            response.body()?.chargelocations?.filterIsInstance(ChargeLocation::class.java)
+                    }
+                }
             }
 
             // remove outdated availabilities

@@ -253,7 +253,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         if (requestingLocationUpdates && ContextCompat.checkSelfPermission(
                 requireContext(),
                 ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
+            ) == PackageManager.PERMISSION_GRANTED && locationClient.isConnected
         ) {
             requestLocationUpdates()
         }

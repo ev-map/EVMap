@@ -83,7 +83,6 @@ class EVMapSession(val cas: CarAppService) : Session(), LifecycleObserver {
         override fun onServiceConnected(name: ComponentName, ibinder: IBinder) {
             val binder: CarLocationService.LocalBinder = ibinder as CarLocationService.LocalBinder
             locationService = binder.service
-            // TODO: check for location permission
             locationService?.requestLocationUpdates()
         }
 
@@ -133,8 +132,10 @@ class EVMapSession(val cas: CarAppService) : Session(), LifecycleObserver {
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     private fun unbindLocationService() {
-        locationService?.removeLocationUpdates()
-        cas.unbindService(serviceConnection)
+        locationService?.let { service ->
+            service.removeLocationUpdates()
+            cas.unbindService(serviceConnection)
+        }
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)

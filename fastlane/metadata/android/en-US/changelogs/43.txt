@@ -1,0 +1,5 @@
+Improvements:
+- Close map type menu when moving map
+- Android Auto: Increased search radius when few chargers are closeby
+- Verification status will be shown independently of fault reports
+- Fixed crashes

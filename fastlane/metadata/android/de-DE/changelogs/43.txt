@@ -1,0 +1,5 @@
+Verbesserungen:
+- Kartentypenmenü wird bei Verschieben der Karte automatisch geschlossen
+- Android Auto: Suchradius vergrößert, wenn wenige Ladestationen in der Nähe sind
+- Verifizierungstatus wird unabhängig von Störungsmeldungen angezeigt
+- Abstürze behoben

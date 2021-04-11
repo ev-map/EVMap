@@ -50,6 +50,25 @@ fun invisibleUnless(view: View, visible: Boolean) {
     view.visibility = if (visible) View.VISIBLE else View.INVISIBLE
 }
 
+@BindingAdapter("invisibleUnlessAnimated")
+fun invisibleUnlessAnimated(view: View, oldValue: Boolean, newValue: Boolean) {
+    if (oldValue == newValue) return
+
+    view.animate().cancel()
+    if (newValue) {
+        view.visibility = View.VISIBLE
+        view.alpha = 0f
+        view.animate().alpha(1f).withEndAction {
+            view.alpha = 1f
+        }
+    } else {
+        view.animate().alpha(0f).withEndAction {
+            view.alpha = 1f
+            view.visibility = View.INVISIBLE
+        }
+    }
+}
+
 @BindingAdapter("isFabActive")
 fun isFabActive(view: FloatingActionButton, isColored: Boolean) {
     val color = view.context.theme.obtainStyledAttributes(

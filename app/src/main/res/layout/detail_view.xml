@@ -323,12 +323,28 @@
                 android:layout_marginBottom="2dp"
                 android:contentDescription="@string/verified"
                 android:tooltipText="@string/verified_desc"
-                app:goneUnless="@{ charger.data.verified &amp;&amp; charger.data.faultReport == null }"
+                app:goneUnless="@{ charger.data.verified }"
                 app:layout_constraintBottom_toBottomOf="@+id/txtName"
-                app:layout_constraintStart_toEndOf="@+id/txtName"
+                app:layout_constraintStart_toEndOf="@+id/imgFaultReport"
                 app:layout_constraintTop_toTopOf="@+id/txtName"
                 app:srcCompat="@drawable/ic_verified"
                 app:tint="@color/available"
+                tools:targetApi="o" />
+
+            <ImageView
+                android:id="@+id/imgFaultReport"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="2dp"
+                android:contentDescription="@string/fault_report"
+                android:tooltipText="@string/fault_report"
+                app:goneUnless="@{ charger.data.faultReport != null }"
+                app:layout_constraintBottom_toBottomOf="@+id/txtName"
+                app:layout_constraintStart_toEndOf="@+id/txtName"
+                app:layout_constraintTop_toTopOf="@+id/txtName"
+                app:srcCompat="@drawable/ic_map_marker_fault"
                 tools:targetApi="o" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

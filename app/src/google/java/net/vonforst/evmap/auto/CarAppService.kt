@@ -615,7 +615,7 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
             val response = api.getChargepointDetail(chargerSparse.id)
             charger = response.body()?.chargelocations?.get(0) as ChargeLocation
 
-            val photo = charger?.photos?.get(0)
+            val photo = charger?.photos?.firstOrNull()
             photo?.let {
                 val size = (carContext.resources.displayMetrics.density * 64).roundToInt()
                 val url = "https://api.goingelectric.de/chargepoints/photo/?key=${apikey}" +

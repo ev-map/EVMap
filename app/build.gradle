@@ -85,6 +85,10 @@ android {
         if (mapboxKey != null) {
             variant.resValue "string", "mapbox_key", mapboxKey
         }
+        def chargepriceKey = env.CHARGEPRICE_API_KEY ?: project.findProperty("CHARGEPRICE_API_KEY")
+        if (chargepriceKey != null) {
+            variant.resValue "string", "chargeprice_key", chargepriceKey
+        }
     }
 }
 

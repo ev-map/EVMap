@@ -45,10 +45,211 @@
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <data
-                    android:scheme="https"
                     android:host="www.goingelectric.de"
-                    android:pathPattern="/stromtankstellen/..*/..*/..*/..*/" />
+                    android:pathPattern="/stromtankstellen/Deutschland/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Oesterreich/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Schweiz/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Albanien/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Andorra/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Aruba/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Belarus/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Belgien/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Bosnien-und-Herzegowina/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Bulgarien/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Daenemark/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Estland/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Faeroeer/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Finnland/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Frankreich/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Gibraltar/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Griechenland/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Grossbritannien/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Irland/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Island/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Italien/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Jordanien/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Kasachstan/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Kroatien/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Lettland/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Liechtenstein/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Litauen/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Luxemburg/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Malta/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Marokko/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Mazedonien/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Moldawien/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Monaco/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Montenegro/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Niederlande/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Norwegen/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Polen/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Portugal/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Rumaenien/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Russland/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/San-Marino/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Schweden/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Serbien/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Slowakei/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Slowenien/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Spanien/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Tuerkei/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Tschechien/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/USA/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Ukraine/..*/..*/..*/"
+                    android:scheme="https" />
+                <data
+                    android:host="www.goingelectric.de"
+                    android:pathPattern="/stromtankstellen/Ungarn/..*/..*/..*/"
+                    android:scheme="https" />
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />

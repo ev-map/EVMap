@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Color
+import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
 import android.os.Handler
@@ -83,6 +84,7 @@ const val REQUEST_AUTOCOMPLETE = 2
 const val ARG_CHARGER_ID = "chargerId"
 const val ARG_LAT = "lat"
 const val ARG_LON = "lon"
+const val ARG_LOCATION_NAME = "locationName"
 
 class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallback,
     LostApiClient.ConnectionCallbacks, LocationListener {
@@ -744,6 +746,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         val lat = arguments?.optDouble(ARG_LAT)
         val lon = arguments?.optDouble(ARG_LON)
         val chargerId = arguments?.optLong(ARG_CHARGER_ID)
+        val locationName = arguments?.getString(ARG_LOCATION_NAME)
 
         var positionSet = false
 
@@ -796,6 +799,18 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             }
 
             positionSet = true
+        } else if (locationName != null) {
+            lifecycleScope.launch {
+                val address = withContext(Dispatchers.IO) {
+                    Geocoder(requireContext()).getFromLocationName(locationName, 1).getOrNull(0)
+                }
+                address?.let {
+                    val latLng = LatLng(it.latitude, it.longitude)
+                    val cameraUpdate = map.cameraUpdateFactory.newLatLngZoom(latLng, 16f)
+                    map.moveCamera(cameraUpdate)
+                    vm.searchResult.value = PlaceWithBounds(latLng, null)
+                }
+            }
         }
         if (ContextCompat.checkSelfPermission(
                 requireContext(),
@@ -1117,7 +1132,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             }
         }
 
-        fun showChargerById(id: Long): Bundle? {
+        fun showChargerById(id: Long): Bundle {
             return Bundle().apply {
                 putLong(ARG_CHARGER_ID, id)
             }
@@ -1128,6 +1143,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 putLong(ARG_CHARGER_ID, id)
                 putDouble(ARG_LAT, lat)
                 putDouble(ARG_LON, lon)
+            }
+        }
+
+        fun showLocationByName(query: String): Bundle {
+            return Bundle().apply {
+                putString(ARG_LOCATION_NAME, query)
             }
         }
     }

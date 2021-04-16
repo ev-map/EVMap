@@ -71,16 +71,24 @@ class MapsActivity : AppCompatActivity() {
 
         if (intent?.scheme == "geo") {
             val pos = intent.data?.schemeSpecificPart?.split("?")?.get(0)
+            val query = intent.data?.query?.split("=")?.get(1)
             val coords = pos?.split(",")?.map { it.toDoubleOrNull() }
 
             if (coords != null && coords.size == 2) {
                 val lat = coords[0]
                 val lon = coords[1]
-                if (lat != null && lon != null) {
+                if (lat != null && lon != null && lat != 0.0 && lon != 0.0) {
                     val deepLink = navController.createDeepLink()
                         .setGraph(R.navigation.nav_graph)
                         .setDestination(R.id.map)
                         .setArguments(MapFragment.showLocation(lat, lon))
+                        .createPendingIntent()
+                    deepLink.send()
+                } else if (query != null && query.isNotEmpty()) {
+                    val deepLink = navController.createDeepLink()
+                        .setGraph(R.navigation.nav_graph)
+                        .setDestination(R.id.map)
+                        .setArguments(MapFragment.showLocationByName(query))
                         .createPendingIntent()
                     deepLink.send()
                 }

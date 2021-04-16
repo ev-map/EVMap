@@ -9,6 +9,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -63,7 +65,14 @@ class MapsActivity : AppCompatActivity() {
             ),
             findViewById<DrawerLayout>(R.id.drawer_layout)
         )
-        findViewById<NavigationView>(R.id.nav_view).setupWithNavController(navController)
+        val navView = findViewById<NavigationView>(R.id.nav_view)
+        navView.setupWithNavController(navController)
+        
+        val header = navView.getHeaderView(0)
+        ViewCompat.setOnApplyWindowInsetsListener(header) { v, insets ->
+            v.setPadding(0, insets.getInsets(WindowInsetsCompat.Type.statusBars()).top, 0, 0)
+            insets
+        }
 
         prefs = PreferenceDataSource(this)
 

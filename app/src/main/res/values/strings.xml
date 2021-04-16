@@ -161,4 +161,5 @@
     <string name="verified_desc">Charger verified by a member at the GoingElectric.de community — not necessarily working right now.</string>
     <string name="update_060_androidauto_title">New update: Android Auto</string>
     <string name="update_060_androidauto_text">With this new update, you can also use EVMap to find nearby chargers from within Android Auto on supported cars. Simply select the EVMap app in the Android Auto menu.</string>
+    <string name="edit_on_goingelectric_info">If only an empty page is showing here, please first log in to GoingElectric.de.</string>
 </resources>

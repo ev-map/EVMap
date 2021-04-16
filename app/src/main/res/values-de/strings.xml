@@ -162,4 +162,5 @@
     <string name="verified_desc">Verifiziert von der GoingElectric.de Community – nicht zwangsläufig auch aktuell verfügbar.</string>
     <string name="update_060_androidauto_title">Neues Update: Android Auto</string>
     <string name="update_060_androidauto_text">Mit diesem neuen Update kannst du EVMap nutzen, um Ladestationen in der Nähe auf unterstützen Autos direkt aus Android Auto zu finden. Öffne einfach die EVMap-App aus dem Menü von Android Auto.</string>
+    <string name="edit_on_goingelectric_info">Falls hier nur eine leere Seite erscheint, logge dich bitte zuerst bei GoingElectric.de ein.</string>
 </resources>

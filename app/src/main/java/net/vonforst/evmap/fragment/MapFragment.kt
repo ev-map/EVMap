@@ -13,6 +13,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.view.*
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresPermission
 import androidx.appcompat.app.AlertDialog
@@ -325,6 +326,11 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                     val charger = vm.charger.value?.data
                     if (charger != null) {
                         (activity as? MapsActivity)?.openUrl("https:${charger.url}edit/")
+                        Toast.makeText(
+                            requireContext(),
+                            R.string.edit_on_goingelectric_info,
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
                     true
                 }

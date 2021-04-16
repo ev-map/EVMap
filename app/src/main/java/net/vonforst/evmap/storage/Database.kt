@@ -24,7 +24,7 @@ import net.vonforst.evmap.viewmodel.SliderFilterValue
         Plug::class,
         Network::class,
         ChargeCard::class
-    ], version = 10
+    ], version = 11
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -41,7 +41,7 @@ abstract class AppDatabase : RoomDatabase() {
             Room.databaseBuilder(context, AppDatabase::class.java, "evmap.db")
                 .addMigrations(
                     MIGRATION_2, MIGRATION_3, MIGRATION_4, MIGRATION_5, MIGRATION_6,
-                    MIGRATION_7, MIGRATION_8, MIGRATION_9, MIGRATION_10
+                    MIGRATION_7, MIGRATION_8, MIGRATION_9, MIGRATION_10, MIGRATION_11
                 )
                 .addCallback(object : Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
@@ -168,6 +168,12 @@ abstract class AppDatabase : RoomDatabase() {
         private val MIGRATION_10 = object : Migration(9, 10) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("ALTER TABLE `FilterProfile` ADD `order` INTEGER NOT NULL DEFAULT 0")
+            }
+        }
+
+        private val MIGRATION_11 = object : Migration(10, 11) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE `ChargeLocation` ADD `barrierFree` INTEGER")
             }
         }
     }

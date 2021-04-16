@@ -54,6 +54,7 @@ data class ChargeLocation(
     val url: String,
     @Embedded(prefix = "fault_report_") @JsonObjectOrFalse @Json(name = "fault_report") val faultReport: FaultReport?,
     val verified: Boolean,
+    @Json(name = "barrierfree") val barrierFree: Boolean?,
     // only shown in details:
     @JsonObjectOrFalse val operator: String?,
     @JsonObjectOrFalse @Json(name = "general_information") val generalInformation: String?,

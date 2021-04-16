@@ -94,16 +94,24 @@ fun buildDetails(
             loc.cost.descriptionLong ?: loc.cost.descriptionShort
         )
         else null,
-        if (loc.chargecards != null && loc.chargecards.isNotEmpty()) DetailsAdapter.Detail(
-            R.drawable.ic_payment,
-            R.string.charge_cards,
-            ctx.resources.getQuantityString(
-                R.plurals.charge_cards_compatible_num,
-                loc.chargecards.size, loc.chargecards.size
-            ),
-            formatChargeCards(loc.chargecards, chargeCards, filteredChargeCards, ctx),
-            clickable = true
-        ) else null,
+        if (loc.chargecards != null && loc.chargecards.isNotEmpty() || loc.barrierFree == true)
+            DetailsAdapter.Detail(
+                R.drawable.ic_payment,
+                R.string.charge_cards,
+                listOfNotNull(
+                    if (loc.barrierFree == true) ctx.resources.getString(R.string.charging_barrierfree) else null,
+                    if (loc.chargecards != null && loc.chargecards.isNotEmpty()) {
+                        ctx.resources.getQuantityString(
+                            R.plurals.charge_cards_compatible_num,
+                            loc.chargecards.size, loc.chargecards.size
+                        )
+                    } else null
+                ).joinToString(", "),
+                if (loc.chargecards != null && loc.chargecards.isNotEmpty()) {
+                    formatChargeCards(loc.chargecards, chargeCards, filteredChargeCards, ctx)
+                } else null,
+                clickable = true
+            ) else null,
         DetailsAdapter.Detail(
             R.drawable.ic_location,
             R.string.coordinates,

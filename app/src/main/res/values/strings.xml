@@ -151,6 +151,7 @@
     <string name="deleted_filterprofile">Deleted “%s”</string>
     <string name="undo">Undo</string>
     <string name="rename">Rename</string>
+    <string name="charging_barrierfree">Usable without registration</string>
     <plurals name="charge_cards_compatible_num">
         <item quantity="one">%d compatible payment method</item>
         <item quantity="other">%d compatible payment methods</item>

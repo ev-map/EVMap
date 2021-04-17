@@ -18,7 +18,7 @@
         app:selectableItemBackground="@{item.clickable}">
 
         <TextView
-            android:id="@+id/txtTitle"
+            android:id="@+id/txtTariff"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
@@ -48,7 +48,7 @@
             tools:srcCompat="@drawable/ic_address" />
 
         <TextView
-            android:id="@+id/txtContent"
+            android:id="@+id/txtProvider"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
@@ -60,8 +60,8 @@
             app:goneUnless="@{item.detailText != null}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/txtTitle"
-            app:layout_constraintTop_toBottomOf="@+id/txtTitle"
+            app:layout_constraintStart_toStartOf="@+id/txtTariff"
+            app:layout_constraintTop_toBottomOf="@+id/txtTariff"
             tools:text="Lorem ipsum" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

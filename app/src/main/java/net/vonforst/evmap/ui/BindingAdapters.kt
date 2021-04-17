@@ -11,10 +11,13 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.use
 import androidx.core.text.HtmlCompat
 import androidx.databinding.BindingAdapter
+import androidx.databinding.InverseBindingAdapter
+import androidx.databinding.InverseBindingListener
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.slider.RangeSlider
 import net.vonforst.evmap.R
 import net.vonforst.evmap.api.availability.ChargepointStatus
 import net.vonforst.evmap.api.iconForPlugType
@@ -177,6 +180,35 @@ fun setLinkify(textView: TextView, oldValue: Int, newValue: Int) {
     }
 }
 
+@BindingAdapter("chargepriceTagColor")
+fun setChargepriceTagColor(view: TextView, kind: String) {
+    view.backgroundTintList = ColorStateList.valueOf(
+        ContextCompat.getColor(
+            view.context,
+            when (kind) {
+                "star" -> R.color.chargeprice_star
+                "alert" -> R.color.chargeprice_alert
+                "info" -> R.color.chargeprice_info
+                "lock" -> R.color.chargeprice_lock
+                else -> R.color.chip_background
+            }
+        )
+    )
+}
+
+@BindingAdapter("chargepriceTagIcon")
+fun setChargepriceTagIcon(view: TextView, kind: String) {
+    view.setCompoundDrawablesRelativeWithIntrinsicBounds(
+        when (kind) {
+            "star" -> R.drawable.ic_chargeprice_star
+            "alert" -> R.drawable.ic_chargeprice_alert
+            "info" -> R.drawable.ic_chargeprice_info
+            "lock" -> R.drawable.ic_chargeprice_lock
+            else -> 0
+        }, 0, 0, 0
+    )
+}
+
 private fun availabilityColor(
     status: List<ChargepointStatus>?,
     context: Context
@@ -210,4 +242,31 @@ fun availabilityText(status: List<ChargepointStatus>?): String? {
 
 fun flatten(it: Iterable<Iterable<ChargepointStatus>>?): List<ChargepointStatus>? {
     return it?.flatten()
+}
+
+fun currency(currency: String): String {
+    // shorthands for currencies
+    return when (currency) {
+        "EUR" -> "€"
+        "USD" -> "$"
+        "DKK", "SEK", "NOK" -> "kr."
+        "PLN" -> "zł"
+        "CHF" -> "Fr."
+        "CZK" -> "Kč"
+        "GBP" -> "£"
+        "HRK" -> "kn"
+        "HUF" -> "Ft"
+        "ISK" -> "Kr"
+        else -> currency
+    }
+}
+
+@InverseBindingAdapter(attribute = "app:values")
+fun getRangeSliderValue(slider: RangeSlider) = slider.values
+
+@BindingAdapter("app:valuesAttrChanged")
+fun setRangeSliderListeners(slider: RangeSlider, attrChange: InverseBindingListener) {
+    slider.addOnChangeListener { _, _, _ ->
+        attrChange.onChange()
+    }
 }

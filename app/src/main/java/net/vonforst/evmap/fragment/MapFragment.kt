@@ -296,8 +296,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         }
         binding.detailView.btnChargeprice.setOnClickListener {
             val charger = vm.charger.value?.data ?: return@setOnClickListener
-            (activity as? MapsActivity)?.openUrl(
-                "https://www.chargeprice.app/?poi_id=${charger.id}&poi_source=going_electric"
+            findNavController().navigate(
+                R.id.action_map_to_chargepriceFragment,
+                ChargepriceFragment.showCharger(charger)
             )
         }
         binding.detailView.topPart.setOnClickListener {

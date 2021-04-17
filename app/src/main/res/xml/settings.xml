@@ -2,7 +2,6 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory android:title="@string/settings_ui">
-
         <ListPreference
             android:key="language"
             android:title="@string/pref_language"
@@ -37,5 +36,19 @@
             android:summaryOff="@string/pref_navigate_use_maps_off"
             android:defaultValue="true" />
 
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/settings_chargeprice">
+        <ListPreference
+            android:key="chargeprice_my_vehicle"
+            android:title="@string/pref_my_vehicle" />
+        <CheckBoxPreference
+            android:key="chargeprice_no_base_fee"
+            android:title="@string/pref_chargeprice_no_base_fee"
+            android:defaultValue="false" />
+        <CheckBoxPreference
+            android:key="chargeprice_show_provider_customer_tariffs"
+            android:title="@string/pref_chargeprice_show_provider_customer_tariffs"
+            android:summary="@string/pref_chargeprice_show_provider_customer_tariffs_summary"
+            android:defaultValue="false" />
     </PreferenceCategory>
 </PreferenceScreen>

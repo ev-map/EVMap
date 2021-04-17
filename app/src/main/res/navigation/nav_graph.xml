@@ -32,6 +32,13 @@
             app:popEnterAnim="@anim/fragment_fade_enter"
             app:popExitAnim="@anim/fragment_fade_exit" />
         <action
+            android:id="@+id/action_map_to_chargepriceFragment"
+            app:destination="@id/chargeprice"
+            app:exitAnim="@anim/fragment_fade_exit"
+            app:enterAnim="@anim/fragment_fade_enter"
+            app:popEnterAnim="@anim/fragment_fade_enter"
+            app:popExitAnim="@anim/fragment_fade_exit" />
+        <action
             android:id="@+id/action_map_to_welcome"
             app:destination="@id/welcome" />
         <action
@@ -76,6 +83,19 @@
         android:name="net.vonforst.evmap.fragment.FilterProfilesFragment"
         android:label="@string/menu_manage_filter_profiles"
         tools:layout="@layout/fragment_filter_profiles" />
+    <dialog
+        android:id="@+id/chargeprice"
+        android:name="net.vonforst.evmap.fragment.ChargepriceFragment"
+        android:label="@string/chargeprice_title"
+        tools:layout="@layout/fragment_chargeprice">
+        <action
+            android:id="@+id/action_chargeprice_to_settingsFragment"
+            app:destination="@id/settings"
+            app:exitAnim="@anim/fragment_fade_exit"
+            app:enterAnim="@anim/fragment_fade_enter"
+            app:popEnterAnim="@anim/fragment_fade_enter"
+            app:popExitAnim="@anim/fragment_fade_exit" />
+    </dialog>
     <fragment
         android:id="@+id/donate"
         android:name="net.vonforst.evmap.fragment.DonateFragment"

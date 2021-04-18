@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import net.vonforst.evmap.MapsActivity
 import net.vonforst.evmap.R
 import net.vonforst.evmap.adapter.ChargepriceAdapter
@@ -22,11 +23,13 @@ import net.vonforst.evmap.api.goingelectric.Chargepoint
 import net.vonforst.evmap.api.goingelectric.GoingElectricApi
 import net.vonforst.evmap.databinding.FragmentChargepriceBinding
 import net.vonforst.evmap.viewmodel.ChargepriceViewModel
+import net.vonforst.evmap.viewmodel.Status
 import net.vonforst.evmap.viewmodel.viewModelFactory
 import java.text.NumberFormat
 
 class ChargepriceFragment : DialogFragment() {
     private lateinit var binding: FragmentChargepriceBinding
+    private var connectionErrorSnackbar: Snackbar? = null
 
     private val vm: ChargepriceViewModel by viewModels(factoryProducer = {
         viewModelFactory {
@@ -146,6 +149,30 @@ class ChargepriceFragment : DialogFragment() {
                 else -> false
             }
         }
+
+        vm.chargePricesForChargepoint.observe(viewLifecycleOwner, Observer { res ->
+            when (res.status) {
+                Status.ERROR -> {
+                    connectionErrorSnackbar?.dismiss()
+                    connectionErrorSnackbar = Snackbar
+                        .make(
+                            view,
+                            R.string.chargeprice_connection_error,
+                            Snackbar.LENGTH_INDEFINITE
+                        )
+                        .setAction(R.string.retry) {
+                            connectionErrorSnackbar?.dismiss()
+                            vm.loadPrices()
+                        }
+                    connectionErrorSnackbar!!.show()
+                }
+                Status.SUCCESS -> {
+                    connectionErrorSnackbar?.dismiss()
+                }
+                Status.LOADING -> {
+                }
+            }
+        })
     }
 
     companion object {

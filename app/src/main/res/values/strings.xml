@@ -185,4 +185,5 @@
     <string name="pref_chargeprice_show_provider_customer_tariffs_summary">Some providers offer cheaper plans exclusively to their customers (e.g., household electricity, gas)</string>
     <string name="close">close</string>
     <string name="chargeprice_title">Prices</string>
+    <string name="chargeprice_connection_error">Could not load prices</string>
 </resources>

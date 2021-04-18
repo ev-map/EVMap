@@ -107,7 +107,7 @@ class ChargepriceViewModel(application: Application, chargepriceApiKey: String) 
     }
 
     private var loadPricesJob: Job? = null
-    private fun loadPrices() {
+    fun loadPrices() {
         chargePrices.value = Resource.loading(null)
         val geCharger = charger.value
         val car = vehicle.value

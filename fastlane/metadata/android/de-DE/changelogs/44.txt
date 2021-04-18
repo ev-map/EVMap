@@ -1,0 +1,9 @@
+Neue Features:
+- Native Integration von Chargeprice.app
+- Live-Daten: Unterscheidung zwischen belegten (türkis) und defekten (rot) Ladestationen
+- Information, ob Laden ohne Registrierung möglich ist, wird angezeigt
+
+Verbesserungen:
+- Absturz auf Android Auto behoben, wenn eine Ladestation kein Foto hat
+- Verbesserung für das Teilen von Links und Standorten zu EVMap
+- Hinweis zur Behebung des Fehlers, dass beim Tippen auf den Bearbeiten-Knopf nur eine leere Seite angezeigt wird, hinzugefügt

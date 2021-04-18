@@ -1,0 +1,9 @@
+New Features:
+- Native integration of Chargeprice.app
+- Real-time data: Differentiate between occupied and broken chargers
+- Add information if charging is possible without registration
+
+Improvements:
+- Fixed crash on Android Auto for chargers without photo
+- Improvements for sharing locations and opening links in EVMap
+- Add note about how to fix the problem that only an empty page is shown when tapping the "edit" button

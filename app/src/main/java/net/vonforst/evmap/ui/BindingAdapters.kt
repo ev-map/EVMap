@@ -215,13 +215,16 @@ private fun availabilityColor(
 ): Int = if (status != null) {
     val unknown = status.any { it == ChargepointStatus.UNKNOWN }
     val available = status.count { it == ChargepointStatus.AVAILABLE }
+    val allFaulted = status.all { it == ChargepointStatus.FAULTED }
 
     if (unknown) {
         ContextCompat.getColor(context, R.color.unknown)
     } else if (available > 0) {
         ContextCompat.getColor(context, R.color.available)
-    } else {
+    } else if (allFaulted) {
         ContextCompat.getColor(context, R.color.unavailable)
+    } else {
+        ContextCompat.getColor(context, R.color.charging)
     }
 } else {
     val ta = context.theme.obtainStyledAttributes(intArrayOf(R.attr.colorControlNormal))

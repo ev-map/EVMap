@@ -31,6 +31,8 @@ class SettingsFragment : PreferenceFragmentCompat(),
         }
     })
 
+    private lateinit var myVehiclePreference: ListPreference
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val toolbar = view.findViewById(R.id.toolbar) as Toolbar
@@ -42,7 +44,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
             (requireActivity() as MapsActivity).appBarConfiguration
         )
 
-        val myVehiclePreference = findPreference<ListPreference>("chargeprice_my_vehicle")!!
+        myVehiclePreference = findPreference<ListPreference>("chargeprice_my_vehicle")!!
         myVehiclePreference.isEnabled = false
         vm.vehicles.observe(viewLifecycleOwner) { res ->
             res.data?.let { cars ->
@@ -77,6 +79,12 @@ class SettingsFragment : PreferenceFragmentCompat(),
             }
             "darkmode" -> {
                 updateNightMode(prefs)
+            }
+            "chargeprice_my_vehicle" -> {
+                vm.vehicles.value?.data?.let { cars ->
+                    myVehiclePreference.summary = cars.find { it.id == prefs.chargepriceMyVehicle }
+                        ?.let { "${it.brand} ${it.name}" }
+                }
             }
         }
     }

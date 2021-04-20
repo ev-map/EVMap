@@ -33,13 +33,18 @@ data class ChargepriceStation(
     @Json(name = "charge_points") val chargePoints: List<ChargepriceChargepoint>
 ) {
     companion object {
-        fun fromGoingelectric(geCharger: ChargeLocation): ChargepriceStation {
+        fun fromGoingelectric(
+            geCharger: ChargeLocation,
+            compatibleConnectors: List<String>
+        ): ChargepriceStation {
             return ChargepriceStation(
                 geCharger.coordinates.lng,
                 geCharger.coordinates.lat,
                 geCharger.address.country,
                 geCharger.network,
-                geCharger.chargepoints.map {
+                geCharger.chargepoints.filter {
+                    it.type in compatibleConnectors
+                }.map {
                     ChargepriceChargepoint(it.power, it.type)
                 }
             )

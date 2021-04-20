@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup.MarginLayoutParams
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.use
 import androidx.core.text.HtmlCompat
@@ -272,4 +273,22 @@ fun setRangeSliderListeners(slider: RangeSlider, attrChange: InverseBindingListe
     slider.addOnChangeListener { _, _, _ ->
         attrChange.onChange()
     }
+}
+
+@ColorInt
+fun colorEnabled(ctx: Context, enabled: Boolean): Int {
+    val attr = if (enabled) {
+        android.R.attr.textColorSecondary
+    } else {
+        android.R.attr.textColorHint
+    }
+    val typedValue = ctx.obtainStyledAttributes(intArrayOf(attr))
+    val color = typedValue.getColor(0, 0)
+    typedValue.recycle()
+    return color
+}
+
+@BindingAdapter("app:tint")
+fun setImageTintList(view: ImageView, @ColorInt color: Int) {
+    view.imageTintList = ColorStateList.valueOf(color)
 }

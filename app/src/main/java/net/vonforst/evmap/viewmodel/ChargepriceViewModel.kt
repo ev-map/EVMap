@@ -32,6 +32,40 @@ class ChargepriceViewModel(application: Application, chargepriceApiKey: String) 
         }
     }
 
+    private val acConnectors = listOf(
+        Chargepoint.CEE_BLAU,
+        Chargepoint.CEE_ROT,
+        Chargepoint.SCHUKO,
+        Chargepoint.TYPE_1,
+        Chargepoint.TYPE_2
+    )
+    private val plugMapping = mapOf(
+        "ccs" to Chargepoint.CCS,
+        "tesla_suc" to Chargepoint.SUPERCHARGER,
+        "tesla_ccs" to Chargepoint.CCS,
+        "chademo" to Chargepoint.CHADEMO
+    )
+    val vehicleCompatibleConnectors: LiveData<List<String>> by lazy {
+        MutableLiveData<List<String>>().apply {
+            value = prefs.chargepriceMyVehicleDcChargeports?.map {
+                plugMapping.get(it)
+            }?.filterNotNull()?.plus(acConnectors)
+        }
+    }
+
+    val noCompatibleConnectors: LiveData<Boolean> by lazy {
+        MediatorLiveData<Boolean>().apply {
+            value = false
+            listOf(charger, vehicleCompatibleConnectors).forEach {
+                addSource(it) {
+                    val charger = charger.value ?: return@addSource
+                    val connectors = vehicleCompatibleConnectors.value ?: return@addSource
+                    value = !charger.chargepoints.map { it.type }.any { it in connectors }
+                }
+            }
+        }
+    }
+
     val batteryRange: MutableLiveData<List<Float>> by lazy {
         MutableLiveData<List<Float>>().apply {
             value = listOf(20f, 80f)
@@ -41,7 +75,7 @@ class ChargepriceViewModel(application: Application, chargepriceApiKey: String) 
     val chargePrices: MediatorLiveData<Resource<List<ChargePrice>>> by lazy {
         MediatorLiveData<Resource<List<ChargePrice>>>().apply {
             value = Resource.loading(null)
-            listOf(charger, vehicle, batteryRange).forEach {
+            listOf(charger, vehicle, batteryRange, vehicleCompatibleConnectors).forEach {
                 addSource(it) {
                     loadPrices()
                 }
@@ -111,10 +145,13 @@ class ChargepriceViewModel(application: Application, chargepriceApiKey: String) 
         chargePrices.value = Resource.loading(null)
         val geCharger = charger.value
         val car = vehicle.value
-        if (geCharger == null || car == null) {
+        val compatibleConnectors = vehicleCompatibleConnectors.value
+        if (geCharger == null || car == null || compatibleConnectors == null) {
             chargePrices.value = Resource.error(null, null)
             return
         }
+
+        val cpStation = ChargepriceStation.fromGoingelectric(geCharger, compatibleConnectors)
 
         loadPricesJob?.cancel()
         loadPricesJob = viewModelScope.launch {
@@ -122,7 +159,7 @@ class ChargepriceViewModel(application: Application, chargepriceApiKey: String) 
             try {
                 val result = api.getChargePrices(ChargepriceRequest().apply {
                     dataAdapter = "going_electric"
-                    station = ChargepriceStation.fromGoingelectric(geCharger)
+                    station = cpStation
                     vehicle = HasOne(car)
                     options = ChargepriceOptions(
                         batteryRange = batteryRange.value!!.map { it.toDouble() },

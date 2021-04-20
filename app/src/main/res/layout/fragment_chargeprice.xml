@@ -131,6 +131,20 @@
             app:layout_constraintTop_toTopOf="@+id/charge_prices_list" />
 
         <TextView
+            android:id="@+id/textView9"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="center_horizontal"
+            android:text="@string/chargeprice_no_compatible_connectors"
+            app:goneUnless="@{vm.noCompatibleConnectors}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/charge_prices_list"
+            app:layout_constraintTop_toTopOf="@+id/charge_prices_list" />
+
+        <TextView
             android:id="@+id/textView3"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

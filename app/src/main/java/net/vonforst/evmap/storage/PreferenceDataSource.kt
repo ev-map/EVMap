@@ -104,6 +104,13 @@ class PreferenceDataSource(val context: Context) {
             sp.edit().putString("chargeprice_my_vehicle", value).apply()
         }
 
+    var chargepriceMyVehicleDcChargeports: List<String>?
+        get() = sp.getString("chargeprice_my_vehicle_dc_chargeports", null)?.split(",")
+        set(value) {
+            sp.edit().putString("chargeprice_my_vehicle_dc_chargeports", value?.joinToString(","))
+                .apply()
+        }
+
     var chargepriceNoBaseFee: Boolean
         get() = sp.getBoolean("chargeprice_no_base_fee", false)
         set(value) {

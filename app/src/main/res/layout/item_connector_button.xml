@@ -12,6 +12,10 @@
         <variable
             name="item"
             type="Chargepoint" />
+
+        <variable
+            name="enabled"
+            type="boolean" />
     </data>
 
     <net.vonforst.evmap.ui.CheckableConstraintLayout
@@ -19,7 +23,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/button_outline"
         android:foreground="?selectableItemBackground"
-        android:clickable="true"
+        android:clickable="@{enabled}"
         android:focusable="true"
         android:layout_margin="4dp">
 
@@ -36,7 +40,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tint="?colorControlNormal"
+            app:tint="@{BindingAdaptersKt.colorEnabled(context, enabled)}"
+            tools:tint="?colorControlNormal"
             tools:srcCompat="@drawable/ic_connector_typ2" />
 
         <TextView
@@ -48,6 +53,7 @@
             android:layout_marginEnd="4dp"
             android:text="@{String.format(&quot;× %d&quot;, item.count)}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+            android:textColor="@{BindingAdaptersKt.colorEnabled(context, enabled)}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/imageView"
             app:layout_constraintTop_toTopOf="@+id/imageView"
@@ -61,6 +67,7 @@
             android:layout_marginBottom="4dp"
             android:text="@{item.formatPower()}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+            android:textColor="@{BindingAdaptersKt.colorEnabled(context, enabled)}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

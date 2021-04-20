@@ -132,13 +132,31 @@ class ChargepriceAdapter() :
 }
 
 class CheckableConnectorAdapter : DataBindingAdapter<Chargepoint>() {
-    private var checkedItem: Int = 0
+    private var checkedItem: Int? = 0
+
+    var enabledConnectors: List<String>? = null
+        get() = field
+        set(value) {
+            field = value
+            checkedItem?.let {
+                if (value != null && getItem(it).type !in value) {
+                    val index = currentList.indexOfFirst {
+                        it.type in value
+                    }
+                    checkedItem = if (index == -1) null else index
+                    onCheckedItemChangedListener?.invoke(getCheckedItem())
+                }
+            }
+            notifyDataSetChanged()
+        }
 
     override fun getItemViewType(position: Int): Int = R.layout.item_connector_button
 
     override fun onBindViewHolder(holder: ViewHolder<Chargepoint>, position: Int) {
-        super.bind(holder, getItem(position))
+        val item = getItem(position)
+        super.bind(holder, item)
         val binding = holder.binding as ItemConnectorButtonBinding
+        binding.enabled = enabledConnectors?.let { item.type in it } ?: true
         val root = binding.root as CheckableConstraintLayout
         root.isChecked = checkedItem == position
         root.setOnClickListener {
@@ -148,18 +166,18 @@ class CheckableConnectorAdapter : DataBindingAdapter<Chargepoint>() {
             if (checked) {
                 checkedItem = position
                 notifyDataSetChanged()
-                onCheckedItemChangedListener?.invoke(getCheckedItem())
+                onCheckedItemChangedListener?.invoke(getCheckedItem()!!)
             }
         }
     }
 
-    fun getCheckedItem(): Chargepoint = getItem(checkedItem)
+    fun getCheckedItem(): Chargepoint? = checkedItem?.let { getItem(it) }
 
-    fun setCheckedItem(item: Chargepoint) {
-        checkedItem = currentList.indexOf(item)
+    fun setCheckedItem(item: Chargepoint?) {
+        checkedItem = item?.let { currentList.indexOf(item) } ?: null
     }
 
-    var onCheckedItemChangedListener: ((Chargepoint) -> Unit)? = null
+    var onCheckedItemChangedListener: ((Chargepoint?) -> Unit)? = null
 }
 
 class ChargepriceTagsAdapter() :

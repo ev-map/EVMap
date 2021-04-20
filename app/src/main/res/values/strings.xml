@@ -172,7 +172,7 @@
     <string name="chargeprice_per_kwh">per kWh</string>
     <string name="chargeprice_per_minute">per min</string>
     <string name="chargeprice_blocking_fee">Blocking fee >%s</string>
-    <string name="chargeprice_no_tariffs_found">Keine geeigneten Tarife für diese Ladestation bei Chargeprice.app gefunden.</string>
+    <string name="chargeprice_no_tariffs_found">Chargeprice.app found no charging plans compatible with this charger.</string>
     <string name="powered_by_chargeprice">powered by Chargeprice</string>
     <string name="chargeprice_base_fee">Base fee: %2$s%1$.2f/month</string>
     <string name="chargeprice_min_spend">Minimum spend: %2$s%1$.2f/month</string>
@@ -186,4 +186,5 @@
     <string name="close">close</string>
     <string name="chargeprice_title">Prices</string>
     <string name="chargeprice_connection_error">Could not load prices</string>
+    <string name="chargeprice_no_compatible_connectors">None of the connectors on this charging station is compatible with your vehicle.</string>
 </resources>

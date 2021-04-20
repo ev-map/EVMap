@@ -82,8 +82,11 @@ class SettingsFragment : PreferenceFragmentCompat(),
             }
             "chargeprice_my_vehicle" -> {
                 vm.vehicles.value?.data?.let { cars ->
-                    myVehiclePreference.summary = cars.find { it.id == prefs.chargepriceMyVehicle }
-                        ?.let { "${it.brand} ${it.name}" }
+                    val vehicle = cars.find { it.id == prefs.chargepriceMyVehicle }
+                    vehicle?.let {
+                        myVehiclePreference.summary = "${it.brand} ${it.name}"
+                        prefs.chargepriceMyVehicleDcChargeports = it.dcChargePorts
+                    }
                 }
             }
         }

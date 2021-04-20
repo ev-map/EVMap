@@ -107,14 +107,10 @@ class ChargepriceFragment : DialogFragment() {
             )
         }
         vm.chargepriceMetaForChargepoint.observe(viewLifecycleOwner) {
-            chargepriceAdapter.meta = it.data
+            chargepriceAdapter.meta = it?.data
         }
 
         val connectorsAdapter = CheckableConnectorAdapter()
-        binding.connectorsList.apply {
-            adapter = connectorsAdapter
-            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        }
 
         val observer: Observer<Chargepoint> = Observer {
             connectorsAdapter.setCheckedItem(it)
@@ -124,6 +120,15 @@ class ChargepriceFragment : DialogFragment() {
             vm.chargepoint.removeObserver(observer)
             vm.chargepoint.value = it
             vm.chargepoint.observe(viewLifecycleOwner, observer)
+        }
+
+        vm.vehicleCompatibleConnectors.observe(viewLifecycleOwner) {
+            connectorsAdapter.enabledConnectors = it
+        }
+
+        binding.connectorsList.apply {
+            adapter = connectorsAdapter
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         }
 
         binding.imgChargepriceLogo.setOnClickListener {
@@ -150,8 +155,8 @@ class ChargepriceFragment : DialogFragment() {
             }
         }
 
-        vm.chargePricesForChargepoint.observe(viewLifecycleOwner, Observer { res ->
-            when (res.status) {
+        vm.chargePricesForChargepoint.observe(viewLifecycleOwner) { res ->
+            when (res?.status) {
                 Status.ERROR -> {
                     connectionErrorSnackbar?.dismiss()
                     connectionErrorSnackbar = Snackbar
@@ -166,13 +171,13 @@ class ChargepriceFragment : DialogFragment() {
                         }
                     connectionErrorSnackbar!!.show()
                 }
-                Status.SUCCESS -> {
+                Status.SUCCESS, null -> {
                     connectionErrorSnackbar?.dismiss()
                 }
                 Status.LOADING -> {
                 }
             }
-        })
+        }
     }
 
     companion object {

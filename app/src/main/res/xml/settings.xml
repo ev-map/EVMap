@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory android:title="@string/settings_ui">
         <ListPreference
@@ -44,11 +45,13 @@
         <CheckBoxPreference
             android:key="chargeprice_no_base_fee"
             android:title="@string/pref_chargeprice_no_base_fee"
-            android:defaultValue="false" />
+            android:defaultValue="false"
+            app:singleLineTitle="false" />
         <CheckBoxPreference
             android:key="chargeprice_show_provider_customer_tariffs"
             android:title="@string/pref_chargeprice_show_provider_customer_tariffs"
             android:summary="@string/pref_chargeprice_show_provider_customer_tariffs_summary"
-            android:defaultValue="false" />
+            android:defaultValue="false"
+            app:singleLineTitle="false" />
     </PreferenceCategory>
 </PreferenceScreen>

@@ -3,7 +3,6 @@ package net.vonforst.evmap.viewmodel
 import android.app.Application
 import androidx.lifecycle.*
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import moe.banana.jsonapi2.HasOne
 import net.vonforst.evmap.api.chargeprice.*
@@ -71,13 +70,24 @@ class ChargepriceViewModel(application: Application, chargepriceApiKey: String) 
             value = listOf(20f, 80f)
         }
     }
+    val batteryRangeSliderDragging: MutableLiveData<Boolean> by lazy {
+        MutableLiveData<Boolean>().apply {
+            value = false
+        }
+    }
 
     val chargePrices: MediatorLiveData<Resource<List<ChargePrice>>> by lazy {
         MediatorLiveData<Resource<List<ChargePrice>>>().apply {
             value = Resource.loading(null)
-            listOf(charger, vehicle, batteryRange, vehicleCompatibleConnectors).forEach {
+            listOf(
+                charger,
+                vehicle,
+                batteryRange,
+                batteryRangeSliderDragging,
+                vehicleCompatibleConnectors
+            ).forEach {
                 addSource(it) {
-                    loadPrices()
+                    if (!batteryRangeSliderDragging.value!!) loadPrices()
                 }
             }
         }
@@ -155,7 +165,6 @@ class ChargepriceViewModel(application: Application, chargepriceApiKey: String) 
 
         loadPricesJob?.cancel()
         loadPricesJob = viewModelScope.launch {
-            delay(800)
             try {
                 val result = api.getChargePrices(ChargepriceRequest().apply {
                     dataAdapter = "going_electric"

@@ -1,7 +1,9 @@
 package net.vonforst.evmap.fragment
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
@@ -73,6 +75,7 @@ class ChargepriceFragment : DialogFragment() {
         )
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -142,7 +145,14 @@ class ChargepriceFragment : DialogFragment() {
         binding.batteryRange.setLabelFormatter { value: Float ->
             val fmt = NumberFormat.getNumberInstance()
             fmt.maximumFractionDigits = 0
-            fmt.format(value.toDouble())
+            fmt.format(value.toDouble()) + "%"
+        }
+        binding.batteryRange.setOnTouchListener { _: View, motionEvent: MotionEvent ->
+            when (motionEvent.actionMasked) {
+                MotionEvent.ACTION_DOWN -> vm.batteryRangeSliderDragging.value = true
+                MotionEvent.ACTION_UP -> vm.batteryRangeSliderDragging.value = false
+            }
+            false
         }
 
         binding.toolbar.setOnMenuItemClickListener {

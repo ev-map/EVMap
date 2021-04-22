@@ -1,5 +1,6 @@
 package net.vonforst.evmap.api.goingelectric
 
+import android.util.Log
 import com.squareup.moshi.*
 import java.lang.reflect.Type
 import java.time.Instant
@@ -130,11 +131,18 @@ internal class HoursAdapter {
             return Hours(null, null)
         } else {
             val match = regex.find(str)
-                ?: throw IllegalArgumentException("$str does not match hours format")
-            return Hours(
-                LocalTime.parse(match.groupValues[1]),
-                LocalTime.parse(match.groupValues[2])
-            )
+            if (match != null) {
+                return Hours(
+                    LocalTime.parse(match.groupValues[1]),
+                    LocalTime.parse(match.groupValues[2])
+                )
+            } else {
+                // I cannot reproduce this case, but it seems to occur once in a while
+                Log.e("GoingElectricApi", "invalid hours value: " + str)
+                return Hours(
+                    LocalTime.MIN, LocalTime.MIN
+                )
+            }
         }
     }
 

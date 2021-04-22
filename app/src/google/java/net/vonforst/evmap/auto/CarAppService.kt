@@ -42,6 +42,7 @@ import net.vonforst.evmap.ui.ChargerIconGenerator
 import net.vonforst.evmap.ui.availabilityText
 import net.vonforst.evmap.ui.getMarkerTint
 import net.vonforst.evmap.utils.distanceBetween
+import java.io.IOException
 import java.time.Duration
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -413,62 +414,69 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
             return
         }
         updateCoroutine = lifecycleScope.launch {
-            // load chargers
-            if (favorites) {
-                chargers = db.chargeLocationsDao().getAllChargeLocationsAsync().sortedBy {
-                    distanceBetween(
-                        location.latitude, location.longitude,
-                        it.coordinates.lat, it.coordinates.lng
-                    )
-                }
-            } else {
-                val response = api.getChargepointsRadius(
-                    location.latitude,
-                    location.longitude,
-                    searchRadius,
-                    zoom = 16f
-                )
-                chargers =
-                    response.body()?.chargelocations?.filterIsInstance(ChargeLocation::class.java)
-                chargers?.let {
-                    if (it.size < 6) {
-                        // try again with larger radius
-                        val response = api.getChargepointsRadius(
-                            location.latitude,
-                            location.longitude,
-                            searchRadius * 5,
-                            zoom = 16f
+            try {
+                // load chargers
+                if (favorites) {
+                    chargers = db.chargeLocationsDao().getAllChargeLocationsAsync().sortedBy {
+                        distanceBetween(
+                            location.latitude, location.longitude,
+                            it.coordinates.lat, it.coordinates.lng
                         )
-                        chargers =
-                            response.body()?.chargelocations?.filterIsInstance(ChargeLocation::class.java)
                     }
-                }
-            }
-
-            // remove outdated availabilities
-            availabilities = availabilities.filter {
-                Duration.between(
-                    it.value.first,
-                    ZonedDateTime.now()
-                ) > availabilityUpdateThreshold
-            }.toMutableMap()
-
-            // update availabilities
-            chargers?.take(maxRows)?.map {
-                lifecycleScope.async {
-                    // update only if not yet stored
-                    if (!availabilities.containsKey(it.id)) {
-                        val date = ZonedDateTime.now()
-                        val availability = getAvailability(it).data
-                        if (availability != null) {
-                            availabilities[it.id] = date to availability
+                } else {
+                    val response = api.getChargepointsRadius(
+                        location.latitude,
+                        location.longitude,
+                        searchRadius,
+                        zoom = 16f
+                    )
+                    chargers =
+                        response.body()?.chargelocations?.filterIsInstance(ChargeLocation::class.java)
+                    chargers?.let {
+                        if (it.size < 6) {
+                            // try again with larger radius
+                            val response = api.getChargepointsRadius(
+                                location.latitude,
+                                location.longitude,
+                                searchRadius * 5,
+                                zoom = 16f
+                            )
+                            chargers =
+                                response.body()?.chargelocations?.filterIsInstance(ChargeLocation::class.java)
                         }
                     }
                 }
-            }?.awaitAll()
 
-            updateCoroutine = null
-            invalidate()
+                // remove outdated availabilities
+                availabilities = availabilities.filter {
+                    Duration.between(
+                        it.value.first,
+                        ZonedDateTime.now()
+                    ) > availabilityUpdateThreshold
+                }.toMutableMap()
+
+                // update availabilities
+                chargers?.take(maxRows)?.map {
+                    lifecycleScope.async {
+                        // update only if not yet stored
+                        if (!availabilities.containsKey(it.id)) {
+                            val date = ZonedDateTime.now()
+                            val availability = getAvailability(it).data
+                            if (availability != null) {
+                                availabilities[it.id] = date to availability
+                            }
+                        }
+                    }
+                }?.awaitAll()
+
+                updateCoroutine = null
+                invalidate()
+            } catch (e: IOException) {
+                withContext(Dispatchers.Main) {
+                    CarToast.makeText(carContext, R.string.connection_error, CarToast.LENGTH_LONG)
+                        .show()
+                }
+            }
         }
     }
 }
@@ -612,22 +620,29 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
 
     private fun loadCharger() {
         lifecycleScope.launch {
-            val response = api.getChargepointDetail(chargerSparse.id)
-            charger = response.body()?.chargelocations?.get(0) as ChargeLocation
+            try {
+                val response = api.getChargepointDetail(chargerSparse.id)
+                charger = response.body()?.chargelocations?.get(0) as ChargeLocation
 
-            val photo = charger?.photos?.firstOrNull()
-            photo?.let {
-                val size = (carContext.resources.displayMetrics.density * 64).roundToInt()
-                val url = "https://api.goingelectric.de/chargepoints/photo/?key=${apikey}" +
-                        "&id=${photo.id}&size=${size}"
-                val request = ImageRequest.Builder(carContext).data(url).build()
-                this@ChargerDetailScreen.photo =
-                    (carContext.imageLoader.execute(request).drawable as BitmapDrawable).bitmap
+                val photo = charger?.photos?.firstOrNull()
+                photo?.let {
+                    val size = (carContext.resources.displayMetrics.density * 64).roundToInt()
+                    val url = "https://api.goingelectric.de/chargepoints/photo/?key=${apikey}" +
+                            "&id=${photo.id}&size=${size}"
+                    val request = ImageRequest.Builder(carContext).data(url).build()
+                    this@ChargerDetailScreen.photo =
+                        (carContext.imageLoader.execute(request).drawable as BitmapDrawable).bitmap
+                }
+
+                availability = charger?.let { getAvailability(it).data }
+
+                invalidate()
+            } catch (e: IOException) {
+                withContext(Dispatchers.Main) {
+                    CarToast.makeText(carContext, R.string.connection_error, CarToast.LENGTH_LONG)
+                        .show()
+                }
             }
-
-            availability = charger?.let { getAvailability(it).data }
-
-            invalidate()
         }
     }
 }

@@ -18,6 +18,8 @@ Features
 - Realtime availability information (beta)
 - Search places
 - Favorites list, also with availability information
+- Charging price comparison, powered by [Chargeprice.app](https://chargeprice.app)
+- Android Auto integration
 - No ads, fully open source
 - Compatible with Android 5.0 and above
 - Can use Google Maps or Mapbox (OpenStreetMap) as map backends - the version available on F-Droid only uses Mapbox.

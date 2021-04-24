@@ -186,6 +186,6 @@
     <string name="edit_on_goingelectric_info">Falls hier nur eine leere Seite erscheint, logge dich bitte zuerst bei GoingElectric.de ein.</string>
     <string name="close">schließen</string>
     <string name="chargeprice_title">Preisvergleich</string>
-    <string name="chargeprice_connection_error">Could not load prices</string>
+    <string name="chargeprice_connection_error">Preise konnten nicht geladen werden</string>
     <string name="chargeprice_no_compatible_connectors">Keiner der Anschlüsse dieser Ladestation ist mit deinem Fahrzeug kompatibel.</string>
 </resources>

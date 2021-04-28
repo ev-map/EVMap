@@ -122,4 +122,10 @@ class PreferenceDataSource(val context: Context) {
         set(value) {
             sp.edit().putBoolean("chargeprice_show_provider_customer_tariffs", value).apply()
         }
+
+    var chargepriceCurrency: String
+        get() = sp.getString("chargeprice_currency", null) ?: "EUR"
+        set(value) {
+            sp.edit().putString("chargeprice_currency", value).apply()
+        }
 }

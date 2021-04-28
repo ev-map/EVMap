@@ -20,4 +20,32 @@
         <item>on</item>
         <item>off</item>
     </string-array>
+    <string-array name="pref_chargeprice_currency_names">
+        <item>Swiss franc (CHF)</item>
+        <item>Czech koruna (CZK)</item>
+        <item>Danish krone (DKK)</item>
+        <item>Euro (EUR)</item>
+        <item>Pound sterling (GBP)</item>
+        <item>Croatian kuna (HRK)</item>
+        <item>Hungarian forint (HUF)</item>
+        <item>Icelandic króna (ISK)</item>
+        <item>Norwegian krone (NOK)</item>
+        <item>Polish złoty (PLN)</item>
+        <item>Swedish krona (SEK)</item>
+        <item>US dollar (USD)</item>
+    </string-array>
+    <string-array name="pref_chargeprice_currency_values" donottranslate="true">
+        <item>CHF</item>
+        <item>CZK</item>
+        <item>DKK</item>
+        <item>EUR</item>
+        <item>GBP</item>
+        <item>HRK</item>
+        <item>HUF</item>
+        <item>ISK</item>
+        <item>NOK</item>
+        <item>PLN</item>
+        <item>SEK</item>
+        <item>USD</item>
+    </string-array>
 </resources>

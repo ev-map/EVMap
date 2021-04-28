@@ -255,7 +255,7 @@ fun currency(currency: String): String {
         "USD" -> "$"
         "DKK", "SEK", "NOK" -> "kr."
         "PLN" -> "zł"
-        "CHF" -> "Fr."
+        "CHF" -> "Fr. "
         "CZK" -> "Kč"
         "GBP" -> "£"
         "HRK" -> "kn"

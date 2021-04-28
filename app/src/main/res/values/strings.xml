@@ -187,4 +187,5 @@
     <string name="chargeprice_title">Prices</string>
     <string name="chargeprice_connection_error">Could not load prices</string>
     <string name="chargeprice_no_compatible_connectors">None of the connectors on this charging station is compatible with your vehicle.</string>
+    <string name="pref_chargeprice_currency">Currency</string>
 </resources>

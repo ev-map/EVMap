@@ -188,4 +188,19 @@
     <string name="chargeprice_title">Preisvergleich</string>
     <string name="chargeprice_connection_error">Preise konnten nicht geladen werden</string>
     <string name="chargeprice_no_compatible_connectors">Keiner der Anschlüsse dieser Ladestation ist mit deinem Fahrzeug kompatibel.</string>
+    <string name="pref_chargeprice_currency">Währung</string>
+    <string-array name="pref_chargeprice_currency_names">
+        <item>Schweizer Franken (CHF)</item>
+        <item>Tschechische Krone (CZK)</item>
+        <item>Dänische Krone (DKK)</item>
+        <item>Euro (EUR)</item>
+        <item>Britisches Pfund (GBP)</item>
+        <item>Kroatische Kuna (HRK)</item>
+        <item>Ungarischer Forint (HUF)</item>
+        <item>Isländische Krone (ISK)</item>
+        <item>Norwegische Krone (NOK)</item>
+        <item>Polnischer Złoty (PLN)</item>
+        <item>Schwedische Krone (SEK)</item>
+        <item>US-Dollar (USD)</item>
+    </string-array>
 </resources>

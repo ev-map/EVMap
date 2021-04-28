@@ -173,7 +173,8 @@ class ChargepriceViewModel(application: Application, chargepriceApiKey: String) 
                     options = ChargepriceOptions(
                         batteryRange = batteryRange.value!!.map { it.toDouble() },
                         providerCustomerTariffs = prefs.chargepriceShowProviderCustomerTariffs,
-                        maxMonthlyFees = if (prefs.chargepriceNoBaseFee) 0.0 else null
+                        maxMonthlyFees = if (prefs.chargepriceNoBaseFee) 0.0 else null,
+                        currency = prefs.chargepriceCurrency
                     )
                 }, getChargepriceLanguage())
                 val meta =

@@ -168,6 +168,7 @@ class ChargepriceFragment : DialogFragment() {
         vm.chargePricesForChargepoint.observe(viewLifecycleOwner) { res ->
             when (res?.status) {
                 Status.ERROR -> {
+                    if (vm.vehicle.value == null) return@observe
                     connectionErrorSnackbar?.dismiss()
                     connectionErrorSnackbar = Snackbar
                         .make(

@@ -128,4 +128,15 @@ class PreferenceDataSource(val context: Context) {
         set(value) {
             sp.edit().putString("chargeprice_currency", value).apply()
         }
+
+    var chargepriceBatteryRange: List<Float>
+        get() = listOf(
+            sp.getFloat("chargeprice_battery_range_min", 20f),
+            sp.getFloat("chargeprice_battery_range_max", 80f),
+        )
+        set(value) {
+            sp.edit().putFloat("chargeprice_battery_range_min", value[0])
+                .putFloat("chargeprice_battery_range_max", value[1])
+                .apply()
+        }
 }

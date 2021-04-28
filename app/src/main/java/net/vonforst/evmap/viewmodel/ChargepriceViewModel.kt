@@ -67,7 +67,10 @@ class ChargepriceViewModel(application: Application, chargepriceApiKey: String) 
 
     val batteryRange: MutableLiveData<List<Float>> by lazy {
         MutableLiveData<List<Float>>().apply {
-            value = listOf(20f, 80f)
+            value = prefs.chargepriceBatteryRange
+            observeForever {
+                prefs.chargepriceBatteryRange = it
+            }
         }
     }
     val batteryRangeSliderDragging: MutableLiveData<Boolean> by lazy {

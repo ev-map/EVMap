@@ -1,0 +1,4 @@
+Verbesserungen für Chargeprice.app-Integration:
+- Währung kann in den Einstellungen gewählt werden
+- Ausgewählter Ladebereich wird gespeichert
+- Eigene Tarife können in den Einstellungen ausgewählt werden

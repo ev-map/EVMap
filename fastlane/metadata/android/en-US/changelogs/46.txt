@@ -1,0 +1,4 @@
+Improvements for Chargeprice.app integration:
+- Currency selection in settings
+- Save selected charging range
+- Own charging plans can be selected in settings

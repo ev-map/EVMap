@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import net.vonforst.evmap.api.chargeprice.ChargepriceApi
 import net.vonforst.evmap.api.chargeprice.ChargepriceCar
+import net.vonforst.evmap.api.chargeprice.ChargepriceTariff
 import java.io.IOException
 
 class SettingsViewModel(application: Application, chargepriceApiKey: String) :
@@ -20,6 +21,13 @@ class SettingsViewModel(application: Application, chargepriceApiKey: String) :
         }
     }
 
+    val tariffs: MutableLiveData<Resource<List<ChargepriceTariff>>> by lazy {
+        MutableLiveData<Resource<List<ChargepriceTariff>>>().apply {
+            value = Resource.loading(null)
+            loadTariffs()
+        }
+    }
+
     private fun loadVehicles() {
         viewModelScope.launch {
             try {
@@ -27,6 +35,17 @@ class SettingsViewModel(application: Application, chargepriceApiKey: String) :
                 vehicles.value = Resource.success(result)
             } catch (e: IOException) {
                 vehicles.value = Resource.error(e.message, null)
+            }
+        }
+    }
+
+    private fun loadTariffs() {
+        viewModelScope.launch {
+            try {
+                val result = api.getTariffs()
+                tariffs.value = Resource.success(result)
+            } catch (e: IOException) {
+                tariffs.value = Resource.error(e.message, null)
             }
         }
     }

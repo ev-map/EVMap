@@ -111,6 +111,18 @@ class PreferenceDataSource(val context: Context) {
                 .apply()
         }
 
+    var chargepriceMyTariffs: Set<String>?
+        get() = sp.getStringSet("chargeprice_my_tariffs", null)
+        set(value) {
+            sp.edit().putStringSet("chargeprice_my_tariffs", value).apply()
+        }
+
+    var chargepriceMyTariffsAll: Boolean
+        get() = sp.getBoolean("chargeprice_my_tariffs_all", true)
+        set(value) {
+            sp.edit().putBoolean("chargeprice_my_tariffs_all", value).apply()
+        }
+
     var chargepriceNoBaseFee: Boolean
         get() = sp.getBoolean("chargeprice_no_base_fee", false)
         set(value) {

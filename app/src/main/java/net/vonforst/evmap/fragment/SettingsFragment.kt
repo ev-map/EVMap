@@ -8,6 +8,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.preference.ListPreference
+import androidx.preference.MultiSelectListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import net.vonforst.evmap.MapsActivity
@@ -32,6 +33,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
     })
 
     private lateinit var myVehiclePreference: ListPreference
+    private lateinit var myTariffsPreference: MultiSelectListPreference
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -44,7 +46,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
             (requireActivity() as MapsActivity).appBarConfiguration
         )
 
-        myVehiclePreference = findPreference<ListPreference>("chargeprice_my_vehicle")!!
+        myVehiclePreference = findPreference("chargeprice_my_vehicle")!!
         myVehiclePreference.isEnabled = false
         vm.vehicles.observe(viewLifecycleOwner) { res ->
             res.data?.let { cars ->
@@ -56,6 +58,32 @@ class SettingsFragment : PreferenceFragmentCompat(),
                 myVehiclePreference.summary = cars.find { it.id == prefs.chargepriceMyVehicle }
                     ?.let { "${it.brand} ${it.name}" }
             }
+        }
+
+        myTariffsPreference = findPreference("chargeprice_my_tariffs")!!
+        vm.tariffs.observe(viewLifecycleOwner) { res ->
+            res.data?.let { tariffs ->
+                myTariffsPreference.entryValues = tariffs.map { it.id }.toTypedArray()
+                myTariffsPreference.entries = tariffs.map {
+                    if (!it.name.startsWith(it.provider)) {
+                        "${it.provider} ${it.name}"
+                    } else {
+                        it.name
+                    }
+                }.toTypedArray()
+                myTariffsPreference.isEnabled = true
+                updateMyTariffsSummary()
+            }
+        }
+    }
+
+    private fun updateMyTariffsSummary() {
+        myTariffsPreference.summary = if (prefs.chargepriceMyTariffsAll) {
+            getString(R.string.chargeprice_all_tariffs_selected)
+        } else {
+            val n = prefs.chargepriceMyTariffs?.size ?: 0
+            requireContext().resources
+                .getQuantityString(R.plurals.chargeprice_some_tariffs_selected, n, n)
         }
     }
 
@@ -88,6 +116,9 @@ class SettingsFragment : PreferenceFragmentCompat(),
                         prefs.chargepriceMyVehicleDcChargeports = it.dcChargePorts
                     }
                 }
+            }
+            "chargeprice_my_tariffs" -> {
+                updateMyTariffsSummary()
             }
         }
     }

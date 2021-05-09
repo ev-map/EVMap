@@ -70,13 +70,46 @@ data class ChargepriceOptions(
 )
 
 @JsonApi(type = "tariff")
-data class ChargepriceTariff(
-    val provider: String,
-    val name: String,
-    @field:Json(name = "direct_payment") val directPayment: Boolean,
-    @field:Json(name = "provider_customer_tariff") val providerCustomerTariff: Boolean,
-    @field:Json(name = "charge_card_id") val chargeCardId: String  // GE charge card ID
-) : Resource()
+class ChargepriceTariff() : Resource() {
+    lateinit var provider: String
+    lateinit var name: String
+    @field:Json(name = "direct_payment")
+    var directPayment: Boolean = false
+    @field:Json(name = "provider_customer_tariff")
+    var providerCustomerTariff: Boolean = false
+    @field:Json(name = "supported_cuntries")
+    lateinit var supportedCountries: Set<String>
+    @field:Json(name = "charge_card_id")
+    lateinit var chargeCardId: String  // GE charge card ID
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        if (!super.equals(other)) return false
+
+        other as ChargepriceTariff
+
+        if (provider != other.provider) return false
+        if (name != other.name) return false
+        if (directPayment != other.directPayment) return false
+        if (providerCustomerTariff != other.providerCustomerTariff) return false
+        if (supportedCountries != other.supportedCountries) return false
+        if (chargeCardId != other.chargeCardId) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = super.hashCode()
+        result = 31 * result + provider.hashCode()
+        result = 31 * result + name.hashCode()
+        result = 31 * result + directPayment.hashCode()
+        result = 31 * result + providerCustomerTariff.hashCode()
+        result = 31 * result + supportedCountries.hashCode()
+        result = 31 * result + chargeCardId.hashCode()
+        return result
+    }
+}
 
 @JsonApi(type = "car")
 class ChargepriceCar : Resource() {

@@ -26,6 +26,9 @@ interface ChargepriceApi {
     @GET("vehicles")
     suspend fun getVehicles(): ArrayDocument<ChargepriceCar>
 
+    @GET("tariffs")
+    suspend fun getTariffs(): ArrayDocument<ChargepriceTariff>
+
     companion object {
         private val cacheSize = 1L * 1024 * 1024 // 1MB
         val supportedLanguages = setOf("de", "en", "fr", "nl")

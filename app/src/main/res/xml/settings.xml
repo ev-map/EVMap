@@ -50,7 +50,8 @@
             android:title="@string/pref_chargeprice_currency"
             android:entries="@array/pref_chargeprice_currency_names"
             android:entryValues="@array/pref_chargeprice_currency_values"
-            android:defaultValue="EUR" />
+            android:defaultValue="EUR"
+            app:useSimpleSummaryProvider="true" />
         <CheckBoxPreference
             android:key="chargeprice_no_base_fee"
             android:title="@string/pref_chargeprice_no_base_fee"

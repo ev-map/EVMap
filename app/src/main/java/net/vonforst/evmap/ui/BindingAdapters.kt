@@ -292,3 +292,14 @@ fun colorEnabled(ctx: Context, enabled: Boolean): Int {
 fun setImageTintList(view: ImageView, @ColorInt color: Int) {
     view.imageTintList = ColorStateList.valueOf(color)
 }
+
+@BindingAdapter("myTariffsBackground")
+fun myTariffsBackground(view: View, myTariff: Boolean) {
+    if (myTariff) {
+        view.background = ContextCompat.getDrawable(view.context, R.drawable.my_tariff_background)
+    } else {
+        view.context.obtainStyledAttributes(intArrayOf(R.attr.selectableItemBackground)).use {
+            view.background = it.getDrawable(0)
+        }
+    }
+}

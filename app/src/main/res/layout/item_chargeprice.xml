@@ -11,6 +11,8 @@
 
         <import type="net.vonforst.evmap.ui.BindingAdaptersKt" />
 
+        <import type="java.util.Set" />
+
         <variable
             name="item"
             type="ChargePrice" />
@@ -18,6 +20,14 @@
         <variable
             name="meta"
             type="ChargepriceChargepointMeta" />
+
+        <variable
+            name="myTariffs"
+            type="Set&lt;String>" />
+
+        <variable
+            name="myTariffsAll"
+            type="Boolean" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -27,7 +37,7 @@
         android:paddingTop="8dp"
         android:paddingRight="16dp"
         android:paddingBottom="8dp"
-        android:background="?selectableItemBackground">
+        app:myTariffsBackground="@{!myTariffsAll &amp;&amp; myTariffs.contains(item.tariff.get().id)}">
 
         <TextView
             android:id="@+id/txtTariff"

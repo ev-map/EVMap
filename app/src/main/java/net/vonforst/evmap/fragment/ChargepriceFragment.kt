@@ -112,6 +112,12 @@ class ChargepriceFragment : DialogFragment() {
         vm.chargepriceMetaForChargepoint.observe(viewLifecycleOwner) {
             chargepriceAdapter.meta = it?.data
         }
+        vm.myTariffs.observe(viewLifecycleOwner) {
+            chargepriceAdapter.myTariffs = it
+        }
+        vm.myTariffsAll.observe(viewLifecycleOwner) {
+            chargepriceAdapter.myTariffsAll = it
+        }
 
         val connectorsAdapter = CheckableConnectorAdapter()
 

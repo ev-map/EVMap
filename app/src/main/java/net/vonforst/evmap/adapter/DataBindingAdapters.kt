@@ -107,6 +107,16 @@ class ChargepriceAdapter() :
             field = value
             notifyDataSetChanged()
         }
+    var myTariffs: Set<String>? = null
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
+    var myTariffsAll: Boolean? = null
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
 
     override fun getItemViewType(position: Int): Int = R.layout.item_chargeprice
 
@@ -127,7 +137,11 @@ class ChargepriceAdapter() :
 
     override fun bind(holder: ViewHolder<ChargePrice>, item: ChargePrice) {
         super.bind(holder, item)
-        (holder.binding as ItemChargepriceBinding).meta = meta
+        (holder.binding as ItemChargepriceBinding).apply {
+            this.meta = this@ChargepriceAdapter.meta
+            this.myTariffs = this@ChargepriceAdapter.myTariffs
+            this.myTariffsAll = this@ChargepriceAdapter.myTariffsAll
+        }
     }
 }
 

@@ -115,6 +115,7 @@ class ChargepriceViewModel(application: Application, chargepriceApiKey: String) 
                     } else if (cps.status == Status.LOADING) {
                         value = Resource.loading(null)
                     } else {
+                        val myTariffs = prefs.chargepriceMyTariffs
                         value = Resource.success(cps.data!!.map { cp ->
                             val filteredPrices =
                                 cp.chargepointPrices.filter { it.plug == chargepoint.type && it.power == chargepoint.power }
@@ -125,10 +126,27 @@ class ChargepriceViewModel(application: Application, chargepriceApiKey: String) 
                                     chargepointPrices = filteredPrices
                                 }
                             }
-                        }.filterNotNull().sortedBy { it.chargepointPrices.first().price })
+                        }.filterNotNull()
+                            .sortedBy { it.chargepointPrices.first().price }
+                            .sortedByDescending {
+                                prefs.chargepriceMyTariffsAll ||
+                                        myTariffs != null && it.tariff?.get()?.id in myTariffs
+                            }
+                        )
                     }
                 }
             }
+        }
+    }
+
+    val myTariffs: LiveData<Set<String>> by lazy {
+        MutableLiveData<Set<String>>().apply {
+            value = prefs.chargepriceMyTariffs
+        }
+    }
+    val myTariffsAll: LiveData<Boolean> by lazy {
+        MutableLiveData<Boolean>().apply {
+            value = prefs.chargepriceMyTariffsAll
         }
     }
 

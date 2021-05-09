@@ -179,6 +179,8 @@ class ChargePrice : Resource(), Equatable, Cloneable {
     @field:Json(name = "charge_point_prices")
     lateinit var chargepointPrices: List<ChargepointPrice>
 
+    var tariff: HasOne<ChargepriceTariff>? = null
+
 
     fun formatMonthlyFees(ctx: Context): String {
         return listOfNotNull(
@@ -245,6 +247,7 @@ class ChargePrice : Resource(), Equatable, Cloneable {
             tariffName = this@ChargePrice.tariffName
             totalMonthlyFee = this@ChargePrice.totalMonthlyFee
             url = this@ChargePrice.url
+            tariff = this@ChargePrice.tariff
         }
     }
 }

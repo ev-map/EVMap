@@ -224,15 +224,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         setupObservers()
         setupClickListeners()
         setupAdapters()
-
-        val navController = findNavController()
         (activity as? MapsActivity)?.setSupportActionBar(binding.toolbar)
-        binding.toolbar.setupWithNavController(
-            navController,
-            (requireActivity() as MapsActivity).appBarConfiguration
-        )
 
         val prefs = PreferenceDataSource(requireContext())
+        val navController = findNavController()
         if (!prefs.welcomeDialogShown) {
             try {
                 navController.navigate(R.id.action_map_to_welcome)
@@ -252,6 +247,13 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         super.onResume()
         val hostActivity = activity as? MapsActivity ?: return
         hostActivity.fragmentCallback = this
+
+        val navController = findNavController()
+        binding.toolbar.setupWithNavController(
+            navController,
+            (requireActivity() as MapsActivity).appBarConfiguration
+        )
+
         vm.reloadPrefs()
         if (requestingLocationUpdates && ContextCompat.checkSelfPermission(
                 requireContext(),

@@ -38,7 +38,7 @@ For testing the app, you need to obtain free API Keys for the
 [GoingElectric API](https://www.goingelectric.de/stromtankstellen/api/),
 the [Chargeprice API](https://github.com/chargeprice/chargeprice-api-docs)
 as well as for [Google APIs](https://console.developers.google.com/)
-("Maps SDK for Android" and "Places API" need to be activated) and/or [Mapbox](https://www.mapbox.com/). These APIs need to be put into the
+("Maps SDK for Android" and "Places API" need to be activated) and/or [Mapbox](https://www.mapbox.com/). These API keys need to be put into the
 app in the form of a resource file called `apikeys.xml` under `app/src/main/res/values`, with the
 following content:
 

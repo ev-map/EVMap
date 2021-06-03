@@ -19,8 +19,8 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
-import net.vonforst.evmap.api.goingelectric.ChargeLocation
 import net.vonforst.evmap.fragment.MapFragment
+import net.vonforst.evmap.model.ChargeLocation
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.utils.LocaleContextWrapper
 import net.vonforst.evmap.utils.getLocationFromIntent

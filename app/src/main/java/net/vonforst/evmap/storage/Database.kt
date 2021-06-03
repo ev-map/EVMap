@@ -7,12 +7,8 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import net.vonforst.evmap.api.goingelectric.ChargeCard
-import net.vonforst.evmap.api.goingelectric.ChargeLocation
-import net.vonforst.evmap.viewmodel.BooleanFilterValue
-import net.vonforst.evmap.viewmodel.FILTERS_CUSTOM
-import net.vonforst.evmap.viewmodel.MultipleChoiceFilterValue
-import net.vonforst.evmap.viewmodel.SliderFilterValue
+import net.vonforst.evmap.api.goingelectric.GEChargeCard
+import net.vonforst.evmap.model.*
 
 @Database(
     entities = [
@@ -21,9 +17,9 @@ import net.vonforst.evmap.viewmodel.SliderFilterValue
         MultipleChoiceFilterValue::class,
         SliderFilterValue::class,
         FilterProfile::class,
-        Plug::class,
-        Network::class,
-        ChargeCard::class
+        GEPlug::class,
+        GENetwork::class,
+        GEChargeCard::class
     ], version = 11
 )
 @TypeConverters(Converters::class)
@@ -31,9 +27,9 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun chargeLocationsDao(): ChargeLocationsDao
     abstract fun filterValueDao(): FilterValueDao
     abstract fun filterProfileDao(): FilterProfileDao
-    abstract fun plugDao(): PlugDao
-    abstract fun networkDao(): NetworkDao
-    abstract fun chargeCardDao(): ChargeCardDao
+
+    // GoingElectric API specific
+    abstract fun geReferenceDataDao(): GEReferenceDataDao
 
     companion object {
         private lateinit var context: Context

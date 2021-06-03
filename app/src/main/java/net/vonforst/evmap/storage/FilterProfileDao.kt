@@ -3,7 +3,7 @@ package net.vonforst.evmap.storage
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import net.vonforst.evmap.adapter.Equatable
-import net.vonforst.evmap.viewmodel.FILTERS_CUSTOM
+import net.vonforst.evmap.model.FILTERS_CUSTOM
 
 @Entity(
     indices = [Index(value = ["name"], unique = true)]

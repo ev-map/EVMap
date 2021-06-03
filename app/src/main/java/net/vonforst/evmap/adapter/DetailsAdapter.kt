@@ -3,12 +3,12 @@ package net.vonforst.evmap.adapter
 import android.content.Context
 import androidx.core.text.HtmlCompat
 import net.vonforst.evmap.R
-import net.vonforst.evmap.api.goingelectric.ChargeCard
-import net.vonforst.evmap.api.goingelectric.ChargeCardId
-import net.vonforst.evmap.api.goingelectric.ChargeLocation
-import net.vonforst.evmap.api.goingelectric.OpeningHoursDays
 import net.vonforst.evmap.bold
 import net.vonforst.evmap.joinToSpannedString
+import net.vonforst.evmap.model.ChargeCard
+import net.vonforst.evmap.model.ChargeCardId
+import net.vonforst.evmap.model.ChargeLocation
+import net.vonforst.evmap.model.OpeningHoursDays
 import net.vonforst.evmap.plus
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter

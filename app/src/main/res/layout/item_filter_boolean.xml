@@ -5,11 +5,11 @@
 
     <data>
 
-        <import type="net.vonforst.evmap.viewmodel.BooleanFilter" />
+        <import type="net.vonforst.evmap.model.BooleanFilter" />
 
-        <import type="net.vonforst.evmap.viewmodel.BooleanFilterValue" />
+        <import type="net.vonforst.evmap.model.BooleanFilterValue" />
 
-        <import type="net.vonforst.evmap.viewmodel.FilterWithValue" />
+        <import type="net.vonforst.evmap.model.FilterWithValue" />
 
         <variable
             name="item"

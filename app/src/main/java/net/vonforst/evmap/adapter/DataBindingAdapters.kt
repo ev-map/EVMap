@@ -15,14 +15,14 @@ import net.vonforst.evmap.api.availability.ChargepointStatus
 import net.vonforst.evmap.api.chargeprice.ChargePrice
 import net.vonforst.evmap.api.chargeprice.ChargepriceChargepointMeta
 import net.vonforst.evmap.api.chargeprice.ChargepriceTag
-import net.vonforst.evmap.api.goingelectric.Chargepoint
 import net.vonforst.evmap.databinding.ItemChargepriceBinding
 import net.vonforst.evmap.databinding.ItemConnectorButtonBinding
+import net.vonforst.evmap.model.Chargepoint
 import net.vonforst.evmap.ui.CheckableConstraintLayout
 import net.vonforst.evmap.viewmodel.FavoritesViewModel
 
 interface Equatable {
-    override fun equals(other: Any?): Boolean;
+    override fun equals(other: Any?): Boolean
 }
 
 abstract class DataBindingAdapter<T : Equatable>(getKey: ((T) -> Any)? = null) :

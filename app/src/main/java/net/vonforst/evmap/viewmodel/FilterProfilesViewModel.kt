@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import net.vonforst.evmap.model.FILTERS_DISABLED
 import net.vonforst.evmap.storage.AppDatabase
 import net.vonforst.evmap.storage.FilterProfile
 import net.vonforst.evmap.storage.PreferenceDataSource

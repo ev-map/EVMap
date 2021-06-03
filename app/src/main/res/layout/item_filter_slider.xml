@@ -5,11 +5,11 @@
 
     <data>
 
-        <import type="net.vonforst.evmap.viewmodel.SliderFilter" />
+        <import type="net.vonforst.evmap.model.SliderFilter" />
 
-        <import type="net.vonforst.evmap.viewmodel.SliderFilterValue" />
+        <import type="net.vonforst.evmap.model.SliderFilterValue" />
 
-        <import type="net.vonforst.evmap.viewmodel.FilterWithValue" />
+        <import type="net.vonforst.evmap.model.FilterWithValue" />
 
         <variable
             name="item"

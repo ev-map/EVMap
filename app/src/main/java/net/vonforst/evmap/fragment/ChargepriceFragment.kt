@@ -20,10 +20,10 @@ import net.vonforst.evmap.MapsActivity
 import net.vonforst.evmap.R
 import net.vonforst.evmap.adapter.ChargepriceAdapter
 import net.vonforst.evmap.adapter.CheckableConnectorAdapter
-import net.vonforst.evmap.api.goingelectric.ChargeLocation
-import net.vonforst.evmap.api.goingelectric.Chargepoint
 import net.vonforst.evmap.api.goingelectric.GoingElectricApi
 import net.vonforst.evmap.databinding.FragmentChargepriceBinding
+import net.vonforst.evmap.model.ChargeLocation
+import net.vonforst.evmap.model.Chargepoint
 import net.vonforst.evmap.viewmodel.ChargepriceViewModel
 import net.vonforst.evmap.viewmodel.Status
 import net.vonforst.evmap.viewmodel.viewModelFactory

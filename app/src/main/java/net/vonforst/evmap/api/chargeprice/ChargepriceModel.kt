@@ -9,7 +9,7 @@ import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
 import net.vonforst.evmap.R
 import net.vonforst.evmap.adapter.Equatable
-import net.vonforst.evmap.api.goingelectric.ChargeLocation
+import net.vonforst.evmap.model.ChargeLocation
 import net.vonforst.evmap.ui.currency
 import kotlin.math.ceil
 import kotlin.math.floor

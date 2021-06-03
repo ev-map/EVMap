@@ -7,7 +7,7 @@ import androidx.interpolator.view.animation.FastOutLinearInInterpolator
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
 import com.car2go.maps.model.Marker
 import net.vonforst.evmap.R
-import net.vonforst.evmap.api.goingelectric.ChargeLocation
+import net.vonforst.evmap.model.ChargeLocation
 import kotlin.math.max
 
 fun getMarkerTint(

@@ -5,11 +5,11 @@
 
     <data>
 
-        <import type="net.vonforst.evmap.api.goingelectric.ChargeLocation" />
+        <import type="net.vonforst.evmap.model.ChargeLocation" />
 
-        <import type="net.vonforst.evmap.api.goingelectric.Chargepoint" />
+        <import type="net.vonforst.evmap.model.Chargepoint" />
 
-        <import type="net.vonforst.evmap.api.goingelectric.ChargeCard" />
+        <import type="net.vonforst.evmap.model.ChargeCard" />
 
         <import type="net.vonforst.evmap.api.availability.ChargeLocationStatus" />
 

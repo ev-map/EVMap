@@ -1,9 +1,9 @@
 package net.vonforst.evmap.api.availability
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import net.vonforst.evmap.api.goingelectric.ChargeLocation
-import net.vonforst.evmap.api.goingelectric.Chargepoint
 import net.vonforst.evmap.api.iterator
+import net.vonforst.evmap.model.ChargeLocation
+import net.vonforst.evmap.model.Chargepoint
 import okhttp3.OkHttpClient
 import org.json.JSONObject
 import java.io.IOException

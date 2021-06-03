@@ -4,8 +4,8 @@ import android.content.Context
 import androidx.preference.PreferenceManager
 import com.car2go.maps.AnyMap
 import net.vonforst.evmap.R
-import net.vonforst.evmap.viewmodel.FILTERS_CUSTOM
-import net.vonforst.evmap.viewmodel.FILTERS_DISABLED
+import net.vonforst.evmap.model.FILTERS_CUSTOM
+import net.vonforst.evmap.model.FILTERS_DISABLED
 import java.time.Instant
 
 class PreferenceDataSource(val context: Context) {
@@ -17,22 +17,10 @@ class PreferenceDataSource(val context: Context) {
             sp.edit().putBoolean("navigate_use_maps", value).apply()
         }
 
-    var lastPlugUpdate: Instant
-        get() = Instant.ofEpochMilli(sp.getLong("last_plug_update", 0L))
+    var lastGeReferenceDataUpdate: Instant
+        get() = Instant.ofEpochMilli(sp.getLong("last_ge_reference_data_update", 0L))
         set(value) {
-            sp.edit().putLong("last_plug_update", value.toEpochMilli()).apply()
-        }
-
-    var lastNetworkUpdate: Instant
-        get() = Instant.ofEpochMilli(sp.getLong("last_network_update", 0L))
-        set(value) {
-            sp.edit().putLong("last_network_update", value.toEpochMilli()).apply()
-        }
-
-    var lastChargeCardUpdate: Instant
-        get() = Instant.ofEpochMilli(sp.getLong("last_chargecard_update", 0L))
-        set(value) {
-            sp.edit().putLong("last_chargecard_update", value.toEpochMilli()).apply()
+            sp.edit().putLong("last_ge_reference_data_update", value.toEpochMilli()).apply()
         }
 
     /**

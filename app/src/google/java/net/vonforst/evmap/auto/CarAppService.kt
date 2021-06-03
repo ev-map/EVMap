@@ -34,9 +34,10 @@ import net.vonforst.evmap.*
 import net.vonforst.evmap.api.availability.ChargeLocationStatus
 import net.vonforst.evmap.api.availability.ChargepointStatus
 import net.vonforst.evmap.api.availability.getAvailability
-import net.vonforst.evmap.api.goingelectric.ChargeLocation
 import net.vonforst.evmap.api.goingelectric.GoingElectricApi
 import net.vonforst.evmap.api.nameForPlugType
+import net.vonforst.evmap.api.stringProvider
+import net.vonforst.evmap.model.ChargeLocation
 import net.vonforst.evmap.storage.AppDatabase
 import net.vonforst.evmap.ui.ChargerIconGenerator
 import net.vonforst.evmap.ui.availabilityText
@@ -518,7 +519,7 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
                             chargepointsText.append(
                                 "${cp.count}× ${
                                     nameForPlugType(
-                                        carContext,
+                                        carContext.stringProvider(),
                                         cp.type
                                     )
                                 } ${cp.formatPower()}"

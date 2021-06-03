@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.room.*
-import net.vonforst.evmap.viewmodel.*
+import net.vonforst.evmap.model.*
 
 @Dao
 abstract class FilterValueDao {

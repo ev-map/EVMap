@@ -5,11 +5,11 @@
 
     <data>
 
-        <import type="net.vonforst.evmap.viewmodel.MultipleChoiceFilter" />
+        <import type="net.vonforst.evmap.model.MultipleChoiceFilter" />
 
-        <import type="net.vonforst.evmap.viewmodel.MultipleChoiceFilterValue" />
+        <import type="net.vonforst.evmap.model.MultipleChoiceFilterValue" />
 
-        <import type="net.vonforst.evmap.viewmodel.FilterWithValue" />
+        <import type="net.vonforst.evmap.model.FilterWithValue" />
 
         <variable
             name="item"

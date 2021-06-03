@@ -4,7 +4,7 @@
 
     <data>
 
-        <import type="net.vonforst.evmap.api.goingelectric.ChargerPhoto" />
+        <import type="net.vonforst.evmap.model.ChargerPhoto" />
 
         <import type="java.util.List" />
 

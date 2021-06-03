@@ -16,8 +16,8 @@ import coil.memory.MemoryCache
 import com.ortiz.touchview.TouchImageView
 import net.vonforst.evmap.R
 import net.vonforst.evmap.adapter.GalleryAdapter
-import net.vonforst.evmap.api.goingelectric.ChargerPhoto
 import net.vonforst.evmap.databinding.FragmentGalleryBinding
+import net.vonforst.evmap.model.ChargerPhoto
 import net.vonforst.evmap.viewmodel.GalleryViewModel
 
 

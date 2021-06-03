@@ -6,12 +6,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.withContext
 import net.vonforst.evmap.api.RateLimitInterceptor
 import net.vonforst.evmap.api.await
-import net.vonforst.evmap.api.goingelectric.ChargeLocation
-import net.vonforst.evmap.api.goingelectric.Chargepoint
-import net.vonforst.evmap.viewmodel.FilterValues
+import net.vonforst.evmap.model.*
 import net.vonforst.evmap.viewmodel.Resource
-import net.vonforst.evmap.viewmodel.getMultipleChoiceValue
-import net.vonforst.evmap.viewmodel.getSliderValue
 import okhttp3.JavaNetCookieJar
 import okhttp3.OkHttpClient
 import okhttp3.Request

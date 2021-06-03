@@ -3,9 +3,9 @@ package net.vonforst.evmap.storage
 import androidx.room.TypeConverter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
-import net.vonforst.evmap.api.goingelectric.ChargeCardId
-import net.vonforst.evmap.api.goingelectric.Chargepoint
-import net.vonforst.evmap.api.goingelectric.ChargerPhoto
+import net.vonforst.evmap.model.ChargeCardId
+import net.vonforst.evmap.model.Chargepoint
+import net.vonforst.evmap.model.ChargerPhoto
 import java.time.Instant
 import java.time.LocalTime
 

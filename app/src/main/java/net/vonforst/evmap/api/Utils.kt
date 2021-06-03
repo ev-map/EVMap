@@ -1,11 +1,10 @@
 package net.vonforst.evmap.api
 
-import android.content.Context
 import androidx.annotation.DrawableRes
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.suspendCancellableCoroutine
 import net.vonforst.evmap.R
-import net.vonforst.evmap.api.goingelectric.Chargepoint
+import net.vonforst.evmap.model.Chargepoint
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
@@ -56,7 +55,7 @@ private val plugNames = mapOf(
     Chargepoint.TESLA_ROADSTER_HPC to R.string.plug_roadster_hpc
 )
 
-fun nameForPlugType(ctx: Context, type: String): String =
+fun nameForPlugType(ctx: StringProvider, type: String): String =
     plugNames[type]?.let {
         ctx.getString(it)
     } ?: type

@@ -5,7 +5,7 @@
 
     <data>
 
-        <import type="net.vonforst.evmap.api.goingelectric.Chargepoint" />
+        <import type="net.vonforst.evmap.model.Chargepoint" />
 
         <import type="net.vonforst.evmap.ui.BindingAdaptersKt" />
 

@@ -13,7 +13,7 @@ internal class ChargepointListItemJsonAdapterFactory : JsonAdapter.Factory {
         annotations: MutableSet<out Annotation>,
         moshi: Moshi
     ): JsonAdapter<*>? {
-        if (Types.getRawType(type) == ChargepointListItem::class.java) {
+        if (Types.getRawType(type) == GEChargepointListItem::class.java) {
             return ChargepointListItemJsonAdapter(
                 moshi
             )
@@ -26,18 +26,18 @@ internal class ChargepointListItemJsonAdapterFactory : JsonAdapter.Factory {
 
 
 internal class ChargepointListItemJsonAdapter(val moshi: Moshi) :
-    JsonAdapter<ChargepointListItem>() {
+    JsonAdapter<GEChargepointListItem>() {
     private val clusterAdapter =
-        moshi.adapter<ChargeLocationCluster>(
-            ChargeLocationCluster::class.java
+        moshi.adapter<GEChargeLocationCluster>(
+            GEChargeLocationCluster::class.java
         )
 
-    private val locationAdapter = moshi.adapter<ChargeLocation>(
-        ChargeLocation::class.java
+    private val locationAdapter = moshi.adapter<GEChargeLocation>(
+        GEChargeLocation::class.java
     )
 
     @FromJson
-    override fun fromJson(reader: JsonReader): ChargepointListItem {
+    override fun fromJson(reader: JsonReader): GEChargepointListItem {
         var clustered = false
         reader.peekJson().use { peeked ->
             peeked.beginObject()
@@ -61,7 +61,7 @@ internal class ChargepointListItemJsonAdapter(val moshi: Moshi) :
         val CLUSTERED: JsonReader.Options = JsonReader.Options.of("clustered")
     }
 
-    override fun toJson(writer: JsonWriter, value: ChargepointListItem?) {
+    override fun toJson(writer: JsonWriter, value: GEChargepointListItem?) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }
@@ -94,8 +94,8 @@ internal class JsonObjectOrFalseAdapter<T> private constructor(
         JsonReader.Token.BOOLEAN -> when (reader.nextBoolean()) {
             false -> null // Response was false
             else -> {
-                if (this.clazz == FaultReport::class.java) {
-                    FaultReport(null, null) as T
+                if (this.clazz == GEFaultReport::class.java) {
+                    GEFaultReport(null, null) as T
                 } else {
                     throw IllegalStateException("Non-false boolean for @JsonObjectOrFalse field")
                 }
@@ -126,20 +126,20 @@ internal class HoursAdapter {
     private val regex = Regex("from (.*) till (.*)")
 
     @FromJson
-    fun fromJson(str: String): Hours? {
+    fun fromJson(str: String): GEHours? {
         if (str == "closed") {
-            return Hours(null, null)
+            return GEHours(null, null)
         } else {
             val match = regex.find(str)
             if (match != null) {
-                return Hours(
+                return GEHours(
                     LocalTime.parse(match.groupValues[1]),
                     LocalTime.parse(match.groupValues[2])
                 )
             } else {
                 // I cannot reproduce this case, but it seems to occur once in a while
                 Log.e("GoingElectricApi", "invalid hours value: " + str)
-                return Hours(
+                return GEHours(
                     LocalTime.MIN, LocalTime.MIN
                 )
             }
@@ -147,7 +147,7 @@ internal class HoursAdapter {
     }
 
     @ToJson
-    fun toJson(value: Hours): String {
+    fun toJson(value: GEHours): String {
         if (value.start == null || value.end == null) {
             return "closed"
         } else {

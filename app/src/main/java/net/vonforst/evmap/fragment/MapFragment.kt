@@ -66,12 +66,10 @@ import net.vonforst.evmap.*
 import net.vonforst.evmap.adapter.ConnectorAdapter
 import net.vonforst.evmap.adapter.DetailsAdapter
 import net.vonforst.evmap.adapter.GalleryAdapter
-import net.vonforst.evmap.api.goingelectric.ChargeLocation
-import net.vonforst.evmap.api.goingelectric.ChargeLocationCluster
-import net.vonforst.evmap.api.goingelectric.ChargepointListItem
 import net.vonforst.evmap.autocomplete.handleAutocompleteResult
 import net.vonforst.evmap.autocomplete.launchAutocomplete
 import net.vonforst.evmap.databinding.FragmentMapBinding
+import net.vonforst.evmap.model.*
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.ui.ChargerIconGenerator
 import net.vonforst.evmap.ui.ClusterIconGenerator

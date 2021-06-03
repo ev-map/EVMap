@@ -5,16 +5,17 @@ import androidx.lifecycle.*
 import com.car2go.maps.AnyMap
 import com.car2go.maps.model.LatLng
 import com.car2go.maps.model.LatLngBounds
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import net.vonforst.evmap.api.availability.ChargeLocationStatus
 import net.vonforst.evmap.api.availability.getAvailability
-import net.vonforst.evmap.api.goingelectric.ChargeCard
-import net.vonforst.evmap.api.goingelectric.ChargeLocation
-import net.vonforst.evmap.api.goingelectric.ChargepointListItem
-import net.vonforst.evmap.api.goingelectric.GoingElectricApi
-import net.vonforst.evmap.storage.*
-import net.vonforst.evmap.ui.cluster
+import net.vonforst.evmap.api.goingelectric.GEReferenceData
+import net.vonforst.evmap.api.goingelectric.GoingElectricApiWrapper
+import net.vonforst.evmap.api.stringProvider
+import net.vonforst.evmap.model.*
+import net.vonforst.evmap.storage.AppDatabase
+import net.vonforst.evmap.storage.FilterProfile
+import net.vonforst.evmap.storage.GEReferenceDataRepository
+import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.utils.distanceBetween
 import java.io.IOException
 
@@ -33,7 +34,7 @@ internal fun getClusterDistance(zoom: Float): Int? {
 }
 
 class MapViewModel(application: Application, geApiKey: String) : AndroidViewModel(application) {
-    private var api = GoingElectricApi.create(geApiKey, context = application)
+    private var api = GoingElectricApiWrapper(geApiKey, context = application)
     private var db = AppDatabase.getInstance(application)
     private var prefs = PreferenceDataSource(application)
 
@@ -56,16 +57,19 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
             }
         }
     }
-    private val plugs: LiveData<List<Plug>> by lazy {
-        PlugRepository(api, viewModelScope, db.plugDao(), prefs).getPlugs()
+    private val referenceData: LiveData<out ReferenceData> by lazy {
+        GEReferenceDataRepository(
+            api,
+            viewModelScope,
+            db.geReferenceDataDao(),
+            prefs
+        ).getReferenceData()
     }
-    private val networks: LiveData<List<Network>> by lazy {
-        NetworkRepository(api, viewModelScope, db.networkDao(), prefs).getNetworks()
+    private val filters = MediatorLiveData<List<Filter<FilterValue>>>().apply {
+        addSource(referenceData) { data ->
+            value = api.getFilters(data as GEReferenceData, application.stringProvider())
+        }
     }
-    private val chargeCards: LiveData<List<ChargeCard>> by lazy {
-        ChargeCardRepository(api, viewModelScope, db.chargeCardDao(), prefs).getChargeCards()
-    }
-    private val filters = getFilters(application, plugs, networks, chargeCards)
 
     private val filtersWithValue: LiveData<FilterValues> by lazy {
         filtersWithValue(filters, filterValues)
@@ -78,10 +82,14 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
     val chargeCardMap: LiveData<Map<Long, ChargeCard>> by lazy {
         MediatorLiveData<Map<Long, ChargeCard>>().apply {
             value = null
-            addSource(chargeCards) {
-                value = chargeCards.value?.map {
-                    it.id to it
-                }?.toMap()
+            addSource(referenceData) { data ->
+                value = if (data is GEReferenceData) {
+                    data.chargecards.map {
+                        it.id to it.convert()
+                    }.toMap()
+                } else {
+                    null
+                }
             }
         }
     }
@@ -286,10 +294,19 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
 
             val mapPosition = data.first
             val filters = data.second
-            val result = getChargepointsWithFilters(mapPosition.bounds, mapPosition.zoom, filters)
-            filteredConnectors.value = result.second
-            filteredChargeCards.value = result.third
-            chargepoints.value = result.first
+            var result = api.getChargepoints(mapPosition.bounds, mapPosition.zoom, filters)
+            if (result.status == Status.ERROR && result.data == null) {
+                // keep old results if new data could not be loaded
+                result = Resource.error(result.message, chargepoints.value?.data)
+            }
+            chargepoints.value = result
+
+            val chargeCardsVal = filters.getMultipleChoiceValue("chargecards")
+            filteredChargeCards.value =
+                if (chargeCardsVal.all) null else chargeCardsVal.values.map { it.toLong() }.toSet()
+
+            val connectorsVal = filters.getMultipleChoiceValue("connectors")
+            filteredConnectors.value = if (connectorsVal.all) null else connectorsVal.values
         }
 
     private fun loadChargepoints(
@@ -298,125 +315,6 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
     ) {
         chargepointLoader(Pair(mapPosition, filters))
     }
-
-    private suspend fun getChargepointsWithFilters(
-        bounds: LatLngBounds,
-        zoom: Float,
-        filters: FilterValues
-    ): Triple<Resource<List<ChargepointListItem>>, Set<String>?, Set<Long>?> {
-        val freecharging = filters.getBooleanValue("freecharging")
-        val freeparking = filters.getBooleanValue("freeparking")
-        val open247 = filters.getBooleanValue("open_247")
-        val barrierfree = filters.getBooleanValue("barrierfree")
-        val excludeFaults = filters.getBooleanValue("exclude_faults")
-        val minPower = filters.getSliderValue("min_power")
-        val minConnectors = filters.getSliderValue("min_connectors")
-
-        val connectorsVal = filters.getMultipleChoiceValue("connectors")
-        if (connectorsVal.values.isEmpty() && !connectorsVal.all) {
-            // no connectors chosen
-            return Triple(Resource.success(emptyList()), null, null)
-        }
-        val connectors = formatMultipleChoice(connectorsVal)
-        val filteredConnectors = if (connectorsVal.all) null else connectorsVal.values
-
-        val chargeCardsVal = filters.getMultipleChoiceValue("chargecards")
-        if (chargeCardsVal.values.isEmpty() && !chargeCardsVal.all) {
-            // no chargeCards chosen
-            return Triple(Resource.success(emptyList()), filteredConnectors, null)
-        }
-        val chargeCards = formatMultipleChoice(chargeCardsVal)
-        val filteredChargeCards =
-            if (chargeCardsVal.all) null else chargeCardsVal.values.map { it.toLong() }.toSet()
-
-        val networksVal = filters.getMultipleChoiceValue("networks")
-        if (networksVal.values.isEmpty() && !networksVal.all) {
-            // no networks chosen
-            return Triple(Resource.success(emptyList()), filteredConnectors, filteredChargeCards)
-        }
-        val networks = formatMultipleChoice(networksVal)
-
-        val categoriesVal = filters.getMultipleChoiceValue("categories")
-        if (categoriesVal.values.isEmpty() && !categoriesVal.all) {
-            // no categories chosen
-            return Triple(Resource.success(emptyList()), filteredConnectors, filteredChargeCards)
-        }
-        val categories = formatMultipleChoice(categoriesVal)
-
-        // do not use clustering if filters need to be applied locally.
-        val useClustering = zoom < 13
-        val geClusteringAvailable = minConnectors <= 1
-        val useGeClustering = useClustering && geClusteringAvailable
-        val clusterDistance = if (useClustering) getClusterDistance(zoom) else null
-
-        var startkey: Int? = null
-        val data = mutableListOf<ChargepointListItem>()
-        do {
-            // load all pages of the response
-            try {
-                val response = api.getChargepoints(
-                    bounds.southwest.latitude,
-                    bounds.southwest.longitude,
-                    bounds.northeast.latitude,
-                    bounds.northeast.longitude,
-                    clustering = useGeClustering,
-                    zoom = zoom,
-                    clusterDistance = clusterDistance,
-                    freecharging = freecharging,
-                    minPower = minPower,
-                    freeparking = freeparking,
-                    open247 = open247,
-                    barrierfree = barrierfree,
-                    excludeFaults = excludeFaults,
-                    plugs = connectors,
-                    chargecards = chargeCards,
-                    networks = networks,
-                    categories = categories,
-                    startkey = startkey
-                )
-                if (!response.isSuccessful || response.body()!!.status != "ok") {
-                    return Triple(
-                        Resource.error(response.message(), chargepoints.value?.data),
-                        null,
-                        null
-                    )
-                } else {
-                    val body = response.body()!!
-                    data.addAll(body.chargelocations)
-                    startkey = body.startkey
-                }
-            } catch (e: IOException) {
-                return Triple(
-                    Resource.error(e.message, chargepoints.value?.data),
-                    filteredConnectors,
-                    filteredChargeCards
-                )
-            }
-        } while (startkey != null && startkey < 10000)
-
-        var result = data.filter { it ->
-            // apply filters which GoingElectric does not support natively
-            if (it is ChargeLocation) {
-                it.chargepoints
-                    .filter { it.power >= minPower }
-                    .filter { if (!connectorsVal.all) it.type in connectorsVal.values else true }
-                    .sumBy { it.count } >= minConnectors
-            } else {
-                true
-            }
-        }
-        if (!geClusteringAvailable && useClustering) {
-            // apply local clustering if server side clustering is not available
-            Dispatchers.IO.run {
-                result = cluster(result, zoom, clusterDistance!!)
-            }
-        }
-
-        return Triple(Resource.success(result), filteredConnectors, filteredChargeCards)
-    }
-
-    private fun formatMultipleChoice(connectorsVal: MultipleChoiceFilterValue) =
-        if (connectorsVal.all) null else connectorsVal.values.joinToString(",")
 
     private suspend fun loadAvailability(charger: ChargeLocation) {
         availability.value = Resource.loading(null)
@@ -427,13 +325,7 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
         chargerDetails.value = Resource.loading(null)
         viewModelScope.launch {
             try {
-                val response = api.getChargepointDetail(charger.id)
-                if (!response.isSuccessful || response.body()!!.status != "ok") {
-                    chargerDetails.value = Resource.error(response.message(), null)
-                } else {
-                    chargerDetails.value =
-                        Resource.success(response.body()!!.chargelocations[0] as ChargeLocation)
-                }
+                chargerDetails.value = api.getChargepointDetail(charger.id)
             } catch (e: IOException) {
                 chargerDetails.value = Resource.error(e.message, null)
                 e.printStackTrace()
@@ -446,19 +338,11 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
         chargerSparse.value = null
         viewModelScope.launch {
             val response = api.getChargepointDetail(chargerId)
-            if (!response.isSuccessful || response.body()!!.status != "ok") {
-                chargerSparse.value = null
-                chargerDetails.value = Resource.error(response.message(), null)
+            chargerDetails.value = response
+            if (response.status == Status.SUCCESS) {
+                chargerSparse.value = response.data
             } else {
-                val chargers = response.body()!!.chargelocations
-                    if (chargers.isNotEmpty()) {
-                        val charger = chargers[0] as ChargeLocation
-                chargerDetails.value =
-                    Resource.success(charger)
-                chargerSparse.value = charger} else {
-                        chargerDetails.value = Resource.error("not found", null)
-                        chargerSparse.value = null
-                    }
+                chargerSparse.value = null
             }
         }
     }

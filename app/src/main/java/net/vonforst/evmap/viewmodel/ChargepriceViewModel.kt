@@ -6,8 +6,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import moe.banana.jsonapi2.HasOne
 import net.vonforst.evmap.api.chargeprice.*
-import net.vonforst.evmap.api.goingelectric.ChargeLocation
-import net.vonforst.evmap.api.goingelectric.Chargepoint
+import net.vonforst.evmap.model.ChargeLocation
+import net.vonforst.evmap.model.Chargepoint
 import net.vonforst.evmap.storage.PreferenceDataSource
 import java.io.IOException
 import java.util.*

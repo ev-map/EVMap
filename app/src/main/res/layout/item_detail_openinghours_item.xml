@@ -11,7 +11,7 @@
 
         <variable
             name="hours"
-            type="net.vonforst.evmap.api.goingelectric.OpeningHoursDays" />
+            type="net.vonforst.evmap.model.OpeningHoursDays" />
 
         <variable
             name="dayOfWeek"

@@ -129,6 +129,7 @@ class GoingElectricApiWrapper(
 ) : ChargepointApi<GEReferenceData> {
     val api = GoingElectricApi.create(apikey, baseurl, context)
     override suspend fun getChargepoints(
+        referenceData: ReferenceData,
         bounds: LatLngBounds,
         zoom: Float,
         filters: FilterValues
@@ -237,6 +238,7 @@ class GoingElectricApiWrapper(
         if (connectorsVal.all) null else connectorsVal.values.joinToString(",")
 
     override suspend fun getChargepointsRadius(
+        referenceData: ReferenceData,
         location: LatLng,
         radius: Int,
         zoom: Float,
@@ -245,7 +247,10 @@ class GoingElectricApiWrapper(
         TODO("Not yet implemented")
     }
 
-    override suspend fun getChargepointDetail(id: Long): Resource<ChargeLocation> {
+    override suspend fun getChargepointDetail(
+        referenceData: ReferenceData,
+        id: Long
+    ): Resource<ChargeLocation> {
         val response = api.getChargepointDetail(id)
         return if (response.isSuccessful && response.body()!!.status == "ok" && response.body()!!.chargelocations.size == 1) {
             Resource.success(
@@ -284,9 +289,10 @@ class GoingElectricApiWrapper(
         }
 
     override fun getFilters(
-        referenceData: GEReferenceData,
+        referenceData: ReferenceData,
         sp: StringProvider
     ): List<Filter<FilterValue>> {
+        val referenceData = referenceData as GEReferenceData
         val plugs = referenceData.plugs
         val networks = referenceData.networks
         val chargeCards = referenceData.chargecards

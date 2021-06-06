@@ -101,20 +101,28 @@ data class ChargeLocation(
 }
 
 data class Cost(
-    val freecharging: Boolean,
-    val freeparking: Boolean,
-    val descriptionShort: String?,
-    val descriptionLong: String?
+    val freecharging: Boolean? = null,
+    val freeparking: Boolean? = null,
+    val descriptionShort: String? = null,
+    val descriptionLong: String? = null
 ) {
     fun getStatusText(ctx: Context, emoji: Boolean = false): CharSequence {
-        val charging =
-            if (freecharging) ctx.getString(R.string.free) else ctx.getString(R.string.paid)
-        val parking =
-            if (freeparking) ctx.getString(R.string.free) else ctx.getString(R.string.paid)
-        return if (emoji) {
-            "⚡ $charging · \uD83C\uDD7F️ $parking"
+        if (freecharging != null && freeparking != null) {
+            val charging =
+                if (freecharging) ctx.getString(R.string.free) else ctx.getString(R.string.paid)
+            val parking =
+                if (freeparking) ctx.getString(R.string.free) else ctx.getString(R.string.paid)
+            return if (emoji) {
+                "⚡ $charging · \uD83C\uDD7F️ $parking"
+            } else {
+                HtmlCompat.fromHtml(ctx.getString(R.string.cost_detail, charging, parking), 0)
+            }
+        } else if (descriptionShort != null) {
+            return descriptionShort
+        } else if (descriptionLong != null) {
+            return descriptionLong
         } else {
-            HtmlCompat.fromHtml(ctx.getString(R.string.cost_detail, charging, parking), 0)
+            return ""
         }
     }
 }

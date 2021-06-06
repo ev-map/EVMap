@@ -6,25 +6,30 @@ import com.car2go.maps.model.LatLngBounds
 import net.vonforst.evmap.model.*
 import net.vonforst.evmap.viewmodel.Resource
 
-interface ChargepointApi<T : ReferenceData> {
+interface ChargepointApi<out T : ReferenceData> {
     suspend fun getChargepoints(
+        referenceData: ReferenceData,
         bounds: LatLngBounds,
         zoom: Float,
         filters: FilterValues
     ): Resource<List<ChargepointListItem>>
 
     suspend fun getChargepointsRadius(
+        referenceData: ReferenceData,
         location: LatLng,
         radius: Int,
         zoom: Float,
         filters: FilterValues
     ): Resource<List<ChargepointListItem>>
 
-    suspend fun getChargepointDetail(id: Long): Resource<ChargeLocation>
+    suspend fun getChargepointDetail(
+        referenceData: ReferenceData,
+        id: Long
+    ): Resource<ChargeLocation>
 
     suspend fun getReferenceData(): Resource<T>
 
-    fun getFilters(referenceData: T, sp: StringProvider): List<Filter<FilterValue>>
+    fun getFilters(referenceData: ReferenceData, sp: StringProvider): List<Filter<FilterValue>>
 }
 
 interface StringProvider {

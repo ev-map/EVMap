@@ -1,4 +1,3 @@
 package net.vonforst.evmap.model
 
-open class ReferenceData {
-}
+abstract class ReferenceData

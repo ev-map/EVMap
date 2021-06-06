@@ -54,28 +54,26 @@ data class GEChargeLocation(
     val openinghours: GEOpeningHours?,
     val cost: GECost?
 ) : GEChargepointListItem() {
-    override fun convert(apikey: String): ChargeLocation {
-        return ChargeLocation(
-            id,
-            name,
-            coordinates.convert(),
-            address.convert(),
-            chargepoints.map { it.convert() },
-            network,
-            url,
-            faultReport?.convert(),
-            verified,
-            barrierFree,
-            operator,
-            generalInformation,
-            amenities,
-            locationDescription,
-            photos?.map { it.convert(apikey) },
-            chargecards?.map { it.convert() },
-            openinghours?.convert(),
-            cost?.convert()
-        )
-    }
+    override fun convert(apikey: String) = ChargeLocation(
+        id,
+        name,
+        coordinates.convert(),
+        address.convert(),
+        chargepoints.map { it.convert() },
+        network,
+        url,
+        faultReport?.convert(),
+        verified,
+        barrierFree,
+        operator,
+        generalInformation,
+        amenities,
+        locationDescription,
+        photos?.map { it.convert(apikey) },
+        chargecards?.map { it.convert() },
+        openinghours?.convert(),
+        cost?.convert()
+    )
 }
 
 @JsonClass(generateAdapter = true)

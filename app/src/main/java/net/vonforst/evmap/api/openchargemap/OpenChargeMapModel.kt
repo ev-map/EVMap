@@ -2,6 +2,7 @@ package net.vonforst.evmap.api.openchargemap
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import net.vonforst.evmap.model.*
 import java.time.ZonedDateTime
 
 data class OCMBoundingBox(
@@ -23,7 +24,28 @@ data class OCMChargepoint(
     @Json(name = "Connections") val connections: List<OCMConnection>,
     @Json(name = "NumberOfPoints") val numPoints: Int,
     @Json(name = "GeneralComments") val generalComments: String?
-)
+) {
+    fun convert(refData: OCMReferenceData) = ChargeLocation(
+        id,
+        addressInfo.title,
+        Coordinate(addressInfo.latitude, addressInfo.longitude),
+        addressInfo.toAddress(refData),
+        connections.map { it.convert(refData) },
+        null,
+        "https://openchargemap.org/site/poi/details/$id",
+        null,
+        recentlyVerified,
+        null,
+        null, //TODO: OperatorInfo
+        generalComments,
+        null,
+        addressInfo.accessComments,
+        null, // TODO: MediaItems,
+        null,
+        null,
+        Cost(descriptionLong = cost)
+    )
+}
 
 @JsonClass(generateAdapter = true)
 data class OCMAddressInfo(
@@ -41,14 +63,50 @@ data class OCMAddressInfo(
     @Json(name = "ContactEmail") val contactEmail: String?,
     @Json(name = "AccessComments") val accessComments: String?,
     @Json(name = "RelatedURL") val relatedUrl: String?
-)
+) {
+    fun toAddress(refData: OCMReferenceData) = Address(
+        town,
+        refData.countries.find { it.id == countryId }!!.title,
+        postcode,
+        listOfNotNull(addressLine1, addressLine2).joinToString(", ")
+    )
+}
 
 @JsonClass(generateAdapter = true)
 data class OCMConnection(
     @Json(name = "ConnectionTypeID") val connectionTypeId: Long,
-    @Json(name = "Amps") val amps: Int,
-    @Json(name = "Voltage") val voltage: Int,
+    @Json(name = "Amps") val amps: Int?,
+    @Json(name = "Voltage") val voltage: Int?,
     @Json(name = "PowerKW") val power: Double,
-    @Json(name = "Quantity") val quantity: Int,
+    @Json(name = "Quantity") val quantity: Int?,
     @Json(name = "Comments") val comments: String?
+) {
+    fun convert(refData: OCMReferenceData) = Chargepoint(
+        refData.connectionTypes.find { it.id == connectionTypeId }!!.title,
+        power,
+        quantity ?: 0
+    )
+}
+
+@JsonClass(generateAdapter = true)
+data class OCMReferenceData(
+    @Json(name = "ConnectionTypes") val connectionTypes: List<OCMConnectionType>,
+    @Json(name = "Countries") val countries: List<OCMCountry>
+) : ReferenceData()
+
+@JsonClass(generateAdapter = true)
+data class OCMConnectionType(
+    @Json(name = "ID") val id: Long,
+    @Json(name = "Title") val title: String,
+    @Json(name = "FormalName") val formalName: String?,
+    @Json(name = "IsDiscontinued") val discontinued: Boolean?,
+    @Json(name = "IsObsolete") val obsolete: Boolean?
+)
+
+@JsonClass(generateAdapter = true)
+data class OCMCountry(
+    @Json(name = "ID") val id: Long,
+    @Json(name = "ISOCode") val isoCode: String,
+    @Json(name = "ContinentCode") val continentCode: String?,
+    @Json(name = "Title") val title: String
 )

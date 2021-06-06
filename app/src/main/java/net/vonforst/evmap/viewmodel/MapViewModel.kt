@@ -6,10 +6,13 @@ import com.car2go.maps.AnyMap
 import com.car2go.maps.model.LatLng
 import com.car2go.maps.model.LatLngBounds
 import kotlinx.coroutines.launch
+import net.vonforst.evmap.R
+import net.vonforst.evmap.api.ChargepointApi
 import net.vonforst.evmap.api.availability.ChargeLocationStatus
 import net.vonforst.evmap.api.availability.getAvailability
 import net.vonforst.evmap.api.goingelectric.GEReferenceData
 import net.vonforst.evmap.api.goingelectric.GoingElectricApiWrapper
+import net.vonforst.evmap.api.openchargemap.OpenChargeMapApiWrapper
 import net.vonforst.evmap.api.stringProvider
 import net.vonforst.evmap.model.*
 import net.vonforst.evmap.storage.AppDatabase
@@ -34,7 +37,13 @@ internal fun getClusterDistance(zoom: Float): Int? {
 }
 
 class MapViewModel(application: Application, geApiKey: String) : AndroidViewModel(application) {
-    private var api = GoingElectricApiWrapper(geApiKey, context = application)
+    private var api: ChargepointApi<ReferenceData> = OpenChargeMapApiWrapper(
+        application.getString(
+            R.string.openchargemap_key
+        )
+    )
+
+    // = GoingElectricApiWrapper(geApiKey, context = application)
     private var db = AppDatabase.getInstance(application)
     private var prefs = PreferenceDataSource(application)
 
@@ -58,16 +67,30 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
         }
     }
     private val referenceData: LiveData<out ReferenceData> by lazy {
-        GEReferenceDataRepository(
-            api,
-            viewModelScope,
-            db.geReferenceDataDao(),
-            prefs
-        ).getReferenceData()
+        val api = api
+        if (api is GoingElectricApiWrapper) {
+            GEReferenceDataRepository(
+                api,
+                viewModelScope,
+                db.geReferenceDataDao(),
+                prefs
+            ).getReferenceData()
+        } else {
+            // TODO: create repository
+            MutableLiveData<ReferenceData>().apply {
+                viewModelScope.launch {
+                    val referenceData1 = api.getReferenceData()
+                    if (referenceData1.status == Status.SUCCESS) {
+                        value = referenceData1.data
+                    }
+                }
+            }
+        }
     }
     private val filters = MediatorLiveData<List<Filter<FilterValue>>>().apply {
         addSource(referenceData) { data ->
-            value = api.getFilters(data as GEReferenceData, application.stringProvider())
+            val api = api
+            value = api.getFilters(data, application.stringProvider())
         }
     }
 
@@ -127,11 +150,15 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
     }
     val chargerDetails: MediatorLiveData<Resource<ChargeLocation>> by lazy {
         MediatorLiveData<Resource<ChargeLocation>>().apply {
-            addSource(chargerSparse) { charger ->
-                if (charger != null) {
-                    loadChargerDetails(charger)
-                } else {
-                    value = null
+            listOf(chargerSparse, referenceData).forEach {
+                addSource(it) { _ ->
+                    val charger = chargerSparse.value
+                    val refData = referenceData.value
+                    if (charger != null && refData != null) {
+                        loadChargerDetails(charger, refData)
+                    } else {
+                        value = null
+                    }
                 }
             }
         }
@@ -283,49 +310,51 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
     fun reloadChargepoints() {
         val pos = mapPosition.value ?: return
         val filters = filtersWithValue.value ?: return
-        loadChargepoints(pos, filters)
+        val referenceData = referenceData.value ?: return
+        chargepointLoader(Triple(pos, filters, referenceData))
     }
 
     private var chargepointLoader =
-        throttleLatest(500L, viewModelScope) { data: Pair<MapPosition, FilterValues> ->
+        throttleLatest(
+            500L,
+            viewModelScope
+        ) { data: Triple<MapPosition, FilterValues, ReferenceData> ->
             chargepoints.value = Resource.loading(chargepoints.value?.data)
             filteredConnectors.value = null
             filteredChargeCards.value = null
 
             val mapPosition = data.first
             val filters = data.second
-            var result = api.getChargepoints(mapPosition.bounds, mapPosition.zoom, filters)
+            val api = api
+            val refData = data.third
+            var result = api.getChargepoints(refData, mapPosition.bounds, mapPosition.zoom, filters)
             if (result.status == Status.ERROR && result.data == null) {
                 // keep old results if new data could not be loaded
                 result = Resource.error(result.message, chargepoints.value?.data)
             }
             chargepoints.value = result
 
-            val chargeCardsVal = filters.getMultipleChoiceValue("chargecards")
-            filteredChargeCards.value =
-                if (chargeCardsVal.all) null else chargeCardsVal.values.map { it.toLong() }.toSet()
+            if (api is GoingElectricApiWrapper) {
+                val chargeCardsVal = filters.getMultipleChoiceValue("chargecards")
+                filteredChargeCards.value =
+                    if (chargeCardsVal.all) null else chargeCardsVal.values.map { it.toLong() }
+                        .toSet()
 
-            val connectorsVal = filters.getMultipleChoiceValue("connectors")
-            filteredConnectors.value = if (connectorsVal.all) null else connectorsVal.values
+                val connectorsVal = filters.getMultipleChoiceValue("connectors")
+                filteredConnectors.value = if (connectorsVal.all) null else connectorsVal.values
+            }
         }
-
-    private fun loadChargepoints(
-        mapPosition: MapPosition,
-        filters: FilterValues
-    ) {
-        chargepointLoader(Pair(mapPosition, filters))
-    }
 
     private suspend fun loadAvailability(charger: ChargeLocation) {
         availability.value = Resource.loading(null)
         availability.value = getAvailability(charger)
     }
 
-    private fun loadChargerDetails(charger: ChargeLocation) {
+    private fun loadChargerDetails(charger: ChargeLocation, referenceData: ReferenceData) {
         chargerDetails.value = Resource.loading(null)
         viewModelScope.launch {
             try {
-                chargerDetails.value = api.getChargepointDetail(charger.id)
+                chargerDetails.value = api.getChargepointDetail(referenceData, charger.id)
             } catch (e: IOException) {
                 chargerDetails.value = Resource.error(e.message, null)
                 e.printStackTrace()
@@ -336,14 +365,19 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
     fun loadChargerById(chargerId: Long) {
         chargerDetails.value = Resource.loading(null)
         chargerSparse.value = null
-        viewModelScope.launch {
-            val response = api.getChargepointDetail(chargerId)
-            chargerDetails.value = response
-            if (response.status == Status.SUCCESS) {
-                chargerSparse.value = response.data
-            } else {
-                chargerSparse.value = null
+        referenceData.observeForever(object : Observer<ReferenceData> {
+            override fun onChanged(refData: ReferenceData) {
+                referenceData.removeObserver(this)
+                viewModelScope.launch {
+                    val response = api.getChargepointDetail(refData, chargerId)
+                    chargerDetails.value = response
+                    if (response.status == Status.SUCCESS) {
+                        chargerSparse.value = response.data
+                    } else {
+                        chargerSparse.value = null
+                    }
+                }
             }
-        }
+        })
     }
 }

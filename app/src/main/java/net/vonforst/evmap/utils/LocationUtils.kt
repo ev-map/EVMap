@@ -1,5 +1,6 @@
 package net.vonforst.evmap.utils
 
+import android.content.Intent
 import android.location.Location
 import kotlin.math.*
 
@@ -31,4 +32,31 @@ fun distanceBetween(
     val a = sin(dLat / 2).pow(2.0) + sin(dLon / 2).pow(2.0) * cos(originLat) * cos(destinationLat)
     val c = 2 * asin(sqrt(a))
     return earthRadiusM * c
+}
+
+
+fun getLocationFromIntent(intent: Intent): List<Double>? {
+    val pos = intent.data?.schemeSpecificPart?.split("?")?.get(0)
+    var coords = stringToCoords(pos)
+    if (coords != null) {
+        return coords
+    }
+    val query = intent.data?.query?.split("=")?.get(1)
+    coords = stringToCoords(query)
+    if (coords != null) {
+        return coords
+    } else {
+        return null
+    }
+}
+
+internal fun stringToCoords(s: String?): List<Double>? {
+    if (s == null) return null
+
+    val coords = s.split(",").mapNotNull { it.toDoubleOrNull() }
+    return if (coords.size == 2 && !(coords[0] == 0.0 && coords[1] == 0.0)) {
+        coords
+    } else {
+        null
+    }
 }

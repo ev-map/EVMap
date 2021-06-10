@@ -22,6 +22,7 @@ import net.vonforst.evmap.api.goingelectric.ChargeLocation
 import net.vonforst.evmap.fragment.MapFragment
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.utils.LocaleContextWrapper
+import net.vonforst.evmap.utils.getLocationFromIntent
 
 
 const val REQUEST_LOCATION_PERMISSION = 1
@@ -79,28 +80,25 @@ class MapsActivity : AppCompatActivity() {
         checkPlayServices(this)
 
         if (intent?.scheme == "geo") {
-            val pos = intent.data?.schemeSpecificPart?.split("?")?.get(0)
             val query = intent.data?.query?.split("=")?.get(1)
-            val coords = pos?.split(",")?.map { it.toDoubleOrNull() }
+            val coords = getLocationFromIntent(intent)
 
-            if (coords != null && coords.size == 2) {
+            if (coords != null) {
                 val lat = coords[0]
                 val lon = coords[1]
-                if (lat != null && lon != null && lat != 0.0 && lon != 0.0) {
-                    val deepLink = navController.createDeepLink()
-                        .setGraph(R.navigation.nav_graph)
-                        .setDestination(R.id.map)
-                        .setArguments(MapFragment.showLocation(lat, lon))
-                        .createPendingIntent()
-                    deepLink.send()
-                } else if (query != null && query.isNotEmpty()) {
-                    val deepLink = navController.createDeepLink()
-                        .setGraph(R.navigation.nav_graph)
-                        .setDestination(R.id.map)
-                        .setArguments(MapFragment.showLocationByName(query))
-                        .createPendingIntent()
-                    deepLink.send()
-                }
+                val deepLink = navController.createDeepLink()
+                    .setGraph(R.navigation.nav_graph)
+                    .setDestination(R.id.map)
+                    .setArguments(MapFragment.showLocation(lat, lon))
+                    .createPendingIntent()
+                deepLink.send()
+            } else if (query != null && query.isNotEmpty()) {
+                val deepLink = navController.createDeepLink()
+                    .setGraph(R.navigation.nav_graph)
+                    .setDestination(R.id.map)
+                    .setArguments(MapFragment.showLocationByName(query))
+                    .createPendingIntent()
+                deepLink.send()
             }
         } else if (intent?.scheme == "https" && intent?.data?.host == "www.goingelectric.de") {
             val id = intent.data?.pathSegments?.last()?.toLongOrNull()

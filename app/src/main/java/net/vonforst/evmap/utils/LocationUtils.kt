@@ -2,6 +2,8 @@ package net.vonforst.evmap.utils
 
 import android.content.Intent
 import android.location.Location
+import com.car2go.maps.model.LatLng
+import com.car2go.maps.model.LatLngBounds
 import kotlin.math.*
 
 /**
@@ -11,6 +13,12 @@ fun Location.plusMeters(dx: Double, dy: Double): Pair<Double, Double> {
     val lat = this.latitude + (180 / Math.PI) * (dx / 6378137.0)
     val lon = this.longitude + (180 / Math.PI) * (dy / 6378137.0) / cos(Math.toRadians(lat))
     return Pair(lat, lon)
+}
+
+fun LatLng.plusMeters(dx: Double, dy: Double): LatLng {
+    val lat = this.latitude + (180 / Math.PI) * (dx / 6378137.0)
+    val lon = this.longitude + (180 / Math.PI) * (dy / 6378137.0) / cos(Math.toRadians(lat))
+    return LatLng(lat, lon)
 }
 
 const val earthRadiusM = 6378137.0
@@ -59,4 +67,11 @@ internal fun stringToCoords(s: String?): List<Double>? {
     } else {
         null
     }
+}
+
+fun boundingBox(pos: LatLng, sizeMeters: Double): LatLngBounds {
+    return LatLngBounds(
+        pos.plusMeters(-sizeMeters, -sizeMeters),
+        pos.plusMeters(sizeMeters, sizeMeters)
+    )
 }

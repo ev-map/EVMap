@@ -77,6 +77,7 @@ import net.vonforst.evmap.ui.ChargerIconGenerator
 import net.vonforst.evmap.ui.ClusterIconGenerator
 import net.vonforst.evmap.ui.MarkerAnimator
 import net.vonforst.evmap.ui.getMarkerTint
+import net.vonforst.evmap.utils.boundingBox
 import net.vonforst.evmap.utils.distanceBetween
 import net.vonforst.evmap.viewmodel.*
 
@@ -784,7 +785,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             positionSet = true
         } else if (lat != null && lon != null) {
             // show given position
-            val cameraUpdate = map.cameraUpdateFactory.newLatLngZoom(LatLng(lat, lon), 16f)
+            val latLng = LatLng(lat, lon)
+            val cameraUpdate = map.cameraUpdateFactory.newLatLngZoom(latLng, 16f)
             map.moveCamera(cameraUpdate)
 
             if (chargerId != null) {
@@ -804,7 +806,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                     })
             } else {
                 // mark location as search result
-                vm.searchResult.value = PlaceWithBounds(LatLng(lat, lon), null)
+                vm.searchResult.value = PlaceWithBounds(latLng, boundingBox(latLng, 750.0))
             }
 
             positionSet = true
@@ -817,7 +819,16 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                     val latLng = LatLng(it.latitude, it.longitude)
                     val cameraUpdate = map.cameraUpdateFactory.newLatLngZoom(latLng, 16f)
                     map.moveCamera(cameraUpdate)
-                    vm.searchResult.value = PlaceWithBounds(latLng, null)
+                    val bboxSize = if (it.subAdminArea != null) {
+                        750.0 // this is a place within a city
+                    } else if (it.adminArea != null && it.adminArea != it.featureName) {
+                        4000.0 // this is a city
+                    } else if (it.adminArea != null) {
+                        100000.0 // this is a top-level administrative area (i.e. state)
+                    } else {
+                        500000.0 // this is a country
+                    }
+                    vm.searchResult.value = PlaceWithBounds(latLng, boundingBox(latLng, bboxSize))
                 }
             }
         }

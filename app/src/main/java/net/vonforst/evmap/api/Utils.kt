@@ -44,9 +44,13 @@ suspend fun Call.await(): Response {
 
 private val plugNames = mapOf(
     Chargepoint.TYPE_1 to R.string.plug_type_1,
-    Chargepoint.TYPE_2 to R.string.plug_type_2,
+    Chargepoint.TYPE_2_UNKNOWN to R.string.plug_type_2,
+    Chargepoint.TYPE_2_PLUG to R.string.plug_type_2,
+    Chargepoint.TYPE_2_SOCKET to R.string.plug_type_2,
     Chargepoint.TYPE_3 to R.string.plug_type_3,
-    Chargepoint.CCS to R.string.plug_ccs,
+    Chargepoint.CCS_UNKNOWN to R.string.plug_ccs,
+    Chargepoint.CCS_TYPE_1 to R.string.plug_ccs,
+    Chargepoint.CCS_TYPE_2 to R.string.plug_ccs,
     Chargepoint.SCHUKO to R.string.plug_schuko,
     Chargepoint.CHADEMO to R.string.plug_chademo,
     Chargepoint.SUPERCHARGER to R.string.plug_supercharger,
@@ -60,14 +64,38 @@ fun nameForPlugType(ctx: StringProvider, type: String): String =
         ctx.getString(it)
     } ?: type
 
+fun equivalentPlugTypes(type: String): Set<String> {
+    return when (type) {
+        Chargepoint.CCS_TYPE_1 -> setOf(Chargepoint.CCS_UNKNOWN, Chargepoint.CCS_TYPE_1)
+        Chargepoint.CCS_TYPE_2 -> setOf(Chargepoint.CCS_UNKNOWN, Chargepoint.CCS_TYPE_2)
+        Chargepoint.CCS_UNKNOWN -> setOf(
+            Chargepoint.CCS_UNKNOWN,
+            Chargepoint.CCS_TYPE_1,
+            Chargepoint.CCS_TYPE_2
+        )
+        Chargepoint.TYPE_2_PLUG -> setOf(Chargepoint.TYPE_2_UNKNOWN, Chargepoint.TYPE_2_PLUG)
+        Chargepoint.TYPE_2_SOCKET -> setOf(Chargepoint.TYPE_2_UNKNOWN, Chargepoint.TYPE_2_SOCKET)
+        Chargepoint.TYPE_2_UNKNOWN -> setOf(
+            Chargepoint.TYPE_2_UNKNOWN,
+            Chargepoint.TYPE_2_PLUG,
+            Chargepoint.TYPE_2_SOCKET
+        )
+        else -> setOf(type)
+    }
+}
+
 @DrawableRes
 fun iconForPlugType(type: String): Int =
     when (type) {
-        Chargepoint.CCS -> R.drawable.ic_connector_ccs
+        Chargepoint.CCS_TYPE_2 -> R.drawable.ic_connector_ccs
+        Chargepoint.CCS_UNKNOWN -> R.drawable.ic_connector_ccs
+        Chargepoint.CCS_TYPE_1 -> 0 // TODO: add CCS Type 1
         Chargepoint.CHADEMO -> R.drawable.ic_connector_chademo
         Chargepoint.SCHUKO -> R.drawable.ic_connector_schuko
         Chargepoint.SUPERCHARGER -> R.drawable.ic_connector_supercharger
-        Chargepoint.TYPE_2 -> R.drawable.ic_connector_typ2
+        Chargepoint.TYPE_2_UNKNOWN -> R.drawable.ic_connector_typ2
+        Chargepoint.TYPE_2_SOCKET -> R.drawable.ic_connector_typ2
+        Chargepoint.TYPE_2_PLUG -> R.drawable.ic_connector_typ2
         Chargepoint.CEE_BLAU -> R.drawable.ic_connector_cee_blau
         Chargepoint.CEE_ROT -> R.drawable.ic_connector_cee_rot
         Chargepoint.TYPE_1 -> R.drawable.ic_connector_typ1

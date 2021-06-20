@@ -85,9 +85,9 @@ class ChargecloudAvailabilityDetector(
 
     private fun getType(string: String): String {
         return when (string) {
-            "IEC_62196_T2" -> Chargepoint.TYPE_2
+            "IEC_62196_T2" -> Chargepoint.TYPE_2_UNKNOWN
             "DOMESTIC_F" -> Chargepoint.SCHUKO
-            "IEC_62196_T2_COMBO" -> Chargepoint.CCS
+            "IEC_62196_T2_COMBO" -> Chargepoint.CCS_TYPE_2
             "CHADEMO" -> Chargepoint.CHADEMO
             else -> throw IllegalArgumentException("unrecognized type $string")
         }

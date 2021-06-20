@@ -134,36 +134,39 @@ class GoingElectricApiWrapper(
         zoom: Float,
         filters: FilterValues
     ): Resource<List<ChargepointListItem>> {
-        val freecharging = filters.getBooleanValue("freecharging")
-        val freeparking = filters.getBooleanValue("freeparking")
-        val open247 = filters.getBooleanValue("open_247")
-        val barrierfree = filters.getBooleanValue("barrierfree")
-        val excludeFaults = filters.getBooleanValue("exclude_faults")
-        val minPower = filters.getSliderValue("min_power")
-        val minConnectors = filters.getSliderValue("min_connectors")
+        val freecharging = filters.getBooleanValue("freecharging")!!
+        val freeparking = filters.getBooleanValue("freeparking")!!
+        val open247 = filters.getBooleanValue("open_247")!!
+        val barrierfree = filters.getBooleanValue("barrierfree")!!
+        val excludeFaults = filters.getBooleanValue("exclude_faults")!!
+        val minPower = filters.getSliderValue("min_power")!!
+        val minConnectors = filters.getSliderValue("min_connectors")!!
 
-        val connectorsVal = filters.getMultipleChoiceValue("connectors")
+        val connectorsVal = filters.getMultipleChoiceValue("connectors")!!
         if (connectorsVal.values.isEmpty() && !connectorsVal.all) {
             // no connectors chosen
             return Resource.success(emptyList())
         }
+        connectorsVal.values = connectorsVal.values.mapNotNull {
+            GEChargepoint.convertType(it)
+        }.toMutableSet()
         val connectors = formatMultipleChoice(connectorsVal)
 
-        val chargeCardsVal = filters.getMultipleChoiceValue("chargecards")
+        val chargeCardsVal = filters.getMultipleChoiceValue("chargecards")!!
         if (chargeCardsVal.values.isEmpty() && !chargeCardsVal.all) {
             // no chargeCards chosen
             return Resource.success(emptyList())
         }
         val chargeCards = formatMultipleChoice(chargeCardsVal)
 
-        val networksVal = filters.getMultipleChoiceValue("networks")
+        val networksVal = filters.getMultipleChoiceValue("networks")!!
         if (networksVal.values.isEmpty() && !networksVal.all) {
             // no networks chosen
             return Resource.success(emptyList())
         }
         val networks = formatMultipleChoice(networksVal)
 
-        val categoriesVal = filters.getMultipleChoiceValue("categories")
+        val categoriesVal = filters.getMultipleChoiceValue("categories")!!
         if (categoriesVal.values.isEmpty() && !categoriesVal.all) {
             // no categories chosen
             return Resource.success(emptyList())
@@ -344,7 +347,11 @@ class GoingElectricApiWrapper(
             MultipleChoiceFilter(
                 sp.getString(R.string.filter_connectors), "connectors",
                 plugMap,
-                commonChoices = setOf(Chargepoint.TYPE_2, Chargepoint.CCS, Chargepoint.CHADEMO),
+                commonChoices = setOf(
+                    Chargepoint.TYPE_2_UNKNOWN,
+                    Chargepoint.CCS_UNKNOWN,
+                    Chargepoint.CHADEMO
+                ),
                 manyChoices = true
             ),
             SliderFilter(

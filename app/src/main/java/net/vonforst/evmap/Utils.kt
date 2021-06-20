@@ -52,3 +52,12 @@ fun String.bold(): CharSequence {
         )
     }
 }
+
+fun <T> Collection<Iterable<T>>.cartesianProduct(): Set<Set<T>> =
+    /**
+    Returns all possible combinations of entries of a list
+     */
+    if (isEmpty()) emptySet()
+    else drop(1).fold(first().map(::setOf)) { acc, iterable ->
+        acc.flatMap { list -> iterable.map(list::plus) }
+    }.toSet()

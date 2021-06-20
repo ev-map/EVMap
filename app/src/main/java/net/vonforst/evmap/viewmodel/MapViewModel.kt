@@ -335,12 +335,12 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
             chargepoints.value = result
 
             if (api is GoingElectricApiWrapper) {
-                val chargeCardsVal = filters.getMultipleChoiceValue("chargecards")
+                val chargeCardsVal = filters.getMultipleChoiceValue("chargecards")!!
                 filteredChargeCards.value =
                     if (chargeCardsVal.all) null else chargeCardsVal.values.map { it.toLong() }
                         .toSet()
 
-                val connectorsVal = filters.getMultipleChoiceValue("connectors")
+                val connectorsVal = filters.getMultipleChoiceValue("connectors")!!
                 filteredConnectors.value = if (connectorsVal.all) null else connectorsVal.values
             }
         }

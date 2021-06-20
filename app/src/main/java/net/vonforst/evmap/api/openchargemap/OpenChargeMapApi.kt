@@ -5,11 +5,14 @@ import com.car2go.maps.model.LatLng
 import com.car2go.maps.model.LatLngBounds
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.squareup.moshi.Moshi
+import kotlinx.coroutines.Dispatchers
 import net.vonforst.evmap.BuildConfig
 import net.vonforst.evmap.api.ChargepointApi
 import net.vonforst.evmap.api.StringProvider
 import net.vonforst.evmap.model.*
+import net.vonforst.evmap.ui.cluster
 import net.vonforst.evmap.viewmodel.Resource
+import net.vonforst.evmap.viewmodel.getClusterDistance
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import retrofit2.Response
@@ -100,7 +103,17 @@ class OpenChargeMapApiWrapper(
             return Resource.error(response.message(), null)
         }
 
-        val result = response.body()!!.map { it.convert(referenceData) }
+        var result = response.body()!!.map { it.convert(referenceData) }
+            .distinct() as List<ChargepointListItem>
+
+        val useClustering = zoom < 13
+        val clusterDistance = if (useClustering) getClusterDistance(zoom) else null
+        if (useClustering) {
+            Dispatchers.IO.run {
+                result = cluster(result, zoom, clusterDistance!!)
+            }
+        }
+
         return Resource.success(result)
     }
 

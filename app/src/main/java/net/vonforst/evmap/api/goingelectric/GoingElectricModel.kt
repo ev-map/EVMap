@@ -170,7 +170,42 @@ data class GEAddress(
 
 @JsonClass(generateAdapter = true)
 data class GEChargepoint(val type: String, val power: Double, val count: Int) {
-    fun convert() = Chargepoint(type, power, count)
+    fun convert() = Chargepoint(convertType(type), power, count)
+
+    private fun convertType(type: String): String {
+        return when (type) {
+            "Typ1" -> Chargepoint.TYPE_1
+            "Typ2" -> Chargepoint.TYPE_2_UNKNOWN
+            "Typ3" -> Chargepoint.TYPE_3
+            "CCS" -> Chargepoint.CCS_UNKNOWN
+            "Schuko" -> Chargepoint.SCHUKO
+            "CHAdeMO" -> Chargepoint.CHADEMO
+            "Tesla Supercharger" -> Chargepoint.SUPERCHARGER
+            "CEE Blau" -> Chargepoint.CEE_BLAU
+            "CEE Rot" -> Chargepoint.CEE_ROT
+            "Tesla HPC" -> Chargepoint.TESLA_ROADSTER_HPC
+            else -> type
+        }
+    }
+
+    companion object {
+        fun convertType(type: String): String? {
+            return when (type) {
+                Chargepoint.TYPE_1 -> "Typ1"
+                Chargepoint.TYPE_2_UNKNOWN -> "Typ2"
+                Chargepoint.TYPE_3 -> "Typ3"
+                Chargepoint.CCS_UNKNOWN -> "CCS"
+                Chargepoint.CCS_TYPE_2 -> "Typ2"
+                Chargepoint.SCHUKO -> "Schuko"
+                Chargepoint.CHADEMO -> "CHAdeMO"
+                Chargepoint.SUPERCHARGER -> "Tesla Supercharger"
+                Chargepoint.CEE_BLAU -> "CEE Blau"
+                Chargepoint.CEE_ROT -> "CEE Rot"
+                Chargepoint.TESLA_ROADSTER_HPC -> "Tesla HPC"
+                else -> null
+            }
+        }
+    }
 }
 
 @JsonClass(generateAdapter = true)

@@ -115,16 +115,16 @@ data class FilterWithValue<T : FilterValue>(val filter: Filter<T>, val value: T)
 typealias FilterValues = List<FilterWithValue<out FilterValue>>
 
 fun FilterValues.getBooleanValue(key: String) =
-    (this.find { it.value.key == key }!!.value as BooleanFilterValue).value
+    (this.find { it.value.key == key }?.value as BooleanFilterValue?)?.value
 
 fun FilterValues.getSliderValue(key: String) =
-    (this.find { it.value.key == key }!!.value as SliderFilterValue).value
+    (this.find { it.value.key == key }?.value as SliderFilterValue?)?.value
 
 fun FilterValues.getMultipleChoiceFilter(key: String) =
-    this.find { it.value.key == key }!!.filter as MultipleChoiceFilter
+    this.find { it.value.key == key }?.filter as MultipleChoiceFilter?
 
 fun FilterValues.getMultipleChoiceValue(key: String) =
-    this.find { it.value.key == key }!!.value as MultipleChoiceFilterValue
+    this.find { it.value.key == key }?.value as MultipleChoiceFilterValue?
 
 const val FILTERS_DISABLED = -2L
 const val FILTERS_CUSTOM = -1L

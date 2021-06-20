@@ -43,7 +43,7 @@ data class OCMChargepoint(
         null, // TODO: MediaItems,
         null,
         null,
-        Cost(descriptionLong = cost)
+        cost?.let { Cost(descriptionShort = it) }
     )
 }
 
@@ -77,15 +77,34 @@ data class OCMConnection(
     @Json(name = "ConnectionTypeID") val connectionTypeId: Long,
     @Json(name = "Amps") val amps: Int?,
     @Json(name = "Voltage") val voltage: Int?,
-    @Json(name = "PowerKW") val power: Double,
+    @Json(name = "PowerKW") val power: Double?,
     @Json(name = "Quantity") val quantity: Int?,
     @Json(name = "Comments") val comments: String?
 ) {
     fun convert(refData: OCMReferenceData) = Chargepoint(
-        refData.connectionTypes.find { it.id == connectionTypeId }!!.title,
-        power,
+        convertConnectionType(connectionTypeId, refData),
+        power ?: 0.0,
         quantity ?: 0
     )
+
+    private fun convertConnectionType(id: Long, refData: OCMReferenceData): String {
+        val title = refData.connectionTypes.find { it.id == id }!!.title
+        return when (title) {
+            "CCS (Type 2)" -> Chargepoint.CCS_TYPE_2
+            "CHAdeMO" -> Chargepoint.CHADEMO
+            "CEE 3 Pin" -> Chargepoint.CEE_BLAU
+            "CEE 5 Pin" -> Chargepoint.CEE_ROT
+            "CEE 7/4 - Schuko - Type F" -> Chargepoint.SCHUKO
+            "Tesla (Roadster)" -> Chargepoint.TESLA_ROADSTER_HPC
+            "Tesla Supercharger" -> Chargepoint.SUPERCHARGER
+            "Type 2 (Socket Only)" -> Chargepoint.TYPE_2_SOCKET
+            "Type 2 (Tethered Connector) " -> Chargepoint.TYPE_2_PLUG
+            "Type 1 (J1772)" -> Chargepoint.TYPE_1
+            "SCAME Type 3A (Low Power)" -> Chargepoint.TYPE_3
+            "SCAME Type 3C (Schneider-Legrand)" -> Chargepoint.TYPE_3
+            else -> title
+        }
+    }
 }
 
 @JsonClass(generateAdapter = true)

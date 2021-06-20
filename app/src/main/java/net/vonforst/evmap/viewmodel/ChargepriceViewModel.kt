@@ -36,12 +36,12 @@ class ChargepriceViewModel(application: Application, chargepriceApiKey: String) 
         Chargepoint.CEE_ROT,
         Chargepoint.SCHUKO,
         Chargepoint.TYPE_1,
-        Chargepoint.TYPE_2
+        Chargepoint.TYPE_2_UNKNOWN
     )
     private val plugMapping = mapOf(
-        "ccs" to Chargepoint.CCS,
+        "ccs" to Chargepoint.CCS_UNKNOWN,
         "tesla_suc" to Chargepoint.SUPERCHARGER,
-        "tesla_ccs" to Chargepoint.CCS,
+        "tesla_ccs" to Chargepoint.CCS_UNKNOWN,
         "chademo" to Chargepoint.CHADEMO
     )
     val vehicleCompatibleConnectors: LiveData<List<String>> by lazy {

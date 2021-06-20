@@ -8,6 +8,8 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import net.vonforst.evmap.R
 import net.vonforst.evmap.adapter.Equatable
+import net.vonforst.evmap.api.StringProvider
+import net.vonforst.evmap.api.nameForPlugType
 import java.time.DayOfWeek
 import java.time.Instant
 import java.time.LocalDate
@@ -93,9 +95,9 @@ data class ChargeLocation(
     val totalChargepoints: Int
         get() = chargepoints.sumBy { it.count }
 
-    fun formatChargepoints(): String {
+    fun formatChargepoints(sp: StringProvider): String {
         return chargepointsMerged.map {
-            "${it.count} × ${it.type} ${it.formatPower()}"
+            "${it.count} × ${nameForPlugType(sp, it.type)} ${it.formatPower()}"
         }.joinToString(" · ")
     }
 }
@@ -267,10 +269,14 @@ data class Chargepoint(val type: String, val power: Double, val count: Int) : Eq
     }
 
     companion object {
-        const val TYPE_1 = "Typ1"
-        const val TYPE_2 = "Typ2"
-        const val TYPE_3 = "Typ3"
-        const val CCS = "CCS"
+        const val TYPE_1 = "Type 1"
+        const val TYPE_2_UNKNOWN = "Type 2 (either plug or socket)"
+        const val TYPE_2_SOCKET = "Type 2 socket"
+        const val TYPE_2_PLUG = "Type 2 plug"
+        const val TYPE_3 = "Type 3"
+        const val CCS_TYPE_2 = "CCS Type 2"
+        const val CCS_TYPE_1 = "CCS Type 1"
+        const val CCS_UNKNOWN = "CCS (either Type 1 or Type 2)"
         const val SCHUKO = "Schuko"
         const val CHADEMO = "CHAdeMO"
         const val SUPERCHARGER = "Tesla Supercharger"

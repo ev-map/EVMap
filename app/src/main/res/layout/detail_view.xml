@@ -23,6 +23,8 @@
 
         <import type="net.vonforst.evmap.ui.BindingAdaptersKt" />
 
+        <import type="net.vonforst.evmap.api.ChargepointApiKt" />
+
         <variable
             name="charger"
             type="Resource&lt;ChargeLocation&gt;" />
@@ -140,7 +142,7 @@
                 android:layout_marginEnd="8dp"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="@{charger.data.formatChargepoints()}"
+                android:text="@{charger.data.formatChargepoints(ChargepointApiKt.stringProvider(context))}"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
                 app:layout_constraintEnd_toStartOf="@+id/txtDistance"
                 app:layout_constraintStart_toStartOf="@+id/guideline"

@@ -183,6 +183,7 @@ class ChargepriceViewModel(application: Application, chargepriceApiKey: String) 
         }
 
         val cpStation = ChargepriceStation.fromGoingelectric(geCharger, compatibleConnectors)
+        // TODO: implement this for OpenChargeMap -> https://github.com/chargeprice/chargeprice-api-docs/blob/master/guides/integrate_charge_prices.md#open-charge-map-beta
 
         loadPricesJob?.cancel()
         loadPricesJob = viewModelScope.launch {

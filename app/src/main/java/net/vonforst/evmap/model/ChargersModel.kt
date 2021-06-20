@@ -6,6 +6,7 @@ import androidx.core.text.HtmlCompat
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlinx.parcelize.Parcelize
 import net.vonforst.evmap.R
 import net.vonforst.evmap.adapter.Equatable
 import net.vonforst.evmap.api.StringProvider
@@ -23,6 +24,7 @@ import kotlin.math.floor
 sealed class ChargepointListItem
 
 @Entity
+@Parcelize
 data class ChargeLocation(
     @PrimaryKey val id: Long,
     val name: String,
@@ -45,7 +47,7 @@ data class ChargeLocation(
     @Embedded val openinghours: OpeningHours?,
     @Embedded val cost: Cost?,
     val license: String?
-) : ChargepointListItem(), Equatable {
+) : ChargepointListItem(), Equatable, Parcelable {
     /**
      * maximum power available from this charger.
      */
@@ -104,12 +106,13 @@ data class ChargeLocation(
     }
 }
 
+@Parcelize
 data class Cost(
     val freecharging: Boolean? = null,
     val freeparking: Boolean? = null,
     val descriptionShort: String? = null,
     val descriptionLong: String? = null
-) {
+) : Parcelable {
     fun getStatusText(ctx: Context, emoji: Boolean = false): CharSequence {
         if (freecharging != null && freeparking != null) {
             val charging =
@@ -131,11 +134,12 @@ data class Cost(
     }
 }
 
+@Parcelize
 data class OpeningHours(
     val twentyfourSeven: Boolean,
     val description: String?,
     @Embedded val days: OpeningHoursDays?
-) {
+) : Parcelable {
     val isEmpty: Boolean
         get() = description == "Leider noch keine Informationen zu Öffnungszeiten vorhanden."
                 && days == null && !twentyfourSeven
@@ -173,6 +177,7 @@ data class OpeningHours(
     }
 }
 
+@Parcelize
 data class OpeningHoursDays(
     @Embedded(prefix = "mo") val monday: Hours,
     @Embedded(prefix = "tu") val tuesday: Hours,
@@ -182,7 +187,7 @@ data class OpeningHoursDays(
     @Embedded(prefix = "sa") val saturday: Hours,
     @Embedded(prefix = "su") val sunday: Hours,
     @Embedded(prefix = "ho") val holiday: Hours
-) {
+) : Parcelable {
     fun getHoursForDate(date: LocalDate): Hours {
         // TODO: check for holidays
         return getHoursForDayOfWeek(date.dayOfWeek)
@@ -203,10 +208,11 @@ data class OpeningHoursDays(
     }
 }
 
+@Parcelize
 data class Hours(
     val start: LocalTime?,
     val end: LocalTime?
-) {
+) : Parcelable {
     override fun toString(): String {
         if (start != null && end != null) {
             val fmt = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
@@ -226,7 +232,8 @@ data class ChargeLocationCluster(
     val coordinates: Coordinate
 ) : ChargepointListItem()
 
-data class Coordinate(val lat: Double, val lng: Double) {
+@Parcelize
+data class Coordinate(val lat: Double, val lng: Double) : Parcelable {
     fun formatDMS(): String {
         return "${dms(lat, false)}, ${dms(lng, true)}"
     }
@@ -249,18 +256,21 @@ data class Coordinate(val lat: Double, val lng: Double) {
     }
 }
 
+@Parcelize
 data class Address(
     val city: String?,
     val country: String?,
     val postcode: String?,
     val street: String?
-) {
+) : Parcelable {
     override fun toString(): String {
         return "${street ?: ""}, ${postcode ?: ""} ${city ?: ""}"
     }
 }
 
-data class Chargepoint(val type: String, val power: Double, val count: Int) : Equatable {
+@kotlinx.android.parcel.Parcelize
+data class Chargepoint(val type: String, val power: Double, val count: Int) : Equatable,
+    Parcelable {
     fun formatPower(): String {
         val powerFmt = if (power - power.toInt() == 0.0) {
             "%.0f".format(power)
@@ -288,7 +298,8 @@ data class Chargepoint(val type: String, val power: Double, val count: Int) : Eq
     }
 }
 
-data class FaultReport(val created: Instant?, val description: String?)
+@Parcelize
+data class FaultReport(val created: Instant?, val description: String?) : Parcelable
 
 @Entity
 data class ChargeCard(
@@ -297,6 +308,7 @@ data class ChargeCard(
     val url: String
 )
 
+@Parcelize
 data class ChargeCardId(
     val id: Long
-)
+) : Parcelable

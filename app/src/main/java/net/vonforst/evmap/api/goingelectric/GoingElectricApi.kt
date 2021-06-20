@@ -84,7 +84,7 @@ interface GoingElectricApi {
     companion object {
         private val cacheSize = 10L * 1024 * 1024 // 10MB
 
-        val moshi = Moshi.Builder()
+        private val moshi = Moshi.Builder()
             .add(ChargepointListItemJsonAdapterFactory())
             .add(JsonObjectOrFalseAdapter.Factory())
             .add(HoursAdapter())

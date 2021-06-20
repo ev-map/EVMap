@@ -86,6 +86,8 @@ class OpenChargeMapApiWrapper(
 ) : ChargepointApi<OCMReferenceData> {
     val api = OpenChargeMapApi.create(apikey, baseurl, context)
 
+    override fun getName() = "OpenChargeMap.org"
+
     override suspend fun getChargepoints(
         referenceData: ReferenceData,
         bounds: LatLngBounds,

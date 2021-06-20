@@ -18,7 +18,7 @@ class DetailsAdapter : DataBindingAdapter<DetailsAdapter.Detail>() {
     data class Detail(
         val icon: Int,
         val contentDescription: Int,
-        val text: CharSequence,
+        val text: CharSequence?,
         val detailText: CharSequence? = null,
         val links: Boolean = true,
         val clickable: Boolean = false,
@@ -119,7 +119,7 @@ fun buildDetails(
             loc.coordinates.formatDecimal(),
             links = false,
             clickable = true
-        )
+        ),
     )
 }
 

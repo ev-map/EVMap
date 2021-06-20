@@ -23,7 +23,7 @@
     <string name="realtime_data_unavailable">Real-time status unavailable</string>
     <string name="realtime_data_loading">Checking real-time status…</string>
     <string name="realtime_data_source">Real-time status source (beta): %s</string>
-    <string name="go_to_goingelectric">Source: goingelectric.de</string>
+    <string name="source">Source: %s</string>
     <string name="search">Search</string>
     <string name="menu_map">Map</string>
     <string name="menu_favs">Favorites</string>
@@ -191,6 +191,7 @@
     <string name="pref_chargeprice_currency">Currency</string>
     <string name="pref_my_tariffs">My charging plans</string>
     <string name="chargeprice_all_tariffs_selected">all plans selected</string>
+    <string name="license">License</string>
     <plurals name="chargeprice_some_tariffs_selected">
         <item quantity="one">%d plan selected</item>
         <item quantity="other">%d plans selected</item>

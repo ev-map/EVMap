@@ -66,6 +66,7 @@ import net.vonforst.evmap.*
 import net.vonforst.evmap.adapter.ConnectorAdapter
 import net.vonforst.evmap.adapter.DetailsAdapter
 import net.vonforst.evmap.adapter.GalleryAdapter
+import net.vonforst.evmap.api.goingelectric.GoingElectricApiWrapper
 import net.vonforst.evmap.autocomplete.handleAutocompleteResult
 import net.vonforst.evmap.autocomplete.launchAutocomplete
 import net.vonforst.evmap.databinding.FragmentMapBinding
@@ -292,10 +293,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         binding.layers.btnClose.setOnClickListener {
             closeLayersMenu()
         }
-        binding.detailView.goingelectricButton.setOnClickListener {
+        binding.detailView.sourceButton.setOnClickListener {
             val charger = vm.charger.value?.data
             if (charger != null) {
-                (activity as? MapsActivity)?.openUrl("https:${charger.url}")
+                (activity as? MapsActivity)?.openUrl(charger.url)
             }
         }
         binding.detailView.btnChargeprice.setOnClickListener {
@@ -323,19 +324,22 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 R.id.menu_share -> {
                     val charger = vm.charger.value?.data
                     if (charger != null) {
-                        (activity as? MapsActivity)?.shareUrl("https:${charger.url}")
+                        (activity as? MapsActivity)?.shareUrl(charger.url)
                     }
                     true
                 }
                 R.id.menu_edit -> {
                     val charger = vm.charger.value?.data
-                    if (charger != null) {
-                        (activity as? MapsActivity)?.openUrl("https:${charger.url}edit/")
-                        Toast.makeText(
-                            requireContext(),
-                            R.string.edit_on_goingelectric_info,
-                            Toast.LENGTH_LONG
-                        ).show()
+                    if (charger?.editUrl != null) {
+                        (activity as? MapsActivity)?.openUrl(charger.editUrl)
+                        if (vm.apiType == GoingElectricApiWrapper::class.java) {
+                            // instructions specific to GoingElectric
+                            Toast.makeText(
+                                requireContext(),
+                                R.string.edit_on_goingelectric_info,
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
                     }
                     true
                 }
@@ -627,7 +631,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                                 (activity as? MapsActivity)?.showLocation(charger)
                             }
                             R.drawable.ic_fault_report -> {
-                                (activity as? MapsActivity)?.openUrl("https:${charger.url}")
+                                (activity as? MapsActivity)?.openUrl(charger.url)
                             }
                             R.drawable.ic_payment -> {
                                 showPaymentMethodsDialog(charger)

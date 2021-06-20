@@ -23,7 +23,9 @@ data class OCMChargepoint(
     @Json(name = "AddressInfo") val addressInfo: OCMAddressInfo,
     @Json(name = "Connections") val connections: List<OCMConnection>,
     @Json(name = "NumberOfPoints") val numPoints: Int,
-    @Json(name = "GeneralComments") val generalComments: String?
+    @Json(name = "GeneralComments") val generalComments: String?,
+    @Json(name = "OperatorInfo") val operatorInfo: OCMOperator?,
+    @Json(name = "DataProvider") val dataProvider: OCMDataProvider?
 ) {
     fun convert(refData: OCMReferenceData) = ChargeLocation(
         id,
@@ -31,19 +33,21 @@ data class OCMChargepoint(
         Coordinate(addressInfo.latitude, addressInfo.longitude),
         addressInfo.toAddress(refData),
         connections.map { it.convert(refData) },
-        null,
+        operatorInfo?.title,
         "https://openchargemap.org/site/poi/details/$id",
+        "https://openchargemap.org/site/poi/edit/$id",
         null,
         recentlyVerified,
         null,
-        null, //TODO: OperatorInfo
+        null,
         generalComments,
         null,
         addressInfo.accessComments,
         null, // TODO: MediaItems,
         null,
         null,
-        cost?.let { Cost(descriptionShort = it) }
+        cost?.let { Cost(descriptionShort = it) },
+        dataProvider?.let { "© ${it.title}" + if (it.license != null) ". ${it.license}" else "" }
     )
 }
 
@@ -128,4 +132,22 @@ data class OCMCountry(
     @Json(name = "ISOCode") val isoCode: String,
     @Json(name = "ContinentCode") val continentCode: String?,
     @Json(name = "Title") val title: String
+)
+
+@JsonClass(generateAdapter = true)
+data class OCMDataProvider(
+    @Json(name = "ID") val id: Long,
+    @Json(name = "WebsiteURL") val websiteUrl: String?,
+    @Json(name = "Title") val title: String,
+    @Json(name = "License") val license: String?
+)
+
+@JsonClass(generateAdapter = true)
+data class OCMOperator(
+    @Json(name = "ID") val id: Long,
+    @Json(name = "WebsiteURL") val websiteUrl: String?,
+    @Json(name = "Title") val title: String,
+    @Json(name = "ContactEmail") val contactEmail: String?,
+    @Json(name = "PhonePrimaryContact") val contactTelephone1: String?,
+    @Json(name = "PhoneSecondaryContact") val contactTelephone2: String?,
 )

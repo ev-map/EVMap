@@ -61,7 +61,8 @@ data class GEChargeLocation(
         address.convert(),
         chargepoints.map { it.convert() },
         network,
-        url,
+        "https:${url}",
+        "https:${url}edit/",
         faultReport?.convert(),
         verified,
         barrierFree,
@@ -72,7 +73,8 @@ data class GEChargeLocation(
         photos?.map { it.convert(apikey) },
         chargecards?.map { it.convert() },
         openinghours?.convert(),
-        cost?.convert()
+        cost?.convert(),
+        null
     )
 }
 

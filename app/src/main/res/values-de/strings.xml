@@ -24,7 +24,7 @@
     <string name="realtime_data_unavailable">Echtzeitstatus nicht verfügbar</string>
     <string name="realtime_data_loading">Prüfe Echtzeitstatus…</string>
     <string name="realtime_data_source">Quelle Echtzeitdaten (beta): %s</string>
-    <string name="go_to_goingelectric">Quelle: goingelectric.de</string>
+    <string name="source">Quelle: %s</string>
     <string name="search">Suche</string>
     <string name="menu_map">Karte</string>
     <string name="menu_favs">Favoriten</string>
@@ -192,6 +192,7 @@
     <string name="pref_chargeprice_currency">Währung</string>
     <string name="pref_my_tariffs">Meine Tarife</string>
     <string name="chargeprice_all_tariffs_selected">alle Tarife ausgewählt</string>
+    <string name="license">Lizenz</string>
     <string-array name="pref_chargeprice_currency_names">
         <item>Schweizer Franken (CHF)</item>
         <item>Tschechische Krone (CZK)</item>

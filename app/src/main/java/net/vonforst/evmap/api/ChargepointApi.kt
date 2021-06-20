@@ -30,6 +30,8 @@ interface ChargepointApi<out T : ReferenceData> {
     suspend fun getReferenceData(): Resource<T>
 
     fun getFilters(referenceData: ReferenceData, sp: StringProvider): List<Filter<FilterValue>>
+
+    fun getName(): String
 }
 
 interface StringProvider {

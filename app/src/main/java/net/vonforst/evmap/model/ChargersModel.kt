@@ -31,6 +31,7 @@ data class ChargeLocation(
     val chargepoints: List<Chargepoint>,
     val network: String?,
     val url: String,
+    val editUrl: String?,
     @Embedded(prefix = "fault_report_") val faultReport: FaultReport?,
     val verified: Boolean,
     val barrierFree: Boolean?,
@@ -42,7 +43,8 @@ data class ChargeLocation(
     val photos: List<ChargerPhoto>?,
     val chargecards: List<ChargeCardId>?,
     @Embedded val openinghours: OpeningHours?,
-    @Embedded val cost: Cost?
+    @Embedded val cost: Cost?,
+    val license: String?
 ) : ChargepointListItem(), Equatable {
     /**
      * maximum power available from this charger.

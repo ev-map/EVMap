@@ -128,6 +128,9 @@ class GoingElectricApiWrapper(
     context: Context? = null
 ) : ChargepointApi<GEReferenceData> {
     val api = GoingElectricApi.create(apikey, baseurl, context)
+
+    override fun getName() = "GoingElectric.de"
+
     override suspend fun getChargepoints(
         referenceData: ReferenceData,
         bounds: LatLngBounds,

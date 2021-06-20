@@ -20,7 +20,7 @@ import net.vonforst.evmap.model.*
         GEPlug::class,
         GENetwork::class,
         GEChargeCard::class
-    ], version = 11
+    ], version = 12
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -37,7 +37,8 @@ abstract class AppDatabase : RoomDatabase() {
             Room.databaseBuilder(context, AppDatabase::class.java, "evmap.db")
                 .addMigrations(
                     MIGRATION_2, MIGRATION_3, MIGRATION_4, MIGRATION_5, MIGRATION_6,
-                    MIGRATION_7, MIGRATION_8, MIGRATION_9, MIGRATION_10, MIGRATION_11
+                    MIGRATION_7, MIGRATION_8, MIGRATION_9, MIGRATION_10, MIGRATION_11,
+                    MIGRATION_12
                 )
                 .addCallback(object : Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
@@ -170,6 +171,19 @@ abstract class AppDatabase : RoomDatabase() {
         private val MIGRATION_11 = object : Migration(10, 11) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("ALTER TABLE `ChargeLocation` ADD `barrierFree` INTEGER")
+            }
+        }
+
+        private val MIGRATION_12 = object : Migration(11, 12) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.beginTransaction()
+                try {
+                    db.execSQL("ALTER TABLE `ChargeLocation` ADD `editUrl` TEXT")
+                    db.execSQL("ALTER TABLE `ChargeLocation` ADD `license` TEXT")
+                    db.setTransactionSuccessful()
+                } finally {
+                    db.endTransaction()
+                }
             }
         }
     }

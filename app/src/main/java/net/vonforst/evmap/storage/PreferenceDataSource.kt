@@ -23,6 +23,12 @@ class PreferenceDataSource(val context: Context) {
             sp.edit().putLong("last_ge_reference_data_update", value.toEpochMilli()).apply()
         }
 
+    var lastOcmReferenceDataUpdate: Instant
+        get() = Instant.ofEpochMilli(sp.getLong("last_ocm_reference_data_update", 0L))
+        set(value) {
+            sp.edit().putLong("last_ocm_reference_data_update", value.toEpochMilli()).apply()
+        }
+
     /**
      * Stores the current filtering status, which is either the ID of a filter profile or
      * one of FILTERS_DISABLED, FILTERS_CUSTOM

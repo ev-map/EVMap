@@ -15,10 +15,7 @@ import net.vonforst.evmap.api.goingelectric.GoingElectricApiWrapper
 import net.vonforst.evmap.api.openchargemap.OpenChargeMapApiWrapper
 import net.vonforst.evmap.api.stringProvider
 import net.vonforst.evmap.model.*
-import net.vonforst.evmap.storage.AppDatabase
-import net.vonforst.evmap.storage.FilterProfile
-import net.vonforst.evmap.storage.GEReferenceDataRepository
-import net.vonforst.evmap.storage.PreferenceDataSource
+import net.vonforst.evmap.storage.*
 import net.vonforst.evmap.utils.distanceBetween
 import java.io.IOException
 
@@ -79,16 +76,15 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
                 db.geReferenceDataDao(),
                 prefs
             ).getReferenceData()
+        } else if (api is OpenChargeMapApiWrapper) {
+            OCMReferenceDataRepository(
+                api,
+                viewModelScope,
+                db.ocmReferenceDataDao(),
+                prefs
+            ).getReferenceData()
         } else {
-            // TODO: create repository
-            MutableLiveData<ReferenceData>().apply {
-                viewModelScope.launch {
-                    val referenceData1 = api.getReferenceData()
-                    if (referenceData1.status == Status.SUCCESS) {
-                        value = referenceData1.data
-                    }
-                }
-            }
+            throw RuntimeException("no reference data implemented")
         }
     }
     private val filters = MediatorLiveData<List<Filter<FilterValue>>>().apply {
@@ -135,7 +131,7 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
         MediatorLiveData<Resource<List<ChargepointListItem>>>()
             .apply {
                 value = Resource.loading(emptyList())
-                listOf(mapPosition, filtersWithValue).forEach {
+                listOf(mapPosition, filtersWithValue, referenceData).forEach {
                     addSource(it) {
                         reloadChargepoints()
                     }

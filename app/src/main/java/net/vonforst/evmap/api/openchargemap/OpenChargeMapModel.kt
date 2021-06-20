@@ -1,5 +1,7 @@
 package net.vonforst.evmap.api.openchargemap
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import net.vonforst.evmap.model.*
@@ -70,7 +72,7 @@ data class OCMAddressInfo(
 ) {
     fun toAddress(refData: OCMReferenceData) = Address(
         town,
-        refData.countries.find { it.id == countryId }!!.title,
+        refData.countries.find { it.id == countryId }?.title,
         postcode,
         listOfNotNull(addressLine1, addressLine2).joinToString(", ")
     )
@@ -92,7 +94,7 @@ data class OCMConnection(
     )
 
     private fun convertConnectionType(id: Long, refData: OCMReferenceData): String {
-        val title = refData.connectionTypes.find { it.id == id }!!.title
+        val title = refData.connectionTypes.find { it.id == id }?.title
         return when (title) {
             "CCS (Type 2)" -> Chargepoint.CCS_TYPE_2
             "CHAdeMO" -> Chargepoint.CHADEMO
@@ -106,7 +108,7 @@ data class OCMConnection(
             "Type 1 (J1772)" -> Chargepoint.TYPE_1
             "SCAME Type 3A (Low Power)" -> Chargepoint.TYPE_3
             "SCAME Type 3C (Schneider-Legrand)" -> Chargepoint.TYPE_3
-            else -> title
+            else -> title ?: ""
         }
     }
 }
@@ -118,8 +120,9 @@ data class OCMReferenceData(
 ) : ReferenceData()
 
 @JsonClass(generateAdapter = true)
+@Entity
 data class OCMConnectionType(
-    @Json(name = "ID") val id: Long,
+    @Json(name = "ID") @PrimaryKey val id: Long,
     @Json(name = "Title") val title: String,
     @Json(name = "FormalName") val formalName: String?,
     @Json(name = "IsDiscontinued") val discontinued: Boolean?,
@@ -127,8 +130,9 @@ data class OCMConnectionType(
 )
 
 @JsonClass(generateAdapter = true)
+@Entity
 data class OCMCountry(
-    @Json(name = "ID") val id: Long,
+    @Json(name = "ID") @PrimaryKey val id: Long,
     @Json(name = "ISOCode") val isoCode: String,
     @Json(name = "ContinentCode") val continentCode: String?,
     @Json(name = "Title") val title: String

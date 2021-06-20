@@ -8,6 +8,8 @@ import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import net.vonforst.evmap.api.goingelectric.GEChargeCard
+import net.vonforst.evmap.api.openchargemap.OCMConnectionType
+import net.vonforst.evmap.api.openchargemap.OCMCountry
 import net.vonforst.evmap.model.*
 
 @Database(
@@ -19,8 +21,10 @@ import net.vonforst.evmap.model.*
         FilterProfile::class,
         GEPlug::class,
         GENetwork::class,
-        GEChargeCard::class
-    ], version = 12
+        GEChargeCard::class,
+        OCMConnectionType::class,
+        OCMCountry::class
+    ], version = 13
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -31,6 +35,9 @@ abstract class AppDatabase : RoomDatabase() {
     // GoingElectric API specific
     abstract fun geReferenceDataDao(): GEReferenceDataDao
 
+    // OpenChargeMap API specific
+    abstract fun ocmReferenceDataDao(): OCMReferenceDataDao
+
     companion object {
         private lateinit var context: Context
         private val database: AppDatabase by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
@@ -38,7 +45,7 @@ abstract class AppDatabase : RoomDatabase() {
                 .addMigrations(
                     MIGRATION_2, MIGRATION_3, MIGRATION_4, MIGRATION_5, MIGRATION_6,
                     MIGRATION_7, MIGRATION_8, MIGRATION_9, MIGRATION_10, MIGRATION_11,
-                    MIGRATION_12
+                    MIGRATION_12, MIGRATION_13
                 )
                 .addCallback(object : Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
@@ -180,6 +187,19 @@ abstract class AppDatabase : RoomDatabase() {
                 try {
                     db.execSQL("ALTER TABLE `ChargeLocation` ADD `editUrl` TEXT")
                     db.execSQL("ALTER TABLE `ChargeLocation` ADD `license` TEXT")
+                    db.setTransactionSuccessful()
+                } finally {
+                    db.endTransaction()
+                }
+            }
+        }
+
+        private val MIGRATION_13 = object : Migration(12, 13) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.beginTransaction()
+                try {
+                    db.execSQL("CREATE TABLE `OCMConnectionType` (`id` INTEGER NOT NULL, `title` TEXT NOT NULL, `formalName` TEXT, `discontinued` INTEGER, `obsolete` INTEGER, PRIMARY KEY(`id`))")
+                    db.execSQL("CREATE TABLE `OCMCountry` (`id` INTEGER NOT NULL, `isoCode` TEXT NOT NULL, `continentCode` TEXT, `title` TEXT NOT NULL, PRIMARY KEY(`id`))")
                     db.setTransactionSuccessful()
                 } finally {
                     db.endTransaction()

@@ -22,7 +22,7 @@ data class OCMChargepoint(
     @Json(name = "UsageCost") val cost: String?,
     @Json(name = "AddressInfo") val addressInfo: OCMAddressInfo,
     @Json(name = "Connections") val connections: List<OCMConnection>,
-    @Json(name = "NumberOfPoints") val numPoints: Int,
+    @Json(name = "NumberOfPoints") val numPoints: Int?,
     @Json(name = "GeneralComments") val generalComments: String?,
     @Json(name = "OperatorInfo") val operatorInfo: OCMOperator?,
     @Json(name = "DataProvider") val dataProvider: OCMDataProvider?

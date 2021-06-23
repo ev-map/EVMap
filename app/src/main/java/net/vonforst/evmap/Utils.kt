@@ -61,3 +61,16 @@ fun <T> Collection<Iterable<T>>.cartesianProduct(): Set<Set<T>> =
     else drop(1).fold(first().map(::setOf)) { acc, iterable ->
         acc.flatMap { list -> iterable.map(list::plus) }
     }.toSet()
+
+
+fun max(a: Int?, b: Int?): Int? {
+    /**
+     * Returns the maximum of two values of both are non-null,
+     * otherwise the non-null value or null
+     */
+    return if (a != null && b != null) {
+        max(a, b)
+    } else {
+        a ?: b
+    }
+}

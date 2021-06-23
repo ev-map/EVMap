@@ -4,6 +4,8 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import kotlinx.parcelize.Parcelize
+import net.vonforst.evmap.max
 import net.vonforst.evmap.model.*
 import java.time.ZonedDateTime
 
@@ -27,7 +29,8 @@ data class OCMChargepoint(
     @Json(name = "NumberOfPoints") val numPoints: Int?,
     @Json(name = "GeneralComments") val generalComments: String?,
     @Json(name = "OperatorInfo") val operatorInfo: OCMOperator?,
-    @Json(name = "DataProvider") val dataProvider: OCMDataProvider?
+    @Json(name = "DataProvider") val dataProvider: OCMDataProvider?,
+    @Json(name = "MediaItems") val mediaItems: List<OCMMediaItem>?
 ) {
     fun convert(refData: OCMReferenceData) = ChargeLocation(
         id,
@@ -45,7 +48,7 @@ data class OCMChargepoint(
         generalComments,
         null,
         addressInfo.accessComments,
-        null, // TODO: MediaItems,
+        mediaItems?.mapNotNull { it.convert() },
         null,
         null,
         cost?.let { Cost(descriptionShort = it) },
@@ -155,3 +158,37 @@ data class OCMOperator(
     @Json(name = "PhonePrimaryContact") val contactTelephone1: String?,
     @Json(name = "PhoneSecondaryContact") val contactTelephone2: String?,
 )
+
+@JsonClass(generateAdapter = true)
+data class OCMMediaItem(
+    @Json(name = "ID") val id: Long,
+    @Json(name = "ItemURL") val url: String,
+    @Json(name = "ItemThumbnailURL") val thumbUrl: String,
+    @Json(name = "IsVideo") val isVideo: Boolean,
+    @Json(name = "IsExternalResource") val isExternalResource: Boolean,
+    @Json(name = "Comment") val comment: String?
+) {
+    fun convert(): ChargerPhoto? {
+        if (isVideo or isExternalResource) return null
+
+        return OCMChargerPhotoAdapter(id.toString(), url, thumbUrl)
+    }
+}
+
+@Parcelize
+private class OCMChargerPhotoAdapter(
+    override val id: String,
+    private val largeUrl: String,
+    private val thumbUrl: String
+) : ChargerPhoto(id) {
+    override fun getUrl(height: Int?, width: Int?, size: Int?): String {
+        val maxSize = size ?: max(height, width)
+        val mediumUrl = thumbUrl.replace(".thmb.", ".medi.")
+        return when (maxSize) {
+            0 -> mediumUrl
+            in 1..100 -> thumbUrl
+            in 101..400 -> mediumUrl
+            else -> largeUrl
+        }
+    }
+}

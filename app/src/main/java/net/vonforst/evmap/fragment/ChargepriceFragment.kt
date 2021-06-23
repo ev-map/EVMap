@@ -20,9 +20,13 @@ import net.vonforst.evmap.MapsActivity
 import net.vonforst.evmap.R
 import net.vonforst.evmap.adapter.ChargepriceAdapter
 import net.vonforst.evmap.adapter.CheckableConnectorAdapter
+import net.vonforst.evmap.api.ChargepointApi
+import net.vonforst.evmap.api.goingelectric.GoingElectricApiWrapper
+import net.vonforst.evmap.api.openchargemap.OpenChargeMapApiWrapper
 import net.vonforst.evmap.databinding.FragmentChargepriceBinding
 import net.vonforst.evmap.model.ChargeLocation
 import net.vonforst.evmap.model.Chargepoint
+import net.vonforst.evmap.model.ReferenceData
 import net.vonforst.evmap.viewmodel.ChargepriceViewModel
 import net.vonforst.evmap.viewmodel.Status
 import net.vonforst.evmap.viewmodel.viewModelFactory
@@ -87,7 +91,9 @@ class ChargepriceFragment : DialogFragment() {
         )
 
         val charger = requireArguments().getParcelable<ChargeLocation>(ARG_CHARGER)!!
+        val dataSource = requireArguments().getString(ARG_DATASOURCE)!!
         vm.charger.value = charger
+        vm.dataSource.value = dataSource
         if (vm.chargepoint.value == null) {
             vm.chargepoint.value = charger.chargepointsMerged.get(0)
         }
@@ -196,13 +202,25 @@ class ChargepriceFragment : DialogFragment() {
     }
 
     companion object {
-        val ARG_CHARGER = "charger"
+        const val ARG_CHARGER = "charger"
+        const val ARG_DATASOURCE = "datasource"
 
-        fun showCharger(charger: ChargeLocation): Bundle {
+        fun showCharger(
+            charger: ChargeLocation,
+            dataSource: Class<ChargepointApi<ReferenceData>>
+        ): Bundle {
             return Bundle().apply {
                 putParcelable(
                     ARG_CHARGER,
                     charger
+                )
+                putString(
+                    ARG_DATASOURCE,
+                    when (dataSource) {
+                        GoingElectricApiWrapper::class.java -> "going_electric"
+                        OpenChargeMapApiWrapper::class.java -> "open_charge_map"
+                        else -> throw IllegalArgumentException("unsupported data source")
+                    }
                 )
             }
         }

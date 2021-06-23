@@ -303,7 +303,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             val charger = vm.charger.value?.data ?: return@setOnClickListener
             findNavController().navigate(
                 R.id.action_map_to_chargepriceFragment,
-                ChargepriceFragment.showCharger(charger)
+                ChargepriceFragment.showCharger(charger, vm.apiType)
             )
         }
         binding.detailView.topPart.setOnClickListener {

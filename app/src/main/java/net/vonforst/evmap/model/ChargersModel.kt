@@ -46,7 +46,8 @@ data class ChargeLocation(
     val chargecards: List<ChargeCardId>?,
     @Embedded val openinghours: OpeningHours?,
     @Embedded val cost: Cost?,
-    val license: String?
+    val license: String?,
+    @Embedded(prefix = "chargeprice") val chargepriceData: ChargepriceData
 ) : ChargepointListItem(), Equatable, Parcelable {
     /**
      * maximum power available from this charger.
@@ -105,6 +106,16 @@ data class ChargeLocation(
         }.joinToString(" · ")
     }
 }
+
+/**
+ * Additional data needed for the Chargeprice implementation
+ */
+@Parcelize
+data class ChargepriceData(
+    val country: String?,
+    val network: String?,
+    val plugTypes: List<String>?
+) : Parcelable
 
 @Parcelize
 data class Cost(

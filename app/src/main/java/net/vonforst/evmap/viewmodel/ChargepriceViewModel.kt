@@ -6,9 +6,11 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import moe.banana.jsonapi2.HasOne
 import net.vonforst.evmap.api.chargeprice.*
+import net.vonforst.evmap.api.equivalentPlugTypes
 import net.vonforst.evmap.model.ChargeLocation
 import net.vonforst.evmap.model.Chargepoint
 import net.vonforst.evmap.storage.PreferenceDataSource
+import retrofit2.HttpException
 import java.io.IOException
 import java.util.*
 
@@ -19,6 +21,10 @@ class ChargepriceViewModel(application: Application, chargepriceApiKey: String) 
 
     val charger: MutableLiveData<ChargeLocation> by lazy {
         MutableLiveData<ChargeLocation>()
+    }
+
+    val dataSource: MutableLiveData<String> by lazy {
+        MutableLiveData<String>()
     }
 
     val chargepoint: MutableLiveData<Chargepoint> by lazy {
@@ -36,7 +42,9 @@ class ChargepriceViewModel(application: Application, chargepriceApiKey: String) 
         Chargepoint.CEE_ROT,
         Chargepoint.SCHUKO,
         Chargepoint.TYPE_1,
-        Chargepoint.TYPE_2_UNKNOWN
+        Chargepoint.TYPE_2_UNKNOWN,
+        Chargepoint.TYPE_2_SOCKET,
+        Chargepoint.TYPE_2_PLUG
     )
     private val plugMapping = mapOf(
         "ccs" to Chargepoint.CCS_UNKNOWN,
@@ -59,7 +67,8 @@ class ChargepriceViewModel(application: Application, chargepriceApiKey: String) 
                 addSource(it) {
                     val charger = charger.value ?: return@addSource
                     val connectors = vehicleCompatibleConnectors.value ?: return@addSource
-                    value = !charger.chargepoints.map { it.type }.any { it in connectors }
+                    value = !charger.chargepoints.flatMap { equivalentPlugTypes(it.type) }
+                        .any { it in connectors }
                 }
             }
         }
@@ -84,6 +93,7 @@ class ChargepriceViewModel(application: Application, chargepriceApiKey: String) 
             value = Resource.loading(null)
             listOf(
                 charger,
+                dataSource,
                 vehicle,
                 batteryRange,
                 batteryRangeSliderDragging,
@@ -118,7 +128,9 @@ class ChargepriceViewModel(application: Application, chargepriceApiKey: String) 
                         val myTariffs = prefs.chargepriceMyTariffs
                         value = Resource.success(cps.data!!.map { cp ->
                             val filteredPrices =
-                                cp.chargepointPrices.filter { it.plug == chargepoint.type && it.power == chargepoint.power }
+                                cp.chargepointPrices.filter {
+                                    it.plug == getChargepricePlugType(chargepoint) && it.power == chargepoint.power
+                                }
                             if (filteredPrices.isEmpty()) {
                                 null
                             } else {
@@ -137,6 +149,12 @@ class ChargepriceViewModel(application: Application, chargepriceApiKey: String) 
                 }
             }
         }
+    }
+
+    private fun getChargepricePlugType(chargepoint: Chargepoint): String {
+        val index = charger.value!!.chargepoints.indexOf(chargepoint)
+        val type = charger.value!!.chargepriceData.plugTypes?.get(index) ?: chargepoint.type
+        return type
     }
 
     val myTariffs: LiveData<Set<String>> by lazy {
@@ -164,7 +182,11 @@ class ChargepriceViewModel(application: Application, chargepriceApiKey: String) 
                         value = Resource.loading(null)
                     } else {
                         value =
-                            Resource.success(cpMeta.data!!.chargePoints.filter { it.plug == chargepoint.type && it.power == chargepoint.power }[0])
+                            Resource.success(cpMeta.data!!.chargePoints.filter {
+                                it.plug == getChargepricePlugType(
+                                    chargepoint
+                                ) && it.power == chargepoint.power
+                            }[0])
                     }
                 }
             }
@@ -174,22 +196,22 @@ class ChargepriceViewModel(application: Application, chargepriceApiKey: String) 
     private var loadPricesJob: Job? = null
     fun loadPrices() {
         chargePrices.value = Resource.loading(null)
-        val geCharger = charger.value
+        val charger = charger.value
         val car = vehicle.value
         val compatibleConnectors = vehicleCompatibleConnectors.value
-        if (geCharger == null || car == null || compatibleConnectors == null) {
+        val dataSource = dataSource.value
+        if (charger == null || car == null || compatibleConnectors == null || dataSource == null) {
             chargePrices.value = Resource.error(null, null)
             return
         }
 
-        val cpStation = ChargepriceStation.fromGoingelectric(geCharger, compatibleConnectors)
-        // TODO: implement this for OpenChargeMap -> https://github.com/chargeprice/chargeprice-api-docs/blob/master/guides/integrate_charge_prices.md#open-charge-map-beta
+        val cpStation = ChargepriceStation.fromEvmap(charger, compatibleConnectors)
 
         loadPricesJob?.cancel()
         loadPricesJob = viewModelScope.launch {
             try {
                 val result = api.getChargePrices(ChargepriceRequest().apply {
-                    dataAdapter = "going_electric"
+                    dataAdapter = dataSource
                     station = cpStation
                     vehicle = HasOne(car)
                     options = ChargepriceOptions(
@@ -204,6 +226,9 @@ class ChargepriceViewModel(application: Application, chargepriceApiKey: String) 
                 chargePrices.value = Resource.success(result)
                 chargePriceMeta.value = Resource.success(meta)
             } catch (e: IOException) {
+                chargePrices.value = Resource.error(e.message, null)
+                chargePriceMeta.value = Resource.error(e.message, null)
+            } catch (e: HttpException) {
                 chargePrices.value = Resource.error(e.message, null)
                 chargePriceMeta.value = Resource.error(e.message, null)
             }

@@ -66,7 +66,7 @@ class ChargepriceApiTest {
                     ChargepriceRequest().apply {
                         dataAdapter = "going_electric"
                         station =
-                            ChargepriceStation.fromGoingelectric(charger, listOf("Typ2", "Schuko"))
+                            ChargepriceStation.fromEvmap(charger, listOf("Typ2", "Schuko"))
                         options = ChargepriceOptions(energy = 22.0, duration = 60)
                     }, "en"
                 )

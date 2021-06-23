@@ -24,7 +24,7 @@ import net.vonforst.evmap.model.*
         GEChargeCard::class,
         OCMConnectionType::class,
         OCMCountry::class
-    ], version = 13
+    ], version = 14
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -45,7 +45,7 @@ abstract class AppDatabase : RoomDatabase() {
                 .addMigrations(
                     MIGRATION_2, MIGRATION_3, MIGRATION_4, MIGRATION_5, MIGRATION_6,
                     MIGRATION_7, MIGRATION_8, MIGRATION_9, MIGRATION_10, MIGRATION_11,
-                    MIGRATION_12, MIGRATION_13
+                    MIGRATION_12, MIGRATION_13, MIGRATION_14
                 )
                 .addCallback(object : Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
@@ -205,6 +205,21 @@ abstract class AppDatabase : RoomDatabase() {
                     db.endTransaction()
                 }
             }
+        }
+
+        private val MIGRATION_14 = object : Migration(13, 14) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.beginTransaction()
+                try {
+                    db.execSQL("ALTER TABLE `ChargeLocation` ADD `chargepricecountry` TEXT")
+                    db.execSQL("ALTER TABLE `ChargeLocation` ADD `chargepricenetwork` TEXT")
+                    db.execSQL("ALTER TABLE `ChargeLocation` ADD `chargepriceplugTypes` TEXT")
+                    db.setTransactionSuccessful()
+                } finally {
+                    db.endTransaction()
+                }
+            }
+
         }
     }
 }

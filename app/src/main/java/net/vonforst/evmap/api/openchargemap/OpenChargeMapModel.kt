@@ -29,6 +29,7 @@ data class OCMChargepoint(
     @Json(name = "NumberOfPoints") val numPoints: Int?,
     @Json(name = "GeneralComments") val generalComments: String?,
     @Json(name = "OperatorInfo") val operatorInfo: OCMOperator?,
+    @Json(name = "OperatorID") val operatorId: Long?,
     @Json(name = "DataProvider") val dataProvider: OCMDataProvider?,
     @Json(name = "MediaItems") val mediaItems: List<OCMMediaItem>?
 ) {
@@ -52,7 +53,11 @@ data class OCMChargepoint(
         null,
         null,
         cost?.let { Cost(descriptionShort = it) },
-        dataProvider?.let { "© ${it.title}" + if (it.license != null) ". ${it.license}" else "" }
+        dataProvider?.let { "© ${it.title}" + if (it.license != null) ". ${it.license}" else "" },
+        ChargepriceData(
+            addressInfo.countryISOCode(refData),
+            operatorId?.toString(),
+            connections.map { "${it.connectionTypeId},${it.currentTypeId}" })
     )
 }
 
@@ -79,11 +84,15 @@ data class OCMAddressInfo(
         postcode,
         listOfNotNull(addressLine1, addressLine2).joinToString(", ")
     )
+
+    fun countryISOCode(refData: OCMReferenceData) =
+        refData.countries.find { it.id == countryId }?.isoCode
 }
 
 @JsonClass(generateAdapter = true)
 data class OCMConnection(
     @Json(name = "ConnectionTypeID") val connectionTypeId: Long,
+    @Json(name = "CurrentTypeID") val currentTypeId: Long?,
     @Json(name = "Amps") val amps: Int?,
     @Json(name = "Voltage") val voltage: Int?,
     @Json(name = "PowerKW") val power: Double?,

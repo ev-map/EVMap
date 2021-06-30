@@ -21,6 +21,7 @@ import net.vonforst.evmap.R
 import net.vonforst.evmap.adapter.ChargepriceAdapter
 import net.vonforst.evmap.adapter.CheckableConnectorAdapter
 import net.vonforst.evmap.api.ChargepointApi
+import net.vonforst.evmap.api.equivalentPlugTypes
 import net.vonforst.evmap.api.goingelectric.GoingElectricApiWrapper
 import net.vonforst.evmap.api.openchargemap.OpenChargeMapApiWrapper
 import net.vonforst.evmap.databinding.FragmentChargepriceBinding
@@ -135,8 +136,9 @@ class ChargepriceFragment : DialogFragment() {
             vm.chargepoint.observe(viewLifecycleOwner, observer)
         }
 
-        vm.vehicleCompatibleConnectors.observe(viewLifecycleOwner) {
-            connectorsAdapter.enabledConnectors = it
+        vm.vehicleCompatibleConnectors.observe(viewLifecycleOwner) { plugs ->
+            connectorsAdapter.enabledConnectors =
+                plugs.flatMap { plug -> equivalentPlugTypes(plug) }
         }
 
         binding.connectorsList.apply {

@@ -192,6 +192,8 @@
     <string name="pref_my_tariffs">My charging plans</string>
     <string name="chargeprice_all_tariffs_selected">all plans selected</string>
     <string name="license">License</string>
+    <string name="settings_charger_data">Charging stations</string>
+    <string name="pref_data_source">Data source</string>
     <plurals name="chargeprice_some_tariffs_selected">
         <item quantity="one">%d plan selected</item>
         <item quantity="other">%d plans selected</item>

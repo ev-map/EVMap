@@ -193,6 +193,8 @@
     <string name="pref_my_tariffs">Meine Tarife</string>
     <string name="chargeprice_all_tariffs_selected">alle Tarife ausgewählt</string>
     <string name="license">Lizenz</string>
+    <string name="settings_charger_data">Ladesäulen</string>
+    <string name="pref_data_source">Datenquelle</string>
     <string-array name="pref_chargeprice_currency_names">
         <item>Schweizer Franken (CHF)</item>
         <item>Tschechische Krone (CZK)</item>

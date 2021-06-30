@@ -20,6 +20,15 @@
             android:summary="@string/pref_darkmode_summary" />
 
     </PreferenceCategory>
+    <PreferenceCategory android:title="@string/settings_charger_data">
+        <ListPreference
+            android:key="data_source"
+            android:title="@string/pref_data_source"
+            android:entries="@array/pref_data_source_names"
+            android:entryValues="@array/pref_data_source_values"
+            android:defaultValue="goingelectric"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
     <PreferenceCategory android:title="@string/settings_map">
 
         <ListPreference

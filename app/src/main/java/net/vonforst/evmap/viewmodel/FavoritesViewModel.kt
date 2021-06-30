@@ -10,14 +10,12 @@ import net.vonforst.evmap.adapter.Equatable
 import net.vonforst.evmap.api.availability.ChargeLocationStatus
 import net.vonforst.evmap.api.availability.ChargepointStatus
 import net.vonforst.evmap.api.availability.getAvailability
-import net.vonforst.evmap.api.goingelectric.GoingElectricApi
 import net.vonforst.evmap.model.ChargeLocation
 import net.vonforst.evmap.storage.AppDatabase
 import net.vonforst.evmap.utils.distanceBetween
 
 class FavoritesViewModel(application: Application, geApiKey: String) :
     AndroidViewModel(application) {
-    private var api = GoingElectricApi.create(geApiKey, context = application)
     private var db = AppDatabase.getInstance(application)
 
     val favorites: LiveData<List<ChargeLocation>> by lazy {

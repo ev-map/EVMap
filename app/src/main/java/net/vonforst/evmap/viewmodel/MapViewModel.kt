@@ -6,10 +6,10 @@ import com.car2go.maps.AnyMap
 import com.car2go.maps.model.LatLng
 import com.car2go.maps.model.LatLngBounds
 import kotlinx.coroutines.launch
-import net.vonforst.evmap.R
 import net.vonforst.evmap.api.ChargepointApi
 import net.vonforst.evmap.api.availability.ChargeLocationStatus
 import net.vonforst.evmap.api.availability.getAvailability
+import net.vonforst.evmap.api.createApi
 import net.vonforst.evmap.api.goingelectric.GEReferenceData
 import net.vonforst.evmap.api.goingelectric.GoingElectricApiWrapper
 import net.vonforst.evmap.api.openchargemap.OpenChargeMapApiWrapper
@@ -34,11 +34,6 @@ internal fun getClusterDistance(zoom: Float): Int? {
 }
 
 class MapViewModel(application: Application, geApiKey: String) : AndroidViewModel(application) {
-    private var api: ChargepointApi<ReferenceData> = OpenChargeMapApiWrapper(
-        application.getString(
-            R.string.openchargemap_key
-        )
-    )
     val apiType: Class<ChargepointApi<ReferenceData>>
         get() = api.javaClass
     val apiName: String
@@ -47,6 +42,7 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
     // = GoingElectricApiWrapper(geApiKey, context = application)
     private var db = AppDatabase.getInstance(application)
     private var prefs = PreferenceDataSource(application)
+    private var api: ChargepointApi<ReferenceData> = createApi(prefs.dataSource, application)
 
     val bottomSheetState: MutableLiveData<Int> by lazy {
         MutableLiveData<Int>()
@@ -69,22 +65,26 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
     }
     private val referenceData: LiveData<out ReferenceData> by lazy {
         val api = api
-        if (api is GoingElectricApiWrapper) {
-            GEReferenceDataRepository(
-                api,
-                viewModelScope,
-                db.geReferenceDataDao(),
-                prefs
-            ).getReferenceData()
-        } else if (api is OpenChargeMapApiWrapper) {
-            OCMReferenceDataRepository(
-                api,
-                viewModelScope,
-                db.ocmReferenceDataDao(),
-                prefs
-            ).getReferenceData()
-        } else {
-            throw RuntimeException("no reference data implemented")
+        when (api) {
+            is GoingElectricApiWrapper -> {
+                GEReferenceDataRepository(
+                    api,
+                    viewModelScope,
+                    db.geReferenceDataDao(),
+                    prefs
+                ).getReferenceData()
+            }
+            is OpenChargeMapApiWrapper -> {
+                OCMReferenceDataRepository(
+                    api,
+                    viewModelScope,
+                    db.ocmReferenceDataDao(),
+                    prefs
+                ).getReferenceData()
+            }
+            else -> {
+                throw RuntimeException("no reference data implemented")
+            }
         }
     }
     private val filters = MediatorLiveData<List<Filter<FilterValue>>>().apply {

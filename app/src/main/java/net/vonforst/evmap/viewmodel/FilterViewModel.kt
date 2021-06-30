@@ -3,8 +3,11 @@ package net.vonforst.evmap.viewmodel
 import android.app.Application
 import androidx.lifecycle.*
 import kotlinx.coroutines.launch
+import net.vonforst.evmap.api.ChargepointApi
+import net.vonforst.evmap.api.createApi
 import net.vonforst.evmap.api.goingelectric.GEReferenceData
 import net.vonforst.evmap.api.goingelectric.GoingElectricApiWrapper
+import net.vonforst.evmap.api.openchargemap.OpenChargeMapApiWrapper
 import net.vonforst.evmap.api.stringProvider
 import net.vonforst.evmap.model.*
 import net.vonforst.evmap.storage.*
@@ -30,17 +33,33 @@ internal fun filtersWithValue(
 
 class FilterViewModel(application: Application, geApiKey: String) :
     AndroidViewModel(application) {
-    private var api = GoingElectricApiWrapper(geApiKey, context = application)
     private var db = AppDatabase.getInstance(application)
     private var prefs = PreferenceDataSource(application)
+    private var api: ChargepointApi<ReferenceData> = createApi(prefs.dataSource, application)
 
     private val referenceData: LiveData<out ReferenceData> by lazy {
-        GEReferenceDataRepository(
-            api,
-            viewModelScope,
-            db.geReferenceDataDao(),
-            prefs
-        ).getReferenceData()
+        val api = api
+        when (api) {
+            is GoingElectricApiWrapper -> {
+                GEReferenceDataRepository(
+                    api,
+                    viewModelScope,
+                    db.geReferenceDataDao(),
+                    prefs
+                ).getReferenceData()
+            }
+            is OpenChargeMapApiWrapper -> {
+                OCMReferenceDataRepository(
+                    api,
+                    viewModelScope,
+                    db.ocmReferenceDataDao(),
+                    prefs
+                ).getReferenceData()
+            }
+            else -> {
+                throw RuntimeException("no reference data implemented")
+            }
+        }
     }
     private val filters = MediatorLiveData<List<Filter<FilterValue>>>().apply {
         addSource(referenceData) { data ->

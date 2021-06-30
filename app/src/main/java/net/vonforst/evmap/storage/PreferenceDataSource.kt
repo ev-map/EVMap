@@ -11,6 +11,12 @@ import java.time.Instant
 class PreferenceDataSource(val context: Context) {
     val sp = PreferenceManager.getDefaultSharedPreferences(context)
 
+    var dataSource: String
+        get() = sp.getString("data_source", "goingelectric")!!
+        set(value) {
+            sp.edit().putString("data_source", value).apply()
+        }
+
     var navigateUseMaps: Boolean
         get() = sp.getBoolean("navigate_use_maps", true)
         set(value) {

@@ -3,6 +3,7 @@
     <string name="title_activity_maps">EVMap</string>
     <string name="connectors">Connectors</string>
     <string name="no_maps_app_found">No navigation app found</string>
+    <string name="no_browser_app_found">No web browser found</string>
     <string name="address">Address</string>
     <string name="operator">Operator</string>
     <string name="network">Network</string>

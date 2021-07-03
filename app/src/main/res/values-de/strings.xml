@@ -4,6 +4,7 @@
     <string name="title_activity_maps">EVMap</string>
     <string name="connectors">Anschlüsse</string>
     <string name="no_maps_app_found">Keine Navigations-App gefunden</string>
+    <string name="no_browser_app_found">Kein Webbrowser gefunden</string>
     <string name="address">Adresse</string>
     <string name="operator">Betreiber</string>
     <string name="network">Verbund</string>

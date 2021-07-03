@@ -1,5 +1,6 @@
 package net.vonforst.evmap
 
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -162,7 +163,16 @@ class MapsActivity : AppCompatActivity() {
                     .build()
             )
             .build()
-        intent.launchUrl(this, Uri.parse(url))
+        try {
+            intent.launchUrl(this, Uri.parse(url))
+        } catch (e: ActivityNotFoundException) {
+            val cb = fragmentCallback ?: return
+            Snackbar.make(
+                cb.getRootView(),
+                R.string.no_browser_app_found,
+                Snackbar.LENGTH_SHORT
+            ).show()
+        }
     }
 
     fun shareUrl(url: String) {

@@ -291,6 +291,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         binding.fabLayers.setOnClickListener {
             openLayersMenu()
         }
+        binding.layers.btnClose.setOnClickListener {
+            closeLayersMenu()
+        }
         binding.detailView.goingelectricButton.setOnClickListener {
             val charger = vm.charger.value?.data
             if (charger != null) {

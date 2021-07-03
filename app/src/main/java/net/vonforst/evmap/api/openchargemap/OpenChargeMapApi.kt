@@ -30,7 +30,7 @@ interface OpenChargeMapApi {
         @Query("operatorid") operators: String? = null,
         @Query("compact") compact: Boolean = true,
         @Query("statustypeid") statusType: String? = null,
-        @Query("maxresults") maxresults: Int = 100,
+        @Query("maxresults") maxresults: Int = 500,
     ): Response<List<OCMChargepoint>>
 
     @GET("poi/")

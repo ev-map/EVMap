@@ -34,7 +34,8 @@ interface OpenChargeMapApi {
     @GET("poi/")
     suspend fun getChargepointDetail(
         @Query("chargepointid") id: Long,
-        @Query("compact") compact: Boolean = false
+        @Query("compact") compact: Boolean = false,
+        @Query("includecomments") includeComments: Boolean = true
     ): Response<List<OCMChargepoint>>
 
     @GET("referencedata/")

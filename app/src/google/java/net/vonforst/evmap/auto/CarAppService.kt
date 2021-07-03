@@ -546,6 +546,8 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
                                 if (isNotEmpty()) append(" · ")
                                 append(it)
                             }
+                        }.ifEmpty {
+                            carContext.getString(R.string.unknown_operator)
                         }
                         setTitle(operatorText)
 

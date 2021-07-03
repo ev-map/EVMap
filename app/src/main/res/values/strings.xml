@@ -195,4 +195,5 @@
         <item quantity="one">%d plan selected</item>
         <item quantity="other">%d plans selected</item>
     </plurals>
+    <string name="unknown_operator">Unknown operator</string>
 </resources>

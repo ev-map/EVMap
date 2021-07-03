@@ -210,4 +210,5 @@
         <item quantity="one">%d Tarif ausgewählt</item>
         <item quantity="other">%d Tarife ausgewählt</item>
     </plurals>
+    <string name="unknown_operator">Unbekannter Betreiber</string>
 </resources>

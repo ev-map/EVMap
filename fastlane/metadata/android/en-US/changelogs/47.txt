@@ -1,0 +1,3 @@
+Fixed various crashes
+Improved support for shared locations from other apps
+F-Droid version: Search field will be focused automatically when opened

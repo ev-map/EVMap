@@ -61,6 +61,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
         }
 
         myTariffsPreference = findPreference("chargeprice_my_tariffs")!!
+        myTariffsPreference.isEnabled = false
         vm.tariffs.observe(viewLifecycleOwner) { res ->
             res.data?.let { tariffs ->
                 myTariffsPreference.entryValues = tariffs.map { it.id }.toTypedArray()

@@ -50,7 +50,7 @@
     </string-array>
     <string-array name="pref_data_source_names">
         <item>GoingElectric.de</item>
-        <item>OpenChargeMap.org</item>
+        <item>Open Charge Map</item>
     </string-array>
     <string-array name="pref_data_source_values" tranlatable="false">
         <item>goingelectric</item>

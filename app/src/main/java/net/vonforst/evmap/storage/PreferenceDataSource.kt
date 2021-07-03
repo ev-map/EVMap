@@ -17,6 +17,12 @@ class PreferenceDataSource(val context: Context) {
             sp.edit().putString("data_source", value).apply()
         }
 
+    var dataSourceSet: Boolean
+        get() = sp.getBoolean("data_source_set", false)
+        set(value) {
+            sp.edit().putBoolean("data_source_set", value).apply()
+        }
+
     var navigateUseMaps: Boolean
         get() = sp.getBoolean("navigate_use_maps", true)
         set(value) {

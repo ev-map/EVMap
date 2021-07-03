@@ -21,7 +21,7 @@
 
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/settings_charger_data">
-        <ListPreference
+        <net.vonforst.evmap.ui.DataSourceSelectDialogPreference
             android:key="data_source"
             android:title="@string/pref_data_source"
             android:entries="@array/pref_data_source_names"

@@ -215,4 +215,9 @@
         <item quantity="other">%d Tarife ausgewählt</item>
     </plurals>
     <string name="unknown_operator">Unbekannter Betreiber</string>
+    <string name="data_sources_description">EVMap unterstützt verschiedene Datenquellen. Bitte wähle aus, welche du nutzen möchtest. Du kannst die Datenquelle später in den Einstellungen der App ändern.</string>
+    <string name="data_source_goingelectric">GoingElectric.de</string>
+    <string name="data_source_openchargemap">Open Charge Map</string>
+    <string name="data_source_goingelectric_desc">Sehr gute Abdeckung in Deutschland, Österreich, Schweiz und vielen angrenzenden Ländern. Beschreibungen in Deutsch. Von der Community gepflegt.</string>
+    <string name="data_source_openchargemap_desc"><![CDATA[Weltweite Abdeckung mit variierender Qualität. Beschreibungen in Englisch oder Landessprache. Von der Community gepflegt & offizielle Verzeichnisse einiger Länder (z.B. Nordamerika, UK, Frankreich, Norwegen).]]></string>
 </resources>

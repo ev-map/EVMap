@@ -7,8 +7,8 @@ import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
 import net.vonforst.evmap.BuildConfig
-import net.vonforst.evmap.api.ChargepointApi
-import net.vonforst.evmap.api.StringProvider
+import net.vonforst.evmap.R
+import net.vonforst.evmap.api.*
 import net.vonforst.evmap.model.*
 import net.vonforst.evmap.ui.cluster
 import net.vonforst.evmap.viewmodel.Resource
@@ -27,8 +27,10 @@ interface OpenChargeMapApi {
         @Query("boundingbox") boundingbox: OCMBoundingBox,
         @Query("connectiontypeid") plugs: String? = null,
         @Query("minpowerkw") minPower: Double? = null,
+        @Query("operatorid") operators: String? = null,
         @Query("compact") compact: Boolean = true,
-        @Query("maxresults") maxresults: Int = 100
+        @Query("statustypeid") statusType: String? = null,
+        @Query("maxresults") maxresults: Int = 100,
     ): Response<List<OCMChargepoint>>
 
     @GET("poi/")
@@ -89,6 +91,12 @@ class OpenChargeMapApiWrapper(
 
     override fun getName() = "OpenChargeMap.org"
 
+    private fun formatMultipleChoice(value: MultipleChoiceFilterValue) =
+        if (value.all) null else value.values.joinToString(",")
+
+    // Unknown, Currently Available, Currently In Use, Operational, Partly Operational
+    private val noFaultStatuses = "0,10,20,50,75"
+
     override suspend fun getChargepoints(
         referenceData: ReferenceData,
         bounds: LatLngBounds,
@@ -96,18 +104,46 @@ class OpenChargeMapApiWrapper(
         filters: FilterValues,
     ): Resource<List<ChargepointListItem>> {
         val referenceData = referenceData as OCMReferenceData
+
+        val minPower = filters.getSliderValue("min_power")!!.toDouble()
+        val minConnectors = filters.getSliderValue("min_connectors")!!
+        val excludeFaults = filters.getBooleanValue("exclude_faults")!!
+
+        val connectorsVal = filters.getMultipleChoiceValue("connectors")!!
+        if (connectorsVal.values.isEmpty() && !connectorsVal.all) {
+            // no connectors chosen
+            return Resource.success(emptyList())
+        }
+        val connectors = formatMultipleChoice(connectorsVal)
+
+        val operatorsVal = filters.getMultipleChoiceValue("operators")!!
+        if (operatorsVal.values.isEmpty() && !operatorsVal.all) {
+            // no operators chosen
+            return Resource.success(emptyList())
+        }
+        val operators = formatMultipleChoice(operatorsVal)
+
         val response = api.getChargepoints(
             OCMBoundingBox(
                 bounds.southwest.latitude, bounds.southwest.longitude,
                 bounds.northeast.latitude, bounds.northeast.longitude
-            )
+            ),
+            minPower = minPower,
+            plugs = connectors,
+            operators = operators,
+            statusType = if (excludeFaults) noFaultStatuses else null
         )
         if (!response.isSuccessful) {
             return Resource.error(response.message(), null)
         }
 
-        var result = response.body()!!.map { it.convert(referenceData) }
-            .distinct() as List<ChargepointListItem>
+        var result = response.body()!!.filter { it ->
+            // apply filters which OCM does not support natively
+            it.connections
+                .filter { it.power == null || it.power >= minPower }
+                .filter { if (!connectorsVal.all) it.connectionTypeId in connectorsVal.values.map { it.toLong() } else true }
+                .sumOf { it.quantity ?: 0 } >= minConnectors
+        }.map { it.convert(referenceData) }.distinct() as List<ChargepointListItem>
 
         val useClustering = zoom < 13
         val clusterDistance = if (useClustering) getClusterDistance(zoom) else null
@@ -157,7 +193,46 @@ class OpenChargeMapApiWrapper(
         sp: StringProvider
     ): List<Filter<FilterValue>> {
         val referenceData = referenceData as OCMReferenceData
-        return emptyList()
+
+        val operatorsMap = referenceData.operators.map { it.id.toString() to it.title }.toMap()
+        val plugMap = referenceData.connectionTypes.map { it.id.toString() to it.title }.toMap()
+
+        return listOf(
+            // supported by OCM API
+            SliderFilter(
+                sp.getString(R.string.filter_min_power), "min_power",
+                powerSteps.size - 1,
+                mapping = ::mapPower,
+                inverseMapping = ::mapPowerInverse,
+                unit = "kW"
+            ),
+            MultipleChoiceFilter(
+                sp.getString(R.string.filter_connectors), "connectors",
+                plugMap,
+                commonChoices = setOf(
+                    "1", // Type 1 (J1772)
+                    "25", // Type 2 (Socket only)
+                    "1036", // Type 2 (Tethered connector)
+                    "32", // CCS (Type 1)
+                    "33", // CCS (Type 2)
+                    "2" // CHAdeMO
+                ),
+                manyChoices = true
+            ),
+            MultipleChoiceFilter(
+                sp.getString(R.string.filter_operators), "operators",
+                operatorsMap, manyChoices = true
+            ),
+            BooleanFilter(sp.getString(R.string.filter_exclude_faults), "exclude_faults"),
+
+            // local filters
+            SliderFilter(
+                sp.getString(R.string.filter_min_connectors),
+                "min_connectors",
+                10,
+                min = 1
+            ),
+        )
     }
 
 }

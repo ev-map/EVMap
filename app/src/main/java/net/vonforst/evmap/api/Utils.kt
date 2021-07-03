@@ -11,6 +11,7 @@ import okhttp3.Response
 import org.json.JSONArray
 import java.io.IOException
 import kotlin.coroutines.resumeWithException
+import kotlin.math.abs
 
 operator fun <T> JSONArray.iterator(): Iterator<T> =
     (0 until length()).asSequence().map {
@@ -102,3 +103,9 @@ fun iconForPlugType(type: String): Int =
         // TODO: add other connectors
         else -> 0
     }
+
+val powerSteps = listOf(0, 2, 3, 7, 11, 22, 43, 50, 75, 100, 150, 200, 250, 300, 350)
+fun mapPower(i: Int) = powerSteps[i]
+fun mapPowerInverse(power: Int) = powerSteps
+    .mapIndexed { index, v -> abs(v - power) to index }
+    .minByOrNull { it.first }?.second ?: 0

@@ -10,9 +10,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import net.vonforst.evmap.BuildConfig
 import net.vonforst.evmap.R
-import net.vonforst.evmap.api.ChargepointApi
-import net.vonforst.evmap.api.StringProvider
-import net.vonforst.evmap.api.nameForPlugType
+import net.vonforst.evmap.api.*
 import net.vonforst.evmap.model.*
 import net.vonforst.evmap.ui.cluster
 import net.vonforst.evmap.viewmodel.Resource
@@ -25,7 +23,6 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
 import java.io.IOException
-import kotlin.math.abs
 
 interface GoingElectricApi {
     @GET("chargepoints/")
@@ -151,7 +148,7 @@ class GoingElectricApiWrapper(
             return Resource.success(emptyList())
         }
         connectorsVal.values = connectorsVal.values.mapNotNull {
-            GEChargepoint.convertType(it)
+            GEChargepoint.convertTypeToGE(it)
         }.toMutableSet()
         val connectors = formatMultipleChoice(connectorsVal)
 
@@ -225,7 +222,7 @@ class GoingElectricApiWrapper(
                 it.chargepoints
                     .filter { it.power >= minPower }
                     .filter { if (!connectorsVal.all) it.type in connectorsVal.values else true }
-                    .sumBy { it.count } >= minConnectors
+                    .sumOf { it.count } >= minConnectors
             } else {
                 true
             }
@@ -380,11 +377,5 @@ class GoingElectricApiWrapper(
             BooleanFilter(sp.getString(R.string.filter_exclude_faults), "exclude_faults")
         )
     }
-
-    private val powerSteps = listOf(0, 2, 3, 7, 11, 22, 43, 50, 75, 100, 150, 200, 250, 300, 350)
-    private fun mapPower(i: Int) = powerSteps[i]
-    private fun mapPowerInverse(power: Int) = powerSteps
-        .mapIndexed { index, v -> abs(v - power) to index }
-        .minByOrNull { it.first }?.second ?: 0
 }
 

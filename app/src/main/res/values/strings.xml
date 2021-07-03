@@ -87,6 +87,7 @@
     <string name="fault_report">Fault report</string>
     <string name="fault_report_date">Fault report (last update: %s)</string>
     <string name="filter_networks">Networks</string>
+    <string name="filter_operators">Operators</string>
     <string name="filter_chargecards">Payment methods</string>
     <string name="all_selected">All selected</string>
     <string name="number_selected">%d selected</string>

@@ -100,27 +100,30 @@ data class OCMConnection(
     @Json(name = "Comments") val comments: String?
 ) {
     fun convert(refData: OCMReferenceData) = Chargepoint(
-        convertConnectionType(connectionTypeId, refData),
+        convertConnectionTypeFromOCM(connectionTypeId, refData),
         power ?: 0.0,
         quantity ?: 0
     )
 
-    private fun convertConnectionType(id: Long, refData: OCMReferenceData): String {
-        val title = refData.connectionTypes.find { it.id == id }?.title
-        return when (title) {
-            "CCS (Type 2)" -> Chargepoint.CCS_TYPE_2
-            "CHAdeMO" -> Chargepoint.CHADEMO
-            "CEE 3 Pin" -> Chargepoint.CEE_BLAU
-            "CEE 5 Pin" -> Chargepoint.CEE_ROT
-            "CEE 7/4 - Schuko - Type F" -> Chargepoint.SCHUKO
-            "Tesla (Roadster)" -> Chargepoint.TESLA_ROADSTER_HPC
-            "Tesla Supercharger" -> Chargepoint.SUPERCHARGER
-            "Type 2 (Socket Only)" -> Chargepoint.TYPE_2_SOCKET
-            "Type 2 (Tethered Connector) " -> Chargepoint.TYPE_2_PLUG
-            "Type 1 (J1772)" -> Chargepoint.TYPE_1
-            "SCAME Type 3A (Low Power)" -> Chargepoint.TYPE_3
-            "SCAME Type 3C (Schneider-Legrand)" -> Chargepoint.TYPE_3
-            else -> title ?: ""
+    companion object {
+        fun convertConnectionTypeFromOCM(id: Long, refData: OCMReferenceData): String {
+            val title = refData.connectionTypes.find { it.id == id }?.title
+            return when (id) {
+                32L -> Chargepoint.CCS_TYPE_1
+                33L -> Chargepoint.CCS_TYPE_2
+                2L -> Chargepoint.CHADEMO
+                16L -> Chargepoint.CEE_BLAU
+                17L -> Chargepoint.CEE_ROT
+                28L -> Chargepoint.SCHUKO
+                8L -> Chargepoint.TESLA_ROADSTER_HPC
+                27L -> Chargepoint.SUPERCHARGER
+                25L -> Chargepoint.TYPE_2_SOCKET
+                1036L -> Chargepoint.TYPE_2_PLUG
+                1L -> Chargepoint.TYPE_1
+                36L -> Chargepoint.TYPE_3
+                26L -> Chargepoint.TYPE_3
+                else -> title ?: ""
+            }
         }
     }
 }
@@ -128,7 +131,8 @@ data class OCMConnection(
 @JsonClass(generateAdapter = true)
 data class OCMReferenceData(
     @Json(name = "ConnectionTypes") val connectionTypes: List<OCMConnectionType>,
-    @Json(name = "Countries") val countries: List<OCMCountry>
+    @Json(name = "Countries") val countries: List<OCMCountry>,
+    @Json(name = "Operators") val operators: List<OCMOperator>
 ) : ReferenceData()
 
 @JsonClass(generateAdapter = true)
@@ -159,8 +163,9 @@ data class OCMDataProvider(
 )
 
 @JsonClass(generateAdapter = true)
+@Entity
 data class OCMOperator(
-    @Json(name = "ID") val id: Long,
+    @Json(name = "ID") @PrimaryKey val id: Long,
     @Json(name = "WebsiteURL") val websiteUrl: String?,
     @Json(name = "Title") val title: String,
     @Json(name = "ContactEmail") val contactEmail: String?,

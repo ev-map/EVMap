@@ -10,6 +10,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import net.vonforst.evmap.api.goingelectric.GEChargeCard
 import net.vonforst.evmap.api.openchargemap.OCMConnectionType
 import net.vonforst.evmap.api.openchargemap.OCMCountry
+import net.vonforst.evmap.api.openchargemap.OCMOperator
 import net.vonforst.evmap.model.*
 
 @Database(
@@ -23,8 +24,9 @@ import net.vonforst.evmap.model.*
         GENetwork::class,
         GEChargeCard::class,
         OCMConnectionType::class,
-        OCMCountry::class
-    ], version = 14
+        OCMCountry::class,
+        OCMOperator::class
+    ], version = 15
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -45,7 +47,7 @@ abstract class AppDatabase : RoomDatabase() {
                 .addMigrations(
                     MIGRATION_2, MIGRATION_3, MIGRATION_4, MIGRATION_5, MIGRATION_6,
                     MIGRATION_7, MIGRATION_8, MIGRATION_9, MIGRATION_10, MIGRATION_11,
-                    MIGRATION_12, MIGRATION_13, MIGRATION_14
+                    MIGRATION_12, MIGRATION_13, MIGRATION_14, MIGRATION_15
                 )
                 .addCallback(object : Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
@@ -220,6 +222,12 @@ abstract class AppDatabase : RoomDatabase() {
                 }
             }
 
+        }
+
+        private val MIGRATION_15 = object : Migration(14, 15) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("CREATE TABLE IF NOT EXISTS `OCMOperator` (`id` INTEGER NOT NULL, `websiteUrl` TEXT, `title` TEXT NOT NULL, `contactEmail` TEXT, `contactTelephone1` TEXT, `contactTelephone2` TEXT, PRIMARY KEY(`id`))");
+            }
         }
     }
 }

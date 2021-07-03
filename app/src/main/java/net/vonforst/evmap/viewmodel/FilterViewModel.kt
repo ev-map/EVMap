@@ -5,7 +5,6 @@ import androidx.lifecycle.*
 import kotlinx.coroutines.launch
 import net.vonforst.evmap.api.ChargepointApi
 import net.vonforst.evmap.api.createApi
-import net.vonforst.evmap.api.goingelectric.GEReferenceData
 import net.vonforst.evmap.api.goingelectric.GoingElectricApiWrapper
 import net.vonforst.evmap.api.openchargemap.OpenChargeMapApiWrapper
 import net.vonforst.evmap.api.stringProvider
@@ -63,7 +62,7 @@ class FilterViewModel(application: Application, geApiKey: String) :
     }
     private val filters = MediatorLiveData<List<Filter<FilterValue>>>().apply {
         addSource(referenceData) { data ->
-            value = api.getFilters(data as GEReferenceData, application.stringProvider())
+            value = api.getFilters(data, application.stringProvider())
         }
     }
 

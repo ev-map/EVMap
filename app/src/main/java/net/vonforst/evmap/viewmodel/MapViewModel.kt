@@ -10,8 +10,11 @@ import net.vonforst.evmap.api.ChargepointApi
 import net.vonforst.evmap.api.availability.ChargeLocationStatus
 import net.vonforst.evmap.api.availability.getAvailability
 import net.vonforst.evmap.api.createApi
+import net.vonforst.evmap.api.goingelectric.GEChargepoint
 import net.vonforst.evmap.api.goingelectric.GEReferenceData
 import net.vonforst.evmap.api.goingelectric.GoingElectricApiWrapper
+import net.vonforst.evmap.api.openchargemap.OCMConnection
+import net.vonforst.evmap.api.openchargemap.OCMReferenceData
 import net.vonforst.evmap.api.openchargemap.OpenChargeMapApiWrapper
 import net.vonforst.evmap.api.stringProvider
 import net.vonforst.evmap.model.*
@@ -341,7 +344,19 @@ class MapViewModel(application: Application, geApiKey: String) : AndroidViewMode
                         .toSet()
 
                 val connectorsVal = filters.getMultipleChoiceValue("connectors")!!
-                filteredConnectors.value = if (connectorsVal.all) null else connectorsVal.values
+                filteredConnectors.value =
+                    if (connectorsVal.all) null else connectorsVal.values.map {
+                        GEChargepoint.convertTypeFromGE(it)
+                    }.toSet()
+            } else if (api is OpenChargeMapApiWrapper) {
+                val connectorsVal = filters.getMultipleChoiceValue("connectors")!!
+                filteredConnectors.value =
+                    if (connectorsVal.all) null else connectorsVal.values.map {
+                        OCMConnection.convertConnectionTypeFromOCM(
+                            it.toLong(),
+                            refData as OCMReferenceData
+                        )
+                    }.toSet()
             }
         }
 

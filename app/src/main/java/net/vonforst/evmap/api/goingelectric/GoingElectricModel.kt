@@ -173,26 +173,10 @@ data class GEAddress(
 
 @JsonClass(generateAdapter = true)
 data class GEChargepoint(val type: String, val power: Double, val count: Int) {
-    fun convert() = Chargepoint(convertType(type), power, count)
-
-    private fun convertType(type: String): String {
-        return when (type) {
-            "Typ1" -> Chargepoint.TYPE_1
-            "Typ2" -> Chargepoint.TYPE_2_UNKNOWN
-            "Typ3" -> Chargepoint.TYPE_3
-            "CCS" -> Chargepoint.CCS_UNKNOWN
-            "Schuko" -> Chargepoint.SCHUKO
-            "CHAdeMO" -> Chargepoint.CHADEMO
-            "Tesla Supercharger" -> Chargepoint.SUPERCHARGER
-            "CEE Blau" -> Chargepoint.CEE_BLAU
-            "CEE Rot" -> Chargepoint.CEE_ROT
-            "Tesla HPC" -> Chargepoint.TESLA_ROADSTER_HPC
-            else -> type
-        }
-    }
+    fun convert() = Chargepoint(convertTypeFromGE(type), power, count)
 
     companion object {
-        fun convertType(type: String): String? {
+        fun convertTypeToGE(type: String): String? {
             return when (type) {
                 Chargepoint.TYPE_1 -> "Typ1"
                 Chargepoint.TYPE_2_UNKNOWN -> "Typ2"
@@ -206,6 +190,22 @@ data class GEChargepoint(val type: String, val power: Double, val count: Int) {
                 Chargepoint.CEE_ROT -> "CEE Rot"
                 Chargepoint.TESLA_ROADSTER_HPC -> "Tesla HPC"
                 else -> null
+            }
+        }
+
+        fun convertTypeFromGE(type: String): String {
+            return when (type) {
+                "Typ1" -> Chargepoint.TYPE_1
+                "Typ2" -> Chargepoint.TYPE_2_UNKNOWN
+                "Typ3" -> Chargepoint.TYPE_3
+                "CCS" -> Chargepoint.CCS_UNKNOWN
+                "Schuko" -> Chargepoint.SCHUKO
+                "CHAdeMO" -> Chargepoint.CHADEMO
+                "Tesla Supercharger" -> Chargepoint.SUPERCHARGER
+                "CEE Blau" -> Chargepoint.CEE_BLAU
+                "CEE Rot" -> Chargepoint.CEE_ROT
+                "Tesla HPC" -> Chargepoint.TESLA_ROADSTER_HPC
+                else -> type
             }
         }
     }

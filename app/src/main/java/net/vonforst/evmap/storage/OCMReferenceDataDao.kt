@@ -5,10 +5,7 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.room.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import net.vonforst.evmap.api.openchargemap.OCMConnectionType
-import net.vonforst.evmap.api.openchargemap.OCMCountry
-import net.vonforst.evmap.api.openchargemap.OCMReferenceData
-import net.vonforst.evmap.api.openchargemap.OpenChargeMapApiWrapper
+import net.vonforst.evmap.api.openchargemap.*
 import net.vonforst.evmap.viewmodel.Status
 import java.time.Duration
 import java.time.Instant
@@ -50,6 +47,24 @@ abstract class OCMReferenceDataDao {
 
     @Query("SELECT * FROM ocmcountry")
     abstract fun getAllCountries(): LiveData<List<OCMCountry>>
+
+    // OPERATORS
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    abstract suspend fun insert(vararg operators: OCMOperator)
+
+    @Query("DELETE FROM ocmoperator")
+    abstract fun deleteAllOperators()
+
+    @Transaction
+    open suspend fun updateOperators(operators: List<OCMOperator>) {
+        deleteAllOperators()
+        for (operator in operators) {
+            insert(operator)
+        }
+    }
+
+    @Query("SELECT * FROM ocmoperator")
+    abstract fun getAllOperators(): LiveData<List<OCMOperator>>
 }
 
 class OCMReferenceDataRepository(
@@ -62,13 +77,15 @@ class OCMReferenceDataRepository(
         }
         val connectionTypes = dao.getAllConnectionTypes()
         val countries = dao.getAllCountries()
+        val operators = dao.getAllOperators()
         return MediatorLiveData<OCMReferenceData>().apply {
-            listOf(countries, connectionTypes).map { source ->
+            listOf(countries, connectionTypes, operators).map { source ->
                 addSource(source) { _ ->
                     val ct = connectionTypes.value
                     val c = countries.value
-                    if (ct.isNullOrEmpty() || c.isNullOrEmpty()) return@addSource
-                    value = OCMReferenceData(ct, c)
+                    val o = operators.value
+                    if (ct.isNullOrEmpty() || c.isNullOrEmpty() || o.isNullOrEmpty()) return@addSource
+                    value = OCMReferenceData(ct, c, o)
                 }
             }
         }
@@ -88,6 +105,7 @@ class OCMReferenceDataRepository(
         val data = response.data!!
         dao.updateConnectionTypes(data.connectionTypes)
         dao.updateCountries(data.countries)
+        dao.updateOperators(data.operators)
 
         prefs.lastOcmReferenceDataUpdate = Instant.now()
     }

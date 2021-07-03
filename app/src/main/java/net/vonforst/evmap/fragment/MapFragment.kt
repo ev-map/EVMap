@@ -1233,4 +1233,11 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         super.onPause()
         removeLocationUpdates()
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (locationClient.isConnected) {
+            locationClient.disconnect()
+        }
+    }
 }

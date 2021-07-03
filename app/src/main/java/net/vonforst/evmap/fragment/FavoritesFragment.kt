@@ -102,4 +102,11 @@ class FavoritesFragment : Fragment(), LostApiClient.ConnectionCallbacks {
     override fun onConnectionSuspended() {
 
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (locationClient.isConnected) {
+            locationClient.disconnect()
+        }
+    }
 }

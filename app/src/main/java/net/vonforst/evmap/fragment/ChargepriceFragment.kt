@@ -138,7 +138,7 @@ class ChargepriceFragment : DialogFragment() {
 
         vm.vehicleCompatibleConnectors.observe(viewLifecycleOwner) { plugs ->
             connectorsAdapter.enabledConnectors =
-                plugs.flatMap { plug -> equivalentPlugTypes(plug) }
+                plugs?.flatMap { plug -> equivalentPlugTypes(plug) }
         }
 
         binding.connectorsList.apply {

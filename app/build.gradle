@@ -77,6 +77,13 @@ android {
         if (goingelectricKey != null) {
             variant.resValue "string", "goingelectric_key", goingelectricKey
         }
+        def openchargemapKey = env.OPENCHARGEMAP_API_KEY ?: project.findProperty("OPENCHARGEMAP_API_KEY")
+        if (openchargemapKey == null && project.hasProperty("OPENCHARGEMAP_API_KEY_ENCRYPTED")) {
+            openchargemapKey = decode(project.findProperty("OPENCHARGEMAP_API_KEY_ENCRYPTED"), "FmK.d,-f*p+rD+WK!eds")
+        }
+        if (openchargemapKey != null) {
+            variant.resValue "string", "openchargemap_key", openchargemapKey
+        }
         def googleMapsKey = env.GOOGLE_MAPS_API_KEY ?: project.findProperty("GOOGLE_MAPS_API_KEY")
         if (googleMapsKey != null && variant.flavorName == 'google') {
             variant.resValue "string", "google_maps_key", googleMapsKey

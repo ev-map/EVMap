@@ -18,10 +18,12 @@ class DataSourceSelectDialog : AppCompatDialogFragment() {
             cancelEnabled: Boolean
         ): DataSourceSelectDialog {
             val dialog = DataSourceSelectDialog()
-            dialog.arguments = Bundle().apply {
-                putBoolean("cancel_enabled", cancelEnabled)
-            }
+            dialog.arguments = args(cancelEnabled)
             return dialog
+        }
+
+        fun args(cancelEnabled: Boolean) = Bundle().apply {
+            putBoolean("cancel_enabled", cancelEnabled)
         }
     }
 
@@ -53,8 +55,8 @@ class DataSourceSelectDialog : AppCompatDialogFragment() {
 
         if (prefs.dataSourceSet) {
             when (prefs.dataSource) {
-                "goingelectric" -> binding.rbGoingElectric.isChecked = true
-                "openchargemap" -> binding.rbOpenChargeMap.isChecked = true
+                "goingelectric" -> binding.rgDataSource.rbGoingElectric.isChecked = true
+                "openchargemap" -> binding.rgDataSource.rbOpenChargeMap.isChecked = true
             }
         }
 
@@ -62,9 +64,9 @@ class DataSourceSelectDialog : AppCompatDialogFragment() {
             dismiss()
         }
         binding.btnOK.setOnClickListener {
-            val result = if (binding.rbGoingElectric.isChecked) {
+            val result = if (binding.rgDataSource.rbGoingElectric.isChecked) {
                 "goingelectric"
-            } else if (binding.rbOpenChargeMap.isChecked) {
+            } else if (binding.rgDataSource.rbOpenChargeMap.isChecked) {
                 "openchargemap"
             } else {
                 return@setOnClickListener

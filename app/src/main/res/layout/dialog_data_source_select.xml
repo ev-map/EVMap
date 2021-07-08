@@ -42,7 +42,7 @@
         android:text="@string/ok"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/radioGroup2" />
+        app:layout_constraintTop_toBottomOf="@+id/rg_data_source" />
 
     <Button
         android:id="@+id/btnCancel"
@@ -54,10 +54,11 @@
         android:text="@string/cancel"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/btnOK"
-        app:layout_constraintTop_toBottomOf="@+id/radioGroup2" />
+        app:layout_constraintTop_toBottomOf="@+id/rg_data_source" />
 
-    <RadioGroup
-        android:id="@+id/radioGroup2"
+    <include
+        android:id="@+id/rg_data_source"
+        layout="@layout/data_source_select"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -65,45 +66,6 @@
         android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dataSourceDescription">
-
-        <RadioButton
-            android:id="@+id/rbGoingElectric"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/data_source_goingelectric"
-            android:textColor="#098ac7"
-            android:buttonTint="#098ac7"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/textView27"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="-8dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginStart="32dp"
-            android:text="@string/data_source_goingelectric_desc" />
-
-        <RadioButton
-            android:id="@+id/rbOpenChargeMap"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/data_source_openchargemap"
-            android:textColor="#587e25"
-            android:buttonTint="#587e25"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/textView28"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="-8dp"
-            android:layout_marginStart="32dp"
-            android:text="@string/data_source_openchargemap_desc" />
-
-    </RadioGroup>
+        app:layout_constraintTop_toBottomOf="@+id/dataSourceDescription" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

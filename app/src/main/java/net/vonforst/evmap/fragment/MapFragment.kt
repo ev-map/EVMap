@@ -93,8 +93,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
     private val vm: MapViewModel by viewModels(factoryProducer = {
         viewModelFactory {
             MapViewModel(
-                requireActivity().application,
-                getString(R.string.goingelectric_key)
+                requireActivity().application
             )
         }
     })
@@ -226,21 +225,13 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         setupAdapters()
         (activity as? MapsActivity)?.setSupportActionBar(binding.toolbar)
 
-        val prefs = PreferenceDataSource(requireContext())
-        val navController = findNavController()
-        if (!prefs.welcomeDialogShown) {
-            try {
-                navController.navigate(R.id.action_map_to_welcome)
-            } catch (ignored: IllegalArgumentException) {
-                // when there is already another navigation going on
-            }
-        } else if (!prefs.update060AndroidAutoDialogShown) {
+        /*if (!prefs.update060AndroidAutoDialogShown) {
             try {
                 navController.navigate(R.id.action_map_to_update_060_androidauto)
             } catch (ignored: IllegalArgumentException) {
                 // when there is already another navigation going on
             }
-        }
+        }*/
     }
 
     override fun onResume() {

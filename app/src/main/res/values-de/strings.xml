@@ -148,9 +148,11 @@
     <string name="save_as_profile">Als Profil speichern</string>
     <string name="save_profile_enter_name">Geben Sie den Namen des Filterprofils ein:</string>
     <string name="filterprofiles_empty_state">Du hast noch keine Filterprofile gespeichert.</string>
-    <string name="welcome_to_evmap">Willkommen bei EVMap!</string>
-    <string name="welcome_1">Mit EVMap kannst du Ladestationen für Elektroautos in deiner Nähe finden. EVMap nutzt dafür die Community-gepflegte Datenbank von GoingElectric.de, die sich vor allem auf Europa und den deutschsprachigen Raum konzentriert. Über die Website GoingElectric.de kannst du selbst zum Verzeichnis beitragen.\n\nDie Ladestationen werden auf der Karte mit verschiedenen Farben angezeigt, die die maximale Ladeleistung angeben:</string>
-    <string name="welcome_2">EVMap ist kostenlos und Open Source. Du kannst bei GitHub zur Weiterentwicklung beitragen oder die Entwicklung mit Spenden unterstützen. Die entsprechenden Links findest du unter „Über EVMap” im Menü.</string>
+    <string name="welcome_to_evmap">Willkommen bei EVMap</string>
+    <string name="welcome_1">Finde Ladestationen für Elektroautos in deiner Nähe.</string>
+    <string name="welcome_2_title">Auf die Leistung kommt es an</string>
+    <string name="welcome_2">Die Farbe einer Ladestatione auf der Karte zeigt dir die maximale Ladeleistung.</string>
+    <string name="welcome_3">EVMap ist kostenlos und Open Source. Du kannst bei GitHub zur Weiterentwicklung beitragen oder die Entwicklung mit Spenden unterstützen. Die entsprechenden Links findest du unter „Über EVMap” im Menü.</string>
     <string name="deleted_filterprofile">„%s” gelöscht</string>
     <string name="undo">Rückgängig</string>
     <string name="rename">Umbenennen</string>
@@ -215,9 +217,13 @@
         <item quantity="other">%d Tarife ausgewählt</item>
     </plurals>
     <string name="unknown_operator">Unbekannter Betreiber</string>
-    <string name="data_sources_description">EVMap unterstützt verschiedene Datenquellen. Bitte wähle aus, welche du nutzen möchtest. Du kannst die Datenquelle später in den Einstellungen der App ändern.</string>
+    <string name="data_sources_description">EVMap unterstützt verschiedene Datenquellen. Bitte wähle aus, welche du nutzen möchtest. Du kannst sie später in den Einstellungen der App ändern.</string>
     <string name="data_source_goingelectric">GoingElectric.de</string>
     <string name="data_source_openchargemap">Open Charge Map</string>
     <string name="data_source_goingelectric_desc">Sehr gute Abdeckung in Deutschland, Österreich, Schweiz und vielen angrenzenden Ländern. Beschreibungen in Deutsch. Von der Community gepflegt.</string>
     <string name="data_source_openchargemap_desc"><![CDATA[Weltweite Abdeckung mit variierender Qualität. Beschreibungen in Englisch oder Landessprache. Von der Community gepflegt & offizielle Verzeichnisse einiger Länder (z.B. Nordamerika, UK, Frankreich, Norwegen).]]></string>
+    <string name="next">weiter</string>
+    <string name="get_started">Los geht\'s</string>
+    <string name="got_it">Alles klar</string>
+    <string name="lets_go">Und los</string>
 </resources>

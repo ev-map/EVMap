@@ -125,6 +125,7 @@ dependencies {
     implementation 'com.mapzen.android:lost:3.0.2'
     implementation 'com.google.guava:guava:29.0-android'
     implementation 'com.github.pengrad:mapscaleview:1.6.0'
+    implementation 'com.github.romandanylyk:PageIndicatorView:b1bad589b5'
 
     // Android Auto
     googleImplementation 'androidx.car.app:app:1.0.0'

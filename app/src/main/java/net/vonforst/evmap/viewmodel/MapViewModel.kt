@@ -36,13 +36,12 @@ internal fun getClusterDistance(zoom: Float): Int? {
     }
 }
 
-class MapViewModel(application: Application, geApiKey: String) : AndroidViewModel(application) {
+class MapViewModel(application: Application) : AndroidViewModel(application) {
     val apiType: Class<ChargepointApi<ReferenceData>>
         get() = api.javaClass
     val apiName: String
         get() = api.getName()
 
-    // = GoingElectricApiWrapper(geApiKey, context = application)
     private var db = AppDatabase.getInstance(application)
     private var prefs = PreferenceDataSource(application)
     private var api: ChargepointApi<ReferenceData> = createApi(prefs.dataSource, application)

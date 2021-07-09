@@ -3,6 +3,7 @@ package net.vonforst.evmap.fragment
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -26,13 +27,7 @@ class OnboardingFragment : Fragment() {
     ): View {
         binding = FragmentOnboardingBinding.inflate(inflater)
 
-        val adapter = OnboardingViewPagerAdapter(this) {
-            if (binding.viewPager.currentItem == 2) {
-                findNavController().navigate(R.id.action_onboarding_to_map)
-            } else {
-                binding.viewPager.setCurrentItem(binding.viewPager.currentItem + 1, true)
-            }
-        }
+        val adapter = OnboardingViewPagerAdapter(this)
         binding.viewPager.adapter = adapter
         binding.pageIndicatorView.count = adapter.itemCount
         binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
@@ -59,21 +54,38 @@ class OnboardingFragment : Fragment() {
 
         return binding.root
     }
+
+    fun goToNext() {
+        if (binding.viewPager.currentItem == 2) {
+            findNavController().navigate(R.id.action_onboarding_to_map)
+        } else {
+            binding.viewPager.setCurrentItem(binding.viewPager.currentItem + 1, true)
+        }
+    }
 }
 
-class OnboardingViewPagerAdapter(fragment: Fragment, val goToNext: () -> Unit) :
+class OnboardingViewPagerAdapter(fragment: Fragment) :
     FragmentStateAdapter(fragment) {
     override fun getItemCount(): Int = 3
 
     override fun createFragment(position: Int): Fragment = when (position) {
-        0 -> WelcomeFragment(goToNext)
-        1 -> IconsFragment(goToNext)
-        2 -> DataSourceSelectFragment(goToNext)
+        0 -> WelcomeFragment()
+        1 -> IconsFragment()
+        2 -> DataSourceSelectFragment()
         else -> throw IllegalArgumentException()
     }
 }
 
-class WelcomeFragment(val goToNext: () -> Unit) : Fragment() {
+abstract class OnboardingPageFragment : Fragment() {
+    lateinit var parent: OnboardingFragment
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        parent = parentFragment as OnboardingFragment
+    }
+}
+
+class WelcomeFragment : OnboardingPageFragment() {
     private lateinit var binding: FragmentOnboardingWelcomeBinding
 
     override fun onCreateView(
@@ -84,7 +96,7 @@ class WelcomeFragment(val goToNext: () -> Unit) : Fragment() {
         binding = FragmentOnboardingWelcomeBinding.inflate(inflater, container, false)
 
         binding.btnGetStarted.setOnClickListener {
-            goToNext()
+            parent.goToNext()
         }
 
         return binding.root
@@ -101,7 +113,7 @@ class WelcomeFragment(val goToNext: () -> Unit) : Fragment() {
     }
 }
 
-class IconsFragment(val goToNext: () -> Unit) : Fragment() {
+class IconsFragment : OnboardingPageFragment() {
     private lateinit var binding: FragmentOnboardingIconsBinding
 
     val labels
@@ -121,7 +133,7 @@ class IconsFragment(val goToNext: () -> Unit) : Fragment() {
         binding = FragmentOnboardingIconsBinding.inflate(inflater, container, false)
 
         binding.btnGetStarted.setOnClickListener {
-            goToNext()
+            parent.goToNext()
         }
         labels.forEach { it.alpha = 0f }
 
@@ -155,7 +167,7 @@ class IconsFragment(val goToNext: () -> Unit) : Fragment() {
     }
 }
 
-class DataSourceSelectFragment(val goToNext: () -> Unit) : Fragment() {
+class DataSourceSelectFragment : OnboardingPageFragment() {
     private lateinit var prefs: PreferenceDataSource
     private lateinit var binding: FragmentOnboardingDataSourceBinding
 
@@ -205,7 +217,7 @@ class DataSourceSelectFragment(val goToNext: () -> Unit) : Fragment() {
             prefs.dataSource = result
             prefs.dataSourceSet = true
             prefs.welcomeDialogShown = true
-            goToNext()
+            parent.goToNext()
         }
         animatedItems.forEach { it.alpha = 0f }
     }

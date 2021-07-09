@@ -30,8 +30,7 @@ internal fun filtersWithValue(
         }
     }
 
-class FilterViewModel(application: Application, geApiKey: String) :
-    AndroidViewModel(application) {
+class FilterViewModel(application: Application) : AndroidViewModel(application) {
     private var db = AppDatabase.getInstance(application)
     private var prefs = PreferenceDataSource(application)
     private var api: ChargepointApi<ReferenceData> = createApi(prefs.dataSource, application)

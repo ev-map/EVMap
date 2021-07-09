@@ -90,13 +90,7 @@ const val ARG_LOCATION_NAME = "locationName"
 class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallback,
     LostApiClient.ConnectionCallbacks, LocationListener {
     private lateinit var binding: FragmentMapBinding
-    private val vm: MapViewModel by viewModels(factoryProducer = {
-        viewModelFactory {
-            MapViewModel(
-                requireActivity().application
-            )
-        }
-    })
+    private val vm: MapViewModel by viewModels()
     private val galleryVm: GalleryViewModel by activityViewModels()
     private var mapFragment: MapFragment? = null
     private var map: AnyMap? = null

@@ -19,19 +19,11 @@ import net.vonforst.evmap.adapter.FiltersAdapter
 import net.vonforst.evmap.databinding.FragmentFilterBinding
 import net.vonforst.evmap.ui.showEditTextDialog
 import net.vonforst.evmap.viewmodel.FilterViewModel
-import net.vonforst.evmap.viewmodel.viewModelFactory
 
 
 class FilterFragment : Fragment() {
     private lateinit var binding: FragmentFilterBinding
-    private val vm: FilterViewModel by viewModels(factoryProducer = {
-        viewModelFactory {
-            FilterViewModel(
-                requireActivity().application,
-                getString(R.string.goingelectric_key)
-            )
-        }
-    })
+    private val vm: FilterViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,

@@ -59,7 +59,7 @@ class GoingElectricApiTest {
         assertEquals("ok", body.status)
         assertEquals(null, body.startkey)
         assertEquals(1, body.chargelocations.size)
-        val charger = body.chargelocations[0] as ChargeLocation
+        val charger = body.chargelocations[0] as GEChargeLocation
         assertEquals(2105, charger.id)
     }
 
@@ -73,7 +73,7 @@ class GoingElectricApiTest {
         assertEquals("ok", body.status)
         assertEquals(null, body.startkey)
         assertEquals(2, body.chargelocations.size)
-        val charger = body.chargelocations[0] as ChargeLocation
+        val charger = body.chargelocations[0] as GEChargeLocation
         assertEquals(41161, charger.id)
     }
 
@@ -99,7 +99,7 @@ class GoingElectricApiTest {
         assertEquals("ok", body.status)
         assertEquals(2, body.startkey)
         assertEquals(2, body.chargelocations.size)
-        val charger = body.chargelocations[0] as ChargeLocation
+        val charger = body.chargelocations[0] as GEChargeLocation
         assertEquals(41161, charger.id)
     }
 }

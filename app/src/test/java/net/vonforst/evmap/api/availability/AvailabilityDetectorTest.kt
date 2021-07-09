@@ -1,6 +1,6 @@
 package net.vonforst.evmap.api.availability
 
-import net.vonforst.evmap.api.goingelectric.Chargepoint
+import net.vonforst.evmap.model.Chargepoint
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

@@ -2,8 +2,8 @@ package net.vonforst.evmap.api.availability
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
-import net.vonforst.evmap.api.goingelectric.ChargeLocation
 import net.vonforst.evmap.api.goingelectric.GoingElectricApi
+import net.vonforst.evmap.model.ChargeLocation
 import net.vonforst.evmap.okResponse
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.Dispatcher
@@ -67,7 +67,7 @@ class NewMotionAvailabilityDetectorTest {
     fun apiTest() {
         for (chargepoint in listOf(2105L, 18284L)) {
             val charger = runBlocking { api.getChargepointDetail(chargepoint).body()!! }
-                .chargelocations[0] as ChargeLocation
+                .chargelocations[0].convert("") as ChargeLocation
             println(charger)
 
             runBlocking {

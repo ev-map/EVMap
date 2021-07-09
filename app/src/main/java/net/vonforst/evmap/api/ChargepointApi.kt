@@ -1,6 +1,5 @@
 package net.vonforst.evmap.api
 
-import android.app.Application
 import android.content.Context
 import com.car2go.maps.model.LatLng
 import com.car2go.maps.model.LatLngBounds
@@ -48,18 +47,18 @@ fun Context.stringProvider() = object : StringProvider {
     }
 }
 
-fun createApi(type: String, application: Application): ChargepointApi<ReferenceData> {
+fun createApi(type: String, ctx: Context): ChargepointApi<ReferenceData> {
     return when (type) {
         "openchargemap" -> {
             OpenChargeMapApiWrapper(
-                application.getString(
+                ctx.getString(
                     R.string.openchargemap_key
                 )
             )
         }
         "goingelectric" -> {
             GoingElectricApiWrapper(
-                application.getString(
+                ctx.getString(
                     R.string.goingelectric_key
                 )
             )

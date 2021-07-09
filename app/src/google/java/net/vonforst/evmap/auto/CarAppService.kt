@@ -22,23 +22,28 @@ import androidx.car.app.model.Distance.UNIT_KILOMETERS
 import androidx.car.app.validation.HostValidator
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.IconCompat
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.*
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import coil.imageLoader
 import coil.request.ImageRequest
+import com.car2go.maps.model.LatLng
 import kotlinx.coroutines.*
 import net.vonforst.evmap.*
 import net.vonforst.evmap.api.availability.ChargeLocationStatus
 import net.vonforst.evmap.api.availability.ChargepointStatus
 import net.vonforst.evmap.api.availability.getAvailability
+import net.vonforst.evmap.api.createApi
 import net.vonforst.evmap.api.goingelectric.GoingElectricApi
+import net.vonforst.evmap.api.goingelectric.GoingElectricApiWrapper
 import net.vonforst.evmap.api.nameForPlugType
+import net.vonforst.evmap.api.openchargemap.OpenChargeMapApiWrapper
 import net.vonforst.evmap.api.stringProvider
 import net.vonforst.evmap.model.ChargeLocation
+import net.vonforst.evmap.model.ReferenceData
 import net.vonforst.evmap.storage.AppDatabase
+import net.vonforst.evmap.storage.GEReferenceDataRepository
+import net.vonforst.evmap.storage.OCMReferenceDataRepository
+import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.ui.ChargerIconGenerator
 import net.vonforst.evmap.ui.availabilityText
 import net.vonforst.evmap.ui.getMarkerTint
@@ -280,8 +285,9 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
     private var location: Location? = null
     private var lastUpdateLocation: Location? = null
     private var chargers: List<ChargeLocation>? = null
+    private var prefs = PreferenceDataSource(ctx)
     private val api by lazy {
-        GoingElectricApi.create(ctx.getString(R.string.goingelectric_key), context = ctx)
+        createApi(prefs.dataSource, ctx)
     }
     private val searchRadius = 5 // kilometers
     private val updateThreshold = 2000 // meters
@@ -426,24 +432,25 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
                     }
                 } else {
                     val response = api.getChargepointsRadius(
-                        location.latitude,
-                        location.longitude,
+                        getReferenceData(),
+                        LatLng.fromLocation(location),
                         searchRadius,
-                        zoom = 16f
+                        zoom = 16f,
+                        emptyList()
                     )
-                    chargers =
-                        response.body()?.chargelocations?.filterIsInstance(ChargeLocation::class.java)
+                    chargers = response.data?.filterIsInstance(ChargeLocation::class.java)
                     chargers?.let {
                         if (it.size < 6) {
                             // try again with larger radius
                             val response = api.getChargepointsRadius(
-                                location.latitude,
-                                location.longitude,
+                                getReferenceData(),
+                                LatLng.fromLocation(location),
                                 searchRadius * 5,
-                                zoom = 16f
+                                zoom = 16f,
+                                emptyList()
                             )
                             chargers =
-                                response.body()?.chargelocations?.filterIsInstance(ChargeLocation::class.java)
+                                response.data?.filterIsInstance(ChargeLocation::class.java)
                         }
                     }
                 }
@@ -477,6 +484,31 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
                     CarToast.makeText(carContext, R.string.connection_error, CarToast.LENGTH_LONG)
                         .show()
                 }
+            }
+        }
+    }
+
+    private suspend fun getReferenceData(): ReferenceData {
+        val api = api
+        return when (api) {
+            is GoingElectricApiWrapper -> {
+                GEReferenceDataRepository(
+                    api,
+                    lifecycleScope,
+                    db.geReferenceDataDao(),
+                    prefs
+                ).getReferenceData().await()
+            }
+            is OpenChargeMapApiWrapper -> {
+                OCMReferenceDataRepository(
+                    api,
+                    lifecycleScope,
+                    db.ocmReferenceDataDao(),
+                    prefs
+                ).getReferenceData().await()
+            }
+            else -> {
+                throw RuntimeException("no reference data implemented")
             }
         }
     }

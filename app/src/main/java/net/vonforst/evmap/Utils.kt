@@ -4,6 +4,11 @@ import android.graphics.Typeface
 import android.os.Bundle
 import android.text.*
 import android.text.style.StyleSpan
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withContext
 
 fun Bundle.optDouble(name: String): Double? {
     if (!this.containsKey(name)) return null
@@ -72,5 +77,24 @@ fun max(a: Int?, b: Int?): Int? {
         max(a, b)
     } else {
         a ?: b
+    }
+}
+
+public suspend fun <T> LiveData<T>.await(): T {
+    return withContext(Dispatchers.Main.immediate) {
+        suspendCancellableCoroutine { continuation ->
+            val observer = object : Observer<T> {
+                override fun onChanged(value: T) {
+                    removeObserver(this)
+                    continuation.resume(value, null)
+                }
+            }
+
+            observeForever(observer)
+
+            continuation.invokeOnCancellation {
+                removeObserver(observer)
+            }
+        }
     }
 }

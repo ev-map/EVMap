@@ -33,7 +33,6 @@ import net.vonforst.evmap.api.availability.ChargeLocationStatus
 import net.vonforst.evmap.api.availability.ChargepointStatus
 import net.vonforst.evmap.api.availability.getAvailability
 import net.vonforst.evmap.api.createApi
-import net.vonforst.evmap.api.goingelectric.GoingElectricApi
 import net.vonforst.evmap.api.goingelectric.GoingElectricApiWrapper
 import net.vonforst.evmap.api.nameForPlugType
 import net.vonforst.evmap.api.openchargemap.OpenChargeMapApiWrapper
@@ -436,7 +435,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
                         LatLng.fromLocation(location),
                         searchRadius,
                         zoom = 16f,
-                        emptyList()
+                        null
                     )
                     chargers = response.data?.filterIsInstance(ChargeLocation::class.java)
                     chargers?.let {
@@ -519,9 +518,10 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
     var photo: Bitmap? = null
     private var availability: ChargeLocationStatus? = null
 
-    val apikey = ctx.getString(R.string.goingelectric_key)
+    val prefs = PreferenceDataSource(ctx)
+    private val db = AppDatabase.getInstance(carContext)
     private val api by lazy {
-        GoingElectricApi.create(apikey, context = ctx)
+        createApi(prefs.dataSource, ctx)
     }
 
     private val iconGen = ChargerIconGenerator(carContext, null, oversize = 1.4f, height = 64)
@@ -656,14 +656,13 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
     private fun loadCharger() {
         lifecycleScope.launch {
             try {
-                val response = api.getChargepointDetail(chargerSparse.id)
-                charger = response.body()?.chargelocations?.get(0) as ChargeLocation
+                val response = api.getChargepointDetail(getReferenceData(), chargerSparse.id)
+                charger = response.data!!
 
                 val photo = charger?.photos?.firstOrNull()
                 photo?.let {
                     val size = (carContext.resources.displayMetrics.density * 64).roundToInt()
-                    val url = "https://api.goingelectric.de/chargepoints/photo/?key=${apikey}" +
-                            "&id=${photo.id}&size=${size}"
+                    val url = photo.getUrl(size = size)
                     val request = ImageRequest.Builder(carContext).data(url).build()
                     this@ChargerDetailScreen.photo =
                         (carContext.imageLoader.execute(request).drawable as BitmapDrawable).bitmap
@@ -677,6 +676,31 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
                     CarToast.makeText(carContext, R.string.connection_error, CarToast.LENGTH_LONG)
                         .show()
                 }
+            }
+        }
+    }
+
+    private suspend fun getReferenceData(): ReferenceData {
+        val api = api
+        return when (api) {
+            is GoingElectricApiWrapper -> {
+                GEReferenceDataRepository(
+                    api,
+                    lifecycleScope,
+                    db.geReferenceDataDao(),
+                    prefs
+                ).getReferenceData().await()
+            }
+            is OpenChargeMapApiWrapper -> {
+                OCMReferenceDataRepository(
+                    api,
+                    lifecycleScope,
+                    db.ocmReferenceDataDao(),
+                    prefs
+                ).getReferenceData().await()
+            }
+            else -> {
+                throw RuntimeException("no reference data implemented")
             }
         }
     }

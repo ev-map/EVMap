@@ -34,6 +34,20 @@ interface OpenChargeMapApi {
     ): Response<List<OCMChargepoint>>
 
     @GET("poi/")
+    suspend fun getChargepointsRadius(
+        @Query("latitude") latitude: Double,
+        @Query("longitude") longitude: Double,
+        @Query("distance") distance: Double,
+        @Query("distanceunit") distanceUnit: String = "KM",
+        @Query("connectiontypeid") plugs: String? = null,
+        @Query("minpowerkw") minPower: Double? = null,
+        @Query("operatorid") operators: String? = null,
+        @Query("compact") compact: Boolean = true,
+        @Query("statustypeid") statusType: String? = null,
+        @Query("maxresults") maxresults: Int = 500,
+    ): Response<List<OCMChargepoint>>
+
+    @GET("poi/")
     suspend fun getChargepointDetail(
         @Query("chargepointid") id: Long,
         @Query("compact") compact: Boolean = false,
@@ -91,8 +105,8 @@ class OpenChargeMapApiWrapper(
 
     override fun getName() = "OpenChargeMap.org"
 
-    private fun formatMultipleChoice(value: MultipleChoiceFilterValue) =
-        if (value.all) null else value.values.joinToString(",")
+    private fun formatMultipleChoice(value: MultipleChoiceFilterValue?) =
+        if (value == null || value.all) null else value.values.joinToString(",")
 
     // Unknown, Currently Available, Currently In Use, Operational, Partly Operational
     private val noFaultStatuses = "0,10,20,50,75"
@@ -101,23 +115,23 @@ class OpenChargeMapApiWrapper(
         referenceData: ReferenceData,
         bounds: LatLngBounds,
         zoom: Float,
-        filters: FilterValues,
+        filters: FilterValues?,
     ): Resource<List<ChargepointListItem>> {
         val referenceData = referenceData as OCMReferenceData
 
-        val minPower = filters.getSliderValue("min_power")!!.toDouble()
-        val minConnectors = filters.getSliderValue("min_connectors")!!
-        val excludeFaults = filters.getBooleanValue("exclude_faults")!!
+        val minPower = filters?.getSliderValue("min_power")?.toDouble()
+        val minConnectors = filters?.getSliderValue("min_connectors")
+        val excludeFaults = filters?.getBooleanValue("exclude_faults")
 
-        val connectorsVal = filters.getMultipleChoiceValue("connectors")!!
-        if (connectorsVal.values.isEmpty() && !connectorsVal.all) {
+        val connectorsVal = filters?.getMultipleChoiceValue("connectors")
+        if (connectorsVal != null && connectorsVal.values.isEmpty() && !connectorsVal.all) {
             // no connectors chosen
             return Resource.success(emptyList())
         }
         val connectors = formatMultipleChoice(connectorsVal)
 
-        val operatorsVal = filters.getMultipleChoiceValue("operators")!!
-        if (operatorsVal.values.isEmpty() && !operatorsVal.all) {
+        val operatorsVal = filters?.getMultipleChoiceValue("operators")!!
+        if (operatorsVal != null && operatorsVal.values.isEmpty() && !operatorsVal.all) {
             // no operators chosen
             return Resource.success(emptyList())
         }
@@ -131,28 +145,20 @@ class OpenChargeMapApiWrapper(
             minPower = minPower,
             plugs = connectors,
             operators = operators,
-            statusType = if (excludeFaults) noFaultStatuses else null
+            statusType = if (excludeFaults == true) noFaultStatuses else null
         )
         if (!response.isSuccessful) {
             return Resource.error(response.message(), null)
         }
 
-        var result = response.body()!!.filter { it ->
-            // apply filters which OCM does not support natively
-            it.connections
-                .filter { it.power == null || it.power >= minPower }
-                .filter { if (!connectorsVal.all) it.connectionTypeId in connectorsVal.values.map { it.toLong() } else true }
-                .sumOf { it.quantity ?: 0 } >= minConnectors
-        }.map { it.convert(referenceData) }.distinct() as List<ChargepointListItem>
-
-        val useClustering = zoom < 13
-        val clusterDistance = if (useClustering) getClusterDistance(zoom) else null
-        if (useClustering) {
-            Dispatchers.IO.run {
-                result = cluster(result, zoom, clusterDistance!!)
-            }
-        }
-
+        var result = postprocessResult(
+            response.body()!!,
+            minPower,
+            connectorsVal,
+            minConnectors,
+            referenceData,
+            zoom
+        )
         return Resource.success(result)
     }
 
@@ -161,9 +167,76 @@ class OpenChargeMapApiWrapper(
         location: LatLng,
         radius: Int,
         zoom: Float,
-        filters: FilterValues
+        filters: FilterValues?
     ): Resource<List<ChargepointListItem>> {
-        TODO("Not yet implemented")
+        val referenceData = referenceData as OCMReferenceData
+
+        val minPower = filters?.getSliderValue("min_power")?.toDouble()
+        val minConnectors = filters?.getSliderValue("min_connectors")
+        val excludeFaults = filters?.getBooleanValue("exclude_faults")
+
+        val connectorsVal = filters?.getMultipleChoiceValue("connectors")
+        if (connectorsVal != null && connectorsVal.values.isEmpty() && !connectorsVal.all) {
+            // no connectors chosen
+            return Resource.success(emptyList())
+        }
+        val connectors = formatMultipleChoice(connectorsVal)
+
+        val operatorsVal = filters?.getMultipleChoiceValue("operators")
+        if (operatorsVal != null && operatorsVal.values.isEmpty() && !operatorsVal.all) {
+            // no operators chosen
+            return Resource.success(emptyList())
+        }
+        val operators = formatMultipleChoice(operatorsVal)
+
+        val response = api.getChargepointsRadius(
+            location.latitude, location.longitude,
+            radius.toDouble(),
+            minPower = minPower,
+            plugs = connectors,
+            operators = operators,
+            statusType = if (excludeFaults == true) noFaultStatuses else null
+        )
+        if (!response.isSuccessful) {
+            return Resource.error(response.message(), null)
+        }
+
+        val result = postprocessResult(
+            response.body()!!,
+            minPower,
+            connectorsVal,
+            minConnectors,
+            referenceData,
+            zoom
+        )
+        return Resource.success(result)
+    }
+
+    private fun postprocessResult(
+        chargers: List<OCMChargepoint>,
+        minPower: Double?,
+        connectorsVal: MultipleChoiceFilterValue?,
+        minConnectors: Int?,
+        referenceData: OCMReferenceData,
+        zoom: Float
+    ): List<ChargepointListItem> {
+        // apply filters which OCM does not support natively
+        var result = chargers.filter { it ->
+            it.connections
+                .filter { it.power == null || it.power >= (minPower ?: 0.0) }
+                .filter { if (connectorsVal != null && !connectorsVal.all) it.connectionTypeId in connectorsVal.values.map { it.toLong() } else true }
+                .sumOf { it.quantity ?: 0 } >= (minConnectors ?: 0)
+        }.map { it.convert(referenceData) }.distinct() as List<ChargepointListItem>
+
+        // apply clustering
+        val useClustering = zoom < 13
+        if (useClustering) {
+            val clusterDistance = getClusterDistance(zoom)
+            Dispatchers.IO.run {
+                result = cluster(result, zoom, clusterDistance!!)
+            }
+        }
+        return result
     }
 
     override suspend fun getChargepointDetail(

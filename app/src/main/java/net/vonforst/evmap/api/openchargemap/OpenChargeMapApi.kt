@@ -111,9 +111,6 @@ class OpenChargeMapApiWrapper(
     private fun formatMultipleChoice(value: MultipleChoiceFilterValue?) =
         if (value == null || value.all) null else value.values.joinToString(",")
 
-    // Unknown, Currently Available, Currently In Use, Operational, Partly Operational
-    private val noFaultStatuses = "0,10,20,50,75"
-
     override suspend fun getChargepoints(
         referenceData: ReferenceData,
         bounds: LatLngBounds,
@@ -148,7 +145,7 @@ class OpenChargeMapApiWrapper(
             minPower = minPower,
             plugs = connectors,
             operators = operators,
-            statusType = if (excludeFaults == true) noFaultStatuses else null
+            statusType = if (excludeFaults == true) noFaultStatuses.joinToString(",") else null
         )
         if (!response.isSuccessful) {
             return Resource.error(response.message(), null)
@@ -198,7 +195,7 @@ class OpenChargeMapApiWrapper(
             minPower = minPower,
             plugs = connectors,
             operators = operators,
-            statusType = if (excludeFaults == true) noFaultStatuses else null
+            statusType = if (excludeFaults == true) noFaultStatuses.joinToString(",") else null
         )
         if (!response.isSuccessful) {
             return Resource.error(response.message(), null)

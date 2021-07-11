@@ -9,6 +9,13 @@ import net.vonforst.evmap.max
 import net.vonforst.evmap.model.*
 import java.time.ZonedDateTime
 
+// Unknown, Currently Available, Currently In Use, Operational
+val noFaultStatuses = listOf(0, 10, 20, 50)
+
+// Temporarily Unavailable, Partly Operational, Not Operational, Planned For Future Date, Removed (Decommissioned)
+val faultStatuses = listOf(30L, 75L, 100L, 150L, 200L)
+val faultReportCommentType = 1000L
+
 data class OCMBoundingBox(
     val sw_lat: Double, val sw_lng: Double,
     val ne_lat: Double, val ne_lng: Double
@@ -31,7 +38,11 @@ data class OCMChargepoint(
     @Json(name = "OperatorInfo") val operatorInfo: OCMOperator?,
     @Json(name = "OperatorID") val operatorId: Long?,
     @Json(name = "DataProvider") val dataProvider: OCMDataProvider?,
-    @Json(name = "MediaItems") val mediaItems: List<OCMMediaItem>?
+    @Json(name = "MediaItems") val mediaItems: List<OCMMediaItem>?,
+    @Json(name = "StatusTypeID") val statusTypeId: Long?,
+    @Json(name = "StatusType") val statusType: OCMStatusType?,
+    @Json(name = "UserComments") val userComments: List<OCMUserComment>?,
+    @Json(name = "DateLastStatusUpdate") val lastStatusUpdateDate: ZonedDateTime?
 ) {
     fun convert(refData: OCMReferenceData) = ChargeLocation(
         id,
@@ -42,7 +53,7 @@ data class OCMChargepoint(
         operatorInfo?.title,
         "https://openchargemap.org/site/poi/details/$id",
         "https://openchargemap.org/site/poi/edit/$id",
-        null,
+        convertFaultReport(),
         recentlyVerified,
         null,
         null,
@@ -59,6 +70,29 @@ data class OCMChargepoint(
             operatorId?.toString(),
             connections.map { "${it.connectionTypeId},${it.currentTypeId}" })
     )
+
+    private fun convertFaultReport(): FaultReport? {
+        if (statusTypeId in faultStatuses || connections.any { it.statusTypeId in faultStatuses }) {
+            if (userComments != null) {
+                val comment = userComments.filter { it.commentTypeId == faultReportCommentType }
+                    .maxByOrNull { it.dateCreated }
+                if (comment != null) {
+                    return FaultReport(comment.dateCreated.toInstant(), comment.comment)
+                }
+            }
+            if (statusType != null && statusType.id in faultStatuses) {
+                return FaultReport(lastStatusUpdateDate?.toInstant(), statusType.title)
+            } else if (connections.any { it.statusType != null && it.statusTypeId in faultStatuses }) {
+                return FaultReport(
+                    lastStatusUpdateDate?.toInstant(),
+                    connections.first { it.statusType != null && it.statusTypeId in faultStatuses }.statusType!!.title
+                )
+            }
+            return FaultReport(null, null)
+        } else {
+            return null
+        }
+    }
 }
 
 @JsonClass(generateAdapter = true)
@@ -97,7 +131,9 @@ data class OCMConnection(
     @Json(name = "Voltage") val voltage: Int?,
     @Json(name = "PowerKW") val power: Double?,
     @Json(name = "Quantity") val quantity: Int?,
-    @Json(name = "Comments") val comments: String?
+    @Json(name = "Comments") val comments: String?,
+    @Json(name = "StatusTypeID") val statusTypeId: Long?,
+    @Json(name = "StatusType") val statusType: OCMStatusType?
 ) {
     fun convert(refData: OCMReferenceData) = Chargepoint(
         convertConnectionTypeFromOCM(connectionTypeId, refData),
@@ -188,6 +224,21 @@ data class OCMMediaItem(
         return OCMChargerPhotoAdapter(id.toString(), url, thumbUrl)
     }
 }
+
+@JsonClass(generateAdapter = true)
+data class OCMUserComment(
+    @Json(name = "ID") val id: Long,
+    @Json(name = "CommentTypeID") val commentTypeId: Long,
+    @Json(name = "Comment") val comment: String,
+    @Json(name = "UserName") val userName: String,
+    @Json(name = "DateCreated") val dateCreated: ZonedDateTime
+)
+
+@JsonClass(generateAdapter = true)
+data class OCMStatusType(
+    @Json(name = "ID") val id: Long,
+    @Json(name = "Title") val title: String
+)
 
 @Parcelize
 private class OCMChargerPhotoAdapter(

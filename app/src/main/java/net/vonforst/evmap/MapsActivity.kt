@@ -19,8 +19,8 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
-import net.vonforst.evmap.api.goingelectric.ChargeLocation
 import net.vonforst.evmap.fragment.MapFragment
+import net.vonforst.evmap.model.ChargeLocation
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.utils.LocaleContextWrapper
 import net.vonforst.evmap.utils.getLocationFromIntent
@@ -58,6 +58,7 @@ class MapsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_maps)
 
         navController = findNavController(R.id.nav_host_fragment)
+        val navGraph = navController.navInflater.inflate(R.navigation.nav_graph)
         appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.map,
@@ -69,7 +70,7 @@ class MapsActivity : AppCompatActivity() {
         )
         val navView = findViewById<NavigationView>(R.id.nav_view)
         navView.setupWithNavController(navController)
-        
+
         val header = navView.getHeaderView(0)
         ViewCompat.setOnApplyWindowInsetsListener(header) { v, insets ->
             v.setPadding(0, insets.getInsets(WindowInsetsCompat.Type.statusBars()).top, 0, 0)
@@ -79,6 +80,17 @@ class MapsActivity : AppCompatActivity() {
         prefs = PreferenceDataSource(this)
 
         checkPlayServices(this)
+
+
+        if (!prefs.welcomeDialogShown || !prefs.dataSourceSet) {
+            navGraph.startDestination = R.id.onboarding
+            navController.graph = navGraph
+            return
+        } else {
+            navGraph.startDestination = R.id.map
+            navController.graph = navGraph
+        }
+
 
         if (intent?.scheme == "geo") {
             val query = intent.data?.query?.split("=")?.get(1)

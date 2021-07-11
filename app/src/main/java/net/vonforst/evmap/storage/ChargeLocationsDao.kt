@@ -2,7 +2,7 @@ package net.vonforst.evmap.storage
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import net.vonforst.evmap.api.goingelectric.ChargeLocation
+import net.vonforst.evmap.model.ChargeLocation
 
 @Dao
 interface ChargeLocationsDao {

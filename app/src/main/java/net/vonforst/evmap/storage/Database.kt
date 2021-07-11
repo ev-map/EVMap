@@ -7,12 +7,11 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import net.vonforst.evmap.api.goingelectric.ChargeCard
-import net.vonforst.evmap.api.goingelectric.ChargeLocation
-import net.vonforst.evmap.viewmodel.BooleanFilterValue
-import net.vonforst.evmap.viewmodel.FILTERS_CUSTOM
-import net.vonforst.evmap.viewmodel.MultipleChoiceFilterValue
-import net.vonforst.evmap.viewmodel.SliderFilterValue
+import net.vonforst.evmap.api.goingelectric.GEChargeCard
+import net.vonforst.evmap.api.openchargemap.OCMConnectionType
+import net.vonforst.evmap.api.openchargemap.OCMCountry
+import net.vonforst.evmap.api.openchargemap.OCMOperator
+import net.vonforst.evmap.model.*
 
 @Database(
     entities = [
@@ -21,19 +20,25 @@ import net.vonforst.evmap.viewmodel.SliderFilterValue
         MultipleChoiceFilterValue::class,
         SliderFilterValue::class,
         FilterProfile::class,
-        Plug::class,
-        Network::class,
-        ChargeCard::class
-    ], version = 11
+        GEPlug::class,
+        GENetwork::class,
+        GEChargeCard::class,
+        OCMConnectionType::class,
+        OCMCountry::class,
+        OCMOperator::class
+    ], version = 12
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun chargeLocationsDao(): ChargeLocationsDao
     abstract fun filterValueDao(): FilterValueDao
     abstract fun filterProfileDao(): FilterProfileDao
-    abstract fun plugDao(): PlugDao
-    abstract fun networkDao(): NetworkDao
-    abstract fun chargeCardDao(): ChargeCardDao
+
+    // GoingElectric API specific
+    abstract fun geReferenceDataDao(): GEReferenceDataDao
+
+    // OpenChargeMap API specific
+    abstract fun ocmReferenceDataDao(): OCMReferenceDataDao
 
     companion object {
         private lateinit var context: Context
@@ -41,12 +46,14 @@ abstract class AppDatabase : RoomDatabase() {
             Room.databaseBuilder(context, AppDatabase::class.java, "evmap.db")
                 .addMigrations(
                     MIGRATION_2, MIGRATION_3, MIGRATION_4, MIGRATION_5, MIGRATION_6,
-                    MIGRATION_7, MIGRATION_8, MIGRATION_9, MIGRATION_10, MIGRATION_11
+                    MIGRATION_7, MIGRATION_8, MIGRATION_9, MIGRATION_10, MIGRATION_11,
+                    MIGRATION_12
                 )
                 .addCallback(object : Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
-                        // create default filter profile
-                        db.execSQL("INSERT INTO `FilterProfile` (`name`, `id`, `order`) VALUES ('FILTERS_CUSTOM', $FILTERS_CUSTOM, 0)")
+                        // create default filter profile for each data source
+                        db.execSQL("INSERT INTO `FilterProfile` (`dataSource`, `name`, `id`, `order`) VALUES ('goingelectric', 'FILTERS_CUSTOM', $FILTERS_CUSTOM, 0)")
+                        db.execSQL("INSERT INTO `FilterProfile` (`dataSource`, `name`, `id`, `order`) VALUES ('openchargemap', 'FILTERS_CUSTOM', $FILTERS_CUSTOM, 0)")
                     }
                 })
                 .build()
@@ -174,6 +181,74 @@ abstract class AppDatabase : RoomDatabase() {
         private val MIGRATION_11 = object : Migration(10, 11) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("ALTER TABLE `ChargeLocation` ADD `barrierFree` INTEGER")
+            }
+        }
+
+        private val MIGRATION_12 = object : Migration(11, 12) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.beginTransaction()
+                try {
+                    //////////////////////////////////////////
+                    // create OpenChargeMap-specific tables //
+                    //////////////////////////////////////////
+                    db.execSQL("CREATE TABLE `OCMConnectionType` (`id` INTEGER NOT NULL, `title` TEXT NOT NULL, `formalName` TEXT, `discontinued` INTEGER, `obsolete` INTEGER, PRIMARY KEY(`id`))")
+                    db.execSQL("CREATE TABLE `OCMCountry` (`id` INTEGER NOT NULL, `isoCode` TEXT NOT NULL, `continentCode` TEXT, `title` TEXT NOT NULL, PRIMARY KEY(`id`))")
+                    db.execSQL("CREATE TABLE `OCMOperator` (`id` INTEGER NOT NULL, `websiteUrl` TEXT, `title` TEXT NOT NULL, `contactEmail` TEXT, `contactTelephone1` TEXT, `contactTelephone2` TEXT, PRIMARY KEY(`id`))");
+
+                    //////////////////////////////////////////
+                    // rename GoingElectric-specific tables //
+                    //////////////////////////////////////////
+                    db.execSQL("ALTER TABLE `ChargeCard` RENAME TO `GEChargeCard`")
+                    db.execSQL("ALTER TABLE `Network` RENAME TO `GENetwork`")
+                    db.execSQL("ALTER TABLE `Plug` RENAME TO `GEPlug`")
+
+                    /////////////////////////////////////////////
+                    // add new columns to ChargeLocation table //
+                    /////////////////////////////////////////////
+                    db.execSQL("ALTER TABLE `ChargeLocation` ADD `editUrl` TEXT")
+                    db.execSQL("ALTER TABLE `ChargeLocation` ADD `license` TEXT")
+                    db.execSQL("ALTER TABLE `ChargeLocation` ADD `chargepricecountry` TEXT")
+                    db.execSQL("ALTER TABLE `ChargeLocation` ADD `chargepricenetwork` TEXT")
+                    db.execSQL("ALTER TABLE `ChargeLocation` ADD `chargepriceplugTypes` TEXT")
+
+                    ////////////////////////////////////////////////////////////
+                    // Separate FilterValues and FilterProfiles by DataSource //
+                    ////////////////////////////////////////////////////////////
+                    // recreate tables
+                    db.execSQL("CREATE TABLE `FilterProfileNew` (`name` TEXT NOT NULL, `dataSource` TEXT NOT NULL, `id` INTEGER NOT NULL, `order` INTEGER NOT NULL, PRIMARY KEY(`dataSource`, `id`))")
+                    db.execSQL("CREATE UNIQUE INDEX `index_FilterProfile_dataSource_name` ON `FilterProfileNew` (`dataSource`, `name`)")
+
+                    db.execSQL("CREATE TABLE `BooleanFilterValueNew` (`key` TEXT NOT NULL, `value` INTEGER NOT NULL, `dataSource` TEXT NOT NULL, `profile` INTEGER NOT NULL, PRIMARY KEY(`key`, `profile`, `dataSource`), FOREIGN KEY(`profile`, `dataSource`) REFERENCES `FilterProfile`(`id`, `dataSource`) ON UPDATE NO ACTION ON DELETE CASCADE )")
+                    db.execSQL("CREATE TABLE `MultipleChoiceFilterValueNew` (`key` TEXT NOT NULL, `values` TEXT NOT NULL, `all` INTEGER NOT NULL, `dataSource` TEXT NOT NULL, `profile` INTEGER NOT NULL, PRIMARY KEY(`key`, `profile`, `dataSource`), FOREIGN KEY(`profile`, `dataSource`) REFERENCES `FilterProfile`(`id`, `dataSource`) ON UPDATE NO ACTION ON DELETE CASCADE )")
+                    db.execSQL("CREATE TABLE `SliderFilterValueNew` (`key` TEXT NOT NULL, `value` INTEGER NOT NULL, `dataSource` TEXT NOT NULL, `profile` INTEGER NOT NULL, PRIMARY KEY(`key`, `profile`, `dataSource`), FOREIGN KEY(`profile`, `dataSource`) REFERENCES `FilterProfile`(`id`, `dataSource`) ON UPDATE NO ACTION ON DELETE CASCADE )")
+
+                    val tables = listOf(
+                        "FilterProfile",
+                        "BooleanFilterValue",
+                        "MultipleChoiceFilterValue",
+                        "SliderFilterValue",
+                    )
+                    // copy data
+                    for (table in tables) {
+                        val columnList = when (table) {
+                            "BooleanFilterValue", "SliderFilterValue" -> "`key`, `value`, `dataSource`, `profile`"
+                            "MultipleChoiceFilterValue" -> "`key`, `values`, `all`, `dataSource`, `profile`"
+                            "FilterProfile" -> "`name`, `dataSource`, `id`, `order`"
+                            else -> throw IllegalArgumentException()
+                        }
+
+                        db.execSQL("ALTER TABLE `$table` ADD COLUMN `dataSource` STRING NOT NULL DEFAULT 'goingelectric'")
+                        db.execSQL("INSERT INTO `${table}New`($columnList) SELECT $columnList FROM `$table`")
+                        db.execSQL("DROP TABLE `$table`")
+                        db.execSQL("ALTER TABLE `${table}New` RENAME TO `$table`")
+                    }
+
+                    // create default filter profile for openchargemap
+                    db.execSQL("INSERT INTO `FilterProfile` (`dataSource`, `name`, `id`, `order`) VALUES ('openchargemap', 'FILTERS_CUSTOM', $FILTERS_CUSTOM, 0)")
+                    db.setTransactionSuccessful()
+                } finally {
+                    db.endTransaction()
+                }
             }
         }
     }

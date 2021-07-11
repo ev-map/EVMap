@@ -4,18 +4,27 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.room.*
-import net.vonforst.evmap.viewmodel.*
+import net.vonforst.evmap.model.*
 
 @Dao
 abstract class FilterValueDao {
-    @Query("SELECT * FROM booleanfiltervalue WHERE profile = :profile")
-    protected abstract fun getBooleanFilterValues(profile: Long): LiveData<List<BooleanFilterValue>>
+    @Query("SELECT * FROM booleanfiltervalue WHERE profile = :profile AND dataSource = :dataSource")
+    protected abstract fun getBooleanFilterValues(
+        profile: Long,
+        dataSource: String
+    ): LiveData<List<BooleanFilterValue>>
 
-    @Query("SELECT * FROM multiplechoicefiltervalue WHERE profile = :profile")
-    protected abstract fun getMultipleChoiceFilterValues(profile: Long): LiveData<List<MultipleChoiceFilterValue>>
+    @Query("SELECT * FROM multiplechoicefiltervalue WHERE profile = :profile AND dataSource = :dataSource")
+    protected abstract fun getMultipleChoiceFilterValues(
+        profile: Long,
+        dataSource: String
+    ): LiveData<List<MultipleChoiceFilterValue>>
 
-    @Query("SELECT * FROM sliderfiltervalue WHERE profile = :profile")
-    protected abstract fun getSliderFilterValues(profile: Long): LiveData<List<SliderFilterValue>>
+    @Query("SELECT * FROM sliderfiltervalue WHERE profile = :profile AND dataSource = :dataSource")
+    protected abstract fun getSliderFilterValues(
+        profile: Long,
+        dataSource: String
+    ): LiveData<List<SliderFilterValue>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     protected abstract suspend fun insert(vararg values: BooleanFilterValue)
@@ -26,24 +35,33 @@ abstract class FilterValueDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     protected abstract suspend fun insert(vararg values: SliderFilterValue)
 
-    @Query("DELETE FROM booleanfiltervalue WHERE profile = :profile")
-    protected abstract suspend fun deleteBooleanFilterValuesForProfile(profile: Long)
+    @Query("DELETE FROM booleanfiltervalue WHERE profile = :profile AND dataSource = :dataSource")
+    protected abstract suspend fun deleteBooleanFilterValuesForProfile(
+        profile: Long,
+        dataSource: String
+    )
 
-    @Query("DELETE FROM multiplechoicefiltervalue WHERE profile = :profile")
-    protected abstract suspend fun deleteMultipleChoiceFilterValuesForProfile(profile: Long)
+    @Query("DELETE FROM multiplechoicefiltervalue WHERE profile = :profile AND dataSource = :dataSource")
+    protected abstract suspend fun deleteMultipleChoiceFilterValuesForProfile(
+        profile: Long,
+        dataSource: String
+    )
 
-    @Query("DELETE FROM sliderfiltervalue WHERE profile = :profile")
-    protected abstract suspend fun deleteSliderFilterValuesForProfile(profile: Long)
+    @Query("DELETE FROM sliderfiltervalue WHERE profile = :profile AND dataSource = :dataSource")
+    protected abstract suspend fun deleteSliderFilterValuesForProfile(
+        profile: Long,
+        dataSource: String
+    )
 
-    open fun getFilterValues(filterStatus: Long): LiveData<List<FilterValue>> =
+    open fun getFilterValues(filterStatus: Long, dataSource: String): LiveData<List<FilterValue>> =
         if (filterStatus == FILTERS_DISABLED) {
             MutableLiveData(emptyList())
         } else {
             MediatorLiveData<List<FilterValue>>().apply {
                 val sources = listOf(
-                    getBooleanFilterValues(filterStatus),
-                    getMultipleChoiceFilterValues(filterStatus),
-                    getSliderFilterValues(filterStatus)
+                    getBooleanFilterValues(filterStatus, dataSource),
+                    getMultipleChoiceFilterValues(filterStatus, dataSource),
+                    getSliderFilterValues(filterStatus, dataSource)
                 )
                 for (source in sources) {
                     addSource(source) {
@@ -65,10 +83,10 @@ abstract class FilterValueDao {
     }
 
     @Transaction
-    open suspend fun deleteFilterValuesForProfile(profile: Long) {
-        deleteBooleanFilterValuesForProfile(profile)
-        deleteMultipleChoiceFilterValuesForProfile(profile)
-        deleteSliderFilterValuesForProfile(profile)
+    open suspend fun deleteFilterValuesForProfile(profile: Long, dataSource: String) {
+        deleteBooleanFilterValuesForProfile(profile, dataSource)
+        deleteMultipleChoiceFilterValuesForProfile(profile, dataSource)
+        deleteSliderFilterValuesForProfile(profile, dataSource)
     }
 
 }

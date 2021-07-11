@@ -1,8 +1,8 @@
 package net.vonforst.evmap.api.availability
 
 import com.squareup.moshi.JsonClass
-import net.vonforst.evmap.api.goingelectric.ChargeLocation
-import net.vonforst.evmap.api.goingelectric.Chargepoint
+import net.vonforst.evmap.model.ChargeLocation
+import net.vonforst.evmap.model.Chargepoint
 import net.vonforst.evmap.utils.distanceBetween
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -141,11 +141,11 @@ class NewMotionAvailabilityDetector(client: OkHttpClient, baseUrl: String? = nul
             val power = connector.electricalProperties.getPower()
             val type = when (connector.connectorType.toLowerCase(Locale.ROOT)) {
                 "type3" -> Chargepoint.TYPE_3
-                "type2" -> Chargepoint.TYPE_2
+                "type2" -> Chargepoint.TYPE_2_UNKNOWN
                 "type1" -> Chargepoint.TYPE_1
                 "domestic" -> Chargepoint.SCHUKO
-                "type1combo" -> Chargepoint.CCS  // US CCS, aka type1_combo
-                "type2combo" -> Chargepoint.CCS  // EU CCS, aka type2_combo
+                "type1combo" -> Chargepoint.CCS_TYPE_1  // US CCS, aka type1_combo
+                "type2combo" -> Chargepoint.CCS_TYPE_2  // EU CCS, aka type2_combo
                 "tepcochademo" -> Chargepoint.CHADEMO
                 "unspecified" -> "unknown"
                 "unknown" -> "unknown"

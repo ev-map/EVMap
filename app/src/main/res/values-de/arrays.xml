@@ -10,4 +10,8 @@
         <item>immer an</item>
         <item>immer aus</item>
     </string-array>
+    <string-array name="pref_data_source_names">
+        <item>GoingElectric.de</item>
+        <item>Open Charge Map</item>
+    </string-array>
 </resources>

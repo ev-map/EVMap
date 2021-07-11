@@ -1,0 +1,591 @@
+[
+  {
+    "DataProvider": {
+      "WebsiteURL": "http://openchargemap.org",
+      "Comments": null,
+      "DataProviderStatusType": {
+        "IsProviderEnabled": true,
+        "ID": 1,
+        "Title": "Manual Data Entry"
+      },
+      "IsRestrictedEdit": false,
+      "IsOpenDataLicensed": true,
+      "IsApprovedImport": true,
+      "License": "Licensed under Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)",
+      "DateLastImported": null,
+      "ID": 1,
+      "Title": "Open Charge Map Contributors"
+    },
+    "OperatorInfo": {
+      "WebsiteURL": null,
+      "Comments": "For use when the operator of the equipment is a single business owner connected to the location and equipment is not part of a larger network",
+      "PhonePrimaryContact": null,
+      "PhoneSecondaryContact": null,
+      "IsPrivateIndividual": false,
+      "AddressInfo": null,
+      "BookingURL": null,
+      "ContactEmail": null,
+      "FaultReportEmail": null,
+      "IsRestrictedEdit": null,
+      "ID": 45,
+      "Title": "(Business Owner at Location)"
+    },
+    "UsageType": {
+      "IsPayAtLocation": null,
+      "IsMembershipRequired": null,
+      "IsAccessKeyRequired": null,
+      "ID": 1,
+      "Title": "Public"
+    },
+    "StatusType": {
+      "IsOperational": true,
+      "IsUserSelectable": true,
+      "ID": 50,
+      "Title": "Operational"
+    },
+    "SubmissionStatus": {
+      "IsLive": true,
+      "ID": 200,
+      "Title": "Submission Published"
+    },
+    "UserComments": null,
+    "PercentageSimilarity": null,
+    "MediaItems": null,
+    "IsRecentlyVerified": false,
+    "DateLastVerified": null,
+    "ID": 102167,
+    "UUID": "8C01976D-D519-45CD-8E35-FEE1E9E13484",
+    "ParentChargePointID": null,
+    "DataProviderID": 1,
+    "DataProvidersReference": null,
+    "OperatorID": 45,
+    "OperatorsReference": null,
+    "UsageTypeID": 1,
+    "UsageCost": null,
+    "AddressInfo": {
+      "ID": 102513,
+      "Title": "Nordoel Tankstelle",
+      "AddressLine1": "Jungfernstieg 13",
+      "AddressLine2": null,
+      "Town": "Meldorf",
+      "StateOrProvince": "Kreis Dithmarschen",
+      "Postcode": "25704",
+      "CountryID": 87,
+      "Country": {
+        "ISOCode": "DE",
+        "ContinentCode": "EU",
+        "ID": 87,
+        "Title": "Germany"
+      },
+      "Latitude": 54.09008953316771,
+      "Longitude": 9.06896678095086,
+      "ContactTelephone1": null,
+      "ContactTelephone2": null,
+      "ContactEmail": null,
+      "AccessComments": "24/7 open",
+      "RelatedURL": null,
+      "Distance": null,
+      "DistanceUnit": 0
+    },
+    "Connections": [
+      {
+        "ID": 144186,
+        "ConnectionTypeID": 25,
+        "ConnectionType": {
+          "FormalName": "IEC 62196-2 Type 2",
+          "IsDiscontinued": false,
+          "IsObsolete": false,
+          "ID": 25,
+          "Title": "Type 2 (Socket Only)"
+        },
+        "Reference": null,
+        "StatusTypeID": 50,
+        "StatusType": {
+          "IsOperational": true,
+          "IsUserSelectable": true,
+          "ID": 50,
+          "Title": "Operational"
+        },
+        "LevelID": 2,
+        "Level": {
+          "Comments": "Over 2 kW, usually non-domestic socket type",
+          "IsFastChargeCapable": false,
+          "ID": 2,
+          "Title": "Level 2 : Medium (Over 2kW)"
+        },
+        "Amps": 32,
+        "Voltage": 400,
+        "PowerKW": 22,
+        "CurrentTypeID": 20,
+        "CurrentType": {
+          "Description": "Alternating Current - Three Phase",
+          "ID": 20,
+          "Title": "AC (Three-Phase)"
+        },
+        "Quantity": 2,
+        "Comments": null
+      }
+    ],
+    "NumberOfPoints": 2,
+    "GeneralComments": null,
+    "DatePlanned": null,
+    "DateLastConfirmed": null,
+    "StatusTypeID": 50,
+    "DateLastStatusUpdate": "2018-04-18T06:03:00Z",
+    "MetadataValues": null,
+    "DataQualityLevel": 1,
+    "DateCreated": "2018-04-18T06:03:00Z",
+    "SubmissionStatusTypeID": 200
+  },
+  {
+    "DataProvider": {
+      "WebsiteURL": "http://openchargemap.org",
+      "Comments": null,
+      "DataProviderStatusType": {
+        "IsProviderEnabled": true,
+        "ID": 1,
+        "Title": "Manual Data Entry"
+      },
+      "IsRestrictedEdit": false,
+      "IsOpenDataLicensed": true,
+      "IsApprovedImport": true,
+      "License": "Licensed under Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)",
+      "DateLastImported": null,
+      "ID": 1,
+      "Title": "Open Charge Map Contributors"
+    },
+    "OperatorInfo": {
+      "WebsiteURL": null,
+      "Comments": null,
+      "PhonePrimaryContact": null,
+      "PhoneSecondaryContact": null,
+      "IsPrivateIndividual": null,
+      "AddressInfo": null,
+      "BookingURL": null,
+      "ContactEmail": null,
+      "FaultReportEmail": null,
+      "IsRestrictedEdit": null,
+      "ID": 1,
+      "Title": "(Unknown Operator)"
+    },
+    "UsageType": {
+      "IsPayAtLocation": null,
+      "IsMembershipRequired": null,
+      "IsAccessKeyRequired": null,
+      "ID": 1,
+      "Title": "Public"
+    },
+    "StatusType": {
+      "IsOperational": true,
+      "IsUserSelectable": true,
+      "ID": 50,
+      "Title": "Operational"
+    },
+    "SubmissionStatus": {
+      "IsLive": true,
+      "ID": 200,
+      "Title": "Submission Published"
+    },
+    "UserComments": null,
+    "PercentageSimilarity": null,
+    "MediaItems": null,
+    "IsRecentlyVerified": false,
+    "DateLastVerified": null,
+    "ID": 83520,
+    "UUID": "AA25EFC9-5996-4968-9337-2ECD927099C8",
+    "ParentChargePointID": null,
+    "DataProviderID": 1,
+    "DataProvidersReference": null,
+    "OperatorID": 1,
+    "OperatorsReference": null,
+    "UsageTypeID": 1,
+    "UsageCost": null,
+    "AddressInfo": {
+      "ID": 83866,
+      "Title": "Johann-Hinrich-Wichern-Haus",
+      "AddressLine1": "Nordermarkt 8",
+      "AddressLine2": null,
+      "Town": "Meldorf",
+      "StateOrProvince": "Kreis Dithmarschen",
+      "Postcode": "25704",
+      "CountryID": 87,
+      "Country": {
+        "ISOCode": "DE",
+        "ContinentCode": "EU",
+        "ID": 87,
+        "Title": "Germany"
+      },
+      "Latitude": 54.0907817,
+      "Longitude": 9.072517000000062,
+      "ContactTelephone1": null,
+      "ContactTelephone2": null,
+      "ContactEmail": null,
+      "AccessComments": "24/7 kostenlos und ohne Ladekarte nutzbar. Betreiber sind die Stadtwerke Heide.",
+      "RelatedURL": null,
+      "Distance": null,
+      "DistanceUnit": 0
+    },
+    "Connections": [
+      {
+        "ID": 118345,
+        "ConnectionTypeID": 25,
+        "ConnectionType": {
+          "FormalName": "IEC 62196-2 Type 2",
+          "IsDiscontinued": false,
+          "IsObsolete": false,
+          "ID": 25,
+          "Title": "Type 2 (Socket Only)"
+        },
+        "Reference": null,
+        "StatusTypeID": 50,
+        "StatusType": {
+          "IsOperational": true,
+          "IsUserSelectable": true,
+          "ID": 50,
+          "Title": "Operational"
+        },
+        "LevelID": 2,
+        "Level": {
+          "Comments": "Over 2 kW, usually non-domestic socket type",
+          "IsFastChargeCapable": false,
+          "ID": 2,
+          "Title": "Level 2 : Medium (Over 2kW)"
+        },
+        "Amps": 32,
+        "Voltage": 400,
+        "PowerKW": 22,
+        "CurrentTypeID": 20,
+        "CurrentType": {
+          "Description": "Alternating Current - Three Phase",
+          "ID": 20,
+          "Title": "AC (Three-Phase)"
+        },
+        "Quantity": 2,
+        "Comments": null
+      }
+    ],
+    "NumberOfPoints": 2,
+    "GeneralComments": null,
+    "DatePlanned": null,
+    "DateLastConfirmed": null,
+    "StatusTypeID": 50,
+    "DateLastStatusUpdate": "2017-02-09T14:23:00Z",
+    "MetadataValues": null,
+    "DataQualityLevel": 1,
+    "DateCreated": "2017-02-09T14:23:00Z",
+    "SubmissionStatusTypeID": 200
+  },
+  {
+    "DataProvider": {
+      "WebsiteURL": "http://openchargemap.org",
+      "Comments": null,
+      "DataProviderStatusType": {
+        "IsProviderEnabled": true,
+        "ID": 1,
+        "Title": "Manual Data Entry"
+      },
+      "IsRestrictedEdit": false,
+      "IsOpenDataLicensed": true,
+      "IsApprovedImport": true,
+      "License": "Licensed under Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)",
+      "DateLastImported": null,
+      "ID": 1,
+      "Title": "Open Charge Map Contributors"
+    },
+    "OperatorInfo": {
+      "WebsiteURL": null,
+      "Comments": "For use when the operator of the equipment is a single business owner connected to the location and equipment is not part of a larger network",
+      "PhonePrimaryContact": null,
+      "PhoneSecondaryContact": null,
+      "IsPrivateIndividual": false,
+      "AddressInfo": null,
+      "BookingURL": null,
+      "ContactEmail": null,
+      "FaultReportEmail": null,
+      "IsRestrictedEdit": null,
+      "ID": 45,
+      "Title": "(Business Owner at Location)"
+    },
+    "UsageType": {
+      "IsPayAtLocation": false,
+      "IsMembershipRequired": false,
+      "IsAccessKeyRequired": false,
+      "ID": 7,
+      "Title": "Public - Notice Required"
+    },
+    "StatusType": {
+      "IsOperational": true,
+      "IsUserSelectable": true,
+      "ID": 50,
+      "Title": "Operational"
+    },
+    "SubmissionStatus": {
+      "IsLive": true,
+      "ID": 200,
+      "Title": "Submission Published"
+    },
+    "UserComments": null,
+    "PercentageSimilarity": null,
+    "MediaItems": null,
+    "IsRecentlyVerified": false,
+    "DateLastVerified": null,
+    "ID": 41847,
+    "UUID": "D00D1011-6E8F-444A-B80F-E85FAF0D4D51",
+    "ParentChargePointID": null,
+    "DataProviderID": 1,
+    "DataProvidersReference": null,
+    "OperatorID": 45,
+    "OperatorsReference": null,
+    "UsageTypeID": 7,
+    "UsageCost": "Free",
+    "AddressInfo": {
+      "ID": 42193,
+      "Title": "Aldra Solar GmbH",
+      "AddressLine1": "Marschstraße 49",
+      "AddressLine2": null,
+      "Town": "Meldorf",
+      "StateOrProvince": null,
+      "Postcode": "25704",
+      "CountryID": 87,
+      "Country": {
+        "ISOCode": "DE",
+        "ContinentCode": "EU",
+        "ID": 87,
+        "Title": "Germany"
+      },
+      "Latitude": 54.0835119454403,
+      "Longitude": 9.07720685005188,
+      "ContactTelephone1": "04832 9599800",
+      "ContactTelephone2": null,
+      "ContactEmail": "info@aldra-solar.de",
+      "AccessComments": "Geöffnet Mo-Fr 8-17Uhr. Vor Laden im Aldra-Musterhaus melden. Ladesäule ist neben dem Aldra-Musterhaus an der Solaranlage. Auf das Firmengelände fahren, dann rechts bis zum Ende durchfahren.",
+      "RelatedURL": "http://www.aldra-solar.de/",
+      "Distance": null,
+      "DistanceUnit": 0
+    },
+    "Connections": [
+      {
+        "ID": 50152,
+        "ConnectionTypeID": 28,
+        "ConnectionType": {
+          "FormalName": "CEE 7/4",
+          "IsDiscontinued": false,
+          "IsObsolete": false,
+          "ID": 28,
+          "Title": "CEE 7/4 - Schuko - Type F"
+        },
+        "Reference": null,
+        "StatusTypeID": 50,
+        "StatusType": {
+          "IsOperational": true,
+          "IsUserSelectable": true,
+          "ID": 50,
+          "Title": "Operational"
+        },
+        "LevelID": 2,
+        "Level": {
+          "Comments": "Over 2 kW, usually non-domestic socket type",
+          "IsFastChargeCapable": false,
+          "ID": 2,
+          "Title": "Level 2 : Medium (Over 2kW)"
+        },
+        "Amps": 16,
+        "Voltage": 230,
+        "PowerKW": 3.7,
+        "CurrentTypeID": 10,
+        "CurrentType": {
+          "Description": "Alternating Current - Single Phase",
+          "ID": 10,
+          "Title": "AC (Single-Phase)"
+        },
+        "Quantity": 1,
+        "Comments": null
+      },
+      {
+        "ID": 50153,
+        "ConnectionTypeID": 25,
+        "ConnectionType": {
+          "FormalName": "IEC 62196-2 Type 2",
+          "IsDiscontinued": false,
+          "IsObsolete": false,
+          "ID": 25,
+          "Title": "Type 2 (Socket Only)"
+        },
+        "Reference": null,
+        "StatusTypeID": 50,
+        "StatusType": {
+          "IsOperational": true,
+          "IsUserSelectable": true,
+          "ID": 50,
+          "Title": "Operational"
+        },
+        "LevelID": 2,
+        "Level": {
+          "Comments": "Over 2 kW, usually non-domestic socket type",
+          "IsFastChargeCapable": false,
+          "ID": 2,
+          "Title": "Level 2 : Medium (Over 2kW)"
+        },
+        "Amps": 32,
+        "Voltage": 400,
+        "PowerKW": 22,
+        "CurrentTypeID": 20,
+        "CurrentType": {
+          "Description": "Alternating Current - Three Phase",
+          "ID": 20,
+          "Title": "AC (Three-Phase)"
+        },
+        "Quantity": 1,
+        "Comments": null
+      }
+    ],
+    "NumberOfPoints": 2,
+    "GeneralComments": null,
+    "DatePlanned": null,
+    "DateLastConfirmed": null,
+    "StatusTypeID": 50,
+    "DateLastStatusUpdate": "2015-02-16T21:20:00Z",
+    "MetadataValues": null,
+    "DataQualityLevel": 1,
+    "DateCreated": "2015-02-12T14:17:00Z",
+    "SubmissionStatusTypeID": 200
+  },
+  {
+    "DataProvider": {
+      "WebsiteURL": "http://openchargemap.org",
+      "Comments": null,
+      "DataProviderStatusType": {
+        "IsProviderEnabled": true,
+        "ID": 1,
+        "Title": "Manual Data Entry"
+      },
+      "IsRestrictedEdit": false,
+      "IsOpenDataLicensed": true,
+      "IsApprovedImport": true,
+      "License": "Licensed under Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)",
+      "DateLastImported": null,
+      "ID": 1,
+      "Title": "Open Charge Map Contributors"
+    },
+    "OperatorInfo": {
+      "WebsiteURL": "https://www.eon.de/de/eonde/pk/produkteUndPreise/E.ON_eMobil/index.htm",
+      "Comments": null,
+      "PhonePrimaryContact": null,
+      "PhoneSecondaryContact": null,
+      "IsPrivateIndividual": false,
+      "AddressInfo": null,
+      "BookingURL": null,
+      "ContactEmail": null,
+      "FaultReportEmail": null,
+      "IsRestrictedEdit": false,
+      "ID": 46,
+      "Title": "E.ON (DE)"
+    },
+    "UsageType": {
+      "IsPayAtLocation": false,
+      "IsMembershipRequired": true,
+      "IsAccessKeyRequired": true,
+      "ID": 4,
+      "Title": "Public - Membership Required"
+    },
+    "StatusType": {
+      "IsOperational": true,
+      "IsUserSelectable": true,
+      "ID": 50,
+      "Title": "Operational"
+    },
+    "SubmissionStatus": {
+      "IsLive": true,
+      "ID": 200,
+      "Title": "Submission Published"
+    },
+    "UserComments": null,
+    "PercentageSimilarity": null,
+    "MediaItems": null,
+    "IsRecentlyVerified": false,
+    "DateLastVerified": null,
+    "ID": 100664,
+    "UUID": "19C90835-521F-4DA3-9198-550F733ACB07",
+    "ParentChargePointID": null,
+    "DataProviderID": 1,
+    "DataProvidersReference": null,
+    "OperatorID": 46,
+    "OperatorsReference": null,
+    "UsageTypeID": 4,
+    "UsageCost": null,
+    "AddressInfo": {
+      "ID": 101010,
+      "Title": "Schleswig Holstein Netz",
+      "AddressLine1": "Altentreptower Straße 6",
+      "AddressLine2": null,
+      "Town": " Meldorf",
+      "StateOrProvince": "Kreis Dithmarschen",
+      "Postcode": "25704",
+      "CountryID": 87,
+      "Country": {
+        "ISOCode": "DE",
+        "ContinentCode": "EU",
+        "ID": 87,
+        "Title": "Germany"
+      },
+      "Latitude": 54.097794671035075,
+      "Longitude": 9.064442199336213,
+      "ContactTelephone1": null,
+      "ContactTelephone2": null,
+      "ContactEmail": null,
+      "AccessComments": "24/7 nutzbar direkt am Schild \"Schleswig Holstein Netz\"",
+      "RelatedURL": null,
+      "Distance": null,
+      "DistanceUnit": 0
+    },
+    "Connections": [
+      {
+        "ID": 142186,
+        "ConnectionTypeID": 25,
+        "ConnectionType": {
+          "FormalName": "IEC 62196-2 Type 2",
+          "IsDiscontinued": false,
+          "IsObsolete": false,
+          "ID": 25,
+          "Title": "Type 2 (Socket Only)"
+        },
+        "Reference": null,
+        "StatusTypeID": 50,
+        "StatusType": {
+          "IsOperational": true,
+          "IsUserSelectable": true,
+          "ID": 50,
+          "Title": "Operational"
+        },
+        "LevelID": 2,
+        "Level": {
+          "Comments": "Over 2 kW, usually non-domestic socket type",
+          "IsFastChargeCapable": false,
+          "ID": 2,
+          "Title": "Level 2 : Medium (Over 2kW)"
+        },
+        "Amps": 32,
+        "Voltage": 400,
+        "PowerKW": 22,
+        "CurrentTypeID": 20,
+        "CurrentType": {
+          "Description": "Alternating Current - Three Phase",
+          "ID": 20,
+          "Title": "AC (Three-Phase)"
+        },
+        "Quantity": 2,
+        "Comments": null
+      }
+    ],
+    "NumberOfPoints": 2,
+    "GeneralComments": null,
+    "DatePlanned": null,
+    "DateLastConfirmed": null,
+    "StatusTypeID": 50,
+    "DateLastStatusUpdate": "2018-03-05T08:46:00Z",
+    "MetadataValues": null,
+    "DataQualityLevel": 1,
+    "DateCreated": "2018-03-05T08:46:00Z",
+    "SubmissionStatusTypeID": 200
+  }
+]

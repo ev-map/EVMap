@@ -1,10 +1,10 @@
-package net.vonforst.evmap.viewmodel
+package net.vonforst.evmap.api
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-class FilterViewModelTest {
+class UtilsTest {
     @Test
     fun testPowerMapping() {
         val sliderValues = powerSteps.indices.toList()

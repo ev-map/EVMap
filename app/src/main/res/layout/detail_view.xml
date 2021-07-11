@@ -5,11 +5,11 @@
 
     <data>
 
-        <import type="net.vonforst.evmap.api.goingelectric.ChargeLocation" />
+        <import type="net.vonforst.evmap.model.ChargeLocation" />
 
-        <import type="net.vonforst.evmap.api.goingelectric.Chargepoint" />
+        <import type="net.vonforst.evmap.model.Chargepoint" />
 
-        <import type="net.vonforst.evmap.api.goingelectric.ChargeCard" />
+        <import type="net.vonforst.evmap.model.ChargeCard" />
 
         <import type="net.vonforst.evmap.api.availability.ChargeLocationStatus" />
 
@@ -22,6 +22,8 @@
         <import type="net.vonforst.evmap.viewmodel.Status" />
 
         <import type="net.vonforst.evmap.ui.BindingAdaptersKt" />
+
+        <import type="net.vonforst.evmap.api.ChargepointApiKt" />
 
         <variable
             name="charger"
@@ -50,6 +52,10 @@
         <variable
             name="expanded"
             type="Boolean" />
+
+        <variable
+            name="apiName"
+            type="String" />
 
     </data>
 
@@ -140,7 +146,7 @@
                 android:layout_marginEnd="8dp"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="@{charger.data.formatChargepoints()}"
+                android:text="@{charger.data.formatChargepoints(ChargepointApiKt.stringProvider(context))}"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
                 app:layout_constraintEnd_toStartOf="@+id/txtDistance"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
@@ -268,14 +274,13 @@
                 app:layout_constraintGuide_begin="16dp" />
 
             <Button
-                android:id="@+id/goingelectricButton"
+                android:id="@+id/sourceButton"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
-                android:text="@string/go_to_goingelectric"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:text="@{@string/source(apiName)}"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/textView4" />
@@ -322,7 +327,7 @@
                 android:layout_marginTop="2dp"
                 android:layout_marginBottom="2dp"
                 android:contentDescription="@string/verified"
-                android:tooltipText="@string/verified_desc"
+                android:tooltipText="@{@string/verified_desc(apiName)}"
                 app:goneUnless="@{ charger.data.verified }"
                 app:layout_constraintBottom_toBottomOf="@+id/txtName"
                 app:layout_constraintStart_toEndOf="@+id/imgFaultReport"
@@ -346,6 +351,23 @@
                 app:layout_constraintTop_toTopOf="@+id/txtName"
                 app:srcCompat="@drawable/ic_map_marker_fault"
                 tools:targetApi="o" />
+
+            <TextView
+                android:id="@+id/txtLicense"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+                android:textStyle="italic"
+                android:text="@{charger.data.license}"
+                android:breakStrategy="balanced"
+                app:goneUnless="@{charger.data.license != null}"
+                app:layout_constraintEnd_toStartOf="@+id/guideline2"
+                app:layout_constraintStart_toStartOf="@+id/guideline"
+                app:layout_constraintTop_toBottomOf="@+id/sourceButton"
+                app:layout_constraintBottom_toBottomOf="parent"
+                tools:text="The data is provided under the National Oman Open Data LicensE (NOODLE), Version 3.14, and may be used for any purpose whatsoever." />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

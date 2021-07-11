@@ -66,12 +66,11 @@ import net.vonforst.evmap.*
 import net.vonforst.evmap.adapter.ConnectorAdapter
 import net.vonforst.evmap.adapter.DetailsAdapter
 import net.vonforst.evmap.adapter.GalleryAdapter
-import net.vonforst.evmap.api.goingelectric.ChargeLocation
-import net.vonforst.evmap.api.goingelectric.ChargeLocationCluster
-import net.vonforst.evmap.api.goingelectric.ChargepointListItem
+import net.vonforst.evmap.api.goingelectric.GoingElectricApiWrapper
 import net.vonforst.evmap.autocomplete.handleAutocompleteResult
 import net.vonforst.evmap.autocomplete.launchAutocomplete
 import net.vonforst.evmap.databinding.FragmentMapBinding
+import net.vonforst.evmap.model.*
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.ui.ChargerIconGenerator
 import net.vonforst.evmap.ui.ClusterIconGenerator
@@ -91,14 +90,7 @@ const val ARG_LOCATION_NAME = "locationName"
 class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallback,
     LostApiClient.ConnectionCallbacks, LocationListener {
     private lateinit var binding: FragmentMapBinding
-    private val vm: MapViewModel by viewModels(factoryProducer = {
-        viewModelFactory {
-            MapViewModel(
-                requireActivity().application,
-                getString(R.string.goingelectric_key)
-            )
-        }
-    })
+    private val vm: MapViewModel by viewModels()
     private val galleryVm: GalleryViewModel by activityViewModels()
     private var mapFragment: MapFragment? = null
     private var map: AnyMap? = null
@@ -221,27 +213,21 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
         binding.detailAppBar.toolbar.inflateMenu(R.menu.detail)
         favToggle = binding.detailAppBar.toolbar.menu.findItem(R.id.menu_fav)
+        binding.detailAppBar.toolbar.menu.findItem(R.id.menu_edit).title =
+            getString(R.string.edit_at_datasource, vm.apiName)
 
         setupObservers()
         setupClickListeners()
         setupAdapters()
         (activity as? MapsActivity)?.setSupportActionBar(binding.toolbar)
 
-        val prefs = PreferenceDataSource(requireContext())
-        val navController = findNavController()
-        if (!prefs.welcomeDialogShown) {
-            try {
-                navController.navigate(R.id.action_map_to_welcome)
-            } catch (ignored: IllegalArgumentException) {
-                // when there is already another navigation going on
-            }
-        } else if (!prefs.update060AndroidAutoDialogShown) {
+        /*if (!prefs.update060AndroidAutoDialogShown) {
             try {
                 navController.navigate(R.id.action_map_to_update_060_androidauto)
             } catch (ignored: IllegalArgumentException) {
                 // when there is already another navigation going on
             }
-        }
+        }*/
     }
 
     override fun onResume() {
@@ -294,17 +280,17 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         binding.layers.btnClose.setOnClickListener {
             closeLayersMenu()
         }
-        binding.detailView.goingelectricButton.setOnClickListener {
+        binding.detailView.sourceButton.setOnClickListener {
             val charger = vm.charger.value?.data
             if (charger != null) {
-                (activity as? MapsActivity)?.openUrl("https:${charger.url}")
+                (activity as? MapsActivity)?.openUrl(charger.url)
             }
         }
         binding.detailView.btnChargeprice.setOnClickListener {
             val charger = vm.charger.value?.data ?: return@setOnClickListener
             findNavController().navigate(
                 R.id.action_map_to_chargepriceFragment,
-                ChargepriceFragment.showCharger(charger)
+                ChargepriceFragment.showCharger(charger, vm.apiType)
             )
         }
         binding.detailView.topPart.setOnClickListener {
@@ -325,19 +311,22 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 R.id.menu_share -> {
                     val charger = vm.charger.value?.data
                     if (charger != null) {
-                        (activity as? MapsActivity)?.shareUrl("https:${charger.url}")
+                        (activity as? MapsActivity)?.shareUrl(charger.url)
                     }
                     true
                 }
                 R.id.menu_edit -> {
                     val charger = vm.charger.value?.data
-                    if (charger != null) {
-                        (activity as? MapsActivity)?.openUrl("https:${charger.url}edit/")
-                        Toast.makeText(
-                            requireContext(),
-                            R.string.edit_on_goingelectric_info,
-                            Toast.LENGTH_LONG
-                        ).show()
+                    if (charger?.editUrl != null) {
+                        (activity as? MapsActivity)?.openUrl(charger.editUrl)
+                        if (vm.apiType == GoingElectricApiWrapper::class.java) {
+                            // instructions specific to GoingElectric
+                            Toast.makeText(
+                                requireContext(),
+                                R.string.edit_on_goingelectric_info,
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
                     }
                     true
                 }
@@ -629,7 +618,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                                 (activity as? MapsActivity)?.showLocation(charger)
                             }
                             R.drawable.ic_fault_report -> {
-                                (activity as? MapsActivity)?.openUrl("https:${charger.url}")
+                                (activity as? MapsActivity)?.openUrl(charger.url)
                             }
                             R.drawable.ic_payment -> {
                                 showPaymentMethodsDialog(charger)

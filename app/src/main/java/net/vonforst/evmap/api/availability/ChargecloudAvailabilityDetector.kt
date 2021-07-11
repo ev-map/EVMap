@@ -1,9 +1,9 @@
 package net.vonforst.evmap.api.availability
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import net.vonforst.evmap.api.goingelectric.ChargeLocation
-import net.vonforst.evmap.api.goingelectric.Chargepoint
 import net.vonforst.evmap.api.iterator
+import net.vonforst.evmap.model.ChargeLocation
+import net.vonforst.evmap.model.Chargepoint
 import okhttp3.OkHttpClient
 import org.json.JSONObject
 import java.io.IOException
@@ -85,9 +85,9 @@ class ChargecloudAvailabilityDetector(
 
     private fun getType(string: String): String {
         return when (string) {
-            "IEC_62196_T2" -> Chargepoint.TYPE_2
+            "IEC_62196_T2" -> Chargepoint.TYPE_2_UNKNOWN
             "DOMESTIC_F" -> Chargepoint.SCHUKO
-            "IEC_62196_T2_COMBO" -> Chargepoint.CCS
+            "IEC_62196_T2_COMBO" -> Chargepoint.CCS_TYPE_2
             "CHADEMO" -> Chargepoint.CHADEMO
             else -> throw IllegalArgumentException("unrecognized type $string")
         }

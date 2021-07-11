@@ -3,10 +3,10 @@ package net.vonforst.evmap.ui;
 import com.car2go.maps.model.LatLng
 import com.google.maps.android.clustering.ClusterItem
 import com.google.maps.android.clustering.algo.NonHierarchicalDistanceBasedAlgorithm
-import net.vonforst.evmap.api.goingelectric.ChargeLocation
-import net.vonforst.evmap.api.goingelectric.ChargeLocationCluster
-import net.vonforst.evmap.api.goingelectric.ChargepointListItem
-import net.vonforst.evmap.api.goingelectric.Coordinate
+import net.vonforst.evmap.model.ChargeLocation
+import net.vonforst.evmap.model.ChargeLocationCluster
+import net.vonforst.evmap.model.ChargepointListItem
+import net.vonforst.evmap.model.Coordinate
 
 
 fun cluster(

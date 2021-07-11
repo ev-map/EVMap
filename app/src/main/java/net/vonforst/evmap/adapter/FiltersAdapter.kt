@@ -12,7 +12,7 @@ import net.vonforst.evmap.databinding.ItemFilterMultipleChoiceBinding
 import net.vonforst.evmap.databinding.ItemFilterMultipleChoiceLargeBinding
 import net.vonforst.evmap.databinding.ItemFilterSliderBinding
 import net.vonforst.evmap.fragment.MultiSelectDialog
-import net.vonforst.evmap.viewmodel.*
+import net.vonforst.evmap.model.*
 import kotlin.math.max
 
 class FiltersAdapter : DataBindingAdapter<FilterWithValue<FilterValue>>() {

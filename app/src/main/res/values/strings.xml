@@ -23,7 +23,7 @@
     <string name="realtime_data_unavailable">Real-time status unavailable</string>
     <string name="realtime_data_loading">Checking real-time status…</string>
     <string name="realtime_data_source">Real-time status source (beta): %s</string>
-    <string name="go_to_goingelectric">Source: goingelectric.de</string>
+    <string name="source">Source: %s</string>
     <string name="search">Search</string>
     <string name="menu_map">Map</string>
     <string name="menu_favs">Favorites</string>
@@ -87,6 +87,7 @@
     <string name="fault_report">Fault report</string>
     <string name="fault_report_date">Fault report (last update: %s)</string>
     <string name="filter_networks">Networks</string>
+    <string name="filter_operators">Operators</string>
     <string name="filter_chargecards">Payment methods</string>
     <string name="all_selected">All selected</string>
     <string name="number_selected">%d selected</string>
@@ -109,7 +110,7 @@
     <string name="goingelectric_forum">Forum thread at GoingElectric.de</string>
     <string name="contact">Contact</string>
     <string name="menu_report_new_charger">Report new charger</string>
-    <string name="edit_on_goingelectric">edit on GoingElectric.de</string>
+    <string name="edit_at_datasource">edit at %s</string>
     <string name="categories">Categories</string>
     <string name="category_car_dealership">Car Dealership</string>
     <string name="category_service_on_motorway">Service area (on motorway)</string>
@@ -146,9 +147,11 @@
     <string name="save_as_profile">Save as profile</string>
     <string name="save_profile_enter_name">Enter the name of the filter profile:</string>
     <string name="filterprofiles_empty_state">You have not yet saved any filter profiles.</string>
-    <string name="welcome_to_evmap">Welcome to EVMap!</string>
-    <string name="welcome_1">Using EVMap, you can find electric vehicle chargers around you. EVMap uses the community-maintained database from GoingElectric.de, which focuses on chargers in Europe and the German-speaking countries. You can contribute to this database on the GoingElectric.de website.\n\nChargers are shown on the map in different colors, which correspond to their maximum charging power:</string>
-    <string name="welcome_2">EVMap is free and Open Source software. You can contribute to the development on GitHub or support me through donations. The corresponding links can be found under “About EVMap” in the menu.</string>
+    <string name="welcome_to_evmap">Welcome to EVMap</string>
+    <string name="welcome_1">Find electric vehicle chargers around you.</string>
+    <string name="welcome_2_title">You\'ve got the power</string>
+    <string name="welcome_2">The color of a charger on the map shows you its maximum charging power.</string>
+    <string name="welcome_3">EVMap is free and Open Source software. You can contribute to the development on GitHub or support me through donations. The corresponding links can be found under “About EVMap” in the menu.</string>
     <string name="deleted_filterprofile">Deleted “%s”</string>
     <string name="undo">Undo</string>
     <string name="rename">Rename</string>
@@ -159,7 +162,7 @@
     </plurals>
     <string name="navigate">Navigate</string>
     <string name="verified">verified</string>
-    <string name="verified_desc">Charger verified by a member at the GoingElectric.de community — not necessarily working right now.</string>
+    <string name="verified_desc">Charger verified by a member at the %s community — not necessarily working right now.</string>
     <string name="update_060_androidauto_title">New update: Android Auto</string>
     <string name="update_060_androidauto_text">With this new update, you can also use EVMap to find nearby chargers from within Android Auto on supported cars. Simply select the EVMap app in the Android Auto menu.</string>
     <string name="charge_price_format">%2$s%1$.2f</string>
@@ -191,9 +194,21 @@
     <string name="pref_chargeprice_currency">Currency</string>
     <string name="pref_my_tariffs">My charging plans</string>
     <string name="chargeprice_all_tariffs_selected">all plans selected</string>
+    <string name="license">License</string>
+    <string name="settings_charger_data">Charging stations</string>
+    <string name="pref_data_source">Data source</string>
     <plurals name="chargeprice_some_tariffs_selected">
         <item quantity="one">%d plan selected</item>
         <item quantity="other">%d plans selected</item>
     </plurals>
     <string name="unknown_operator">Unknown operator</string>
+    <string name="data_sources_description">EVMap supports multiple data sources. Please select the one you would like to use. You can always change it later in the app\'s settings.</string>
+    <string name="data_source_goingelectric">GoingElectric.de</string>
+    <string name="data_source_openchargemap">Open Charge Map</string>
+    <string name="data_source_goingelectric_desc">Very good coverage in Germany, Austria and Switzerland and many neighboring countries. Descriptions in German. Community-maintained.</string>
+    <string name="data_source_openchargemap_desc"><![CDATA[Worldwide coverage with varying quality. Descriptions in English or local language. Community-maintained & government open data in some countries (e.g. North America, UK, France, Norway).]]></string>
+    <string name="next">next</string>
+    <string name="get_started">Get started</string>
+    <string name="got_it">Got it</string>
+    <string name="lets_go">Let\'s go</string>
 </resources>

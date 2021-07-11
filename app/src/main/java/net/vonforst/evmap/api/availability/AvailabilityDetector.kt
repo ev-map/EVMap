@@ -6,12 +6,10 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.withContext
 import net.vonforst.evmap.api.RateLimitInterceptor
 import net.vonforst.evmap.api.await
-import net.vonforst.evmap.api.goingelectric.ChargeLocation
-import net.vonforst.evmap.api.goingelectric.Chargepoint
-import net.vonforst.evmap.viewmodel.FilterValues
+import net.vonforst.evmap.api.equivalentPlugTypes
+import net.vonforst.evmap.cartesianProduct
+import net.vonforst.evmap.model.*
 import net.vonforst.evmap.viewmodel.Resource
-import net.vonforst.evmap.viewmodel.getMultipleChoiceValue
-import net.vonforst.evmap.viewmodel.getSliderValue
 import okhttp3.JavaNetCookieJar
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -68,8 +66,9 @@ abstract class BaseAvailabilityDetector(private val client: OkHttpClient) : Avai
         ): Map<Chargepoint, Set<Long>> {
             // iterate over each connector type
             val types = connectors.map { it.value.second }.distinct().toSet()
+            val equivalentTypes = types.map { equivalentPlugTypes(it).plus(it) }.cartesianProduct()
             val geTypes = chargepoints.map { it.type }.distinct().toSet()
-            if (types != geTypes) throw AvailabilityDetectorException("chargepoints do not match")
+            if (!equivalentTypes.any { it == geTypes }) throw AvailabilityDetectorException("chargepoints do not match")
             return types.flatMap { type ->
                 // find connectors of this type
                 val connsOfType = connectors.filter { it.value.second == type }
@@ -77,13 +76,14 @@ abstract class BaseAvailabilityDetector(private val client: OkHttpClient) : Avai
                 val powers = connsOfType.map { it.value.first }.distinct().sorted()
                 // find corresponding powers in GE data
                 val gePowers =
-                    chargepoints.filter { it.type == type }.map { it.power }.distinct().sorted()
+                    chargepoints.filter { equivalentPlugTypes(it.type).any { it == type } }
+                        .map { it.power }.distinct().sorted()
 
                 // if the distinct number of powers is the same, try to match.
                 if (powers.size == gePowers.size) {
                     gePowers.zip(powers).map { (gePower, power) ->
                         val chargepoint =
-                            chargepoints.find { it.type == type && it.power == gePower }!!
+                            chargepoints.find { equivalentPlugTypes(it.type).any { it == type } && it.power == gePower }!!
                         val ids = connsOfType.filter { it.value.first == power }.keys
                         if (chargepoint.count != ids.size) {
                             throw AvailabilityDetectorException("chargepoints do not match")
@@ -124,7 +124,12 @@ data class ChargeLocationStatus(
         val minPower = filters.getSliderValue("min_power")
 
         val statusFiltered = status.filterKeys {
-            (connectorsVal.all || it.type in connectorsVal.values) && it.power > minPower
+            (connectorsVal == null || connectorsVal.all || connectorsVal.values.map {
+                equivalentPlugTypes(
+                    it
+                )
+            }.any { equivalent -> it.type in equivalent })
+                    && (minPower == null || it.power > minPower)
         }
         return this.copy(status = statusFiltered)
     }

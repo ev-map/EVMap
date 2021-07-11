@@ -2,8 +2,8 @@ package net.vonforst.evmap.api.chargeprice
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
-import net.vonforst.evmap.api.goingelectric.ChargeLocation
 import net.vonforst.evmap.api.goingelectric.GoingElectricApi
+import net.vonforst.evmap.model.ChargeLocation
 import net.vonforst.evmap.okResponse
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
@@ -58,7 +58,7 @@ class ChargepriceApiTest {
     fun apiTest() {
         for (chargepoint in listOf(2105L, 18284L)) {
             val charger = runBlocking { ge.getChargepointDetail(chargepoint).body()!! }
-                .chargelocations[0] as ChargeLocation
+                .chargelocations[0].convert("") as ChargeLocation
             println(charger)
 
             runBlocking {
@@ -66,7 +66,7 @@ class ChargepriceApiTest {
                     ChargepriceRequest().apply {
                         dataAdapter = "going_electric"
                         station =
-                            ChargepriceStation.fromGoingelectric(charger, listOf("Typ2", "Schuko"))
+                            ChargepriceStation.fromEvmap(charger, listOf("Typ2", "Schuko"))
                         options = ChargepriceOptions(energy = 22.0, duration = 60)
                     }, "en"
                 )

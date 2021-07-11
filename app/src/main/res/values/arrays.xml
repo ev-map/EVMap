@@ -48,4 +48,12 @@
         <item>SEK</item>
         <item>USD</item>
     </string-array>
+    <string-array name="pref_data_source_names">
+        <item>GoingElectric.de</item>
+        <item>Open Charge Map</item>
+    </string-array>
+    <string-array name="pref_data_source_values" tranlatable="false">
+        <item>goingelectric</item>
+        <item>openchargemap</item>
+    </string-array>
 </resources>

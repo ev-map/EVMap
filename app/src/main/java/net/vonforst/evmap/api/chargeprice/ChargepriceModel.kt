@@ -9,7 +9,8 @@ import moe.banana.jsonapi2.JsonApi
 import moe.banana.jsonapi2.Resource
 import net.vonforst.evmap.R
 import net.vonforst.evmap.adapter.Equatable
-import net.vonforst.evmap.api.goingelectric.ChargeLocation
+import net.vonforst.evmap.api.equivalentPlugTypes
+import net.vonforst.evmap.model.ChargeLocation
 import net.vonforst.evmap.ui.currency
 import kotlin.math.ceil
 import kotlin.math.floor
@@ -33,19 +34,21 @@ data class ChargepriceStation(
     @Json(name = "charge_points") val chargePoints: List<ChargepriceChargepoint>
 ) {
     companion object {
-        fun fromGoingelectric(
-            geCharger: ChargeLocation,
-            compatibleConnectors: List<String>
+        fun fromEvmap(
+            charger: ChargeLocation,
+            compatibleConnectors: List<String>,
         ): ChargepriceStation {
+            val plugTypes =
+                charger.chargepriceData.plugTypes ?: charger.chargepoints.map { it.type }
             return ChargepriceStation(
-                geCharger.coordinates.lng,
-                geCharger.coordinates.lat,
-                geCharger.address.country,
-                geCharger.network,
-                geCharger.chargepoints.filter {
-                    it.type in compatibleConnectors
+                charger.coordinates.lng,
+                charger.coordinates.lat,
+                charger.chargepriceData.country,
+                charger.chargepriceData.network,
+                charger.chargepoints.zip(plugTypes).filter {
+                    equivalentPlugTypes(it.first.type).any { it in compatibleConnectors }
                 }.map {
-                    ChargepriceChargepoint(it.power, it.type)
+                    ChargepriceChargepoint(it.first.power, it.second)
                 }
             )
         }

@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/icon1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/iconLabel1"
+        app:layout_constraintEnd_toEndOf="@+id/iconLabel1"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/iconLabel1"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.65"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:srcCompat="@drawable/ic_map_marker_charging"
+        app:tint="@color/charger_low"
+        app:tintMode="multiply" />
+
+    <TextView
+        android:id="@+id/iconLabel1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="72dp"
+        android:layout_marginTop="4dp"
+        android:text="&lt; 11 kW"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+        app:layout_constraintBottom_toTopOf="@id/icon4"
+        app:layout_constraintEnd_toStartOf="@+id/iconLabel2"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/icon1" />
+
+    <ImageView
+        android:id="@+id/icon2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="@+id/iconLabel2"
+        app:layout_constraintStart_toStartOf="@+id/iconLabel2"
+        app:layout_constraintTop_toTopOf="@id/icon1"
+        app:srcCompat="@drawable/ic_map_marker_charging"
+        app:tint="@color/charger_11kw"
+        app:tintMode="multiply" />
+
+    <TextView
+        android:id="@+id/iconLabel2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="4dp"
+        android:text="≥ 11 kW"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+        app:layout_constraintEnd_toStartOf="@+id/iconLabel3"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/iconLabel1"
+        app:layout_constraintTop_toBottomOf="@+id/icon2" />
+
+    <ImageView
+        android:id="@+id/icon3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="@+id/iconLabel3"
+        app:layout_constraintStart_toStartOf="@+id/iconLabel3"
+        app:layout_constraintTop_toTopOf="@id/icon1"
+        app:srcCompat="@drawable/ic_map_marker_charging"
+        app:tint="@color/charger_20kw"
+        app:tintMode="multiply" />
+
+    <TextView
+        android:id="@+id/iconLabel3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="4dp"
+        android:text="≥ 20 kW"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+        app:layout_constraintEnd_toStartOf="@+id/iconLabel4"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/iconLabel2"
+        app:layout_constraintTop_toBottomOf="@+id/icon3" />
+
+    <ImageView
+        android:id="@+id/icon4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        app:layout_constraintBottom_toTopOf="@id/iconLabel4"
+        app:layout_constraintEnd_toEndOf="@+id/iconLabel4"
+        app:layout_constraintStart_toStartOf="@+id/iconLabel4"
+        app:layout_constraintTop_toBottomOf="@+id/iconLabel1"
+        app:srcCompat="@drawable/ic_map_marker_charging"
+        app:tint="@color/charger_43kw"
+        app:tintMode="multiply" />
+
+    <TextView
+        android:id="@+id/iconLabel4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="≥ 43 kW"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/iconLabel5"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="@id/iconLabel1"
+        app:layout_constraintTop_toBottomOf="@+id/icon4" />
+
+    <ImageView
+        android:id="@+id/icon5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        app:layout_constraintEnd_toEndOf="@+id/iconLabel5"
+        app:layout_constraintStart_toStartOf="@+id/iconLabel5"
+        app:layout_constraintTop_toBottomOf="@+id/iconLabel1"
+        app:srcCompat="@drawable/ic_map_marker_charging"
+        app:tint="@color/charger_100kw"
+        app:tintMode="multiply" />
+
+    <TextView
+        android:id="@+id/iconLabel5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="4dp"
+        android:text="≥ 100 kW"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+        app:layout_constraintEnd_toEndOf="@id/iconLabel3"
+        app:layout_constraintStart_toEndOf="@+id/iconLabel4"
+        app:layout_constraintTop_toBottomOf="@+id/icon5" />
+
+    <TextView
+        android:id="@+id/welcomeTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="72dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="16dp"
+        android:text="@string/welcome_2_title"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+        app:layout_constraintBottom_toTopOf="@+id/welcomeText2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/iconLabel3"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <TextView
+        android:id="@+id/welcomeText2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="72dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="42dp"
+        android:breakStrategy="balanced"
+        android:text="@string/welcome_2"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+        android:textColor="?android:textColorSecondary"
+        app:layout_constraintBottom_toTopOf="@+id/btnGetStarted"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/iconLabel3" />
+
+    <Button
+        android:id="@+id/btnGetStarted"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="72dp"
+        android:layout_marginBottom="24dp"
+        android:text="@string/got_it"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/iconLabel3" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

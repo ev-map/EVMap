@@ -13,7 +13,7 @@ import coil.size.OriginalSize
 import coil.size.SizeResolver
 import com.ortiz.touchview.TouchImageView
 import net.vonforst.evmap.R
-import net.vonforst.evmap.api.goingelectric.ChargerPhoto
+import net.vonforst.evmap.model.ChargerPhoto
 
 
 class GalleryAdapter(
@@ -78,13 +78,11 @@ class GalleryAdapter(
             (holder.view as TouchImageView).resetZoom()
         }
         val id = getItem(position).id
-        val url = "https://api.goingelectric.de/chargepoints/photo/?key=${apikey}" +
-                "&id=$id" +
-                if (detailView) {
-                    "&size=1000"
-                } else {
-                    "&height=${holder.view.height}"
-                }
+        val url = if (detailView) {
+            getItem(position).getUrl(size = 1000)
+        } else {
+            getItem(position).getUrl(height = holder.view.height)
+        }
 
         holder.view.load(
             url

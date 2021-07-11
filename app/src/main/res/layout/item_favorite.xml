@@ -8,6 +8,7 @@
         <import type="net.vonforst.evmap.api.UtilsKt" />
         <import type="net.vonforst.evmap.viewmodel.Status" />
         <import type="net.vonforst.evmap.ui.BindingAdaptersKt" />
+        <import type="net.vonforst.evmap.api.ChargepointApiKt" />
 
         <variable
             name="item"
@@ -51,7 +52,7 @@
             android:layout_marginEnd="8dp"
             android:ellipsize="end"
             android:maxLines="1"
-            android:text="@{item.charger.formatChargepoints()}"
+            android:text="@{item.charger.formatChargepoints(ChargepointApiKt.stringProvider(context))}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
             app:layout_constraintEnd_toStartOf="@+id/textView7"
             app:layout_constraintStart_toStartOf="@+id/textView2"

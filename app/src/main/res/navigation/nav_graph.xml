@@ -2,8 +2,7 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/nav_graph"
-    app:startDestination="@id/map">
+    android:id="@+id/nav_graph">
 
     <fragment
         android:id="@+id/map"
@@ -38,9 +37,6 @@
             app:enterAnim="@animator/nav_default_enter_anim"
             app:popEnterAnim="@animator/nav_default_pop_enter_anim"
             app:popExitAnim="@animator/nav_default_pop_exit_anim" />
-        <action
-            android:id="@+id/action_map_to_welcome"
-            app:destination="@id/welcome" />
         <action
             android:id="@+id/action_map_to_update_060_androidauto"
             app:destination="@id/update_060_androidauto" />
@@ -102,11 +98,6 @@
         android:label="@string/donate"
         tools:layout="@layout/fragment_donate" />
     <dialog
-        android:id="@+id/welcome"
-        android:name="net.vonforst.evmap.fragment.WelcomeDialogFragment"
-        android:label="@string/welcome_to_evmap"
-        tools:layout="@layout/dialog_welcome" />
-    <dialog
         android:id="@+id/update_060_androidauto"
         android:name="net.vonforst.evmap.fragment.updatedialogs.Update060AndroidAutoDialogFramgent"
         android:label="@string/welcome_to_evmap"
@@ -114,4 +105,12 @@
     <chrome
         android:id="@+id/report_new_charger"
         app:url="@string/report_new_charger_url" />
+    <fragment
+        android:id="@+id/onboarding"
+        android:name="net.vonforst.evmap.fragment.OnboardingFragment"
+        android:label="OnboardingFragment">
+        <action
+            android:id="@+id/action_onboarding_to_map"
+            app:destination="@id/map" />
+    </fragment>
 </navigation>

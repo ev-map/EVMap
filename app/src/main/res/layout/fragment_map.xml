@@ -144,7 +144,8 @@
                 app:chargeCards="@{vm.chargeCardMap}"
                 app:filteredChargeCards="@{vm.filteredChargeCards}"
                 app:distance="@{vm.chargerDistance}"
-                app:expanded="@{vm.bottomSheetState != BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED &amp;&amp; vm.bottomSheetState != BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN}" />
+                app:expanded="@{vm.bottomSheetState != BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED &amp;&amp; vm.bottomSheetState != BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN}"
+                app:apiName="@{vm.apiName}" />
 
         </androidx.core.widget.NestedScrollView>
 

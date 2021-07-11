@@ -5,7 +5,7 @@
     <item
         android:id="@+id/menu_edit"
         android:icon="@drawable/ic_edit"
-        android:title="@string/edit_on_goingelectric"
+        android:title="@string/edit_at_datasource"
         app:showAsAction="ifRoom" />
 
     <item

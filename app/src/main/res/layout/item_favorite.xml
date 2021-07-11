@@ -63,6 +63,7 @@
             android:id="@+id/textView16"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:goneUnless="@{item.distance != null}"
             android:text="@{@string/distance_format(item.distance)}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
             app:layout_constraintEnd_toEndOf="parent"

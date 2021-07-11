@@ -6,6 +6,7 @@ import androidx.core.text.HtmlCompat
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.squareup.moshi.JsonClass
 import kotlinx.parcelize.Parcelize
 import net.vonforst.evmap.R
 import net.vonforst.evmap.adapter.Equatable
@@ -47,7 +48,7 @@ data class ChargeLocation(
     @Embedded val openinghours: OpeningHours?,
     @Embedded val cost: Cost?,
     val license: String?,
-    @Embedded(prefix = "chargeprice") val chargepriceData: ChargepriceData
+    @Embedded(prefix = "chargeprice") val chargepriceData: ChargepriceData?
 ) : ChargepointListItem(), Equatable, Parcelable {
     /**
      * maximum power available from this charger.
@@ -279,7 +280,8 @@ data class Address(
     }
 }
 
-@kotlinx.android.parcel.Parcelize
+@Parcelize
+@JsonClass(generateAdapter = true)
 data class Chargepoint(val type: String, val power: Double, val count: Int) : Equatable,
     Parcelable {
     fun formatPower(): String {
@@ -320,6 +322,7 @@ data class ChargeCard(
 )
 
 @Parcelize
+@JsonClass(generateAdapter = true)
 data class ChargeCardId(
     val id: Long
 ) : Parcelable

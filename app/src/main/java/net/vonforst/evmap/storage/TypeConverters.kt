@@ -3,6 +3,9 @@ package net.vonforst.evmap.storage
 import androidx.room.TypeConverter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
+import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
+import net.vonforst.evmap.api.goingelectric.GEChargerPhotoAdapter
+import net.vonforst.evmap.api.openchargemap.OCMChargerPhotoAdapter
 import net.vonforst.evmap.model.ChargeCardId
 import net.vonforst.evmap.model.Chargepoint
 import net.vonforst.evmap.model.ChargerPhoto
@@ -10,7 +13,14 @@ import java.time.Instant
 import java.time.LocalTime
 
 class Converters {
-    val moshi = Moshi.Builder().build()
+    val moshi = Moshi.Builder()
+        .add(
+            PolymorphicJsonAdapterFactory.of(ChargerPhoto::class.java, "type")
+                .withSubtype(GEChargerPhotoAdapter::class.java, "goingelectric")
+                .withSubtype(OCMChargerPhotoAdapter::class.java, "openchargemap")
+                .withDefaultValue(null)
+        )
+        .build()
     private val chargepointListAdapter by lazy {
         val type = Types.newParameterizedType(List::class.java, Chargepoint::class.java)
         moshi.adapter<List<Chargepoint>>(type)
@@ -49,7 +59,7 @@ class Converters {
 
     @TypeConverter
     fun toChargerPhotoList(value: String): List<ChargerPhoto>? {
-        return chargerPhotoListAdapter.fromJson(value)
+        return chargerPhotoListAdapter.fromJson(value)?.filterNotNull()
     }
 
     @TypeConverter

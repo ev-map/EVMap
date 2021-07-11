@@ -134,7 +134,8 @@ data class GEChargerPhoto(val id: String) {
 }
 
 @Parcelize
-private class GEChargerPhotoAdapter(override val id: String, private val apikey: String) :
+@JsonClass(generateAdapter = true)
+class GEChargerPhotoAdapter(override val id: String, val apikey: String) :
     ChargerPhoto(id) {
     override fun getUrl(height: Int?, width: Int?, size: Int?): String {
         return "https://api.goingelectric.de/chargepoints/photo/?key=${apikey}&id=$id" +

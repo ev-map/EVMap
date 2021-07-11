@@ -241,10 +241,11 @@ data class OCMStatusType(
 )
 
 @Parcelize
-private class OCMChargerPhotoAdapter(
+@JsonClass(generateAdapter = true)
+class OCMChargerPhotoAdapter(
     override val id: String,
-    private val largeUrl: String,
-    private val thumbUrl: String
+    val largeUrl: String,
+    val thumbUrl: String
 ) : ChargerPhoto(id) {
     override fun getUrl(height: Int?, width: Int?, size: Int?): String {
         val maxSize = size ?: max(height, width)

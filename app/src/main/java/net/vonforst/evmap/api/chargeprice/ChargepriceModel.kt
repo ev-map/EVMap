@@ -38,6 +38,8 @@ data class ChargepriceStation(
             charger: ChargeLocation,
             compatibleConnectors: List<String>,
         ): ChargepriceStation {
+            if (charger.chargepriceData == null) throw IllegalArgumentException()
+
             val plugTypes =
                 charger.chargepriceData.plugTypes ?: charger.chargepoints.map { it.type }
             return ChargepriceStation(

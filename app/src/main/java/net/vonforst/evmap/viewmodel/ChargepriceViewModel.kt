@@ -153,7 +153,7 @@ class ChargepriceViewModel(application: Application, chargepriceApiKey: String) 
 
     private fun getChargepricePlugType(chargepoint: Chargepoint): String {
         val index = charger.value!!.chargepoints.indexOf(chargepoint)
-        val type = charger.value!!.chargepriceData.plugTypes?.get(index) ?: chargepoint.type
+        val type = charger.value!!.chargepriceData!!.plugTypes?.get(index) ?: chargepoint.type
         return type
     }
 

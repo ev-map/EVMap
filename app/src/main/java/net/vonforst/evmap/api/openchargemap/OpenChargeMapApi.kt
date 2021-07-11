@@ -228,7 +228,7 @@ class OpenChargeMapApiWrapper(
             it.connections
                 .filter { it.power == null || it.power >= (minPower ?: 0.0) }
                 .filter { if (connectorsVal != null && !connectorsVal.all) it.connectionTypeId in connectorsVal.values.map { it.toLong() } else true }
-                .sumOf { it.quantity ?: 0 } >= (minConnectors ?: 0)
+                .sumOf { it.quantity ?: 1 } >= (minConnectors ?: 0)
         }.map { it.convert(referenceData) }.distinct() as List<ChargepointListItem>
 
         // apply clustering

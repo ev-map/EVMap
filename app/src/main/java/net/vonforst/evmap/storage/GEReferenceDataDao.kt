@@ -12,10 +12,10 @@ import net.vonforst.evmap.viewmodel.Status
 import java.time.Duration
 import java.time.Instant
 
-@Entity(tableName = "Network")
+@Entity
 data class GENetwork(@PrimaryKey val name: String)
 
-@Entity(tableName = "Plug")
+@Entity
 data class GEPlug(@PrimaryKey val name: String)
 
 @Dao
@@ -24,7 +24,7 @@ abstract class GEReferenceDataDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract suspend fun insert(vararg networks: GENetwork)
 
-    @Query("DELETE FROM network")
+    @Query("DELETE FROM genetwork")
     abstract fun deleteAllNetworks()
 
     @Transaction
@@ -35,14 +35,14 @@ abstract class GEReferenceDataDao {
         }
     }
 
-    @Query("SELECT * FROM network")
+    @Query("SELECT * FROM genetwork")
     abstract fun getAllNetworks(): LiveData<List<GENetwork>>
 
     // PLUGS
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract suspend fun insert(vararg plugs: GEPlug)
 
-    @Query("DELETE FROM plug")
+    @Query("DELETE FROM geplug")
     abstract fun deleteAllPlugs()
 
     @Transaction
@@ -53,14 +53,14 @@ abstract class GEReferenceDataDao {
         }
     }
 
-    @Query("SELECT * FROM plug")
+    @Query("SELECT * FROM geplug")
     abstract fun getAllPlugs(): LiveData<List<GEPlug>>
 
     // CHARGE CARDS
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract suspend fun insert(vararg chargeCards: GEChargeCard)
 
-    @Query("DELETE FROM chargecard")
+    @Query("DELETE FROM gechargecard")
     abstract fun deleteAllChargeCards()
 
     @Transaction
@@ -71,7 +71,7 @@ abstract class GEReferenceDataDao {
         }
     }
 
-    @Query("SELECT * FROM chargecard")
+    @Query("SELECT * FROM gechargecard")
     abstract fun getAllChargeCards(): LiveData<List<GEChargeCard>>
 }
 

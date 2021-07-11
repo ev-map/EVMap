@@ -217,7 +217,7 @@ data class GEFaultReport(val created: Instant?, val description: String?) {
 }
 
 @JsonClass(generateAdapter = true)
-@Entity(tableName = "ChargeCard")
+@Entity
 data class GEChargeCard(
     @Json(name = "card_id") @PrimaryKey val id: Long,
     val name: String,

@@ -26,7 +26,7 @@ import net.vonforst.evmap.model.*
         OCMConnectionType::class,
         OCMCountry::class,
         OCMOperator::class
-    ], version = 16
+    ], version = 17
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -47,7 +47,8 @@ abstract class AppDatabase : RoomDatabase() {
                 .addMigrations(
                     MIGRATION_2, MIGRATION_3, MIGRATION_4, MIGRATION_5, MIGRATION_6,
                     MIGRATION_7, MIGRATION_8, MIGRATION_9, MIGRATION_10, MIGRATION_11,
-                    MIGRATION_12, MIGRATION_13, MIGRATION_14, MIGRATION_15, MIGRATION_16
+                    MIGRATION_12, MIGRATION_13, MIGRATION_14, MIGRATION_15, MIGRATION_16,
+                    MIGRATION_17
                 )
                 .addCallback(object : Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
@@ -267,6 +268,21 @@ abstract class AppDatabase : RoomDatabase() {
 
                     // create default filter profile for openchargemap
                     db.execSQL("INSERT INTO `FilterProfile` (`dataSource`, `name`, `id`, `order`) VALUES ('openchargemap', 'FILTERS_CUSTOM', $FILTERS_CUSTOM, 0)")
+                    db.setTransactionSuccessful()
+                } finally {
+                    db.endTransaction()
+                }
+            }
+        }
+
+        private val MIGRATION_17 = object : Migration(16, 17) {
+            // rename GE-specific tables
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.beginTransaction()
+                try {
+                    db.execSQL("ALTER TABLE `ChargeCard` RENAME TO `GEChargeCard`")
+                    db.execSQL("ALTER TABLE `Network` RENAME TO `GENetwork`")
+                    db.execSQL("ALTER TABLE `Plug` RENAME TO `GEPlug`")
                     db.setTransactionSuccessful()
                 } finally {
                     db.endTransaction()

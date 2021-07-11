@@ -3,7 +3,7 @@ EVMap [![Build Status](https://travis-ci.org/johan12345/EVMap.svg?branch=master)
 
 <img src="https://raw.githubusercontent.com/johan12345/EVMap/master/_img/feature_graphic.svg" width=700 alt="Logo"/>
 
-Android app to access the goingelectric.de electric vehicle charging station directory.
+Android app to find electric vehicle charging stations.
 
 <a href="https://play.google.com/store/apps/details?id=net.vonforst.evmap" target="_blank">
 <img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" alt="Get it on Google Play" height="100"/></a>
@@ -14,7 +14,7 @@ Features
 --------
 
 - [Material Design](https://material.io/)
-- Shows all charging stations from the community-maintained [GoingElectric.de](https://www.goingelectric.de/stromtankstellen/) directory
+- Shows all charging stations from the community-maintained [GoingElectric.de](https://www.goingelectric.de/stromtankstellen/) and [Open Charge Map](https://openchargemap.org) directories
 - Realtime availability information (beta)
 - Search places
 - Favorites list, also with availability information

@@ -88,9 +88,9 @@ fun equivalentPlugTypes(type: String): Set<String> {
 @DrawableRes
 fun iconForPlugType(type: String): Int =
     when (type) {
-        Chargepoint.CCS_TYPE_2 -> R.drawable.ic_connector_ccs
-        Chargepoint.CCS_UNKNOWN -> R.drawable.ic_connector_ccs
-        Chargepoint.CCS_TYPE_1 -> 0 // TODO: add CCS Type 1
+        Chargepoint.CCS_TYPE_2 -> R.drawable.ic_connector_ccs_typ2
+        Chargepoint.CCS_UNKNOWN -> R.drawable.ic_connector_ccs_typ2
+        Chargepoint.CCS_TYPE_1 -> R.drawable.ic_connector_ccs_typ1
         Chargepoint.CHADEMO -> R.drawable.ic_connector_chademo
         Chargepoint.SCHUKO -> R.drawable.ic_connector_schuko
         Chargepoint.SUPERCHARGER -> R.drawable.ic_connector_supercharger

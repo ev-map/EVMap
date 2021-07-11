@@ -111,7 +111,7 @@
     <string name="goingelectric_forum">Forenthread bei GoingElectric.de</string>
     <string name="contact">Kontakt</string>
     <string name="menu_report_new_charger">Ladesäule melden</string>
-    <string name="edit_on_goingelectric">bei GoingElectric.de bearbeiten</string>
+    <string name="edit_at_datasource">bei %s bearbeiten</string>
     <string name="categories">Kategorien</string>
     <string name="category_car_dealership">Autohaus</string>
     <string name="category_service_on_motorway">Autobahnraststätte</string>
@@ -163,7 +163,7 @@
     </plurals>
     <string name="navigate">Navigieren</string>
     <string name="verified">Verifiziert</string>
-    <string name="verified_desc">Verifiziert von der GoingElectric.de Community – nicht zwangsläufig auch aktuell verfügbar.</string>
+    <string name="verified_desc">Verifiziert von der %s Community – nicht zwangsläufig auch aktuell verfügbar.</string>
     <string name="update_060_androidauto_title">Neues Update: Android Auto</string>
     <string name="update_060_androidauto_text">Mit diesem neuen Update kannst du EVMap nutzen, um Ladestationen in der Nähe auf unterstützen Autos direkt aus Android Auto zu finden. Öffne einfach die EVMap-App aus dem Menü von Android Auto.</string>
     <string name="charge_price_format">%1$.2f %2$s</string>

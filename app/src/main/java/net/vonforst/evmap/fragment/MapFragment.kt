@@ -213,6 +213,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
         binding.detailAppBar.toolbar.inflateMenu(R.menu.detail)
         favToggle = binding.detailAppBar.toolbar.menu.findItem(R.id.menu_fav)
+        binding.detailAppBar.toolbar.menu.findItem(R.id.menu_edit).title =
+            getString(R.string.edit_at_datasource, vm.apiName)
 
         setupObservers()
         setupClickListeners()

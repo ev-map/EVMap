@@ -327,7 +327,7 @@
                 android:layout_marginTop="2dp"
                 android:layout_marginBottom="2dp"
                 android:contentDescription="@string/verified"
-                android:tooltipText="@string/verified_desc"
+                android:tooltipText="@{@string/verified_desc(apiName)}"
                 app:goneUnless="@{ charger.data.verified }"
                 app:layout_constraintBottom_toBottomOf="@+id/txtName"
                 app:layout_constraintStart_toEndOf="@+id/imgFaultReport"

@@ -1,0 +1,7 @@
+New features:
+- Support for OpenChargeMap as a data source
+- Chargeprice: Support for selecting multiple vehicle models
+- New onboarding experience
+
+Bugs fixed:
+- Distance was shown as "n km" in favorites panel if current location was not available

@@ -1,0 +1,7 @@
+Neue Features:
+- Unterstützung für OpenChargeMap als alternative Datenquelle
+- Chargeprice: Unterstützung für Auswahl mehrerer Fahrzeugmodelle
+- Neues Intro beim ersten Start
+
+Fehler behoben:
+- Distanz wurde als "n km" in der Favoritenansicht angezeigt, wenn der aktuelle Standort nicht verfügbar war

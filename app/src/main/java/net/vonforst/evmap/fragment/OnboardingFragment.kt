@@ -15,6 +15,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import net.vonforst.evmap.R
 import net.vonforst.evmap.databinding.*
+import net.vonforst.evmap.model.FILTERS_DISABLED
 import net.vonforst.evmap.storage.PreferenceDataSource
 
 class OnboardingFragment : Fragment() {
@@ -215,6 +216,7 @@ class DataSourceSelectFragment : OnboardingPageFragment() {
                 return@setOnClickListener
             }
             prefs.dataSource = result
+            prefs.filterStatus = FILTERS_DISABLED
             prefs.dataSourceSet = true
             prefs.welcomeDialogShown = true
             parent.goToNext()

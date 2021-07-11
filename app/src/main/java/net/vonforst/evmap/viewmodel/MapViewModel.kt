@@ -58,7 +58,7 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
             var source: LiveData<List<FilterValue>>? = null
             addSource(filterStatus) { status ->
                 source?.let { removeSource(it) }
-                source = db.filterValueDao().getFilterValues(status)
+                source = db.filterValueDao().getFilterValues(status, prefs.dataSource)
                 addSource(source!!) { result ->
                     value = result
                 }
@@ -101,7 +101,7 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     val filterProfiles: LiveData<List<FilterProfile>> by lazy {
-        db.filterProfileDao().getProfiles()
+        db.filterProfileDao().getProfiles(prefs.dataSource)
     }
 
     val chargeCardMap: LiveData<Map<Long, ChargeCard>> by lazy {
@@ -286,7 +286,7 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
     suspend fun copyFiltersToCustom() {
         if (filterStatus.value == FILTERS_CUSTOM) return
 
-        db.filterValueDao().deleteFilterValuesForProfile(FILTERS_CUSTOM)
+        db.filterValueDao().deleteFilterValuesForProfile(FILTERS_CUSTOM, prefs.dataSource)
         filterValues.value?.forEach {
             it.profile = FILTERS_CUSTOM
             db.filterValueDao().insert(it)

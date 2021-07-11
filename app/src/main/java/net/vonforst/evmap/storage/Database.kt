@@ -26,7 +26,7 @@ import net.vonforst.evmap.model.*
         OCMConnectionType::class,
         OCMCountry::class,
         OCMOperator::class
-    ], version = 15
+    ], version = 16
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -47,12 +47,13 @@ abstract class AppDatabase : RoomDatabase() {
                 .addMigrations(
                     MIGRATION_2, MIGRATION_3, MIGRATION_4, MIGRATION_5, MIGRATION_6,
                     MIGRATION_7, MIGRATION_8, MIGRATION_9, MIGRATION_10, MIGRATION_11,
-                    MIGRATION_12, MIGRATION_13, MIGRATION_14, MIGRATION_15
+                    MIGRATION_12, MIGRATION_13, MIGRATION_14, MIGRATION_15, MIGRATION_16
                 )
                 .addCallback(object : Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
-                        // create default filter profile
-                        db.execSQL("INSERT INTO `FilterProfile` (`name`, `id`, `order`) VALUES ('FILTERS_CUSTOM', $FILTERS_CUSTOM, 0)")
+                        // create default filter profile for each data source
+                        db.execSQL("INSERT INTO `FilterProfile` (`dataSource`, `name`, `id`, `order`) VALUES ('goingelectric', 'FILTERS_CUSTOM', $FILTERS_CUSTOM, 0)")
+                        db.execSQL("INSERT INTO `FilterProfile` (`dataSource`, `name`, `id`, `order`) VALUES ('openchargemap', 'FILTERS_CUSTOM', $FILTERS_CUSTOM, 0)")
                     }
                 })
                 .build()
@@ -227,6 +228,49 @@ abstract class AppDatabase : RoomDatabase() {
         private val MIGRATION_15 = object : Migration(14, 15) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("CREATE TABLE IF NOT EXISTS `OCMOperator` (`id` INTEGER NOT NULL, `websiteUrl` TEXT, `title` TEXT NOT NULL, `contactEmail` TEXT, `contactTelephone1` TEXT, `contactTelephone2` TEXT, PRIMARY KEY(`id`))");
+            }
+        }
+
+        private val MIGRATION_16 = object : Migration(15, 16) {
+            // Separate FilterValues and FilterProfiles by DataSource
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.beginTransaction()
+                try {
+                    // recreate tables
+                    db.execSQL("CREATE TABLE `FilterProfileNew` (`name` TEXT NOT NULL, `dataSource` TEXT NOT NULL, `id` INTEGER NOT NULL, `order` INTEGER NOT NULL, PRIMARY KEY(`dataSource`, `id`))")
+                    db.execSQL("CREATE UNIQUE INDEX `index_FilterProfile_dataSource_name` ON `FilterProfileNew` (`dataSource`, `name`)")
+
+                    db.execSQL("CREATE TABLE `BooleanFilterValueNew` (`key` TEXT NOT NULL, `value` INTEGER NOT NULL, `dataSource` TEXT NOT NULL, `profile` INTEGER NOT NULL, PRIMARY KEY(`key`, `profile`, `dataSource`), FOREIGN KEY(`profile`, `dataSource`) REFERENCES `FilterProfile`(`id`, `dataSource`) ON UPDATE NO ACTION ON DELETE CASCADE )")
+                    db.execSQL("CREATE TABLE `MultipleChoiceFilterValueNew` (`key` TEXT NOT NULL, `values` TEXT NOT NULL, `all` INTEGER NOT NULL, `dataSource` TEXT NOT NULL, `profile` INTEGER NOT NULL, PRIMARY KEY(`key`, `profile`, `dataSource`), FOREIGN KEY(`profile`, `dataSource`) REFERENCES `FilterProfile`(`id`, `dataSource`) ON UPDATE NO ACTION ON DELETE CASCADE )")
+                    db.execSQL("CREATE TABLE `SliderFilterValueNew` (`key` TEXT NOT NULL, `value` INTEGER NOT NULL, `dataSource` TEXT NOT NULL, `profile` INTEGER NOT NULL, PRIMARY KEY(`key`, `profile`, `dataSource`), FOREIGN KEY(`profile`, `dataSource`) REFERENCES `FilterProfile`(`id`, `dataSource`) ON UPDATE NO ACTION ON DELETE CASCADE )")
+
+                    val tables = listOf(
+                        "FilterProfile",
+                        "BooleanFilterValue",
+                        "MultipleChoiceFilterValue",
+                        "SliderFilterValue",
+                    )
+                    // copy data
+                    for (table in tables) {
+                        val columnList = when (table) {
+                            "BooleanFilterValue", "SliderFilterValue" -> "`key`, `value`, `dataSource`, `profile`"
+                            "MultipleChoiceFilterValue" -> "`key`, `values`, `all`, `dataSource`, `profile`"
+                            "FilterProfile" -> "`name`, `dataSource`, `id`, `order`"
+                            else -> throw IllegalArgumentException()
+                        }
+
+                        db.execSQL("ALTER TABLE `$table` ADD COLUMN `dataSource` STRING NOT NULL DEFAULT 'goingelectric'")
+                        db.execSQL("INSERT INTO `${table}New`($columnList) SELECT $columnList FROM `$table`")
+                        db.execSQL("DROP TABLE `$table`")
+                        db.execSQL("ALTER TABLE `${table}New` RENAME TO `$table`")
+                    }
+
+                    // create default filter profile for openchargemap
+                    db.execSQL("INSERT INTO `FilterProfile` (`dataSource`, `name`, `id`, `order`) VALUES ('openchargemap', 'FILTERS_CUSTOM', $FILTERS_CUSTOM, 0)")
+                    db.setTransactionSuccessful()
+                } finally {
+                    db.endTransaction()
+                }
             }
         }
     }

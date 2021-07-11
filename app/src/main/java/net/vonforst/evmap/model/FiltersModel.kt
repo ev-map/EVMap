@@ -46,17 +46,18 @@ data class SliderFilter(
 
 sealed class FilterValue : BaseObservable(), Equatable {
     abstract val key: String
+    var dataSource: String = ""
     var profile: Long = FILTERS_CUSTOM
 }
 
 @Entity(
     foreignKeys = [ForeignKey(
         entity = FilterProfile::class,
-        parentColumns = arrayOf("id"),
-        childColumns = arrayOf("profile"),
+        parentColumns = arrayOf("id", "dataSource"),
+        childColumns = arrayOf("profile", "dataSource"),
         onDelete = ForeignKey.CASCADE
     )],
-    primaryKeys = ["key", "profile"]
+    primaryKeys = ["key", "profile", "dataSource"]
 )
 data class BooleanFilterValue(
     override val key: String,
@@ -66,11 +67,11 @@ data class BooleanFilterValue(
 @Entity(
     foreignKeys = [ForeignKey(
         entity = FilterProfile::class,
-        parentColumns = arrayOf("id"),
-        childColumns = arrayOf("profile"),
+        parentColumns = arrayOf("id", "dataSource"),
+        childColumns = arrayOf("profile", "dataSource"),
         onDelete = ForeignKey.CASCADE
     )],
-    primaryKeys = ["key", "profile"]
+    primaryKeys = ["key", "profile", "dataSource"]
 )
 data class MultipleChoiceFilterValue(
     override val key: String,
@@ -99,11 +100,11 @@ data class MultipleChoiceFilterValue(
 @Entity(
     foreignKeys = [ForeignKey(
         entity = FilterProfile::class,
-        parentColumns = arrayOf("id"),
-        childColumns = arrayOf("profile"),
+        parentColumns = arrayOf("id", "dataSource"),
+        childColumns = arrayOf("profile", "dataSource"),
         onDelete = ForeignKey.CASCADE
     )],
-    primaryKeys = ["key", "profile"]
+    primaryKeys = ["key", "profile", "dataSource"]
 )
 data class SliderFilterValue(
     override val key: String,

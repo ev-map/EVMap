@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDialogFragment
 import net.vonforst.evmap.databinding.DialogDataSourceSelectBinding
+import net.vonforst.evmap.model.FILTERS_DISABLED
 import net.vonforst.evmap.storage.PreferenceDataSource
 import java.util.*
 
@@ -72,6 +73,7 @@ class DataSourceSelectDialog : AppCompatDialogFragment() {
                 return@setOnClickListener
             }
             prefs.dataSource = result
+            prefs.filterStatus = FILTERS_DISABLED
             okListener?.let { listener ->
                 listener(result)
             }

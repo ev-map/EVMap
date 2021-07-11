@@ -6,11 +6,13 @@ import net.vonforst.evmap.adapter.Equatable
 import net.vonforst.evmap.model.FILTERS_CUSTOM
 
 @Entity(
-    indices = [Index(value = ["name"], unique = true)]
+    indices = [Index(value = ["dataSource", "name"], unique = true)],
+    primaryKeys = ["dataSource", "id"],
 )
 data class FilterProfile(
     val name: String,
-    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val dataSource: String,
+    val id: Long,
     var order: Int = 0
 ) : Equatable
 
@@ -25,12 +27,15 @@ interface FilterProfileDao {
     @Delete
     suspend fun delete(vararg profiles: FilterProfile)
 
-    @Query("SELECT * FROM filterProfile WHERE id != $FILTERS_CUSTOM ORDER BY `order` ASC, `name` ASC")
-    fun getProfiles(): LiveData<List<FilterProfile>>
+    @Query("SELECT * FROM filterProfile WHERE dataSource = :dataSource AND id != $FILTERS_CUSTOM ORDER BY `order` ASC, `name` ASC")
+    fun getProfiles(dataSource: String): LiveData<List<FilterProfile>>
 
-    @Query("SELECT * FROM filterProfile WHERE name = :name")
-    suspend fun getProfileByName(name: String): FilterProfile?
+    @Query("SELECT * FROM filterProfile WHERE dataSource = :dataSource AND name = :name")
+    suspend fun getProfileByName(name: String, dataSource: String): FilterProfile?
 
-    @Query("SELECT * FROM filterProfile WHERE id = :id")
-    suspend fun getProfileById(id: Long): FilterProfile?
+    @Query("SELECT * FROM filterProfile WHERE dataSource = :dataSource AND id = :id")
+    suspend fun getProfileById(id: Long, dataSource: String): FilterProfile?
+
+    @Query("SELECT (MAX(id) + 1) FROM filterProfile WHERE dataSource = :dataSource")
+    suspend fun getNewId(dataSource: String): Long
 }

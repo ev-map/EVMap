@@ -66,7 +66,7 @@ class FilterViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     private val filterValues: LiveData<List<FilterValue>> by lazy {
-        db.filterValueDao().getFilterValues(FILTERS_CUSTOM)
+        db.filterValueDao().getFilterValues(FILTERS_CUSTOM, prefs.dataSource)
     }
 
     val filtersWithValue: LiveData<FilterValues> by lazy {
@@ -85,7 +85,7 @@ class FilterViewModel(application: Application) : AndroidViewModel(application) 
                 when (id) {
                     FILTERS_CUSTOM, FILTERS_DISABLED -> value = null
                     else -> viewModelScope.launch {
-                        value = db.filterProfileDao().getProfileById(id)
+                        value = db.filterProfileDao().getProfileById(id, prefs.dataSource)
                     }
                 }
             }
@@ -96,6 +96,7 @@ class FilterViewModel(application: Application) : AndroidViewModel(application) 
         filtersWithValue.value?.forEach {
             val value = it.value
             value.profile = FILTERS_CUSTOM
+            value.dataSource = prefs.dataSource
             db.filterValueDao().insert(value)
         }
 
@@ -105,15 +106,17 @@ class FilterViewModel(application: Application) : AndroidViewModel(application) 
 
     suspend fun saveAsProfile(name: String) {
         // get or create profile
-        var profileId = db.filterProfileDao().getProfileByName(name)?.id
+        var profileId = db.filterProfileDao().getProfileByName(name, prefs.dataSource)?.id
         if (profileId == null) {
-            profileId = db.filterProfileDao().insert(FilterProfile(name))
+            profileId = db.filterProfileDao().getNewId(prefs.dataSource)
+            db.filterProfileDao().insert(FilterProfile(name, prefs.dataSource, profileId))
         }
 
         // save filter values
         filtersWithValue.value?.forEach {
             val value = it.value
             value.profile = profileId
+            value.dataSource = prefs.dataSource
             db.filterValueDao().insert(value)
         }
 

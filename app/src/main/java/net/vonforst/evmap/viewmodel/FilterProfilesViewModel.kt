@@ -15,12 +15,12 @@ class FilterProfilesViewModel(application: Application) : AndroidViewModel(appli
     private var prefs = PreferenceDataSource(application)
 
     val filterProfiles: LiveData<List<FilterProfile>> by lazy {
-        db.filterProfileDao().getProfiles()
+        db.filterProfileDao().getProfiles(prefs.dataSource)
     }
 
     fun delete(itemId: Long) {
         viewModelScope.launch {
-            val profile = db.filterProfileDao().getProfileById(itemId)
+            val profile = db.filterProfileDao().getProfileById(itemId, prefs.dataSource)
             profile?.let { db.filterProfileDao().delete(it) }
             if (prefs.filterStatus == profile?.id) {
                 prefs.filterStatus = FILTERS_DISABLED

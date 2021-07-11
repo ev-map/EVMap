@@ -26,7 +26,7 @@ import net.vonforst.evmap.model.*
         OCMConnectionType::class,
         OCMCountry::class,
         OCMOperator::class
-    ], version = 17
+    ], version = 12
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -47,8 +47,7 @@ abstract class AppDatabase : RoomDatabase() {
                 .addMigrations(
                     MIGRATION_2, MIGRATION_3, MIGRATION_4, MIGRATION_5, MIGRATION_6,
                     MIGRATION_7, MIGRATION_8, MIGRATION_9, MIGRATION_10, MIGRATION_11,
-                    MIGRATION_12, MIGRATION_13, MIGRATION_14, MIGRATION_15, MIGRATION_16,
-                    MIGRATION_17
+                    MIGRATION_12
                 )
                 .addCallback(object : Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
@@ -189,54 +188,32 @@ abstract class AppDatabase : RoomDatabase() {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.beginTransaction()
                 try {
-                    db.execSQL("ALTER TABLE `ChargeLocation` ADD `editUrl` TEXT")
-                    db.execSQL("ALTER TABLE `ChargeLocation` ADD `license` TEXT")
-                    db.setTransactionSuccessful()
-                } finally {
-                    db.endTransaction()
-                }
-            }
-        }
-
-        private val MIGRATION_13 = object : Migration(12, 13) {
-            override fun migrate(db: SupportSQLiteDatabase) {
-                db.beginTransaction()
-                try {
+                    //////////////////////////////////////////
+                    // create OpenChargeMap-specific tables //
+                    //////////////////////////////////////////
                     db.execSQL("CREATE TABLE `OCMConnectionType` (`id` INTEGER NOT NULL, `title` TEXT NOT NULL, `formalName` TEXT, `discontinued` INTEGER, `obsolete` INTEGER, PRIMARY KEY(`id`))")
                     db.execSQL("CREATE TABLE `OCMCountry` (`id` INTEGER NOT NULL, `isoCode` TEXT NOT NULL, `continentCode` TEXT, `title` TEXT NOT NULL, PRIMARY KEY(`id`))")
-                    db.setTransactionSuccessful()
-                } finally {
-                    db.endTransaction()
-                }
-            }
-        }
+                    db.execSQL("CREATE TABLE `OCMOperator` (`id` INTEGER NOT NULL, `websiteUrl` TEXT, `title` TEXT NOT NULL, `contactEmail` TEXT, `contactTelephone1` TEXT, `contactTelephone2` TEXT, PRIMARY KEY(`id`))");
 
-        private val MIGRATION_14 = object : Migration(13, 14) {
-            override fun migrate(db: SupportSQLiteDatabase) {
-                db.beginTransaction()
-                try {
+                    //////////////////////////////////////////
+                    // rename GoingElectric-specific tables //
+                    //////////////////////////////////////////
+                    db.execSQL("ALTER TABLE `ChargeCard` RENAME TO `GEChargeCard`")
+                    db.execSQL("ALTER TABLE `Network` RENAME TO `GENetwork`")
+                    db.execSQL("ALTER TABLE `Plug` RENAME TO `GEPlug`")
+
+                    /////////////////////////////////////////////
+                    // add new columns to ChargeLocation table //
+                    /////////////////////////////////////////////
+                    db.execSQL("ALTER TABLE `ChargeLocation` ADD `editUrl` TEXT")
+                    db.execSQL("ALTER TABLE `ChargeLocation` ADD `license` TEXT")
                     db.execSQL("ALTER TABLE `ChargeLocation` ADD `chargepricecountry` TEXT")
                     db.execSQL("ALTER TABLE `ChargeLocation` ADD `chargepricenetwork` TEXT")
                     db.execSQL("ALTER TABLE `ChargeLocation` ADD `chargepriceplugTypes` TEXT")
-                    db.setTransactionSuccessful()
-                } finally {
-                    db.endTransaction()
-                }
-            }
 
-        }
-
-        private val MIGRATION_15 = object : Migration(14, 15) {
-            override fun migrate(db: SupportSQLiteDatabase) {
-                db.execSQL("CREATE TABLE IF NOT EXISTS `OCMOperator` (`id` INTEGER NOT NULL, `websiteUrl` TEXT, `title` TEXT NOT NULL, `contactEmail` TEXT, `contactTelephone1` TEXT, `contactTelephone2` TEXT, PRIMARY KEY(`id`))");
-            }
-        }
-
-        private val MIGRATION_16 = object : Migration(15, 16) {
-            // Separate FilterValues and FilterProfiles by DataSource
-            override fun migrate(db: SupportSQLiteDatabase) {
-                db.beginTransaction()
-                try {
+                    ////////////////////////////////////////////////////////////
+                    // Separate FilterValues and FilterProfiles by DataSource //
+                    ////////////////////////////////////////////////////////////
                     // recreate tables
                     db.execSQL("CREATE TABLE `FilterProfileNew` (`name` TEXT NOT NULL, `dataSource` TEXT NOT NULL, `id` INTEGER NOT NULL, `order` INTEGER NOT NULL, PRIMARY KEY(`dataSource`, `id`))")
                     db.execSQL("CREATE UNIQUE INDEX `index_FilterProfile_dataSource_name` ON `FilterProfileNew` (`dataSource`, `name`)")
@@ -268,21 +245,6 @@ abstract class AppDatabase : RoomDatabase() {
 
                     // create default filter profile for openchargemap
                     db.execSQL("INSERT INTO `FilterProfile` (`dataSource`, `name`, `id`, `order`) VALUES ('openchargemap', 'FILTERS_CUSTOM', $FILTERS_CUSTOM, 0)")
-                    db.setTransactionSuccessful()
-                } finally {
-                    db.endTransaction()
-                }
-            }
-        }
-
-        private val MIGRATION_17 = object : Migration(16, 17) {
-            // rename GE-specific tables
-            override fun migrate(db: SupportSQLiteDatabase) {
-                db.beginTransaction()
-                try {
-                    db.execSQL("ALTER TABLE `ChargeCard` RENAME TO `GEChargeCard`")
-                    db.execSQL("ALTER TABLE `Network` RENAME TO `GENetwork`")
-                    db.execSQL("ALTER TABLE `Plug` RENAME TO `GEPlug`")
                     db.setTransactionSuccessful()
                 } finally {
                     db.endTransaction()

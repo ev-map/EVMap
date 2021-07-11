@@ -117,7 +117,7 @@ class ChargepriceTariff() : Resource() {
 }
 
 @JsonApi(type = "car")
-class ChargepriceCar : Resource() {
+class ChargepriceCar : Resource(), Equatable {
     lateinit var name: String
     lateinit var brand: String
 

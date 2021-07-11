@@ -31,10 +31,22 @@ class ChargepriceViewModel(application: Application, chargepriceApiKey: String) 
         MutableLiveData<Chargepoint>()
     }
 
-    val vehicle: LiveData<ChargepriceCar> by lazy {
-        MutableLiveData<ChargepriceCar>().apply {
-            value = prefs.chargepriceMyVehicle?.let { ChargepriceCar().apply { id = it } }
+    val vehicles: MutableLiveData<Resource<List<ChargepriceCar>>> by lazy {
+        MutableLiveData<Resource<List<ChargepriceCar>>>().apply {
+            if (prefs.chargepriceMyVehicles.isEmpty()) {
+                value = Resource.success(emptyList())
+            } else {
+                value = Resource.loading(null)
+                loadVehicles()
+            }
+            observeForever {
+                vehicle.value = it.data?.firstOrNull()
+            }
         }
+    }
+
+    val vehicle: MutableLiveData<ChargepriceCar> by lazy {
+        MutableLiveData<ChargepriceCar>()
     }
 
     private val acConnectors = listOf(
@@ -53,10 +65,12 @@ class ChargepriceViewModel(application: Application, chargepriceApiKey: String) 
         "chademo" to Chargepoint.CHADEMO
     )
     val vehicleCompatibleConnectors: LiveData<List<String>> by lazy {
-        MutableLiveData<List<String>>().apply {
-            value = prefs.chargepriceMyVehicleDcChargeports?.map {
-                plugMapping.get(it)
-            }?.filterNotNull()?.plus(acConnectors)
+        MediatorLiveData<List<String>>().apply {
+            addSource(vehicle) {
+                value = it?.dcChargePorts?.map {
+                    plugMapping[it]
+                }?.filterNotNull()?.plus(acConnectors)
+            }
         }
     }
 
@@ -94,7 +108,6 @@ class ChargepriceViewModel(application: Application, chargepriceApiKey: String) 
             listOf(
                 charger,
                 dataSource,
-                vehicle,
                 batteryRange,
                 batteryRangeSliderDragging,
                 vehicleCompatibleConnectors
@@ -231,6 +244,19 @@ class ChargepriceViewModel(application: Application, chargepriceApiKey: String) 
             } catch (e: HttpException) {
                 chargePrices.value = Resource.error(e.message, null)
                 chargePriceMeta.value = Resource.error(e.message, null)
+            }
+        }
+    }
+
+    private fun loadVehicles() {
+        viewModelScope.launch {
+            try {
+                val result = api.getVehicles()
+                vehicles.value = Resource.success(result.filter {
+                    it.id in prefs.chargepriceMyVehicles
+                })
+            } catch (e: IOException) {
+                vehicles.value = Resource.error(e.message, null)
             }
         }
     }

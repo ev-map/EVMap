@@ -181,11 +181,12 @@
     <string name="chargeprice_base_fee">Base fee: %2$s%1$.2f/month</string>
     <string name="chargeprice_min_spend">Minimum spend: %2$s%1$.2f/month</string>
     <string name="settings_chargeprice">Price comparison</string>
-    <string name="pref_my_vehicle">My vehicle</string>
+    <string name="pref_my_vehicle">My vehicles</string>
     <string name="pref_chargeprice_no_base_fee">Only show plans with no monthly fees</string>
     <string name="pref_chargeprice_show_provider_customer_tariffs">Show customer-exclusive plans</string>
     <string name="chargeprice_select_car_first">Please first select your car model in the settings.</string>
     <string name="chargeprice_battery_range">Charge from %1$.0f%% to %2$.0f%%</string>
+    <string name="chargeprice_vehicle">Vehicle</string>
     <string name="pref_chargeprice_show_provider_customer_tariffs_summary">Some providers offer cheaper plans exclusively to their customers (e.g., household electricity, gas)</string>
     <string name="close">close</string>
     <string name="chargeprice_title">Prices</string>

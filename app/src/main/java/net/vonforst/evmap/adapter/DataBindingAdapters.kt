@@ -9,13 +9,16 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.chip.Chip
 import net.vonforst.evmap.BR
 import net.vonforst.evmap.R
 import net.vonforst.evmap.api.availability.ChargepointStatus
 import net.vonforst.evmap.api.chargeprice.ChargePrice
+import net.vonforst.evmap.api.chargeprice.ChargepriceCar
 import net.vonforst.evmap.api.chargeprice.ChargepriceChargepointMeta
 import net.vonforst.evmap.api.chargeprice.ChargepriceTag
 import net.vonforst.evmap.databinding.ItemChargepriceBinding
+import net.vonforst.evmap.databinding.ItemChargepriceVehicleChipBinding
 import net.vonforst.evmap.databinding.ItemConnectorButtonBinding
 import net.vonforst.evmap.model.Chargepoint
 import net.vonforst.evmap.ui.CheckableConstraintLayout
@@ -179,7 +182,9 @@ class CheckableConnectorAdapter : DataBindingAdapter<Chargepoint>() {
         root.setOnCheckedChangeListener { v: View, checked: Boolean ->
             if (checked) {
                 checkedItem = position
-                notifyDataSetChanged()
+                root.post {
+                    notifyDataSetChanged()
+                }
                 onCheckedItemChangedListener?.invoke(getCheckedItem()!!)
             }
         }
@@ -188,7 +193,7 @@ class CheckableConnectorAdapter : DataBindingAdapter<Chargepoint>() {
     fun getCheckedItem(): Chargepoint? = checkedItem?.let { getItem(it) }
 
     fun setCheckedItem(item: Chargepoint?) {
-        checkedItem = item?.let { currentList.indexOf(item) } ?: null
+        checkedItem = item?.let { currentList.indexOf(item) }
     }
 
     var onCheckedItemChangedListener: ((Chargepoint?) -> Unit)? = null
@@ -197,4 +202,38 @@ class CheckableConnectorAdapter : DataBindingAdapter<Chargepoint>() {
 class ChargepriceTagsAdapter() :
     DataBindingAdapter<ChargepriceTag>() {
     override fun getItemViewType(position: Int): Int = R.layout.item_chargeprice_tag
+}
+
+class CheckableChargepriceCarAdapter : DataBindingAdapter<ChargepriceCar>() {
+    private var checkedItem: ChargepriceCar? = null
+
+    override fun getItemViewType(position: Int): Int = R.layout.item_chargeprice_vehicle_chip
+
+    override fun onBindViewHolder(holder: ViewHolder<ChargepriceCar>, position: Int) {
+        val item = getItem(position)
+        super.bind(holder, item)
+        val binding = holder.binding as ItemChargepriceVehicleChipBinding
+        val root = binding.root as Chip
+        root.isChecked = checkedItem == item
+        root.setOnClickListener {
+            root.isChecked = true
+        }
+        root.setOnCheckedChangeListener { v: View, checked: Boolean ->
+            if (checked && item != checkedItem) {
+                checkedItem = item
+                root.post {
+                    notifyDataSetChanged()
+                }
+                onCheckedItemChangedListener?.invoke(getCheckedItem()!!)
+            }
+        }
+    }
+
+    fun getCheckedItem(): ChargepriceCar? = checkedItem
+
+    fun setCheckedItem(item: ChargepriceCar?) {
+        checkedItem = item
+    }
+
+    var onCheckedItemChangedListener: ((ChargepriceCar?) -> Unit)? = null
 }

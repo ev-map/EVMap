@@ -21,7 +21,8 @@ class MultiSelectDialog : AppCompatDialogFragment() {
             title: String,
             data: Map<String, String>,
             selected: Set<String>,
-            commonChoices: Set<String>?
+            commonChoices: Set<String>?,
+            showAllButton: Boolean = true
         ): MultiSelectDialog {
             val dialog = MultiSelectDialog()
             dialog.arguments = Bundle().apply {
@@ -29,6 +30,7 @@ class MultiSelectDialog : AppCompatDialogFragment() {
                 putSerializable("data", HashMap(data))
                 putSerializable("selected", HashSet(selected))
                 if (commonChoices != null) putSerializable("commonChoices", HashSet(commonChoices))
+                putBoolean("showAllButton", showAllButton)
             }
             return dialog
         }
@@ -66,11 +68,14 @@ class MultiSelectDialog : AppCompatDialogFragment() {
         val commonChoices = if (args.containsKey("commonChoices")) {
             args.getSerializable("commonChoices") as HashSet<String>
         } else null
+        val showAllButton = args.getBoolean("showAllButton")
 
         binding.dialogTitle.text = title
         val adapter = Adapter()
         binding.list.adapter = adapter
         binding.list.layoutManager = LinearLayoutManager(view.context)
+
+        binding.btnAll.visibility = if (showAllButton) View.VISIBLE else View.INVISIBLE
 
         items = data.entries.toList()
             .sortedBy { it.value.toLowerCase(Locale.getDefault()) }

@@ -48,9 +48,11 @@
 
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/settings_chargeprice">
-        <ListPreference
+        <net.vonforst.evmap.ui.MultiSelectDialogPreference
             android:key="chargeprice_my_vehicle"
-            android:title="@string/pref_my_vehicle" />
+            android:title="@string/pref_my_vehicle"
+            app:showAllButton="false"
+            app:defaultToAll="false" />
         <net.vonforst.evmap.ui.MultiSelectDialogPreference
             android:key="chargeprice_my_tariffs"
             android:title="@string/pref_my_tariffs" />

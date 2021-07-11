@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="net.vonforst.evmap.api.chargeprice.ChargepriceCar" />
+
+        <variable
+            name="item"
+            type="ChargepriceCar" />
+
+        <variable
+            name="selectedItem"
+            type="ChargepriceCar" />
+    </data>
+
+    <com.google.android.material.chip.Chip
+        style="@style/Widget.MaterialComponents.Chip.Choice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:text="@{item.brand + ' ' + item.name}"
+        android:checked="@{item == selectedItem}"
+        tools:text="Tesla Model 2" />
+</layout>

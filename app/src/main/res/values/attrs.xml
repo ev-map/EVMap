@@ -3,4 +3,8 @@
     <declare-styleable name="ChromeCustomTabsNavigator">
         <attr name="url" format="reference" />
     </declare-styleable>
+    <declare-styleable name="MultiSelectDialogPreference">
+        <attr name="showAllButton" format="boolean" />
+        <attr name="defaultToAll" format="boolean" />
+    </declare-styleable>
 </resources>

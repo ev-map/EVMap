@@ -61,7 +61,7 @@
             android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
             android:textColor="?colorPrimary"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar_container" />
+            app:layout_constraintTop_toBottomOf="@id/vehicle_selection" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/connectors_list"
@@ -89,6 +89,35 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/connectors_list"
             tools:text="Charge from 20% to 80%" />
+
+        <TextView
+            android:id="@+id/tvVehicleHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/chargeprice_vehicle"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+            android:textColor="?colorPrimary"
+            app:goneUnless="@{vm.vehicles.data != null &amp;&amp; vm.vehicles.data.size() > 1}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbar_container" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/vehicle_selection"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvVehicleHeader"
+            app:data="@{vm.vehicles.data}"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:goneUnless="@{vm.vehicles.data != null &amp;&amp; vm.vehicles.data.size() > 1}"
+            android:orientation="horizontal"
+            tools:listitem="@layout/item_chargeprice_vehicle_chip" />
 
         <com.google.android.material.slider.RangeSlider
             android:id="@+id/battery_range"
@@ -152,7 +181,7 @@
             android:layout_marginEnd="16dp"
             android:gravity="center_horizontal"
             android:text="@string/chargeprice_select_car_first"
-            app:goneUnless="@{vm.vehicle == null}"
+            app:goneUnless="@{vm.vehicles.status == Status.SUCCESS &amp;&amp; vm.vehicles.data.size() == 0}"
             app:layout_constraintBottom_toTopOf="@+id/btnSettings"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/charge_prices_list"
@@ -164,7 +193,7 @@
             style="?android:attr/progressBarStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:goneUnless="@{vm.chargePricesForChargepoint.status == Status.LOADING}"
+            app:goneUnless="@{vm.chargePricesForChargepoint.status == Status.LOADING || vm.vehicles.status == Status.LOADING}"
             app:layout_constraintBottom_toBottomOf="@+id/charge_prices_list"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/charge_prices_list"
@@ -177,7 +206,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="@string/settings"
-            app:goneUnless="@{vm.vehicle == null}"
+            app:goneUnless="@{vm.vehicles.status == Status.SUCCESS &amp;&amp; vm.vehicles.data.size() == 0}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

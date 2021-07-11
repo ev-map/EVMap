@@ -104,17 +104,16 @@ class PreferenceDataSource(val context: Context) {
             sp.edit().putBoolean("update_0.6.0_androidauto_dialog_shown", value).apply()
         }
 
-    var chargepriceMyVehicle: String?
-        get() = sp.getString("chargeprice_my_vehicle", null)
+    var chargepriceMyVehicles: Set<String>
+        get() = sp.getStringSet("chargeprice_my_vehicle", emptySet())!!
         set(value) {
-            sp.edit().putString("chargeprice_my_vehicle", value).apply()
+            sp.edit().putStringSet("chargeprice_my_vehicle", value).apply()
         }
 
-    var chargepriceMyVehicleDcChargeports: List<String>?
-        get() = sp.getString("chargeprice_my_vehicle_dc_chargeports", null)?.split(",")
+    var chargepriceLastSelectedVehicle: String?
+        get() = sp.getString("chargeprice_last_vehicle", null)
         set(value) {
-            sp.edit().putString("chargeprice_my_vehicle_dc_chargeports", value?.joinToString(","))
-                .apply()
+            sp.edit().putString("chargeprice_last_vehicle", value).apply()
         }
 
     var chargepriceMyTariffs: Set<String>?

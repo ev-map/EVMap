@@ -19,8 +19,10 @@ import com.google.android.material.snackbar.Snackbar
 import net.vonforst.evmap.MapsActivity
 import net.vonforst.evmap.R
 import net.vonforst.evmap.adapter.ChargepriceAdapter
+import net.vonforst.evmap.adapter.CheckableChargepriceCarAdapter
 import net.vonforst.evmap.adapter.CheckableConnectorAdapter
 import net.vonforst.evmap.api.ChargepointApi
+import net.vonforst.evmap.api.chargeprice.ChargepriceCar
 import net.vonforst.evmap.api.equivalentPlugTypes
 import net.vonforst.evmap.api.goingelectric.GoingElectricApiWrapper
 import net.vonforst.evmap.api.openchargemap.OpenChargeMapApiWrapper
@@ -97,6 +99,18 @@ class ChargepriceFragment : DialogFragment() {
         vm.dataSource.value = dataSource
         if (vm.chargepoint.value == null) {
             vm.chargepoint.value = charger.chargepointsMerged.get(0)
+        }
+
+        val vehicleAdapter = CheckableChargepriceCarAdapter()
+        binding.vehicleSelection.adapter = vehicleAdapter
+        val vehicleObserver: Observer<ChargepriceCar> = Observer {
+            vehicleAdapter.setCheckedItem(it)
+        }
+        vm.vehicle.observe(viewLifecycleOwner, vehicleObserver)
+        vehicleAdapter.onCheckedItemChangedListener = {
+            vm.vehicle.removeObserver(vehicleObserver)
+            vm.vehicle.value = it
+            vm.vehicle.observe(viewLifecycleOwner, vehicleObserver)
         }
 
         val chargepriceAdapter = ChargepriceAdapter().apply {

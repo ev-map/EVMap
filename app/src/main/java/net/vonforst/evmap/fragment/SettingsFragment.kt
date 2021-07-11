@@ -7,7 +7,6 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
-import androidx.preference.ListPreference
 import androidx.preference.MultiSelectListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -32,7 +31,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
         }
     })
 
-    private lateinit var myVehiclePreference: ListPreference
+    private lateinit var myVehiclePreference: MultiSelectListPreference
     private lateinit var myTariffsPreference: MultiSelectListPreference
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -55,8 +54,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
                 myVehiclePreference.entries =
                     sortedCars.map { "${it.brand} ${it.name}" }.toTypedArray()
                 myVehiclePreference.isEnabled = true
-                myVehiclePreference.summary = cars.find { it.id == prefs.chargepriceMyVehicle }
-                    ?.let { "${it.brand} ${it.name}" }
+                updateMyVehiclesSummary()
             }
         }
 
@@ -88,6 +86,17 @@ class SettingsFragment : PreferenceFragmentCompat(),
         }
     }
 
+    private fun updateMyVehiclesSummary() {
+        vm.vehicles.value?.data?.let { cars ->
+            val vehicles = cars.filter { it.id in prefs.chargepriceMyVehicles }
+            val summary = vehicles.map {
+                "${it.brand} ${it.name}"
+            }.joinToString(", ")
+            myVehiclePreference.summary = summary
+            // TODO: prefs.chargepriceMyVehicleDcChargeports = it.dcChargePorts
+        }
+    }
+
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.settings, rootKey)
     }
@@ -110,13 +119,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
                 updateNightMode(prefs)
             }
             "chargeprice_my_vehicle" -> {
-                vm.vehicles.value?.data?.let { cars ->
-                    val vehicle = cars.find { it.id == prefs.chargepriceMyVehicle }
-                    vehicle?.let {
-                        myVehiclePreference.summary = "${it.brand} ${it.name}"
-                        prefs.chargepriceMyVehicleDcChargeports = it.dcChargePorts
-                    }
-                }
+                updateMyVehiclesSummary()
             }
             "chargeprice_my_tariffs" -> {
                 updateMyTariffsSummary()

@@ -28,9 +28,10 @@ interface OpenChargeMapApi {
         @Query("connectiontypeid") plugs: String? = null,
         @Query("minpowerkw") minPower: Double? = null,
         @Query("operatorid") operators: String? = null,
-        @Query("compact") compact: Boolean = true,
         @Query("statustypeid") statusType: String? = null,
         @Query("maxresults") maxresults: Int = 500,
+        @Query("compact") compact: Boolean = true,
+        @Query("verbose") verbose: Boolean = false
     ): Response<List<OCMChargepoint>>
 
     @GET("poi/")
@@ -42,16 +43,18 @@ interface OpenChargeMapApi {
         @Query("connectiontypeid") plugs: String? = null,
         @Query("minpowerkw") minPower: Double? = null,
         @Query("operatorid") operators: String? = null,
-        @Query("compact") compact: Boolean = true,
         @Query("statustypeid") statusType: String? = null,
         @Query("maxresults") maxresults: Int = 500,
+        @Query("compact") compact: Boolean = true,
+        @Query("verbose") verbose: Boolean = false
     ): Response<List<OCMChargepoint>>
 
     @GET("poi/")
     suspend fun getChargepointDetail(
         @Query("chargepointid") id: Long,
+        @Query("includecomments") includeComments: Boolean = true,
         @Query("compact") compact: Boolean = false,
-        @Query("includecomments") includeComments: Boolean = true
+        @Query("verbose") verbose: Boolean = false
     ): Response<List<OCMChargepoint>>
 
     @GET("referencedata/")

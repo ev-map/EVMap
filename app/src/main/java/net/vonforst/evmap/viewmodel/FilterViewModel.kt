@@ -93,11 +93,14 @@ class FilterViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     suspend fun saveFilterValues() {
-        filtersWithValue.value?.forEach {
+        filtersWithValue.value?.map {
             val value = it.value
             value.profile = FILTERS_CUSTOM
             value.dataSource = prefs.dataSource
             db.filterValueDao().insert(value)
+            value
+        }?.let {
+            db.filterValueDao().insert(*it.toTypedArray())
         }
 
         // set selected profile
@@ -113,11 +116,13 @@ class FilterViewModel(application: Application) : AndroidViewModel(application) 
         }
 
         // save filter values
-        filtersWithValue.value?.forEach {
+        filtersWithValue.value?.map {
             val value = it.value
             value.profile = profileId
             value.dataSource = prefs.dataSource
-            db.filterValueDao().insert(value)
+            value
+        }?.let {
+            db.filterValueDao().insert(*it.toTypedArray())
         }
 
         // set selected profile

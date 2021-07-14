@@ -65,7 +65,10 @@ abstract class FilterValueDao {
                 )
                 for (source in sources) {
                     addSource(source) {
-                        value = sources.mapNotNull { it.value }.flatten()
+                        val values = sources.map { it.value }
+                        if (values.all { it != null }) {
+                            value = values.filterNotNull().flatten()
+                        }
                     }
                 }
             }

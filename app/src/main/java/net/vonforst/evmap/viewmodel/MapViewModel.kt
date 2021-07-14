@@ -287,9 +287,11 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
         if (filterStatus.value == FILTERS_CUSTOM) return
 
         db.filterValueDao().deleteFilterValuesForProfile(FILTERS_CUSTOM, prefs.dataSource)
-        filterValues.value?.forEach {
+        filterValues.value?.map {
             it.profile = FILTERS_CUSTOM
-            db.filterValueDao().insert(it)
+            it
+        }?.let {
+            db.filterValueDao().insert(*it.toTypedArray())
         }
     }
 

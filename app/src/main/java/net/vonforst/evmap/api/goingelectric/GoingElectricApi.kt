@@ -143,14 +143,9 @@ class GoingElectricApiWrapper(
         val minConnectors = filters?.getSliderValue("min_connectors")
 
         var connectorsVal = filters?.getMultipleChoiceValue("connectors")
-        if (connectorsVal != null) {
-            if (connectorsVal.values.isEmpty() && !connectorsVal.all) {
-                // no connectors chosen
-                return Resource.success(emptyList())
-            }
-            connectorsVal = connectorsVal.copy(values = connectorsVal.values.mapNotNull {
-                GEChargepoint.convertTypeToGE(it)
-            }.toMutableSet())
+        if (connectorsVal != null && connectorsVal.values.isEmpty() && !connectorsVal.all) {
+            // no connectors chosen
+            return Resource.success(emptyList())
         }
         val connectors = formatMultipleChoice(connectorsVal)
 
@@ -242,14 +237,9 @@ class GoingElectricApiWrapper(
         val minConnectors = filters?.getSliderValue("min_connectors")
 
         var connectorsVal = filters?.getMultipleChoiceValue("connectors")
-        if (connectorsVal != null) {
-            if (connectorsVal.values.isEmpty() && !connectorsVal.all) {
-                // no connectors chosen
-                return Resource.success(emptyList())
-            }
-            connectorsVal = connectorsVal.copy(values = connectorsVal.values.mapNotNull {
-                GEChargepoint.convertTypeToGE(it)
-            }.toMutableSet())
+        if (connectorsVal != null && connectorsVal.values.isEmpty() && !connectorsVal.all) {
+            // no connectors chosen
+            return Resource.success(emptyList())
         }
         val connectors = formatMultipleChoice(connectorsVal)
 

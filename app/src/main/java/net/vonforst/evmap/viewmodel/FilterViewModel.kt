@@ -97,7 +97,6 @@ class FilterViewModel(application: Application) : AndroidViewModel(application) 
             val value = it.value
             value.profile = FILTERS_CUSTOM
             value.dataSource = prefs.dataSource
-            db.filterValueDao().insert(value)
             value
         }?.let {
             db.filterValueDao().insert(*it.toTypedArray())

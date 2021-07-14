@@ -124,7 +124,7 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
             value = 0
             addSource(filtersWithValue) { filtersWithValue ->
                 value = filtersWithValue.count {
-                    it.filter.defaultValue() != it.value
+                    !it.value.hasSameValueAs(it.filter.defaultValue())
                 }
             }
         }

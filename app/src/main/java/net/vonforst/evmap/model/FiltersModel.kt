@@ -48,6 +48,8 @@ sealed class FilterValue : BaseObservable(), Equatable {
     abstract val key: String
     var dataSource: String = ""
     var profile: Long = FILTERS_CUSTOM
+
+    abstract fun hasSameValueAs(other: FilterValue): Boolean
 }
 
 @Entity(
@@ -62,7 +64,11 @@ sealed class FilterValue : BaseObservable(), Equatable {
 data class BooleanFilterValue(
     override val key: String,
     var value: Boolean
-) : FilterValue()
+) : FilterValue() {
+    override fun hasSameValueAs(other: FilterValue): Boolean {
+        return other is BooleanFilterValue && other.value == this.value
+    }
+}
 
 @Entity(
     foreignKeys = [ForeignKey(
@@ -78,22 +84,13 @@ data class MultipleChoiceFilterValue(
     var values: MutableSet<String>,
     var all: Boolean
 ) : FilterValue() {
-    override fun equals(other: Any?): Boolean {
-        if (other == null || other !is MultipleChoiceFilterValue) return false
-        if (key != other.key) return false
 
-        return if (all) {
-            other.all
+    override fun hasSameValueAs(other: FilterValue): Boolean {
+        return other is MultipleChoiceFilterValue && if (other.all) {
+            this.all
         } else {
-            !other.all && values == other.values
+            !this.all && other.values == this.values
         }
-    }
-
-    override fun hashCode(): Int {
-        var result = key.hashCode()
-        result = 31 * result + all.hashCode()
-        result = 31 * result + if (all) 0 else values.hashCode()
-        return result
     }
 }
 
@@ -109,7 +106,11 @@ data class MultipleChoiceFilterValue(
 data class SliderFilterValue(
     override val key: String,
     var value: Int
-) : FilterValue()
+) : FilterValue() {
+    override fun hasSameValueAs(other: FilterValue): Boolean {
+        return other is SliderFilterValue && other.value == this.value
+    }
+}
 
 data class FilterWithValue<T : FilterValue>(val filter: Filter<T>, val value: T) : Equatable
 

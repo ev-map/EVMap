@@ -105,7 +105,12 @@ class PreferenceDataSource(val context: Context) {
         }
 
     var chargepriceMyVehicles: Set<String>
-        get() = sp.getStringSet("chargeprice_my_vehicle", emptySet())!!
+        get() = try {
+            sp.getStringSet("chargeprice_my_vehicle", emptySet())!!
+        } catch (e: ClassCastException) {
+            // backwards compatibility
+            sp.getString("chargeprice_my_vehicle", null)?.let { setOf(it) } ?: emptySet()
+        }
         set(value) {
             sp.edit().putStringSet("chargeprice_my_vehicle", value).apply()
         }

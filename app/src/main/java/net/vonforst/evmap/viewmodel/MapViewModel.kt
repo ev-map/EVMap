@@ -143,6 +143,9 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
     val filteredConnectors: MutableLiveData<Set<String>> by lazy {
         MutableLiveData<Set<String>>()
     }
+    val filteredMinPower: MutableLiveData<Int> by lazy {
+        MutableLiveData<Int>()
+    }
     val filteredChargeCards: MutableLiveData<Set<Long>> by lazy {
         MutableLiveData<Set<Long>>()
     }
@@ -217,13 +220,19 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
                 val av = availability.value
                 val filters = filtersWithValue.value
                 if (av?.status == Status.SUCCESS && filters != null) {
-                    value = Resource.success(av.data!!.applyFilters(filters))
+                    value = Resource.success(
+                        av.data!!.applyFilters(
+                            filteredConnectors.value,
+                            filteredMinPower.value
+                        )
+                    )
                 } else {
                     value = av
                 }
             }
             addSource(availability, callback)
-            addSource(filtersWithValue, callback)
+            addSource(filteredConnectors, callback)
+            addSource(filteredMinPower, callback)
         }
     }
     val myLocationEnabled: MutableLiveData<Boolean> by lazy {
@@ -325,6 +334,7 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
         ) { data: Triple<MapPosition, FilterValues, ReferenceData> ->
             chargepoints.value = Resource.loading(chargepoints.value?.data)
             filteredConnectors.value = null
+            filteredMinPower.value = null
             filteredChargeCards.value = null
 
             val mapPosition = data.first
@@ -349,6 +359,7 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
                     if (connectorsVal.all) null else connectorsVal.values.map {
                         GEChargepoint.convertTypeFromGE(it)
                     }.toSet()
+                filteredMinPower.value = filters.getSliderValue("minPower")
             } else if (api is OpenChargeMapApiWrapper) {
                 val connectorsVal = filters.getMultipleChoiceValue("connectors")!!
                 filteredConnectors.value =
@@ -358,6 +369,7 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
                             refData as OCMReferenceData
                         )
                     }.toSet()
+                filteredMinPower.value = filters.getSliderValue("minPower")
             }
         }
 

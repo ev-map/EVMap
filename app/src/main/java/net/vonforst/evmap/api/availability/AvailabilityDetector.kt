@@ -8,7 +8,8 @@ import net.vonforst.evmap.api.RateLimitInterceptor
 import net.vonforst.evmap.api.await
 import net.vonforst.evmap.api.equivalentPlugTypes
 import net.vonforst.evmap.cartesianProduct
-import net.vonforst.evmap.model.*
+import net.vonforst.evmap.model.ChargeLocation
+import net.vonforst.evmap.model.Chargepoint
 import net.vonforst.evmap.viewmodel.Resource
 import okhttp3.JavaNetCookieJar
 import okhttp3.OkHttpClient
@@ -117,17 +118,10 @@ data class ChargeLocationStatus(
     val status: Map<Chargepoint, List<ChargepointStatus>>,
     val source: String
 ) {
-    fun applyFilters(filters: FilterValues?): ChargeLocationStatus {
-        if (filters == null) return this
-
-        val connectorsVal = filters.getMultipleChoiceValue("connectors")
-        val minPower = filters.getSliderValue("min_power")
-
+    fun applyFilters(connectors: Set<String>?, minPower: Int?): ChargeLocationStatus {
         val statusFiltered = status.filterKeys {
-            (connectorsVal == null || connectorsVal.all || connectorsVal.values.map {
-                equivalentPlugTypes(
-                    it
-                )
+            (connectors == null || connectors.map {
+                equivalentPlugTypes(it)
             }.any { equivalent -> it.type in equivalent })
                     && (minPower == null || it.power > minPower)
         }

@@ -22,6 +22,8 @@ import com.google.android.material.slider.RangeSlider
 import net.vonforst.evmap.R
 import net.vonforst.evmap.api.availability.ChargepointStatus
 import net.vonforst.evmap.api.iconForPlugType
+import kotlin.math.ceil
+import kotlin.math.floor
 import kotlin.math.roundToInt
 
 
@@ -263,6 +265,13 @@ fun currency(currency: String): String {
         "ISK" -> "Kr"
         else -> currency
     }
+}
+
+fun time(value: Int): String {
+    val h = floor(value.toDouble() / 60).toInt();
+    val min = ceil(value.toDouble() % 60).toInt();
+    return if (h == 0 && min > 0) "$min min";
+    else "%d:%02d h".format(h, min);
 }
 
 @InverseBindingAdapter(attribute = "app:values")

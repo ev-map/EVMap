@@ -7,6 +7,7 @@
 
         <import type="net.vonforst.evmap.viewmodel.ChargepriceViewModel" />
         <import type="net.vonforst.evmap.viewmodel.Status" />
+        <import type="net.vonforst.evmap.ui.BindingAdaptersKt" />
 
         <variable
             name="vm"
@@ -98,6 +99,21 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/connectors_list"
                     tools:text="Charge from 20% to 80%" />
+
+                <TextView
+                    android:id="@+id/textView4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@{@string/chargeprice_duration(BindingAdaptersKt.time((int) Math.round(vm.chargepriceMetaForChargepoint.data.duration)))}"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+                    android:textColor="?colorPrimary"
+                    app:invisibleUnlessAnimated="@{!vm.batteryRangeSliderDragging &amp;&amp; vm.chargepriceMetaForChargepoint.status == Status.SUCCESS}"
+                    app:layout_constraintStart_toEndOf="@+id/textView2"
+                    app:layout_constraintTop_toBottomOf="@+id/connectors_list"
+                    tools:text="(25 min)" />
+
 
                 <TextView
                     android:id="@+id/tvVehicleHeader"

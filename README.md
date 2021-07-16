@@ -59,6 +59,6 @@ following content:
     </string>
     <string name="openchargemap_key" translatable="false">
         insert your OpenChargeMap key here
-</string>
+    </string>
 </resources>
 ```

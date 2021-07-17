@@ -10,8 +10,8 @@ import android.graphics.Color
 import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
-import android.os.Handler
 import android.view.*
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
@@ -19,7 +19,6 @@ import androidx.annotation.RequiresPermission
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.app.ActivityCompat
-import androidx.core.app.SharedElementCallback
 import androidx.core.content.ContextCompat
 import androidx.core.view.MenuCompat
 import androidx.core.view.updateLayoutParams
@@ -31,14 +30,16 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.transition.TransitionInflater
 import androidx.transition.TransitionManager
+import coil.load
 import coil.memory.MemoryCache
+import coil.size.OriginalSize
+import coil.size.SizeResolver
 import com.car2go.maps.AnyMap
 import com.car2go.maps.MapFragment
 import com.car2go.maps.OnMapReadyCallback
@@ -57,6 +58,7 @@ import com.mapzen.android.lost.api.LocationListener
 import com.mapzen.android.lost.api.LocationRequest
 import com.mapzen.android.lost.api.LocationServices
 import com.mapzen.android.lost.api.LostApiClient
+import com.stfalcon.imageviewer.StfalconImageViewer
 import io.michaelrocks.bimap.HashBiMap
 import io.michaelrocks.bimap.MutableBiMap
 import kotlinx.coroutines.Dispatchers
@@ -173,7 +175,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         }
 
         setHasOptionsMenu(true)
-        postponeEnterTransition()
 
         binding.root.setOnApplyWindowInsetsListener { _, insets ->
             binding.detailAppBar.toolbar.updateLayoutParams<ViewGroup.MarginLayoutParams> {
@@ -194,7 +195,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             insets
         }
 
-        setExitSharedElementCallback(reenterSharedElementCallback)
         exitTransition = TransitionInflater.from(requireContext())
             .inflateTransition(R.transition.map_exit_transition)
 
@@ -537,24 +537,35 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
     }
 
     private fun setupAdapters() {
+        var viewer: StfalconImageViewer<ChargerPhoto>? = null
         val galleryClickListener = object : GalleryAdapter.ItemClickListener {
             override fun onItemClick(view: View, position: Int, imageCacheKey: MemoryCache.Key?) {
                 val photos = vm.charger.value?.data?.photos ?: return
-                val extras = FragmentNavigatorExtras(view to view.transitionName)
-                view.findNavController().navigate(
-                    R.id.action_map_to_galleryFragment,
-                    GalleryFragment.buildArgs(photos, position, imageCacheKey),
-                    null,
-                    extras
-                )
+
+                viewer = StfalconImageViewer.Builder(context, photos) { imageView, photo ->
+                    imageView.load(photo.getUrl(size = 1000)) {
+                        if (photo == photos[position] && imageCacheKey != null) {
+                            placeholderMemoryCacheKey(imageCacheKey)
+                        }
+                        size(SizeResolver(OriginalSize))
+                        allowHardware(false)
+                    }
+                }
+                    .withTransitionFrom(view as ImageView)
+                    .withImageChangeListener {
+                        binding.gallery.layoutManager!!.scrollToPosition(it)
+                        binding.gallery.layoutManager!!.findViewByPosition(it)?.let {
+                            viewer?.updateTransitionImage(it as ImageView)
+                        }
+                    }
+                    .withStartPosition(position)
+                    .show()
+
             }
         }
 
-        val galleryPosition = galleryVm.galleryPosition.value
         binding.gallery.apply {
-            adapter = GalleryAdapter(context, galleryClickListener, pageToLoad = galleryPosition) {
-                startPostponedEnterTransition()
-            }
+            adapter = GalleryAdapter(context, galleryClickListener)
             itemAnimator = null
             layoutManager =
                 LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
@@ -564,41 +575,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 ).apply {
                     setDrawable(ContextCompat.getDrawable(context, R.drawable.gallery_divider)!!)
                 })
-        }
-        if (galleryPosition == null) {
-            startPostponedEnterTransition()
-        } else {
-            binding.gallery.addOnLayoutChangeListener(object : View.OnLayoutChangeListener {
-                override fun onLayoutChange(
-                    v: View,
-                    left: Int,
-                    top: Int,
-                    right: Int,
-                    bottom: Int,
-                    oldLeft: Int,
-                    oldTop: Int,
-                    oldRight: Int,
-                    oldBottom: Int
-                ) {
-                    v.removeOnLayoutChangeListener(this)
-                    val layoutManager = binding.gallery.layoutManager!!
-                    val viewAtPosition = layoutManager.findViewByPosition(galleryPosition)
-                    if (viewAtPosition == null || layoutManager.isViewPartiallyVisible(
-                            viewAtPosition,
-                            false,
-                            true
-                        )
-                    ) {
-                        binding.gallery.post {
-                            layoutManager.scrollToPosition(galleryPosition)
-                        }
-                    }
-                }
-            })
-            // make sure that the app does not freeze waiting for a picture to load
-            Handler().postDelayed({
-                startPostponedEnterTransition()
-            }, 100)
         }
 
         binding.detailView.connectors.apply {
@@ -1109,23 +1085,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
     override fun getRootView(): View {
         return binding.root
-    }
-
-    private val reenterSharedElementCallback: SharedElementCallback =
-        object : SharedElementCallback() {
-            override fun onMapSharedElements(
-                names: MutableList<String>,
-                sharedElements: MutableMap<String, View>
-            ) {
-                // Locate the ViewHolder for the clicked position.
-                val position = galleryVm.galleryPosition.value ?: return
-
-                val vh = binding.gallery.findViewHolderForAdapterPosition(position)
-                if (vh?.itemView == null) return
-
-            // Map the first shared element name to the child ImageView.
-            sharedElements[names[0]] = vh.itemView
-        }
     }
 
     companion object {

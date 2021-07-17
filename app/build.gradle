@@ -125,7 +125,7 @@ dependencies {
     implementation 'moe.banana:moshi-jsonapi:3.5.0'
     implementation 'moe.banana:moshi-jsonapi-retrofit-converter:3.5.0'
     implementation 'io.coil-kt:coil:1.1.0'
-    implementation 'com.github.MikeOrtiz:TouchImageView:3.0.3'
+    implementation 'com.github.johan12345:StfalconImageViewer:5082ebd392'
     implementation "com.mikepenz:aboutlibraries-core:$about_libs_version"
     implementation "com.mikepenz:aboutlibraries:$about_libs_version"
     implementation 'com.airbnb.android:lottie:3.4.0'

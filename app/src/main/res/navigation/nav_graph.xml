@@ -10,13 +10,6 @@
         android:label="MapFragment"
         tools:layout="@layout/fragment_map">
         <action
-            android:id="@+id/action_map_to_galleryFragment"
-            app:destination="@id/gallery"
-            app:enterAnim="@animator/nav_default_enter_anim"
-            app:exitAnim="@animator/nav_default_exit_anim"
-            app:popEnterAnim="@animator/nav_default_pop_enter_anim"
-            app:popExitAnim="@animator/nav_default_pop_exit_anim" />
-        <action
             android:id="@+id/action_map_to_filterFragment"
             app:destination="@id/filter"
             app:exitAnim="@animator/nav_default_exit_anim"
@@ -55,11 +48,6 @@
         android:name="net.vonforst.evmap.fragment.SettingsFragment"
         android:label="@string/settings"
         tools:layout="@layout/fragment_preference" />
-    <fragment
-        android:id="@+id/gallery"
-        android:name="net.vonforst.evmap.fragment.GalleryFragment"
-        android:label="GalleryFragment"
-        tools:layout="@layout/fragment_gallery" />
     <fragment
         android:id="@+id/favs"
         android:name="net.vonforst.evmap.fragment.FavoritesFragment"

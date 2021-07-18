@@ -344,40 +344,48 @@ class GoingElectricApiWrapper(
         referenceData: ReferenceData,
         id: Long
     ): Resource<ChargeLocation> {
-        val response = api.getChargepointDetail(id)
-        return if (response.isSuccessful && response.body()!!.status == "ok" && response.body()!!.chargelocations.size == 1) {
-            Resource.success(
-                (response.body()!!.chargelocations[0] as GEChargeLocation).convert(
-                    apikey
+        try {
+            val response = api.getChargepointDetail(id)
+            return if (response.isSuccessful && response.body()!!.status == "ok" && response.body()!!.chargelocations.size == 1) {
+                Resource.success(
+                    (response.body()!!.chargelocations[0] as GEChargeLocation).convert(
+                        apikey
+                    )
                 )
-            )
-        } else {
-            Resource.error(response.message(), null)
+            } else {
+                Resource.error(response.message(), null)
+            }
+        } catch (e: IOException) {
+            return Resource.error(e.message, null)
         }
     }
 
     override suspend fun getReferenceData(): Resource<GEReferenceData> =
         withContext(Dispatchers.IO) {
-            val plugs = async { api.getPlugs() }
-            val chargeCards = async { api.getChargeCards() }
-            val networks = async { api.getNetworks() }
+            try {
+                val plugs = async { api.getPlugs() }
+                val chargeCards = async { api.getChargeCards() }
+                val networks = async { api.getNetworks() }
 
-            val plugsResponse = plugs.await()
-            val chargeCardsResponse = chargeCards.await()
-            val networksResponse = networks.await()
+                val plugsResponse = plugs.await()
+                val chargeCardsResponse = chargeCards.await()
+                val networksResponse = networks.await()
 
-            val responses = listOf(plugsResponse, chargeCardsResponse, networksResponse)
+                val responses = listOf(plugsResponse, chargeCardsResponse, networksResponse)
 
-            if (responses.map { it.isSuccessful }.all { it }) {
-                Resource.success(
-                    GEReferenceData(
-                        plugsResponse.body()!!.result,
-                        networksResponse.body()!!.result,
-                        chargeCardsResponse.body()!!.result
+                if (responses.map { it.isSuccessful }.all { it }) {
+                    Resource.success(
+                        GEReferenceData(
+                            plugsResponse.body()!!.result,
+                            networksResponse.body()!!.result,
+                            chargeCardsResponse.body()!!.result
+                        )
                     )
-                )
-            } else {
-                Resource.error(responses.find { !it.isSuccessful }!!.message(), null)
+                } else {
+                    Resource.error(responses.find { !it.isSuccessful }!!.message(), null)
+                }
+            } catch (e: IOException) {
+                Resource.error(e.message, null)
             }
         }
 

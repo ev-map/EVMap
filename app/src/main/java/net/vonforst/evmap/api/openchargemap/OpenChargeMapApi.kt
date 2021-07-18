@@ -20,6 +20,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
+import java.io.IOException
 
 interface OpenChargeMapApi {
     @GET("poi/")
@@ -137,29 +138,33 @@ class OpenChargeMapApiWrapper(
         }
         val operators = formatMultipleChoice(operatorsVal)
 
-        val response = api.getChargepoints(
-            OCMBoundingBox(
-                bounds.southwest.latitude, bounds.southwest.longitude,
-                bounds.northeast.latitude, bounds.northeast.longitude
-            ),
-            minPower = minPower,
-            plugs = connectors,
-            operators = operators,
-            statusType = if (excludeFaults == true) noFaultStatuses.joinToString(",") else null
-        )
-        if (!response.isSuccessful) {
-            return Resource.error(response.message(), null)
-        }
+        try {
+            val response = api.getChargepoints(
+                OCMBoundingBox(
+                    bounds.southwest.latitude, bounds.southwest.longitude,
+                    bounds.northeast.latitude, bounds.northeast.longitude
+                ),
+                minPower = minPower,
+                plugs = connectors,
+                operators = operators,
+                statusType = if (excludeFaults == true) noFaultStatuses.joinToString(",") else null
+            )
+            if (!response.isSuccessful) {
+                return Resource.error(response.message(), null)
+            }
 
-        var result = postprocessResult(
-            response.body()!!,
-            minPower,
-            connectorsVal,
-            minConnectors,
-            referenceData,
-            zoom
-        )
-        return Resource.success(result)
+            var result = postprocessResult(
+                response.body()!!,
+                minPower,
+                connectorsVal,
+                minConnectors,
+                referenceData,
+                zoom
+            )
+            return Resource.success(result)
+        } catch (e: IOException) {
+            return Resource.error(e.message, null)
+        }
     }
 
     override suspend fun getChargepointsRadius(
@@ -189,27 +194,31 @@ class OpenChargeMapApiWrapper(
         }
         val operators = formatMultipleChoice(operatorsVal)
 
-        val response = api.getChargepointsRadius(
-            location.latitude, location.longitude,
-            radius.toDouble(),
-            minPower = minPower,
-            plugs = connectors,
-            operators = operators,
-            statusType = if (excludeFaults == true) noFaultStatuses.joinToString(",") else null
-        )
-        if (!response.isSuccessful) {
-            return Resource.error(response.message(), null)
-        }
+        try {
+            val response = api.getChargepointsRadius(
+                location.latitude, location.longitude,
+                radius.toDouble(),
+                minPower = minPower,
+                plugs = connectors,
+                operators = operators,
+                statusType = if (excludeFaults == true) noFaultStatuses.joinToString(",") else null
+            )
+            if (!response.isSuccessful) {
+                return Resource.error(response.message(), null)
+            }
 
-        val result = postprocessResult(
-            response.body()!!,
-            minPower,
-            connectorsVal,
-            minConnectors,
-            referenceData,
-            zoom
-        )
-        return Resource.success(result)
+            val result = postprocessResult(
+                response.body()!!,
+                minPower,
+                connectorsVal,
+                minConnectors,
+                referenceData,
+                zoom
+            )
+            return Resource.success(result)
+        } catch (e: IOException) {
+            return Resource.error(e.message, null)
+        }
     }
 
     private fun postprocessResult(
@@ -244,20 +253,28 @@ class OpenChargeMapApiWrapper(
         id: Long
     ): Resource<ChargeLocation> {
         val referenceData = referenceData as OCMReferenceData
-        val response = api.getChargepointDetail(id)
-        if (response.isSuccessful && response.body()?.size == 1) {
-            return Resource.success(response.body()!![0].convert(referenceData))
-        } else {
-            return Resource.error(response.message(), null)
+        try {
+            val response = api.getChargepointDetail(id)
+            if (response.isSuccessful && response.body()?.size == 1) {
+                return Resource.success(response.body()!![0].convert(referenceData))
+            } else {
+                return Resource.error(response.message(), null)
+            }
+        } catch (e: IOException) {
+            return Resource.error(e.message, null)
         }
     }
 
     override suspend fun getReferenceData(): Resource<OCMReferenceData> {
-        val response = api.getReferenceData()
-        if (response.isSuccessful) {
-            return Resource.success(response.body()!!)
-        } else {
-            return Resource.error(response.message(), null)
+        try {
+            val response = api.getReferenceData()
+            if (response.isSuccessful) {
+                return Resource.success(response.body()!!)
+            } else {
+                return Resource.error(response.message(), null)
+            }
+        } catch (e: IOException) {
+            return Resource.error(e.message, null)
         }
     }
 

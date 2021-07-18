@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="ChromeCustomTabsNavigator">
-        <attr name="url" format="reference" />
+    <declare-styleable name="CustomNavigator">
+        <attr name="customDestination" format="string" />
     </declare-styleable>
     <declare-styleable name="MultiSelectDialogPreference">
         <attr name="showAllButton" format="boolean" />

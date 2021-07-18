@@ -7,7 +7,7 @@ class NavHostFragment : NavHostFragment() {
     override fun onCreateNavController(navController: NavController) {
         super.onCreateNavController(navController)
         navController.navigatorProvider.addNavigator(
-            ChromeCustomTabsNavigator(
+            CustomNavigator(
                 requireContext()
             )
         )

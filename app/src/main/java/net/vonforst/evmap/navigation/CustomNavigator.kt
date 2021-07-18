@@ -13,11 +13,12 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavOptions
 import androidx.navigation.Navigator
 import net.vonforst.evmap.R
+import net.vonforst.evmap.storage.PreferenceDataSource
 
-@Navigator.Name("chrome")
-class ChromeCustomTabsNavigator(
+@Navigator.Name("custom")
+class CustomNavigator(
     private val context: Context
-) : Navigator<ChromeCustomTabsNavigator.Destination>() {
+) : Navigator<CustomNavigator.Destination>() {
 
     override fun createDestination() =
         Destination(this)
@@ -28,6 +29,19 @@ class ChromeCustomTabsNavigator(
         navOptions: NavOptions?,
         navigatorExtras: Extras?
     ): NavDestination? {
+        if (destination.destination == "report_new_charger") {
+            val prefs = PreferenceDataSource(context)
+            val url = when (prefs.dataSource) {
+                "goingelectric" -> "https://www.goingelectric.de/stromtankstellen/new/"
+                "openchargemap" -> "https://openchargemap.org/site/poi/add"
+                else -> throw IllegalArgumentException()
+            }
+            launchCustomTab(url)
+        }
+        return null // Do not add to the back stack, managed by Chrome Custom Tabs
+    }
+
+    fun launchCustomTab(url: String) {
         val intent = CustomTabsIntent.Builder()
             .setDefaultColorSchemeParams(
                 CustomTabColorSchemeParams.Builder()
@@ -35,20 +49,19 @@ class ChromeCustomTabsNavigator(
                     .build()
             )
             .build()
-        intent.launchUrl(context, destination.url!!)
-        return null // Do not add to the back stack, managed by Chrome Custom Tabs
+        intent.launchUrl(context, Uri.parse(url))
     }
 
     override fun popBackStack() = true // Managed by Chrome Custom Tabs
 
     @NavDestination.ClassType(Activity::class)
     class Destination(navigator: Navigator<out NavDestination>) : NavDestination(navigator) {
-        var url: Uri? = null
+        lateinit var destination: String
 
         override fun onInflate(context: Context, attrs: AttributeSet) {
             super.onInflate(context, attrs)
-            context.withStyledAttributes(attrs, R.styleable.ChromeCustomTabsNavigator, 0, 0) {
-                url = Uri.parse(getString(R.styleable.ChromeCustomTabsNavigator_url))
+            context.withStyledAttributes(attrs, R.styleable.CustomNavigator, 0, 0) {
+                destination = getString(R.styleable.CustomNavigator_customDestination)!!
             }
         }
     }

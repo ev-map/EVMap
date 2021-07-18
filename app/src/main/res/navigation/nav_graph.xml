@@ -90,9 +90,9 @@
         android:name="net.vonforst.evmap.fragment.updatedialogs.Update060AndroidAutoDialogFramgent"
         android:label="@string/welcome_to_evmap"
         tools:layout="@layout/dialog_update_060_androidauto" />
-    <chrome
+    <custom
         android:id="@+id/report_new_charger"
-        app:url="@string/report_new_charger_url" />
+        app:customDestination="report_new_charger" />
     <fragment
         android:id="@+id/onboarding"
         android:name="net.vonforst.evmap.fragment.OnboardingFragment"

@@ -22,7 +22,6 @@ import net.vonforst.evmap.databinding.ItemChargepriceVehicleChipBinding
 import net.vonforst.evmap.databinding.ItemConnectorButtonBinding
 import net.vonforst.evmap.model.Chargepoint
 import net.vonforst.evmap.ui.CheckableConstraintLayout
-import net.vonforst.evmap.viewmodel.FavoritesViewModel
 
 interface Equatable {
     override fun equals(other: Any?): Boolean
@@ -87,18 +86,6 @@ class ConnectorAdapter : DataBindingAdapter<ConnectorAdapter.ChargepointWithAvai
         Equatable
 
     override fun getItemViewType(position: Int): Int = R.layout.item_connector
-}
-
-
-class FavoritesAdapter(val vm: FavoritesViewModel) :
-    DataBindingAdapter<FavoritesViewModel.FavoritesListItem>() {
-    init {
-        setHasStableIds(true)
-    }
-
-    override fun getItemViewType(position: Int): Int = R.layout.item_favorite
-
-    override fun getItemId(position: Int): Long = getItem(position).charger.id
 }
 
 class ChargepriceAdapter() :

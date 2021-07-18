@@ -6,8 +6,11 @@
     <data>
 
         <import type="net.vonforst.evmap.api.UtilsKt" />
+
         <import type="net.vonforst.evmap.viewmodel.Status" />
+
         <import type="net.vonforst.evmap.ui.BindingAdaptersKt" />
+
         <import type="net.vonforst.evmap.api.ChargepointApiKt" />
 
         <variable
@@ -15,21 +18,45 @@
             type="net.vonforst.evmap.viewmodel.FavoritesViewModel.FavoritesListItem" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:background="?attr/selectableItemBackground">
+        android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/textView15"
-            android:layout_width="wrap_content"
+        <FrameLayout
+            android:id="@+id/background"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/delete_red"> <!--Add your background color here-->
+
+            <ImageView
+                android:id="@+id/delete_icon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center_vertical|end"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                app:tint="@android:color/white"
+                app:srcCompat="@drawable/ic_delete" />
+
+        </FrameLayout>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/foreground"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@{item.charger.name}"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Parkhaus" />
+            android:padding="16dp"
+            android:background="@drawable/selectable_opaque_background">
+
+            <TextView
+                android:id="@+id/textView15"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{item.charger.name}"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Parkhaus" />
 
         <TextView
             android:id="@+id/textView2"
@@ -59,40 +86,57 @@
             app:layout_constraintTop_toBottomOf="@+id/textView2"
             tools:text="2x Typ 2 22 kW" />
 
-        <TextView
-            android:id="@+id/textView16"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:goneUnless="@{item.distance != null}"
-            android:text="@{@string/distance_format(item.distance)}"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="9999,9 km" />
+            <TextView
+                android:id="@+id/textView16"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:text="@{@string/distance_format(item.distance)}"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+                app:goneUnless="@{item.distance != null}"
+                app:layout_constraintEnd_toStartOf="@id/btnDelete"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="9999,9 km" />
 
-        <TextView
-            android:id="@+id/textView7"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/rounded_rect"
-            android:padding="2dp"
-            android:text="@{String.format(&quot;%s/%d&quot;, BindingAdaptersKt.availabilityText(item.available.data), item.total)}"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textColor="@android:color/white"
-            app:backgroundTintAvailability="@{item.available.data}"
-            app:goneUnless="@{item.available.status == Status.SUCCESS}"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            tools:backgroundTint="@color/available"
-            tools:text="80/99" />
+            <TextView
+                android:id="@+id/textView7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/rounded_rect"
+                android:padding="2dp"
+                android:text="@{String.format(&quot;%s/%d&quot;, BindingAdaptersKt.availabilityText(item.available.data), item.total)}"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textColor="@android:color/white"
+                app:backgroundTintAvailability="@{item.available.data}"
+                app:goneUnless="@{item.available.status == Status.SUCCESS}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/btnDelete"
+                tools:backgroundTint="@color/available"
+                tools:text="80/99" />
 
-        <ProgressBar
-            android:id="@+id/progressBar4"
-            style="?android:attr/progressBarStyle"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            app:goneUnless="@{item.available.status == Status.LOADING}"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <ProgressBar
+                android:id="@+id/progressBar4"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="16dp"
+                app:goneUnless="@{item.available.status == Status.LOADING}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/btnDelete" />
+
+            <ImageButton
+                android:id="@+id/btnDelete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:tint="?colorControlNormal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_delete"
+                android:contentDescription="@string/delete" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
 </layout>

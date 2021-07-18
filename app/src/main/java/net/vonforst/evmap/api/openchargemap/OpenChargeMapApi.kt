@@ -245,7 +245,7 @@ class OpenChargeMapApiWrapper(
     ): Resource<ChargeLocation> {
         val referenceData = referenceData as OCMReferenceData
         val response = api.getChargepointDetail(id)
-        if (response.isSuccessful) {
+        if (response.isSuccessful && response.body()?.size == 1) {
             return Resource.success(response.body()!![0].convert(referenceData))
         } else {
             return Resource.error(response.message(), null)

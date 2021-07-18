@@ -1,0 +1,7 @@
+New Features:
+- swipe to delete favorites
+
+Bugs fixed:
+- Improved fullscreen photo view
+- "Report new charger" in menu was still linking to GoingElectric when OpenChargeMap was selected
+- Fixed crashes

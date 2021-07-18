@@ -1,0 +1,7 @@
+Neue Features:
+- Favoriten können durch Wischen gelöscht werden
+
+Fehler behoben:
+- Verbesserte Vollbildansicht von Fotos
+- "Ladesäule melden" verlinkte auf GoingElectric auch wenn OpenChargeMap ausgewählt war
+- Abstürze behoben

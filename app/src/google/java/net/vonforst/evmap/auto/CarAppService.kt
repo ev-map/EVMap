@@ -47,6 +47,7 @@ import net.vonforst.evmap.ui.ChargerIconGenerator
 import net.vonforst.evmap.ui.availabilityText
 import net.vonforst.evmap.ui.getMarkerTint
 import net.vonforst.evmap.utils.distanceBetween
+import net.vonforst.evmap.viewmodel.Status
 import java.io.IOException
 import java.time.Duration
 import java.time.ZoneId
@@ -655,8 +656,8 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
 
     private fun loadCharger() {
         lifecycleScope.launch {
-            try {
-                val response = api.getChargepointDetail(getReferenceData(), chargerSparse.id)
+            val response = api.getChargepointDetail(getReferenceData(), chargerSparse.id)
+            if (response.status == Status.SUCCESS) {
                 charger = response.data!!
 
                 val photo = charger?.photos?.firstOrNull()
@@ -671,7 +672,7 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
                 availability = charger?.let { getAvailability(it).data }
 
                 invalidate()
-            } catch (e: IOException) {
+            } else {
                 withContext(Dispatchers.Main) {
                     CarToast.makeText(carContext, R.string.connection_error, CarToast.LENGTH_LONG)
                         .show()

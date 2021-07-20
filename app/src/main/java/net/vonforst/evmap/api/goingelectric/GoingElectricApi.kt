@@ -7,6 +7,7 @@ import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.supervisorScope
 import kotlinx.coroutines.withContext
 import net.vonforst.evmap.BuildConfig
 import net.vonforst.evmap.R
@@ -362,30 +363,32 @@ class GoingElectricApiWrapper(
 
     override suspend fun getReferenceData(): Resource<GEReferenceData> =
         withContext(Dispatchers.IO) {
-            try {
-                val plugs = async { api.getPlugs() }
-                val chargeCards = async { api.getChargeCards() }
-                val networks = async { api.getNetworks() }
+            supervisorScope {
+                try {
+                    val plugs = async { api.getPlugs() }
+                    val chargeCards = async { api.getChargeCards() }
+                    val networks = async { api.getNetworks() }
 
-                val plugsResponse = plugs.await()
-                val chargeCardsResponse = chargeCards.await()
-                val networksResponse = networks.await()
+                    val plugsResponse = plugs.await()
+                    val chargeCardsResponse = chargeCards.await()
+                    val networksResponse = networks.await()
 
-                val responses = listOf(plugsResponse, chargeCardsResponse, networksResponse)
+                    val responses = listOf(plugsResponse, chargeCardsResponse, networksResponse)
 
-                if (responses.map { it.isSuccessful }.all { it }) {
-                    Resource.success(
-                        GEReferenceData(
-                            plugsResponse.body()!!.result,
-                            networksResponse.body()!!.result,
-                            chargeCardsResponse.body()!!.result
+                    if (responses.map { it.isSuccessful }.all { it }) {
+                        Resource.success(
+                            GEReferenceData(
+                                plugsResponse.body()!!.result,
+                                networksResponse.body()!!.result,
+                                chargeCardsResponse.body()!!.result
+                            )
                         )
-                    )
-                } else {
-                    Resource.error(responses.find { !it.isSuccessful }!!.message(), null)
+                    } else {
+                        Resource.error(responses.find { !it.isSuccessful }!!.message(), null)
+                    }
+                } catch (e: IOException) {
+                    Resource.error(e.message, null)
                 }
-            } catch (e: IOException) {
-                Resource.error(e.message, null)
             }
         }
 

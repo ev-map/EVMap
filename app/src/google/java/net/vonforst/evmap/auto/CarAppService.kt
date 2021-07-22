@@ -61,6 +61,7 @@ interface LocationAwareScreen {
     fun updateLocation(location: Location)
 }
 
+@androidx.car.app.annotations.ExperimentalCarApi
 class CarAppService : androidx.car.app.CarAppService() {
     override fun createHostValidator(): HostValidator {
         return if (applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0) {
@@ -77,6 +78,7 @@ class CarAppService : androidx.car.app.CarAppService() {
     }
 }
 
+@androidx.car.app.annotations.ExperimentalCarApi
 class EVMapSession(val cas: CarAppService) : Session(), LifecycleObserver {
     var mapScreen: LocationAwareScreen? = null
         set(value) {
@@ -162,6 +164,7 @@ class EVMapSession(val cas: CarAppService) : Session(), LifecycleObserver {
 /**
  * Welcome screen with selection between favorites and nearby chargers
  */
+@androidx.car.app.annotations.ExperimentalCarApi
 class WelcomeScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx), LocationAwareScreen {
     private var location: Location? = null
 
@@ -222,6 +225,7 @@ class WelcomeScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx), L
 /**
  * Screen to grant location permission
  */
+@androidx.car.app.annotations.ExperimentalCarApi
 class PermissionScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx) {
     override fun onGetTemplate(): Template {
         return MessageTemplate.Builder(carContext.getString(R.string.auto_location_permission_needed))

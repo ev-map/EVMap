@@ -136,7 +136,8 @@ dependencies {
     implementation 'com.github.romandanylyk:PageIndicatorView:b1bad589b5'
 
     // Android Auto
-    googleImplementation 'androidx.car.app:app:1.1.0-alpha01'
+    googleImplementation 'androidx.car.app:app:1.1.0-alpha02'
+    googleImplementation 'androidx.car.app:app-projected:1.1.0-alpha02'
 
     // AnyMaps
     def anyMapsVersion = '95ddd6c083'

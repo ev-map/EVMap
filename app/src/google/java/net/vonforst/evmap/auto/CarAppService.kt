@@ -313,8 +313,10 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
             } ?: setLoading(true)
             chargers?.take(maxRows)?.let { chargerList ->
                 val builder = ItemList.Builder()
+                // only show the city if not all chargers are in the same city
+                val showCity = chargerList.map { it.address.city }.distinct().size > 1
                 chargerList.forEach { charger ->
-                    builder.addItem(formatCharger(charger))
+                    builder.addItem(formatCharger(charger, showCity))
                 }
                 builder.setNoItemsMessage(
                     carContext.getString(
@@ -333,7 +335,8 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
         }.build()
     }
 
-    private fun formatCharger(charger: ChargeLocation): Row {
+    @androidx.car.app.annotations.ExperimentalCarApi
+    private fun formatCharger(charger: ChargeLocation, showCity: Boolean): Row {
         val color = ContextCompat.getColor(carContext, getMarkerTint(charger))
         val place =
             Place.Builder(CarLocation.create(charger.coordinates.lat, charger.coordinates.lng))
@@ -345,7 +348,16 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
                 .build()
 
         return Row.Builder().apply {
-            setTitle(charger.name)
+            // only show the city if not all chargers are in the same city (-> showCity == true)
+            // and the city is not already contained in the charger name
+            if (showCity && charger.address.city != null && charger.address.city !in charger.name) {
+                setTitle(CarText.Builder("${charger.name} · ${charger.address.city}")
+                    .addVariant(charger.name)
+                    .build())
+            } else {
+                setTitle(charger.name)
+            }
+
             val text = SpannableStringBuilder()
 
             // distance

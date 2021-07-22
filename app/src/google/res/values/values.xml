@@ -30,6 +30,7 @@
     <string name="auto_favorites">Favorites</string>
     <string name="auto_fault_report_date">⚠️ Fault report (%s)</string>
     <string name="auto_no_refresh_possible">Further updates not possible. Please go back and restart.</string>
+    <string name="auto_vehicle_data">Vehicle data</string>
     <string name="welcome_android_auto">Android Auto support</string>
     <string name="welcome_android_auto_detail">You can also use EVMap from within Android Auto on supported cars. Simply select the EVMap app in the Android Auto menu.</string>
     <string name="sounds_cool">sounds cool</string>

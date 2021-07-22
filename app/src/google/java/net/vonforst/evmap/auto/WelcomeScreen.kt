@@ -6,6 +6,7 @@ import androidx.car.app.Screen
 import androidx.car.app.model.*
 import androidx.core.graphics.drawable.IconCompat
 import net.vonforst.evmap.R
+import net.vonforst.evmap.auto.screens.VehicleDataScreen
 
 /**
  * Welcome screen with selection between favorites and nearby chargers
@@ -55,6 +56,21 @@ class WelcomeScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx), L
                             screenManager.push(MapScreen(carContext, session, favorites = true))
                         }
                         .build())
+                addItem(
+                    Row.Builder()
+                        .setTitle(carContext.getString(R.string.auto_vehicle_data))
+                        .setImage(
+                            CarIcon.Builder(
+                                IconCompat.createWithResource(carContext, R.drawable.ic_car)
+                            ).setTint(CarColor.DEFAULT).build()
+                        )
+                        .setBrowsable(true)
+                        .setOnClickListener {
+                            session.mapScreen = null
+                            screenManager.push(VehicleDataScreen(carContext))
+                        }
+                        .build()
+                )
             }.build())
             setCurrentLocationEnabled(true)
             setHeaderAction(Action.APP_ICON)

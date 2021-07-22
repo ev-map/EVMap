@@ -276,6 +276,7 @@ class PermissionScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx)
 /**
  * Main map screen showing either nearby chargers or favorites
  */
+@androidx.car.app.annotations.ExperimentalCarApi
 class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boolean = false) :
     Screen(ctx), LocationAwareScreen {
     private var updateCoroutine: Job? = null
@@ -335,7 +336,6 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
         }.build()
     }
 
-    @androidx.car.app.annotations.ExperimentalCarApi
     private fun formatCharger(charger: ChargeLocation, showCity: Boolean): Row {
         val color = ContextCompat.getColor(carContext, getMarkerTint(charger))
         val place =

@@ -139,7 +139,7 @@ dependencies {
     googleImplementation 'androidx.car.app:app:1.0.0'
 
     // AnyMaps
-    def anyMapsVersion = '1f050d860f'
+    def anyMapsVersion = 'a281776441'
     implementation "com.github.johan12345.AnyMaps:anymaps-base:$anyMapsVersion"
     googleImplementation "com.github.johan12345.AnyMaps:anymaps-google:$anyMapsVersion"
     implementation "com.github.johan12345.AnyMaps:anymaps-mapbox:$anyMapsVersion"

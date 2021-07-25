@@ -36,14 +36,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val toolbar = view.findViewById(R.id.toolbar) as Toolbar
         prefs = PreferenceDataSource(requireContext())
-
-        val navController = findNavController()
-        toolbar.setupWithNavController(
-            navController,
-            (requireActivity() as MapsActivity).appBarConfiguration
-        )
 
         myVehiclePreference = findPreference("chargeprice_my_vehicle")!!
         myVehiclePreference.isEnabled = false
@@ -130,6 +123,13 @@ class SettingsFragment : PreferenceFragmentCompat(),
     override fun onResume() {
         super.onResume()
         preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
+
+        val navController = findNavController()
+        val toolbar = requireView().findViewById(R.id.toolbar) as Toolbar
+        toolbar.setupWithNavController(
+            navController,
+            (requireActivity() as MapsActivity).appBarConfiguration
+        )
     }
 
     override fun onPause() {

@@ -1,0 +1,2 @@
+- Android Auto: Show place name next to charger name (if enough room available)
+- Fixed various crashes

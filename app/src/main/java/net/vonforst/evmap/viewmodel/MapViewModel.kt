@@ -5,6 +5,7 @@ import androidx.lifecycle.*
 import com.car2go.maps.AnyMap
 import com.car2go.maps.model.LatLng
 import com.car2go.maps.model.LatLngBounds
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import net.vonforst.evmap.api.ChargepointApi
 import net.vonforst.evmap.api.availability.ChargeLocationStatus
@@ -378,9 +379,12 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
         availability.value = getAvailability(charger)
     }
 
+    private var chargerLoadingTask: Job? = null
+
     private fun loadChargerDetails(charger: ChargeLocation, referenceData: ReferenceData) {
         chargerDetails.value = Resource.loading(null)
-        viewModelScope.launch {
+        chargerLoadingTask?.cancel()
+        chargerLoadingTask = viewModelScope.launch {
             try {
                 chargerDetails.value = api.getChargepointDetail(referenceData, charger.id)
             } catch (e: IOException) {

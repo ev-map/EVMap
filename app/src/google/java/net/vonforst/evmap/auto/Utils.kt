@@ -1,5 +1,7 @@
 package net.vonforst.evmap.auto
 
+import androidx.car.app.CarContext
+import androidx.car.app.constraints.ConstraintManager
 import androidx.car.app.model.CarColor
 import net.vonforst.evmap.api.availability.ChargepointStatus
 
@@ -18,3 +20,6 @@ fun carAvailabilityColor(status: List<ChargepointStatus>): CarColor {
         CarColor.BLUE
     }
 }
+
+val CarContext.constraintManager
+    get() = getCarService(CarContext.CONSTRAINT_SERVICE) as ConstraintManager

@@ -8,6 +8,8 @@ import androidx.car.app.CarToast
 import androidx.car.app.Screen
 import androidx.car.app.model.*
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.IconCompat
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import com.car2go.maps.model.LatLng
 import kotlinx.coroutines.*
@@ -15,21 +17,23 @@ import net.vonforst.evmap.R
 import net.vonforst.evmap.api.availability.ChargeLocationStatus
 import net.vonforst.evmap.api.availability.getAvailability
 import net.vonforst.evmap.api.createApi
-import net.vonforst.evmap.api.goingelectric.GoingElectricApiWrapper
-import net.vonforst.evmap.api.openchargemap.OpenChargeMapApiWrapper
-import net.vonforst.evmap.await
+import net.vonforst.evmap.api.stringProvider
 import net.vonforst.evmap.model.ChargeLocation
-import net.vonforst.evmap.model.ReferenceData
+import net.vonforst.evmap.model.FILTERS_CUSTOM
+import net.vonforst.evmap.model.FILTERS_DISABLED
 import net.vonforst.evmap.storage.AppDatabase
-import net.vonforst.evmap.storage.GEReferenceDataRepository
-import net.vonforst.evmap.storage.OCMReferenceDataRepository
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.ui.availabilityText
 import net.vonforst.evmap.ui.getMarkerTint
 import net.vonforst.evmap.utils.distanceBetween
+import net.vonforst.evmap.viewmodel.filtersWithValue
+import net.vonforst.evmap.viewmodel.getFilterValues
+import net.vonforst.evmap.viewmodel.getFilters
+import net.vonforst.evmap.viewmodel.getReferenceData
 import java.io.IOException
 import java.time.Duration
 import java.time.ZonedDateTime
+import kotlin.collections.set
 import kotlin.math.roundToInt
 
 /**
@@ -46,6 +50,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
     private var lastUpdateLocation: Location? = null
     private var chargers: List<ChargeLocation>? = null
     private var prefs = PreferenceDataSource(ctx)
+    private val db = AppDatabase.getInstance(carContext)
     private val api by lazy {
         createApi(prefs.dataSource, ctx)
     }
@@ -55,6 +60,20 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
     private var availabilities: MutableMap<Long, Pair<ZonedDateTime, ChargeLocationStatus>> =
         HashMap()
     private val maxRows = 6
+
+    private val referenceData = api.getReferenceData(lifecycleScope, carContext)
+    private val filterStatus = MutableLiveData<Long>().apply {
+        value = prefs.filterStatus.takeUnless { it == FILTERS_CUSTOM } ?: FILTERS_DISABLED
+    }
+    private val filterValues = db.filterValueDao().getFilterValues(filterStatus, prefs.dataSource)
+    private val filters = api.getFilters(referenceData, carContext.stringProvider())
+    private val filtersWithValue = filtersWithValue(filters, filterValues)
+
+    init {
+        filtersWithValue.observe(this) {
+            loadChargers()
+        }
+    }
 
     override fun onGetTemplate(): Template {
         session.mapScreen = this
@@ -91,6 +110,36 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
             } ?: setLoading(true)
             setCurrentLocationEnabled(true)
             setHeaderAction(Action.BACK)
+            if (!favorites) {
+                val filtersCount = filtersWithValue.value?.count {
+                    !it.value.hasSameValueAs(it.filter.defaultValue())
+                }
+
+                setActionStrip(
+                    ActionStrip.Builder()
+                        .addAction(
+                            Action.Builder()
+                                .setIcon(
+                                    CarIcon.Builder(
+                                        IconCompat.createWithResource(
+                                            carContext,
+                                            R.drawable.ic_filter
+                                        )
+                                    )
+                                        .setTint(if (filtersCount != null && filtersCount > 0) CarColor.SECONDARY else CarColor.DEFAULT)
+                                        .build()
+                        )
+                        .setOnClickListener {
+                            screenManager.pushForResult(FilterScreen(carContext)) {
+                                chargers = null
+                                numUpdates = 0
+                                filterStatus.value = prefs.filterStatus
+                            }
+                            session.mapScreen = null
+                        }
+                        .build())
+                    .build())
+            }
             build()
         }.build()
     }
@@ -178,13 +227,15 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
         ) {
             lastUpdateLocation = location
             // update displayed chargers
-            loadChargers(location)
+            loadChargers()
         }
     }
 
-    private val db = AppDatabase.getInstance(carContext)
+    private fun loadChargers() {
+        val location = location ?: return
+        val referenceData = referenceData.value ?: return
+        val filters = filtersWithValue.value ?: return
 
-    private fun loadChargers(location: Location) {
         numUpdates++
         println(numUpdates)
         if (numUpdates > maxNumUpdates) {
@@ -204,22 +255,22 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
                     }
                 } else {
                     val response = api.getChargepointsRadius(
-                        getReferenceData(),
+                        referenceData,
                         LatLng.fromLocation(location),
                         searchRadius,
                         zoom = 16f,
-                        null
+                        filters
                     )
                     chargers = response.data?.filterIsInstance(ChargeLocation::class.java)
                     chargers?.let {
                         if (it.size < 6) {
                             // try again with larger radius
                             val response = api.getChargepointsRadius(
-                                getReferenceData(),
+                                referenceData,
                                 LatLng.fromLocation(location),
-                                searchRadius * 5,
+                                searchRadius * 10,
                                 zoom = 16f,
-                                emptyList()
+                                filters
                             )
                             chargers =
                                 response.data?.filterIsInstance(ChargeLocation::class.java)
@@ -256,31 +307,6 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
                     CarToast.makeText(carContext, R.string.connection_error, CarToast.LENGTH_LONG)
                         .show()
                 }
-            }
-        }
-    }
-
-    private suspend fun getReferenceData(): ReferenceData {
-        val api = api
-        return when (api) {
-            is GoingElectricApiWrapper -> {
-                GEReferenceDataRepository(
-                    api,
-                    lifecycleScope,
-                    db.geReferenceDataDao(),
-                    prefs
-                ).getReferenceData().await()
-            }
-            is OpenChargeMapApiWrapper -> {
-                OCMReferenceDataRepository(
-                    api,
-                    lifecycleScope,
-                    db.ocmReferenceDataDao(),
-                    prefs
-                ).getReferenceData().await()
-            }
-            else -> {
-                throw RuntimeException("no reference data implemented")
             }
         }
     }

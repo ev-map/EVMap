@@ -21,20 +21,16 @@ import net.vonforst.evmap.*
 import net.vonforst.evmap.api.availability.ChargeLocationStatus
 import net.vonforst.evmap.api.availability.getAvailability
 import net.vonforst.evmap.api.createApi
-import net.vonforst.evmap.api.goingelectric.GoingElectricApiWrapper
 import net.vonforst.evmap.api.nameForPlugType
-import net.vonforst.evmap.api.openchargemap.OpenChargeMapApiWrapper
 import net.vonforst.evmap.api.stringProvider
 import net.vonforst.evmap.model.ChargeLocation
-import net.vonforst.evmap.model.ReferenceData
 import net.vonforst.evmap.storage.AppDatabase
-import net.vonforst.evmap.storage.GEReferenceDataRepository
-import net.vonforst.evmap.storage.OCMReferenceDataRepository
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.ui.ChargerIconGenerator
 import net.vonforst.evmap.ui.availabilityText
 import net.vonforst.evmap.ui.getMarkerTint
 import net.vonforst.evmap.viewmodel.Status
+import net.vonforst.evmap.viewmodel.getReferenceData
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -50,8 +46,15 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
     private val api by lazy {
         createApi(prefs.dataSource, ctx)
     }
+    private val referenceData = api.getReferenceData(lifecycleScope, carContext)
 
     private val iconGen = ChargerIconGenerator(carContext, null, oversize = 1.4f, height = 64)
+
+    init {
+        referenceData.observe(this) {
+            loadCharger()
+        }
+    }
 
     override fun onGetTemplate(): Template {
         if (charger == null) loadCharger()
@@ -181,8 +184,9 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
     }
 
     private fun loadCharger() {
+        val referenceData = referenceData.value ?: return
         lifecycleScope.launch {
-            val response = api.getChargepointDetail(getReferenceData(), chargerSparse.id)
+            val response = api.getChargepointDetail(referenceData, chargerSparse.id)
             if (response.status == Status.SUCCESS) {
                 charger = response.data!!
 
@@ -203,31 +207,6 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
                     CarToast.makeText(carContext, R.string.connection_error, CarToast.LENGTH_LONG)
                         .show()
                 }
-            }
-        }
-    }
-
-    private suspend fun getReferenceData(): ReferenceData {
-        val api = api
-        return when (api) {
-            is GoingElectricApiWrapper -> {
-                GEReferenceDataRepository(
-                    api,
-                    lifecycleScope,
-                    db.geReferenceDataDao(),
-                    prefs
-                ).getReferenceData().await()
-            }
-            is OpenChargeMapApiWrapper -> {
-                OCMReferenceDataRepository(
-                    api,
-                    lifecycleScope,
-                    db.ocmReferenceDataDao(),
-                    prefs
-                ).getReferenceData().await()
-            }
-            else -> {
-                throw RuntimeException("no reference data implemented")
             }
         }
     }

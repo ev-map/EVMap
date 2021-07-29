@@ -19,7 +19,9 @@ import net.vonforst.evmap.api.openchargemap.OCMReferenceData
 import net.vonforst.evmap.api.openchargemap.OpenChargeMapApiWrapper
 import net.vonforst.evmap.api.stringProvider
 import net.vonforst.evmap.model.*
-import net.vonforst.evmap.storage.*
+import net.vonforst.evmap.storage.AppDatabase
+import net.vonforst.evmap.storage.FilterProfile
+import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.utils.distanceBetween
 import java.io.IOException
 
@@ -54,48 +56,19 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
     val mapPosition: MutableLiveData<MapPosition> by lazy {
         MutableLiveData<MapPosition>()
     }
-    private val filterValues: LiveData<List<FilterValue>> by lazy {
-        MediatorLiveData<List<FilterValue>>().apply {
-            var source: LiveData<List<FilterValue>>? = null
-            addSource(filterStatus) { status ->
-                source?.let { removeSource(it) }
-                source = db.filterValueDao().getFilterValues(status, prefs.dataSource)
-                addSource(source!!) { result ->
-                    value = result
-                }
+    val filterStatus: MutableLiveData<Long> by lazy {
+        MutableLiveData<Long>().apply {
+            value = prefs.filterStatus
+            observeForever {
+                prefs.filterStatus = it
+                if (it != FILTERS_DISABLED) prefs.lastFilterProfile = it
             }
         }
     }
-    private val referenceData: LiveData<out ReferenceData> by lazy {
-        val api = api
-        when (api) {
-            is GoingElectricApiWrapper -> {
-                GEReferenceDataRepository(
-                    api,
-                    viewModelScope,
-                    db.geReferenceDataDao(),
-                    prefs
-                ).getReferenceData()
-            }
-            is OpenChargeMapApiWrapper -> {
-                OCMReferenceDataRepository(
-                    api,
-                    viewModelScope,
-                    db.ocmReferenceDataDao(),
-                    prefs
-                ).getReferenceData()
-            }
-            else -> {
-                throw RuntimeException("no reference data implemented")
-            }
-        }
-    }
-    private val filters = MediatorLiveData<List<Filter<FilterValue>>>().apply {
-        addSource(referenceData) { data ->
-            val api = api
-            value = api.getFilters(data, application.stringProvider())
-        }
-    }
+    private val filterValues: LiveData<List<FilterValue>> =
+        db.filterValueDao().getFilterValues(filterStatus, prefs.dataSource)
+    private val referenceData = api.getReferenceData(viewModelScope, application)
+    private val filters = api.getFilters(referenceData, application.stringProvider())
 
     private val filtersWithValue: LiveData<FilterValues> by lazy {
         filtersWithValue(filters, filterValues)
@@ -267,16 +240,6 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
             value = prefs.mapTrafficEnabled
             observeForever {
                 prefs.mapTrafficEnabled = it
-            }
-        }
-    }
-
-    val filterStatus: MutableLiveData<Long> by lazy {
-        MutableLiveData<Long>().apply {
-            value = prefs.filterStatus
-            observeForever {
-                prefs.filterStatus = it
-                if (it != FILTERS_DISABLED) prefs.lastFilterProfile = it
             }
         }
     }

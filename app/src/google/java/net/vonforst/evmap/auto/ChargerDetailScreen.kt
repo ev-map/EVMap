@@ -48,7 +48,10 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
     }
     private val referenceData = api.getReferenceData(lifecycleScope, carContext)
 
-    private val iconGen = ChargerIconGenerator(carContext, null, oversize = 1.4f, height = 64)
+    private val imageSize = 128  // images should be 128dp according to docs
+
+    private val iconGen =
+        ChargerIconGenerator(carContext, null, oversize = 1.4f, height = imageSize)
 
     init {
         referenceData.observe(this) {

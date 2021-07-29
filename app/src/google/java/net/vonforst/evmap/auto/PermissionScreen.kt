@@ -9,7 +9,6 @@ import net.vonforst.evmap.R
 /**
  * Screen to grant location permission
  */
-@androidx.car.app.annotations.ExperimentalCarApi
 class PermissionScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx) {
     override fun onGetTemplate(): Template {
         return MessageTemplate.Builder(carContext.getString(R.string.auto_location_permission_needed))

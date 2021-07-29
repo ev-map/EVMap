@@ -10,7 +10,6 @@ import net.vonforst.evmap.R
 /**
  * Welcome screen with selection between favorites and nearby chargers
  */
-@androidx.car.app.annotations.ExperimentalCarApi
 class WelcomeScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx), LocationAwareScreen {
     private var location: Location? = null
 

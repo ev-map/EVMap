@@ -40,7 +40,6 @@ import kotlin.math.roundToInt
 /**
  * Main map screen showing either nearby chargers or favorites
  */
-@androidx.car.app.annotations.ExperimentalCarApi
 class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boolean = false) :
     Screen(ctx), LocationAwareScreen {
     private var updateCoroutine: Job? = null

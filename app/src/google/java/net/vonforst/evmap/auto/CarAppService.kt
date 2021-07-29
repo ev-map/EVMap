@@ -21,7 +21,6 @@ interface LocationAwareScreen {
     fun updateLocation(location: Location)
 }
 
-@androidx.car.app.annotations.ExperimentalCarApi
 class CarAppService : androidx.car.app.CarAppService() {
     override fun createHostValidator(): HostValidator {
         return if (applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0) {
@@ -38,7 +37,6 @@ class CarAppService : androidx.car.app.CarAppService() {
     }
 }
 
-@androidx.car.app.annotations.ExperimentalCarApi
 class EVMapSession(val cas: CarAppService) : Session(), LifecycleObserver {
     var mapScreen: LocationAwareScreen? = null
         set(value) {

@@ -41,7 +41,5 @@
             android:name=".auto.CarLocationService"
             android:foregroundServiceType="location"
             android:enabled="true" />
-
-        <activity android:name=".auto.PermissionActivity" />
     </application>
 </manifest>

@@ -1,10 +1,7 @@
 package net.vonforst.evmap.auto
 
-import android.content.Intent
-import android.os.Bundle
-import android.os.ResultReceiver
+import android.Manifest
 import androidx.car.app.CarContext
-import androidx.car.app.CarToast
 import androidx.car.app.Screen
 import androidx.car.app.model.*
 import net.vonforst.evmap.R
@@ -23,32 +20,7 @@ class PermissionScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx)
                     .setTitle(carContext.getString(R.string.grant_on_phone))
                     .setBackgroundColor(CarColor.PRIMARY)
                     .setOnClickListener(ParkedOnlyOnClickListener.create {
-                        val intent = Intent(carContext, PermissionActivity::class.java)
-                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                            .putExtra(
-                                PermissionActivity.EXTRA_RESULT_RECEIVER,
-                                object : ResultReceiver(null) {
-                                    override fun onReceiveResult(
-                                        resultCode: Int,
-                                        resultData: Bundle?
-                                    ) {
-                                        if (resultData!!.getBoolean(PermissionActivity.RESULT_GRANTED)) {
-                                            session.bindLocationService()
-                                            screenManager.push(
-                                                WelcomeScreen(
-                                                    carContext,
-                                                    session
-                                                )
-                                            )
-                                        }
-                                    }
-                                })
-                        carContext.startActivity(intent)
-                        CarToast.makeText(
-                            carContext,
-                            R.string.opened_on_phone,
-                            CarToast.LENGTH_LONG
-                        ).show()
+                        requestPermissions()
                     })
                     .build()
             )
@@ -61,5 +33,22 @@ class PermissionScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx)
                     .build(),
             )
             .build()
+    }
+
+    private fun requestPermissions() {
+        val permission = Manifest.permission.ACCESS_FINE_LOCATION
+        carContext.requestPermissions(listOf(permission)) { granted, rejected ->
+            if (granted.contains(permission)) {
+                session.bindLocationService()
+                screenManager.push(
+                    WelcomeScreen(
+                        carContext,
+                        session
+                    )
+                )
+            } else {
+                requestPermissions()
+            }
+        }
     }
 }

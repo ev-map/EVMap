@@ -77,7 +77,7 @@ data class OCMChargepoint(
                 val comment = userComments.filter { it.commentTypeId == faultReportCommentType }
                     .maxByOrNull { it.dateCreated }
                 if (comment != null) {
-                    return FaultReport(comment.dateCreated.toInstant(), comment.comment)
+                    return FaultReport(comment.dateCreated.toInstant(), comment.comment ?: "")
                 }
             }
             if (statusType != null && statusType.id in faultStatuses) {
@@ -229,7 +229,7 @@ data class OCMMediaItem(
 data class OCMUserComment(
     @Json(name = "ID") val id: Long,
     @Json(name = "CommentTypeID") val commentTypeId: Long,
-    @Json(name = "Comment") val comment: String,
+    @Json(name = "Comment") val comment: String?,
     @Json(name = "UserName") val userName: String,
     @Json(name = "DateCreated") val dateCreated: ZonedDateTime
 )

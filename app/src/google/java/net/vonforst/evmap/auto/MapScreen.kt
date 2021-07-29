@@ -9,6 +9,7 @@ import androidx.car.app.Screen
 import androidx.car.app.model.*
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
+import com.car2go.maps.model.LatLng
 import kotlinx.coroutines.*
 import net.vonforst.evmap.R
 import net.vonforst.evmap.api.availability.ChargeLocationStatus

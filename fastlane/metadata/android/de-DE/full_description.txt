@@ -1,18 +1,17 @@
-Mit EVMap kannst du Stromtankstellen in deiner Nähe komfortabel über dein Android-Smartphone finden. Die Datenbank von GoingElectric.de wird als Datenquelle genutzt und bietet Community-gepflegte Informationen zu mehr als 100.000 Ladepunkten an über 40.000 Standorten in 48 Ländern (die meisten in Europa). Für viele Ladepunkte kann zusätzlich der aktuelle Status (verfügbar oder belegt) angezeigt werden.
+Mit EVMap kannst du Stromtankstellen in deiner Nähe komfortabel über dein Android-Smartphone finden. Die Datenbanken von GoingElectric.de oder Open Charge Map werden als Datenquelle genutzt und bieten Community-gepflegte Informationen zu Ladestationen auf der ganzen Welt. Für viele Ladepunkte in Europa kann zusätzlich der aktuelle Status (verfügbar oder belegt) angezeigt werden.
 
 Funktionen:
 - Zeitgemäßes Material Design
-- Anzeige der Stromtankstellen aus dem GoingElectric-Stromtankstellenverzeichnis
-- Echtzeit-Verfügbarkeitsanzeige für viele Ladesäulen
-- Direkte Links zu Chargeprice.app für einen Preisvergleich für die jeweilige Ladesäule
-- Markierung des aktuellen Standorts
-- Google Maps-Verkehrsdaten
+- Anzeige der Stromtankstellen aus den Stromtankstellenverzeichnissen von GoingElectric.de und Open Charge Map
+- Echtzeit-Verfügbarkeitsanzeige für viele Ladesäulen (nur in Europa)
+- Integrierter Preisvergleich für die jeweilige Ladesäule mit Chargeprice.app (nur in Europa)
+- Google Maps oder OpenStreetMap (Mapbox) können für die Kartendaten genutzt werden
 - Suche nach Orten
-- Erweiterte Filterfunktionen
+- Erweiterte Filterfunktionen, Filterprofile speichern
 - Favoritenliste, auch mit Anzeige der Verfügbarkeit
 - Unterstützung für Android Auto
 - Keine nervige Werbung
 
 EVMap ist ein Open-Source-Projekt und unter https://github.com/johan12345/EVMap zu finden.
 
-Die App ist kein offizielles Angebot von GoingElectric.de, sondern nutzt die öffentliche API dieser Seite.
+Die App ist kein offizielles Angebot von GoingElectric.de oder Open Charge Map, sondern nutzt die öffentlichen APIs dieser Seiten.

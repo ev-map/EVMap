@@ -15,10 +15,11 @@ Features
 
 - [Material Design](https://material.io/)
 - Shows all charging stations from the community-maintained [GoingElectric.de](https://www.goingelectric.de/stromtankstellen/) and [Open Charge Map](https://openchargemap.org) directories
-- Realtime availability information (beta)
-- Search places
+- Realtime availability information (only in Europe)
+- Search for places
+- Advanced filtering options, including saved filter profiles
 - Favorites list, also with availability information
-- Charging price comparison, powered by [Chargeprice.app](https://chargeprice.app)
+- Integrated price comparison using Chargeprice.app [Chargeprice.app](https://chargeprice.app) (only in Europe)
 - Android Auto integration
 - No ads, fully open source
 - Compatible with Android 5.0 and above

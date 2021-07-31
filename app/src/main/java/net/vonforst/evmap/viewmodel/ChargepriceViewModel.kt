@@ -92,7 +92,14 @@ class ChargepriceViewModel(application: Application, chargepriceApiKey: String) 
         MutableLiveData<List<Float>>().apply {
             value = prefs.chargepriceBatteryRange
             observeForever {
-                prefs.chargepriceBatteryRange = it
+                if (it[0] == it[1]) {
+                    value = if (it[0] < 1.0) {
+                        listOf(it[0], it[1] + 1)
+                    } else {
+                        listOf(it[0] - 1, it[1])
+                    }
+                }
+                prefs.chargepriceBatteryRange = value!!
             }
         }
     }

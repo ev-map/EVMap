@@ -1,0 +1,2 @@
+- Chargeprice: Prevent selection of same state of charge for start and end
+- Fixed crashes

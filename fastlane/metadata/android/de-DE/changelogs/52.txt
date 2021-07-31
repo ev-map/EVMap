@@ -1,0 +1,2 @@
+- Chargeprice: Auswahl von gleichem Start- und Endladestand verhindert
+- Abstürze behoben

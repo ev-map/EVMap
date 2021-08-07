@@ -168,7 +168,7 @@ class CheckableConnectorAdapter : DataBindingAdapter<Chargepoint>() {
         }
         root.setOnCheckedChangeListener { v: View, checked: Boolean ->
             if (checked) {
-                checkedItem = position
+                checkedItem = holder.bindingAdapterPosition
                 root.post {
                     notifyDataSetChanged()
                 }

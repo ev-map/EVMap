@@ -3,6 +3,7 @@ package net.vonforst.evmap.autocomplete
 import android.content.Context
 import android.content.Intent
 import android.view.inputmethod.InputMethodManager
+import androidx.core.os.ConfigurationCompat
 import androidx.fragment.app.Fragment
 import com.car2go.maps.model.LatLng
 import com.car2go.maps.model.LatLngBounds
@@ -15,9 +16,13 @@ import net.vonforst.evmap.fragment.REQUEST_AUTOCOMPLETE
 import net.vonforst.evmap.viewmodel.PlaceWithBounds
 
 
-fun launchAutocomplete(fragment: Fragment) {
-    val placeOptions = PlaceOptions.builder()
-        .build(PlaceOptions.MODE_CARDS)
+fun launchAutocomplete(fragment: Fragment, location: LatLng?) {
+    val placeOptions = PlaceOptions.builder().apply {
+        location?.let {
+            proximity(Point.fromLngLat(location.longitude, location.latitude))
+        }
+        language(ConfigurationCompat.getLocales(fragment.resources.configuration)[0].language)
+    }.build(PlaceOptions.MODE_CARDS)
 
     val intent = PlaceAutocomplete.IntentBuilder()
         .accessToken(fragment.getString(R.string.mapbox_key))

@@ -297,7 +297,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             bottomSheetBehavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT
         }
         binding.search.setOnClickListener {
-            launchAutocomplete(this)
+            launchAutocomplete(this, vm.location.value)
         }
         binding.detailAppBar.toolbar.setNavigationOnClickListener {
             bottomSheetBehavior.state = STATE_COLLAPSED

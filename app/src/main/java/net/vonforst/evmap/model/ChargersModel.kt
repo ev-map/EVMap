@@ -24,10 +24,11 @@ import kotlin.math.floor
 
 sealed class ChargepointListItem
 
-@Entity
+@Entity(primaryKeys = ["id", "dataSource"])
 @Parcelize
 data class ChargeLocation(
-    @PrimaryKey val id: Long,
+    val id: Long,
+    val dataSource: String,
     val name: String,
     @Embedded val coordinates: Coordinate,
     @Embedded val address: Address,

@@ -56,6 +56,7 @@ data class GEChargeLocation(
 ) : GEChargepointListItem() {
     override fun convert(apikey: String) = ChargeLocation(
         id,
+        "goingelectric",
         name,
         coordinates.convert(),
         address.convert(),

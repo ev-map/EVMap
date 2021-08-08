@@ -46,6 +46,7 @@ data class OCMChargepoint(
 ) {
     fun convert(refData: OCMReferenceData) = ChargeLocation(
         id,
+        "openchargemap",
         addressInfo.title,
         Coordinate(addressInfo.latitude, addressInfo.longitude),
         addressInfo.toAddress(refData),

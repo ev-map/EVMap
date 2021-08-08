@@ -257,10 +257,13 @@ abstract class AppDatabase : RoomDatabase() {
 
         private val MIGRATION_13 = object : Migration(12, 13) {
             override fun migrate(db: SupportSQLiteDatabase) {
-                // this should have been included in MIGRATION_12:
-                // Update GoingElectric format of plug types for favorites to generic EVMap format
                 db.beginTransaction()
                 try {
+                    // add column dataSource to ChargeLocation table
+                    db.execSQL("ALTER TABLE `ChargeLocation` ADD `dataSource` TEXT NOT NULL DEFAULT 'openchargemap'")
+
+                    // this should have been included in MIGRATION_12:
+                    // Update GoingElectric format of plug types for favorites to generic EVMap format
                     val cursor = db.query("SELECT * FROM `ChargeLocation`")
                     while (cursor.moveToNext()) {
                         val chargepoints =
@@ -268,16 +271,30 @@ abstract class AppDatabase : RoomDatabase() {
                         val updated = chargepoints.map {
                             it.copy(type = GEChargepoint.convertTypeFromGE(it.type))
                         }
-                        db.update(
-                            "ChargeLocation",
-                            SQLiteDatabase.CONFLICT_ROLLBACK,
-                            ContentValues().apply {
-                                put("chargepoints", Converters().fromChargepointList(updated))
-                            },
-                            "id = ?",
-                            arrayOf(cursor.getLong(cursor.getColumnIndex("id")))
-                        )
+                        if (updated != chargepoints) {
+                            db.update(
+                                "ChargeLocation",
+                                SQLiteDatabase.CONFLICT_ROLLBACK,
+                                ContentValues().apply {
+                                    put("chargepoints", Converters().fromChargepointList(updated))
+                                    put("dataSource", "goingelectric")
+                                },
+                                "id = ?",
+                                arrayOf(cursor.getLong(cursor.getColumnIndex("id")))
+                            )
+                        }
                     }
+
+                    // update ChargeLocation table to change primary key
+                    db.execSQL(
+                        "CREATE TABLE `ChargeLocationNew` (`id` INTEGER NOT NULL, `dataSource` TEXT NOT NULL, `name` TEXT NOT NULL, `chargepoints` TEXT NOT NULL, `network` TEXT, `url` TEXT NOT NULL, `editUrl` TEXT, `verified` INTEGER NOT NULL, `barrierFree` INTEGER, `operator` TEXT, `generalInformation` TEXT, `amenities` TEXT, `locationDescription` TEXT, `photos` TEXT, `chargecards` TEXT, `license` TEXT, `lat` REAL NOT NULL, `lng` REAL NOT NULL, `city` TEXT, `country` TEXT, `postcode` TEXT, `street` TEXT, `fault_report_created` INTEGER, `fault_report_description` TEXT, `twentyfourSeven` INTEGER, `description` TEXT, `mostart` TEXT, `moend` TEXT, `tustart` TEXT, `tuend` TEXT, `westart` TEXT, `weend` TEXT, `thstart` TEXT, `thend` TEXT, `frstart` TEXT, `frend` TEXT, `sastart` TEXT, `saend` TEXT, `sustart` TEXT, `suend` TEXT, `hostart` TEXT, `hoend` TEXT, `freecharging` INTEGER, `freeparking` INTEGER, `descriptionShort` TEXT, `descriptionLong` TEXT, `chargepricecountry` TEXT, `chargepricenetwork` TEXT, `chargepriceplugTypes` TEXT, PRIMARY KEY(`id`, `dataSource`))"
+                    );
+                    val columnList =
+                        "`id`,`dataSource`,`name`,`chargepoints`,`network`,`url`,`editUrl`,`verified`,`barrierFree`,`operator`,`generalInformation`,`amenities`,`locationDescription`,`photos`,`chargecards`,`license`,`lat`,`lng`,`city`,`country`,`postcode`,`street`,`fault_report_created`,`fault_report_description`,`twentyfourSeven`,`description`,`mostart`,`moend`,`tustart`,`tuend`,`westart`,`weend`,`thstart`,`thend`,`frstart`,`frend`,`sastart`,`saend`,`sustart`,`suend`,`hostart`,`hoend`,`freecharging`,`freeparking`,`descriptionShort`,`descriptionLong`,`chargepricecountry`,`chargepricenetwork`,`chargepriceplugTypes`"
+                    db.execSQL("INSERT INTO `ChargeLocationNew`($columnList) SELECT $columnList FROM `ChargeLocation`")
+                    db.execSQL("DROP TABLE `ChargeLocation`")
+                    db.execSQL("ALTER TABLE `ChargeLocationNew` RENAME TO `ChargeLocation`")
+
                     db.setTransactionSuccessful()
                 } finally {
                     db.endTransaction()

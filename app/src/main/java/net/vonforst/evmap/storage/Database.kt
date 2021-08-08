@@ -1,6 +1,8 @@
 package net.vonforst.evmap.storage
 
+import android.content.ContentValues
 import android.content.Context
+import android.database.sqlite.SQLiteDatabase
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -8,6 +10,7 @@ import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import net.vonforst.evmap.api.goingelectric.GEChargeCard
+import net.vonforst.evmap.api.goingelectric.GEChargepoint
 import net.vonforst.evmap.api.openchargemap.OCMConnectionType
 import net.vonforst.evmap.api.openchargemap.OCMCountry
 import net.vonforst.evmap.api.openchargemap.OCMOperator
@@ -26,7 +29,7 @@ import net.vonforst.evmap.model.*
         OCMConnectionType::class,
         OCMCountry::class,
         OCMOperator::class
-    ], version = 12
+    ], version = 13
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -47,7 +50,7 @@ abstract class AppDatabase : RoomDatabase() {
                 .addMigrations(
                     MIGRATION_2, MIGRATION_3, MIGRATION_4, MIGRATION_5, MIGRATION_6,
                     MIGRATION_7, MIGRATION_8, MIGRATION_9, MIGRATION_10, MIGRATION_11,
-                    MIGRATION_12
+                    MIGRATION_12, MIGRATION_13
                 )
                 .addCallback(object : Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
@@ -245,6 +248,36 @@ abstract class AppDatabase : RoomDatabase() {
 
                     // create default filter profile for openchargemap
                     db.execSQL("INSERT INTO `FilterProfile` (`dataSource`, `name`, `id`, `order`) VALUES ('openchargemap', 'FILTERS_CUSTOM', $FILTERS_CUSTOM, 0)")
+                    db.setTransactionSuccessful()
+                } finally {
+                    db.endTransaction()
+                }
+            }
+        }
+
+        private val MIGRATION_13 = object : Migration(12, 13) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                // this should have been included in MIGRATION_12:
+                // Update GoingElectric format of plug types for favorites to generic EVMap format
+                db.beginTransaction()
+                try {
+                    val cursor = db.query("SELECT * FROM `ChargeLocation`")
+                    while (cursor.moveToNext()) {
+                        val chargepoints =
+                            Converters().toChargepointList(cursor.getString(cursor.getColumnIndex("chargepoints")))!!
+                        val updated = chargepoints.map {
+                            it.copy(type = GEChargepoint.convertTypeFromGE(it.type))
+                        }
+                        db.update(
+                            "ChargeLocation",
+                            SQLiteDatabase.CONFLICT_ROLLBACK,
+                            ContentValues().apply {
+                                put("chargepoints", Converters().fromChargepointList(updated))
+                            },
+                            "id = ?",
+                            arrayOf(cursor.getLong(cursor.getColumnIndex("id")))
+                        )
+                    }
                     db.setTransactionSuccessful()
                 } finally {
                     db.endTransaction()

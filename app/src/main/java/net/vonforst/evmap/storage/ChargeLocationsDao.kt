@@ -9,6 +9,9 @@ interface ChargeLocationsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(vararg locations: ChargeLocation)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertBlocking(vararg locations: ChargeLocation)
+
     @Delete
     suspend fun delete(vararg locations: ChargeLocation)
 
@@ -17,4 +20,7 @@ interface ChargeLocationsDao {
 
     @Query("SELECT * FROM chargelocation")
     suspend fun getAllChargeLocationsAsync(): List<ChargeLocation>
+
+    @Query("SELECT * FROM chargelocation")
+    fun getAllChargeLocationsBlocking(): List<ChargeLocation>
 }

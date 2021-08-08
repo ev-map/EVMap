@@ -51,6 +51,12 @@ class FilterFragment : Fragment() {
             (requireActivity() as MapsActivity).appBarConfiguration
         )
 
+        vm.filterProfile.observe(viewLifecycleOwner) {
+            if (it != null) {
+                toolbar.title = "${getString(R.string.menu_filter)}: ${it.name}"
+            }
+        }
+
         binding.filtersList.apply {
             adapter = FiltersAdapter()
             layoutManager =

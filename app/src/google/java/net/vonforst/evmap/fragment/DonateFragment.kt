@@ -54,6 +54,10 @@ class DonateFragment : Fragment() {
             layoutManager = LinearLayoutManager(context)
         }
 
+        vm.products.observe(viewLifecycleOwner) {
+            print(it)
+        }
+
         vm.purchaseSuccessful.observe(viewLifecycleOwner, Observer {
             Snackbar.make(view, R.string.donation_successful, Snackbar.LENGTH_LONG).show()
         })

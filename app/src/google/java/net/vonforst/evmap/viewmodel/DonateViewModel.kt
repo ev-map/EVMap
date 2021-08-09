@@ -54,12 +54,12 @@ class DonateViewModel(application: Application) : AndroidViewModel(application),
             .build()
         billingClient.querySkuDetailsAsync(params) { result, details ->
             if (result.responseCode == BillingClient.BillingResponseCode.OK && details != null) {
-                products.value = Resource.success(details
+                products.postValue(Resource.success(details
                     .sortedBy { it.priceAmountMicros }
                     .map { DonationItem(it) }
-                )
+                ))
             } else {
-                products.value = Resource.error(result.debugMessage, null)
+                products.postValue(Resource.error(result.debugMessage, null))
             }
         }
     }

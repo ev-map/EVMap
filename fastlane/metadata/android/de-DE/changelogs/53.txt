@@ -1,0 +1,8 @@
+Neue Funktionen:
+- Android Auto: Filterfunktion
+
+Verbesserungen:
+- Beim Bearbeiten von Filterprofilen wird der Titel des aktuellen Filterprofils angezeigt
+- Ortssuche nutzt nun immer Daten von Mapbox
+- Verfügbarkeitsanzeige in der Favoritenliste funktionierte nicht
+- Spendenfunktion funktionierte nicht

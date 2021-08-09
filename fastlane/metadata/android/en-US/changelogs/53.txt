@@ -1,0 +1,8 @@
+New features:
+- Android Auto: Filter function
+
+Improvements:
+- Show name of current filter profile while editing filters
+- Always use Mapbox data for place search
+- Availability view in favorites list was not working
+- Donation feature was not working

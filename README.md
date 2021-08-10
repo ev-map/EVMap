@@ -19,7 +19,7 @@ Features
 - Search for places
 - Advanced filtering options, including saved filter profiles
 - Favorites list, also with availability information
-- Integrated price comparison using Chargeprice.app [Chargeprice.app](https://chargeprice.app) (only in Europe)
+- Integrated price comparison using [Chargeprice.app](https://chargeprice.app) (only in Europe)
 - Android Auto integration
 - No ads, fully open source
 - Compatible with Android 5.0 and above

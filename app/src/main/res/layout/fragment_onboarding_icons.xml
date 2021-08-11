@@ -23,10 +23,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
+        android:autoSizeTextType="uniform"
         android:layout_marginBottom="28dp"
         android:text="&lt; 11 kW"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/welcomeTitle"
         app:layout_constraintEnd_toStartOf="@+id/iconLabel2"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -45,6 +46,7 @@
 
     <TextView
         android:id="@+id/iconLabel2"
+        android:autoSizeTextType="uniform"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
@@ -68,6 +70,7 @@
 
     <TextView
         android:id="@+id/iconLabel3"
+        android:autoSizeTextType="uniform"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
@@ -95,6 +98,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:text="≥ 43 kW"
+        android:autoSizeTextType="uniform"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
         app:layout_constraintEnd_toStartOf="@+id/iconLabel5"
         app:layout_constraintHorizontal_bias="0.5"
@@ -114,6 +118,7 @@
 
     <TextView
         android:id="@+id/iconLabel5"
+        android:autoSizeTextType="uniform"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
@@ -127,6 +132,7 @@
     <TextView
         android:id="@+id/welcomeTitle"
         android:layout_width="0dp"
+        android:autoSizeTextType="uniform"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
@@ -142,6 +148,7 @@
     <TextView
         android:id="@+id/welcomeText2"
         android:layout_width="0dp"
+        android:autoSizeTextType="uniform"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
@@ -158,6 +165,7 @@
 
     <Button
         android:id="@+id/btnGetStarted"
+        android:autoSizeTextType="uniform"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

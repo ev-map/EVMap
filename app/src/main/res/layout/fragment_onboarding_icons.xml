@@ -1,8 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
     android:layout_height="match_parent">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/welcomeTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintVertical_bias="0.75"
+        >
 
     <ImageView
         android:id="@+id/icon1"
@@ -23,11 +36,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:autoSizeTextType="uniform"
+
         android:layout_marginBottom="28dp"
         android:text="&lt; 11 kW"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-        app:layout_constraintBottom_toTopOf="@+id/welcomeTitle"
         app:layout_constraintEnd_toStartOf="@+id/iconLabel2"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -46,7 +58,6 @@
 
     <TextView
         android:id="@+id/iconLabel2"
-        android:autoSizeTextType="uniform"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
@@ -70,7 +81,6 @@
 
     <TextView
         android:id="@+id/iconLabel3"
-        android:autoSizeTextType="uniform"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
@@ -98,7 +108,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:text="≥ 43 kW"
-        android:autoSizeTextType="uniform"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
         app:layout_constraintEnd_toStartOf="@+id/iconLabel5"
         app:layout_constraintHorizontal_bias="0.5"
@@ -118,7 +127,6 @@
 
     <TextView
         android:id="@+id/iconLabel5"
-        android:autoSizeTextType="uniform"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
@@ -129,10 +137,11 @@
         app:layout_constraintStart_toEndOf="@+id/iconLabel4"
         app:layout_constraintTop_toBottomOf="@+id/icon5" />
 
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <TextView
         android:id="@+id/welcomeTitle"
         android:layout_width="0dp"
-        android:autoSizeTextType="uniform"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
@@ -148,7 +157,6 @@
     <TextView
         android:id="@+id/welcomeText2"
         android:layout_width="0dp"
-        android:autoSizeTextType="uniform"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
@@ -165,7 +173,6 @@
 
     <Button
         android:id="@+id/btnGetStarted"
-        android:autoSizeTextType="uniform"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

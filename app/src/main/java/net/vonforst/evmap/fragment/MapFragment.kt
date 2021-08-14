@@ -21,6 +21,7 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.MenuCompat
+import androidx.core.view.doOnNextLayout
 import androidx.core.view.updateLayoutParams
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -215,6 +216,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         favToggle = binding.detailAppBar.toolbar.menu.findItem(R.id.menu_fav)
         binding.detailAppBar.toolbar.menu.findItem(R.id.menu_edit).title =
             getString(R.string.edit_at_datasource, vm.apiName)
+
+        binding.detailView.topPart.doOnNextLayout {
+            bottomSheetBehavior.peekHeight = binding.detailView.topPart.bottom
+        }
 
         setupObservers()
         setupClickListeners()

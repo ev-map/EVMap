@@ -114,7 +114,7 @@
                 android:minWidth="50dp"
                 android:text="@{@string/distance_format(distance)}"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-                app:layout_constraintBottom_toBottomOf="@+id/topPart"
+                app:layout_constraintBottom_toBottomOf="@+id/txtConnectors"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 tools:text="10 km" />
 
@@ -302,6 +302,7 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:text="TextView"
+                android:layout_marginBottom="-10dp"
                 app:layout_constraintBottom_toBottomOf="@+id/txtConnectors"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintStart_toStartOf="@+id/guideline"

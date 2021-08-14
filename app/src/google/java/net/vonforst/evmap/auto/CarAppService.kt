@@ -63,14 +63,10 @@ class EVMapSession(val cas: CarAppService) : Session(), LifecycleObserver {
     }
 
     override fun onCreateScreen(intent: Intent): Screen {
-        return if (locationPermissionGranted()) {
-            WelcomeScreen(carContext, this)
-        } else {
-            PermissionScreen(carContext, this)
-        }
+        return WelcomeScreen(carContext, this)
     }
 
-    private fun locationPermissionGranted() =
+    fun locationPermissionGranted() =
         ContextCompat.checkSelfPermission(
             carContext,
             Manifest.permission.ACCESS_FINE_LOCATION

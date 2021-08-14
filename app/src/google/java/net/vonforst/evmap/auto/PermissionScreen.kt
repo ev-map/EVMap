@@ -1,17 +1,22 @@
 package net.vonforst.evmap.auto
 
-import android.Manifest
+import androidx.annotation.StringRes
 import androidx.car.app.CarContext
 import androidx.car.app.Screen
 import androidx.car.app.model.*
 import net.vonforst.evmap.R
 
 /**
- * Screen to grant location permission
+ * Screen to grant permission
  */
-class PermissionScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx) {
+class PermissionScreen(
+    ctx: CarContext,
+    val session: EVMapSession,
+    @StringRes val message: Int,
+    val permissions: List<String>
+) : Screen(ctx) {
     override fun onGetTemplate(): Template {
-        return MessageTemplate.Builder(carContext.getString(R.string.auto_location_permission_needed))
+        return MessageTemplate.Builder(carContext.getString(message))
             .setTitle(carContext.getString(R.string.app_name))
             .setHeaderAction(Action.APP_ICON)
             .addAction(
@@ -35,16 +40,9 @@ class PermissionScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx)
     }
 
     private fun requestPermissions() {
-        val permission = Manifest.permission.ACCESS_FINE_LOCATION
-        carContext.requestPermissions(listOf(permission)) { granted, rejected ->
-            if (granted.contains(permission)) {
-                session.bindLocationService()
-                screenManager.push(
-                    WelcomeScreen(
-                        carContext,
-                        session
-                    )
-                )
+        carContext.requestPermissions(permissions) { granted, rejected ->
+            if (granted.containsAll(permissions)) {
+                screenManager.pop()
             } else {
                 requestPermissions()
             }

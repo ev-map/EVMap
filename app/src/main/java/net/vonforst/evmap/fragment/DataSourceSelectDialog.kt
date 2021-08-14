@@ -41,9 +41,10 @@ class DataSourceSelectDialog : AppCompatDialogFragment() {
     override fun onStart() {
         super.onStart()
 
+        // dialog with 95% screen height
         dialog?.window?.setLayout(
             ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
+            (resources.displayMetrics.heightPixels * 0.95).toInt()
         )
     }
 

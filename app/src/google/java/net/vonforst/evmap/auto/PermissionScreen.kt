@@ -11,7 +11,6 @@ import net.vonforst.evmap.R
  */
 class PermissionScreen(
     ctx: CarContext,
-    val session: EVMapSession,
     @StringRes val message: Int,
     val permissions: List<String>
 ) : Screen(ctx) {

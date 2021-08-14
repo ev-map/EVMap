@@ -25,6 +25,7 @@
     <string name="open_in_app">Open in app</string>
     <string name="opened_on_phone">Opened on phone</string>
     <string name="auto_location_permission_needed">To run EVMap on Android Auto, you need to grant access to your location.</string>
+    <string name="auto_vehicle_data_permission_needed">For this feature, EVMap needs access to your vehicle data.</string>
     <string name="grant_on_phone">Grant on phone</string>
     <string name="auto_chargers_closeby">Nearby chargers</string>
     <string name="auto_favorites">Favorites</string>

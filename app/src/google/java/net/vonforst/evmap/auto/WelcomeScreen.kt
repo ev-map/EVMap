@@ -22,7 +22,6 @@ class WelcomeScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx), L
                 screenManager.pushForResult(
                     PermissionScreen(
                         carContext,
-                        session,
                         R.string.auto_location_permission_needed,
                         listOf(Manifest.permission.ACCESS_FINE_LOCATION)
                     )

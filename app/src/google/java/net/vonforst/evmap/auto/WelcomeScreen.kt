@@ -7,6 +7,7 @@ import android.os.Looper
 import androidx.car.app.CarContext
 import androidx.car.app.Screen
 import androidx.car.app.model.*
+import androidx.car.app.versioning.CarAppApiLevels
 import androidx.core.graphics.drawable.IconCompat
 import net.vonforst.evmap.R
 
@@ -81,21 +82,23 @@ class WelcomeScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx), L
                                 screenManager.push(MapScreen(carContext, session, favorites = true))
                             }
                             .build())
-                    addItem(
-                        Row.Builder()
-                            .setTitle(carContext.getString(R.string.auto_vehicle_data))
-                            .setImage(
-                                CarIcon.Builder(
-                                    IconCompat.createWithResource(carContext, R.drawable.ic_car)
-                                ).setTint(CarColor.DEFAULT).build()
-                            )
-                            .setBrowsable(true)
-                            .setOnClickListener {
-                                session.mapScreen = null
-                                screenManager.push(VehicleDataScreen(carContext))
-                            }
-                            .build()
-                    )
+                    if (carContext.carAppApiLevel >= CarAppApiLevels.LEVEL_3) {
+                        addItem(
+                            Row.Builder()
+                                .setTitle(carContext.getString(R.string.auto_vehicle_data))
+                                .setImage(
+                                    CarIcon.Builder(
+                                        IconCompat.createWithResource(carContext, R.drawable.ic_car)
+                                    ).setTint(CarColor.DEFAULT).build()
+                                )
+                                .setBrowsable(true)
+                                .setOnClickListener {
+                                    session.mapScreen = null
+                                    screenManager.push(VehicleDataScreen(carContext))
+                                }
+                                .build()
+                        )
+                    }
                 }.build())
                 setCurrentLocationEnabled(true)
             }

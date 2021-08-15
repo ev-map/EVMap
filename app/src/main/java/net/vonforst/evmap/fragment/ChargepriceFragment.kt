@@ -161,7 +161,7 @@ class ChargepriceFragment : DialogFragment() {
         }
 
         binding.imgChargepriceLogo.setOnClickListener {
-            (requireActivity() as MapsActivity).openUrl("https://www.chargeprice.app/?poi_id=${charger.id}&poi_source=going_electric")
+            (requireActivity() as MapsActivity).openUrl("https://www.chargeprice.app/?poi_id=${charger.id}&poi_source=${dataSource}")
         }
 
         binding.btnSettings.setOnClickListener {

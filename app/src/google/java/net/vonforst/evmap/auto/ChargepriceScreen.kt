@@ -1,6 +1,12 @@
 package net.vonforst.evmap.auto
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.net.Uri
+import androidx.browser.customtabs.CustomTabColorSchemeParams
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.car.app.CarContext
+import androidx.car.app.CarToast
 import androidx.car.app.Screen
 import androidx.car.app.hardware.CarHardwareManager
 import androidx.car.app.hardware.info.Model
@@ -10,7 +16,7 @@ import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import moe.banana.jsonapi2.HasOne
-import net.vonforst.evmap.R
+import net.vonforst.evmap.*
 import net.vonforst.evmap.api.chargeprice.*
 import net.vonforst.evmap.model.ChargeLocation
 import net.vonforst.evmap.storage.AppDatabase
@@ -65,7 +71,37 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
                                 R.drawable.ic_chargeprice
                             )
                         ).build()
-                    ).build()
+                    ).setOnClickListener {
+                        val intent = CustomTabsIntent.Builder()
+                            .setDefaultColorSchemeParams(
+                                CustomTabColorSchemeParams.Builder()
+                                    .setToolbarColor(
+                                        ContextCompat.getColor(
+                                            carContext,
+                                            R.color.colorPrimary
+                                        )
+                                    )
+                                    .build()
+                            )
+                            .build().intent
+                        intent.data =
+                            Uri.parse("https://www.chargeprice.app/?poi_id=${charger.id}&poi_source=${getDataAdapter()}")
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        try {
+                            carContext.startActivity(intent)
+                            CarToast.makeText(
+                                carContext,
+                                R.string.opened_on_phone,
+                                CarToast.LENGTH_LONG
+                            ).show()
+                        } catch (e: ActivityNotFoundException) {
+                            CarToast.makeText(
+                                carContext,
+                                R.string.no_browser_app_found,
+                                CarToast.LENGTH_LONG
+                            ).show()
+                        }
+                    }.build()
                 ).build()
             )
         }.build()
@@ -120,11 +156,7 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
     }
 
     private fun loadPrices(model: Model) {
-        val dataAdapter = when (charger.dataSource) {
-            "goingelectric" -> ChargepriceApi.DATA_SOURCE_GOINGELECTRIC
-            "openchargemap" -> ChargepriceApi.DATA_SOURCE_OPENCHARGEMAP
-            else -> return
-        }
+        val dataAdapter = getDataAdapter() ?: return
         val manufacturer = model.manufacturer.value
         val modelName = model.name.value
         lifecycleScope.launch {
@@ -212,5 +244,11 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
                 }
             invalidate()
         }
+    }
+
+    private fun getDataAdapter(): String? = when (charger.dataSource) {
+        "goingelectric" -> ChargepriceApi.DATA_SOURCE_GOINGELECTRIC
+        "openchargemap" -> ChargepriceApi.DATA_SOURCE_OPENCHARGEMAP
+        else -> null
     }
 }

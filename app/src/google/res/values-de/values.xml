@@ -22,6 +22,10 @@
     <string name="auto_fault_report_date">⚠️ Störungsmeldung (%s)</string>
     <string name="auto_no_refresh_possible">Weitere Aktualisierung nicht möglich. Bitte zurück gehen und neu starten.</string>
     <string name="auto_vehicle_data">Fahrzeugdaten</string>
+    <string name="auto_charging_level">Ladezustand</string>
+    <string name="auto_no_data">Nicht verfügbar</string>
+    <string name="auto_range">Reichweite</string>
+    <string name="auto_speed">Geschwindigkeit</string>
     <string name="welcome_android_auto">Android Auto-Unterstützung</string>
     <string name="welcome_android_auto_detail">Auf unterstützen Autos kannst du EVMap auch mit Android Auto nutzen. Öffne dazu einfach die EVMap-App aus dem Menü von Android Auto.</string>
     <string name="sounds_cool">klingt cool</string>

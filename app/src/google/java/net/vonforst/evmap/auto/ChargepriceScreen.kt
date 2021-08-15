@@ -6,6 +6,7 @@ import androidx.car.app.hardware.CarHardwareManager
 import androidx.car.app.hardware.info.Model
 import androidx.car.app.model.*
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import moe.banana.jsonapi2.HasOne
@@ -55,6 +56,18 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
                     }
                 }.build())
             }
+            setActionStrip(
+                ActionStrip.Builder().addAction(
+                    Action.Builder().setIcon(
+                        CarIcon.Builder(
+                            IconCompat.createWithResource(
+                                carContext,
+                                R.drawable.ic_chargeprice
+                            )
+                        ).build()
+                    ).build()
+                ).build()
+            )
         }.build()
     }
 

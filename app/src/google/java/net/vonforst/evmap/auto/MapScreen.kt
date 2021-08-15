@@ -44,7 +44,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
     Screen(ctx), LocationAwareScreen {
     private var updateCoroutine: Job? = null
     private var numUpdates = 0
-    private val maxNumUpdates = 3
+    private val maxNumUpdates = 2
 
     private var location: Location? = null
     private var lastUpdateLocation: Location? = null

@@ -11,6 +11,7 @@ import net.vonforst.evmap.R
 import net.vonforst.evmap.adapter.Equatable
 import net.vonforst.evmap.api.equivalentPlugTypes
 import net.vonforst.evmap.model.ChargeLocation
+import net.vonforst.evmap.model.Chargepoint
 import net.vonforst.evmap.ui.currency
 import kotlin.math.ceil
 import kotlin.math.floor
@@ -148,6 +149,26 @@ class ChargepriceCar : Resource(), Equatable {
         result = 31 * result + manufacturer.hashCode()
         return result
     }
+
+    private val acConnectors = listOf(
+        Chargepoint.CEE_BLAU,
+        Chargepoint.CEE_ROT,
+        Chargepoint.SCHUKO,
+        Chargepoint.TYPE_1,
+        Chargepoint.TYPE_2_UNKNOWN,
+        Chargepoint.TYPE_2_SOCKET,
+        Chargepoint.TYPE_2_PLUG
+    )
+    private val plugMapping = mapOf(
+        "ccs" to Chargepoint.CCS_UNKNOWN,
+        "tesla_suc" to Chargepoint.SUPERCHARGER,
+        "tesla_ccs" to Chargepoint.CCS_UNKNOWN,
+        "chademo" to Chargepoint.CHADEMO
+    )
+    val compatibleEvmapConnectors: List<String>
+        get() = dcChargePorts.map {
+            plugMapping[it]
+        }.filterNotNull().plus(acConnectors)
 }
 
 @JsonApi(type = "brand")

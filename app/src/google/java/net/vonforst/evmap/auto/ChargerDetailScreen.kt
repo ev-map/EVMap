@@ -150,29 +150,46 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
                             navigateToCharger(charger)
                         }
                         .build())
-                    addAction(
-                        Action.Builder()
-                            .setTitle(carContext.getString(R.string.open_in_app))
-                            .setOnClickListener(ParkedOnlyOnClickListener.create {
-                                val intent = Intent(carContext, MapsActivity::class.java)
-                                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                    .putExtra(EXTRA_CHARGER_ID, charger.id)
-                                    .putExtra(EXTRA_LAT, charger.coordinates.lat)
-                                    .putExtra(EXTRA_LON, charger.coordinates.lng)
-                                carContext.startActivity(intent)
-                                CarToast.makeText(
+                    addAction(Action.Builder()
+                        .setIcon(
+                            CarIcon.Builder(
+                                IconCompat.createWithResource(
                                     carContext,
-                                    R.string.opened_on_phone,
-                                    CarToast.LENGTH_LONG
-                                ).show()
-                            })
-                            .build()
-                    )
+                                    R.drawable.ic_chargeprice
+                                )
+                            ).build()
+                        )
+                        .setTitle(carContext.getString(R.string.auto_prices))
+                        .setOnClickListener {
+                            screenManager.push(ChargepriceScreen(carContext, charger))
+                        }
+                        .build())
+
                 } ?: setLoading(true)
             }.build()
         ).apply {
             setTitle(chargerSparse.name)
             setHeaderAction(Action.BACK)
+            setActionStrip(
+                ActionStrip.Builder().addAction(
+                    Action.Builder()
+                        .setTitle(carContext.getString(R.string.open_in_app))
+                        .setOnClickListener(ParkedOnlyOnClickListener.create {
+                            val intent = Intent(carContext, MapsActivity::class.java)
+                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                .putExtra(EXTRA_CHARGER_ID, chargerSparse.id)
+                                .putExtra(EXTRA_LAT, chargerSparse.coordinates.lat)
+                                .putExtra(EXTRA_LON, chargerSparse.coordinates.lng)
+                            carContext.startActivity(intent)
+                            CarToast.makeText(
+                                carContext,
+                                R.string.opened_on_phone,
+                                CarToast.LENGTH_LONG
+                            ).show()
+                        })
+                        .build()
+                ).build()
+            )
         }.build()
     }
 

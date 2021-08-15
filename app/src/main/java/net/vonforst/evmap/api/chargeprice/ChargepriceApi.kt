@@ -15,6 +15,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import java.util.*
 
 interface ChargepriceApi {
     @POST("charge_prices")
@@ -32,6 +33,9 @@ interface ChargepriceApi {
     companion object {
         private val cacheSize = 1L * 1024 * 1024 // 1MB
         val supportedLanguages = setOf("de", "en", "fr", "nl")
+
+        val DATA_SOURCE_GOINGELECTRIC = "going_electric"
+        val DATA_SOURCE_OPENCHARGEMAP = "open_charge_map"
 
         private val jsonApiAdapterFactory = ResourceAdapterFactory.builder()
             .add(ChargepriceRequest::class.java)
@@ -73,6 +77,16 @@ interface ChargepriceApi {
                 .client(client)
                 .build()
             return retrofit.create(ChargepriceApi::class.java)
+        }
+
+
+        fun getChargepriceLanguage(): String {
+            val locale = Locale.getDefault().language
+            return if (supportedLanguages.contains(locale)) {
+                locale
+            } else {
+                "en"
+            }
         }
 
         @JvmStatic

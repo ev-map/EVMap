@@ -11,6 +11,7 @@ import androidx.car.app.Screen
 import androidx.car.app.hardware.CarHardwareManager
 import androidx.car.app.hardware.info.Model
 import androidx.car.app.model.*
+import androidx.car.app.versioning.CarAppApiLevels
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.lifecycleScope
@@ -147,18 +148,22 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
     }
 
     private fun loadData() {
-        val exec = ContextCompat.getMainExecutor(carContext)
-        val hardwareMan =
-            carContext.getCarService(CarContext.HARDWARE_SERVICE) as CarHardwareManager
-        hardwareMan.carInfo.fetchModel(exec) { model ->
-            loadPrices(model)
+        if (carContext.carAppApiLevel >= CarAppApiLevels.LEVEL_3) {
+            val exec = ContextCompat.getMainExecutor(carContext)
+            val hardwareMan =
+                carContext.getCarService(CarContext.HARDWARE_SERVICE) as CarHardwareManager
+            hardwareMan.carInfo.fetchModel(exec) { model ->
+                loadPrices(model)
+            }
+        } else {
+            loadPrices(null)
         }
     }
 
-    private fun loadPrices(model: Model) {
+    private fun loadPrices(model: Model?) {
         val dataAdapter = getDataAdapter() ?: return
-        val manufacturer = model.manufacturer.value
-        val modelName = model.name.value
+        val manufacturer = model?.manufacturer?.value
+        val modelName = model?.name?.value
         lifecycleScope.launch {
             var vehicles = api.getVehicles().filter {
                 it.id in prefs.chargepriceMyVehicles

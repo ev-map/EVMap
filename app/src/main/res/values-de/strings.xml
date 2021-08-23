@@ -152,6 +152,7 @@
     <string name="welcome_1">Finde Ladestationen für Elektroautos in deiner Nähe.</string>
     <string name="welcome_2_title">Auf die Leistung kommt es an</string>
     <string name="welcome_2">Die Farbe einer Ladestatione auf der Karte zeigt dir die maximale Ladeleistung.</string>
+    <string name="welcome_2_detail">Du kannst die Farben im Menü unter “Über EVMap → FAQ” erneut ansehen)</string>
     <string name="welcome_3">EVMap ist kostenlos und Open Source. Du kannst bei GitHub zur Weiterentwicklung beitragen oder die Entwicklung mit Spenden unterstützen. Die entsprechenden Links findest du unter „Über EVMap” im Menü.</string>
     <string name="deleted_filterprofile">„%s” gelöscht</string>
     <string name="undo">Rückgängig</string>

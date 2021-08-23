@@ -151,6 +151,7 @@
     <string name="welcome_1">Find electric vehicle chargers around you.</string>
     <string name="welcome_2_title">You\'ve got the power</string>
     <string name="welcome_2">The color of a charger on the map shows you its maximum charging power.</string>
+    <string name="welcome_2_detail">(You can check the colors again under “About EVMap → FAQ” in the menu)</string>
     <string name="welcome_3">EVMap is free and Open Source software. You can contribute to the development on GitHub or support me through donations. The corresponding links can be found under “About EVMap” in the menu.</string>
     <string name="deleted_filterprofile">Deleted “%s”</string>
     <string name="undo">Undo</string>

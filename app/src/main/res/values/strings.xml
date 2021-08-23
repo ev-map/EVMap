@@ -78,6 +78,7 @@
     <string name="map_details">Map details</string>
     <string name="map_traffic">Traffic</string>
     <string name="faq">FAQ</string>
+    <string name="faq_desc">Frequently asked questions</string>
     <string name="menu_filters_active">Filters active</string>
     <string name="filters_activated">Filters activated</string>
     <string name="filters_deactivated">Filters deactivated</string>

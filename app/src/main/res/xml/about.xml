@@ -16,7 +16,8 @@
 
         <Preference
             android:key="faq"
-            android:title="@string/faq" />
+            android:title="@string/faq"
+            android:summary="@string/faq_desc" />
 
         <Preference
             android:key="donate"

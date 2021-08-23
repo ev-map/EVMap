@@ -79,6 +79,7 @@
     <string name="map_details">Kartendetails</string>
     <string name="map_traffic">Verkehr</string>
     <string name="faq">FAQ</string>
+    <string name="faq_desc">Häufig gestellte Fragen</string>
     <string name="menu_filters_active">Filter aktiv</string>
     <string name="filters_activated">Filter aktiviert</string>
     <string name="filters_deactivated">Filter deaktiviert</string>

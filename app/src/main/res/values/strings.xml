@@ -215,4 +215,6 @@
     <string name="get_started">Get started</string>
     <string name="got_it">Got it</string>
     <string name="lets_go">Let\'s go</string>
+    <string name="crash_report_text">Sorry, it seems that EVMap has crashed. Please send a crash report to the developer.</string>
+    <string name="crash_report_comment_prompt">You can add a comment below:</string>
 </resources>

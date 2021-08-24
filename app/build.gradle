@@ -185,6 +185,12 @@ dependencies {
     googleImplementation "com.android.billingclient:billing:$billing_version"
     googleImplementation "com.android.billingclient:billing-ktx:$billing_version"
 
+    // ACRA (crash reporting)
+    def acraVersion = "5.8.4"
+    implementation("ch.acra:acra-mail:$acraVersion")
+    implementation("ch.acra:acra-dialog:$acraVersion")
+    implementation("ch.acra:acra-limiter:$acraVersion")
+
     // debug tools
     implementation 'com.facebook.stetho:stetho:1.5.1'
     implementation 'com.facebook.stetho:stetho-okhttp3:1.5.1'

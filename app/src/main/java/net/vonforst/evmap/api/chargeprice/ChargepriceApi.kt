@@ -74,5 +74,51 @@ interface ChargepriceApi {
                 .build()
             return retrofit.create(ChargepriceApi::class.java)
         }
+
+        @JvmStatic
+        fun isCountrySupported(country: String, dataSource: String): Boolean = when (dataSource) {
+            // list of countries updated 2021/08/24
+            "goingelectric" -> country in listOf(
+                "Deutschland",
+                "Österreich",
+                "Schweiz",
+                "Frankreich",
+                "Belgien",
+                "Niederlande",
+                "Luxemburg",
+                "Dänemark",
+                "Norwegen",
+                "Schweden",
+                "Slowenien",
+                "Kroatien",
+                "Ungarn",
+                "Tschechien",
+                "Italien",
+                "Spanien",
+                "Großbritannien",
+                "Irland"
+            )
+            "openchargemap" -> country in listOf(
+                "DE",
+                "AT",
+                "CH",
+                "FR",
+                "BE",
+                "NE",
+                "LU",
+                "DK",
+                "NO",
+                "SE",
+                "SI",
+                "HR",
+                "HU",
+                "CZ",
+                "IT",
+                "ES",
+                "GB",
+                "IE"
+            )
+            else -> false
+        }
     }
 }

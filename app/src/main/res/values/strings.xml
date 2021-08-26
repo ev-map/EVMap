@@ -197,6 +197,7 @@
     <string name="chargeprice_no_compatible_connectors">None of the connectors on this charging station is compatible with your vehicle.</string>
     <string name="pref_chargeprice_currency">Currency</string>
     <string name="pref_my_tariffs">My charging plans</string>
+    <string name="pref_my_tariffs_summary">(will be highlighted in price comparison)</string>
     <string name="chargeprice_all_tariffs_selected">all plans selected</string>
     <string name="license">License</string>
     <string name="settings_charger_data">Charging stations</string>

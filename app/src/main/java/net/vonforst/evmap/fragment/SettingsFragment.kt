@@ -70,13 +70,18 @@ class SettingsFragment : PreferenceFragmentCompat(),
     }
 
     private fun updateMyTariffsSummary() {
-        myTariffsPreference.summary = if (prefs.chargepriceMyTariffsAll) {
-            getString(R.string.chargeprice_all_tariffs_selected)
-        } else {
-            val n = prefs.chargepriceMyTariffs?.size ?: 0
-            requireContext().resources
-                .getQuantityString(R.plurals.chargeprice_some_tariffs_selected, n, n)
-        }
+        myTariffsPreference.summary =
+            if (prefs.chargepriceMyTariffsAll) {
+                getString(R.string.chargeprice_all_tariffs_selected)
+            } else {
+                val n = prefs.chargepriceMyTariffs?.size ?: 0
+                requireContext().resources
+                    .getQuantityString(
+                        R.plurals.chargeprice_some_tariffs_selected,
+                        n,
+                        n
+                    ) + "\n" + getString(R.string.pref_my_tariffs_summary)
+            }
     }
 
     private fun updateMyVehiclesSummary() {

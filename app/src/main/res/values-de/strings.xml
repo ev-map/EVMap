@@ -199,6 +199,7 @@
     <string name="pref_chargeprice_currency">Währung</string>
     <string name="pref_my_tariffs">Meine Tarife</string>
     <string name="chargeprice_all_tariffs_selected">alle Tarife ausgewählt</string>
+    <string name="pref_my_tariffs_summary">(werden im Preisvergleich hervorgehoben)</string>
     <string name="license">Lizenz</string>
     <string name="settings_charger_data">Ladesäulen</string>
     <string name="pref_data_source">Datenquelle</string>

@@ -60,7 +60,7 @@
             android:layout_marginEnd="4dp"
             android:text="@{item.provider}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-            app:goneUnless="@{!item.tariffName.startsWith(item.provider)}"
+            app:goneUnless="@{!item.tariffName.toLowerCase().startsWith(item.provider.toLowerCase())}"
             app:layout_constraintBottom_toTopOf="@+id/rvTags"
             app:layout_constraintEnd_toStartOf="@+id/guideline5"
             app:layout_constraintStart_toStartOf="@+id/txtTariff"

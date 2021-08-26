@@ -57,7 +57,7 @@ class SettingsFragment : PreferenceFragmentCompat(),
             res.data?.let { tariffs ->
                 myTariffsPreference.entryValues = tariffs.map { it.id }.toTypedArray()
                 myTariffsPreference.entries = tariffs.map {
-                    if (!it.name.startsWith(it.provider)) {
+                    if (!it.name.lowercase().startsWith(it.provider.lowercase())) {
                         "${it.provider} ${it.name}"
                     } else {
                         it.name

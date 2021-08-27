@@ -77,16 +77,34 @@ fun invisibleUnlessAnimated(view: View, oldValue: Boolean, newValue: Boolean) {
 
 @BindingAdapter("isFabActive")
 fun isFabActive(view: FloatingActionButton, isColored: Boolean) {
-    val color = view.context.theme.obtainStyledAttributes(
+    view.imageTintList = activeTint(view.context, isColored)
+}
+
+@BindingAdapter("backgroundTintActive")
+fun backgroundTintActive(view: View, isColored: Boolean) {
+    view.backgroundTintList = activeTint(view.context, isColored)
+}
+
+@BindingAdapter("imageTintActive")
+fun imageTintActive(view: ImageView, isColored: Boolean) {
+    view.imageTintList = activeTint(view.context, isColored)
+}
+
+private fun activeTint(
+    context: Context,
+    isColored: Boolean
+): ColorStateList {
+    val color = context.theme.obtainStyledAttributes(
         intArrayOf(
             if (isColored) {
-                R.attr.colorAccent
+                R.attr.colorPrimary
             } else {
                 R.attr.colorControlNormal
             }
         )
     )
-    view.imageTintList = ColorStateList.valueOf(color.getColor(0, 0))
+    val valueOf = ColorStateList.valueOf(color.getColor(0, 0))
+    return valueOf
 }
 
 @BindingAdapter("data")

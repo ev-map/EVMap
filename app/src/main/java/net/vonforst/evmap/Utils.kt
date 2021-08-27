@@ -1,5 +1,7 @@
 package net.vonforst.evmap
 
+import android.content.Context
+import android.content.res.Configuration
 import android.graphics.Typeface
 import android.os.Bundle
 import android.text.*
@@ -80,6 +82,8 @@ fun max(a: Int?, b: Int?): Int? {
     }
 }
 
+fun <T> List<T>.containsAny(vararg values: T) = values.any { this.contains(it) }
+
 public suspend fun <T> LiveData<T>.await(): T {
     return withContext(Dispatchers.Main.immediate) {
         suspendCancellableCoroutine { continuation ->
@@ -98,3 +102,6 @@ public suspend fun <T> LiveData<T>.await(): T {
         }
     }
 }
+
+fun Context.isDarkMode() =
+    (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES

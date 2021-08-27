@@ -233,4 +233,5 @@
     <string name="lets_go">Und los</string>
     <string name="crash_report_text">Sorry, anscheinend ist EVMap abgestürzt. Bitte schicke einen Fehlerbericht an den Entwickler.</string>
     <string name="crash_report_comment_prompt">Du kannst unten noch einen Kommentar hinzufügen:</string>
+    <string name="powered_by_mapbox">powered by Mapbox</string>
 </resources>

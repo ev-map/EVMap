@@ -18,6 +18,7 @@ import net.vonforst.evmap.api.openchargemap.OCMConnection
 import net.vonforst.evmap.api.openchargemap.OCMReferenceData
 import net.vonforst.evmap.api.openchargemap.OpenChargeMapApiWrapper
 import net.vonforst.evmap.api.stringProvider
+import net.vonforst.evmap.autocomplete.PlaceWithBounds
 import net.vonforst.evmap.model.*
 import net.vonforst.evmap.storage.AppDatabase
 import net.vonforst.evmap.storage.FilterProfile
@@ -26,8 +27,6 @@ import net.vonforst.evmap.utils.distanceBetween
 import java.io.IOException
 
 data class MapPosition(val bounds: LatLngBounds, val zoom: Float)
-
-data class PlaceWithBounds(val latLng: LatLng, val viewport: LatLngBounds?)
 
 internal fun getClusterDistance(zoom: Float): Int? {
     return when (zoom) {

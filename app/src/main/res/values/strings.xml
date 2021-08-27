@@ -218,4 +218,5 @@
     <string name="lets_go">Let\'s go</string>
     <string name="crash_report_text">Sorry, it seems that EVMap has crashed. Please send a crash report to the developer.</string>
     <string name="crash_report_comment_prompt">You can add a comment below:</string>
+    <string name="powered_by_mapbox">powered by Mapbox</string>
 </resources>

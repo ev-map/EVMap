@@ -164,7 +164,7 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
                         loc.longitude,
                         charger.coordinates.lat,
                         charger.coordinates.lng
-                    ) / 1000
+                    )
                 } else null
             }
             addSource(chargerSparse, callback)

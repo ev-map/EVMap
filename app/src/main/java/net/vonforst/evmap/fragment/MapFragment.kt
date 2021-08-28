@@ -352,7 +352,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         searchKeyListener = binding.search.keyListener
         binding.search.keyListener = null
 
-        val adapter = PlaceAutocompleteAdapter(requireContext())
+        val adapter = PlaceAutocompleteAdapter(requireContext(), vm.location)
         binding.search.setAdapter(adapter)
         binding.search.onItemClickListener =
             AdapterView.OnItemClickListener { _, _, position, _ ->

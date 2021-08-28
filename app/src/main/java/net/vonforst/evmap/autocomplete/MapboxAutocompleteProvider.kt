@@ -2,7 +2,6 @@ package net.vonforst.evmap.autocomplete
 
 import android.content.Context
 import android.graphics.Typeface
-import android.location.Location
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.CharacterStyle
@@ -23,7 +22,7 @@ class MapboxAutocompleteProvider(val context: Context) : AutocompleteProvider {
     private val bold: CharacterStyle = StyleSpan(Typeface.BOLD)
     private val results = HashMap<String, CarmenFeature>()
 
-    override fun autocomplete(query: String, location: Location?): List<AutocompletePlace> {
+    override fun autocomplete(query: String, location: LatLng?): List<AutocompletePlace> {
         val result = MapboxGeocoding.builder().apply {
             location?.let {
                 proximity(Point.fromLngLat(location.longitude, location.latitude))
@@ -48,7 +47,7 @@ class MapboxAutocompleteProvider(val context: Context) : AutocompleteProvider {
                 feature.id()!!,
                 location?.let { location ->
                     SphericalUtil.computeDistanceBetween(
-                        feature.center()!!.toLatLng(), LatLng.fromLocation(location)
+                        feature.center()!!.toLatLng(), location
                     ).roundToInt()
                 },
                 getPlaceTypes(feature)

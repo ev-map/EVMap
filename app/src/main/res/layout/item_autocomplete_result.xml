@@ -7,6 +7,7 @@
 
         <import type="android.text.util.Linkify" />
         <import type="net.vonforst.evmap.adapter.PlaceAutocompleteAdapterKt" />
+        <import type="net.vonforst.evmap.ui.BindingAdaptersKt" />
 
         <variable
             name="item"
@@ -58,13 +59,14 @@
             android:id="@+id/textView16"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{@string/distance_format(Double.valueOf(item.distanceMeters) / 1e3)}"
+            android:layout_marginTop="4dp"
+            android:text="@{BindingAdaptersKt.distance(item.distanceMeters)}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
             app:goneUnless="@{item.distanceMeters != null}"
             app:layout_constraintEnd_toEndOf="@+id/icon"
             app:layout_constraintStart_toStartOf="@+id/icon"
             app:layout_constraintTop_toBottomOf="@+id/icon"
-            tools:text="9999,9 km" />
+            tools:text="9999 km" />
 
         <TextView
             android:id="@+id/subtitle"

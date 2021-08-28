@@ -66,7 +66,7 @@ class FavoritesViewModel(application: Application, geApiKey: String) :
                                     loc.longitude,
                                     charger.coordinates.lat,
                                     charger.coordinates.lng
-                                ) / 1000
+                                )
                             }
                         })
                 }?.sortedBy { it.distance }

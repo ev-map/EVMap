@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.LiveData
+import com.car2go.maps.model.LatLng
 import net.vonforst.evmap.R
 import net.vonforst.evmap.autocomplete.*
 import net.vonforst.evmap.containsAny
@@ -13,7 +15,8 @@ import net.vonforst.evmap.databinding.ItemAutocompleteResultBinding
 import net.vonforst.evmap.isDarkMode
 import net.vonforst.evmap.storage.PreferenceDataSource
 
-class PlaceAutocompleteAdapter(val context: Context) : BaseAdapter(), Filterable {
+class PlaceAutocompleteAdapter(val context: Context, val location: LiveData<LatLng>) :
+    BaseAdapter(), Filterable {
     private var resultList: List<AutocompletePlace>? = null
     private val providers = getAutocompleteProviders(context)
     private val typeItem = 0
@@ -104,7 +107,8 @@ class PlaceAutocompleteAdapter(val context: Context) : BaseAdapter(), Filterable
                 if (constraint != null) {
                     for (provider in providers) {
                         try {
-                            resultList = provider.autocomplete(constraint.toString(), null)
+                            resultList =
+                                provider.autocomplete(constraint.toString(), location.value)
                             currentProvider = provider
                             break
                         } catch (e: ApiUnavailableException) {

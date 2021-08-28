@@ -1,13 +1,12 @@
 package net.vonforst.evmap.autocomplete
 
-import android.location.Location
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.car2go.maps.model.LatLng
 import com.car2go.maps.model.LatLngBounds
 
 interface AutocompleteProvider {
-    fun autocomplete(query: String, location: Location?): List<AutocompletePlace>
+    fun autocomplete(query: String, location: LatLng?): List<AutocompletePlace>
     suspend fun getDetails(id: String): PlaceWithBounds
 
     @StringRes

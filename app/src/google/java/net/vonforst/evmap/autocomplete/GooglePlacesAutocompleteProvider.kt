@@ -2,7 +2,6 @@ package net.vonforst.evmap.autocomplete
 
 import android.content.Context
 import android.graphics.Typeface
-import android.location.Location
 import android.text.style.CharacterStyle
 import android.text.style.StyleSpan
 import com.car2go.maps.google.adapter.AnyMapAdapter
@@ -28,7 +27,10 @@ class GooglePlacesAutocompleteProvider(val context: Context) : AutocompleteProvi
     private val client = Places.createClient(context)
     private val bold: CharacterStyle = StyleSpan(Typeface.BOLD)
 
-    override fun autocomplete(query: String, location: Location?): List<AutocompletePlace> {
+    override fun autocomplete(
+        query: String,
+        location: com.car2go.maps.model.LatLng?
+    ): List<AutocompletePlace> {
         val request = FindAutocompletePredictionsRequest.builder().apply {
             if (location != null) {
                 setLocationBias(calcLocationBias(location))
@@ -81,24 +83,24 @@ class GooglePlacesAutocompleteProvider(val context: Context) : AutocompleteProvi
     override fun getAttributionImage(dark: Boolean): Int =
         if (dark) R.drawable.places_powered_by_google_dark else R.drawable.places_powered_by_google_light
 
-    private fun calcLocationBias(location: Location): RectangularBounds {
+    private fun calcLocationBias(location: com.car2go.maps.model.LatLng): RectangularBounds {
         val radius = 100e3 // meters
         val northEast =
             SphericalUtil.computeOffset(
-                com.car2go.maps.model.LatLng.fromLocation(location),
+                location,
                 radius * sqrt(2.0),
                 45.0
             )
         val southWest =
             SphericalUtil.computeOffset(
-                com.car2go.maps.model.LatLng.fromLocation(location),
+                location,
                 radius * sqrt(2.0),
                 225.0
             )
         return RectangularBounds.newInstance(
             LatLngBounds(
-                AnyMapAdapter.adapt(northEast),
-                AnyMapAdapter.adapt(southWest)
+                AnyMapAdapter.adapt(southWest),
+                AnyMapAdapter.adapt(northEast)
             )
         )
     }

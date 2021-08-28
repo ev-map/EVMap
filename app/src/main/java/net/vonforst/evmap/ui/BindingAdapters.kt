@@ -22,6 +22,9 @@ import com.google.android.material.slider.RangeSlider
 import net.vonforst.evmap.R
 import net.vonforst.evmap.api.availability.ChargepointStatus
 import net.vonforst.evmap.api.iconForPlugType
+import net.vonforst.evmap.kmPerMile
+import net.vonforst.evmap.meterPerFt
+import net.vonforst.evmap.shouldUseImperialUnits
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.roundToInt
@@ -290,6 +293,26 @@ fun time(value: Int): String {
     val min = ceil(value.toDouble() % 60).toInt();
     return if (h == 0 && min > 0) "$min min";
     else "%d:%02d h".format(h, min);
+}
+
+fun distance(meters: Number?): String? {
+    if (meters == null) return null
+    if (shouldUseImperialUnits()) {
+        val ft = meters.toDouble() / meterPerFt
+        val mi = meters.toDouble() / 1e3 / kmPerMile
+        return when {
+            ft < 1000 -> "%.0f ft".format(ft)
+            mi < 10 -> "%.1f mi".format(mi)
+            else -> "%.0f mi".format(mi)
+        }
+    } else {
+        val km = meters.toDouble() / 1e3
+        return when {
+            km < 1 -> "%.0f m".format(meters.toDouble())
+            km < 10 -> "%.1f km".format(km)
+            else -> "%.0f km".format(km)
+        }
+    }
 }
 
 @InverseBindingAdapter(attribute = "app:values")

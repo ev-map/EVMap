@@ -80,6 +80,12 @@ class PreferenceDataSource(val context: Context) {
             context.getString(R.string.pref_map_provider_default)
         )!!
 
+    val searchProvider: String
+        get() = sp.getString(
+            "search_provider",
+            context.getString(R.string.pref_search_provider_default)
+        )!!
+
     var mapType: AnyMap.Type
         get() = AnyMap.Type.valueOf(sp.getString("map_type", null) ?: AnyMap.Type.NORMAL.toString())
         set(type) {

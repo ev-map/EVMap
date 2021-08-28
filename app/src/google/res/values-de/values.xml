@@ -4,6 +4,10 @@
         <item>Google Maps</item>
         <item>OpenStreetMap (Mapbox)</item>
     </string-array>
+    <string-array name="pref_search_provider_names">
+        <item>Google Maps</item>
+        <item>OpenStreetMap (Mapbox)</item>
+    </string-array>
     <string name="donations_info" formatted="false">Findest du EVMap nützlich? Unterstütze die Weiterentwicklung der App mit einer Spende an den Entwickler.\n\nGoogle zieht von der Spende 15% Gebühren ab.</string>
     <string name="auto_location_service">EVMap läuft unter Android Auto und nutzt dafür deinen Standort.</string>
     <string name="auto_no_chargers_found">Keine Ladestationen in der Nähe gefunden</string>

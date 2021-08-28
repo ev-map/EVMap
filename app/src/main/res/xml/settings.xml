@@ -39,6 +39,14 @@
             android:defaultValue="@string/pref_map_provider_default"
             android:summary="%s" />
 
+        <ListPreference
+            android:key="search_provider"
+            android:title="@string/pref_search_provider"
+            android:entries="@array/pref_search_provider_names"
+            android:entryValues="@array/pref_search_provider_values"
+            android:defaultValue="@string/pref_search_provider_default"
+            android:summary="%s" />
+
         <CheckBoxPreference
             android:key="navigate_use_maps"
             android:title="@string/pref_navigate_use_maps"

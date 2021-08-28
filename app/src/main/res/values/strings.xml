@@ -219,4 +219,6 @@
     <string name="crash_report_text">Sorry, it seems that EVMap has crashed. Please send a crash report to the developer.</string>
     <string name="crash_report_comment_prompt">You can add a comment below:</string>
     <string name="powered_by_mapbox">powered by Mapbox</string>
+    <string name="pref_search_provider">Place search provider</string>
+    <string name="pref_search_provider_info"><![CDATA[Data for place search, especially from Google Maps, is relatively expensive. If you use this feature often, please consider making a donation through \"About EVMap -> Donate\".]]></string>
 </resources>

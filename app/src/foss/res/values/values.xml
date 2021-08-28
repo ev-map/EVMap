@@ -6,6 +6,13 @@
     <string-array name="pref_map_provider_values" tranlatable="false">
         <item>mapbox</item>
     </string-array>
+    <string-array name="pref_search_provider_names">
+        <item>OpenStreetMap (Mapbox)</item>
+    </string-array>
+    <string-array name="pref_search_provider_values" tranlatable="false">
+        <item>mapbox</item>
+    </string-array>
+    <string name="pref_search_provider_default" translatable="false">mapbox</string>
     <string name="pref_map_provider_default" translatable="false">mapbox</string>
     <string name="donations_info" formatted="false">Do you find EVMap useful? Support its development by sending a donation to the developer.</string>
     <string name="donate_paypal">Donate with PayPal</string>

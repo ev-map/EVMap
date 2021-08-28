@@ -19,6 +19,7 @@ import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRe
 import com.google.android.libraries.places.api.net.PlacesStatusCodes
 import kotlinx.coroutines.tasks.await
 import net.vonforst.evmap.R
+import java.util.concurrent.ExecutionException
 import kotlin.math.sqrt
 
 
@@ -50,12 +51,14 @@ class GooglePlacesAutocompleteProvider(val context: Context) : AutocompleteProvi
                     it.distanceMeters,
                     it.placeTypes.map { AutocompletePlaceType.valueOf(it.name) })
             }
-        } catch (e: ApiException) {
-            if (e.statusCode == PlacesStatusCodes.OVER_QUERY_LIMIT) {
-                throw ApiUnavailableException()
-            } else {
-                throw e
+        } catch (e: ExecutionException) {
+            val cause = e.cause
+            if (cause is ApiException) {
+                if (cause.statusCode == PlacesStatusCodes.OVER_QUERY_LIMIT) {
+                    throw ApiUnavailableException()
+                }
             }
+            throw e
         }
     }
 

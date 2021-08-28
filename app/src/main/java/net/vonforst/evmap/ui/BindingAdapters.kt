@@ -8,6 +8,7 @@ import android.view.ViewGroup.MarginLayoutParams
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.ColorInt
+import androidx.appcompat.widget.TooltipCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.use
 import androidx.core.text.HtmlCompat
@@ -311,4 +312,9 @@ fun myTariffsBackground(view: View, myTariff: Boolean) {
             view.background = it.getDrawable(0)
         }
     }
+}
+
+@BindingAdapter("tooltipTextCompat")
+fun setTooltipTextCompat(view: View, text: String) {
+    TooltipCompat.setTooltipText(view, text)
 }

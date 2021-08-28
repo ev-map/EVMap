@@ -4,16 +4,14 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.BaseAdapter
-import android.widget.Filter
-import android.widget.Filterable
-import android.widget.ImageView
+import android.widget.*
 import androidx.databinding.DataBindingUtil
 import net.vonforst.evmap.R
 import net.vonforst.evmap.autocomplete.*
 import net.vonforst.evmap.containsAny
 import net.vonforst.evmap.databinding.ItemAutocompleteResultBinding
 import net.vonforst.evmap.isDarkMode
+import net.vonforst.evmap.storage.PreferenceDataSource
 
 class PlaceAutocompleteAdapter(val context: Context) : BaseAdapter(), Filterable {
     private var resultList: List<AutocompletePlace>? = null
@@ -84,6 +82,15 @@ class PlaceAutocompleteAdapter(val context: Context) : BaseAdapter(), Filterable
 
     override fun getFilter(): Filter {
         return object : Filter() {
+            var delaySet = false
+
+            init {
+                if (PreferenceDataSource(context).searchProvider == "mapbox") {
+                    // set delay to 500 ms to reduce paid Mapbox API requests
+                    this.setDelayer { 500L }
+                }
+            }
+
             override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
                 if (results != null && results.count > 0) {
                     notifyDataSetChanged()
@@ -102,13 +109,18 @@ class PlaceAutocompleteAdapter(val context: Context) : BaseAdapter(), Filterable
                             break
                         } catch (e: ApiUnavailableException) {
                             e.printStackTrace()
-                        } catch (e: Exception) {
-                            break
                         }
                     }
                     filterResults.values = resultList
                     filterResults.count = resultList!!.size
                 }
+
+
+                if (currentProvider is MapboxAutocompleteProvider && !delaySet) {
+                    // set delay to 500 ms to reduce paid Mapbox API requests
+                    this.setDelayer { 500L }
+                }
+
                 return filterResults
             }
         }

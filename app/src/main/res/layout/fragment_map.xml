@@ -58,16 +58,47 @@
                 <androidx.appcompat.widget.Toolbar
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
-                    android:layout_height="48dp">
+                    android:layout_height="48dp"
+                    app:contentInsetStartWithNavigation="70dp">
 
-                    <TextView
-                        android:id="@+id/search"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:orientation="horizontal"
                         android:gravity="center_vertical"
-                        android:text="@string/search"
-                        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-                        android:textColor="?android:textColorSecondary" />
+                        android:focusable="true"
+                        android:focusableInTouchMode="true">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/search"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="match_parent"
+                            android:singleLine="true"
+                            android:scrollHorizontally="true"
+                            android:ellipsize="end"
+                            android:background="@null"
+                            android:gravity="center_vertical"
+                            android:hint="@string/search"
+                            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+                            android:textColor="?android:textColorSecondary"
+                            android:dropDownVerticalOffset="8dp"
+                            android:popupBackground="@drawable/rounded_rect_4dp" />
+
+                        <ImageButton
+                            android:id="@+id/clearSearch"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            app:invisibleUnless="@{search.text.length() > 0}"
+                            app:tint="?colorControlNormal"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/handle"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:srcCompat="@drawable/ic_close"
+                            android:contentDescription="@string/delete" />
+                    </LinearLayout>
 
                 </androidx.appcompat.widget.Toolbar>
 

@@ -2,15 +2,17 @@ package net.vonforst.evmap.fragment
 
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.content.Intent
+import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Color
 import android.location.Geocoder
 import android.location.Location
 import android.os.Bundle
+import android.text.method.KeyListener
 import android.view.*
+import android.view.inputmethod.InputMethodManager
+import android.widget.AdapterView
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -20,9 +22,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.view.MenuCompat
-import androidx.core.view.doOnNextLayout
-import androidx.core.view.updateLayoutParams
+import androidx.core.view.*
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -69,9 +69,10 @@ import net.vonforst.evmap.*
 import net.vonforst.evmap.adapter.ConnectorAdapter
 import net.vonforst.evmap.adapter.DetailsAdapter
 import net.vonforst.evmap.adapter.GalleryAdapter
+import net.vonforst.evmap.adapter.PlaceAutocompleteAdapter
 import net.vonforst.evmap.api.goingelectric.GoingElectricApiWrapper
-import net.vonforst.evmap.autocomplete.handleAutocompleteResult
-import net.vonforst.evmap.autocomplete.launchAutocomplete
+import net.vonforst.evmap.autocomplete.ApiUnavailableException
+import net.vonforst.evmap.autocomplete.PlaceWithBounds
 import net.vonforst.evmap.databinding.FragmentMapBinding
 import net.vonforst.evmap.model.*
 import net.vonforst.evmap.storage.PreferenceDataSource
@@ -82,9 +83,9 @@ import net.vonforst.evmap.ui.getMarkerTint
 import net.vonforst.evmap.utils.boundingBox
 import net.vonforst.evmap.utils.distanceBetween
 import net.vonforst.evmap.viewmodel.*
+import java.io.IOException
 
 
-const val REQUEST_AUTOCOMPLETE = 2
 const val ARG_CHARGER_ID = "chargerId"
 const val ARG_LAT = "lat"
 const val ARG_LON = "lon"
@@ -118,6 +119,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             if (value != null && value) {
                 closeLayersMenu()
                 return
+            }
+
+            if (binding.search.hasFocus()) {
+                removeSearchFocus()
             }
 
             val state = bottomSheetBehavior.state
@@ -301,9 +306,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         binding.detailView.topPart.setOnClickListener {
             bottomSheetBehavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT
         }
-        binding.search.setOnClickListener {
-            launchAutocomplete(this, vm.location.value)
-        }
+        setupSearchAutocomplete()
         binding.detailAppBar.toolbar.setNavigationOnClickListener {
             bottomSheetBehavior.state = STATE_COLLAPSED
         }
@@ -338,6 +341,68 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 else -> false
             }
         }
+    }
+
+    var searchKeyListener: KeyListener? = null
+
+    @SuppressLint("SetTextI18n")
+    private fun setupSearchAutocomplete() {
+        binding.search.threshold = 1
+
+        searchKeyListener = binding.search.keyListener
+        binding.search.keyListener = null
+
+        val adapter = PlaceAutocompleteAdapter(requireContext(), vm.location)
+        binding.search.setAdapter(adapter)
+        binding.search.onItemClickListener =
+            AdapterView.OnItemClickListener { _, _, position, _ ->
+                val place = adapter.getItem(position) ?: return@OnItemClickListener
+                lifecycleScope.launch {
+                    try {
+                        vm.searchResult.value = adapter.currentProvider!!.getDetails(place.id)
+                    } catch (e: ApiUnavailableException) {
+                        e.printStackTrace()
+                    } catch (e: IOException) {
+                        // TODO: show error
+                        e.printStackTrace()
+                    }
+                }
+                removeSearchFocus()
+                binding.search.setText(
+                    if (place.secondaryText.isNotEmpty()) {
+                        "${place.primaryText}, ${place.secondaryText}"
+                    } else {
+                        place.primaryText.toString()
+                    }
+                )
+            }
+        binding.search.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
+            if (hasFocus) {
+                binding.search.keyListener = searchKeyListener
+                if (binding.search.text.isNotEmpty() && isVisible) {
+                    binding.search.showDropDown()
+                }
+            } else {
+                binding.search.keyListener = null
+            }
+            updateBackPressedCallback()
+        }
+        binding.clearSearch.setOnClickListener {
+            vm.searchResult.value = null
+            removeSearchFocus()
+        }
+        binding.toolbar.doOnLayout {
+            binding.search.dropDownWidth = binding.toolbar.width
+            binding.search.dropDownAnchor = R.id.toolbar
+        }
+    }
+
+    private fun removeSearchFocus() {
+        // clear focus and hide keyboard
+        val imm =
+            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(binding.search.windowToken, 0)
+        binding.search.clearFocus()
     }
 
     private fun openLayersMenu() {
@@ -464,6 +529,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                         .icon(searchResultIcon)
                         .anchor(0.5f, 1f)
                 )
+            } else {
+                binding.search.setText("")
             }
 
             updateBackPressedCallback()
@@ -488,6 +555,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             vm.bottomSheetState.value != null && vm.bottomSheetState.value != STATE_HIDDEN
                     || vm.searchResult.value != null
                     || (vm.layersMenuOpen.value ?: false)
+                    || binding.search.hasFocus()
     }
 
     private fun unhighlightAllMarkers() {
@@ -1074,17 +1142,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 }, Snackbar.LENGTH_SHORT
             ).show()
             true
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        when (requestCode) {
-            REQUEST_AUTOCOMPLETE -> {
-                if (resultCode == Activity.RESULT_OK && data != null) {
-                    vm.searchResult.value = handleAutocompleteResult(data)
-                }
-            }
-            else -> super.onActivityResult(requestCode, resultCode, data)
         }
     }
 

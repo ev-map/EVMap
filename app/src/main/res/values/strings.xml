@@ -42,7 +42,6 @@
     <string name="privacy">Privacy Notice</string>
     <string name="fav_add">Add to favorites</string>
     <string name="fav_remove">Remove from favorites</string>
-    <string name="distance_format">%.1f km</string>
     <string name="pref_navigate_use_maps">Start navigation immediately</string>
     <string name="pref_navigate_use_maps_on">Navigation button starts navigation immediately</string>
     <string name="pref_navigate_use_maps_off">Navigation button launches maps app with charger location</string>
@@ -218,4 +217,7 @@
     <string name="lets_go">Let\'s go</string>
     <string name="crash_report_text">Sorry, it seems that EVMap has crashed. Please send a crash report to the developer.</string>
     <string name="crash_report_comment_prompt">You can add a comment below:</string>
+    <string name="powered_by_mapbox">powered by Mapbox</string>
+    <string name="pref_search_provider">Place search provider</string>
+    <string name="pref_search_provider_info"><![CDATA[Data for place search, especially from Google Maps, is relatively expensive. If you use this feature often, please consider making a donation through \"About EVMap -> Donate\".]]></string>
 </resources>

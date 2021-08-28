@@ -91,7 +91,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
-                android:text="@{@string/distance_format(item.distance)}"
+                android:text="@{BindingAdaptersKt.distance(item.distance)}"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
                 app:goneUnless="@{item.distance != null}"
                 app:layout_constraintEnd_toStartOf="@id/btnDelete"

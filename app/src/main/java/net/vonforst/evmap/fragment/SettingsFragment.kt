@@ -3,6 +3,7 @@ package net.vonforst.evmap.fragment
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -121,6 +122,12 @@ class SettingsFragment : PreferenceFragmentCompat(),
             }
             "chargeprice_my_tariffs" -> {
                 updateMyTariffsSummary()
+            }
+            "search_provider" -> {
+                if (prefs.searchProvider == "google") {
+                    Toast.makeText(context, R.string.pref_search_provider_info, Toast.LENGTH_LONG)
+                        .show()
+                }
             }
         }
     }

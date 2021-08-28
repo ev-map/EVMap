@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.text.util.Linkify" />
+        <import type="net.vonforst.evmap.adapter.PlaceAutocompleteAdapterKt" />
+        <import type="net.vonforst.evmap.ui.BindingAdaptersKt" />
+
+        <variable
+            name="item"
+            type="net.vonforst.evmap.autocomplete.AutocompletePlace" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?selectableItemBackground">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="18dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="14dp"
+            android:text="@{item.primaryText}"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/icon"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
+            tools:text="Lorem ipsum" />
+
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:contentDescription="@{item.secondaryText}"
+            android:padding="6dp"
+            android:background="@drawable/circle_bg_autocomplete"
+            android:backgroundTintMode="src_in"
+            app:imageTintActive="@{PlaceAutocompleteAdapterKt.isSpecialPlace(item.types)}"
+            app:backgroundTintActive="@{PlaceAutocompleteAdapterKt.isSpecialPlace(item.types)}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@{PlaceAutocompleteAdapterKt.iconForPlaceType(item.types)}"
+            tools:srcCompat="@drawable/ic_address"
+            tools:tint="?colorControlNormal"
+            tools:backgroundTint="?colorControlNormal" />
+
+        <TextView
+            android:id="@+id/textView16"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@{BindingAdaptersKt.distance(item.distanceMeters)}"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+            app:goneUnless="@{item.distanceMeters != null}"
+            app:layout_constraintEnd_toEndOf="@+id/icon"
+            app:layout_constraintStart_toStartOf="@+id/icon"
+            app:layout_constraintTop_toBottomOf="@+id/icon"
+            tools:text="9999 km" />
+
+        <TextView
+            android:id="@+id/subtitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="14dp"
+            android:text="@{item.secondaryText}"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/title"
+            app:layout_constraintTop_toBottomOf="@+id/title"
+            tools:text="Lorem ipsum" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

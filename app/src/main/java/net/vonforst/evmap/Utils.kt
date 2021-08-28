@@ -1,5 +1,7 @@
 package net.vonforst.evmap
 
+import android.content.Context
+import android.content.res.Configuration
 import android.graphics.Typeface
 import android.os.Bundle
 import android.text.*
@@ -9,6 +11,7 @@ import androidx.lifecycle.Observer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
+import java.util.*
 
 fun Bundle.optDouble(name: String): Double? {
     if (!this.containsKey(name)) return null
@@ -80,6 +83,8 @@ fun max(a: Int?, b: Int?): Int? {
     }
 }
 
+fun <T> List<T>.containsAny(vararg values: T) = values.any { this.contains(it) }
+
 public suspend fun <T> LiveData<T>.await(): T {
     return withContext(Dispatchers.Main.immediate) {
         suspendCancellableCoroutine { continuation ->
@@ -97,4 +102,14 @@ public suspend fun <T> LiveData<T>.await(): T {
             }
         }
     }
+}
+
+fun Context.isDarkMode() =
+    (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+
+const val kmPerMile = 1.609344
+const val meterPerFt = 0.3048
+
+fun shouldUseImperialUnits(): Boolean {
+    return Locale.getDefault().country in listOf("US", "GB", "MM", "LR")
 }

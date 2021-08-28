@@ -157,6 +157,7 @@ dependencies {
     googleImplementation 'com.google.code.gson:gson:2.8.6'
     googleImplementation 'com.google.android.datatransport:transport-runtime:2.2.5'
     googleImplementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+    googleImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.4.1'
 
     // Mapbox places (autocomplete)
     // forked this library and included through JitPack to fix https://github.com/mapbox/mapbox-plugins-android/issues/1011

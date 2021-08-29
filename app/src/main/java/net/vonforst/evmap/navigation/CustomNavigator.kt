@@ -38,6 +38,9 @@ class CustomNavigator(
             }
             launchCustomTab(url)
         }
+        if (destination.destination == "github_sponsors") {
+            launchCustomTab(context.getString(R.string.github_sponsors_link))
+        }
         return null // Do not add to the back stack, managed by Chrome Custom Tabs
     }
 

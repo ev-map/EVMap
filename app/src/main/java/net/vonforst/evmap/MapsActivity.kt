@@ -78,6 +78,7 @@ class MapsActivity : AppCompatActivity() {
         }
 
         prefs = PreferenceDataSource(this)
+        prefs.appStartCounter += 1
 
         checkPlayServices(this)
 

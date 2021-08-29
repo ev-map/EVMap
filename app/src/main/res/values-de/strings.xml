@@ -153,7 +153,8 @@
     <string name="welcome_2_title">Auf die Leistung kommt es an</string>
     <string name="welcome_2">Die Farbe einer Ladestatione auf der Karte zeigt dir die maximale Ladeleistung.</string>
     <string name="welcome_2_detail">Du kannst die Farben im Menü unter “Über EVMap → FAQ” erneut ansehen)</string>
-    <string name="welcome_3">EVMap ist kostenlos und Open Source. Du kannst bei GitHub zur Weiterentwicklung beitragen oder die Entwicklung mit Spenden unterstützen. Die entsprechenden Links findest du unter „Über EVMap” im Menü.</string>
+    <string name="welcome_3_title">Danke, dass du EVMap nutzt!</string>
+    <string name="welcome_3_detail">EVMap ist kostenlos und Open Source, ich entwickle es in meiner Freizeit. Über GitHub kann jeder zur Weiterentwicklung der App beitragen. Durch die steigende Beliebtheit der App müssen allerdings auch laufende Kosten, z.B. für den Zugriff auf die Datenquellen, gedeckt werden. Daher freue ich mich auch über Spenden in der App oder über GitHub Sponsors.</string>
     <string name="deleted_filterprofile">„%s” gelöscht</string>
     <string name="undo">Rückgängig</string>
     <string name="rename">Umbenennen</string>
@@ -235,4 +236,7 @@
     <string name="powered_by_mapbox">powered by Mapbox</string>
     <string name="pref_search_provider">Anbieter für Ortssuche</string>
     <string name="pref_search_provider_info"><![CDATA[Die Daten für die Ortssuche, vor allem von Google Maps, sind relativ teuer. Wenn du diese Funktion häufig nutzt, würde ich mich über eine Spende unter \"Über EVMap -> Spenden\" sehr freuen.]]></string>
+    <string name="github_sponsors">GitHub Sponsors</string>
+    <string name="donate_desc">Unterstütze die Weiterentwicklung von EVMap mit einer einmaligen Spende</string>
+    <string name="github_sponsors_desc">Unterstütze EVMap über GitHub Sponsors</string>
 </resources>

@@ -33,6 +33,9 @@
         <action
             android:id="@+id/action_map_to_update_060_androidauto"
             app:destination="@id/update_060_androidauto" />
+        <action
+            android:id="@+id/action_map_to_opensource_donations"
+            app:destination="@id/opensource_donations" />
     </fragment>
     <fragment
         android:id="@+id/about"
@@ -42,6 +45,9 @@
         <action
             android:id="@+id/action_about_to_donateFragment"
             app:destination="@id/donate" />
+        <action
+            android:id="@+id/action_about_to_github_sponsors"
+            app:destination="@id/github_sponsors" />
     </fragment>
     <fragment
         android:id="@+id/settings"
@@ -90,9 +96,24 @@
         android:name="net.vonforst.evmap.fragment.updatedialogs.Update060AndroidAutoDialogFramgent"
         android:label="@string/welcome_to_evmap"
         tools:layout="@layout/dialog_update_060_androidauto" />
+    <dialog
+        android:id="@+id/opensource_donations"
+        android:name="net.vonforst.evmap.fragment.updatedialogs.OpensourceDonationsDialogFramgent"
+        android:label="@string/welcome_3_title"
+        tools:layout="@layout/dialog_opensource_donations">
+        <action
+            android:id="@+id/action_opensource_donations_to_donate"
+            app:destination="@id/donate" />
+        <action
+            android:id="@+id/action_opensource_donations_to_github_sponsors"
+            app:destination="@id/github_sponsors" />
+    </dialog>
     <custom
         android:id="@+id/report_new_charger"
         app:customDestination="report_new_charger" />
+    <custom
+        android:id="@+id/github_sponsors"
+        app:customDestination="github_sponsors" />
     <fragment
         android:id="@+id/onboarding"
         android:name="net.vonforst.evmap.fragment.OnboardingFragment"

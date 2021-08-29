@@ -152,7 +152,8 @@
     <string name="welcome_2_title">You\'ve got the power</string>
     <string name="welcome_2">The color of a charger on the map shows you its maximum charging power.</string>
     <string name="welcome_2_detail">(You can check the colors again under “About EVMap → FAQ” in the menu)</string>
-    <string name="welcome_3">EVMap is free and Open Source software. You can contribute to the development on GitHub or support me through donations. The corresponding links can be found under “About EVMap” in the menu.</string>
+    <string name="welcome_3_title">Thank you for using EVMap!</string>
+    <string name="welcome_3_detail">EVMap is free and Open Source software that I develop in my spare time. Coding contributions on GitHub are very much appreciated. However, due to increasing popularity of the app, I also need to cover some running costs, e.g. for access to the data sources. Therefore, please consider supporting the app through a donation or via GitHub Sponsors.</string>
     <string name="deleted_filterprofile">Deleted “%s”</string>
     <string name="undo">Undo</string>
     <string name="rename">Rename</string>
@@ -220,4 +221,7 @@
     <string name="powered_by_mapbox">powered by Mapbox</string>
     <string name="pref_search_provider">Place search provider</string>
     <string name="pref_search_provider_info"><![CDATA[Data for place search, especially from Google Maps, is relatively expensive. If you use this feature often, please consider making a donation through \"About EVMap -> Donate\".]]></string>
+    <string name="github_sponsors">GitHub Sponsors</string>
+    <string name="donate_desc">Support EVMap\'s development with a one-time donation</string>
+    <string name="github_sponsors_desc">Support EVMap on GitHub Sponsors</string>
 </resources>

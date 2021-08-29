@@ -21,7 +21,13 @@
 
         <Preference
             android:key="donate"
-            android:title="@string/donate" />
+            android:title="@string/donate"
+            android:summary="@string/donate_desc" />
+
+        <Preference
+            android:key="github_sponsors"
+            android:title="@string/github_sponsors"
+            android:summary="@string/github_sponsors_desc" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/contact">

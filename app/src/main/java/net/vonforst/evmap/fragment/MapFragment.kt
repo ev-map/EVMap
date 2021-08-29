@@ -102,6 +102,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
     private var requestingLocationUpdates = false
     private lateinit var bottomSheetBehavior: BottomSheetBehaviorGoogleMapsLike<View>
     private lateinit var detailAppBarBehavior: MergedAppBarLayoutBehavior
+    private lateinit var prefs: PreferenceDataSource
     private var markers: MutableBiMap<Marker, ChargeLocation> = HashBiMap()
     private var clusterMarkers: List<Marker> = emptyList()
     private var searchResultMarker: Marker? = null
@@ -139,6 +140,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        prefs = PreferenceDataSource(requireContext())
+
         locationClient = LostApiClient.Builder(requireContext())
             .addConnectionCallbacks(this)
             .build()
@@ -155,7 +158,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         binding.lifecycleOwner = this
         binding.vm = vm
 
-        val provider = PreferenceDataSource(requireContext()).mapProvider
+        val provider = prefs.mapProvider
         if (mapFragment == null || mapFragment!!.priority[0] != provider) {
             mapFragment = MapFragment()
             mapFragment!!.priority = arrayOf(
@@ -231,6 +234,13 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         setupAdapters()
         (activity as? MapsActivity)?.setSupportActionBar(binding.toolbar)
 
+        if (prefs.appStartCounter > 5 && !prefs.opensourceDonationsDialogShown) {
+            try {
+                findNavController().navigate(R.id.action_map_to_opensource_donations)
+            } catch (ignored: IllegalArgumentException) {
+                // when there is already another navigation going on
+            }
+        }
         /*if (!prefs.update060AndroidAutoDialogShown) {
             try {
                 navController.navigate(R.id.action_map_to_update_060_androidauto)

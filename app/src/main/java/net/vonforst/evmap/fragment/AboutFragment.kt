@@ -59,6 +59,10 @@ class AboutFragment : PreferenceFragmentCompat() {
                 findNavController().navigate(R.id.action_about_to_donateFragment)
                 true
             }
+            "github_sponsors" -> {
+                findNavController().navigate(R.id.action_about_to_github_sponsors)
+                true
+            }
             "twitter" -> {
                 (activity as? MapsActivity)?.openUrl(getString(R.string.twitter_url))
                 true

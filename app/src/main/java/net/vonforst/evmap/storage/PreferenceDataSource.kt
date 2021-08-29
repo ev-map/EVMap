@@ -167,4 +167,17 @@ class PreferenceDataSource(val context: Context) {
                 .putFloat("chargeprice_battery_range_max", value[1])
                 .apply()
         }
+
+    /** App start counter, introduced with Version 1.0.0 */
+    var appStartCounter: Long
+        get() = sp.getLong("app_start_counter", 0)
+        set(value) {
+            sp.edit().putLong("app_start_counter", value).apply()
+        }
+
+    var opensourceDonationsDialogShown: Boolean
+        get() = sp.getBoolean("opensource_donations_dialog_shown", false)
+        set(value) {
+            sp.edit().putBoolean("opensource_donations_dialog_shown", value)
+        }
 }

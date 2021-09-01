@@ -6,6 +6,7 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.CharacterStyle
 import android.text.style.StyleSpan
+import androidx.core.os.ConfigurationCompat
 import com.car2go.maps.model.LatLng
 import com.car2go.maps.model.LatLngBounds
 import com.car2go.maps.util.SphericalUtil
@@ -27,6 +28,7 @@ class MapboxAutocompleteProvider(val context: Context) : AutocompleteProvider {
             location?.let {
                 proximity(Point.fromLngLat(location.longitude, location.latitude))
             }
+            languages(ConfigurationCompat.getLocales(context.resources.configuration)[0].language)
             accessToken(context.getString(R.string.mapbox_key))
             autocomplete(true)
             this.query(query)

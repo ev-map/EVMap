@@ -19,6 +19,7 @@ import net.vonforst.evmap.storage.PreferenceDataSource
 
 class OnboardingFragment : Fragment() {
     private lateinit var binding: FragmentOnboardingBinding
+    private lateinit var adapter: OnboardingViewPagerAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -27,7 +28,7 @@ class OnboardingFragment : Fragment() {
     ): View {
         binding = FragmentOnboardingBinding.inflate(inflater)
 
-        val adapter = OnboardingViewPagerAdapter(this)
+        adapter = OnboardingViewPagerAdapter(this)
         binding.viewPager.adapter = adapter
         binding.pageIndicatorView.count = adapter.itemCount
         binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
@@ -56,7 +57,7 @@ class OnboardingFragment : Fragment() {
     }
 
     fun goToNext() {
-        if (binding.viewPager.currentItem == 2) {
+        if (binding.viewPager.currentItem == adapter.itemCount - 1) {
             findNavController().navigate(R.id.action_onboarding_to_map)
         } else {
             binding.viewPager.setCurrentItem(binding.viewPager.currentItem + 1, true)

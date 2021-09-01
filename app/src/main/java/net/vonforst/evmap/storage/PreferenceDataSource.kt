@@ -178,6 +178,6 @@ class PreferenceDataSource(val context: Context) {
     var opensourceDonationsDialogShown: Boolean
         get() = sp.getBoolean("opensource_donations_dialog_shown", false)
         set(value) {
-            sp.edit().putBoolean("opensource_donations_dialog_shown", value)
+            sp.edit().putBoolean("opensource_donations_dialog_shown", value).apply()
         }
 }

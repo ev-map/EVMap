@@ -1,0 +1,8 @@
+Improvements:
+- New UI for place search
+- Added information about donation infos
+- Disabled Chargeprice button for unsupported countries
+- Improvements for devices with small screens
+- Added more explanation for some settings
+- New crash reporting mechanism
+- Fixed crashes

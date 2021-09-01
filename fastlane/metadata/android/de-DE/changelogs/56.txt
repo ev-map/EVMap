@@ -1,0 +1,8 @@
+Verbesserungen:
+- Neue Oberfläche für Ortssuche
+- Infos zu Spendenmöglichkeiten hinzugefügt
+- Chargeprice-Button für nicht unterstützte Länder deaktiviert
+- Anpassungen für Geräte mit kleinen Bildschirmen
+- Mehr Erklärungen zu einigen Einstellungen hinzugefügt
+- Neuer Mechanismus für Absturzberichte
+- Abstürze behoben

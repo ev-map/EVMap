@@ -153,8 +153,8 @@
     <string name="welcome_2_title">Auf die Leistung kommt es an</string>
     <string name="welcome_2">Die Farbe einer Ladestatione auf der Karte zeigt dir die maximale Ladeleistung.</string>
     <string name="welcome_2_detail">Du kannst die Farben im Menü unter “Über EVMap → FAQ” erneut ansehen)</string>
-    <string name="welcome_3_title">Danke, dass du EVMap nutzt!</string>
-    <string name="welcome_3_detail">EVMap ist kostenlos und Open Source, ich entwickle es in meiner Freizeit. Über GitHub kann jeder zur Weiterentwicklung der App beitragen. Durch die steigende Beliebtheit der App müssen allerdings auch laufende Kosten, z.B. für den Zugriff auf die Datenquellen, gedeckt werden. Daher freue ich mich auch über Spenden in der App oder über GitHub Sponsors.</string>
+    <string name="donation_dialog_title">Danke, dass du EVMap nutzt!</string>
+    <string name="donation_dialog_detail">EVMap ist kostenlos und Open Source, ich entwickle es in meiner Freizeit. Über GitHub kann jeder zur Weiterentwicklung der App beitragen. Durch die steigende Beliebtheit der App müssen allerdings auch laufende Kosten, z.B. für den Zugriff auf die Datenquellen, gedeckt werden. Daher freue ich mich auch über Spenden in der App oder über GitHub Sponsors.</string>
     <string name="deleted_filterprofile">„%s” gelöscht</string>
     <string name="undo">Rückgängig</string>
     <string name="rename">Umbenennen</string>

@@ -152,8 +152,8 @@
     <string name="welcome_2_title">You\'ve got the power</string>
     <string name="welcome_2">The color of a charger on the map shows you its maximum charging power.</string>
     <string name="welcome_2_detail">(You can check the colors again under “About EVMap → FAQ” in the menu)</string>
-    <string name="welcome_3_title">Thank you for using EVMap!</string>
-    <string name="welcome_3_detail">EVMap is free and Open Source software that I develop in my spare time. Coding contributions on GitHub are very much appreciated. However, due to increasing popularity of the app, I also need to cover some running costs, e.g. for access to the data sources. Therefore, please consider supporting the app through a donation or via GitHub Sponsors.</string>
+    <string name="donation_dialog_title">Thank you for using EVMap!</string>
+    <string name="donation_dialog_detail">EVMap is free and Open Source software that I develop in my spare time. Coding contributions on GitHub are very much appreciated. However, due to increasing popularity of the app, I also need to cover some running costs, e.g. for access to the data sources. Therefore, please consider supporting the app through a donation or via GitHub Sponsors.</string>
     <string name="deleted_filterprofile">Deleted “%s”</string>
     <string name="undo">Undo</string>
     <string name="rename">Rename</string>

@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
@@ -85,14 +84,6 @@ class ChargepriceFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val toolbar = view.findViewById(R.id.toolbar) as Toolbar
-
-        val navController = findNavController()
-        toolbar.setupWithNavController(
-            navController,
-            (requireActivity() as MapsActivity).appBarConfiguration
-        )
-
         val charger = requireArguments().getParcelable<ChargeLocation>(ARG_CHARGER)!!
         val dataSource = requireArguments().getString(ARG_DATASOURCE)!!
         vm.charger.value = charger
@@ -165,7 +156,7 @@ class ChargepriceFragment : DialogFragment() {
         }
 
         binding.btnSettings.setOnClickListener {
-            navController.navigate(R.id.action_chargeprice_to_settingsFragment)
+            findNavController().navigate(R.id.action_chargeprice_to_settingsFragment)
         }
 
         binding.batteryRange.setLabelFormatter { value: Float ->
@@ -215,6 +206,14 @@ class ChargepriceFragment : DialogFragment() {
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.toolbar.setupWithNavController(
+            findNavController(),
+            (requireActivity() as MapsActivity).appBarConfiguration
+        )
     }
 
     companion object {

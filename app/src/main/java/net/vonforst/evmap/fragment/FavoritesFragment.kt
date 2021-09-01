@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -70,19 +69,15 @@ class FavoritesFragment : Fragment(), LostApiClient.ConnectionCallbacks {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val toolbar = view.findViewById(R.id.toolbar) as Toolbar
-
-        val navController = findNavController()
-        toolbar.setupWithNavController(
-            navController,
-            (requireActivity() as MapsActivity).appBarConfiguration
-        )
 
         adapter = FavoritesAdapter(onDelete = {
             delete(it.charger)
         }).apply {
             onClickListener = {
-                navController.navigate(R.id.action_favs_to_map, MapFragment.showCharger(it.charger))
+                findNavController().navigate(
+                    R.id.action_favs_to_map,
+                    MapFragment.showCharger(it.charger)
+                )
             }
         }
         binding.favsList.apply {
@@ -255,5 +250,13 @@ class FavoritesFragment : Fragment(), LostApiClient.ConnectionCallbacks {
                 }
             }
         })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.toolbar.setupWithNavController(
+            findNavController(),
+            (requireActivity() as MapsActivity).appBarConfiguration
+        )
     }
 }

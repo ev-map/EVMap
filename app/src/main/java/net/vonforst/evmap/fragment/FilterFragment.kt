@@ -3,7 +3,6 @@ package net.vonforst.evmap.fragment
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -42,18 +41,11 @@ class FilterFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val toolbar = view.findViewById(R.id.toolbar) as Toolbar
-        (requireActivity() as AppCompatActivity).setSupportActionBar(toolbar)
-
-        val navController = findNavController()
-        toolbar.setupWithNavController(
-            navController,
-            (requireActivity() as MapsActivity).appBarConfiguration
-        )
+        (requireActivity() as AppCompatActivity).setSupportActionBar(binding.toolbar)
 
         vm.filterProfile.observe(viewLifecycleOwner) {
             if (it != null) {
-                toolbar.title = "${getString(R.string.menu_filter)}: ${it.name}"
+                binding.toolbar.title = "${getString(R.string.menu_filter)}: ${it.name}"
             }
         }
 
@@ -68,7 +60,7 @@ class FilterFragment : Fragment() {
             )
         }
 
-        toolbar.setNavigationOnClickListener {
+        binding.toolbar.setNavigationOnClickListener {
             findNavController().popBackStack()
         }
     }
@@ -109,5 +101,13 @@ class FilterFragment : Fragment() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.toolbar.setupWithNavController(
+            findNavController(),
+            (requireActivity() as MapsActivity).appBarConfiguration
+        )
     }
 }

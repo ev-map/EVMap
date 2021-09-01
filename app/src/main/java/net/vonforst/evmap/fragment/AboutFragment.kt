@@ -1,7 +1,6 @@
 package net.vonforst.evmap.fragment
 
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.widget.Toolbar
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
@@ -14,13 +13,12 @@ import net.vonforst.evmap.R
 
 
 class AboutFragment : PreferenceFragmentCompat() {
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        val toolbar = view.findViewById(R.id.toolbar) as Toolbar
+    override fun onResume() {
+        super.onResume()
+        val toolbar = requireView().findViewById(R.id.toolbar) as Toolbar
 
-        val navController = findNavController()
         toolbar.setupWithNavController(
-            navController,
+            findNavController(),
             (requireActivity() as MapsActivity).appBarConfiguration
         )
     }

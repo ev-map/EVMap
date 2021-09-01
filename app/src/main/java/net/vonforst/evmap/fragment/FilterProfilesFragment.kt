@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -57,15 +56,7 @@ class FilterProfilesFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val toolbar = view.findViewById(R.id.toolbar) as Toolbar
-        (requireActivity() as AppCompatActivity).setSupportActionBar(toolbar)
-
-        val navController = findNavController()
-        toolbar.setupWithNavController(
-            navController,
-            (requireActivity() as MapsActivity).appBarConfiguration
-        )
-
+        (requireActivity() as AppCompatActivity).setSupportActionBar(binding.toolbar)
 
         touchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
             ItemTouchHelper.UP or ItemTouchHelper.DOWN,
@@ -207,9 +198,17 @@ class FilterProfilesFragment : Fragment() {
 
         touchHelper.attachToRecyclerView(binding.filterProfilesList)
 
-        toolbar.setNavigationOnClickListener {
+        binding.toolbar.setNavigationOnClickListener {
             findNavController().popBackStack()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.toolbar.setupWithNavController(
+            findNavController(),
+            (requireActivity() as MapsActivity).appBarConfiguration
+        )
     }
 
     fun delete(fp: FilterProfile) {

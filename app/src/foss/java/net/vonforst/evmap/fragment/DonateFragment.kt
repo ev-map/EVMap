@@ -27,14 +27,16 @@ class DonateFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         (requireActivity() as AppCompatActivity).setSupportActionBar(binding.toolbar)
 
-        val navController = findNavController()
-        binding.toolbar.setupWithNavController(
-            navController,
-            (requireActivity() as MapsActivity).appBarConfiguration
-        )
-
         binding.btnDonate.setOnClickListener {
             (activity as? MapsActivity)?.openUrl(getString(R.string.paypal_link))
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.toolbar.setupWithNavController(
+            findNavController(),
+            (requireActivity() as MapsActivity).appBarConfiguration
+        )
     }
 }

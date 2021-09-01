@@ -165,8 +165,6 @@
     <string name="navigate">Navigate</string>
     <string name="verified">verified</string>
     <string name="verified_desc">Charger verified by a member at the %s community — not necessarily working right now.</string>
-    <string name="update_060_androidauto_title">New update: Android Auto</string>
-    <string name="update_060_androidauto_text">With this new update, you can also use EVMap to find nearby chargers from within Android Auto on supported cars. Simply select the EVMap app in the Android Auto menu.</string>
     <string name="charge_price_format">%2$s%1$.2f</string>
     <string name="charge_price_average_format">⌀ %2$s%1$.2f/kWh</string>
     <string name="charge_price_kwh_format">%2$s%1$.2f/kWh</string>

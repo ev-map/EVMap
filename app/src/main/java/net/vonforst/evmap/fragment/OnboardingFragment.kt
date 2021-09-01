@@ -11,7 +11,6 @@ import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import net.vonforst.evmap.R
 import net.vonforst.evmap.databinding.*
@@ -62,18 +61,6 @@ class OnboardingFragment : Fragment() {
         } else {
             binding.viewPager.setCurrentItem(binding.viewPager.currentItem + 1, true)
         }
-    }
-}
-
-class OnboardingViewPagerAdapter(fragment: Fragment) :
-    FragmentStateAdapter(fragment) {
-    override fun getItemCount(): Int = 3
-
-    override fun createFragment(position: Int): Fragment = when (position) {
-        0 -> WelcomeFragment()
-        1 -> IconsFragment()
-        2 -> DataSourceSelectFragment()
-        else -> throw IllegalArgumentException()
     }
 }
 

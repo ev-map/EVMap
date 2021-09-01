@@ -36,11 +36,19 @@ class MapboxAutocompleteProvider(val context: Context) : AutocompleteProvider {
         }
         return result.body()!!.features().map { feature ->
             results[feature.id()!!] = feature
+            var secondaryText = (feature.matchingPlaceName() ?: feature.placeName())!!
+
+            val matchingText = (feature.matchingText() ?: feature.text())!!
             val primaryText =
-                (feature.matchingText() ?: feature.text())!! + (feature.address()?.let { " $it" }
-                    ?: "")
-            val secondaryText =
-                (feature.matchingPlaceName() ?: feature.placeName())!!.replace("$primaryText, ", "")
+                if (feature.address() != null && secondaryText.startsWith(feature.address() + " " + matchingText)) {
+                    // countries where house number comes in front of road ("10 Downing Street")
+                    feature.address() + " " + matchingText
+                } else {
+                    // countries where house number comes after road ("Willy-Brandt-Str. 1")
+                    matchingText + (feature.address()?.let { " $it" } ?: "")
+                }
+
+            secondaryText = secondaryText.replace("$primaryText, ", "")
             AutocompletePlace(
                 highlightMatch(primaryText, query),
                 secondaryText,

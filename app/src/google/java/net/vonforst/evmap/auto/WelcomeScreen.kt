@@ -64,6 +64,11 @@ class WelcomeScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx), L
     }
 
     override fun updateLocation(location: Location) {
+        if (location.latitude == this.location?.latitude
+            && location.longitude == this.location?.longitude
+        ) {
+            return
+        }
         this.location = location
         invalidate()
     }

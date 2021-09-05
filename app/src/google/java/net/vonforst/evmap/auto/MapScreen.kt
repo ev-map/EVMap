@@ -214,6 +214,11 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
     }
 
     override fun updateLocation(location: Location) {
+        if (location.latitude == this.location?.latitude
+            && location.longitude == this.location?.longitude
+        ) {
+            return
+        }
         this.location = location
         if (updateCoroutine != null) {
             // don't update while still loading last update

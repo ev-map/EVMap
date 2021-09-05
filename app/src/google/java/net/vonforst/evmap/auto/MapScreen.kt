@@ -44,7 +44,11 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
     Screen(ctx), LocationAwareScreen {
     private var updateCoroutine: Job? = null
     private var numUpdates = 0
-    private val maxNumUpdates = 2
+
+    /* Updating map contents is disabled - if the user uses Chargeprice from the charger
+       detail screen, this already means 4 steps, after which the app would crash.
+       follow https://issuetracker.google.com/issues/176694222 for updates how to solve this. */
+    private val maxNumUpdates = 1
 
     private var location: Location? = null
     private var lastUpdateLocation: Location? = null
@@ -246,8 +250,8 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
         numUpdates++
         println(numUpdates)
         if (numUpdates > maxNumUpdates) {
-            CarToast.makeText(carContext, R.string.auto_no_refresh_possible, CarToast.LENGTH_LONG)
-                .show()
+            /*CarToast.makeText(carContext, R.string.auto_no_refresh_possible, CarToast.LENGTH_LONG)
+                .show()*/
             return
         }
         updateCoroutine = lifecycleScope.launch {

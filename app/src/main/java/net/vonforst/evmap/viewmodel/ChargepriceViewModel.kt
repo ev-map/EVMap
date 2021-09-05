@@ -201,12 +201,16 @@ class ChargepriceViewModel(application: Application, chargepriceApiKey: String) 
                     } else if (cpMeta.status == Status.LOADING) {
                         value = Resource.loading(null)
                     } else {
-                        value =
-                            Resource.success(cpMeta.data!!.chargePoints.filter {
-                                it.plug == getChargepricePlugType(
-                                    chargepoint
-                                ) && it.power == chargepoint.power
-                            }[0])
+                        val result = cpMeta.data!!.chargePoints.filter {
+                            it.plug == getChargepricePlugType(
+                                chargepoint
+                            ) && it.power == chargepoint.power
+                        }.elementAtOrNull(0)
+                        value = if (result != null) {
+                            Resource.success(result)
+                        } else {
+                            Resource.error("matching chargepoint not found", null)
+                        }
                     }
                 }
             }

@@ -13,13 +13,14 @@ import androidx.car.app.model.*
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import net.vonforst.evmap.R
 import net.vonforst.evmap.ui.Gauge
 import kotlin.math.min
 import kotlin.math.roundToInt
 
-class VehicleDataScreen(ctx: CarContext) : Screen(ctx) {
+class VehicleDataScreen(ctx: CarContext) : Screen(ctx), LifecycleObserver {
     private val hardwareMan = ctx.getCarService(CarContext.HARDWARE_SERVICE) as CarHardwareManager
     private var model: Model? = null
     private var energyLevel: EnergyLevel? = null
@@ -32,10 +33,12 @@ class VehicleDataScreen(ctx: CarContext) : Screen(ctx) {
         "com.google.android.gms.permission.CAR_SPEED"
     )
 
+    init {
+        lifecycle.addObserver(this)
+    }
+
     override fun onGetTemplate(): Template {
-        if (permissionsGranted()) {
-            setupListeners()
-        } else {
+        if (!permissionsGranted()) {
             Handler(Looper.getMainLooper()).post {
                 screenManager.pushForResult(
                     PermissionScreen(
@@ -179,7 +182,12 @@ class VehicleDataScreen(ctx: CarContext) : Screen(ctx) {
         invalidate()
     }
 
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     private fun setupListeners() {
+        if (!permissionsGranted()) return
+
+        println("Setting up energy level listener")
+
         val exec = ContextCompat.getMainExecutor(carContext)
         hardwareMan.carInfo.addEnergyLevelListener(exec, ::onEnergyLevelUpdated)
         hardwareMan.carInfo.addSpeedListener(exec, ::onSpeedUpdated)
@@ -192,6 +200,7 @@ class VehicleDataScreen(ctx: CarContext) : Screen(ctx) {
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     private fun removeListeners() {
+        println("Removing energy level listener")
         hardwareMan.carInfo.removeEnergyLevelListener(::onEnergyLevelUpdated)
         hardwareMan.carInfo.removeSpeedListener(::onSpeedUpdated)
     }

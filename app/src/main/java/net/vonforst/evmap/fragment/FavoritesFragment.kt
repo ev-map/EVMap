@@ -49,6 +49,12 @@ class FavoritesFragment : Fragment(), LostApiClient.ConnectionCallbacks {
         }
     })
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        locationClient = LostApiClient.Builder(requireContext())
+            .addConnectionCallbacks(this).build()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -60,9 +66,6 @@ class FavoritesFragment : Fragment(), LostApiClient.ConnectionCallbacks {
         )
         binding.lifecycleOwner = this
         binding.vm = vm
-
-        locationClient = LostApiClient.Builder(requireContext())
-            .addConnectionCallbacks(this).build()
 
         return binding.root
     }

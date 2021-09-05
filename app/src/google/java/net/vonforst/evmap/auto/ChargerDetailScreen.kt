@@ -20,6 +20,7 @@ import kotlinx.coroutines.withContext
 import net.vonforst.evmap.*
 import net.vonforst.evmap.api.availability.ChargeLocationStatus
 import net.vonforst.evmap.api.availability.getAvailability
+import net.vonforst.evmap.api.chargeprice.ChargepriceApi
 import net.vonforst.evmap.api.createApi
 import net.vonforst.evmap.api.nameForPlugType
 import net.vonforst.evmap.api.stringProvider
@@ -150,21 +151,24 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
                             navigateToCharger(charger)
                         }
                         .build())
-                    addAction(Action.Builder()
-                        .setIcon(
-                            CarIcon.Builder(
-                                IconCompat.createWithResource(
-                                    carContext,
-                                    R.drawable.ic_chargeprice
+                    charger.chargepriceData?.country?.let { country ->
+                        if (ChargepriceApi.isCountrySupported(country, charger.dataSource)) {
+                            addAction(Action.Builder()
+                                .setIcon(
+                                    CarIcon.Builder(
+                                        IconCompat.createWithResource(
+                                            carContext,
+                                            R.drawable.ic_chargeprice
+                                        )
+                                    ).build()
                                 )
-                            ).build()
-                        )
-                        .setTitle(carContext.getString(R.string.auto_prices))
-                        .setOnClickListener {
-                            screenManager.push(ChargepriceScreen(carContext, charger))
+                                .setTitle(carContext.getString(R.string.auto_prices))
+                                .setOnClickListener {
+                                    screenManager.push(ChargepriceScreen(carContext, charger))
+                                }
+                                .build())
                         }
-                        .build())
-
+                    }
                 } ?: setLoading(true)
             }.build()
         ).apply {

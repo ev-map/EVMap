@@ -170,6 +170,7 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
             }
             if (vehicles.isEmpty()) {
                 errorMessage = carContext.getString(R.string.chargeprice_select_car_first)
+                invalidate()
                 return@launch
             } else if (vehicles.size > 1) {
                 if (manufacturer != null && modelName != null) {
@@ -182,6 +183,7 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
                             manufacturer,
                             modelName
                         )
+                        invalidate()
                         return@launch
                     } else if (vehicles.size > 1) {
                         errorMessage = carContext.getString(
@@ -189,11 +191,13 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
                             manufacturer,
                             modelName
                         )
+                        invalidate()
                         return@launch
                     }
                 } else {
                     errorMessage =
                         carContext.getString(R.string.auto_chargeprice_vehicle_unavailable)
+                    invalidate()
                     return@launch
                 }
             }
@@ -220,6 +224,7 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
             }.maxByOrNull { it.power }
             if (chargepoint == null) {
                 errorMessage = carContext.getString(R.string.chargeprice_no_compatible_connectors)
+                invalidate()
                 return@launch
             }
             meta =

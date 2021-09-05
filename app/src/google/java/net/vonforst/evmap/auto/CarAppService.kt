@@ -49,8 +49,9 @@ class EVMapSession(val cas: CarAppService) : Session(), LifecycleObserver {
         }
     private var location: Location? = null
     private var locationService: CarLocationService? = null
-    private val hardwareMan =
+    private val hardwareMan: CarHardwareManager by lazy {
         carContext.getCarService(CarContext.HARDWARE_SERVICE) as CarHardwareManager
+    }
 
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName, ibinder: IBinder) {

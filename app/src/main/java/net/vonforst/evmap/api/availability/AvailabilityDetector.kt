@@ -100,7 +100,7 @@ abstract class BaseAvailabilityDetector(private val client: OkHttpClient) : Avai
                     var i = 0
                     gePowers.map { gePower ->
                         val chargepoint =
-                            chargepoints.find { it.type == type && it.power == gePower }!!
+                            chargepoints.find { it.type in equivalentPlugTypes(type) && it.power == gePower }!!
                         val ids = allIds.subList(i, i + chargepoint.count).toSet()
                         i += chargepoint.count
                         chargepoint to ids

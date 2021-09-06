@@ -31,9 +31,6 @@
             app:popEnterAnim="@animator/nav_default_pop_enter_anim"
             app:popExitAnim="@animator/nav_default_pop_exit_anim" />
         <action
-            android:id="@+id/action_map_to_update_060_androidauto"
-            app:destination="@id/update_060_androidauto" />
-        <action
             android:id="@+id/action_map_to_opensource_donations"
             app:destination="@id/opensource_donations" />
     </fragment>
@@ -91,11 +88,6 @@
         android:name="net.vonforst.evmap.fragment.DonateFragment"
         android:label="@string/donate"
         tools:layout="@layout/fragment_donate" />
-    <dialog
-        android:id="@+id/update_060_androidauto"
-        android:name="net.vonforst.evmap.fragment.updatedialogs.Update060AndroidAutoDialogFramgent"
-        android:label="@string/welcome_to_evmap"
-        tools:layout="@layout/dialog_update_060_androidauto" />
     <dialog
         android:id="@+id/opensource_donations"
         android:name="net.vonforst.evmap.fragment.updatedialogs.OpensourceDonationsDialogFramgent"

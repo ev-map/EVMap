@@ -5,11 +5,10 @@ Funktionen:
 - Anzeige der Stromtankstellen aus den Stromtankstellenverzeichnissen von GoingElectric.de und Open Charge Map
 - Echtzeit-Verfügbarkeitsanzeige für viele Ladesäulen (nur in Europa)
 - Integrierter Preisvergleich für die jeweilige Ladesäule mit Chargeprice.app (nur in Europa)
-- Google Maps oder OpenStreetMap (Mapbox) können für die Kartendaten genutzt werden
+- Kartendaten von OpenStreetMap (Mapbox)
 - Suche nach Orten
 - Erweiterte Filterfunktionen, Filterprofile speichern
 - Favoritenliste, auch mit Anzeige der Verfügbarkeit
-- Unterstützung für Android Auto
 - Keine nervige Werbung
 
 EVMap ist ein Open-Source-Projekt und unter https://github.com/johan12345/EVMap zu finden.

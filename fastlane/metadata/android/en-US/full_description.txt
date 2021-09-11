@@ -5,11 +5,10 @@ Features:
 - Shows all charging stations from the community-maintained GoingElectric.de and Open Charge Map directories
 - Realtime availability information (only in Europe)
 - Integrated price comparison using Chargeprice.app (only in Europe)
-- Map data from Google Maps or OpenStreetMap (Mapbox)
+- Map data from OpenStreetMap (Mapbox)
 - Search for places
 - Advanced filtering options, including saved filter profiles
 - Favorites list, also with availability information
-- Android Auto support
 - No ads, fully open source
 
 EVMap is an open source project and can be found at https://github.com/johan12345/EVMap.

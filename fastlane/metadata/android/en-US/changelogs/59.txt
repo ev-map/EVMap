@@ -1,0 +1,7 @@
+New features:
+- Android Auto: Price comparison with Chargeprice (only in certain countries)
+- Android Auto: New screen displaying vehicle data (if available)
+
+Improvements:
+- Android Auto: Use vehicle GPS (if available, starting with Android Auto 6.7)
+- Fixed various crashes

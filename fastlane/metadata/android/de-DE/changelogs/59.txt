@@ -1,0 +1,7 @@
+Neue Funktionen:
+- Android Auto: Preisvergleich mit Chargeprice
+- Android Auto: Neuer Bildschirm zur Anzeige von Fahrzeugdaten (falls verfügbar)
+
+Verbesserungen:
+- Android Auto: Nutzung des Fahrzeug-GPS (falls verfügbar, ab Android Auto 6.7)
+- Verschiedene Abstürze behoben

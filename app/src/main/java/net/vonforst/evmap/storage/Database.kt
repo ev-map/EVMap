@@ -1,5 +1,6 @@
 package net.vonforst.evmap.storage
 
+import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
@@ -256,6 +257,7 @@ abstract class AppDatabase : RoomDatabase() {
         }
 
         private val MIGRATION_13 = object : Migration(12, 13) {
+            @SuppressLint("Range")
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.beginTransaction()
                 try {

@@ -49,27 +49,10 @@ class ChargepriceViewModel(application: Application, chargepriceApiKey: String) 
         MutableLiveData<ChargepriceCar>()
     }
 
-    private val acConnectors = listOf(
-        Chargepoint.CEE_BLAU,
-        Chargepoint.CEE_ROT,
-        Chargepoint.SCHUKO,
-        Chargepoint.TYPE_1,
-        Chargepoint.TYPE_2_UNKNOWN,
-        Chargepoint.TYPE_2_SOCKET,
-        Chargepoint.TYPE_2_PLUG
-    )
-    private val plugMapping = mapOf(
-        "ccs" to Chargepoint.CCS_UNKNOWN,
-        "tesla_suc" to Chargepoint.SUPERCHARGER,
-        "tesla_ccs" to Chargepoint.CCS_UNKNOWN,
-        "chademo" to Chargepoint.CHADEMO
-    )
     val vehicleCompatibleConnectors: LiveData<List<String>> by lazy {
         MediatorLiveData<List<String>>().apply {
             addSource(vehicle) {
-                value = it?.dcChargePorts?.map {
-                    plugMapping[it]
-                }?.filterNotNull()?.plus(acConnectors)
+                value = it?.compatibleEvmapConnectors
             }
         }
     }
@@ -245,7 +228,7 @@ class ChargepriceViewModel(application: Application, chargepriceApiKey: String) 
                         maxMonthlyFees = if (prefs.chargepriceNoBaseFee) 0.0 else null,
                         currency = prefs.chargepriceCurrency
                     )
-                }, getChargepriceLanguage())
+                }, ChargepriceApi.getChargepriceLanguage())
                 val meta =
                     result.meta.get<ChargepriceMeta>(ChargepriceApi.moshi.adapter(ChargepriceMeta::class.java)) as ChargepriceMeta
                 chargePrices.value = Resource.success(result)
@@ -270,15 +253,6 @@ class ChargepriceViewModel(application: Application, chargepriceApiKey: String) 
             } catch (e: IOException) {
                 vehicles.value = Resource.error(e.message, null)
             }
-        }
-    }
-
-    private fun getChargepriceLanguage(): String {
-        val locale = Locale.getDefault().language
-        return if (ChargepriceApi.supportedLanguages.contains(locale)) {
-            locale
-        } else {
-            "en"
         }
     }
 }

@@ -25,12 +25,22 @@
     <string name="open_in_app">Open in app</string>
     <string name="opened_on_phone">Opened on phone</string>
     <string name="auto_location_permission_needed">To run EVMap on Android Auto, you need to grant access to your location.</string>
+    <string name="auto_vehicle_data_permission_needed">For this feature, EVMap needs access to your vehicle data.</string>
     <string name="grant_on_phone">Grant on phone</string>
     <string name="auto_chargers_closeby">Nearby chargers</string>
     <string name="auto_favorites">Favorites</string>
     <string name="auto_fault_report_date">⚠️ Fault report (%s)</string>
     <string name="auto_no_refresh_possible">Further updates not possible. Please go back and restart.</string>
+    <string name="auto_prices">Pricing</string>
+    <string name="auto_vehicle_data">Vehicle data</string>
+    <string name="auto_charging_level">Charging level</string>
+    <string name="auto_no_data">Unavailable</string>
+    <string name="auto_range">Range</string>
+    <string name="auto_speed">Speed</string>
     <string name="welcome_android_auto">Android Auto support</string>
     <string name="welcome_android_auto_detail">You can also use EVMap from within Android Auto on supported cars. Simply select the EVMap app in the Android Auto menu.</string>
     <string name="sounds_cool">sounds cool</string>
+    <string name="auto_chargeprice_vehicle_unavailable">EVMap could not determine your vehicle model.</string>
+    <string name="auto_chargeprice_vehicle_unknown">None of the vehicles selected in the app matches this vehicle (%s %s). Please select a matching vehicle from the app.</string>
+    <string name="auto_chargeprice_vehicle_ambiguous">Mehrere der in der App ausgewählten Fahrzeuge passen zu diesem Fahrzeug (%s %s). Bitte wähle nur ein passendes Fahrzeug in der App aus.</string>
 </resources>

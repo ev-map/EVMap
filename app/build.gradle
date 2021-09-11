@@ -6,14 +6,14 @@ apply plugin: 'androidx.navigation.safeargs.kotlin'
 apply plugin: 'com.mikepenz.aboutlibraries.plugin'
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
     buildToolsVersion "30.0.3"
 
     defaultConfig {
         applicationId "net.vonforst.evmap"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 57
+        versionCode 58
         versionName "0.9.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -136,7 +136,8 @@ dependencies {
     implementation 'com.github.romandanylyk:PageIndicatorView:b1bad589b5'
 
     // Android Auto
-    googleImplementation 'androidx.car.app:app:1.0.0'
+    googleImplementation 'androidx.car.app:app:1.1.0-beta01'
+    googleImplementation 'androidx.car.app:app-projected:1.1.0-beta01'
 
     // AnyMaps
     def anyMapsVersion = '95ddd6c083'

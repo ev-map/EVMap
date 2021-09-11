@@ -6,22 +6,25 @@ import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.IBinder
+import androidx.car.app.CarContext
 import androidx.car.app.Screen
 import androidx.car.app.Session
-import androidx.car.app.model.*
+import androidx.car.app.hardware.CarHardwareManager
+import androidx.car.app.hardware.info.CarHardwareLocation
+import androidx.car.app.hardware.info.CarSensors
 import androidx.car.app.validation.HostValidator
+import androidx.car.app.versioning.CarAppApiLevels
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.*
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import kotlinx.coroutines.*
-import net.vonforst.evmap.*
 
 
 interface LocationAwareScreen {
     fun updateLocation(location: Location)
 }
 
-@androidx.car.app.annotations.ExperimentalCarApi
 class CarAppService : androidx.car.app.CarAppService() {
     override fun createHostValidator(): HostValidator {
         return if (applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0) {
@@ -38,7 +41,6 @@ class CarAppService : androidx.car.app.CarAppService() {
     }
 }
 
-@androidx.car.app.annotations.ExperimentalCarApi
 class EVMapSession(val cas: CarAppService) : Session(), LifecycleObserver {
     var mapScreen: LocationAwareScreen? = null
         set(value) {
@@ -47,6 +49,9 @@ class EVMapSession(val cas: CarAppService) : Session(), LifecycleObserver {
         }
     private var location: Location? = null
     private var locationService: CarLocationService? = null
+    private val hardwareMan: CarHardwareManager by lazy {
+        carContext.getCarService(CarContext.HARDWARE_SERVICE) as CarHardwareManager
+    }
 
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName, ibinder: IBinder) {
@@ -65,14 +70,10 @@ class EVMapSession(val cas: CarAppService) : Session(), LifecycleObserver {
     }
 
     override fun onCreateScreen(intent: Intent): Screen {
-        return if (locationPermissionGranted()) {
-            WelcomeScreen(carContext, this)
-        } else {
-            PermissionScreen(carContext, this)
-        }
+        return WelcomeScreen(carContext, this)
     }
 
-    private fun locationPermissionGranted() =
+    fun locationPermissionGranted() =
         ContextCompat.checkSelfPermission(
             carContext,
             Manifest.permission.ACCESS_FINE_LOCATION
@@ -81,29 +82,50 @@ class EVMapSession(val cas: CarAppService) : Session(), LifecycleObserver {
     private val locationReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val location = intent.getParcelableExtra(CarLocationService.EXTRA_LOCATION) as Location?
-            val mapScreen = this@EVMapSession.mapScreen
-            if (location != null && mapScreen != null) {
-                mapScreen.updateLocation(location)
-            }
-            this@EVMapSession.location = location
+            updateLocation(location)
         }
+    }
+
+    private fun updateLocation(location: Location?) {
+        val mapScreen = mapScreen
+        if (location != null && mapScreen != null) {
+            mapScreen.updateLocation(location)
+        }
+        this.location = location
+    }
+
+    private fun onCarHardwareLocationReceived(loc: CarHardwareLocation) {
+        updateLocation(loc.location.value)
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun bindLocationService() {
         if (!locationPermissionGranted()) return
-        cas.bindService(
-            Intent(cas, CarLocationService::class.java),
-            serviceConnection,
-            Context.BIND_AUTO_CREATE
-        )
+        if (carContext.carAppApiLevel >= CarAppApiLevels.LEVEL_3) {
+            val exec = ContextCompat.getMainExecutor(carContext)
+            hardwareMan.carSensors.addCarHardwareLocationListener(
+                CarSensors.UPDATE_RATE_NORMAL,
+                exec,
+                ::onCarHardwareLocationReceived
+            )
+        } else {
+            cas.bindService(
+                Intent(cas, CarLocationService::class.java),
+                serviceConnection,
+                Context.BIND_AUTO_CREATE
+            )
+        }
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     private fun unbindLocationService() {
-        locationService?.let { service ->
-            service.removeLocationUpdates()
-            cas.unbindService(serviceConnection)
+        if (carContext.carAppApiLevel >= CarAppApiLevels.LEVEL_3) {
+            locationService?.let { service ->
+                service.removeLocationUpdates()
+                cas.unbindService(serviceConnection)
+            }
+        } else {
+            hardwareMan.carSensors.removeCarHardwareLocationListener(::onCarHardwareLocationReceived)
         }
     }
 

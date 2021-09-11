@@ -6,6 +6,7 @@ import android.text.Spanned
 import androidx.car.app.CarContext
 import androidx.car.app.CarToast
 import androidx.car.app.Screen
+import androidx.car.app.constraints.ConstraintManager
 import androidx.car.app.model.*
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.IconCompat
@@ -39,12 +40,15 @@ import kotlin.math.roundToInt
 /**
  * Main map screen showing either nearby chargers or favorites
  */
-@androidx.car.app.annotations.ExperimentalCarApi
 class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boolean = false) :
     Screen(ctx), LocationAwareScreen {
     private var updateCoroutine: Job? = null
     private var numUpdates = 0
-    private val maxNumUpdates = 3
+
+    /* Updating map contents is disabled - if the user uses Chargeprice from the charger
+       detail screen, this already means 4 steps, after which the app would crash.
+       follow https://issuetracker.google.com/issues/176694222 for updates how to solve this. */
+    private val maxNumUpdates = 1
 
     private var location: Location? = null
     private var lastUpdateLocation: Location? = null
@@ -59,7 +63,9 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
     private val availabilityUpdateThreshold = Duration.ofMinutes(1)
     private var availabilities: MutableMap<Long, Pair<ZonedDateTime, ChargeLocationStatus>> =
         HashMap()
-    private val maxRows = 6
+    private val maxRows = if (ctx.carAppApiLevel >= 2) {
+        ctx.constraintManager.getContentLimit(ConstraintManager.CONTENT_LIMIT_TYPE_PLACE_LIST)
+    } else 6
 
     private val referenceData = api.getReferenceData(lifecycleScope, carContext)
     private val filterStatus = MutableLiveData<Long>().apply {
@@ -244,8 +250,8 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
         numUpdates++
         println(numUpdates)
         if (numUpdates > maxNumUpdates) {
-            CarToast.makeText(carContext, R.string.auto_no_refresh_possible, CarToast.LENGTH_LONG)
-                .show()
+            /*CarToast.makeText(carContext, R.string.auto_no_refresh_possible, CarToast.LENGTH_LONG)
+                .show()*/
             return
         }
         updateCoroutine = lifecycleScope.launch {
@@ -268,7 +274,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
                     )
                     chargers = response.data?.filterIsInstance(ChargeLocation::class.java)
                     chargers?.let {
-                        if (it.size < 6) {
+                        if (it.size < maxRows) {
                             // try again with larger radius
                             val response = api.getChargepointsRadius(
                                 referenceData,

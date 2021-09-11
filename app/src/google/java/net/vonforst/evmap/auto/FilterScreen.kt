@@ -26,15 +26,11 @@ class FilterScreen(ctx: CarContext) : Screen(ctx) {
 
     init {
         val size = (ctx.resources.displayMetrics.density * 24).roundToInt()
-        emptyIcon = CarIcon.Builder(
-            IconCompat.createWithBitmap(
-                Bitmap.createBitmap(
-                    size,
-                    size,
-                    Bitmap.Config.ARGB_8888
-                )
-            )
-        ).build()
+        emptyIcon = Bitmap.createBitmap(
+            size,
+            size,
+            Bitmap.Config.ARGB_8888
+        ).asCarIcon()
     }
 
     init {

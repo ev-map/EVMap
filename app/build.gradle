@@ -128,7 +128,7 @@ dependencies {
     implementation 'com.github.johan12345:StfalconImageViewer:5082ebd392'
     implementation "com.mikepenz:aboutlibraries-core:$about_libs_version"
     implementation "com.mikepenz:aboutlibraries:$about_libs_version"
-    implementation 'com.airbnb.android:lottie:3.4.0'
+    implementation 'com.airbnb.android:lottie:4.1.0'
     implementation 'io.michaelrocks.bimap:bimap:1.1.0'
     implementation 'com.mapzen.android:lost:3.0.2'
     implementation 'com.google.guava:guava:29.0-android'

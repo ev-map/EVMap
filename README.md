@@ -28,7 +28,7 @@ Features
 Screenshots
 -----------
 
-<img src="https://raw.githubusercontent.com/johan12345/EVMap/master/_img/screenshots/phone/01_main.png" width=250 alt="Screenshot 1"/><img src="https://raw.githubusercontent.com/johan12345/EVMap/master/_img/screenshots/phone/02_detail.png" width=250 alt="Screenshot 2"/>
+<img src="https://media.githubusercontent.com/media/johan12345/EVMap/master/_img/screenshots/phone/en/mapbox/01_map.png" width=250 alt="Screenshot 1"/><img src="https://media.githubusercontent.com/media/johan12345/EVMap/master/_img/screenshots/phone/en/mapbox/02_detail.png" width=250 alt="Screenshot 2"/>
 
 Development setup
 -----------------

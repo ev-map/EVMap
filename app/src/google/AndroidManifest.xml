@@ -10,6 +10,10 @@
 
     <uses-sdk tools:overrideLibrary="androidx.car.app,androidx.car.app.projected" />
 
+    <queries>
+        <package android:name="com.google.android.projection.gearhead" />
+    </queries>
+
     <application>
         <meta-data
             android:name="com.google.android.geo.API_KEY"

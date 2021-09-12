@@ -11,7 +11,6 @@ import androidx.car.app.Screen
 import androidx.car.app.hardware.CarHardwareManager
 import androidx.car.app.hardware.info.Model
 import androidx.car.app.model.*
-import androidx.car.app.versioning.CarAppApiLevels
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.lifecycleScope
@@ -148,7 +147,7 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
     }
 
     private fun loadData() {
-        if (carContext.carAppApiLevel >= CarAppApiLevels.LEVEL_3) {
+        if (supportsCarApiLevel3(carContext)) {
             val exec = ContextCompat.getMainExecutor(carContext)
             val hardwareMan =
                 carContext.getCarService(CarContext.HARDWARE_SERVICE) as CarHardwareManager

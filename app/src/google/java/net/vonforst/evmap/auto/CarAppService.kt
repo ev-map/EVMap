@@ -13,7 +13,6 @@ import androidx.car.app.hardware.CarHardwareManager
 import androidx.car.app.hardware.info.CarHardwareLocation
 import androidx.car.app.hardware.info.CarSensors
 import androidx.car.app.validation.HostValidator
-import androidx.car.app.versioning.CarAppApiLevels
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
@@ -101,7 +100,7 @@ class EVMapSession(val cas: CarAppService) : Session(), LifecycleObserver {
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun bindLocationService() {
         if (!locationPermissionGranted()) return
-        if (carContext.carAppApiLevel >= CarAppApiLevels.LEVEL_3) {
+        if (supportsCarApiLevel3(carContext)) {
             val exec = ContextCompat.getMainExecutor(carContext)
             hardwareMan.carSensors.addCarHardwareLocationListener(
                 CarSensors.UPDATE_RATE_NORMAL,
@@ -119,13 +118,13 @@ class EVMapSession(val cas: CarAppService) : Session(), LifecycleObserver {
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     private fun unbindLocationService() {
-        if (carContext.carAppApiLevel >= CarAppApiLevels.LEVEL_3) {
+        if (supportsCarApiLevel3(carContext)) {
+            hardwareMan.carSensors.removeCarHardwareLocationListener(::onCarHardwareLocationReceived)
+        } else {
             locationService?.let { service ->
                 service.removeLocationUpdates()
                 cas.unbindService(serviceConnection)
             }
-        } else {
-            hardwareMan.carSensors.removeCarHardwareLocationListener(::onCarHardwareLocationReceived)
         }
     }
 

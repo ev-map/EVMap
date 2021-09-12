@@ -7,7 +7,6 @@ import android.os.Looper
 import androidx.car.app.CarContext
 import androidx.car.app.Screen
 import androidx.car.app.model.*
-import androidx.car.app.versioning.CarAppApiLevels
 import androidx.core.graphics.drawable.IconCompat
 import net.vonforst.evmap.R
 
@@ -82,7 +81,7 @@ class WelcomeScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx), L
                                 screenManager.push(MapScreen(carContext, session, favorites = true))
                             }
                             .build())
-                    if (carContext.carAppApiLevel >= CarAppApiLevels.LEVEL_3) {
+                    if (supportsCarApiLevel3(carContext)) {
                         addItem(
                             Row.Builder()
                                 .setTitle(carContext.getString(R.string.auto_vehicle_data))

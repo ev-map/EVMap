@@ -4,12 +4,16 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.SystemClock
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
+import androidx.core.splashscreen.SplashScreen
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -51,9 +55,8 @@ class MapsActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        // set theme to AppTheme to end launch screen
-        setTheme(R.style.AppTheme)
         super.onCreate(savedInstanceState)
+        val splashScreen = installSplashScreen()
 
         setContentView(R.layout.activity_maps)
 
@@ -82,8 +85,23 @@ class MapsActivity : AppCompatActivity() {
 
         checkPlayServices(this)
 
-
         if (!prefs.welcomeDialogShown || !prefs.dataSourceSet) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                // wait for splash screen animation to finish on first start
+                splashScreen.setKeepVisibleCondition(object : SplashScreen.KeepOnScreenCondition {
+                    var startTime: Long? = null
+
+                    override fun shouldKeepOnScreen(): Boolean {
+                        val st = startTime
+                        if (st == null) {
+                            startTime = SystemClock.uptimeMillis()
+                            return true
+                        } else {
+                            return (SystemClock.uptimeMillis() - st) < 1000
+                        }
+                    }
+                })
+            }
             navGraph.startDestination = R.id.onboarding
             navController.graph = navGraph
             return

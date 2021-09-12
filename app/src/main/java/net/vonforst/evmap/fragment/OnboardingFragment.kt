@@ -4,11 +4,13 @@ import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.drawable.AnimatedVectorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
+import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
@@ -93,12 +95,18 @@ class WelcomeFragment : OnboardingPageFragment() {
 
     override fun onResume() {
         super.onResume()
-        binding.animationView.playAnimation()
+        val drawable = (binding.animationView as ImageView).drawable
+        if (drawable is AnimatedVectorDrawable) {
+            drawable.start()
+        }
     }
 
     override fun onPause() {
         super.onPause()
-        binding.animationView.progress = 0f
+        val drawable = (binding.animationView as ImageView).drawable
+        if (drawable is AnimatedVectorDrawable) {
+            drawable.stop()
+        }
     }
 }
 

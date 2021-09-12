@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AppTheme.LaunchScreen" parent="AppTheme.LaunchScreen.Base">
+        <item name="windowSplashScreenAnimatedIcon">@drawable/intro_anim</item>
+    </style>
+</resources>

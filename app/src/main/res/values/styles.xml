@@ -17,8 +17,14 @@
 
     <style name="AppTheme" parent="AppTheme.Base" />
 
-    <style name="AppTheme.LaunchScreen">
-        <item name="android:windowBackground">@drawable/launch_screen</item>
+    <style name="AppTheme.LaunchScreen.Base" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/background</item>
+        <item name="windowSplashScreenAnimationDuration">999</item>
+        <item name="postSplashScreenTheme">@style/AppTheme</item>
+    </style>
+
+    <style name="AppTheme.LaunchScreen" parent="AppTheme.LaunchScreen.Base">
+        <item name="windowSplashScreenAnimatedIcon">@drawable/intro_static</item>
     </style>
 
     <style name="FullScreenDialogStyle" parent="AppTheme">

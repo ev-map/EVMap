@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <drawable name="intro_anim_onboarding">@drawable/intro_anim</drawable>
+</resources>

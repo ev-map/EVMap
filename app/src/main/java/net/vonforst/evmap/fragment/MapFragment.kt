@@ -1,5 +1,6 @@
 package net.vonforst.evmap.fragment
 
+import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.annotation.SuppressLint
 import android.content.Context
@@ -81,6 +82,8 @@ import net.vonforst.evmap.ui.ClusterIconGenerator
 import net.vonforst.evmap.ui.MarkerAnimator
 import net.vonforst.evmap.ui.getMarkerTint
 import net.vonforst.evmap.utils.boundingBox
+import net.vonforst.evmap.utils.checkAnyLocationPermission
+import net.vonforst.evmap.utils.checkFineLocationPermission
 import net.vonforst.evmap.utils.distanceBetween
 import net.vonforst.evmap.viewmodel.*
 import java.io.IOException
@@ -262,10 +265,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         )
 
         vm.reloadPrefs()
-        if (requestingLocationUpdates && ContextCompat.checkSelfPermission(
-                requireContext(),
-                ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED && locationClient.isConnected
+        if (requestingLocationUpdates && requireContext().checkAnyLocationPermission()
+            && locationClient.isConnected
         ) {
             requestLocationUpdates()
         }
@@ -273,16 +274,14 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
     private fun setupClickListeners() {
         binding.fabLocate.setOnClickListener {
-            if (ContextCompat.checkSelfPermission(
-                    requireContext(),
-                    ACCESS_FINE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                requestPermissions(
-                    arrayOf(ACCESS_FINE_LOCATION),
+            if (!requireContext().checkFineLocationPermission()) {
+                ActivityCompat.requestPermissions(
+                    requireActivity(),
+                    arrayOf(ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION),
                     REQUEST_LOCATION_PERMISSION
                 )
-            } else {
+            }
+            if (requireContext().checkAnyLocationPermission()) {
                 enableLocation(moveTo = true, animate = true)
             }
         }
@@ -883,11 +882,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 }
             }
         }
-        if (ContextCompat.checkSelfPermission(
-                requireContext(),
-                ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
+        if (context?.checkAnyLocationPermission() ?: false) {
             enableLocation(!positionSet, false)
             positionSet = true
         }
@@ -903,7 +898,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         )
     }
 
-    @RequiresPermission(ACCESS_FINE_LOCATION)
+    @RequiresPermission(anyOf = [ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION])
     private fun enableLocation(moveTo: Boolean, animate: Boolean) {
         val map = this.map ?: return
         map.setMyLocationEnabled(true)
@@ -917,7 +912,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         }
     }
 
-    @RequiresPermission(ACCESS_FINE_LOCATION)
+    @RequiresPermission(anyOf = [ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION])
     private fun moveToLastLocation(map: AnyMap, animate: Boolean) {
         val location = LocationServices.FusedLocationApi.getLastLocation(locationClient)
         if (location != null) {
@@ -1027,7 +1022,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
     ) {
         when (requestCode) {
             REQUEST_LOCATION_PERMISSION -> {
-                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                if ((grantResults.isNotEmpty() && grantResults.any { it == PackageManager.PERMISSION_GRANTED })) {
                     enableLocation(moveTo = true, animate = true)
                 }
             }
@@ -1200,11 +1195,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         val map = this.map ?: return
         val context = this.context ?: return
         if (vm.myLocationEnabled.value == true) {
-            if (ActivityCompat.checkSelfPermission(
-                    context,
-                    ACCESS_FINE_LOCATION
-                ) == PackageManager.PERMISSION_GRANTED
-            ) {
+            if (context.checkAnyLocationPermission()) {
                 moveToLastLocation(map, false)
                 requestLocationUpdates()
             }

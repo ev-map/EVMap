@@ -1,7 +1,5 @@
 package net.vonforst.evmap.fragment
 
-import android.Manifest
-import android.content.pm.PackageManager
 import android.graphics.Canvas
 import android.os.Bundle
 import android.view.Gravity
@@ -9,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -30,6 +27,7 @@ import net.vonforst.evmap.adapter.FavoritesAdapter
 import net.vonforst.evmap.databinding.FragmentFavoritesBinding
 import net.vonforst.evmap.databinding.ItemFavoriteBinding
 import net.vonforst.evmap.model.ChargeLocation
+import net.vonforst.evmap.utils.checkAnyLocationPermission
 import net.vonforst.evmap.viewmodel.FavoritesViewModel
 import net.vonforst.evmap.viewmodel.viewModelFactory
 
@@ -100,11 +98,7 @@ class FavoritesFragment : Fragment(), LostApiClient.ConnectionCallbacks {
 
     override fun onConnected() {
         val context = this.context ?: return
-        if (ContextCompat.checkSelfPermission(
-                context,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
+        if (context.checkAnyLocationPermission()) {
             val location = LocationServices.FusedLocationApi.getLastLocation(locationClient!!)
             if (location != null) {
                 vm.location.value = LatLng(location.latitude, location.longitude)

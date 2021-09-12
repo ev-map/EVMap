@@ -35,7 +35,7 @@ import net.vonforst.evmap.viewmodel.viewModelFactory
 
 class FavoritesFragment : Fragment(), LostApiClient.ConnectionCallbacks {
     private lateinit var binding: FragmentFavoritesBinding
-    private lateinit var locationClient: LostApiClient
+    private var locationClient: LostApiClient? = null
     private var toDelete: ChargeLocation? = null
     private var deleteSnackbar: Snackbar? = null
     private lateinit var adapter: FavoritesAdapter
@@ -59,7 +59,7 @@ class FavoritesFragment : Fragment(), LostApiClient.ConnectionCallbacks {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = DataBindingUtil.inflate(
             inflater,
             R.layout.fragment_favorites, container, false
@@ -95,7 +95,7 @@ class FavoritesFragment : Fragment(), LostApiClient.ConnectionCallbacks {
         }
         createTouchHelper().attachToRecyclerView(binding.favsList)
 
-        locationClient.connect()
+        locationClient!!.connect()
     }
 
     override fun onConnected() {
@@ -105,7 +105,7 @@ class FavoritesFragment : Fragment(), LostApiClient.ConnectionCallbacks {
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         ) {
-            val location = LocationServices.FusedLocationApi.getLastLocation(locationClient)
+            val location = LocationServices.FusedLocationApi.getLastLocation(locationClient!!)
             if (location != null) {
                 vm.location.value = LatLng(location.latitude, location.longitude)
             }
@@ -118,8 +118,8 @@ class FavoritesFragment : Fragment(), LostApiClient.ConnectionCallbacks {
 
     override fun onDestroy() {
         super.onDestroy()
-        if (locationClient.isConnected) {
-            locationClient.disconnect()
+        locationClient?.let {
+            if (it.isConnected) it.disconnect()
         }
     }
 

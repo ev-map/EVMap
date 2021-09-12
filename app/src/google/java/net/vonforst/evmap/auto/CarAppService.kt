@@ -1,9 +1,7 @@
 package net.vonforst.evmap.auto
 
-import android.Manifest
 import android.content.*
 import android.content.pm.ApplicationInfo
-import android.content.pm.PackageManager
 import android.location.Location
 import android.os.IBinder
 import androidx.car.app.CarContext
@@ -18,6 +16,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import net.vonforst.evmap.utils.checkAnyLocationPermission
 
 
 interface LocationAwareScreen {
@@ -72,11 +71,7 @@ class EVMapSession(val cas: CarAppService) : Session(), LifecycleObserver {
         return WelcomeScreen(carContext, this)
     }
 
-    fun locationPermissionGranted() =
-        ContextCompat.checkSelfPermission(
-            carContext,
-            Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED
+    fun locationPermissionGranted() = carContext.checkAnyLocationPermission()
 
     private val locationReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {

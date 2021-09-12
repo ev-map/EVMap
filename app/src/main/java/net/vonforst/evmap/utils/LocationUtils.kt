@@ -1,7 +1,11 @@
 package net.vonforst.evmap.utils
 
+import android.Manifest
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.location.Location
+import androidx.core.content.ContextCompat
 import com.car2go.maps.model.LatLng
 import com.car2go.maps.model.LatLngBounds
 import kotlin.math.*
@@ -75,3 +79,17 @@ fun boundingBox(pos: LatLng, sizeMeters: Double): LatLngBounds {
         pos.plusMeters(sizeMeters, sizeMeters)
     )
 }
+
+fun Context.checkAnyLocationPermission() = ContextCompat.checkSelfPermission(
+    this,
+    Manifest.permission.ACCESS_FINE_LOCATION
+) == PackageManager.PERMISSION_GRANTED ||
+        ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+
+fun Context.checkFineLocationPermission() = ContextCompat.checkSelfPermission(
+    this,
+    Manifest.permission.ACCESS_FINE_LOCATION
+) == PackageManager.PERMISSION_GRANTED

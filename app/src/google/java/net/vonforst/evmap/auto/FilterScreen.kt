@@ -68,7 +68,9 @@ class FilterScreen(ctx: CarContext) : Screen(ctx) {
             }.build())
             profiles.forEach {
                 addItem(Row.Builder().apply {
-                    setTitle(it.name)
+                    val name =
+                        it.name.ifEmpty { carContext.getString(R.string.unnamed_filter_profile) }
+                    setTitle(name)
                     if (it.id == filterStatus) {
                         setImage(checkIcon)
                     } else {

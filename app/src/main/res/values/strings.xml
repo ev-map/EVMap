@@ -222,4 +222,5 @@
     <string name="github_sponsors">GitHub Sponsors</string>
     <string name="donate_desc">Support EVMap\'s development with a one-time donation</string>
     <string name="github_sponsors_desc">Support EVMap on GitHub Sponsors</string>
+    <string name="unnamed_filter_profile">Unnamed filter profile</string>
 </resources>

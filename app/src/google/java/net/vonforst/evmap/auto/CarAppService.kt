@@ -90,6 +90,14 @@ class EVMapSession(val cas: CarAppService) : Session(), LifecycleObserver {
 
     private fun onCarHardwareLocationReceived(loc: CarHardwareLocation) {
         updateLocation(loc.location.value)
+
+        locationService?.let { service ->
+            // we successfully received a location from the car hardware,
+            // so we don't need the smartphone location anymore.
+            service.removeLocationUpdates()
+            cas.unbindService(serviceConnection)
+            locationService = null
+        }
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
@@ -102,24 +110,22 @@ class EVMapSession(val cas: CarAppService) : Session(), LifecycleObserver {
                 exec,
                 ::onCarHardwareLocationReceived
             )
-        } else {
-            cas.bindService(
-                Intent(cas, CarLocationService::class.java),
-                serviceConnection,
-                Context.BIND_AUTO_CREATE
-            )
         }
+        cas.bindService(
+            Intent(cas, CarLocationService::class.java),
+            serviceConnection,
+            Context.BIND_AUTO_CREATE
+        )
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     private fun unbindLocationService() {
         if (supportsCarApiLevel3(carContext)) {
             hardwareMan.carSensors.removeCarHardwareLocationListener(::onCarHardwareLocationReceived)
-        } else {
-            locationService?.let { service ->
-                service.removeLocationUpdates()
-                cas.unbindService(serviceConnection)
-            }
+        }
+        locationService?.let { service ->
+            service.removeLocationUpdates()
+            cas.unbindService(serviceConnection)
         }
     }
 

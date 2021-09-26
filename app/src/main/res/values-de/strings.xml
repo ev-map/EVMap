@@ -238,4 +238,6 @@
     <string name="donate_desc">Unterstütze die Weiterentwicklung von EVMap mit einer einmaligen Spende</string>
     <string name="github_sponsors_desc">Unterstütze EVMap über GitHub Sponsors</string>
     <string name="unnamed_filter_profile">Unbenanntes Filterprofil</string>
+    <string name="privacy_link">https://evmap.vonforst.net/de/privacy.html</string>
+    <string name="faq_link">https://evmap.vonforst.net/de/faq.html</string>
 </resources>

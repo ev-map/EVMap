@@ -242,6 +242,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 findNavController().navigate(R.id.action_map_to_opensource_donations)
             } catch (ignored: IllegalArgumentException) {
                 // when there is already another navigation going on
+            } catch (ignored: IllegalStateException) {
+                // "no current navigation node"
             }
         }
         /*if (!prefs.update060AndroidAutoDialogShown) {

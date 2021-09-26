@@ -79,7 +79,13 @@ class MultiSelectDialog : AppCompatDialogFragment() {
 
         items = data.entries.toList()
             .sortedBy { it.value.toLowerCase(Locale.getDefault()) }
-            .sortedByDescending { commonChoices?.contains(it.key) == true }
+            .sortedBy {
+                when {
+                    selected.contains(it.key) -> 0
+                    commonChoices?.contains(it.key) == true -> 1
+                    else -> 2
+                }
+            }
             .map { MultiSelectItem(it.key, it.value, it.key in selected) }
         adapter.submitList(items)
 

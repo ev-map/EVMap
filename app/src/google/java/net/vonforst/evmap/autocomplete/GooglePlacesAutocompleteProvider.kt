@@ -28,6 +28,8 @@ class GooglePlacesAutocompleteProvider(val context: Context) : AutocompleteProvi
     private val client = Places.createClient(context)
     private val bold: CharacterStyle = StyleSpan(Typeface.BOLD)
 
+    override val id = "google"
+
     override fun autocomplete(
         query: String,
         location: com.car2go.maps.model.LatLng?
@@ -48,7 +50,7 @@ class GooglePlacesAutocompleteProvider(val context: Context) : AutocompleteProvi
                     it.getPrimaryText(bold),
                     it.getSecondaryText(bold),
                     it.placeId,
-                    it.distanceMeters,
+                    it.distanceMeters?.toDouble(),
                     it.placeTypes.map { AutocompletePlaceType.valueOf(it.name) })
             }
         } catch (e: ExecutionException) {

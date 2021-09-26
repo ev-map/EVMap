@@ -1,11 +1,14 @@
 package net.vonforst.evmap.storage
 
 import androidx.room.TypeConverter
+import com.car2go.maps.model.LatLng
+import com.car2go.maps.model.LatLngBounds
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
 import net.vonforst.evmap.api.goingelectric.GEChargerPhotoAdapter
 import net.vonforst.evmap.api.openchargemap.OCMChargerPhotoAdapter
+import net.vonforst.evmap.autocomplete.AutocompletePlaceType
 import net.vonforst.evmap.model.ChargeCardId
 import net.vonforst.evmap.model.Chargepoint
 import net.vonforst.evmap.model.ChargerPhoto
@@ -40,6 +43,12 @@ class Converters {
     private val stringListAdapter by lazy {
         val type = Types.newParameterizedType(List::class.java, String::class.java)
         moshi.adapter<List<String>>(type)
+    }
+    private val latLngAdapter by lazy {
+        moshi.adapter<LatLng>(LatLng::class.java)
+    }
+    private val latLngBoundsAdapter by lazy {
+        moshi.adapter<LatLngBounds>(LatLngBounds::class.java)
     }
 
     @TypeConverter
@@ -114,5 +123,35 @@ class Converters {
     @TypeConverter
     fun toStringList(value: String): List<String>? {
         return stringListAdapter.fromJson(value)
+    }
+
+    @TypeConverter
+    fun fromLatLng(value: LatLng?): String {
+        return latLngAdapter.toJson(value)
+    }
+
+    @TypeConverter
+    fun toLatLng(value: String): LatLng? {
+        return latLngAdapter.fromJson(value)
+    }
+
+    @TypeConverter
+    fun fromLatLngBounds(value: LatLngBounds?): String {
+        return latLngBoundsAdapter.toJson(value)
+    }
+
+    @TypeConverter
+    fun toLatLngBounds(value: String): LatLngBounds? {
+        return latLngBoundsAdapter.fromJson(value)
+    }
+
+    @TypeConverter
+    fun fromAutocompletePlaceTypeList(value: List<AutocompletePlaceType>): String {
+        return value.joinToString(",") { it.name }
+    }
+
+    @TypeConverter
+    fun toAutocompletePlaceTypeList(value: String): List<AutocompletePlaceType> {
+        return value.split(",").map { AutocompletePlaceType.valueOf(it) }
     }
 }

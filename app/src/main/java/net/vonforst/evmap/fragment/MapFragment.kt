@@ -370,7 +370,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 val place = adapter.getItem(position) ?: return@OnItemClickListener
                 lifecycleScope.launch {
                     try {
-                        vm.searchResult.value = adapter.currentProvider!!.getDetails(place.id)
+                        vm.searchResult.value = adapter.getDetails(place.id)
                     } catch (e: ApiUnavailableException) {
                         e.printStackTrace()
                     } catch (e: IOException) {
@@ -390,9 +390,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         binding.search.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
             if (hasFocus) {
                 binding.search.keyListener = searchKeyListener
-                if (binding.search.text.isNotEmpty() && isVisible) {
-                    binding.search.showDropDown()
-                }
             } else {
                 binding.search.keyListener = null
             }

@@ -24,19 +24,21 @@ import net.vonforst.evmap.model.*
         MultipleChoiceFilterValue::class,
         SliderFilterValue::class,
         FilterProfile::class,
+        RecentAutocompletePlace::class,
         GEPlug::class,
         GENetwork::class,
         GEChargeCard::class,
         OCMConnectionType::class,
         OCMCountry::class,
         OCMOperator::class
-    ], version = 13
+    ], version = 14
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun chargeLocationsDao(): ChargeLocationsDao
     abstract fun filterValueDao(): FilterValueDao
     abstract fun filterProfileDao(): FilterProfileDao
+    abstract fun recentAutocompletePlaceDao(): RecentAutocompletePlaceDao
 
     // GoingElectric API specific
     abstract fun geReferenceDataDao(): GEReferenceDataDao
@@ -51,7 +53,7 @@ abstract class AppDatabase : RoomDatabase() {
                 .addMigrations(
                     MIGRATION_2, MIGRATION_3, MIGRATION_4, MIGRATION_5, MIGRATION_6,
                     MIGRATION_7, MIGRATION_8, MIGRATION_9, MIGRATION_10, MIGRATION_11,
-                    MIGRATION_12, MIGRATION_13
+                    MIGRATION_12, MIGRATION_13, MIGRATION_14
                 )
                 .addCallback(object : Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
@@ -302,6 +304,13 @@ abstract class AppDatabase : RoomDatabase() {
                     db.endTransaction()
                 }
             }
+        }
+
+        private val MIGRATION_14 = object : Migration(13, 14) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("CREATE TABLE IF NOT EXISTS `RecentAutocompletePlace` (`id` TEXT NOT NULL, `dataSource` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, `primaryText` TEXT NOT NULL, `secondaryText` TEXT NOT NULL, `latLng` TEXT NOT NULL, `viewport` TEXT, `types` TEXT NOT NULL, PRIMARY KEY(`id`, `dataSource`))");
+            }
+
         }
     }
 }

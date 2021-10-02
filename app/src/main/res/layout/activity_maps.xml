@@ -10,7 +10,8 @@
         android:name="net.vonforst.evmap.navigation.NavHostFragment"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:fitsSystemWindows="true" />
+        android:fitsSystemWindows="true"
+        app:defaultNavHost="true" />
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"

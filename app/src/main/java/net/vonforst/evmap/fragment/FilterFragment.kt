@@ -43,12 +43,6 @@ class FilterFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         (requireActivity() as AppCompatActivity).setSupportActionBar(binding.toolbar)
 
-        vm.filterProfile.observe(viewLifecycleOwner) {
-            if (it != null) {
-                binding.toolbar.title = "${getString(R.string.menu_filter)}: ${it.name}"
-            }
-        }
-
         binding.filtersList.apply {
             adapter = FiltersAdapter()
             layoutManager =
@@ -109,5 +103,11 @@ class FilterFragment : Fragment() {
             findNavController(),
             (requireActivity() as MapsActivity).appBarConfiguration
         )
+
+        vm.filterProfile.observe(viewLifecycleOwner) {
+            if (it != null) {
+                binding.toolbar.title = "${getString(R.string.menu_filter)}: ${it.name}"
+            }
+        }
     }
 }

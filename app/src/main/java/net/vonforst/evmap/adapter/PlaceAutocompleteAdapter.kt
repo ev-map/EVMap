@@ -131,12 +131,15 @@ class PlaceAutocompleteAdapter(val context: Context, val location: LiveData<LatL
                                 publishResults(constraint, resultList.asFilterResults())
                             }
 
-                            if (query.length < 3) break
+                            // if we already have enough results or the query is short, stop here
+                            if (query.length < 3 || recentResults.size >= maxItems) break
 
                             // then search online
+                            val recentIds = recentPlaces.map { it.id }
                             resultList =
-                                recentPlaces.map { it.asAutocompletePlace(location.value) } +
+                                (recentPlaces.map { it.asAutocompletePlace(location.value) } +
                                         provider.autocomplete(query, location.value)
+                                            .filter { !recentIds.contains(it.id) }).take(maxItems)
                             break
                         } catch (e: ApiUnavailableException) {
                             e.printStackTrace()

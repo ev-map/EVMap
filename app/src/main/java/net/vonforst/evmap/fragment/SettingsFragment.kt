@@ -102,6 +102,12 @@ class SettingsFragment : PreferenceFragmentCompat(),
 
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
         return when (preference?.key) {
+            "search_delete_recent" -> {
+                Toast.makeText(context, R.string.deleted_recent_search_results, Toast.LENGTH_LONG)
+                    .show()
+                vm.deleteRecentSearchResults()
+                true
+            }
             else -> super.onPreferenceTreeClick(preference)
         }
     }

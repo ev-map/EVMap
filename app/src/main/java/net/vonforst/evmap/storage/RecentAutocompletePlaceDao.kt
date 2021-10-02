@@ -56,7 +56,7 @@ abstract class RecentAutocompletePlaceDao {
     abstract suspend fun insert(vararg places: RecentAutocompletePlace)
 
     @Query("DELETE FROM recentautocompleteplace")
-    abstract fun deleteAll()
+    abstract suspend fun deleteAll()
 
     @Query("SELECT * FROM recentautocompleteplace WHERE dataSource = :dataSource AND primaryText LIKE '%' || :query || '%' ORDER BY timestamp DESC LIMIT :limit")
     abstract fun search(

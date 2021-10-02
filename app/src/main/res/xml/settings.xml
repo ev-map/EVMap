@@ -47,6 +47,10 @@
             android:defaultValue="@string/pref_search_provider_default"
             android:summary="%s" />
 
+        <Preference
+            android:key="search_delete_recent"
+            android:title="@string/pref_search_delete_recent" />
+
         <CheckBoxPreference
             android:key="navigate_use_maps"
             android:title="@string/pref_navigate_use_maps"

@@ -1,0 +1,12 @@
+New features:
+- Android Auto: Price comparison with Chargeprice (only in certain countries)
+- Android Auto: New screen displaying vehicle data (if available)
+- Recently searched places are stored and shown as suggestions
+- Android 12 support
+
+Improvements:
+- Android Auto: Use vehicle GPS (if available, starting with Android Auto 6.7)
+- Move already selected entries to the top in selection dialogs
+- FAQ and privacy policy updated and now also available in English
+- Improved back button handling
+- Fixed various crashes

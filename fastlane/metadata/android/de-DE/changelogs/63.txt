@@ -1,0 +1,12 @@
+Neue Funktionen:
+- Android Auto: Preisvergleich mit Chargeprice
+- Android Auto: Neuer Bildschirm zur Anzeige von Fahrzeugdaten (falls verfügbar)
+- Kürzlich gesuchte Orte werden gespeichert und als Vorschläge angezeigt
+- Unterstützung für Android 12
+
+Verbesserungen:
+- Android Auto: Nutzung des Fahrzeug-GPS (falls verfügbar, ab Android Auto 6.7)
+- In Auswahldialogen werden bereits ausgewählte Einträge nach oben verschoben
+- FAQ aktualisiert
+- Verbesserte Behandlung des Zurück-Buttons
+- Verschiedene Abstürze behoben

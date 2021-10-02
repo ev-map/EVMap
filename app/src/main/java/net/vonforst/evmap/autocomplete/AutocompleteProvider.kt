@@ -6,6 +6,8 @@ import com.car2go.maps.model.LatLng
 import com.car2go.maps.model.LatLngBounds
 
 interface AutocompleteProvider {
+    val id: String
+
     fun autocomplete(query: String, location: LatLng?): List<AutocompletePlace>
     suspend fun getDetails(id: String): PlaceWithBounds
 
@@ -20,7 +22,7 @@ data class AutocompletePlace(
     val primaryText: CharSequence,
     val secondaryText: CharSequence,
     val id: String,
-    val distanceMeters: Int?,
+    val distanceMeters: Double?,
     val types: List<AutocompletePlaceType>
 )
 
@@ -167,7 +169,8 @@ enum class AutocompletePlaceType {
     TRAVEL_AGENCY,
     UNIVERSITY,
     VETERINARY_CARE,
-    ZOO;
+    ZOO,
+    RECENT;
 
     companion object {
         fun valueOfOrNull(value: String): AutocompletePlaceType? {

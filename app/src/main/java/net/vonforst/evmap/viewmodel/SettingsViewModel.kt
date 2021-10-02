@@ -8,11 +8,13 @@ import kotlinx.coroutines.launch
 import net.vonforst.evmap.api.chargeprice.ChargepriceApi
 import net.vonforst.evmap.api.chargeprice.ChargepriceCar
 import net.vonforst.evmap.api.chargeprice.ChargepriceTariff
+import net.vonforst.evmap.storage.AppDatabase
 import java.io.IOException
 
 class SettingsViewModel(application: Application, chargepriceApiKey: String) :
     AndroidViewModel(application) {
     private var api = ChargepriceApi.create(chargepriceApiKey)
+    private var db = AppDatabase.getInstance(application)
 
     val vehicles: MutableLiveData<Resource<List<ChargepriceCar>>> by lazy {
         MutableLiveData<Resource<List<ChargepriceCar>>>().apply {
@@ -47,6 +49,12 @@ class SettingsViewModel(application: Application, chargepriceApiKey: String) :
             } catch (e: IOException) {
                 tariffs.value = Resource.error(e.message, null)
             }
+        }
+    }
+
+    fun deleteRecentSearchResults() {
+        viewModelScope.launch {
+            db.recentAutocompletePlaceDao().deleteAll()
         }
     }
 }

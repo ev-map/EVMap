@@ -17,11 +17,12 @@ import com.mapbox.geojson.BoundingBox
 import com.mapbox.geojson.Point
 import net.vonforst.evmap.R
 import java.io.IOException
-import kotlin.math.roundToInt
 
 class MapboxAutocompleteProvider(val context: Context) : AutocompleteProvider {
     private val bold: CharacterStyle = StyleSpan(Typeface.BOLD)
     private val results = HashMap<String, CarmenFeature>()
+
+    override val id = "mapbox"
 
     override fun autocomplete(query: String, location: LatLng?): List<AutocompletePlace> {
         val result = MapboxGeocoding.builder().apply {
@@ -58,7 +59,7 @@ class MapboxAutocompleteProvider(val context: Context) : AutocompleteProvider {
                 location?.let { location ->
                     SphericalUtil.computeDistanceBetween(
                         feature.center()!!.toLatLng(), location
-                    ).roundToInt()
+                    )
                 },
                 getPlaceTypes(feature)
             )
@@ -112,7 +113,8 @@ class MapboxAutocompleteProvider(val context: Context) : AutocompleteProvider {
 
     override fun getAttributionString(): Int = R.string.powered_by_mapbox
 
-    override fun getAttributionImage(dark: Boolean): Int = R.drawable.mapbox_logo_icon
+    override fun getAttributionImage(dark: Boolean): Int =
+        if (dark) R.drawable.mapbox_logo_icon else R.drawable.mapbox_logo
 }
 
 private fun BoundingBox.toLatLngBounds(): LatLngBounds {

@@ -1,6 +1,8 @@
 package net.vonforst.evmap.adapter
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +15,10 @@ import net.vonforst.evmap.autocomplete.*
 import net.vonforst.evmap.containsAny
 import net.vonforst.evmap.databinding.ItemAutocompleteResultBinding
 import net.vonforst.evmap.isDarkMode
+import net.vonforst.evmap.storage.AppDatabase
 import net.vonforst.evmap.storage.PreferenceDataSource
+import net.vonforst.evmap.storage.RecentAutocompletePlace
+import java.time.Instant
 
 class PlaceAutocompleteAdapter(val context: Context, val location: LiveData<LatLng>) :
     BaseAdapter(), Filterable {
@@ -21,7 +26,10 @@ class PlaceAutocompleteAdapter(val context: Context, val location: LiveData<LatL
     private val providers = getAutocompleteProviders(context)
     private val typeItem = 0
     private val typeAttribution = 1
-    var currentProvider: AutocompleteProvider? = null
+    private val maxItems = 6
+    private var currentProvider: AutocompleteProvider? = null
+    private val recents = AppDatabase.getInstance(context).recentAutocompletePlaceDao()
+    private var recentResults = mutableListOf<RecentAutocompletePlace>()
 
     data class ViewHolder(val binding: ItemAutocompleteResultBinding)
 
@@ -103,20 +111,40 @@ class PlaceAutocompleteAdapter(val context: Context, val location: LiveData<LatL
             }
 
             override fun performFiltering(constraint: CharSequence?): FilterResults {
-                val filterResults = FilterResults()
+                val query = constraint.toString()
                 if (constraint != null) {
                     for (provider in providers) {
                         try {
-                            resultList =
-                                provider.autocomplete(constraint.toString(), location.value)
+                            recentResults.clear()
                             currentProvider = provider
+
+                            // first search in recent places
+                            val recentPlaces = if (query.isEmpty()) {
+                                recents.getAll(provider.id, limit = maxItems)
+                            } else {
+                                recents.search(query, provider.id, limit = maxItems)
+                            }
+                            recentResults.addAll(recentPlaces)
+                            resultList = recentPlaces.map { it.asAutocompletePlace(location.value) }
+                            Handler(Looper.getMainLooper()).post {
+                                // publish intermediate results on main thread
+                                publishResults(constraint, resultList.asFilterResults())
+                            }
+
+                            // if we already have enough results or the query is short, stop here
+                            if (query.length < 3 || recentResults.size >= maxItems) break
+
+                            // then search online
+                            val recentIds = recentPlaces.map { it.id }
+                            resultList =
+                                (recentPlaces.map { it.asAutocompletePlace(location.value) } +
+                                        provider.autocomplete(query, location.value)
+                                            .filter { !recentIds.contains(it.id) }).take(maxItems)
                             break
                         } catch (e: ApiUnavailableException) {
                             e.printStackTrace()
                         }
                     }
-                    filterResults.values = resultList
-                    filterResults.count = resultList!!.size
                 }
 
 
@@ -125,9 +153,32 @@ class PlaceAutocompleteAdapter(val context: Context, val location: LiveData<LatL
                     this.setDelayer { 500L }
                 }
 
-                return filterResults
+                return resultList.asFilterResults()
+            }
+
+            private fun List<AutocompletePlace>?.asFilterResults(): FilterResults {
+                val result = FilterResults()
+                if (this != null) {
+                    result.values = this
+                    result.count = this.size
+                }
+                return result
             }
         }
+    }
+
+    suspend fun getDetails(id: String): PlaceWithBounds {
+        val provider = currentProvider!!
+        val result = resultList!!.find { it.id == id }!!
+
+        val recentPlace = recentResults.find { it.id == id }
+        if (recentPlace != null) return recentPlace.asPlaceWithBounds()
+
+        val details = provider.getDetails(id)
+
+        recents.insert(RecentAutocompletePlace(result, details, provider.id, Instant.now()))
+
+        return details
     }
 
 }
@@ -135,6 +186,9 @@ class PlaceAutocompleteAdapter(val context: Context, val location: LiveData<LatL
 
 fun iconForPlaceType(types: List<AutocompletePlaceType>): Int =
     when {
+        types.contains(
+            AutocompletePlaceType.RECENT
+        ) -> R.drawable.ic_history
         types.containsAny(
             AutocompletePlaceType.LIGHT_RAIL_STATION,
             AutocompletePlaceType.BUS_STATION,
@@ -153,4 +207,7 @@ fun iconForPlaceType(types: List<AutocompletePlaceType>): Int =
     }
 
 fun isSpecialPlace(types: List<AutocompletePlaceType>): Boolean =
-    iconForPlaceType(types) != R.drawable.ic_place_type_default
+    !setOf(
+        R.drawable.ic_place_type_default,
+        R.drawable.ic_history
+    ).contains(iconForPlaceType(types))

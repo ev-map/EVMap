@@ -240,4 +240,5 @@
     <string name="unnamed_filter_profile">Unbenanntes Filterprofil</string>
     <string name="privacy_link">https://evmap.vonforst.net/de/privacy.html</string>
     <string name="faq_link">https://evmap.vonforst.net/de/faq.html</string>
+    <string name="required">erforderlich</string>
 </resources>

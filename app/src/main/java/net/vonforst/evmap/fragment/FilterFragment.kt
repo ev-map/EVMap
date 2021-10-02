@@ -74,26 +74,38 @@ class FilterFragment : Fragment() {
                 true
             }
             R.id.menu_save_profile -> {
-                showEditTextDialog(requireContext()) { dialog, input ->
-                    vm.filterProfile.value?.let { profile ->
-                        input.setText(profile.name)
-                    }
-
-                    dialog.setTitle(R.string.save_as_profile)
-                        .setMessage(R.string.save_profile_enter_name)
-                        .setPositiveButton(R.string.ok) { di, button ->
-                            lifecycleScope.launch {
-                                vm.saveAsProfile(input.text.toString())
-                                findNavController().popBackStack()
-                            }
-                        }
-                        .setNegativeButton(R.string.cancel) { di, button ->
-
-                        }
-                }
+                saveProfile()
                 true
             }
             else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun saveProfile(error: Boolean = false) {
+        showEditTextDialog(requireContext()) { dialog, input ->
+            vm.filterProfile.value?.let { profile ->
+                input.setText(profile.name)
+            }
+
+            if (error) {
+                input.error = getString(R.string.required)
+            }
+
+            dialog.setTitle(R.string.save_as_profile)
+                .setMessage(R.string.save_profile_enter_name)
+                .setPositiveButton(R.string.ok) { di, button ->
+                    if (input.text.isBlank()) {
+                        saveProfile(true)
+                    } else {
+                        lifecycleScope.launch {
+                            vm.saveAsProfile(input.text.toString())
+                            findNavController().popBackStack()
+                        }
+                    }
+                }
+                .setNegativeButton(R.string.cancel) { di, button ->
+
+                }
         }
     }
 

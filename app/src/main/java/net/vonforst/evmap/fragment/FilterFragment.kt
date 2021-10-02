@@ -118,7 +118,7 @@ class FilterFragment : Fragment() {
 
         vm.filterProfile.observe(viewLifecycleOwner) {
             if (it != null) {
-                binding.toolbar.title = "${getString(R.string.menu_filter)}: ${it.name}"
+                binding.toolbar.title = getString(R.string.edit_filter_profile, it.name)
             }
         }
     }

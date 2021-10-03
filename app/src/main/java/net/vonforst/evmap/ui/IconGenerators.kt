@@ -55,7 +55,8 @@ class ChargerIconGenerator(
         val alpha: Int,
         val highlight: Boolean,
         val fault: Boolean,
-        val multi: Boolean
+        val multi: Boolean,
+        val fav: Boolean
     )
 
     // 230 items: (21 sizes, 5 colors, multi on/off) + highlight + fault (only with scale = 1)
@@ -66,6 +67,7 @@ class ChargerIconGenerator(
     private val highlightIcon = R.drawable.ic_map_marker_highlight
     private val highlightIconMulti = R.drawable.ic_map_marker_charging_highlight_multiple
     private val faultIcon = R.drawable.ic_map_marker_fault
+    private val favIcon = R.drawable.ic_map_marker_fav
 
     fun preloadCache() {
         // pre-generates images for scale from 0 to 255 for all possible tint colors
@@ -79,12 +81,14 @@ class ChargerIconGenerator(
         for (fault in listOf(false, true)) {
             for (highlight in listOf(false, true)) {
                 for (multi in listOf(false, true)) {
-                    for (tint in tints) {
-                        for (scale in 0..scaleResolution) {
-                            getBitmapDescriptor(
-                                tint, scale.toFloat() / scaleResolution,
-                                255, highlight, fault, multi
-                            )
+                    for (fav in listOf(false, true)) {
+                        for (tint in tints) {
+                            for (scale in 0..scaleResolution) {
+                                getBitmapDescriptor(
+                                    tint, scale.toFloat() / scaleResolution,
+                                    255, highlight, fault, multi, fav
+                                )
+                            }
                         }
                     }
                 }
@@ -98,14 +102,16 @@ class ChargerIconGenerator(
         alpha: Int = 255,
         highlight: Boolean = false,
         fault: Boolean = false,
-        multi: Boolean = false
+        multi: Boolean = false,
+        fav: Boolean = false
     ): BitmapDescriptor? {
         val data = BitmapData(
             tint, (scale * scaleResolution).roundToInt(),
             alpha,
             if (scale == 1f) highlight else false,
             if (scale == 1f) fault else false,
-            multi
+            multi,
+            if (scale == 1f) fav else false
         )
         val cachedImg = cache[data]
         return if (cachedImg != null) {
@@ -124,14 +130,16 @@ class ChargerIconGenerator(
         alpha: Int = 255,
         highlight: Boolean = false,
         fault: Boolean = false,
-        multi: Boolean = false
+        multi: Boolean = false,
+        fav: Boolean = false
     ): Bitmap {
         val data = BitmapData(
             tint, (scale * scaleResolution).roundToInt(),
             alpha,
             if (scale == 1f) highlight else false,
             if (scale == 1f) fault else false,
-            multi
+            multi,
+            if (scale == 1f) fav else false,
         )
         return generateBitmap(data)
     }
@@ -198,6 +206,22 @@ class ChargerIconGenerator(
             )
             faultDrawable.alpha = data.alpha
             faultDrawable.draw(canvas)
+        }
+
+        if (data.fav) {
+            val favDrawable = ContextCompat.getDrawable(context, favIcon)!!
+            val favSize = 0.75
+            val favShiftY = 0.25
+            val favShiftX = if (data.fault) -0.5 else 0.25
+            val base = width
+            favDrawable.setBounds(
+                (leftPadding.toInt() + base * (1 - favSize + favShiftX)).toInt(),
+                (topPadding.toInt() - base * favShiftY).toInt(),
+                (leftPadding.toInt() + base * (1 + favShiftX)).toInt(),
+                (topPadding.toInt() + base * (favSize - favShiftY)).toInt()
+            )
+            favDrawable.alpha = data.alpha
+            favDrawable.draw(canvas)
         }
 
         return bm

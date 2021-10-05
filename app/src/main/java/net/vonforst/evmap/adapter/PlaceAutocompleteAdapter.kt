@@ -103,6 +103,7 @@ class PlaceAutocompleteAdapter(val context: Context, val location: LiveData<LatL
             }
 
             override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+                resultList = results?.values as? List<AutocompletePlace>?
                 if (results != null && results.count > 0) {
                     notifyDataSetChanged()
                 } else {
@@ -112,6 +113,7 @@ class PlaceAutocompleteAdapter(val context: Context, val location: LiveData<LatL
 
             override fun performFiltering(constraint: CharSequence?): FilterResults {
                 val query = constraint.toString()
+                var resultList: List<AutocompletePlace>? = null
                 if (constraint != null) {
                     for (provider in providers) {
                         try {
@@ -137,9 +139,8 @@ class PlaceAutocompleteAdapter(val context: Context, val location: LiveData<LatL
                             // then search online
                             val recentIds = recentPlaces.map { it.id }
                             resultList =
-                                (recentPlaces.map { it.asAutocompletePlace(location.value) } +
-                                        provider.autocomplete(query, location.value)
-                                            .filter { !recentIds.contains(it.id) }).take(maxItems)
+                                (resultList!! + provider.autocomplete(query, location.value)
+                                    .filter { !recentIds.contains(it.id) }).take(maxItems)
                             break
                         } catch (e: ApiUnavailableException) {
                             e.printStackTrace()

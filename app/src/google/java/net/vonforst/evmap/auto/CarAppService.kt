@@ -62,6 +62,7 @@ class EVMapSession(val cas: CarAppService) : Session(), LifecycleObserver {
             locationService = null
         }
     }
+    private var serviceBound = false
 
     init {
         lifecycle.addObserver(this)
@@ -91,13 +92,9 @@ class EVMapSession(val cas: CarAppService) : Session(), LifecycleObserver {
     private fun onCarHardwareLocationReceived(loc: CarHardwareLocation) {
         updateLocation(loc.location.value)
 
-        locationService?.let { service ->
-            // we successfully received a location from the car hardware,
-            // so we don't need the smartphone location anymore.
-            service.removeLocationUpdates()
-            cas.unbindService(serviceConnection)
-            locationService = null
-        }
+        // we successfully received a location from the car hardware,
+        // so we don't need the smartphone location anymore.
+        unbindLocationService()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
@@ -111,7 +108,7 @@ class EVMapSession(val cas: CarAppService) : Session(), LifecycleObserver {
                 ::onCarHardwareLocationReceived
             )
         }
-        cas.bindService(
+        serviceBound = cas.bindService(
             Intent(cas, CarLocationService::class.java),
             serviceConnection,
             Context.BIND_AUTO_CREATE
@@ -119,13 +116,18 @@ class EVMapSession(val cas: CarAppService) : Session(), LifecycleObserver {
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-    private fun unbindLocationService() {
+    private fun onStop() {
         if (supportsCarApiLevel3(carContext)) {
             hardwareMan.carSensors.removeCarHardwareLocationListener(::onCarHardwareLocationReceived)
         }
-        locationService?.let { service ->
-            service.removeLocationUpdates()
+        unbindLocationService()
+    }
+
+    private fun unbindLocationService() {
+        locationService?.removeLocationUpdates()
+        if (serviceBound) {
             cas.unbindService(serviceConnection)
+            serviceBound = false
         }
     }
 

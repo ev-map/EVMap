@@ -23,6 +23,7 @@ import net.vonforst.evmap.model.*
 import net.vonforst.evmap.storage.AppDatabase
 import net.vonforst.evmap.storage.FilterProfile
 import net.vonforst.evmap.storage.PreferenceDataSource
+import net.vonforst.evmap.ui.cluster
 import net.vonforst.evmap.utils.distanceBetween
 import java.io.IOException
 
@@ -304,6 +305,25 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
             val filters = data.second
             val api = api
             val refData = data.third
+
+            if (filterStatus.value == FILTERS_FAVORITES) {
+                // load favorites from local DB
+                val b = mapPosition.bounds
+                var chargers = db.chargeLocationsDao().getChargeLocationsInBoundsAsync(
+                    b.southwest.latitude,
+                    b.northeast.latitude,
+                    b.southwest.longitude,
+                    b.northeast.longitude
+                ) as List<ChargepointListItem>
+
+                val clusterDistance = getClusterDistance(mapPosition.zoom)
+                clusterDistance?.let {
+                    chargers = cluster(chargers, mapPosition.zoom, clusterDistance)
+                }
+                chargepoints.value = Resource.success(chargers)
+                return@throttleLatest
+            }
+
             var result = api.getChargepoints(refData, mapPosition.bounds, mapPosition.zoom, filters)
             if (result.status == Status.ERROR && result.data == null) {
                 // keep old results if new data could not be loaded

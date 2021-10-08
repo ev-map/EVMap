@@ -23,4 +23,12 @@ interface ChargeLocationsDao {
 
     @Query("SELECT * FROM chargelocation")
     fun getAllChargeLocationsBlocking(): List<ChargeLocation>
+
+    @Query("SELECT * FROM chargelocation WHERE lat >= :lat1 AND lat <= :lat2 AND lng >= :lng1 AND lng <= :lng2")
+    suspend fun getChargeLocationsInBoundsAsync(
+        lat1: Double,
+        lat2: Double,
+        lng1: Double,
+        lng2: Double
+    ): List<ChargeLocation>
 }

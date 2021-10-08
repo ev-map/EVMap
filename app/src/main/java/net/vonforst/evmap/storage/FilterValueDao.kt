@@ -54,7 +54,7 @@ abstract class FilterValueDao {
     )
 
     open fun getFilterValues(filterStatus: Long, dataSource: String): LiveData<List<FilterValue>> =
-        if (filterStatus == FILTERS_DISABLED) {
+        if (filterStatus == FILTERS_DISABLED || filterStatus == FILTERS_FAVORITES) {
             MutableLiveData(emptyList())
         } else {
             MediatorLiveData<List<FilterValue>>().apply {

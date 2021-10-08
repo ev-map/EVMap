@@ -7,7 +7,9 @@ import androidx.car.app.model.*
 import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.LiveData
 import net.vonforst.evmap.R
+import net.vonforst.evmap.model.FILTERS_CUSTOM
 import net.vonforst.evmap.model.FILTERS_DISABLED
+import net.vonforst.evmap.model.FILTERS_FAVORITES
 import net.vonforst.evmap.storage.AppDatabase
 import net.vonforst.evmap.storage.FilterProfile
 import net.vonforst.evmap.storage.PreferenceDataSource
@@ -40,9 +42,12 @@ class FilterScreen(ctx: CarContext) : Screen(ctx) {
     }
 
     override fun onGetTemplate(): Template {
+        val filterStatus =
+            prefs.filterStatus.takeUnless { it == FILTERS_CUSTOM || it == FILTERS_FAVORITES }
+                ?: FILTERS_DISABLED
         return ListTemplate.Builder().apply {
             filterProfiles.value?.let {
-                setSingleList(buildFilterProfilesList(it.take(maxRows), prefs.filterStatus))
+                setSingleList(buildFilterProfilesList(it.take(maxRows), filterStatus))
             } ?: setLoading(true)
             setTitle(carContext.getString(R.string.menu_filter))
             setHeaderAction(Action.BACK)

@@ -1100,6 +1100,11 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                     R.id.menu_group_filter_profiles,
                     Menu.NONE, Menu.NONE, R.string.no_filters
                 )
+                val favoritesItem = popup.menu.add(
+                    R.id.menu_group_filter_profiles,
+                    Menu.NONE,
+                    Menu.NONE, R.string.filter_favorites
+                )
                 profiles.forEach { profile ->
                     val item = popup.menu.add(
                         R.id.menu_group_filter_profiles,
@@ -1116,11 +1121,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
                 profilesMap[FILTERS_DISABLED] = noFiltersItem
                 profilesMap[FILTERS_CUSTOM] = customItem
+                profilesMap[FILTERS_FAVORITES] = favoritesItem
 
                 popup.menu.setGroupCheckable(R.id.menu_group_filter_profiles, true, true);
 
                 val manageFiltersItem = popup.menu.findItem(R.id.menu_manage_filter_profiles)
-                manageFiltersItem.isVisible = !profiles.isEmpty()
+                manageFiltersItem.isVisible = profiles.isNotEmpty()
 
                 vm.filterStatus.observe(viewLifecycleOwner, Observer { id ->
                     when (id) {
@@ -1131,6 +1137,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                         FILTERS_CUSTOM -> {
                             customItem.isVisible = true
                             customItem.isChecked = true
+                        }
+                        FILTERS_FAVORITES -> {
+                            customItem.isVisible = false
+                            favoritesItem.isChecked = true
                         }
                         else -> {
                             customItem.isVisible = false

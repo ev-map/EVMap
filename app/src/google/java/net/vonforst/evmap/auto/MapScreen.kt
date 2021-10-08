@@ -22,6 +22,7 @@ import net.vonforst.evmap.api.stringProvider
 import net.vonforst.evmap.model.ChargeLocation
 import net.vonforst.evmap.model.FILTERS_CUSTOM
 import net.vonforst.evmap.model.FILTERS_DISABLED
+import net.vonforst.evmap.model.FILTERS_FAVORITES
 import net.vonforst.evmap.storage.AppDatabase
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.ui.availabilityText
@@ -69,7 +70,8 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
 
     private val referenceData = api.getReferenceData(lifecycleScope, carContext)
     private val filterStatus = MutableLiveData<Long>().apply {
-        value = prefs.filterStatus.takeUnless { it == FILTERS_CUSTOM } ?: FILTERS_DISABLED
+        value = prefs.filterStatus.takeUnless { it == FILTERS_CUSTOM || it == FILTERS_FAVORITES }
+            ?: FILTERS_DISABLED
     }
     private val filterValues = db.filterValueDao().getFilterValues(filterStatus, prefs.dataSource)
     private val filters = api.getFilters(referenceData, carContext.stringProvider())
@@ -139,7 +141,9 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
                             screenManager.pushForResult(FilterScreen(carContext)) {
                                 chargers = null
                                 numUpdates = 0
-                                filterStatus.value = prefs.filterStatus
+                                filterStatus.value =
+                                    prefs.filterStatus.takeUnless { it == FILTERS_CUSTOM || it == FILTERS_FAVORITES }
+                                        ?: FILTERS_DISABLED
                             }
                             session.mapScreen = null
                         }

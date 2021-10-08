@@ -130,3 +130,4 @@ fun FilterValues.getMultipleChoiceValue(key: String) =
 
 const val FILTERS_DISABLED = -2L
 const val FILTERS_CUSTOM = -1L
+const val FILTERS_FAVORITES = -3L

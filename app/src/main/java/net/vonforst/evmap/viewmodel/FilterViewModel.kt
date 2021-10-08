@@ -42,7 +42,7 @@ class FilterViewModel(application: Application) : AndroidViewModel(application) 
         MediatorLiveData<FilterProfile>().apply {
             addSource(filterStatus) { id ->
                 when (id) {
-                    FILTERS_CUSTOM, FILTERS_DISABLED -> value = null
+                    FILTERS_CUSTOM, FILTERS_DISABLED, FILTERS_FAVORITES -> value = null
                     else -> viewModelScope.launch {
                         value = db.filterProfileDao().getProfileById(id, prefs.dataSource)
                     }

@@ -33,7 +33,7 @@
         android:layout_marginBottom="16dp"
         android:gravity="center"
         android:text="@string/welcome_to_evmap"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+        android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
         app:layout_constraintBottom_toTopOf="@+id/welcomeText1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -48,7 +48,7 @@
         android:layout_marginBottom="56dp"
         android:gravity="center"
         android:text="@string/welcome_1"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
         android:textColor="?android:textColorSecondary"
         android:breakStrategy="balanced"
         app:layout_constraintBottom_toTopOf="@+id/btnGetStarted"
@@ -58,7 +58,7 @@
 
     <Button
         android:id="@+id/btnGetStarted"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        style="@style/Widget.Material3.Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"

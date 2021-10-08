@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <RadioButton
         android:id="@+id/rbGoingElectric"
@@ -9,7 +10,7 @@
         android:layout_height="wrap_content"
         android:text="@string/data_source_goingelectric"
         android:textColor="#098ac7"
-        android:buttonTint="#098ac7"
+        app:buttonTint="#098ac7"
         android:textSize="16sp"
         android:textStyle="bold" />
 
@@ -28,7 +29,7 @@
         android:layout_height="wrap_content"
         android:text="@string/data_source_openchargemap"
         android:textColor="#587e25"
-        android:buttonTint="#587e25"
+        app:buttonTint="#587e25"
         android:textSize="16sp"
         android:textStyle="bold" />
 

@@ -47,73 +47,85 @@
             android:fitsSystemWindows="true"
             app:layout_behavior="@string/ScrollingAppBarLayoutBehavior">
 
-            <com.google.android.material.appbar.AppBarLayout
+            <com.google.android.material.card.MaterialCardView
+                style="?attr/materialCardViewElevatedStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:elevation="8dp"
-                android:background="@drawable/rounded_rect_4dp"
-                android:backgroundTint="?android:colorBackground">
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                app:cardElevation="4dp"
+                app:cardCornerRadius="24dp"
+                android:theme="@style/NoElevationOverlay">
 
-                <androidx.appcompat.widget.Toolbar
-                    android:id="@+id/toolbar"
+                <com.google.android.material.appbar.AppBarLayout
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    app:contentInsetStartWithNavigation="70dp">
+                    android:layout_height="wrap_content">
 
-                    <LinearLayout
+                    <com.google.android.material.appbar.MaterialToolbar
+                        android:id="@+id/toolbar"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:focusable="true"
-                        android:focusableInTouchMode="true">
+                        android:layout_height="48dp"
+                        app:contentInsetStartWithNavigation="70dp">
 
-                        <net.vonforst.evmap.ui.AutocompleteTextViewWithSuggestions
-                            android:id="@+id/search"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
+                        <LinearLayout
+                            android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:singleLine="true"
-                            android:scrollHorizontally="true"
-                            android:ellipsize="end"
-                            android:background="@null"
+                            android:orientation="horizontal"
                             android:gravity="center_vertical"
-                            android:hint="@string/search"
-                            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-                            android:textColor="?android:textColorSecondary"
-                            android:dropDownVerticalOffset="8dp"
-                            android:popupBackground="@drawable/rounded_rect_4dp" />
+                            android:focusable="true"
+                            android:focusableInTouchMode="true">
 
-                        <ImageButton
-                            android:id="@+id/clearSearch"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:background="?attr/selectableItemBackgroundBorderless"
-                            app:invisibleUnless="@{search.text.length() > 0}"
-                            app:tint="?colorControlNormal"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toStartOf="@+id/handle"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:srcCompat="@drawable/ic_close"
-                            android:contentDescription="@string/delete" />
-                    </LinearLayout>
+                                <net.vonforst.evmap.ui.AutocompleteTextViewWithSuggestions
+                                    android:id="@+id/search"
+                                    android:layout_width="0dp"
+                                    android:layout_weight="1"
+                                    android:layout_height="match_parent"
+                                    android:singleLine="true"
+                                    android:scrollHorizontally="true"
+                                    android:ellipsize="end"
+                                    android:background="@null"
+                                    android:gravity="center_vertical"
+                                    android:hint="@string/search"
+                                    android:textSize="18sp"
+                                    android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                                    android:textColorHint="@color/hint_text_color"
+                                    android:dropDownVerticalOffset="8dp"
+                                    android:popupElevation="2dp"
+                                    android:popupBackground="@drawable/rounded_rect_24dp" />
 
-                </androidx.appcompat.widget.Toolbar>
+                            <ImageButton
+                                android:id="@+id/clearSearch"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:background="?attr/selectableItemBackgroundBorderless"
+                                app:invisibleUnless="@{search.text.length() > 0}"
+                                app:tint="?colorControlNormal"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toStartOf="@+id/handle"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:srcCompat="@drawable/ic_close"
+                                android:contentDescription="@string/delete" />
+                        </LinearLayout>
 
-                <ProgressBar
-                    android:id="@+id/progressBar2"
-                    style="?android:attr/progressBarStyleHorizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="-10dp"
-                    android:layout_marginBottom="-7dp"
-                    android:indeterminate="true"
-                    android:visibility="visible"
-                    app:goneUnless="@{ vm.chargepoints.status == Status.LOADING }" />
+                    </com.google.android.material.appbar.MaterialToolbar>
 
-            </com.google.android.material.appbar.AppBarLayout>
+                    <ProgressBar
+                        android:id="@+id/progressBar2"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="-10dp"
+                        android:layout_marginBottom="-7dp"
+                        android:indeterminate="true"
+                        android:visibility="visible"
+                        app:goneUnless="@{ vm.chargepoints.status == Status.LOADING }" />
+
+                </com.google.android.material.appbar.AppBarLayout>
+
+            </com.google.android.material.card.MaterialCardView>
 
         </FrameLayout>
 
@@ -190,14 +202,15 @@
             android:src="@drawable/ic_directions"
             app:layout_anchor="@id/bottom_sheet"
             app:layout_anchorGravity="top|right|end"
-            app:layout_behavior="@string/ScrollAwareFABBehavior" />
+            app:layout_behavior="@string/ScrollAwareFABBehavior"
+            android:theme="@style/NoElevationOverlay" />
 
         <com.mahc.custombottomsheetbehavior.MergedAppBarLayout
             android:id="@+id/detail_app_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_behavior="@string/MergedAppBarLayoutBehavior"
-            android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar" />
+            android:theme="@style/ThemeOverlay.Material3.Dark.ActionBar" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_layers"
@@ -206,25 +219,25 @@
             android:clickable="true"
             android:focusable="true"
             android:layout_gravity="top|end"
-            android:layout_marginEnd="12dp"
-            android:layout_marginTop="96dp"
-            android:elevation="-1dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="100dp"
             app:tint="?android:colorControlNormal"
             app:backgroundTint="?android:colorBackground"
             app:borderWidth="0dp"
             app:fabSize="mini"
             app:srcCompat="@drawable/ic_layers"
-            app:layout_behavior="net.vonforst.evmap.ui.HideOnExpandFabBehavior"/>
+            app:layout_behavior="net.vonforst.evmap.ui.HideOnExpandFabBehavior"
+            android:theme="@style/NoElevationOverlay" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/layers_sheet"
             android:layout_height="wrap_content"
             android:layout_width="200dp"
             android:layout_gravity="top|end"
-            android:layout_marginEnd="8dp"
-            android:layout_marginTop="96dp"
-            android:elevation="-1dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="100dp"
             android:visibility="gone"
+            app:cardCornerRadius="16dp"
             tools:visibility="visible">
 
             <include

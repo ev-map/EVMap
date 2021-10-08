@@ -23,9 +23,10 @@
             android:fitsSystemWindows="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            app:liftOnScroll="true">
 
-            <androidx.appcompat.widget.Toolbar
+            <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
@@ -70,7 +71,7 @@
             android:breakStrategy="balanced"
             android:gravity="center_horizontal"
             android:text="@string/favorites_empty_state"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+            android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
             android:textColor="?android:textColorSecondary"
             app:goneUnless="@{vm.listData.size() == 0}"
             app:layout_constraintBottom_toBottomOf="parent"

@@ -3,8 +3,8 @@
 
     <style name="CarAppTheme">
         <item name="carColorPrimary">@color/colorPrimary</item>
-        <item name="carColorPrimaryDark">@color/colorPrimaryVariant</item>
+        <item name="carColorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="carColorSecondary">@color/colorSecondary</item>
-        <item name="carColorSecondaryDark">@color/colorSecondaryVariant</item>
+        <item name="carColorSecondaryDark">@color/colorSecondaryDark</item>
     </style>
 </resources>

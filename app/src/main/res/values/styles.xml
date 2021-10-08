@@ -1,12 +1,16 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme.Base" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="AppTheme.Base" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryVariant">@color/colorPrimaryVariant</item>
+        <item name="colorPrimaryVariant">@color/colorPrimaryDark</item>
+        <item name="colorPrimaryContainer">@color/colorPrimaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/colorPrimaryDark</item>
         <item name="colorSecondary">@color/colorSecondary</item>
-        <item name="colorSecondaryVariant">@color/colorSecondaryVariant</item>
+        <item name="colorSecondaryVariant">@color/colorSecondaryDark</item>
+        <item name="colorSecondaryContainer">@color/colorSecondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/colorSecondaryDark</item>
         <item name="android:windowTranslucentStatus">true</item>
         <item name="preferenceTheme">@style/AppTheme.Preference</item>
     </style>
@@ -35,6 +39,24 @@
     <style name="ChargepriceDialogAnimation">
         <item name="android:windowEnterAnimation">@anim/chargeprice_dialog_enter</item>
         <item name="android:windowExitAnimation">@anim/chargeprice_dialog_exit</item>
+    </style>
+
+    <style name="NoElevationOverlay">
+        <item name="elevationOverlayEnabled">false</item>
+    </style>
+
+    <style name="RoundedPopup">
+        <item name="popupMenuBackground">@drawable/rounded_rect_8dp</item>
+    </style>
+
+    <style name="Widget.App.Button.ElevatedButton.IconOnly" parent="Widget.Material3.Button.ElevatedButton">
+        <item name="iconPadding">0dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:paddingLeft">14dp</item>
+        <item name="android:paddingRight">14dp</item>
+        <item name="android:minWidth">48dp</item>
+        <item name="android:minHeight">48dp</item>
     </style>
 
 </resources>

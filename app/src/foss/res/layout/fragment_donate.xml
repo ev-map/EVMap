@@ -23,7 +23,7 @@
 
     <Button
         android:id="@+id/btnDonate"
-        style="@style/Widget.MaterialComponents.Button.Icon"
+        style="@style/Widget.Material3.Button.Icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"

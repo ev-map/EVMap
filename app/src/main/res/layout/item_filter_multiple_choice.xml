@@ -31,7 +31,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:text="@{item.filter.name}"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+            android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Connectors" />
@@ -54,7 +54,7 @@
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chipMore"
-                style="@style/Widget.MaterialComponents.Chip.Action"
+                style="@style/Widget.Material3.Chip.Filter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@{showingAll ? @string/show_less : @string/show_more}"
@@ -63,7 +63,7 @@
 
         <Button
             android:id="@+id/btnAll"
-            style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
+            style="@style/Widget.Material3.Button.TextButton.Dialog"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/all"
@@ -72,7 +72,7 @@
 
         <Button
             android:id="@+id/btnNone"
-            style="@style/Widget.MaterialComponents.Button.TextButton.Dialog.Flush"
+            style="@style/Widget.Material3.Button.TextButton.Dialog.Flush"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"

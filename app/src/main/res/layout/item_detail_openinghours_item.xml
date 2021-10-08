@@ -27,7 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@{dayOfWeek != null ? dayOfWeek.getDisplayName(TextStyle.FULL, context.resources.configuration.locale) : @string/holiday}"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+            android:textAppearance="@style/TextAppearance.Material3.BodySmall"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Montag" />
@@ -38,7 +38,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="100dp"
             android:text="@{hours.getHoursForDayOfWeek(dayOfWeek) == null ? @string/closed_unfmt : hours.getHoursForDayOfWeek(dayOfWeek).toString()}"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+            android:textAppearance="@style/TextAppearance.Material3.BodySmall"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"

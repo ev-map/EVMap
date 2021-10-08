@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#4caf50</color>
-    <color name="colorPrimaryTransparent">#444caf50</color>
-    <color name="colorPrimaryVariant">#087f23</color>
+    <color name="colorPrimaryContainer">#c8e6c9</color>
+    <color name="colorOnPrimaryContainer">#1b5e1f</color>
+    <color name="colorPrimaryDark">#087f22</color>
     <color name="colorSecondary">#00e676</color>
-    <color name="colorSecondaryVariant">#00b248</color>
+    <color name="colorSecondaryDark">#00b249</color>
+    <color name="colorSecondaryContainer">#b5f4c7</color>
+    <color name="colorOnSecondaryContainer">#007c00</color>
     <color name="charger_100kw">#ffeb3b</color>
     <color name="charger_43kw">#ff9800</color>
     <color name="charger_20kw">#03a9f4</color>

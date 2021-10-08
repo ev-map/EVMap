@@ -194,7 +194,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             val density = resources.displayMetrics.density
             // status bar height + toolbar height + margin
             val margin =
-                insets.systemWindowInsetTop + (48 * density).toInt() + (24 * density).toInt()
+                insets.systemWindowInsetTop + (48 * density).toInt() + (28 * density).toInt()
             binding.fabLayers.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 topMargin = margin
             }
@@ -1070,7 +1070,11 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         filterView?.setOnClickListener {
             var profilesMap: MutableBiMap<Long, MenuItem> = HashBiMap()
 
-            val popup = PopupMenu(requireContext(), it, Gravity.END)
+            val popup = PopupMenu(
+                ContextThemeWrapper(requireContext(), R.style.RoundedPopup),
+                it,
+                Gravity.END
+            )
             popup.menuInflater.inflate(R.menu.popup_filter, popup.menu)
             MenuCompat.setGroupDividerEnabled(popup.menu, true)
             popup.setOnMenuItemClickListener {

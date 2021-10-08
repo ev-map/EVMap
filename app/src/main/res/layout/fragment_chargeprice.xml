@@ -24,12 +24,12 @@
             android:id="@+id/toolbar_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fitsSystemWindows="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            app:liftOnScroll="true">
 
-            <androidx.appcompat.widget.Toolbar
+            <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?android:actionBarSize">
@@ -48,7 +48,7 @@
                     app:srcCompat="@drawable/ic_powered_by_chargeprice"
                     app:tint="?android:textColorPrimary"
                     tools:ignore="RtlSymmetry" />
-            </androidx.appcompat.widget.Toolbar>
+            </com.google.android.material.appbar.MaterialToolbar>
 
         </com.google.android.material.appbar.AppBarLayout>
 
@@ -68,7 +68,7 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
                     android:text="@string/chargeprice_select_connector"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+                    android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
                     android:textColor="?colorPrimary"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/vehicle_selection" />
@@ -94,7 +94,7 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
                     android:text="@{String.format(@string/chargeprice_battery_range, vm.batteryRange[0], vm.batteryRange[1])}"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+                    android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
                     android:textColor="?colorPrimary"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/connectors_list"
@@ -107,7 +107,7 @@
                     android:layout_marginStart="4dp"
                     android:layout_marginTop="8dp"
                     android:text="@{@string/chargeprice_duration(BindingAdaptersKt.time((int) Math.round(vm.chargepriceMetaForChargepoint.data.duration)))}"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+                    android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
                     android:textColor="?colorPrimary"
                     app:invisibleUnlessAnimated="@{!vm.batteryRangeSliderDragging &amp;&amp; vm.chargepriceMetaForChargepoint.status == Status.SUCCESS}"
                     app:layout_constraintStart_toEndOf="@+id/textView2"
@@ -122,7 +122,7 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
                     android:text="@string/chargeprice_vehicle"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+                    android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
                     android:textColor="?colorPrimary"
                     app:goneUnless="@{vm.vehicles.data != null &amp;&amp; vm.vehicles.data.size() > 1}"
                     app:layout_constraintStart_toStartOf="parent"
@@ -226,7 +226,7 @@
 
                 <Button
                     android:id="@+id/btnSettings"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    style="@style/Widget.Material3.Button.TonalButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"

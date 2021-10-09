@@ -402,7 +402,7 @@ class GoingElectricApiWrapper(
         val chargeCards = referenceData.chargecards
 
         val plugMap = plugs.map { plug ->
-            plug to nameForPlugType(sp, plug)
+            plug to nameForPlugType(sp, GEChargepoint.convertTypeFromGE(plug))
         }.toMap()
         val networkMap = networks.map { it to it }.toMap()
         val chargecardMap = chargeCards.map { it.id.toString() to it.name }.toMap()
@@ -448,11 +448,11 @@ class GoingElectricApiWrapper(
             MultipleChoiceFilter(
                 sp.getString(R.string.filter_connectors), "connectors",
                 plugMap,
-                commonChoices = setOf(
+                commonChoices = listOf(
                     Chargepoint.TYPE_2_UNKNOWN,
                     Chargepoint.CCS_UNKNOWN,
                     Chargepoint.CHADEMO
-                ),
+                ).map { GEChargepoint.convertTypeToGE(it)!! }.toSet(),
                 manyChoices = true
             ),
             SliderFilter(

@@ -81,9 +81,10 @@ class MultiSelectDialog : AppCompatDialogFragment() {
             .sortedBy { it.value.toLowerCase(Locale.getDefault()) }
             .sortedBy {
                 when {
-                    selected.contains(it.key) -> 0
-                    commonChoices?.contains(it.key) == true -> 1
-                    else -> 2
+                    selected.contains(it.key) && commonChoices?.contains(it.key) == true -> 0
+                    selected.contains(it.key) -> 1
+                    commonChoices?.contains(it.key) == true -> 2
+                    else -> 3
                 }
             }
             .map { MultiSelectItem(it.key, it.value, it.key in selected) }

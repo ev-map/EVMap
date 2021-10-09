@@ -3,4 +3,5 @@
     <color name="gauge_active">#00e676</color>
     <color name="gauge_middle">#087f23</color>
     <color name="gauge_inactive">#9e9e9e</color>
+    <color name="charger_100kw_dark">#fdd835</color>
 </resources>

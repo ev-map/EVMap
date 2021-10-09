@@ -155,7 +155,12 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
     }
 
     private fun formatCharger(charger: ChargeLocation, showCity: Boolean): Row {
-        val color = ContextCompat.getColor(carContext, getMarkerTint(charger))
+        val markerTint = if (charger.maxPower > 100) {
+            R.color.charger_100kw_dark  // slightly darker color for better contrast
+        } else {
+            getMarkerTint(charger)
+        }
+        val color = ContextCompat.getColor(carContext, markerTint)
         val place =
             Place.Builder(CarLocation.create(charger.coordinates.lat, charger.coordinates.lng))
                 .setMarker(

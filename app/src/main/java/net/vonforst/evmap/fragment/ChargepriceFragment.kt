@@ -2,10 +2,7 @@ package net.vonforst.evmap.fragment
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
@@ -29,6 +26,7 @@ import net.vonforst.evmap.viewmodel.ChargepriceViewModel
 import net.vonforst.evmap.viewmodel.Status
 import net.vonforst.evmap.viewmodel.viewModelFactory
 import java.text.NumberFormat
+import kotlin.math.roundToInt
 
 class ChargepriceFragment : DialogFragment() {
     private lateinit var binding: FragmentChargepriceBinding
@@ -69,9 +67,13 @@ class ChargepriceFragment : DialogFragment() {
     override fun onStart() {
         super.onStart()
 
+        val density = resources.displayMetrics.density
+        val width = resources.displayMetrics.widthPixels
+        val maxWidth = (500 * density).roundToInt()
+
         // dialog with 95% screen height
         dialog?.window?.setLayout(
-            ViewGroup.LayoutParams.MATCH_PARENT,
+            if (width < maxWidth) WindowManager.LayoutParams.MATCH_PARENT else maxWidth,
             (resources.displayMetrics.heightPixels * 0.95).toInt()
         )
     }

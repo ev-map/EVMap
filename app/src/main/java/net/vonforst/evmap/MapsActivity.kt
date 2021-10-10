@@ -1,5 +1,6 @@
 package net.vonforst.evmap
 
+import android.app.PendingIntent
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -111,56 +112,58 @@ class MapsActivity : AppCompatActivity(),
             navController.graph = navGraph
             return
         } else {
+            var deepLink: PendingIntent? = null
+
+            if (intent?.scheme == "geo") {
+                val query = intent.data?.query?.split("=")?.get(1)
+                val coords = getLocationFromIntent(intent)
+
+                if (coords != null) {
+                    val lat = coords[0]
+                    val lon = coords[1]
+                    deepLink = navController.createDeepLink()
+                        .setGraph(R.navigation.nav_graph)
+                        .setDestination(R.id.map)
+                        .setArguments(MapFragmentArgs(latLng = LatLng(lat, lon)).toBundle())
+                        .createPendingIntent()
+                } else if (query != null && query.isNotEmpty()) {
+                    deepLink = navController.createDeepLink()
+                        .setGraph(R.navigation.nav_graph)
+                        .setDestination(R.id.map)
+                        .setArguments(MapFragmentArgs(locationName = query).toBundle())
+                        .createPendingIntent()
+                }
+            } else if (intent?.scheme == "https" && intent?.data?.host == "www.goingelectric.de") {
+                val id = intent.data?.pathSegments?.last()?.toLongOrNull()
+                if (id != null) {
+                    deepLink = navController.createDeepLink()
+                        .setGraph(R.navigation.nav_graph)
+                        .setDestination(R.id.map)
+                        .setArguments(MapFragmentArgs(chargerId = id).toBundle())
+                        .createPendingIntent()
+                }
+            } else if (intent.hasExtra(EXTRA_CHARGER_ID)) {
+                deepLink = navController.createDeepLink()
+                    .setDestination(R.id.map)
+                    .setArguments(
+                        MapFragmentArgs(
+                            chargerId = intent.getLongExtra(EXTRA_CHARGER_ID, 0),
+                            latLng = LatLng(
+                                intent.getDoubleExtra(EXTRA_LAT, 0.0),
+                                intent.getDoubleExtra(EXTRA_LON, 0.0)
+                            )
+                        ).toBundle()
+                    )
+                    .createPendingIntent()
+            }
+
             navGraph.setStartDestination(R.id.map)
-            navController.graph = navGraph
-        }
-
-
-        if (intent?.scheme == "geo") {
-            val query = intent.data?.query?.split("=")?.get(1)
-            val coords = getLocationFromIntent(intent)
-
-            if (coords != null) {
-                val lat = coords[0]
-                val lon = coords[1]
-                val deepLink = navController.createDeepLink()
-                    .setGraph(R.navigation.nav_graph)
-                    .setDestination(R.id.map)
-                    .setArguments(MapFragmentArgs(latLng = LatLng(lat, lon)).toBundle())
-                    .createPendingIntent()
+            if (deepLink != null) {
+                navController.graph = navGraph
                 deepLink.send()
-            } else if (query != null && query.isNotEmpty()) {
-                val deepLink = navController.createDeepLink()
-                    .setGraph(R.navigation.nav_graph)
-                    .setDestination(R.id.map)
-                    .setArguments(MapFragmentArgs(locationName = query).toBundle())
-                    .createPendingIntent()
-                deepLink.send()
+            } else {
+                navController.setGraph(navGraph, MapFragmentArgs(appStart = true).toBundle())
             }
-        } else if (intent?.scheme == "https" && intent?.data?.host == "www.goingelectric.de") {
-            val id = intent.data?.pathSegments?.last()?.toLongOrNull()
-            if (id != null) {
-                val deepLink = navController.createDeepLink()
-                    .setGraph(R.navigation.nav_graph)
-                    .setDestination(R.id.map)
-                    .setArguments(MapFragmentArgs(chargerId = id).toBundle())
-                    .createPendingIntent()
-                deepLink.send()
-            }
-        } else if (intent.hasExtra(EXTRA_CHARGER_ID)) {
-            navController.createDeepLink()
-                .setDestination(R.id.map)
-                .setArguments(
-                    MapFragmentArgs(
-                        chargerId = intent.getLongExtra(EXTRA_CHARGER_ID, 0),
-                        latLng = LatLng(
-                            intent.getDoubleExtra(EXTRA_LAT, 0.0),
-                            intent.getDoubleExtra(EXTRA_LON, 0.0)
-                        )
-                    ).toBundle()
-                )
-                .createPendingIntent()
-                .send()
         }
     }
 

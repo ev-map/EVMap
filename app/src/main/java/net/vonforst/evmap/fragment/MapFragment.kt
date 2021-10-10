@@ -485,6 +485,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 if (vm.bottomSheetState.value != BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT) {
                     bottomSheetBehavior.state = STATE_COLLAPSED
                 }
+                removeSearchFocus()
                 binding.fabDirections.show()
                 detailAppBarBehavior.setToolbarTitle(it.name)
                 updateFavoriteToggle()

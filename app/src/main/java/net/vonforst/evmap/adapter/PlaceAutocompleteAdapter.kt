@@ -98,7 +98,7 @@ class PlaceAutocompleteAdapter(val context: Context, val location: LiveData<LatL
             init {
                 if (PreferenceDataSource(context).searchProvider == "mapbox") {
                     // set delay to 500 ms to reduce paid Mapbox API requests
-                    this.setDelayer { 500L }
+                    this.setDelayer { q -> if (isShortQuery(q)) 0L else 500L }
                 }
             }
 
@@ -134,7 +134,7 @@ class PlaceAutocompleteAdapter(val context: Context, val location: LiveData<LatL
                             }
 
                             // if we already have enough results or the query is short, stop here
-                            if (query.length < 3 || recentResults.size >= maxItems) break
+                            if (isShortQuery(query) || recentResults.size >= maxItems) break
 
                             // then search online
                             val recentIds = recentPlaces.map { it.id }
@@ -151,7 +151,7 @@ class PlaceAutocompleteAdapter(val context: Context, val location: LiveData<LatL
 
                 if (currentProvider is MapboxAutocompleteProvider && !delaySet) {
                     // set delay to 500 ms to reduce paid Mapbox API requests
-                    this.setDelayer { 500L }
+                    this.setDelayer { q -> if (isShortQuery(q)) 0L else 500L }
                 }
 
                 return resultList.asFilterResults()
@@ -167,6 +167,8 @@ class PlaceAutocompleteAdapter(val context: Context, val location: LiveData<LatL
             }
         }
     }
+
+    private fun isShortQuery(query: CharSequence) = query.length < 3
 
     suspend fun getDetails(id: String): PlaceWithBounds {
         val provider = currentProvider!!

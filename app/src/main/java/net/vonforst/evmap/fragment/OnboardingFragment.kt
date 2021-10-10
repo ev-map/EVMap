@@ -52,8 +52,17 @@ class OnboardingFragment : Fragment() {
 
             override fun onPageSelected(position: Int) {
                 binding.pageIndicatorView.selection = position
+                binding.forward?.visibility =
+                    if (position == adapter.itemCount - 1) View.INVISIBLE else View.VISIBLE
+                binding.backward?.visibility = if (position == 0) View.INVISIBLE else View.VISIBLE
             }
         })
+        binding.forward?.setOnClickListener {
+            binding.viewPager.setCurrentItem(binding.viewPager.currentItem + 1, true)
+        }
+        binding.backward?.setOnClickListener {
+            binding.viewPager.setCurrentItem(binding.viewPager.currentItem - 1, true)
+        }
 
         return binding.root
     }

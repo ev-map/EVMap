@@ -26,4 +26,5 @@
     <color name="chargeprice_star">#00C853</color>
     <color name="chip_background">#1F000000</color>
     <color name="background">#FFFFFF</color>
+    <color name="pager_unselected">#1F000000</color>
 </resources>

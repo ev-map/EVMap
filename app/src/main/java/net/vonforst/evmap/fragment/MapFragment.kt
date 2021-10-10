@@ -250,6 +250,32 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 // when there is already another navigation going on
             }
         }*/
+
+        val fragmentArgs: MapFragmentArgs by navArgs()
+        if (savedInstanceState == null && fragmentArgs.appStart) {
+            // logo animation after starting the app
+            binding.appLogo.root.visibility = View.VISIBLE
+            binding.appLogo.root.alpha = 0f
+            binding.search.visibility = View.GONE
+
+            binding.appLogo.root.animate().alpha(1f)
+                .withEndAction {
+                    binding.appLogo.root.animate().alpha(0f).apply {
+                        startDelay = 1000
+                    }.withEndAction {
+                        binding.appLogo.root.visibility = View.GONE
+                        binding.search.visibility = View.VISIBLE
+                        binding.search.alpha = 0f
+                        binding.search.animate().alpha(1f).start()
+                    }.start()
+                }.apply {
+                    startDelay = 100
+                }.start()
+            arguments = fragmentArgs.copy(appStart = false).toBundle()
+        } else {
+            binding.appLogo.root.visibility = View.GONE
+            binding.search.visibility = View.VISIBLE
+        }
     }
 
     override fun onResume() {

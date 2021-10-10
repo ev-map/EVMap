@@ -47,6 +47,10 @@
             android:defaultValue="@null"
             app:argType="com.car2go.maps.model.LatLng"
             app:nullable="true" />
+        <argument
+            android:name="appStart"
+            android:defaultValue="false"
+            app:argType="boolean" />
     </fragment>
     <fragment
         android:id="@+id/about"

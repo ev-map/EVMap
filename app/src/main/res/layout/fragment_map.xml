@@ -69,13 +69,17 @@
                         android:layout_height="48dp"
                         app:contentInsetStartWithNavigation="70dp">
 
-                        <LinearLayout
+                        <FrameLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:focusable="true"
-                            android:focusableInTouchMode="true">
+                            android:layout_height="match_parent">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical"
+                                android:focusable="true"
+                                android:focusableInTouchMode="true">
 
                                 <net.vonforst.evmap.ui.AutocompleteTextViewWithSuggestions
                                     android:id="@+id/search"
@@ -88,27 +92,33 @@
                                     android:background="@null"
                                     android:gravity="center_vertical"
                                     android:hint="@string/search"
-                                    android:textSize="18sp"
-                                    android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                                    android:textSize="18sp"android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
                                     android:textColorHint="@color/hint_text_color"
                                     android:dropDownVerticalOffset="8dp"
                                     android:popupElevation="2dp"
                                     android:popupBackground="@drawable/rounded_rect_24dp" />
 
-                            <ImageButton
-                                android:id="@+id/clearSearch"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="8dp"
-                                android:background="?attr/selectableItemBackgroundBorderless"
-                                app:invisibleUnless="@{search.text.length() > 0}"
-                                app:tint="?colorControlNormal"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toStartOf="@+id/handle"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:srcCompat="@drawable/ic_close"
-                                android:contentDescription="@string/delete" />
-                        </LinearLayout>
+                                <ImageButton
+                                    android:id="@+id/clearSearch"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="8dp"
+                                    android:background="?attr/selectableItemBackgroundBorderless"
+                                    app:invisibleUnless="@{search.text.length() > 0}"
+                                    app:tint="?colorControlNormal"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintEnd_toStartOf="@+id/handle"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    app:srcCompat="@drawable/ic_close"
+                                    android:contentDescription="@string/delete" />
+                            </LinearLayout>
+
+                            <include
+                                layout="@layout/app_logo_small"
+                                android:id="@+id/app_logo"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent" />
+                        </FrameLayout>
 
                     </com.google.android.material.appbar.MaterialToolbar>
 

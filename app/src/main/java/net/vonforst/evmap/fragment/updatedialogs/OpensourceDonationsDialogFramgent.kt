@@ -10,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 import net.vonforst.evmap.R
 import net.vonforst.evmap.databinding.DialogOpensourceDonationsBinding
 import net.vonforst.evmap.storage.PreferenceDataSource
+import kotlin.math.roundToInt
 
 class OpensourceDonationsDialogFramgent : AppCompatDialogFragment() {
     private lateinit var binding: DialogOpensourceDonationsBinding
@@ -43,8 +44,13 @@ class OpensourceDonationsDialogFramgent : AppCompatDialogFragment() {
 
     override fun onStart() {
         super.onStart()
+
+        val density = resources.displayMetrics.density
+        val width = resources.displayMetrics.widthPixels
+        val maxWidth = (500 * density).roundToInt()
+
         dialog?.window?.setLayout(
-            WindowManager.LayoutParams.MATCH_PARENT,
+            if (width < maxWidth) WindowManager.LayoutParams.MATCH_PARENT else maxWidth,
             WindowManager.LayoutParams.WRAP_CONTENT
         )
     }

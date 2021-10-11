@@ -42,7 +42,7 @@
 
         <FrameLayout
             android:id="@+id/toolbar_container"
-            android:layout_width="match_parent"
+            android:layout_width="@dimen/map_toolbar_width"
             android:layout_height="wrap_content"
             android:fitsSystemWindows="true"
             app:layout_behavior="@string/ScrollingAppBarLayoutBehavior">
@@ -231,7 +231,7 @@
             android:focusable="true"
             android:layout_gravity="top|end"
             android:layout_marginEnd="20dp"
-            android:layout_marginTop="100dp"
+            android:layout_marginTop="@dimen/layers_fab_top_padding"
             app:tint="?android:colorControlNormal"
             app:backgroundTint="?android:colorBackground"
             app:borderWidth="0dp"
@@ -246,7 +246,7 @@
             android:layout_width="200dp"
             android:layout_gravity="top|end"
             android:layout_marginEnd="16dp"
-            android:layout_marginTop="100dp"
+            android:layout_marginTop="@dimen/layers_fab_top_padding"
             android:visibility="gone"
             app:cardCornerRadius="16dp"
             tools:visibility="visible">

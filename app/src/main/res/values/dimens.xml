@@ -7,4 +7,8 @@
     <dimen name="detail_corner_radius_negative">-8dp</dimen>
     <dimen name="expand_toggle_padding_large">16dp</dimen>
     <dimen name="expand_toggle_padding_small">8dp</dimen>
+
+    <item name="match_parent" type="dimen">-1</item>
+    <dimen name="map_toolbar_width">@dimen/match_parent</dimen>
+    <dimen name="layers_fab_top_padding">100dp</dimen>
 </resources>

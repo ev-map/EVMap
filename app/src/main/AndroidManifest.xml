@@ -32,7 +32,7 @@
 
         <activity
             android:name=".MapsActivity"
-            android:label="@string/title_activity_maps"
+            android:label="@string/app_name"
             android:theme="@style/AppTheme.LaunchScreen"
             android:exported="true">
             <intent-filter>

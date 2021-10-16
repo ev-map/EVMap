@@ -24,9 +24,10 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import com.car2go.maps.model.LatLng
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
-import net.vonforst.evmap.fragment.MapFragment
+import net.vonforst.evmap.fragment.MapFragmentArgs
 import net.vonforst.evmap.model.ChargeLocation
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.utils.LocaleContextWrapper
@@ -125,14 +126,14 @@ class MapsActivity : AppCompatActivity(),
                 val deepLink = navController.createDeepLink()
                     .setGraph(R.navigation.nav_graph)
                     .setDestination(R.id.map)
-                    .setArguments(MapFragment.showLocation(lat, lon))
+                    .setArguments(MapFragmentArgs(latLng = LatLng(lat, lon)).toBundle())
                     .createPendingIntent()
                 deepLink.send()
             } else if (query != null && query.isNotEmpty()) {
                 val deepLink = navController.createDeepLink()
                     .setGraph(R.navigation.nav_graph)
                     .setDestination(R.id.map)
-                    .setArguments(MapFragment.showLocationByName(query))
+                    .setArguments(MapFragmentArgs(locationName = query).toBundle())
                     .createPendingIntent()
                 deepLink.send()
             }
@@ -142,7 +143,7 @@ class MapsActivity : AppCompatActivity(),
                 val deepLink = navController.createDeepLink()
                     .setGraph(R.navigation.nav_graph)
                     .setDestination(R.id.map)
-                    .setArguments(MapFragment.showChargerById(id))
+                    .setArguments(MapFragmentArgs(chargerId = id).toBundle())
                     .createPendingIntent()
                 deepLink.send()
             }
@@ -150,11 +151,13 @@ class MapsActivity : AppCompatActivity(),
             navController.createDeepLink()
                 .setDestination(R.id.map)
                 .setArguments(
-                    MapFragment.showCharger(
-                        intent.getLongExtra(EXTRA_CHARGER_ID, 0),
-                        intent.getDoubleExtra(EXTRA_LAT, 0.0),
-                        intent.getDoubleExtra(EXTRA_LON, 0.0)
-                    )
+                    MapFragmentArgs(
+                        chargerId = intent.getLongExtra(EXTRA_CHARGER_ID, 0),
+                        latLng = LatLng(
+                            intent.getDoubleExtra(EXTRA_LAT, 0.0),
+                            intent.getDoubleExtra(EXTRA_LON, 0.0)
+                        )
+                    ).toBundle()
                 )
                 .createPendingIntent()
                 .send()

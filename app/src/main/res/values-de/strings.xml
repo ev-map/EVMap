@@ -245,4 +245,5 @@
     <string name="edit_filter_profile">„%s“ bearbeiten</string>
     <string name="pref_search_delete_recent">Suchverlauf löschen</string>
     <string name="deleted_recent_search_results">Suchverlauf wurde gelöscht</string>
+    <string name="settings_data_sources">Datenquellen</string>
 </resources>

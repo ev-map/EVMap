@@ -19,8 +19,11 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
+import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import net.vonforst.evmap.fragment.MapFragment
@@ -35,7 +38,8 @@ const val EXTRA_CHARGER_ID = "chargerId"
 const val EXTRA_LAT = "lat"
 const val EXTRA_LON = "lon"
 
-class MapsActivity : AppCompatActivity() {
+class MapsActivity : AppCompatActivity(),
+    PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
     interface FragmentCallback {
         fun getRootView(): View
     }
@@ -102,11 +106,11 @@ class MapsActivity : AppCompatActivity() {
                     }
                 })
             }
-            navGraph.startDestination = R.id.onboarding
+            navGraph.setStartDestination(R.id.onboarding)
             navController.graph = navGraph
             return
         } else {
-            navGraph.startDestination = R.id.map
+            navGraph.setStartDestination(R.id.map)
             navController.graph = navGraph
         }
 
@@ -212,5 +216,16 @@ class MapsActivity : AppCompatActivity() {
             putExtra(Intent.EXTRA_TEXT, url)
         }
         startActivity(intent)
+    }
+
+    override fun onPreferenceStartFragment(
+        caller: PreferenceFragmentCompat,
+        pref: Preference
+    ): Boolean {
+        // Identify the Navigation Destination
+        val navDestination = navController.graph
+            .find { target -> target is FragmentNavigator.Destination && pref.fragment == target.className }
+        navDestination?.let { target -> navController.navigate(target.id) }
+        return true
     }
 }

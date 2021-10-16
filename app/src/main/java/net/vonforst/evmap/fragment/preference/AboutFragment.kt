@@ -1,4 +1,4 @@
-package net.vonforst.evmap.fragment
+package net.vonforst.evmap.fragment.preference
 
 import android.os.Bundle
 import androidx.appcompat.widget.Toolbar

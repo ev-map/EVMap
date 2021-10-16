@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <net.vonforst.evmap.ui.MultiSelectDialogPreference
+        android:key="chargeprice_my_vehicle"
+        android:title="@string/pref_my_vehicle"
+        app:showAllButton="false"
+        app:defaultToAll="false" />
+    <net.vonforst.evmap.ui.MultiSelectDialogPreference
+        android:key="chargeprice_my_tariffs"
+        android:title="@string/pref_my_tariffs"
+        android:summary="@string/pref_my_tariffs_summary" />
+    <ListPreference
+        android:key="chargeprice_currency"
+        android:title="@string/pref_chargeprice_currency"
+        android:entries="@array/pref_chargeprice_currency_names"
+        android:entryValues="@array/pref_chargeprice_currency_values"
+        android:defaultValue="EUR"
+        app:useSimpleSummaryProvider="true" />
+    <CheckBoxPreference
+        android:key="chargeprice_no_base_fee"
+        android:title="@string/pref_chargeprice_no_base_fee"
+        android:defaultValue="false"
+        app:singleLineTitle="false" />
+    <CheckBoxPreference
+        android:key="chargeprice_show_provider_customer_tariffs"
+        android:title="@string/pref_chargeprice_show_provider_customer_tariffs"
+        android:summary="@string/pref_chargeprice_show_provider_customer_tariffs_summary"
+        android:defaultValue="false"
+        app:singleLineTitle="false" />
+</PreferenceScreen>

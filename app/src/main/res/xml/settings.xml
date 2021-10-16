@@ -1,91 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <PreferenceCategory android:title="@string/settings_ui">
-        <ListPreference
-            android:key="language"
-            android:title="@string/pref_language"
-            android:entries="@array/pref_language_names"
-            android:entryValues="@array/pref_language_values"
-            android:defaultValue="default"
-            android:summary="@string/pref_language_summary" />
-
-        <ListPreference
-            android:key="darkmode"
-            android:title="@string/pref_darkmode"
-            android:entries="@array/pref_darkmode_names"
-            android:entryValues="@array/pref_darkmode_values"
-            android:defaultValue="default"
-            android:summary="@string/pref_darkmode_summary" />
-
-    </PreferenceCategory>
-    <PreferenceCategory android:title="@string/settings_charger_data">
-        <net.vonforst.evmap.ui.DataSourceSelectDialogPreference
-            android:key="data_source"
-            android:title="@string/pref_data_source"
-            android:entries="@array/pref_data_source_names"
-            android:entryValues="@array/pref_data_source_values"
-            android:defaultValue="goingelectric"
-            app:useSimpleSummaryProvider="true" />
-    </PreferenceCategory>
-    <PreferenceCategory android:title="@string/settings_map">
-
-        <ListPreference
-            android:key="map_provider"
-            android:title="@string/pref_map_provider"
-            android:entries="@array/pref_map_provider_names"
-            android:entryValues="@array/pref_map_provider_values"
-            android:defaultValue="@string/pref_map_provider_default"
-            android:summary="%s" />
-
-        <ListPreference
-            android:key="search_provider"
-            android:title="@string/pref_search_provider"
-            android:entries="@array/pref_search_provider_names"
-            android:entryValues="@array/pref_search_provider_values"
-            android:defaultValue="@string/pref_search_provider_default"
-            android:summary="%s" />
-
-        <Preference
-            android:key="search_delete_recent"
-            android:title="@string/pref_search_delete_recent" />
-
-        <CheckBoxPreference
-            android:key="navigate_use_maps"
-            android:title="@string/pref_navigate_use_maps"
-            android:summaryOn="@string/pref_navigate_use_maps_on"
-            android:summaryOff="@string/pref_navigate_use_maps_off"
-            android:defaultValue="true" />
-
-    </PreferenceCategory>
-    <PreferenceCategory android:title="@string/settings_chargeprice">
-        <net.vonforst.evmap.ui.MultiSelectDialogPreference
-            android:key="chargeprice_my_vehicle"
-            android:title="@string/pref_my_vehicle"
-            app:showAllButton="false"
-            app:defaultToAll="false" />
-        <net.vonforst.evmap.ui.MultiSelectDialogPreference
-            android:key="chargeprice_my_tariffs"
-            android:title="@string/pref_my_tariffs"
-            android:summary="@string/pref_my_tariffs_summary" />
-        <ListPreference
-            android:key="chargeprice_currency"
-            android:title="@string/pref_chargeprice_currency"
-            android:entries="@array/pref_chargeprice_currency_names"
-            android:entryValues="@array/pref_chargeprice_currency_values"
-            android:defaultValue="EUR"
-            app:useSimpleSummaryProvider="true" />
-        <CheckBoxPreference
-            android:key="chargeprice_no_base_fee"
-            android:title="@string/pref_chargeprice_no_base_fee"
-            android:defaultValue="false"
-            app:singleLineTitle="false" />
-        <CheckBoxPreference
-            android:key="chargeprice_show_provider_customer_tariffs"
-            android:title="@string/pref_chargeprice_show_provider_customer_tariffs"
-            android:summary="@string/pref_chargeprice_show_provider_customer_tariffs_summary"
-            android:defaultValue="false"
-            app:singleLineTitle="false" />
-    </PreferenceCategory>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <Preference
+        android:fragment="net.vonforst.evmap.fragment.preference.UiSettingsFragment"
+        android:title="@string/settings_ui"
+        android:icon="@drawable/ic_settings_ui" />
+    <Preference
+        android:fragment="net.vonforst.evmap.fragment.preference.DataSettingsFragment"
+        android:title="@string/settings_data_sources"
+        android:icon="@drawable/ic_settings_data_source" />
+    <Preference
+        android:fragment="net.vonforst.evmap.fragment.preference.ChargepriceSettingsFragment"
+        android:title="@string/settings_chargeprice"
+        android:icon="@drawable/ic_chargeprice" />
 </PreferenceScreen>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <ListPreference
+        android:key="language"
+        android:title="@string/pref_language"
+        android:entries="@array/pref_language_names"
+        android:entryValues="@array/pref_language_values"
+        android:defaultValue="default"
+        android:summary="@string/pref_language_summary" />
+
+    <ListPreference
+        android:key="darkmode"
+        android:title="@string/pref_darkmode"
+        android:entries="@array/pref_darkmode_names"
+        android:entryValues="@array/pref_darkmode_values"
+        android:defaultValue="default"
+        android:summary="@string/pref_darkmode_summary" />
+    <CheckBoxPreference
+        android:key="navigate_use_maps"
+        android:title="@string/pref_navigate_use_maps"
+        android:summaryOn="@string/pref_navigate_use_maps_on"
+        android:summaryOff="@string/pref_navigate_use_maps_off"
+        android:defaultValue="true" />
+</PreferenceScreen>

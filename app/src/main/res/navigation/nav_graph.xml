@@ -36,7 +36,7 @@
     </fragment>
     <fragment
         android:id="@+id/about"
-        android:name="net.vonforst.evmap.fragment.AboutFragment"
+        android:name="net.vonforst.evmap.fragment.preference.AboutFragment"
         android:label="@string/about"
         tools:layout="@layout/fragment_preference">
         <action
@@ -48,8 +48,23 @@
     </fragment>
     <fragment
         android:id="@+id/settings"
-        android:name="net.vonforst.evmap.fragment.SettingsFragment"
+        android:name="net.vonforst.evmap.fragment.preference.SettingsFragment"
         android:label="@string/settings"
+        tools:layout="@layout/fragment_preference" />
+    <fragment
+        android:id="@+id/settings_ui"
+        android:name="net.vonforst.evmap.fragment.preference.UiSettingsFragment"
+        android:label="@string/settings_ui"
+        tools:layout="@layout/fragment_preference" />
+    <fragment
+        android:id="@+id/settings_data"
+        android:name="net.vonforst.evmap.fragment.preference.DataSettingsFragment"
+        android:label="@string/settings_data_sources"
+        tools:layout="@layout/fragment_preference" />
+    <fragment
+        android:id="@+id/settings_chargeprice"
+        android:name="net.vonforst.evmap.fragment.preference.ChargepriceSettingsFragment"
+        android:label="@string/settings_chargeprice"
         tools:layout="@layout/fragment_preference" />
     <fragment
         android:id="@+id/favs"

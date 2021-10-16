@@ -1,28 +1,15 @@
-package net.vonforst.evmap.fragment
+package net.vonforst.evmap.fragment.preference
 
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
-import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.setupWithNavController
 import androidx.preference.MultiSelectListPreference
-import androidx.preference.Preference
-import androidx.preference.PreferenceFragmentCompat
-import net.vonforst.evmap.MapsActivity
 import net.vonforst.evmap.R
-import net.vonforst.evmap.storage.PreferenceDataSource
-import net.vonforst.evmap.ui.updateNightMode
 import net.vonforst.evmap.viewmodel.SettingsViewModel
 import net.vonforst.evmap.viewmodel.viewModelFactory
 
-
-class SettingsFragment : PreferenceFragmentCompat(),
-    SharedPreferences.OnSharedPreferenceChangeListener {
-    private lateinit var prefs: PreferenceDataSource
-
+class ChargepriceSettingsFragment : BaseSettingsFragment() {
     private val vm: SettingsViewModel by viewModels(factoryProducer = {
         viewModelFactory {
             SettingsViewModel(
@@ -37,7 +24,6 @@ class SettingsFragment : PreferenceFragmentCompat(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        prefs = PreferenceDataSource(requireContext())
 
         myVehiclePreference = findPreference("chargeprice_my_vehicle")!!
         myVehiclePreference.isEnabled = false
@@ -97,63 +83,17 @@ class SettingsFragment : PreferenceFragmentCompat(),
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        setPreferencesFromResource(R.xml.settings, rootKey)
-    }
-
-    override fun onPreferenceTreeClick(preference: Preference?): Boolean {
-        return when (preference?.key) {
-            "search_delete_recent" -> {
-                Toast.makeText(context, R.string.deleted_recent_search_results, Toast.LENGTH_LONG)
-                    .show()
-                vm.deleteRecentSearchResults()
-                true
-            }
-            else -> super.onPreferenceTreeClick(preference)
-        }
+        setPreferencesFromResource(R.xml.settings_chargeprice, rootKey)
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
         when (key) {
-            "language" -> {
-                activity?.let {
-                    it.finish();
-                    it.startActivity(it.intent);
-                }
-            }
-            "darkmode" -> {
-                updateNightMode(prefs)
-            }
             "chargeprice_my_vehicle" -> {
                 updateMyVehiclesSummary()
             }
             "chargeprice_my_tariffs" -> {
                 updateMyTariffsSummary()
             }
-            "search_provider" -> {
-                if (prefs.searchProvider == "google") {
-                    Toast.makeText(context, R.string.pref_search_provider_info, Toast.LENGTH_LONG)
-                        .show()
-                }
-            }
         }
     }
-
-    override fun onResume() {
-        super.onResume()
-        preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
-
-        val navController = findNavController()
-        val toolbar = requireView().findViewById(R.id.toolbar) as Toolbar
-        toolbar.setupWithNavController(
-            navController,
-            (requireActivity() as MapsActivity).appBarConfiguration
-        )
-    }
-
-    override fun onPause() {
-        preferenceManager.sharedPreferences
-            .unregisterOnSharedPreferenceChangeListener(this)
-        super.onPause()
-    }
-
 }

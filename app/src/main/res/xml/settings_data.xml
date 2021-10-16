@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory android:title="@string/settings_charger_data">
+        <net.vonforst.evmap.ui.DataSourceSelectDialogPreference
+            android:key="data_source"
+            android:title="@string/pref_data_source"
+            android:entries="@array/pref_data_source_names"
+            android:entryValues="@array/pref_data_source_values"
+            android:defaultValue="goingelectric"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/settings_map">
+
+        <ListPreference
+            android:key="map_provider"
+            android:title="@string/pref_map_provider"
+            android:entries="@array/pref_map_provider_names"
+            android:entryValues="@array/pref_map_provider_values"
+            android:defaultValue="@string/pref_map_provider_default"
+            android:summary="%s" />
+
+        <ListPreference
+            android:key="search_provider"
+            android:title="@string/pref_search_provider"
+            android:entries="@array/pref_search_provider_names"
+            android:entryValues="@array/pref_search_provider_values"
+            android:defaultValue="@string/pref_search_provider_default"
+            android:summary="%s" />
+
+        <Preference
+            android:key="search_delete_recent"
+            android:title="@string/pref_search_delete_recent" />
+
+    </PreferenceCategory>
+</PreferenceScreen>

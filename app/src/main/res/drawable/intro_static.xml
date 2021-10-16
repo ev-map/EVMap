@@ -1,13 +1,13 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="160dp"
-    android:height="160dp"
-    android:viewportWidth="120"
-    android:viewportHeight="120">
+    android:width="192dp"
+    android:height="192dp"
+    android:viewportWidth="192"
+    android:viewportHeight="192">
     <group android:name="_R_G">
         <group
             android:name="_R_G_L_2_G_N_1_T_0"
-            android:translateX="58"
-            android:translateY="60">
+            android:translateX="94"
+            android:translateY="96">
             <group
                 android:name="_R_G_L_2_G"
                 android:pivotX="53.625"
@@ -43,8 +43,8 @@
         </group>
         <group
             android:name="_R_G_L_1_G_N_1_T_0"
-            android:translateX="58"
-            android:translateY="60">
+            android:translateX="94"
+            android:translateY="96">
             <group
                 android:name="_R_G_L_1_G"
                 android:translateX="-26.049"
@@ -77,8 +77,8 @@
         </group>
         <group
             android:name="_R_G_L_0_G_N_1_T_0"
-            android:translateX="58"
-            android:translateY="60">
+            android:translateX="94"
+            android:translateY="96">
             <group
                 android:name="_R_G_L_0_G"
                 android:translateX="-1.3999999999999995"

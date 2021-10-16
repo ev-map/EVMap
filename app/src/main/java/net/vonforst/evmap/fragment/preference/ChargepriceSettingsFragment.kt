@@ -78,7 +78,6 @@ class ChargepriceSettingsFragment : BaseSettingsFragment() {
                 "${it.brand} ${it.name}"
             }.joinToString(", ")
             myVehiclePreference.summary = summary
-            // TODO: prefs.chargepriceMyVehicleDcChargeports = it.dcChargePorts
         }
     }
 

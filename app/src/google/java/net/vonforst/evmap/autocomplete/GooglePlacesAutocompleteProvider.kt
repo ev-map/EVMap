@@ -7,9 +7,9 @@ import android.text.style.StyleSpan
 import com.car2go.maps.google.adapter.AnyMapAdapter
 import com.car2go.maps.util.SphericalUtil
 import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.tasks.Tasks.await
-import com.google.android.libraries.maps.model.LatLng
-import com.google.android.libraries.maps.model.LatLngBounds
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken
 import com.google.android.libraries.places.api.model.Place

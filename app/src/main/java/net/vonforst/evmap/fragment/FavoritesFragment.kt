@@ -77,7 +77,10 @@ class FavoritesFragment : Fragment(), LostApiClient.ConnectionCallbacks {
             onClickListener = {
                 findNavController().navigate(
                     R.id.action_favs_to_map,
-                    MapFragment.showCharger(it.charger)
+                    MapFragmentArgs(
+                        chargerId = it.charger.id,
+                        latLng = LatLng(it.charger.coordinates.lat, it.charger.coordinates.lng)
+                    ).toBundle()
                 )
             }
         }

@@ -33,6 +33,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -72,6 +73,7 @@ import net.vonforst.evmap.adapter.DetailsAdapter
 import net.vonforst.evmap.adapter.GalleryAdapter
 import net.vonforst.evmap.adapter.PlaceAutocompleteAdapter
 import net.vonforst.evmap.api.goingelectric.GoingElectricApiWrapper
+import net.vonforst.evmap.api.openchargemap.OpenChargeMapApiWrapper
 import net.vonforst.evmap.autocomplete.ApiUnavailableException
 import net.vonforst.evmap.autocomplete.PlaceWithBounds
 import net.vonforst.evmap.databinding.FragmentMapBinding
@@ -88,11 +90,6 @@ import net.vonforst.evmap.utils.distanceBetween
 import net.vonforst.evmap.viewmodel.*
 import java.io.IOException
 
-
-const val ARG_CHARGER_ID = "chargerId"
-const val ARG_LAT = "lat"
-const val ARG_LON = "lon"
-const val ARG_LOCATION_NAME = "locationName"
 
 class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallback,
     LostApiClient.ConnectionCallbacks, LocationListener {
@@ -309,9 +306,14 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         }
         binding.detailView.btnChargeprice.setOnClickListener {
             val charger = vm.charger.value?.data ?: return@setOnClickListener
+            val dataSource = when (vm.apiType) {
+                GoingElectricApiWrapper::class.java -> "going_electric"
+                OpenChargeMapApiWrapper::class.java -> "open_charge_map"
+                else -> throw IllegalArgumentException("unsupported data source")
+            }
             findNavController().navigate(
                 R.id.action_map_to_chargepriceFragment,
-                ChargepriceFragment.showCharger(charger, vm.apiType)
+                ChargepriceFragmentArgs(charger, dataSource).toBundle()
             )
         }
         binding.detailView.topPart.setOnClickListener {
@@ -816,10 +818,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
 
         val position = vm.mapPosition.value
-        val lat = arguments?.optDouble(ARG_LAT)
-        val lon = arguments?.optDouble(ARG_LON)
-        val chargerId = arguments?.optLong(ARG_CHARGER_ID)
-        val locationName = arguments?.getString(ARG_LOCATION_NAME)
+        val fragmentArgs: MapFragmentArgs by navArgs()
+        val locationName = fragmentArgs.locationName
+        val chargerId = fragmentArgs.chargerId
+        val latLng = fragmentArgs.latLng
 
         var positionSet = false
 
@@ -828,7 +830,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 map.cameraUpdateFactory.newLatLngZoom(position.bounds.center, position.zoom)
             map.moveCamera(cameraUpdate)
             positionSet = true
-        } else if (chargerId != null && (lat == null || lon == null)) {
+        } else if (chargerId != 0L && latLng == null) {
             // show given charger ID
             vm.loadChargerById(chargerId)
             vm.chargerSparse.observe(
@@ -846,13 +848,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 })
 
             positionSet = true
-        } else if (lat != null && lon != null) {
+        } else if (latLng != null) {
             // show given position
-            val latLng = LatLng(lat, lon)
             val cameraUpdate = map.cameraUpdateFactory.newLatLngZoom(latLng, 16f)
             map.moveCamera(cameraUpdate)
 
-            if (chargerId != null) {
+            if (chargerId != 0L) {
                 // show charger detail after chargers were loaded
                 vm.chargepoints.observe(
                     viewLifecycleOwner,
@@ -1179,43 +1180,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
     override fun getRootView(): View {
         return binding.root
-    }
-
-    companion object {
-        fun showCharger(charger: ChargeLocation): Bundle {
-            return Bundle().apply {
-                putLong(ARG_CHARGER_ID, charger.id)
-                putDouble(ARG_LAT, charger.coordinates.lat)
-                putDouble(ARG_LON, charger.coordinates.lng)
-            }
-        }
-
-        fun showLocation(lat: Double, lon: Double): Bundle {
-            return Bundle().apply {
-                putDouble(ARG_LAT, lat)
-                putDouble(ARG_LON, lon)
-            }
-        }
-
-        fun showChargerById(id: Long): Bundle {
-            return Bundle().apply {
-                putLong(ARG_CHARGER_ID, id)
-            }
-        }
-
-        fun showCharger(id: Long, lat: Double, lon: Double): Bundle {
-            return Bundle().apply {
-                putLong(ARG_CHARGER_ID, id)
-                putDouble(ARG_LAT, lat)
-                putDouble(ARG_LON, lon)
-            }
-        }
-
-        fun showLocationByName(query: String): Bundle {
-            return Bundle().apply {
-                putString(ARG_LOCATION_NAME, query)
-            }
-        }
     }
 
     override fun onConnected() {

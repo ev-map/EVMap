@@ -1,4 +1,4 @@
-EVMap [![Build Status](https://travis-ci.org/johan12345/EVMap.svg?branch=master)](https://travis-ci.org/johan12345/EVMap)
+EVMap [![Build Status](https://app.travis-ci.com/johan12345/EVMap.svg?branch=master)](https://app.travis-ci.com/johan12345/EVMap)
 =====
 
 <img src="https://raw.githubusercontent.com/johan12345/EVMap/master/_img/feature_graphic.svg" width=700 alt="Logo"/>

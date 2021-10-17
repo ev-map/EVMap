@@ -33,33 +33,17 @@ Screenshots
 Development setup
 -----------------
 
-The App is developed using Android Studio.
+The App is developed using Android Studio and should pretty much work out-of-the-box when you clone
+the Git repository and open the project with Android Studio.
 
-For testing the app, you need to obtain free API Keys for the 
-[GoingElectric API](https://www.goingelectric.de/stromtankstellen/api/),
-the [Chargeprice API](https://github.com/chargeprice/chargeprice-api-docs),
-the [OpenChargeMap API](https://openchargemap.org/site/profile/appedit),
-as well as for [Google APIs](https://console.developers.google.com/)
-("Maps SDK for Android" and "Places API" need to be activated) and/or [Mapbox](https://www.mapbox.com/). These API keys need to be put into the
-app in the form of a resource file called `apikeys.xml` under `app/src/main/res/values`, with the
-following content:
+The only exception is that you need to obtain some free API keys for the different data sources that
+EVMap uses and put them into the app in the form of a resource file called `apikeys.xml` under
+`app/src/main/res/values`. You can find more information on which API keys are necessary for which
+features and how they can be obtained in our [documentation page](docs/api_keys.md).
 
-```xml
-<resources>
-    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
-        insert your Google Maps key here
-    </string>
-    <string name="mapbox_key" translatable="false">
-        insert your Mapbox key here
-    </string>
-    <string name="goingelectric_key" translatable="false">
-        insert your GoingElectric key here
-    </string>
-    <string name="chargeprice_key" translatable="false">
-        insert your Chargeprice key here
-    </string>
-    <string name="openchargemap_key" translatable="false">
-        insert your OpenChargeMap key here
-    </string>
-</resources>
-```
+There are two different build flavors, `google` and `foss`, where only the `google` variant uses
+Google Maps data and provides the Android Auto integration. The `foss` variant only uses Mapbox data
+and should run on devices without Google Play Services.
+
+We also have a special [documentation page](docs/android_auto.md) on how to test the Android Auto
+app.

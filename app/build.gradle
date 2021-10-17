@@ -152,12 +152,8 @@ dependencies {
     implementation 'com.google.android.libraries.places:places:2.5.0'
     googleImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.4.1'
 
-    // Mapbox places (autocomplete)
-    // forked this library and included through JitPack to fix https://github.com/mapbox/mapbox-plugins-android/issues/1011
-    implementation('com.github.johan12345.mapbox-plugins-android:mapbox-android-plugin-places-v9:922bf877f6') {
-        exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-android-accounts'
-        exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-android-telemetry'
-    }
+    // Mapbox Geocoding
+    implementation 'com.mapbox.mapboxsdk:mapbox-sdk-services:5.5.0'
 
     // navigation library
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"

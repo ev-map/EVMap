@@ -1,0 +1,11 @@
+Neue Funktionen:
+- Favoriten werden auf der Karte hervorgehoben
+- Filtermöglichkeit um nur Favoriten auf der Karte anzuzeigen
+
+Verbesserungen:
+- Liste mit vorherigen Suchergebnissen wird schneller geöffnet
+- Verbesserungen der Markerdarstellung in Google Maps-Karten
+- Umstrukturierung der Einstellungen
+- Android Auto: Gelbe Marker leicht verdunkelt für besseren Kontrast
+- GoingElectric: Filter nach Anschlüssen besser sortiert
+- Verschiedene Abstürze behoben

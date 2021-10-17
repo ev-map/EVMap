@@ -1,0 +1,11 @@
+New features:
+- Favorites are highlighted on the map
+- Filter option to show only favorites
+
+Improvements:
+- List of previous search results opens more quickly
+- Improved incorrect marker display on Google Maps
+- Restructured settings menu
+- Android Auto: Slightly darkened yellow markers for better contrast
+- GoingElectric: Improved sorting of options in connectors filter
+- Fixed various crashes

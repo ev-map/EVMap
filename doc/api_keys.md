@@ -53,8 +53,8 @@ the two, while the `foss` flavor only includes the Mapbox SDK.
 
 ### Google Maps
 
-[Maps SDK for Android](https://developers.google.com/maps/documentation/android-sdk/overview)
-+ [Places API](https://developers.google.com/maps/documentation/places/android-sdk/overview)
+[Maps SDK for Android](https://developers.google.com/maps/documentation/android-sdk/overview),
+[Places API](https://developers.google.com/maps/documentation/places/android-sdk/overview)
 
 <details>
 <summary>How to obtain an API key</summary>

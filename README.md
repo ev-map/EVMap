@@ -39,11 +39,11 @@ the Git repository and open the project with Android Studio.
 The only exception is that you need to obtain some free API keys for the different data sources that
 EVMap uses and put them into the app in the form of a resource file called `apikeys.xml` under
 `app/src/main/res/values`. You can find more information on which API keys are necessary for which
-features and how they can be obtained in our [documentation page](docs/api_keys.md).
+features and how they can be obtained in our [documentation page](doc/api_keys.md).
 
 There are two different build flavors, `google` and `foss`, where only the `google` variant uses
 Google Maps data and provides the Android Auto integration. The `foss` variant only uses Mapbox data
 and should run on devices without Google Play Services.
 
-We also have a special [documentation page](docs/android_auto.md) on how to test the Android Auto
+We also have a special [documentation page](doc/android_auto.md) on how to test the Android Auto
 app.

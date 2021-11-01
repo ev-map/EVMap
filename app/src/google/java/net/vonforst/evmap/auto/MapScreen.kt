@@ -186,13 +186,13 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
 
             // distance
             location?.let {
-                val distance = distanceBetween(
+                val distanceMeters = distanceBetween(
                     it.latitude, it.longitude,
                     charger.coordinates.lat, charger.coordinates.lng
-                ) / 1000
+                )
                 text.append(
                     "distance",
-                    DistanceSpan.create(Distance.create(distance, Distance.UNIT_KILOMETERS)),
+                    DistanceSpan.create(roundValueToDistance(distanceMeters)),
                     Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
                 )
             }

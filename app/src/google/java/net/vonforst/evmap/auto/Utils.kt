@@ -7,10 +7,12 @@ import androidx.car.app.constraints.ConstraintManager
 import androidx.car.app.hardware.common.CarUnit
 import androidx.car.app.model.CarColor
 import androidx.car.app.model.CarIcon
+import androidx.car.app.model.Distance
 import androidx.car.app.versioning.CarAppApiLevels
 import androidx.core.graphics.drawable.IconCompat
 import net.vonforst.evmap.api.availability.ChargepointStatus
 import java.util.*
+import kotlin.math.roundToInt
 
 fun carAvailabilityColor(status: List<ChargepointStatus>): CarColor {
     val unknown = status.any { it == ChargepointStatus.UNKNOWN }
@@ -34,6 +36,8 @@ val CarContext.constraintManager
 fun Bitmap.asCarIcon(): CarIcon = CarIcon.Builder(IconCompat.createWithBitmap(this)).build()
 
 private const val kmPerMile = 1.609344
+private const val ftPerMile = 5280
+private const val ydPerMile = 1760
 
 fun getDefaultDistanceUnit(): Int {
     return when (Locale.getDefault().country) {
@@ -70,6 +74,52 @@ fun formatCarUnitSpeed(value: Float?, unit: Int?): String {
         CarUnit.MILES_PER_HOUR -> "%.0f mph".format(value * 3.6 / kmPerMile)
         else -> ""
     }
+}
+
+fun roundValueToDistance(value: Double, unit: Int? = null): Distance {
+    // value is in meters
+    when (unit ?: getDefaultDistanceUnit()) {
+        CarUnit.MILE -> {
+            // imperial system
+            val miles = value / 1000 / kmPerMile
+            val yards = miles * ydPerMile
+            val feet = miles * ftPerMile
+
+            return when (miles) {
+                in 0.0..0.1 -> if (Locale.getDefault().country == "UK") {
+                    Distance.create(roundToMultipleOf(yards, 10.0), Distance.UNIT_YARDS)
+                } else {
+                    Distance.create(roundToMultipleOf(feet, 10.0), Distance.UNIT_FEET)
+                }
+                in 0.1..10.0 -> Distance.create(
+                    roundToMultipleOf(miles, 0.1),
+                    Distance.UNIT_MILES_P1
+                )
+                else -> Distance.create(roundToMultipleOf(miles, 1.0), Distance.UNIT_MILES)
+            }
+        }
+        else -> {
+            // metric system
+            return when (value) {
+                in 0.0..999.0 -> Distance.create(
+                    roundToMultipleOf(value, 10.0),
+                    Distance.UNIT_METERS
+                )
+                in 1000.0..10000.0 -> Distance.create(
+                    roundToMultipleOf(value / 1000, 0.1),
+                    Distance.UNIT_KILOMETERS_P1
+                )
+                else -> Distance.create(
+                    roundToMultipleOf(value / 1000, 1.0),
+                    Distance.UNIT_KILOMETERS
+                )
+            }
+        }
+    }
+}
+
+private fun roundToMultipleOf(num: Double, step: Double): Double {
+    return (num / step).roundToInt() * step
 }
 
 fun getAndroidAutoVersion(ctx: Context): List<String> {

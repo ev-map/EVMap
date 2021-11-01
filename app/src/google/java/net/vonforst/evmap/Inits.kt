@@ -5,10 +5,12 @@ import android.content.Context
 import android.util.Log
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
+import com.google.android.gms.maps.MapsInitializer
 import com.google.android.libraries.places.api.Places
 
 fun init(context: Context) {
-    Places.initialize(context, context.getString(R.string.google_maps_key));
+    Places.initialize(context, context.getString(R.string.google_maps_key))
+    MapsInitializer.initialize(context.applicationContext, MapsInitializer.Renderer.LATEST, null)
 }
 
 fun checkPlayServices(activity: Activity): Boolean {

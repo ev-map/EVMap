@@ -143,9 +143,10 @@ dependencies {
     googleImplementation 'androidx.car.app:app-projected:1.1.0-beta01'
 
     // AnyMaps
-    def anyMapsVersion = '8c0d46e7a6'
+    def anyMapsVersion = '751daec281'
     implementation "com.github.johan12345.AnyMaps:anymaps-base:$anyMapsVersion"
     googleImplementation "com.github.johan12345.AnyMaps:anymaps-google:$anyMapsVersion"
+    googleImplementation 'com.google.android.gms:play-services-maps:18.0.0'
     implementation "com.github.johan12345.AnyMaps:anymaps-mapbox:$anyMapsVersion"
 
     // Google Places

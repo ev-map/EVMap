@@ -34,6 +34,7 @@ import net.vonforst.evmap.viewmodel.getFilters
 import net.vonforst.evmap.viewmodel.getReferenceData
 import java.io.IOException
 import java.time.Duration
+import java.time.Instant
 import java.time.ZonedDateTime
 import kotlin.collections.set
 import kotlin.math.roundToInt
@@ -52,7 +53,8 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
     private val maxNumUpdates = 1
 
     private var location: Location? = null
-    private var lastUpdateLocation: Location? = null
+    private var lastChargerUpdateLocation: Location? = null
+    private var lastDistanceUpdateTime: Instant? = null
     private var chargers: List<ChargeLocation>? = null
     private var prefs = PreferenceDataSource(ctx)
     private val db = AppDatabase.getInstance(carContext)
@@ -60,7 +62,8 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
         createApi(prefs.dataSource, ctx)
     }
     private val searchRadius = 5 // kilometers
-    private val updateThreshold = 2000 // meters
+    private val chargerUpdateThreshold = 2000 // meters
+    private val distanceUpdateThreshold = Duration.ofSeconds(15)
     private val availabilityUpdateThreshold = Duration.ofMinutes(1)
     private var availabilities: MutableMap<Long, Pair<ZonedDateTime, ChargeLocationStatus>> =
         HashMap()
@@ -240,12 +243,19 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
             return
         }
 
-        invalidate()
-
-        if (lastUpdateLocation == null ||
-            location.distanceTo(lastUpdateLocation) > updateThreshold
+        val now = Instant.now()
+        if (lastDistanceUpdateTime == null ||
+            Duration.between(lastDistanceUpdateTime, now) > distanceUpdateThreshold
         ) {
-            lastUpdateLocation = location
+            lastDistanceUpdateTime = now
+            // update displayed distances
+            invalidate()
+        }
+
+        if (lastChargerUpdateLocation == null ||
+            location.distanceTo(lastChargerUpdateLocation) > chargerUpdateThreshold
+        ) {
+            lastChargerUpdateLocation = location
             // update displayed chargers
             loadChargers()
         }
@@ -321,6 +331,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
                 }?.awaitAll()
 
                 updateCoroutine = null
+                lastDistanceUpdateTime = Instant.now()
                 invalidate()
             } catch (e: IOException) {
                 withContext(Dispatchers.Main) {

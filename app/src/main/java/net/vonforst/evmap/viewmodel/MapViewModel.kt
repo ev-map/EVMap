@@ -297,9 +297,6 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
             viewModelScope
         ) { data: Triple<MapPosition, FilterValues, ReferenceData> ->
             chargepoints.value = Resource.loading(chargepoints.value?.data)
-            filteredConnectors.value = null
-            filteredMinPower.value = null
-            filteredChargeCards.value = null
 
             val mapPosition = data.first
             val filters = data.second
@@ -320,16 +317,12 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
                 clusterDistance?.let {
                     chargers = cluster(chargers, mapPosition.zoom, clusterDistance)
                 }
+                filteredConnectors.value = null
+                filteredMinPower.value = null
+                filteredChargeCards.value = null
                 chargepoints.value = Resource.success(chargers)
                 return@throttleLatest
             }
-
-            var result = api.getChargepoints(refData, mapPosition.bounds, mapPosition.zoom, filters)
-            if (result.status == Status.ERROR && result.data == null) {
-                // keep old results if new data could not be loaded
-                result = Resource.error(result.message, chargepoints.value?.data)
-            }
-            chargepoints.value = result
 
             if (api is GoingElectricApiWrapper) {
                 val chargeCardsVal = filters.getMultipleChoiceValue("chargecards")!!
@@ -353,7 +346,19 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
                         )
                     }.toSet()
                 filteredMinPower.value = filters.getSliderValue("minPower")
+            } else {
+                filteredConnectors.value = null
+                filteredMinPower.value = null
+                filteredChargeCards.value = null
             }
+
+            var result = api.getChargepoints(refData, mapPosition.bounds, mapPosition.zoom, filters)
+            if (result.status == Status.ERROR && result.data == null) {
+                // keep old results if new data could not be loaded
+                result = Resource.error(result.message, chargepoints.value?.data)
+            }
+
+            chargepoints.value = result
         }
 
     private suspend fun loadAvailability(charger: ChargeLocation) {

@@ -1,0 +1,6 @@
+Improvements:
+- Google Maps: new rendering engine for better performance
+- Fixed occasionally wrong marker colors when filtering by connectors
+- Android Auto: Distance will automatically use suitable units (m, km, mi, ft, yd)
+- Android Auto: Reduced refresh frequency to avoid annoying animation
+- Fixed various crashes

@@ -103,6 +103,10 @@ android {
             variant.resValue "string", "chargeprice_key", chargepriceKey
         }
     }
+
+    lintOptions {
+        disable 'NullSafeMutableLiveData'
+    }
 }
 
 dependencies {

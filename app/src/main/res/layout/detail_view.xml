@@ -317,7 +317,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="@string/go_to_chargeprice"
-                app:goneUnless="@{charger.data != null &amp;&amp; ChargepriceApi.isCountrySupported(charger.data.chargepriceData.country, charger.data.dataSource)}"
+                app:goneUnless="@{charger.data != null &amp;&amp; charger.data.chargepriceData != null &amp;&amp; charger.data.chargepriceData.country != null &amp;&amp; ChargepriceApi.isCountrySupported(charger.data.chargepriceData.country, charger.data.dataSource)}"
                 app:icon="@drawable/ic_chargeprice"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintStart_toStartOf="@+id/guideline"

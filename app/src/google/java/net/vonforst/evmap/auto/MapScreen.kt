@@ -1,5 +1,6 @@
 package net.vonforst.evmap.auto
 
+import android.content.pm.PackageManager
 import android.location.Location
 import android.text.SpannableStringBuilder
 import android.text.Spanned
@@ -7,10 +8,14 @@ import androidx.car.app.CarContext
 import androidx.car.app.CarToast
 import androidx.car.app.Screen
 import androidx.car.app.constraints.ConstraintManager
+import androidx.car.app.hardware.CarHardwareManager
+import androidx.car.app.hardware.info.EnergyLevel
 import androidx.car.app.model.*
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.IconCompat
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.lifecycleScope
 import com.car2go.maps.model.LatLng
 import kotlinx.coroutines.*
@@ -79,6 +84,9 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
     private val filterValues = db.filterValueDao().getFilterValues(filterStatus, prefs.dataSource)
     private val filters = api.getFilters(referenceData, carContext.stringProvider())
     private val filtersWithValue = filtersWithValue(filters, filterValues)
+
+    private val hardwareMan = ctx.getCarService(CarContext.HARDWARE_SERVICE) as CarHardwareManager
+    private var energyLevel: EnergyLevel? = null
 
     init {
         filtersWithValue.observe(this) {
@@ -195,7 +203,12 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
                 )
                 text.append(
                     "distance",
-                    DistanceSpan.create(roundValueToDistance(distanceMeters)),
+                    DistanceSpan.create(
+                        roundValueToDistance(
+                            distanceMeters,
+                            energyLevel?.distanceDisplayUnit?.value
+                        )
+                    ),
                     Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
                 )
             }
@@ -340,5 +353,31 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
                 }
             }
         }
+    }
+
+    private fun onEnergyLevelUpdated(energyLevel: EnergyLevel) {
+        this.energyLevel = energyLevel
+        invalidate()
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    private fun setupListeners() {
+        if (ContextCompat.checkSelfPermission(
+                carContext,
+                "com.google.android.gms.permission.CAR_FUEL"
+            ) != PackageManager.PERMISSION_GRANTED
+        )
+            return
+
+        println("Setting up energy level listener")
+
+        val exec = ContextCompat.getMainExecutor(carContext)
+        hardwareMan.carInfo.addEnergyLevelListener(exec, ::onEnergyLevelUpdated)
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+    private fun removeListeners() {
+        println("Removing energy level listener")
+        hardwareMan.carInfo.removeEnergyLevelListener(::onEnergyLevelUpdated)
     }
 }

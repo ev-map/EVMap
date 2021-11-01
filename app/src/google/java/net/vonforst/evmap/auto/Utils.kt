@@ -40,10 +40,16 @@ private const val ftPerMile = 5280
 private const val ydPerMile = 1760
 
 fun getDefaultDistanceUnit(): Int {
-    return when (Locale.getDefault().country) {
-        "US", "GB", "MM", "LR" -> CarUnit.MILE
-        else -> CarUnit.KILOMETER
+    return if (usesImperialUnits(Locale.getDefault())) {
+        CarUnit.MILE
+    } else {
+        CarUnit.KILOMETER
     }
+}
+
+fun usesImperialUnits(locale: Locale): Boolean {
+    return locale.country in listOf("US", "GB", "MM", "LR")
+            || locale.country == "" && locale.language == "en"
 }
 
 fun getDefaultSpeedUnit(): Int {

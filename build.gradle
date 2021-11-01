@@ -27,10 +27,6 @@ allprojects {
         //noinspection JcenterRepositoryObsolete
         jcenter() // still required for https://github.com/kamikat/moshi-jsonapi
         maven { url 'https://jitpack.io' }
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
-        flatDir {
-            dirs 'libs'
-        }
     }
 }
 

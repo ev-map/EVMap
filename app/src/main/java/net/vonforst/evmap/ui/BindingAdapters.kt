@@ -402,3 +402,12 @@ fun loadImage(view: ImageView, url: String?) {
 fun setTooltipTextCompat(view: View, text: String) {
     TooltipCompat.setTooltipText(view, text)
 }
+
+@BindingAdapter("tintNullable")
+fun setImageTint(view: ImageView, @ColorInt tint: Int?) {
+    if (tint != null) {
+        view.imageTintList = ColorStateList.valueOf(tint)
+    } else {
+        view.imageTintList = null
+    }
+}

@@ -167,7 +167,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/guideline5"
             app:layout_constraintTop_toTopOf="parent"
-            app:tint="@{BindingAdaptersKt.isDarkMode(context) ? @android:color/white : null}"
+            app:tintNullable="@{BindingAdaptersKt.isDarkMode(context) ? @android:color/white : null}"
             tools:srcCompat="@tools:sample/avatars" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

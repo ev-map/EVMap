@@ -205,6 +205,9 @@ class ChargePrice : Resource(), Equatable, Cloneable {
     @field:Json(name = "charge_point_prices")
     lateinit var chargepointPrices: List<ChargepointPrice>
 
+    @field:Json(name = "branding")
+    var branding: ChargepriceBranding? = null
+
     var tariff: HasOne<ChargepriceTariff>? = null
 
 
@@ -238,6 +241,7 @@ class ChargePrice : Resource(), Equatable, Cloneable {
         if (startTime != other.startTime) return false
         if (tags != other.tags) return false
         if (chargepointPrices != other.chargepointPrices) return false
+        if (branding != other.branding) return false
 
         return true
     }
@@ -256,6 +260,7 @@ class ChargePrice : Resource(), Equatable, Cloneable {
         result = 31 * result + startTime
         result = 31 * result + tags.hashCode()
         result = 31 * result + chargepointPrices.hashCode()
+        result = 31 * result + branding.hashCode()
         return result
     }
 
@@ -274,6 +279,7 @@ class ChargePrice : Resource(), Equatable, Cloneable {
             totalMonthlyFee = this@ChargePrice.totalMonthlyFee
             url = this@ChargePrice.url
             tariff = this@ChargePrice.tariff
+            branding = this@ChargePrice.branding
         }
     }
 }
@@ -327,6 +333,12 @@ data class ChargepointPrice(
         }
     }
 }
+
+data class ChargepriceBranding(
+    @Json(name = "background_color") val backgroundColor: String,
+    @Json(name = "text_color") val textColor: String,
+    @Json(name = "logo_url") val logoUrl: String
+)
 
 data class PriceDistribution(val kwh: Double?, val session: Double?, val minute: Double?) {
     val isOnlyKwh =

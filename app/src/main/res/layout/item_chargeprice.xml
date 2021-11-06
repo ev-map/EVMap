@@ -37,17 +37,16 @@
         android:paddingTop="8dp"
         android:paddingRight="16dp"
         android:paddingBottom="8dp"
-        app:myTariffsBackground="@{!myTariffsAll &amp;&amp; myTariffs.contains(item.tariff.get().id)}">
+        android:background="@{BindingAdaptersKt.tariffBackground(context,!myTariffsAll &amp;&amp; myTariffs.contains(item.tariff.get().id), item.branding.backgroundColor)}">
 
         <TextView
             android:id="@+id/txtTariff"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="4dp"
             android:text="@{item.tariffName}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
             app:layout_constraintBottom_toTopOf="@+id/txtProvider"
-            app:layout_constraintEnd_toStartOf="@+id/guideline5"
+            app:layout_constraintEnd_toStartOf="@+id/ivLogo"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="packed"
@@ -57,12 +56,11 @@
             android:id="@+id/txtProvider"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="4dp"
             android:text="@{item.provider}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
             app:goneUnless="@{!item.tariffName.toLowerCase().startsWith(item.provider.toLowerCase())}"
             app:layout_constraintBottom_toTopOf="@+id/rvTags"
-            app:layout_constraintEnd_toStartOf="@+id/guideline5"
+            app:layout_constraintEnd_toStartOf="@+id/ivLogo"
             app:layout_constraintStart_toStartOf="@+id/txtTariff"
             app:layout_constraintTop_toBottomOf="@+id/txtTariff"
             tools:text="Cheap Charging Co." />
@@ -71,11 +69,10 @@
             android:id="@+id/rvTags"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="4dp"
             android:nestedScrollingEnabled="false"
             app:data="@{item.tags}"
             app:layout_constraintBottom_toTopOf="@+id/txtProviderCustomerTariff"
-            app:layout_constraintEnd_toStartOf="@+id/guideline5"
+            app:layout_constraintEnd_toStartOf="@+id/ivLogo"
             app:layout_constraintStart_toStartOf="@+id/txtTariff"
             app:layout_constraintTop_toBottomOf="@+id/txtProvider"
             tools:itemCount="1"
@@ -85,12 +82,12 @@
             android:id="@+id/txtProviderCustomerTariff"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="4dp"
             android:text="@string/chargeprice_provider_customer_tariff"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
             app:goneUnless="@{item.providerCustomerTariff}"
             app:layout_constraintBottom_toTopOf="@id/txtMonthlyFee"
-            app:layout_constraintEnd_toStartOf="@+id/guideline5"
+            app:layout_constraintEnd_toStartOf="@+id/ivLogo"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/txtTariff"
             app:layout_constraintTop_toBottomOf="@+id/rvTags" />
 
@@ -98,12 +95,11 @@
             android:id="@+id/txtMonthlyFee"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="4dp"
             android:text="@{item.formatMonthlyFees(context)}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
             app:goneUnless="@{item.totalMonthlyFee > 0 || item.monthlyMinSales > 0}"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/guideline5"
+            app:layout_constraintEnd_toStartOf="@+id/ivLogo"
             app:layout_constraintStart_toStartOf="@+id/txtTariff"
             app:layout_constraintTop_toBottomOf="@+id/txtProviderCustomerTariff"
             tools:text="Base fee 1 €/month" />
@@ -159,6 +155,20 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.65" />
+
+        <ImageView
+            android:id="@+id/ivLogo"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="8dp"
+            android:scaleType="fitCenter"
+            app:goneUnless="@{item.branding.logoUrl != null}"
+            app:imageUrl="@{item.branding.logoUrl}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline5"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@{BindingAdaptersKt.isDarkMode(context) ? @android:color/white : null}"
+            tools:srcCompat="@tools:sample/avatars" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

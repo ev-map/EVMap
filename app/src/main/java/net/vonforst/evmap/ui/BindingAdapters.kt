@@ -2,6 +2,10 @@ package net.vonforst.evmap.ui
 
 import android.content.Context
 import android.content.res.ColorStateList
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.LayerDrawable
 import android.text.SpannableString
 import android.view.View
 import android.view.ViewGroup.MarginLayoutParams
@@ -18,14 +22,12 @@ import androidx.databinding.InverseBindingListener
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
+import coil.load
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.slider.RangeSlider
-import net.vonforst.evmap.R
+import net.vonforst.evmap.*
 import net.vonforst.evmap.api.availability.ChargepointStatus
 import net.vonforst.evmap.api.iconForPlugType
-import net.vonforst.evmap.kmPerMile
-import net.vonforst.evmap.meterPerFt
-import net.vonforst.evmap.shouldUseImperialUnits
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.roundToInt
@@ -344,14 +346,55 @@ fun setImageTintList(view: ImageView, @ColorInt color: Int) {
     view.imageTintList = ColorStateList.valueOf(color)
 }
 
-@BindingAdapter("myTariffsBackground")
-fun myTariffsBackground(view: View, myTariff: Boolean) {
-    if (myTariff) {
-        view.background = ContextCompat.getDrawable(view.context, R.drawable.my_tariff_background)
-    } else {
-        view.context.obtainStyledAttributes(intArrayOf(R.attr.selectableItemBackground)).use {
-            view.background = it.getDrawable(0)
+fun tariffBackground(context: Context, myTariff: Boolean, brandingColor: String?): Drawable? {
+    when {
+        myTariff -> {
+            return ContextCompat.getDrawable(context, R.drawable.my_tariff_background)
         }
+        brandingColor != null -> {
+            val drawable = ContextCompat.getDrawable(context, R.drawable.branded_tariff_background)
+            val color = colorToTransparent(Color.parseColor(brandingColor))
+            (drawable as LayerDrawable).setDrawableByLayerId(
+                R.id.background, ColorDrawable(
+                    color
+                )
+            )
+            return drawable
+        }
+        else -> {
+            context.obtainStyledAttributes(intArrayOf(R.attr.selectableItemBackground)).use {
+                return it.getDrawable(0)
+            }
+        }
+    }
+}
+
+fun isDarkMode(context: Context) = context.isDarkMode()
+
+/**
+ * Converts an opaque color to a transparent color, assuming it was on a white background
+ * with a certain opacity targetAlpha.
+ */
+private fun colorToTransparent(color: Int, targetAlpha: Float = 31f / 255): Int {
+    if (Color.alpha(color) != 255) return color
+
+    val red = Color.red(color)
+    val green = Color.green(color)
+    val blue = Color.blue(color)
+
+    val newRed = ((red - (1 - targetAlpha) * 255) / targetAlpha).roundToInt()
+    val newGreen = ((green - (1 - targetAlpha) * 255) / targetAlpha).roundToInt()
+    val newBlue = ((blue - (1 - targetAlpha) * 255) / targetAlpha).roundToInt()
+
+    return Color.argb((targetAlpha * 255).roundToInt(), newRed, newGreen, newBlue)
+}
+
+@BindingAdapter("imageUrl")
+fun loadImage(view: ImageView, url: String?) {
+    if (url != null) {
+        view.load(url)
+    } else {
+        view.setImageDrawable(null)
     }
 }
 

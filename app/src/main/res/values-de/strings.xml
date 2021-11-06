@@ -192,7 +192,7 @@
     <string name="chargeprice_vehicle">Fahrzeug</string>
     <string name="edit_on_goingelectric_info">Falls hier nur eine leere Seite erscheint, logge dich bitte zuerst bei GoingElectric.de ein.</string>
     <string name="close">schließen</string>
-    <string name="chargeprice_title">Preisvergleich</string>
+    <string name="chargeprice_title">Preise</string>
     <string name="chargeprice_connection_error">Preise konnten nicht geladen werden</string>
     <string name="chargeprice_no_compatible_connectors">Keiner der Anschlüsse dieser Ladestation ist mit deinem Fahrzeug kompatibel.</string>
     <string name="pref_chargeprice_currency">Währung</string>
@@ -241,9 +241,11 @@
     <string name="unnamed_filter_profile">Unbenanntes Filterprofil</string>
     <string name="privacy_link">https://evmap.vonforst.net/de/privacy.html</string>
     <string name="faq_link">https://evmap.vonforst.net/de/faq.html</string>
+    <string name="chargeprice_faq_link">https://evmap.vonforst.net/de/chargeprice_faq.html</string>
     <string name="required">erforderlich</string>
     <string name="edit_filter_profile">„%s“ bearbeiten</string>
     <string name="pref_search_delete_recent">Suchverlauf löschen</string>
     <string name="deleted_recent_search_results">Suchverlauf wurde gelöscht</string>
     <string name="settings_data_sources">Datenquellen</string>
+    <string name="help">Hilfe</string>
 </resources>

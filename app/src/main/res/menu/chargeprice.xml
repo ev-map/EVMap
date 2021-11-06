@@ -3,6 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/menu_help"
+        android:icon="@drawable/ic_help"
+        android:title="@string/help"
+        app:showAsAction="always" />
+
+    <item
         android:id="@+id/menu_close"
         android:icon="@drawable/ic_close"
         android:title="@string/close"

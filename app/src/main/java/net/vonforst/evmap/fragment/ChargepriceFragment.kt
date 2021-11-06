@@ -175,6 +175,10 @@ class ChargepriceFragment : DialogFragment() {
                     dismiss()
                     true
                 }
+                R.id.menu_help -> {
+                    (activity as? MapsActivity)?.openUrl(getString(R.string.chargeprice_faq_link))
+                    true
+                }
                 else -> false
             }
         }

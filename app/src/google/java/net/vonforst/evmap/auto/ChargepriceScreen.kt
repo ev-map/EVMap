@@ -14,7 +14,9 @@ import androidx.car.app.model.*
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import moe.banana.jsonapi2.HasOne
 import net.vonforst.evmap.*
 import net.vonforst.evmap.api.chargeprice.*
@@ -22,6 +24,7 @@ import net.vonforst.evmap.model.ChargeLocation
 import net.vonforst.evmap.storage.AppDatabase
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.ui.currency
+import java.io.IOException
 
 class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(ctx) {
     private val prefs = PreferenceDataSource(ctx)
@@ -164,94 +167,106 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
         val manufacturer = model?.manufacturer?.value
         val modelName = model?.name?.value
         lifecycleScope.launch {
-            var vehicles = api.getVehicles().filter {
-                it.id in prefs.chargepriceMyVehicles
-            }
-            if (vehicles.isEmpty()) {
-                errorMessage = carContext.getString(R.string.chargeprice_select_car_first)
-                invalidate()
-                return@launch
-            } else if (vehicles.size > 1) {
-                if (manufacturer != null && modelName != null) {
-                    vehicles = vehicles.filter {
-                        it.brand == manufacturer && it.name.startsWith(modelName)
-                    }
-                    if (vehicles.isEmpty()) {
-                        errorMessage = carContext.getString(
-                            R.string.auto_chargeprice_vehicle_unknown,
-                            manufacturer,
-                            modelName
-                        )
+            try {
+                var vehicles = api.getVehicles().filter {
+                    it.id in prefs.chargepriceMyVehicles
+                }
+                if (vehicles.isEmpty()) {
+                    errorMessage = carContext.getString(R.string.chargeprice_select_car_first)
+                    invalidate()
+                    return@launch
+                } else if (vehicles.size > 1) {
+                    if (manufacturer != null && modelName != null) {
+                        vehicles = vehicles.filter {
+                            it.brand == manufacturer && it.name.startsWith(modelName)
+                        }
+                        if (vehicles.isEmpty()) {
+                            errorMessage = carContext.getString(
+                                R.string.auto_chargeprice_vehicle_unknown,
+                                manufacturer,
+                                modelName
+                            )
+                            invalidate()
+                            return@launch
+                        } else if (vehicles.size > 1) {
+                            errorMessage = carContext.getString(
+                                R.string.auto_chargeprice_vehicle_ambiguous,
+                                manufacturer,
+                                modelName
+                            )
+                            invalidate()
+                            return@launch
+                        }
+                    } else {
+                        errorMessage =
+                            carContext.getString(R.string.auto_chargeprice_vehicle_unavailable)
                         invalidate()
                         return@launch
-                    } else if (vehicles.size > 1) {
-                        errorMessage = carContext.getString(
-                            R.string.auto_chargeprice_vehicle_ambiguous,
-                            manufacturer,
-                            modelName
-                        )
-                        invalidate()
-                        return@launch
                     }
-                } else {
+                }
+                val car = vehicles[0]
+
+                val cpStation = ChargepriceStation.fromEvmap(charger, car.compatibleEvmapConnectors)
+                val result = api.getChargePrices(ChargepriceRequest().apply {
+                    this.dataAdapter = dataAdapter
+                    station = cpStation
+                    vehicle = HasOne(car)
+                    options = ChargepriceOptions(
+                        batteryRange = batteryRange,
+                        providerCustomerTariffs = prefs.chargepriceShowProviderCustomerTariffs,
+                        maxMonthlyFees = if (prefs.chargepriceNoBaseFee) 0.0 else null,
+                        currency = prefs.chargepriceCurrency
+                    )
+                }, ChargepriceApi.getChargepriceLanguage())
+
+                val myTariffs = prefs.chargepriceMyTariffs
+
+                // choose the highest power chargepoint compatible with the car
+                val chargepoint = cpStation.chargePoints.filterIndexed { i, cp ->
+                    charger.chargepointsMerged[i].type in car.compatibleEvmapConnectors
+                }.maxByOrNull { it.power }
+                if (chargepoint == null) {
                     errorMessage =
-                        carContext.getString(R.string.auto_chargeprice_vehicle_unavailable)
+                        carContext.getString(R.string.chargeprice_no_compatible_connectors)
                     invalidate()
                     return@launch
                 }
-            }
-            val car = vehicles[0]
+                meta =
+                    (result.meta.get<ChargepriceMeta>(ChargepriceApi.moshi.adapter(ChargepriceMeta::class.java)) as ChargepriceMeta).chargePoints.filterIndexed { i, cp ->
+                        charger.chargepointsMerged[i].type in car.compatibleEvmapConnectors
+                    }.maxByOrNull {
+                        it.power
+                    }
 
-            val cpStation = ChargepriceStation.fromEvmap(charger, car.compatibleEvmapConnectors)
-            val result = api.getChargePrices(ChargepriceRequest().apply {
-                this.dataAdapter = dataAdapter
-                station = cpStation
-                vehicle = HasOne(car)
-                options = ChargepriceOptions(
-                    batteryRange = batteryRange,
-                    providerCustomerTariffs = prefs.chargepriceShowProviderCustomerTariffs,
-                    maxMonthlyFees = if (prefs.chargepriceNoBaseFee) 0.0 else null,
-                    currency = prefs.chargepriceCurrency
-                )
-            }, ChargepriceApi.getChargepriceLanguage())
-
-            val myTariffs = prefs.chargepriceMyTariffs
-
-            // choose the highest power chargepoint compatible with the car
-            val chargepoint = cpStation.chargePoints.filterIndexed { i, cp ->
-                charger.chargepointsMerged[i].type in car.compatibleEvmapConnectors
-            }.maxByOrNull { it.power }
-            if (chargepoint == null) {
-                errorMessage = carContext.getString(R.string.chargeprice_no_compatible_connectors)
+                prices = result.map { cp ->
+                    val filteredPrices =
+                        cp.chargepointPrices.filter {
+                            it.plug == chargepoint.plug && it.power == chargepoint.power
+                        }
+                    if (filteredPrices.isEmpty()) {
+                        null
+                    } else {
+                        cp.clone().apply {
+                            chargepointPrices = filteredPrices
+                        }
+                    }
+                }.filterNotNull()
+                    .sortedBy { it.chargepointPrices.first().price }
+                    .sortedByDescending {
+                        prefs.chargepriceMyTariffsAll ||
+                                myTariffs != null && it.tariff?.get()?.id in myTariffs
+                    }
                 invalidate()
-                return@launch
+            } catch (e: IOException) {
+                withContext(Dispatchers.Main) {
+                    CarToast.makeText(
+                        carContext,
+                        R.string.chargeprice_connection_error,
+                        CarToast.LENGTH_LONG
+                    )
+                        .show()
+                }
             }
-            meta =
-                (result.meta.get<ChargepriceMeta>(ChargepriceApi.moshi.adapter(ChargepriceMeta::class.java)) as ChargepriceMeta).chargePoints.filterIndexed { i, cp ->
-                    charger.chargepointsMerged[i].type in car.compatibleEvmapConnectors
-                }.maxByOrNull {
-                    it.power
-                }
-
-            prices = result.map { cp ->
-                val filteredPrices =
-                    cp.chargepointPrices.filter {
-                        it.plug == chargepoint.plug && it.power == chargepoint.power
-                    }
-                if (filteredPrices.isEmpty()) {
-                    null
-                } else {
-                    cp.clone().apply {
-                        chargepointPrices = filteredPrices
-                    }
-                }
-            }.filterNotNull()
-                .sortedBy { it.chargepointPrices.first().price }
-                .sortedByDescending {
-                    prefs.chargepriceMyTariffsAll ||
-                            myTariffs != null && it.tariff?.get()?.id in myTariffs
-                }
-            invalidate()
         }
     }
 

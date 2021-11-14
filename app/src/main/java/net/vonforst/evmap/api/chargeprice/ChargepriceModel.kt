@@ -351,6 +351,19 @@ data class ChargepriceMeta(
     @Json(name = "charge_points") val chargePoints: List<ChargepriceChargepointMeta>
 )
 
+enum class ChargepriceInclude {
+    @Json(name = "filter")
+    FILTER,
+    @Json(name = "always")
+    ALWAYS,
+    @Json(name = "exclusive")
+    EXCLUSIVE
+}
+
+data class ChargepriceRequestTariffMeta(
+    val include: ChargepriceInclude
+)
+
 data class ChargepriceChargepointMeta(
     val power: Double,
     val plug: String,

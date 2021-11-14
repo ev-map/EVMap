@@ -4,7 +4,10 @@ import android.app.Application
 import androidx.lifecycle.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import moe.banana.jsonapi2.HasMany
 import moe.banana.jsonapi2.HasOne
+import moe.banana.jsonapi2.JsonBuffer
+import moe.banana.jsonapi2.ResourceIdentifier
 import net.vonforst.evmap.api.chargeprice.*
 import net.vonforst.evmap.api.equivalentPlugTypes
 import net.vonforst.evmap.model.ChargeLocation
@@ -100,7 +103,8 @@ class ChargepriceViewModel(application: Application, chargepriceApiKey: String) 
                 dataSource,
                 batteryRange,
                 batteryRangeSliderDragging,
-                vehicleCompatibleConnectors
+                vehicleCompatibleConnectors,
+                myTariffs, myTariffsAll
             ).forEach {
                 addSource(it) {
                     if (!batteryRangeSliderDragging.value!!) loadPrices()
@@ -208,7 +212,9 @@ class ChargepriceViewModel(application: Application, chargepriceApiKey: String) 
         val car = vehicle.value
         val compatibleConnectors = vehicleCompatibleConnectors.value
         val dataSource = dataSource.value
-        if (charger == null || car == null || compatibleConnectors == null || dataSource == null) {
+        val myTariffs = myTariffs.value
+        val myTariffsAll = myTariffsAll.value
+        if (charger == null || car == null || compatibleConnectors == null || dataSource == null || myTariffs == null || myTariffsAll == null) {
             chargePrices.value = Resource.error(null, null)
             return
         }
@@ -222,6 +228,19 @@ class ChargepriceViewModel(application: Application, chargepriceApiKey: String) 
                     dataAdapter = dataSource
                     station = cpStation
                     vehicle = HasOne(car)
+                    tariffs = if (!myTariffsAll) {
+                        HasMany<ChargepriceTariff>(*myTariffs.map {
+                            ResourceIdentifier(
+                                "tariff",
+                                it
+                            )
+                        }.toTypedArray()).apply {
+                            meta = JsonBuffer.create(
+                                ChargepriceApi.moshi.adapter(ChargepriceRequestTariffMeta::class.java),
+                                ChargepriceRequestTariffMeta(ChargepriceInclude.ALWAYS)
+                            )
+                        }
+                    } else null
                     options = ChargepriceOptions(
                         batteryRange = batteryRange.value!!.map { it.toDouble() },
                         providerCustomerTariffs = prefs.chargepriceShowProviderCustomerTariffs,

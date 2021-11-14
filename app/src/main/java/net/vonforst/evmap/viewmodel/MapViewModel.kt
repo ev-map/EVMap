@@ -1,12 +1,14 @@
 package net.vonforst.evmap.viewmodel
 
 import android.app.Application
+import android.os.Parcelable
 import androidx.lifecycle.*
 import com.car2go.maps.AnyMap
 import com.car2go.maps.model.LatLng
 import com.car2go.maps.model.LatLngBounds
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.parcelize.Parcelize
 import net.vonforst.evmap.api.ChargepointApi
 import net.vonforst.evmap.api.availability.ChargeLocationStatus
 import net.vonforst.evmap.api.availability.getAvailability
@@ -27,7 +29,8 @@ import net.vonforst.evmap.ui.cluster
 import net.vonforst.evmap.utils.distanceBetween
 import java.io.IOException
 
-data class MapPosition(val bounds: LatLngBounds, val zoom: Float)
+@Parcelize
+data class MapPosition(val bounds: LatLngBounds, val zoom: Float) : Parcelable
 
 internal fun getClusterDistance(zoom: Float): Int? {
     return when (zoom) {
@@ -39,7 +42,8 @@ internal fun getClusterDistance(zoom: Float): Int? {
     }
 }
 
-class MapViewModel(application: Application) : AndroidViewModel(application) {
+class MapViewModel(application: Application, private val state: SavedStateHandle) :
+    AndroidViewModel(application) {
     val apiType: Class<ChargepointApi<ReferenceData>>
         get() = api.javaClass
     val apiName: String
@@ -50,11 +54,11 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
     private var api: ChargepointApi<ReferenceData> = createApi(prefs.dataSource, application)
 
     val bottomSheetState: MutableLiveData<Int> by lazy {
-        MutableLiveData<Int>()
+        state.getLiveData("bottomSheetState")
     }
 
     val mapPosition: MutableLiveData<MapPosition> by lazy {
-        MutableLiveData<MapPosition>()
+        state.getLiveData("mapPosition")
     }
     val filterStatus: MutableLiveData<Long> by lazy {
         MutableLiveData<Long>().apply {
@@ -125,7 +129,7 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     val chargerSparse: MutableLiveData<ChargeLocation> by lazy {
-        MutableLiveData<ChargeLocation>()
+        state.getLiveData("chargerSparse")
     }
     val chargerDetails: MediatorLiveData<Resource<ChargeLocation>> by lazy {
         MediatorLiveData<Resource<ChargeLocation>>().apply {
@@ -223,7 +227,7 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     val searchResult: MutableLiveData<PlaceWithBounds> by lazy {
-        MutableLiveData<PlaceWithBounds>()
+        state.getLiveData("searchResult")
     }
 
     val mapType: MutableLiveData<AnyMap.Type> by lazy {

@@ -910,6 +910,11 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         vm.mapPosition.value = MapPosition(
             map.projection.visibleRegion.latLngBounds, map.cameraPosition.zoom
         )
+
+        if (vm.searchResult.value != null) {
+            // show search result (after configuration change)
+            vm.searchResult.postValue(vm.searchResult.value)
+        }
     }
 
     @RequiresPermission(anyOf = [ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION])

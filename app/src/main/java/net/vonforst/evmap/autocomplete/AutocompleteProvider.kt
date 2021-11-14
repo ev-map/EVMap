@@ -1,9 +1,11 @@
 package net.vonforst.evmap.autocomplete
 
+import android.os.Parcelable
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.car2go.maps.model.LatLng
 import com.car2go.maps.model.LatLngBounds
+import kotlinx.parcelize.Parcelize
 
 interface AutocompleteProvider {
     val id: String
@@ -183,4 +185,5 @@ enum class AutocompletePlaceType {
     }
 }
 
-data class PlaceWithBounds(val latLng: LatLng, val viewport: LatLngBounds?)
+@Parcelize
+data class PlaceWithBounds(val latLng: LatLng, val viewport: LatLngBounds?) : Parcelable

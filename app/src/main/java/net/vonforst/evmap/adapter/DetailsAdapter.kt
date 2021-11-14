@@ -84,7 +84,7 @@ fun buildDetails(
                 loc.openinghours.getStatusText(ctx)
             else
                 loc.openinghours.description ?: "",
-            if (loc.openinghours.days != null) loc.openinghours.description else null,
+            if (loc.openinghours.days != null || loc.openinghours.twentyfourSeven) loc.openinghours.description else null,
             hoursDays = loc.openinghours.days
         ) else null,
         if (loc.cost != null) DetailsAdapter.Detail(

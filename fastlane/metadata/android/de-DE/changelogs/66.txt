@@ -1,0 +1,11 @@
+Verbesserungen:
+- Echtzeitdaten für weitere AC-Ladestationen
+- FAQ-Seite zum Preisvergleich
+- GoingElectric: irreführendes "Laden/Parken: kostenpflichtig" entfernt
+
+Fehlerbehebungen:
+- GoingElectric: Beschreibung zu Öffnungszeiten wurde nicht immer angezeigt
+- Leere Detailansicht, nachdem die App längere Zeit im Hintergrund war
+- Preisvergleich: Exklusive Energiekunden-Tarife unter "Meine Tarife" wurden nicht angezeigt
+- Eingestellte Sprache wurde nicht für Google Maps genutzt
+- Abstürze behoben

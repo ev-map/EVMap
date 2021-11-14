@@ -1,0 +1,11 @@
+Improvements:
+- Realtime data for additional AC chargers
+- FAQ page about price comparison
+- GoingElectric: removed misleading "charging/parking: paid"
+
+Bug fixes:
+- GoingElectric: Description text for opening hours was not always shown
+- Empty detail view after app was in background for a longer time
+- Price comparison: provider exclusive plans were not shown even if selected under "my plans"
+- Selected language was not used for Google Maps
+- Fixed various crashes

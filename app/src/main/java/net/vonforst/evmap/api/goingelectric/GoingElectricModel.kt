@@ -126,7 +126,7 @@ data class GEHours(
     val start: LocalTime?,
     val end: LocalTime?
 ) {
-    fun convert() = Hours(start, end)
+    fun convert() = if (start != null && end != null) Hours(start, end) else null
 }
 
 @JsonClass(generateAdapter = true)

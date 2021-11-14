@@ -37,7 +37,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="100dp"
-            android:text="@{hours.getHoursForDayOfWeek(dayOfWeek).toString().equals(&quot;closed&quot;) ? @string/closed_unfmt : hours.getHoursForDayOfWeek(dayOfWeek).toString()}"
+            android:text="@{hours.getHoursForDayOfWeek(dayOfWeek) == null ? @string/closed_unfmt : hours.getHoursForDayOfWeek(dayOfWeek).toString()}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

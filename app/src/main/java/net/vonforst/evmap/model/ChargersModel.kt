@@ -162,9 +162,7 @@ data class OpeningHours(
             return HtmlCompat.fromHtml(ctx.getString(R.string.open_247), 0)
         } else if (days != null) {
             val hours = days.getHoursForDate(LocalDate.now())
-            if (hours.start == null || hours.end == null) {
-                return HtmlCompat.fromHtml(ctx.getString(R.string.closed), 0)
-            }
+                ?: return HtmlCompat.fromHtml(ctx.getString(R.string.closed), 0)
 
             val now = LocalTime.now()
             if (hours.start.isBefore(now) && hours.end.isAfter(now)) {
@@ -192,21 +190,21 @@ data class OpeningHours(
 
 @Parcelize
 data class OpeningHoursDays(
-    @Embedded(prefix = "mo") val monday: Hours,
-    @Embedded(prefix = "tu") val tuesday: Hours,
-    @Embedded(prefix = "we") val wednesday: Hours,
-    @Embedded(prefix = "th") val thursday: Hours,
-    @Embedded(prefix = "fr") val friday: Hours,
-    @Embedded(prefix = "sa") val saturday: Hours,
-    @Embedded(prefix = "su") val sunday: Hours,
-    @Embedded(prefix = "ho") val holiday: Hours
+    @Embedded(prefix = "mo") val monday: Hours?,
+    @Embedded(prefix = "tu") val tuesday: Hours?,
+    @Embedded(prefix = "we") val wednesday: Hours?,
+    @Embedded(prefix = "th") val thursday: Hours?,
+    @Embedded(prefix = "fr") val friday: Hours?,
+    @Embedded(prefix = "sa") val saturday: Hours?,
+    @Embedded(prefix = "su") val sunday: Hours?,
+    @Embedded(prefix = "ho") val holiday: Hours?
 ) : Parcelable {
-    fun getHoursForDate(date: LocalDate): Hours {
+    fun getHoursForDate(date: LocalDate): Hours? {
         // TODO: check for holidays
         return getHoursForDayOfWeek(date.dayOfWeek)
     }
 
-    fun getHoursForDayOfWeek(dayOfWeek: DayOfWeek?): Hours {
+    fun getHoursForDayOfWeek(dayOfWeek: DayOfWeek?): Hours? {
         @Suppress("WHEN_ENUM_CAN_BE_NULL_IN_JAVA")
         return when (dayOfWeek) {
             DayOfWeek.MONDAY -> monday
@@ -223,16 +221,12 @@ data class OpeningHoursDays(
 
 @Parcelize
 data class Hours(
-    val start: LocalTime?,
-    val end: LocalTime?
+    val start: LocalTime,
+    val end: LocalTime
 ) : Parcelable {
     override fun toString(): String {
-        if (start != null && end != null) {
-            val fmt = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
-            return "${start.format(fmt)} - ${end.format(fmt)}"
-        } else {
-            return "closed"
-        }
+        val fmt = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
+        return "${start.format(fmt)} - ${end.format(fmt)}"
     }
 }
 

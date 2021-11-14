@@ -17,7 +17,10 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import moe.banana.jsonapi2.HasMany
 import moe.banana.jsonapi2.HasOne
+import moe.banana.jsonapi2.JsonBuffer
+import moe.banana.jsonapi2.ResourceIdentifier
 import net.vonforst.evmap.*
 import net.vonforst.evmap.api.chargeprice.*
 import net.vonforst.evmap.model.ChargeLocation
@@ -211,6 +214,20 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
                     this.dataAdapter = dataAdapter
                     station = cpStation
                     vehicle = HasOne(car)
+                    tariffs = if (!prefs.chargepriceMyTariffsAll) {
+                        val myTariffs = prefs.chargepriceMyTariffs ?: emptySet()
+                        HasMany<ChargepriceTariff>(*myTariffs.map {
+                            ResourceIdentifier(
+                                "tariff",
+                                it
+                            )
+                        }.toTypedArray()).apply {
+                            meta = JsonBuffer.create(
+                                ChargepriceApi.moshi.adapter(ChargepriceRequestTariffMeta::class.java),
+                                ChargepriceRequestTariffMeta(ChargepriceInclude.ALWAYS)
+                            )
+                        }
+                    } else null
                     options = ChargepriceOptions(
                         batteryRange = batteryRange,
                         providerCustomerTariffs = prefs.chargepriceShowProviderCustomerTariffs,

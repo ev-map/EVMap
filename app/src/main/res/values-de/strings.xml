@@ -17,6 +17,8 @@
     <string name="closed_opensat"><![CDATA[<b>Geschlossen</b> · Öffnet um %s]]></string>
     <string name="cost">Kosten</string>
     <string name="cost_detail"><![CDATA[<b>Laden:</b> %s · <b>Parken:</b> %s]]></string>
+    <string name="cost_detail_charging"><![CDATA[<b>%s laden</b>]]></string>
+    <string name="cost_detail_parking"><![CDATA[<b>%s parken</b>]]></string>
     <string name="free">Kostenlos</string>
     <string name="paid">Kostenpflichtig</string>
     <string name="amenities">Ladeweile</string>

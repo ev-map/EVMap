@@ -126,6 +126,9 @@ data class Cost(
     val descriptionShort: String? = null,
     val descriptionLong: String? = null
 ) : Parcelable {
+    val isEmpty: Boolean
+        get() = descriptionLong == null && descriptionShort == null && freecharging == null && freeparking == null
+
     fun getStatusText(ctx: Context, emoji: Boolean = false): CharSequence {
         if (freecharging != null && freeparking != null) {
             val charging =
@@ -136,6 +139,22 @@ data class Cost(
                 "⚡ $charging · \uD83C\uDD7F️ $parking"
             } else {
                 HtmlCompat.fromHtml(ctx.getString(R.string.cost_detail, charging, parking), 0)
+            }
+        } else if (freecharging != null) {
+            val charging =
+                if (freecharging) ctx.getString(R.string.free) else ctx.getString(R.string.paid)
+            return if (emoji) {
+                "⚡ $charging"
+            } else {
+                HtmlCompat.fromHtml(ctx.getString(R.string.cost_detail_charging, charging), 0)
+            }
+        } else if (freeparking != null) {
+            val parking =
+                if (freeparking) ctx.getString(R.string.free) else ctx.getString(R.string.paid)
+            return if (emoji) {
+                "⚡ $parking"
+            } else {
+                HtmlCompat.fromHtml(ctx.getString(R.string.cost_detail_parking, parking), 0)
             }
         } else if (descriptionShort != null) {
             return descriptionShort

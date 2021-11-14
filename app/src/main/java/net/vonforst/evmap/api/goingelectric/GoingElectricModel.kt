@@ -87,7 +87,14 @@ data class GECost(
     @JsonObjectOrFalse @Json(name = "description_short") val descriptionShort: String?,
     @JsonObjectOrFalse @Json(name = "description_long") val descriptionLong: String?
 ) {
-    fun convert() = Cost(freecharging, freeparking, descriptionShort, descriptionLong)
+    fun convert() = Cost(
+        // In GE, freecharging = false can either mean "paid charging" or "no information
+        // available", only freecharging = true provides useful information. Therefore convert
+        // false to null. Same for freeparking.
+        if (freecharging) freecharging else null,
+        if (freeparking) freeparking else null,
+        descriptionShort, descriptionLong
+    )
 }
 
 @JsonClass(generateAdapter = true)

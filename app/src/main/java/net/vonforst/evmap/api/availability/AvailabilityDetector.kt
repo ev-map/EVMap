@@ -65,10 +65,20 @@ abstract class BaseAvailabilityDetector(private val client: OkHttpClient) : Avai
             connectors: Map<Long, Pair<Double, String>>,
             chargepoints: List<Chargepoint>
         ): Map<Chargepoint, Set<Long>> {
+            var chargepoints = chargepoints
+
             // iterate over each connector type
             val types = connectors.map { it.value.second }.distinct().toSet()
             val equivalentTypes = types.map { equivalentPlugTypes(it).plus(it) }.cartesianProduct()
-            val geTypes = chargepoints.map { it.type }.distinct().toSet()
+            var geTypes = chargepoints.map { it.type }.distinct().toSet()
+            if (!equivalentTypes.any { it == geTypes } && geTypes.size > 1 && geTypes.contains(
+                    Chargepoint.SCHUKO
+                )) {
+                // If charger has household plugs and other plugs, try removing the household plugs
+                // (common e.g. in Hamburg -> 2x Type 2 + 2x Schuko, but NM only lists Type 2)
+                geTypes = geTypes.filter { it != Chargepoint.SCHUKO }.toSet()
+                chargepoints = chargepoints.filter { it.type != Chargepoint.SCHUKO }
+            }
             if (!equivalentTypes.any { it == geTypes }) throw AvailabilityDetectorException("chargepoints do not match")
             return types.flatMap { type ->
                 // find connectors of this type
@@ -92,7 +102,7 @@ abstract class BaseAvailabilityDetector(private val client: OkHttpClient) : Avai
                         chargepoint to ids
                     }
                 } else if (powers.size == 1 && gePowers.size == 2
-                    && chargepoints.sumBy { it.count } == connsOfType.size
+                    && chargepoints.sumOf { it.count } == connsOfType.size
                 ) {
                     // special case: dual charger(s) with load balancing
                     // GoingElectric shows 2 different powers, NewMotion just one

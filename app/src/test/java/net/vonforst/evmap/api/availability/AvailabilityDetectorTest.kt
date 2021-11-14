@@ -138,4 +138,48 @@ class AvailabilityDetectorTest {
             )
         )
     }
+
+
+    @Test
+    fun testMatchChargepointsMissingSchuko() {
+        // single charger with 2 22kw chargepoints and two Schuko sockets
+        val chargepoints = listOf(
+            Chargepoint(Chargepoint.TYPE_2_UNKNOWN, 22.0, 2),
+            Chargepoint(Chargepoint.SCHUKO, 2.3, 2)
+        )
+
+        // NewMotion only includes the Type 2 sockets
+        assertEquals(
+            mapOf(chargepoints[0] to setOf(0L, 1L)),
+            BaseAvailabilityDetector.matchChargepoints(
+                mapOf(
+                    0L to (27.0 to Chargepoint.TYPE_2_UNKNOWN),
+                    1L to (27.0 to Chargepoint.TYPE_2_UNKNOWN)
+                ),
+                chargepoints
+            )
+        )
+    }
+
+    @Test
+    fun testMatchChargepointsMissingSchukoDifferentPower() {
+        // single charger with 2 22kw chargepoints with load balancing and two Schuko sockets
+        val chargepoints = listOf(
+            Chargepoint(Chargepoint.TYPE_2_UNKNOWN, 22.0, 1),
+            Chargepoint(Chargepoint.TYPE_2_UNKNOWN, 11.0, 1),
+            Chargepoint(Chargepoint.SCHUKO, 2.3, 2)
+        )
+
+        // NewMotion only includes the Type 2 sockets
+        assertEquals(
+            mapOf(chargepoints[1] to setOf(0L), chargepoints[0] to setOf(1L)),
+            BaseAvailabilityDetector.matchChargepoints(
+                mapOf(
+                    0L to (27.0 to Chargepoint.TYPE_2_UNKNOWN),
+                    1L to (27.0 to Chargepoint.TYPE_2_UNKNOWN)
+                ),
+                chargepoints
+            )
+        )
+    }
 }

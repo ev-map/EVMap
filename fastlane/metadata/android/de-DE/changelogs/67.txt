@@ -1,0 +1,3 @@
+Fehlerbehebungen:
+- Preisvergleich funktionierte nicht, wenn "meine Tarife" noch nicht ausgewählt waren
+- Abstürze behoben

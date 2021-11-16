@@ -1,0 +1,3 @@
+Bug fixes:
+- Price comparison was not working when "my charging plans" had not yet been selected
+- Fixed crashes

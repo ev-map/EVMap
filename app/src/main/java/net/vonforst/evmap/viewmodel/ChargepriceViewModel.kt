@@ -214,7 +214,7 @@ class ChargepriceViewModel(application: Application, chargepriceApiKey: String) 
         val dataSource = dataSource.value
         val myTariffs = myTariffs.value
         val myTariffsAll = myTariffsAll.value
-        if (charger == null || car == null || compatibleConnectors == null || dataSource == null || myTariffs == null || myTariffsAll == null) {
+        if (charger == null || car == null || compatibleConnectors == null || dataSource == null || myTariffsAll == null || myTariffsAll == false && myTariffs == null) {
             chargePrices.value = Resource.error(null, null)
             return
         }
@@ -229,7 +229,7 @@ class ChargepriceViewModel(application: Application, chargepriceApiKey: String) 
                     station = cpStation
                     vehicle = HasOne(car)
                     tariffs = if (!myTariffsAll) {
-                        HasMany<ChargepriceTariff>(*myTariffs.map {
+                        HasMany<ChargepriceTariff>(*myTariffs!!.map {
                             ResourceIdentifier(
                                 "tariff",
                                 it

@@ -126,16 +126,21 @@ internal class HoursAdapter {
     private val regex = Regex("from (.*) till (.*)")
 
     @FromJson
-    fun fromJson(str: String): GEHours? {
+    fun fromJson(str: String): GEHours {
         if (str == "closed") {
             return GEHours(null, null)
+        } else if (str == "around the clock") {
+            return GEHours(LocalTime.MIN, LocalTime.MAX)
         } else {
             val match = regex.find(str)
             if (match != null) {
-                return GEHours(
-                    LocalTime.parse(match.groupValues[1]),
+                val start = LocalTime.parse(match.groupValues[1])
+                val end = if (match.groupValues[2] == "24:00") {
+                    LocalTime.MAX
+                } else {
                     LocalTime.parse(match.groupValues[2])
-                )
+                }
+                return GEHours(start, end)
             } else {
                 // I cannot reproduce this case, but it seems to occur once in a while
                 Log.e("GoingElectricApi", "invalid hours value: " + str)

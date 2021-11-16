@@ -10,6 +10,7 @@ import okhttp3.mockwebserver.RecordedRequest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import java.time.LocalTime
 
 class GoingElectricApiTest {
     val api: GoingElectricApi
@@ -61,6 +62,21 @@ class GoingElectricApiTest {
         assertEquals(1, body.chargelocations.size)
         val charger = body.chargelocations[0] as GEChargeLocation
         assertEquals(2105, charger.id)
+    }
+
+    @Test
+    fun testLoadChargepointDetail2() {
+        val response = runBlocking { api.getChargepointDetail(34210) }
+        assertTrue(response.isSuccessful)
+        val body = response.body()!!
+        assertEquals("ok", body.status)
+        assertEquals(null, body.startkey)
+        assertEquals(1, body.chargelocations.size)
+        val charger = body.chargelocations[0] as GEChargeLocation
+        assertEquals(34210, charger.id)
+        assertEquals(LocalTime.MIN, charger.openinghours!!.days!!.monday.start)
+        assertEquals(LocalTime.MAX, charger.openinghours!!.days!!.monday.end)
+        assertEquals(LocalTime.MAX, charger.openinghours!!.days!!.tuesday.end)
     }
 
     @Test

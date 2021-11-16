@@ -1,0 +1,362 @@
+{
+  "status": "ok",
+  "chargelocations": [
+    {
+      "ge_id": 34210,
+      "name": "Langendreer Marktplatz",
+      "address": {
+        "city": "Bochum",
+        "country": "Deutschland",
+        "postcode": "44892",
+        "street": "Oberstraße 2"
+      },
+      "coordinates": {
+        "lat": 51.473454,
+        "lng": 7.325153
+      },
+      "chargepoints": [
+        {
+          "type": "typ2_socket",
+          "voltage": "400",
+          "amperage": "32",
+          "current": "acthree",
+          "power": 22,
+          "count": 2
+        }
+      ],
+      "network": "be.energised",
+      "operator": "Stadtwerke Bochum GmbH",
+      "cost": {
+        "freecharging": false,
+        "freeparking": true,
+        "description_short": false,
+        "description_long": false
+      },
+      "fault_report": false,
+      "verified": true,
+      "barrierfree": true,
+      "openinghours": {
+        "24/7": false,
+        "description": "Markttage: Dienstag und Freitag",
+        "days": {
+          "monday": "around the clock",
+          "tuesday": "from 15:00 till 24:00",
+          "wednesday": "around the clock",
+          "thursday": "around the clock",
+          "friday": "from 15:00 till 24:00",
+          "saturday": "around the clock",
+          "sunday": "around the clock",
+          "holiday": "closed"
+        }
+      },
+      "url": "//www.goingelectric.de/stromtankstellen/Deutschland/Bochum/Langendreer-Marktplatz-Oberstrasse-2/34210/",
+      "ladeweile": false,
+      "location_description": false,
+      "general_information": false,
+      "photos": [
+        {
+          "id": 77283
+        },
+        {
+          "id": 77284
+        },
+        {
+          "id": 77285
+        },
+        {
+          "id": 77286
+        }
+      ],
+      "chargecards": [
+        {
+          "id": 274
+        },
+        {
+          "id": 11
+        },
+        {
+          "id": 7
+        },
+        {
+          "id": 349
+        },
+        {
+          "id": 9
+        },
+        {
+          "id": 75
+        },
+        {
+          "id": 12
+        },
+        {
+          "id": 319
+        },
+        {
+          "id": 36
+        },
+        {
+          "id": 368
+        },
+        {
+          "id": 207
+        },
+        {
+          "id": 124
+        },
+        {
+          "id": 43
+        },
+        {
+          "id": 251
+        },
+        {
+          "id": 233
+        },
+        {
+          "id": 200
+        },
+        {
+          "id": 13
+        },
+        {
+          "id": 44
+        },
+        {
+          "id": 201
+        },
+        {
+          "id": 242
+        },
+        {
+          "id": 332
+        },
+        {
+          "id": 338
+        },
+        {
+          "id": 216
+        },
+        {
+          "id": 312
+        },
+        {
+          "id": 248
+        },
+        {
+          "id": 139
+        },
+        {
+          "id": 402
+        },
+        {
+          "id": 249
+        },
+        {
+          "id": 120
+        },
+        {
+          "id": 223
+        },
+        {
+          "id": 188
+        },
+        {
+          "id": 326
+        },
+        {
+          "id": 151
+        },
+        {
+          "id": 288
+        },
+        {
+          "id": 355
+        },
+        {
+          "id": 336
+        },
+        {
+          "id": 195
+        },
+        {
+          "id": 297
+        },
+        {
+          "id": 358
+        },
+        {
+          "id": 333
+        },
+        {
+          "id": 356
+        },
+        {
+          "id": 257
+        },
+        {
+          "id": 351
+        },
+        {
+          "id": 343
+        },
+        {
+          "id": 103
+        },
+        {
+          "id": 346
+        },
+        {
+          "id": 386
+        },
+        {
+          "id": 256
+        },
+        {
+          "id": 408
+        },
+        {
+          "id": 392
+        },
+        {
+          "id": 330
+        },
+        {
+          "id": 347
+        },
+        {
+          "id": 503
+        },
+        {
+          "id": 511
+        },
+        {
+          "id": 518
+        },
+        {
+          "id": 512
+        },
+        {
+          "id": 513
+        },
+        {
+          "id": 514
+        },
+        {
+          "id": 515
+        },
+        {
+          "id": 516
+        },
+        {
+          "id": 517
+        },
+        {
+          "id": 535
+        },
+        {
+          "id": 519
+        },
+        {
+          "id": 520
+        },
+        {
+          "id": 524
+        },
+        {
+          "id": 525
+        },
+        {
+          "id": 528
+        },
+        {
+          "id": 533
+        },
+        {
+          "id": 498
+        },
+        {
+          "id": 541
+        },
+        {
+          "id": 543
+        },
+        {
+          "id": 544
+        },
+        {
+          "id": 499
+        },
+        {
+          "id": 482
+        },
+        {
+          "id": 497
+        },
+        {
+          "id": 433
+        },
+        {
+          "id": 299
+        },
+        {
+          "id": 366
+        },
+        {
+          "id": 414
+        },
+        {
+          "id": 419
+        },
+        {
+          "id": 428
+        },
+        {
+          "id": 429
+        },
+        {
+          "id": 430
+        },
+        {
+          "id": 432
+        },
+        {
+          "id": 456
+        },
+        {
+          "id": 492
+        },
+        {
+          "id": 464
+        },
+        {
+          "id": 469
+        },
+        {
+          "id": 474
+        },
+        {
+          "id": 479
+        },
+        {
+          "id": 342
+        },
+        {
+          "id": 486
+        },
+        {
+          "id": 487
+        },
+        {
+          "id": 488
+        },
+        {
+          "id": 489
+        },
+        {
+          "id": 545
+        }
+      ]
+    }
+  ]
+}

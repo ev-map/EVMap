@@ -8,6 +8,7 @@ import androidx.browser.customtabs.CustomTabsIntent
 import androidx.car.app.CarContext
 import androidx.car.app.CarToast
 import androidx.car.app.Screen
+import androidx.car.app.constraints.ConstraintManager
 import androidx.car.app.hardware.CarHardwareManager
 import androidx.car.app.hardware.info.Model
 import androidx.car.app.model.*
@@ -37,7 +38,9 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
     }
     private var prices: List<ChargePrice>? = null
     private var meta: ChargepriceChargepointMeta? = null
-    private val maxRows = 6
+    private val maxRows = if (ctx.carAppApiLevel >= 2) {
+        ctx.constraintManager.getContentLimit(ConstraintManager.CONTENT_LIMIT_TYPE_LIST)
+    } else 6
     private var errorMessage: String? = null
     private val batteryRange = listOf(20.0, 80.0)
 

@@ -73,7 +73,7 @@ fun buildDetails(
                 )
             } ?: "",
             loc.faultReport.description?.let {
-                HtmlCompat.fromHtml(it, HtmlCompat.FROM_HTML_MODE_LEGACY)
+                HtmlCompat.fromHtml(it.replace("\n", "<br>"), HtmlCompat.FROM_HTML_MODE_LEGACY)
             } ?: "",
             clickable = true
         ) else null,

@@ -14,6 +14,7 @@ import androidx.car.app.constraints.ConstraintManager
 import androidx.car.app.model.*
 import androidx.core.graphics.drawable.IconCompat
 import androidx.core.graphics.scale
+import androidx.core.text.HtmlCompat
 import androidx.lifecycle.lifecycleScope
 import coil.imageLoader
 import coil.request.ImageRequest
@@ -145,10 +146,12 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
     private fun generateRows(charger: ChargeLocation): List<Row> {
         val rows = mutableListOf<Row>()
 
+        // Row 1: address + chargepoints
         rows.add(Row.Builder().apply {
             setTitle(charger.address.toString())
 
-            if (!largeImageSupported || photo == null) {
+            if (photo == null) {
+                // show just the icon
                 val icon = iconGen.getBitmap(
                     tint = getMarkerTint(charger),
                     fault = charger.faultReport != null,
@@ -158,68 +161,125 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
                     CarIcon.Builder(IconCompat.createWithBitmap(icon)).build(),
                     Row.IMAGE_TYPE_LARGE
                 )
-            }
-
-            val chargepointsText = SpannableStringBuilder()
-            charger.chargepointsMerged.forEachIndexed { i, cp ->
-                if (i > 0) chargepointsText.append(" · ")
-                chargepointsText.append(
-                    "${cp.count}× ${
-                        nameForPlugType(
-                            carContext.stringProvider(),
-                            cp.type
-                        )
-                    } ${cp.formatPower()}"
-                )
-                availability?.status?.get(cp)?.let { status ->
-                    chargepointsText.append(
-                        " (${availabilityText(status)}/${cp.count})",
-                        ForegroundCarColorSpan.create(carAvailabilityColor(status)),
-                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-                    )
-                }
-            }
-            addText(chargepointsText)
-        }.build())
-        rows.add(Row.Builder().apply {
-            if (photo != null && !largeImageSupported) {
+            } else if (!largeImageSupported) {
+                // show the photo with icon
                 setImage(
                     CarIcon.Builder(IconCompat.createWithBitmap(photo)).build(),
                     Row.IMAGE_TYPE_LARGE
                 )
             }
-            val operatorText = StringBuilder().apply {
-                charger.operator?.let { append(it) }
-                charger.network?.let {
-                    if (isNotEmpty()) append(" · ")
-                    append(it)
-                }
-            }.ifEmpty {
-                carContext.getString(R.string.unknown_operator)
-            }
-            setTitle(operatorText)
-
-            charger.cost?.let { addText(it.getStatusText(carContext, emoji = true)) }
-            charger.faultReport?.created?.let {
-                addText(
-                    carContext.getString(
-                        R.string.auto_fault_report_date,
-                        it.atZone(ZoneId.systemDefault())
-                            .format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT))
-                    )
-                )
-            }
-
-            /*val types = charger.chargepoints.map { it.type }.distinct()
-            if (types.size == 1) {
-                setImage(
-                    CarIcon.of(IconCompat.createWithResource(carContext, iconForPlugType(types[0]))),
-                    Row.IMAGE_TYPE_ICON)
-            }*/
+            addText(generateChargepointsText(charger))
         }.build())
+        if (maxRows <= 3) {
+            // row 2: operator + cost + fault report
+            rows.add(Row.Builder().apply {
+                if (photo != null && !largeImageSupported) {
+                    setImage(
+                        CarIcon.Builder(IconCompat.createWithBitmap(photo)).build(),
+                        Row.IMAGE_TYPE_LARGE
+                    )
+                }
+                val operatorText = generateOperatorText(charger)
+                setTitle(operatorText)
 
+                charger.cost?.let { addText(it.getStatusText(carContext, emoji = true)) }
+                charger.faultReport?.let { fault ->
+                    addText(
+                        carContext.getString(
+                            R.string.auto_fault_report_date,
+                            fault.created?.atZone(ZoneId.systemDefault())
+                                ?.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT))
+                        )
+                    )
+                }
+            }.build())
+        } else {
+            // row 2: operator + cost + cost description
+            rows.add(Row.Builder().apply {
+                if (photo != null && !largeImageSupported) {
+                    setImage(
+                        CarIcon.Builder(IconCompat.createWithBitmap(photo)).build(),
+                        Row.IMAGE_TYPE_LARGE
+                    )
+                }
+                val operatorText = generateOperatorText(charger)
+                setTitle(operatorText)
+                charger.cost?.let {
+                    addText(it.getStatusText(carContext, emoji = true))
+                    (it.descriptionShort ?: it.descriptionLong)?.let { addText(it) }
+                }
+            }.build())
+            // row 3: fault report (if exists)
+            charger.faultReport?.let { fault ->
+                rows.add(Row.Builder().apply {
+                    setTitle(
+                        carContext.getString(
+                            R.string.auto_fault_report_date,
+                            fault.created?.atZone(ZoneId.systemDefault())
+                                ?.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT))
+                        )
+                    )
+                    fault.description?.let {
+                        addText(
+                            HtmlCompat.fromHtml(
+                                it.replace("\n", " · "),
+                                HtmlCompat.FROM_HTML_MODE_LEGACY
+                            )
+                        )
+                    }
+                }.build())
+            }
+            // row 4: opening hours + location description
+            charger.openinghours?.let { hours ->
+                rows.add(Row.Builder().apply {
+                    setTitle(hours.getStatusText(carContext))
+                    hours.description?.let { addText(it) }
+                    charger.locationDescription?.let { addText(it) }
+                }.build())
+            }
+        }
         return rows
     }
+
+    private fun generateChargepointsText(charger: ChargeLocation): SpannableStringBuilder {
+        val chargepointsText = SpannableStringBuilder()
+        charger.chargepointsMerged.forEachIndexed { i, cp ->
+            if (i > 0) chargepointsText.append(" · ")
+            chargepointsText.append(
+                "${cp.count}× ${
+                    nameForPlugType(
+                        carContext.stringProvider(),
+                        cp.type
+                    )
+                } ${cp.formatPower()}"
+            )
+            availability?.status?.get(cp)?.let { status ->
+                chargepointsText.append(
+                    " (${availabilityText(status)}/${cp.count})",
+                    ForegroundCarColorSpan.create(carAvailabilityColor(status)),
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+            }
+        }
+        return chargepointsText
+    }
+
+    private fun generateOperatorText(charger: ChargeLocation) =
+        if (charger.operator != null && charger.network != null) {
+            if (charger.operator.contains(charger.network)) {
+                charger.operator
+            } else if (charger.network.contains(charger.operator)) {
+                charger.network
+            } else {
+                "${charger.operator} · ${charger.network}"
+            }
+        } else if (charger.operator != null) {
+            charger.operator
+        } else if (charger.network != null) {
+            charger.network
+        } else {
+            carContext.getString(R.string.unknown_operator)
+        }
 
     private fun navigateToCharger(charger: ChargeLocation) {
         val coord = charger.coordinates
@@ -247,27 +307,25 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
                     var img =
                         (carContext.imageLoader.execute(request).drawable as BitmapDrawable).bitmap
 
-                    if (largeImageSupported) {
-                        // draw icon on top of image
-                        val icon = iconGen.getBitmap(
-                            tint = getMarkerTint(charger),
-                            fault = charger.faultReport != null,
-                            multi = charger.isMulti()
-                        )
+                    // draw icon on top of image
+                    val icon = iconGen.getBitmap(
+                        tint = getMarkerTint(charger),
+                        fault = charger.faultReport != null,
+                        multi = charger.isMulti()
+                    )
 
-                        img = img.copy(Bitmap.Config.ARGB_8888, true)
-                        val iconSmall = icon.scale(
-                            (img.height * 0.4 / icon.height * icon.width).roundToInt(),
-                            (img.height * 0.4).roundToInt()
-                        )
-                        val canvas = Canvas(img)
-                        canvas.drawBitmap(
-                            iconSmall,
-                            0f,
-                            (img.height - iconSmall.height * 1.1).toFloat(),
-                            null
-                        )
-                    }
+                    img = img.copy(Bitmap.Config.ARGB_8888, true)
+                    val iconSmall = icon.scale(
+                        (img.height * 0.4 / icon.height * icon.width).roundToInt(),
+                        (img.height * 0.4).roundToInt()
+                    )
+                    val canvas = Canvas(img)
+                    canvas.drawBitmap(
+                        iconSmall,
+                        0f,
+                        (img.height - iconSmall.height * 1.1).toFloat(),
+                        null
+                    )
                     this@ChargerDetailScreen.photo = img
                 }
                 this@ChargerDetailScreen.charger = charger

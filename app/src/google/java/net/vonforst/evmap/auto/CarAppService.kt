@@ -8,6 +8,7 @@ import androidx.car.app.CarContext
 import androidx.car.app.Screen
 import androidx.car.app.Session
 import androidx.car.app.hardware.CarHardwareManager
+import androidx.car.app.hardware.common.CarValue
 import androidx.car.app.hardware.info.CarHardwareLocation
 import androidx.car.app.hardware.info.CarSensors
 import androidx.car.app.validation.HostValidator
@@ -90,11 +91,13 @@ class EVMapSession(val cas: CarAppService) : Session(), LifecycleObserver {
     }
 
     private fun onCarHardwareLocationReceived(loc: CarHardwareLocation) {
-        updateLocation(loc.location.value)
+        if (loc.location.status == CarValue.STATUS_SUCCESS && loc.location.value != null) {
+            updateLocation(loc.location.value)
 
-        // we successfully received a location from the car hardware,
-        // so we don't need the smartphone location anymore.
-        unbindLocationService()
+            // we successfully received a location from the car hardware,
+            // so we don't need the smartphone location anymore.
+            unbindLocationService()
+        }
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)

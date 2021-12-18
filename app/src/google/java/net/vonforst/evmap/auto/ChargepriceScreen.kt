@@ -171,7 +171,7 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
     private fun loadPrices(model: Model?) {
         val dataAdapter = getDataAdapter() ?: return
         val manufacturer = model?.manufacturer?.value
-        val modelName = model?.name?.value
+        val modelName = getVehicleModel(model?.manufacturer?.value, model?.name?.value)
         lifecycleScope.launch {
             try {
                 val car = determineVehicle(manufacturer, modelName)

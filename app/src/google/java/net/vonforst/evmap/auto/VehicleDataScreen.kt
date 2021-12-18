@@ -59,7 +59,12 @@ class VehicleDataScreen(ctx: CarContext) : Screen(ctx), LifecycleObserver {
         return GridTemplate.Builder().apply {
             setTitle(
                 if (model != null && model.manufacturer.value != null && model.name.value != null) {
-                    "${model.manufacturer.value} ${model.name.value}"
+                    "${model.manufacturer.value} ${
+                        getVehicleModel(
+                            model.manufacturer.value,
+                            model.name.value
+                        )
+                    }"
                 } else {
                     carContext.getString(R.string.auto_vehicle_data)
                 }

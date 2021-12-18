@@ -174,44 +174,7 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
         val modelName = model?.name?.value
         lifecycleScope.launch {
             try {
-                var vehicles = api.getVehicles().filter {
-                    it.id in prefs.chargepriceMyVehicles
-                }
-                if (vehicles.isEmpty()) {
-                    errorMessage = carContext.getString(R.string.chargeprice_select_car_first)
-                    invalidate()
-                    return@launch
-                } else if (vehicles.size > 1) {
-                    if (manufacturer != null && modelName != null) {
-                        vehicles = vehicles.filter {
-                            it.brand == manufacturer && it.name.startsWith(modelName)
-                        }
-                        if (vehicles.isEmpty()) {
-                            errorMessage = carContext.getString(
-                                R.string.auto_chargeprice_vehicle_unknown,
-                                manufacturer,
-                                modelName
-                            )
-                            invalidate()
-                            return@launch
-                        } else if (vehicles.size > 1) {
-                            errorMessage = carContext.getString(
-                                R.string.auto_chargeprice_vehicle_ambiguous,
-                                manufacturer,
-                                modelName
-                            )
-                            invalidate()
-                            return@launch
-                        }
-                    } else {
-                        errorMessage =
-                            carContext.getString(R.string.auto_chargeprice_vehicle_unavailable)
-                        invalidate()
-                        return@launch
-                    }
-                }
-                val car = vehicles[0]
-
+                val car = determineVehicle(manufacturer, modelName)
                 val cpStation = ChargepriceStation.fromEvmap(charger, car.compatibleEvmapConnectors)
                 val result = api.getChargePrices(ChargepriceRequest().apply {
                     this.dataAdapter = dataAdapter
@@ -286,8 +249,71 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
                     )
                         .show()
                 }
+            } catch (e: NoVehicleSelectedException) {
+                errorMessage = carContext.getString(R.string.chargeprice_select_car_first)
+                invalidate()
+            } catch (e: VehicleUnknownException) {
+                errorMessage = carContext.getString(
+                    R.string.auto_chargeprice_vehicle_unknown,
+                    manufacturer,
+                    modelName
+                )
+                invalidate()
+            } catch (e: VehicleAmbiguousException) {
+                errorMessage = carContext.getString(
+                    R.string.auto_chargeprice_vehicle_ambiguous,
+                    manufacturer,
+                    modelName
+                )
+                invalidate()
+            } catch (e: VehicleUnavailableException) {
+                errorMessage =
+                    carContext.getString(R.string.auto_chargeprice_vehicle_unavailable)
+                invalidate()
             }
         }
+    }
+
+    private class NoVehicleSelectedException : Exception()
+    private class VehicleUnknownException : Exception()
+    private class VehicleAmbiguousException : Exception()
+    private class VehicleUnavailableException : Exception()
+
+    private suspend fun determineVehicle(
+        manufacturer: String?,
+        modelName: String?
+    ): ChargepriceCar {
+        var vehicles = api.getVehicles().filter {
+            it.id in prefs.chargepriceMyVehicles
+        }
+        if (vehicles.isEmpty()) {
+            throw NoVehicleSelectedException()
+        } else if (vehicles.size > 1) {
+            if (manufacturer != null) {
+                vehicles = vehicles.filter {
+                    it.brand == manufacturer
+                }
+                if (vehicles.isEmpty()) {
+                    throw VehicleUnknownException()
+                } else if (vehicles.size > 1) {
+                    if (modelName != null) {
+                        vehicles = vehicles.filter {
+                            it.name.startsWith(modelName)
+                        }
+                        if (vehicles.isEmpty()) {
+                            throw VehicleUnknownException()
+                        } else if (vehicles.size > 1) {
+                            throw VehicleAmbiguousException()
+                        }
+                    } else {
+                        throw VehicleAmbiguousException()
+                    }
+                }
+            } else {
+                throw VehicleUnavailableException()
+            }
+        }
+        return vehicles[0]
     }
 
     private fun getDataAdapter(): String? = when (charger.dataSource) {

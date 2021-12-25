@@ -2,7 +2,6 @@ package net.vonforst.evmap.api.availability
 
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.withContext
 import net.vonforst.evmap.api.RateLimitInterceptor
 import net.vonforst.evmap.api.await
@@ -24,7 +23,6 @@ interface AvailabilityDetector {
     suspend fun getAvailability(location: ChargeLocation): ChargeLocationStatus
 }
 
-@ExperimentalCoroutinesApi
 abstract class BaseAvailabilityDetector(private val client: OkHttpClient) : AvailabilityDetector {
     protected val radius = 150  // max radius in meters
 

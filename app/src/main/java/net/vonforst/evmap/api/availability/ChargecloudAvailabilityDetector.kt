@@ -1,6 +1,5 @@
 package net.vonforst.evmap.api.availability
 
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import net.vonforst.evmap.api.iterator
 import net.vonforst.evmap.model.ChargeLocation
 import net.vonforst.evmap.model.Chargepoint
@@ -8,12 +7,10 @@ import okhttp3.OkHttpClient
 import org.json.JSONObject
 import java.io.IOException
 
-@ExperimentalCoroutinesApi
 class ChargecloudAvailabilityDetector(
     client: OkHttpClient,
     private val operatorId: String
 ) : BaseAvailabilityDetector(client) {
-    @ExperimentalCoroutinesApi
     override suspend fun getAvailability(location: ChargeLocation): ChargeLocationStatus {
         val url =
             "https://app.chargecloud.de/emobility:ocpi/$operatorId/app/2.0/locations?latitude=${location.coordinates.lat}&longitude=${location.coordinates.lng}&radius=$radius&offset=0&limit=10"

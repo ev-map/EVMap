@@ -422,6 +422,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         binding.search.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
             if (hasFocus) {
                 binding.search.keyListener = searchKeyListener
+                binding.search.text = binding.search.text  // workaround to fix copy/paste
             } else {
                 binding.search.keyListener = null
             }

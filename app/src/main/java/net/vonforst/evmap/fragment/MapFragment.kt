@@ -588,8 +588,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             updateBackPressedCallback()
         })
         vm.layersMenuOpen.observe(viewLifecycleOwner, Observer { open ->
-            binding.fabLayers.visibility = if (open) View.GONE else View.VISIBLE
-            binding.layersSheet.visibility = if (open) View.VISIBLE else View.GONE
+            binding.fabLayers.visibility = if (open) View.INVISIBLE else View.VISIBLE
+            binding.layersSheet.visibility = if (open) View.VISIBLE else View.INVISIBLE
             updateBackPressedCallback()
         })
         vm.mapType.observe(viewLifecycleOwner, Observer {

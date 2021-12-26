@@ -172,6 +172,7 @@ class MapsActivity : AppCompatActivity(),
         val coord = charger.coordinates
         val intent = Intent(Intent.ACTION_VIEW)
         intent.data = Uri.parse("google.navigation:q=${coord.lat},${coord.lng}")
+        intent.`package` = "com.google.android.apps.maps"
         if (prefs.navigateUseMaps && intent.resolveActivity(packageManager) != null) {
             startActivity(intent);
         } else {

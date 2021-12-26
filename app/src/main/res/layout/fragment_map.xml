@@ -142,7 +142,7 @@
 
         <FrameLayout
             android:id="@+id/gallery_container"
-            android:layout_width="match_parent"
+            android:layout_width="@dimen/map_toolbar_width"
             android:layout_height="@dimen/gallery_height_with_margin"
             android:background="?android:colorBackground"
             app:layout_behavior="@string/BackDropBottomSheetBehavior">
@@ -178,7 +178,7 @@
 
         <androidx.core.widget.NestedScrollView
             android:id="@+id/bottom_sheet"
-            android:layout_width="match_parent"
+            android:layout_width="@dimen/map_toolbar_width"
             android:layout_height="match_parent"
             android:fillViewport="true"
             android:orientation="vertical"
@@ -221,7 +221,7 @@
 
         <com.mahc.custombottomsheetbehavior.MergedAppBarLayout
             android:id="@+id/detail_app_bar"
-            android:layout_width="match_parent"
+            android:layout_width="@dimen/map_toolbar_width"
             android:layout_height="wrap_content"
             app:layout_behavior="@string/MergedAppBarLayoutBehavior"
             android:theme="@style/ThemeOverlay.Material3.Dark.ActionBar" />

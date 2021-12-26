@@ -180,7 +180,11 @@ class MapsActivity : AppCompatActivity(),
     fun showLocation(charger: ChargeLocation) {
         val coord = charger.coordinates
         val intent = Intent(Intent.ACTION_VIEW)
-        intent.data = Uri.parse("geo:0,0?q=${coord.lat},${coord.lng}(${charger.name})")
+        intent.data = Uri.parse(
+            "geo:${coord.lat},${coord.lng}?q=${coord.lat},${coord.lng}(${
+                Uri.encode(charger.name)
+            })"
+        )
         if (intent.resolveActivity(packageManager) != null) {
             startActivity(intent);
         } else {

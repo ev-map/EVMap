@@ -41,6 +41,6 @@
     <string name="welcome_android_auto_detail">You can also use EVMap from within Android Auto on supported cars. Simply select the EVMap app in the Android Auto menu.</string>
     <string name="sounds_cool">sounds cool</string>
     <string name="auto_chargeprice_vehicle_unavailable">EVMap could not determine your vehicle model.</string>
-    <string name="auto_chargeprice_vehicle_unknown">None of the vehicles selected in the app matches this vehicle (%s %s).</string>
-    <string name="auto_chargeprice_vehicle_ambiguous">Mehrere der in der App ausgewählten Fahrzeuge passen zu diesem Fahrzeug (%s %s).</string>
+    <string name="auto_chargeprice_vehicle_unknown">None of the vehicles selected in the app matches this vehicle (%1$s %2$s).</string>
+    <string name="auto_chargeprice_vehicle_ambiguous">Mehrere der in der App ausgewählten Fahrzeuge passen zu diesem Fahrzeug (%1$s %2$s).</string>
 </resources>

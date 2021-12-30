@@ -15,7 +15,7 @@
     <string name="closed_unfmt">Closed</string>
     <string name="holiday">Holiday</string>
     <string name="cost">Cost</string>
-    <string name="cost_detail"><![CDATA[<b>Charging:</b> %s · <b>Parking:</b> %s]]></string>
+    <string name="cost_detail"><![CDATA[<b>Charging:</b> %1$s · <b>Parking:</b> %2$s]]></string>
     <string name="cost_detail_charging"><![CDATA[<b>%s charging</b>]]></string>
     <string name="cost_detail_parking"><![CDATA[<b>%s parking</b>]]></string>
     <string name="free">Free</string>

@@ -908,7 +908,11 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         } else if (locationName != null) {
             lifecycleScope.launch {
                 val address = withContext(Dispatchers.IO) {
-                    Geocoder(requireContext()).getFromLocationName(locationName, 1).getOrNull(0)
+                    try {
+                        Geocoder(requireContext()).getFromLocationName(locationName, 1).getOrNull(0)
+                    } catch (e: IOException) {
+                        null
+                    }
                 }
                 address?.let {
                     val latLng = LatLng(it.latitude, it.longitude)

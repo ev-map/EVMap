@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.*
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -12,7 +12,9 @@ import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.color.MaterialColors
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.transition.MaterialContainerTransform
 import net.vonforst.evmap.MapsActivity
 import net.vonforst.evmap.R
 import net.vonforst.evmap.adapter.ChargepriceAdapter
@@ -26,9 +28,8 @@ import net.vonforst.evmap.viewmodel.ChargepriceViewModel
 import net.vonforst.evmap.viewmodel.Status
 import net.vonforst.evmap.viewmodel.viewModelFactory
 import java.text.NumberFormat
-import kotlin.math.roundToInt
 
-class ChargepriceFragment : DialogFragment() {
+class ChargepriceFragment : Fragment() {
     private lateinit var binding: FragmentChargepriceBinding
     private var connectionErrorSnackbar: Snackbar? = null
 
@@ -41,9 +42,9 @@ class ChargepriceFragment : DialogFragment() {
         }
     })
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        dialog?.window?.attributes?.windowAnimations = R.style.ChargepriceDialogAnimation
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        sharedElementEnterTransition = MaterialContainerTransform()
     }
 
     override fun onCreateView(
@@ -62,20 +63,6 @@ class ChargepriceFragment : DialogFragment() {
         binding.toolbar.setTitle(R.string.chargeprice_title)
 
         return binding.root
-    }
-
-    override fun onStart() {
-        super.onStart()
-
-        val density = resources.displayMetrics.density
-        val width = resources.displayMetrics.widthPixels
-        val maxWidth = (500 * density).roundToInt()
-
-        // dialog with 95% screen height
-        dialog?.window?.setLayout(
-            if (width < maxWidth) WindowManager.LayoutParams.MATCH_PARENT else maxWidth,
-            (resources.displayMetrics.heightPixels * 0.95).toInt()
-        )
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -179,7 +166,7 @@ class ChargepriceFragment : DialogFragment() {
         binding.toolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.menu_close -> {
-                    dismiss()
+                    findNavController().popBackStack()
                     true
                 }
                 R.id.menu_help -> {
@@ -214,6 +201,9 @@ class ChargepriceFragment : DialogFragment() {
                 }
             }
         }
+
+        // Workaround for AndroidX bug: https://github.com/material-components/material-components-android/issues/1984
+        view.setBackgroundColor(MaterialColors.getColor(view, android.R.attr.windowBackground))
     }
 
 }

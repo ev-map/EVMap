@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="shared_element_picture">picture</string>
+    <string name="shared_element_chargeprice">chargeprice</string>
     <string name="github_link">https://github.com/johan12345/EVMap</string>
     <string name="twitter_handle">\@ev_map</string>
     <string name="twitter_url">https://twitter.com/ev_map</string>

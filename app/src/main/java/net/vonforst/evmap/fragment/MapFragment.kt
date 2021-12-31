@@ -32,6 +32,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.setupWithNavController
@@ -345,9 +346,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 OpenChargeMapApiWrapper::class.java -> "open_charge_map"
                 else -> throw IllegalArgumentException("unsupported data source")
             }
+            val extras =
+                FragmentNavigatorExtras(binding.detailView.btnChargeprice to getString(R.string.shared_element_chargeprice))
             findNavController().navigate(
                 R.id.action_map_to_chargepriceFragment,
-                ChargepriceFragmentArgs(charger, dataSource).toBundle()
+                ChargepriceFragmentArgs(charger, dataSource).toBundle(),
+                null, extras
             )
         }
         binding.detailView.topPart.setOnClickListener {

@@ -25,6 +25,13 @@
         <item name="windowSplashScreenBackground">@color/background</item>
         <item name="windowSplashScreenAnimationDuration">999</item>
         <item name="postSplashScreenTheme">@style/AppTheme</item>
+
+        <!-- Workarounds for crashes when switching fragments after the app has been rotated.
+         This is needed because Theme.SplashScreen is not a MaterialComponents theme. -->
+        <item name="preferenceTheme">@style/AppTheme.Preference</item>
+        <item name="viewInflaterClass">
+            com.google.android.material.theme.MaterialComponentsViewInflater
+        </item>
     </style>
 
     <style name="AppTheme.LaunchScreen" parent="AppTheme.LaunchScreen.Base">

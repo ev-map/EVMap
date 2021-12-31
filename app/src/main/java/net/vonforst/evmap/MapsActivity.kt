@@ -19,7 +19,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
@@ -28,8 +27,10 @@ import androidx.preference.PreferenceFragmentCompat
 import com.car2go.maps.model.LatLng
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.transition.MaterialSharedAxis
 import net.vonforst.evmap.fragment.MapFragmentArgs
 import net.vonforst.evmap.model.ChargeLocation
+import net.vonforst.evmap.navigation.NavHostFragment
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.utils.LocaleContextWrapper
 import net.vonforst.evmap.utils.getLocationFromIntent
@@ -66,8 +67,6 @@ class MapsActivity : AppCompatActivity(),
 
         setContentView(R.layout.activity_maps)
 
-        navController = findNavController(R.id.nav_host_fragment)
-        val navGraph = navController.navInflater.inflate(R.navigation.nav_graph)
         appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.map,
@@ -77,6 +76,10 @@ class MapsActivity : AppCompatActivity(),
             ),
             findViewById<DrawerLayout>(R.id.drawer_layout)
         )
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        navController = navHostFragment.navController
+        val navGraph = navController.navInflater.inflate(R.navigation.nav_graph)
         val navView = findViewById<NavigationView>(R.id.nav_view)
         navView.setupWithNavController(navController)
 
@@ -233,6 +236,9 @@ class MapsActivity : AppCompatActivity(),
         caller: PreferenceFragmentCompat,
         pref: Preference
     ): Boolean {
+        caller.exitTransition = MaterialSharedAxis(MaterialSharedAxis.X, true)
+        caller.reenterTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
+
         // Identify the Navigation Destination
         val navDestination = navController.graph
             .find { target -> target is FragmentNavigator.Destination && pref.fragment == target.className }

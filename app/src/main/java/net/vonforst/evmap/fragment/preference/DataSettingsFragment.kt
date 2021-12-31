@@ -11,6 +11,8 @@ import net.vonforst.evmap.viewmodel.SettingsViewModel
 import net.vonforst.evmap.viewmodel.viewModelFactory
 
 class DataSettingsFragment : BaseSettingsFragment() {
+    override val isTopLevel = false
+
     private val vm: SettingsViewModel by viewModels(factoryProducer = {
         viewModelFactory {
             SettingsViewModel(

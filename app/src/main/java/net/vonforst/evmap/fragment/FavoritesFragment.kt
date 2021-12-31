@@ -17,7 +17,9 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.car2go.maps.model.LatLng
+import com.google.android.material.color.MaterialColors
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.transition.MaterialFadeThrough
 import com.mapzen.android.lost.api.LocationServices
 import com.mapzen.android.lost.api.LostApiClient
 import net.vonforst.evmap.MapsActivity
@@ -51,6 +53,9 @@ class FavoritesFragment : Fragment(), LostApiClient.ConnectionCallbacks {
         super.onCreate(savedInstanceState)
         locationClient = LostApiClient.Builder(requireContext())
             .addConnectionCallbacks(this).build()
+
+        enterTransition = MaterialFadeThrough()
+        exitTransition = MaterialFadeThrough()
     }
 
     override fun onCreateView(
@@ -70,6 +75,13 @@ class FavoritesFragment : Fragment(), LostApiClient.ConnectionCallbacks {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // Workaround for AndroidX bug: https://github.com/material-components/material-components-android/issues/1984
+        view.setBackgroundColor(MaterialColors.getColor(view, android.R.attr.windowBackground))
+
+        binding.toolbar.setupWithNavController(
+            findNavController(),
+            (requireActivity() as MapsActivity).appBarConfiguration
+        )
 
         adapter = FavoritesAdapter(onDelete = {
             delete(it.charger)
@@ -254,9 +266,5 @@ class FavoritesFragment : Fragment(), LostApiClient.ConnectionCallbacks {
 
     override fun onResume() {
         super.onResume()
-        binding.toolbar.setupWithNavController(
-            findNavController(),
-            (requireActivity() as MapsActivity).appBarConfiguration
-        )
     }
 }

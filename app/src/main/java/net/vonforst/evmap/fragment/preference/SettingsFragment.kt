@@ -7,6 +7,7 @@ import net.vonforst.evmap.R
 
 
 class SettingsFragment : BaseSettingsFragment() {
+    override val isTopLevel = true
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

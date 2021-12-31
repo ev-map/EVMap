@@ -15,6 +15,12 @@ import net.vonforst.evmap.databinding.FragmentDonateBinding
 class DonateFragment : Fragment() {
     private lateinit var binding: FragmentDonateBinding
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enterTransition = MaterialSharedAxis(MaterialSharedAxis.X, true)
+        returnTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -27,16 +33,13 @@ class DonateFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         (requireActivity() as AppCompatActivity).setSupportActionBar(binding.toolbar)
 
-        binding.btnDonate.setOnClickListener {
-            (activity as? MapsActivity)?.openUrl(getString(R.string.paypal_link))
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
         binding.toolbar.setupWithNavController(
             findNavController(),
             (requireActivity() as MapsActivity).appBarConfiguration
         )
+
+        binding.btnDonate.setOnClickListener {
+            (activity as? MapsActivity)?.openUrl(getString(R.string.paypal_link))
+        }
     }
 }

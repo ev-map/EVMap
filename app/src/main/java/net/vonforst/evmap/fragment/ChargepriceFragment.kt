@@ -82,6 +82,11 @@ class ChargepriceFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.toolbar.setupWithNavController(
+            findNavController(),
+            (requireActivity() as MapsActivity).appBarConfiguration
+        )
+
         val fragmentArgs: ChargepriceFragmentArgs by navArgs()
         val charger = fragmentArgs.charger
         val dataSource = fragmentArgs.dataSource
@@ -209,14 +214,6 @@ class ChargepriceFragment : DialogFragment() {
                 }
             }
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        binding.toolbar.setupWithNavController(
-            findNavController(),
-            (requireActivity() as MapsActivity).appBarConfiguration
-        )
     }
 
 }

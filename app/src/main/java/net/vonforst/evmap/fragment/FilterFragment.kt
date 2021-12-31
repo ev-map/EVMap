@@ -11,6 +11,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.color.MaterialColors
+import com.google.android.material.transition.MaterialSharedAxis
 import kotlinx.coroutines.launch
 import net.vonforst.evmap.MapsActivity
 import net.vonforst.evmap.R
@@ -23,6 +25,12 @@ import net.vonforst.evmap.viewmodel.FilterViewModel
 class FilterFragment : Fragment() {
     private lateinit var binding: FragmentFilterBinding
     private val vm: FilterViewModel by viewModels()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true)
+        returnTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,6 +51,17 @@ class FilterFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         (requireActivity() as AppCompatActivity).setSupportActionBar(binding.toolbar)
 
+        binding.toolbar.setupWithNavController(
+            findNavController(),
+            (requireActivity() as MapsActivity).appBarConfiguration
+        )
+
+        vm.filterProfile.observe(viewLifecycleOwner) {
+            if (it != null) {
+                binding.toolbar.title = getString(R.string.edit_filter_profile, it.name)
+            }
+        }
+
         binding.filtersList.apply {
             adapter = FiltersAdapter()
             layoutManager =
@@ -57,6 +76,9 @@ class FilterFragment : Fragment() {
         binding.toolbar.setNavigationOnClickListener {
             findNavController().popBackStack()
         }
+
+        // Workaround for AndroidX bug: https://github.com/material-components/material-components-android/issues/1984
+        view.setBackgroundColor(MaterialColors.getColor(view, android.R.attr.windowBackground))
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -106,20 +128,6 @@ class FilterFragment : Fragment() {
                 .setNegativeButton(R.string.cancel) { di, button ->
 
                 }
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        binding.toolbar.setupWithNavController(
-            findNavController(),
-            (requireActivity() as MapsActivity).appBarConfiguration
-        )
-
-        vm.filterProfile.observe(viewLifecycleOwner) {
-            if (it != null) {
-                binding.toolbar.title = getString(R.string.edit_filter_profile, it.name)
-            }
         }
     }
 }

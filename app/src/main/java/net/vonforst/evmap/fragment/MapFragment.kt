@@ -53,6 +53,8 @@ import com.car2go.maps.model.MarkerOptions
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialArcMotion
 import com.google.android.material.transition.MaterialContainerTransform
+import com.google.android.material.transition.MaterialFadeThrough
+import com.google.android.material.transition.MaterialSharedAxis
 import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike
 import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED
 import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN
@@ -147,6 +149,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             .build()
         locationClient.connect()
         clusterIconGenerator = ClusterIconGenerator(requireContext())
+
+        enterTransition = MaterialFadeThrough()
+        exitTransition = MaterialFadeThrough()
     }
 
     override fun onCreateView(
@@ -238,6 +243,11 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         setupAdapters()
         (activity as? MapsActivity)?.setSupportActionBar(binding.toolbar)
 
+        binding.toolbar.setupWithNavController(
+            findNavController(),
+            (requireActivity() as MapsActivity).appBarConfiguration
+        )
+
         if (prefs.appStartCounter > 5 && !prefs.opensourceDonationsDialogShown) {
             try {
                 findNavController().navigate(R.id.action_map_to_opensource_donations)
@@ -286,12 +296,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         super.onResume()
         val hostActivity = activity as? MapsActivity ?: return
         hostActivity.fragmentCallback = this
-
-        val navController = findNavController()
-        binding.toolbar.setupWithNavController(
-            navController,
-            (requireActivity() as MapsActivity).appBarConfiguration
-        )
 
         vm.reloadPrefs()
         if (requestingLocationUpdates && requireContext().checkAnyLocationPermission()
@@ -1115,6 +1119,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             popup.setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.menu_edit_filters -> {
+                        exitTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true)
+                        reenterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false)
                         lifecycleScope.launch {
                             vm.copyFiltersToCustom()
                             requireView().findNavController().navigate(
@@ -1124,6 +1130,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                         true
                     }
                     R.id.menu_manage_filter_profiles -> {
+                        exitTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true)
+                        reenterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false)
                         requireView().findNavController().navigate(
                             R.id.action_map_to_filterProfilesFragment
                         )

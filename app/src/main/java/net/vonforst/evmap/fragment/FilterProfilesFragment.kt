@@ -17,7 +17,9 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.color.MaterialColors
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.transition.MaterialSharedAxis
 import kotlinx.coroutines.launch
 import net.vonforst.evmap.MapsActivity
 import net.vonforst.evmap.R
@@ -43,6 +45,12 @@ class FilterProfilesFragment : Fragment() {
     private var deleteSnackbar: Snackbar? = null
     private var toDelete: FilterProfile? = null
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true)
+        returnTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -57,6 +65,11 @@ class FilterProfilesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         (requireActivity() as AppCompatActivity).setSupportActionBar(binding.toolbar)
+
+        binding.toolbar.setupWithNavController(
+            findNavController(),
+            (requireActivity() as MapsActivity).appBarConfiguration
+        )
 
         touchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
             ItemTouchHelper.UP or ItemTouchHelper.DOWN,
@@ -201,14 +214,9 @@ class FilterProfilesFragment : Fragment() {
         binding.toolbar.setNavigationOnClickListener {
             findNavController().popBackStack()
         }
-    }
 
-    override fun onResume() {
-        super.onResume()
-        binding.toolbar.setupWithNavController(
-            findNavController(),
-            (requireActivity() as MapsActivity).appBarConfiguration
-        )
+        // Workaround for AndroidX bug: https://github.com/material-components/material-components-android/issues/1984
+        view.setBackgroundColor(MaterialColors.getColor(view, android.R.attr.windowBackground))
     }
 
     fun delete(fp: FilterProfile) {

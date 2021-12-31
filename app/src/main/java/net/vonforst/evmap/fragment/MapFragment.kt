@@ -155,6 +155,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         exitTransition = MaterialFadeThrough()
     }
 
+    private val mapFragmentTag = "map"
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -165,6 +167,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         binding.vm = vm
 
         val provider = prefs.mapProvider
+        if (mapFragment == null) {
+            mapFragment =
+                requireActivity().supportFragmentManager.findFragmentByTag(mapFragmentTag) as MapFragment?
+        }
         if (mapFragment == null || mapFragment!!.priority[0] != provider) {
             mapFragment = MapFragment()
             mapFragment!!.priority = arrayOf(
@@ -178,7 +184,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             )
             requireActivity().supportFragmentManager
                 .beginTransaction()
-                .replace(R.id.map, mapFragment!!)
+                .replace(R.id.map, mapFragment!!, mapFragmentTag)
                 .commit()
 
             // reset map-related stuff (map provider may have changed)

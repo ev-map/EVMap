@@ -1,0 +1,13 @@
+Verbesserungen:
+- Design im Stil von Android 12
+- Einige Layouts für Tablets angepasst
+- Shortcut zu Favoriten vom Homescreen
+- Android Auto: Mehr Details zur Ladestation (ab Android Auto 7.1)
+- Android Auto: Bessere Erkennung mancher Fahrzeugmodelle
+
+Fehler behoben:
+- Starten der Navigation mit Waze funktionierte nicht
+- Einfügen von Text ins Suchfeld war nicht möglich
+- Android Auto: GPS funktionierte ggf. nicht
+- Android Auto: Falsche Darstellung von "kostenloses Parken"
+- Abstürze behoben

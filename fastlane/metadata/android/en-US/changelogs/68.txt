@@ -1,0 +1,13 @@
+Improvements:
+- Updated design in Android 12 style
+- Adapted some layouts for tablets
+- Added shortcut from homescreen to favorites view
+- Android Auto: Show more charger details (from Android Auto 7.1)
+- Android Auto: Better detection of some vehicle models
+
+Bugfixes:
+- Starting navigation did not work for Waze
+- Pasting text into search bar was not possible
+- Android Auto: Location was sometimes not detected
+- Android Auto: Incorrect display of "free parking"
+- Fixed crashes

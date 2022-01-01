@@ -40,6 +40,7 @@ const val REQUEST_LOCATION_PERMISSION = 1
 const val EXTRA_CHARGER_ID = "chargerId"
 const val EXTRA_LAT = "lat"
 const val EXTRA_LON = "lon"
+const val EXTRA_FAVORITES = "favorites"
 
 class MapsActivity : AppCompatActivity(),
     PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
@@ -115,6 +116,8 @@ class MapsActivity : AppCompatActivity(),
             navController.graph = navGraph
             return
         } else {
+            navGraph.setStartDestination(R.id.map)
+            navController.setGraph(navGraph, MapFragmentArgs(appStart = true).toBundle())
             var deepLink: PendingIntent? = null
 
             if (intent?.scheme == "geo") {
@@ -158,15 +161,13 @@ class MapsActivity : AppCompatActivity(),
                         ).toBundle()
                     )
                     .createPendingIntent()
+            } else if (intent.hasExtra(EXTRA_FAVORITES)) {
+                deepLink = navController.createDeepLink()
+                    .setDestination(R.id.favs)
+                    .createPendingIntent()
             }
 
-            navGraph.setStartDestination(R.id.map)
-            if (deepLink != null) {
-                navController.graph = navGraph
-                deepLink.send()
-            } else {
-                navController.setGraph(navGraph, MapFragmentArgs(appStart = true).toBundle())
-            }
+            deepLink?.send()
         }
     }
 

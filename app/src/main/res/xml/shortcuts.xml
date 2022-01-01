@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="favs"
+        android:icon="@drawable/ic_shortcut_fav"
+        android:shortcutShortLabel="@string/menu_favs">
+        <!-- Note: the targetPackage is hardcoded here, because templates or string resources don't
+             work. This means that the shortcut will not work if the package name changes
+             (e.g. in the debug version). -->
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="net.vonforst.evmap"
+            android:targetClass="net.vonforst.evmap.MapsActivity">
+            <extra
+                android:name="favorites"
+                android:value="true" />
+        </intent>
+        <capability-binding android:key="actions.intent.OPEN_APP_FEATURE">
+            <parameter-binding
+                android:value="@string/menu_favs"
+                android:key="feature" />
+        </capability-binding>
+    </shortcut>
+</shortcuts>

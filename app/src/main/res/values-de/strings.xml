@@ -250,4 +250,5 @@
     <string name="deleted_recent_search_results">Suchverlauf wurde gelöscht</string>
     <string name="settings_data_sources">Datenquellen</string>
     <string name="help">Hilfe</string>
+    <string name="settings_android_auto">Android Auto</string>
 </resources>

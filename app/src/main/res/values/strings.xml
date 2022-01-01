@@ -235,4 +235,5 @@
     <string name="deleted_recent_search_results">Recent search results have been deleted</string>
     <string name="settings_data_sources">Data sources</string>
     <string name="help">Help</string>
+    <string name="settings_android_auto">Android Auto</string>
 </resources>

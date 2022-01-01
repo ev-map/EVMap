@@ -7,4 +7,11 @@
         <attr name="showAllButton" format="boolean" />
         <attr name="defaultToAll" format="boolean" />
     </declare-styleable>
+    <declare-styleable name="RangeSliderPreference">
+        <attr format="float" name="android:valueFrom" />
+        <attr format="float" name="android:valueTo" />
+        <attr format="float" name="android:stepSize" />
+        <attr format="boolean" name="updatesContinuously" />
+        <attr format="string" name="android:defaultValue" />
+    </declare-styleable>
 </resources>

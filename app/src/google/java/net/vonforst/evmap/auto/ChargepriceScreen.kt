@@ -42,7 +42,7 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
         ctx.constraintManager.getContentLimit(ConstraintManager.CONTENT_LIMIT_TYPE_LIST)
     } else 6
     private var errorMessage: String? = null
-    private val batteryRange = listOf(20.0, 80.0)
+    private val batteryRange = prefs.chargepriceBatteryRangeAndroidAuto
 
     override fun onGetTemplate(): Template {
         if (prices == null) loadData()
@@ -195,7 +195,7 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
                         }
                     } else null
                     options = ChargepriceOptions(
-                        batteryRange = batteryRange,
+                        batteryRange = batteryRange.map { it.toDouble() },
                         providerCustomerTariffs = prefs.chargepriceShowProviderCustomerTariffs,
                         maxMonthlyFees = if (prefs.chargepriceNoBaseFee) 0.0 else null,
                         currency = prefs.chargepriceCurrency

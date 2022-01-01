@@ -168,6 +168,17 @@ class PreferenceDataSource(val context: Context) {
                 .apply()
         }
 
+    var chargepriceBatteryRangeAndroidAuto: List<Float>
+        get() = listOf(
+            sp.getFloat("chargeprice_battery_range_android_auto_min", 20f),
+            sp.getFloat("chargeprice_battery_range_android_auto_max", 80f),
+        )
+        set(value) {
+            sp.edit().putFloat("chargeprice_battery_range_android_auto_min", value[0])
+                .putFloat("chargeprice_battery_range_android_auto_max", value[1])
+                .apply()
+        }
+
     /** App start counter, introduced with Version 1.0.0 */
     var appStartCounter: Long
         get() = sp.getLong("app_start_counter", 0)

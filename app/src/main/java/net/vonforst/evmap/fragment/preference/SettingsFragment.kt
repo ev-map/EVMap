@@ -14,7 +14,8 @@ class SettingsFragment : BaseSettingsFragment() {
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        setPreferencesFromResource(R.xml.settings, rootKey)
+        addPreferencesFromResource(R.xml.settings)
+        addPreferencesFromResource(R.xml.settings_variantspecific)
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {

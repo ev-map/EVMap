@@ -81,6 +81,11 @@
         android:label="@string/settings_chargeprice"
         tools:layout="@layout/fragment_preference" />
     <fragment
+        android:id="@+id/settings_android_auto"
+        android:name="net.vonforst.evmap.fragment.preference.AndroidAutoSettingsFragment"
+        android:label="@string/settings_android_auto"
+        tools:layout="@layout/fragment_preference" />
+    <fragment
         android:id="@+id/favs"
         android:name="net.vonforst.evmap.fragment.FavoritesFragment"
         android:label="@string/menu_favs"

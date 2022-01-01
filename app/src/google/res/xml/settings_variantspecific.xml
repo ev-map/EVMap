@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <Preference
+        android:fragment="net.vonforst.evmap.fragment.preference.AndroidAutoSettingsFragment"
+        android:title="@string/settings_android_auto"
+        android:icon="@drawable/ic_android_auto" />
+</PreferenceScreen>

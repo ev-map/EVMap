@@ -144,10 +144,9 @@ class CheckableConnectorAdapter : DataBindingAdapter<Chargepoint>() {
             field = value
             checkedItem?.let {
                 if (value != null && getItem(it).type !in value) {
-                    val index = currentList.indexOfFirst {
+                    checkedItem = currentList.indexOfFirst {
                         it.type in value
-                    }
-                    checkedItem = if (index == -1) null else index
+                    }.takeIf { it != -1 }
                     onCheckedItemChangedListener?.invoke(getCheckedItem())
                 }
             }
@@ -168,7 +167,7 @@ class CheckableConnectorAdapter : DataBindingAdapter<Chargepoint>() {
         }
         root.setOnCheckedChangeListener { v: View, checked: Boolean ->
             if (checked) {
-                checkedItem = holder.bindingAdapterPosition
+                checkedItem = holder.bindingAdapterPosition.takeIf { it != -1 }
                 root.post {
                     notifyDataSetChanged()
                 }
@@ -180,7 +179,7 @@ class CheckableConnectorAdapter : DataBindingAdapter<Chargepoint>() {
     fun getCheckedItem(): Chargepoint? = checkedItem?.let { getItem(it) }
 
     fun setCheckedItem(item: Chargepoint?) {
-        checkedItem = item?.let { currentList.indexOf(item) }
+        checkedItem = item?.let { currentList.indexOf(item) }.takeIf { it != -1 }
     }
 
     var onCheckedItemChangedListener: ((Chargepoint?) -> Unit)? = null

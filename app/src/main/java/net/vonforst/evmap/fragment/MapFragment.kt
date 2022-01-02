@@ -462,28 +462,38 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
     private fun openLayersMenu() {
         binding.fabLayers.tag = false
-        val materialTransform = MaterialContainerTransform().apply {
-            startView = binding.fabLayers
-            endView = binding.layersSheet
-            setPathMotion(MaterialArcMotion())
-            duration = 250
-            scrimColor = Color.TRANSPARENT
-        }
-        TransitionManager.beginDelayedTransition(binding.root, materialTransform)
-        vm.layersMenuOpen.value = true
+
+        binding.fabLayers.postDelayed({
+            val materialTransform = MaterialContainerTransform().apply {
+                startView = binding.fabLayers
+                endView = binding.layersSheet
+                setPathMotion(MaterialArcMotion())
+                duration = 250
+                scrimColor = Color.TRANSPARENT
+                addTarget(binding.layersSheet)
+                isElevationShadowEnabled = false
+            }
+            TransitionManager.beginDelayedTransition(binding.root, materialTransform)
+            vm.layersMenuOpen.value = true
+        }, 100)
     }
 
     private fun closeLayersMenu() {
         binding.fabLayers.tag = true
-        val materialTransform = MaterialContainerTransform().apply {
-            startView = binding.layersSheet
-            endView = binding.fabLayers
-            setPathMotion(MaterialArcMotion())
-            duration = 200
-            scrimColor = Color.TRANSPARENT
-        }
-        TransitionManager.beginDelayedTransition(binding.root, materialTransform)
-        vm.layersMenuOpen.value = false
+
+        binding.fabLayers.postDelayed({
+            val materialTransform = MaterialContainerTransform().apply {
+                startView = binding.layersSheet
+                endView = binding.fabLayers
+                setPathMotion(MaterialArcMotion())
+                duration = 200
+                scrimColor = Color.TRANSPARENT
+                addTarget(binding.fabLayers)
+                isElevationShadowEnabled = false
+            }
+            TransitionManager.beginDelayedTransition(binding.root, materialTransform)
+            vm.layersMenuOpen.value = false
+        }, 100)
     }
 
     private fun toggleFavorite() {

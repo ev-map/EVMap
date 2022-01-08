@@ -150,7 +150,7 @@ dependencies {
     def anyMapsVersion = '751daec281'
     implementation "com.github.johan12345.AnyMaps:anymaps-base:$anyMapsVersion"
     googleImplementation "com.github.johan12345.AnyMaps:anymaps-google:$anyMapsVersion"
-    googleImplementation 'com.google.android.gms:play-services-maps:18.0.1'
+    googleImplementation 'com.google.android.gms:play-services-maps:18.0.2'
     implementation "com.github.johan12345.AnyMaps:anymaps-mapbox:$anyMapsVersion"
 
     // Google Places

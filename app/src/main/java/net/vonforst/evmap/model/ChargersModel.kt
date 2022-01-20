@@ -307,6 +307,9 @@ data class Address(
     }
 }
 
+/**
+ * One socket with a certain power, which may be available multiple times at a ChargeLocation.
+ */
 @Parcelize
 @JsonClass(generateAdapter = true)
 data class Chargepoint(

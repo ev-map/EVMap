@@ -499,9 +499,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
     private fun toggleFavorite() {
         val favs = vm.favorites.value ?: return
         val charger = vm.chargerSparse.value ?: return
-        val isFav = favs.find { it.id == charger.id } != null
-        if (isFav) {
-            vm.deleteFavorite(charger)
+        val fav = favs.find { it.charger.id == charger.id }
+        if (fav != null) {
+            vm.deleteFavorite(fav.favorite)
         } else {
             vm.insertFavorite(charger)
         }
@@ -511,7 +511,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 highlight = true,
                 fault = charger.faultReport != null,
                 multi = charger.isMulti(vm.filteredConnectors.value),
-                fav = !isFav
+                fav = fav == null
             )
         )
     }
@@ -642,7 +642,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                     highlight = false,
                     fault = c.faultReport != null,
                     multi = c.isMulti(vm.filteredConnectors.value),
-                    fav = c.id in vm.favorites.value?.map { it.id } ?: emptyList()
+                    fav = c.id in vm.favorites.value?.map { it.charger.id } ?: emptyList()
                 )
             )
         }
@@ -657,7 +657,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 highlight = true,
                 fault = charger.faultReport != null,
                 multi = charger.isMulti(vm.filteredConnectors.value),
-                fav = charger.id in vm.favorites.value?.map { it.id } ?: emptyList()
+                fav = charger.id in vm.favorites.value?.map { it.charger.id } ?: emptyList()
             )
         )
         animator.animateMarkerBounce(marker)
@@ -671,7 +671,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                         highlight = false,
                         fault = c.faultReport != null,
                         multi = c.isMulti(vm.filteredConnectors.value),
-                        fav = c.id in vm.favorites.value?.map { it.id } ?: emptyList()
+                        fav = c.id in vm.favorites.value?.map { it.charger.id } ?: emptyList()
                     )
                 )
             }
@@ -681,7 +681,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
     private fun updateFavoriteToggle() {
         val favs = vm.favorites.value ?: return
         val charger = vm.chargerSparse.value ?: return
-        if (favs.find { it.id == charger.id } != null) {
+        if (favs.find { it.charger.id == charger.id } != null) {
             favToggle.setIcon(R.drawable.ic_fav)
         } else {
             favToggle.setIcon(R.drawable.ic_fav_no)
@@ -1023,7 +1023,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                     highlight = charger == vm.chargerSparse.value,
                     fault = charger.faultReport != null,
                     multi = charger.isMulti(vm.filteredConnectors.value),
-                    fav = charger.id in vm.favorites.value?.map { it.id } ?: emptyList()
+                    fav = charger.id in vm.favorites.value?.map { it.charger.id } ?: emptyList()
                 )
             )
         }
@@ -1041,7 +1041,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                         val highlight = charger == vm.chargerSparse.value
                         val fault = charger.faultReport != null
                         val multi = charger.isMulti(vm.filteredConnectors.value)
-                        val fav = charger.id in vm.favorites.value?.map { it.id } ?: emptyList()
+                        val fav =
+                            charger.id in vm.favorites.value?.map { it.charger.id } ?: emptyList()
                         animator.animateMarkerDisappear(marker, tint, highlight, fault, multi, fav)
                     } else {
                         animator.deleteMarker(marker)
@@ -1057,7 +1058,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                     val highlight = charger == vm.chargerSparse.value
                     val fault = charger.faultReport != null
                     val multi = charger.isMulti(vm.filteredConnectors.value)
-                    val fav = charger.id in vm.favorites.value?.map { it.id } ?: emptyList()
+                    val fav = charger.id in vm.favorites.value?.map { it.charger.id } ?: emptyList()
                     val marker = map.addMarker(
                         MarkerOptions()
                             .position(LatLng(charger.coordinates.lat, charger.coordinates.lng))

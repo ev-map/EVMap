@@ -268,12 +268,13 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
             try {
                 // load chargers
                 if (favorites) {
-                    chargers = db.chargeLocationsDao().getAllChargeLocationsAsync().sortedBy {
-                        distanceBetween(
-                            location.latitude, location.longitude,
-                            it.coordinates.lat, it.coordinates.lng
-                        )
-                    }
+                    chargers =
+                        db.favoritesDao().getAllFavoritesAsync().map { it.charger }.sortedBy {
+                            distanceBetween(
+                                location.latitude, location.longitude,
+                                it.coordinates.lat, it.coordinates.lng
+                            )
+                        }
                 } else {
                     val response = api.getChargepointsRadius(
                         referenceData,

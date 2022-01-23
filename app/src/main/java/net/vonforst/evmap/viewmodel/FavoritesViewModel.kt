@@ -11,6 +11,8 @@ import net.vonforst.evmap.api.availability.ChargeLocationStatus
 import net.vonforst.evmap.api.availability.ChargepointStatus
 import net.vonforst.evmap.api.availability.getAvailability
 import net.vonforst.evmap.model.ChargeLocation
+import net.vonforst.evmap.model.Favorite
+import net.vonforst.evmap.model.FavoriteWithDetail
 import net.vonforst.evmap.storage.AppDatabase
 import net.vonforst.evmap.utils.distanceBetween
 
@@ -18,8 +20,8 @@ class FavoritesViewModel(application: Application, geApiKey: String) :
     AndroidViewModel(application) {
     private var db = AppDatabase.getInstance(application)
 
-    val favorites: LiveData<List<ChargeLocation>> by lazy {
-        db.chargeLocationsDao().getAllChargeLocations()
+    val favorites: LiveData<List<FavoriteWithDetail>> by lazy {
+        db.favoritesDao().getAllFavorites()
     }
 
     val location: MutableLiveData<LatLng> by lazy {
@@ -28,8 +30,9 @@ class FavoritesViewModel(application: Application, geApiKey: String) :
 
     val availability: MediatorLiveData<Map<Long, Resource<ChargeLocationStatus>>> by lazy {
         MediatorLiveData<Map<Long, Resource<ChargeLocationStatus>>>().apply {
-            addSource(favorites) { chargers ->
-                if (chargers != null) {
+            addSource(favorites) { favorites ->
+                if (favorites != null) {
+                    val chargers = favorites.map { it.charger }
                     viewModelScope.launch {
                         val data = hashMapOf<Long, Resource<ChargeLocationStatus>>()
                         chargers.forEach { charger ->
@@ -54,9 +57,10 @@ class FavoritesViewModel(application: Application, geApiKey: String) :
     val listData: MediatorLiveData<List<FavoritesListItem>> by lazy {
         MediatorLiveData<List<FavoritesListItem>>().apply {
             val callback = { _: Any ->
-                listData.value = favorites.value?.map { charger ->
+                listData.value = favorites.value?.map { favorite ->
+                    val charger = favorite.charger
                     FavoritesListItem(
-                        charger,
+                        favorite,
                         totalAvailable(charger.id),
                         charger.chargepoints.sumBy { it.count },
                         location.value.let { loc ->
@@ -78,11 +82,14 @@ class FavoritesViewModel(application: Application, geApiKey: String) :
     }
 
     data class FavoritesListItem(
-        val charger: ChargeLocation,
+        val fav: FavoriteWithDetail,
         val available: Resource<List<ChargepointStatus>>,
         val total: Int,
         val distance: Double?
-    ) : Equatable
+    ) : Equatable {
+        val charger
+            get() = fav.charger
+    }
 
     private fun totalAvailable(id: Long): Resource<List<ChargepointStatus>> {
         val availability = availability.value?.get(id) ?: return Resource.error(null, null)
@@ -97,12 +104,14 @@ class FavoritesViewModel(application: Application, geApiKey: String) :
     fun insertFavorite(charger: ChargeLocation) {
         viewModelScope.launch {
             db.chargeLocationsDao().insert(charger)
+            db.favoritesDao()
+                .insert(Favorite(chargerId = charger.id, chargerDataSource = charger.dataSource))
         }
     }
 
-    fun deleteFavorite(charger: ChargeLocation) {
+    fun deleteFavorite(fav: Favorite) {
         viewModelScope.launch {
-            db.chargeLocationsDao().delete(charger)
+            db.favoritesDao().delete(fav)
         }
     }
 }

@@ -2,8 +2,9 @@ package net.vonforst.evmap.api.openstreetmap
 
 import com.squareup.moshi.Moshi
 import net.vonforst.evmap.api.openchargemap.ZonedDateTimeAdapter
-import org.junit.Assert
+import org.junit.Assert.assertEquals
 import org.junit.Test
+import java.time.Instant
 import java.time.Month
 import java.time.ZoneOffset
 
@@ -46,12 +47,34 @@ class OpenStreetMapModelTest {
         val deserialized = moshi
             .adapter(OSMChargingStation::class.java)
             .fromJson(JSON_SINGLE)!!
-        Assert.assertEquals(9084665785, deserialized.id)
-        Assert.assertEquals(1, deserialized.version)
-        Assert.assertEquals(12, deserialized.lastUpdateTimestamp.dayOfMonth)
-        Assert.assertEquals(Month.SEPTEMBER, deserialized.lastUpdateTimestamp.month)
-        Assert.assertEquals(36, deserialized.lastUpdateTimestamp.minute)
-        Assert.assertEquals(ZoneOffset.UTC, deserialized.lastUpdateTimestamp.offset)
-        Assert.assertEquals("Swisscharge", deserialized.tags["network"])
+        assertEquals(9084665785, deserialized.id)
+        assertEquals(1, deserialized.version)
+        assertEquals(12, deserialized.lastUpdateTimestamp.dayOfMonth)
+        assertEquals(Month.SEPTEMBER, deserialized.lastUpdateTimestamp.month)
+        assertEquals(36, deserialized.lastUpdateTimestamp.minute)
+        assertEquals(ZoneOffset.UTC, deserialized.lastUpdateTimestamp.offset)
+        assertEquals("Swisscharge", deserialized.tags["network"])
+    }
+
+    @Test
+    fun convert() {
+        val osmChargingStation = Moshi.Builder()
+            .add(ZonedDateTimeAdapter())
+            .build()
+            .adapter(OSMChargingStation::class.java)
+            .fromJson(JSON_SINGLE)!!
+        val now = Instant.now()
+        val chargeLocation = osmChargingStation.convert(now)
+
+        // Basics
+        assertEquals("openstreetmap", chargeLocation.dataSource)
+        assertEquals("https://www.openstreetmap.org/node/9084665785", chargeLocation.url)
+        assertEquals(true, chargeLocation.openinghours?.twentyfourSeven)
+        assertEquals("GOFAST", chargeLocation.name) // Fallback to operator because name is not set
+        assertEquals(now, chargeLocation.timeRetrieved)
+
+        // Chargepoints
+        assertEquals(3, chargeLocation.chargepoints.size)
+        assertEquals(5, chargeLocation.chargepoints.sumOf { it.count })
     }
 }

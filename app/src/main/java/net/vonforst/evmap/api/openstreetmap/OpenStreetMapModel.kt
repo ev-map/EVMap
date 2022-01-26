@@ -7,37 +7,55 @@ import okhttp3.internal.immutableListOf
 import java.time.Instant
 import java.time.ZonedDateTime
 
+private data class OsmSocket(
+    // The OSM socket name (e.g. "type2_combo")
+    val osmSocketName: String,
+    // The socket identifier used in EVMap.
+    // TODO: This should probably be a separate enum-like type, not a string.
+    val evmapKey: String?,
+) {
+    /**
+     * Return the OSM socket base tag (e.g. "socket:type2_combo").
+     */
+    fun osmSocketBaseTag(): String {
+        return "socket:${this.osmSocketName}"
+    }
+}
+
 // List of all OSM socket types that are relevant for EVs:
 // https://wiki.openstreetmap.org/wiki/Key:socket
-val SOCKET_TYPES = immutableListOf(
+private val SOCKET_TYPES = immutableListOf(
     // Type 1
-    "type1",
-    "type1_combo",
+    OsmSocket("type1", Chargepoint.TYPE_1),
+    OsmSocket("type1_combo", Chargepoint.CCS_TYPE_1),
 
     // Type 2
-    "type2", // Type2 socket
-    "type2_cable", // Type2 with a fixed attached cable
-    "type2_combo", // CCS
+    OsmSocket("type2", Chargepoint.TYPE_2_SOCKET), // Type2 socket (or unknown)
+    OsmSocket("type2_cable", Chargepoint.TYPE_2_PLUG), // Type2 plug
+    OsmSocket("type2_combo", Chargepoint.CCS_TYPE_2), // CCS
 
     // CHAdeMO
-    "chademo",
+    OsmSocket("chademo", Chargepoint.CHADEMO),
 
     // Tesla
-    "tesla_standard",
-    "tesla_supercharger",
+    OsmSocket("tesla_standard", null),
+    OsmSocket("tesla_supercharger", Chargepoint.SUPERCHARGER),
 
     // CEE
-    "cee_blue", // Also known as "caravan socket"
-    "cee_red_16a",
-    "cee_red_32a",
-    "cee_red_63a",
-    "cee_red_125a",
+    OsmSocket("cee_blue", Chargepoint.CEE_BLAU), // Also known as "caravan socket"
+    OsmSocket("cee_red_16a", Chargepoint.CEE_ROT),
+    OsmSocket("cee_red_32a", Chargepoint.CEE_ROT),
+    OsmSocket("cee_red_63a", Chargepoint.CEE_ROT),
+    OsmSocket("cee_red_125a", Chargepoint.CEE_ROT),
+
+    // Europe
+    OsmSocket("schuko", Chargepoint.SCHUKO),
 
     // Switzerland
-    "sev1011_t13",
-    "sev1011_t15",
-    "sev1011_t23",
-    "sev1011_t25",
+    OsmSocket("sev1011_t13", null),
+    OsmSocket("sev1011_t15", null),
+    OsmSocket("sev1011_t23", null),
+    OsmSocket("sev1011_t25", null),
 )
 
 @JsonClass(generateAdapter = true)
@@ -111,12 +129,14 @@ data class OSMChargingStation(
         val chargepoints = mutableListOf<Chargepoint>()
         for (socket in SOCKET_TYPES) {
             val count = try {
-                (this.tags["socket:$socket"] ?: "0").toInt()
+                (this.tags[socket.osmSocketBaseTag()] ?: "0").toInt()
             } catch (e: NumberFormatException) {
                 0
             }
             if (count > 0) {
-                chargepoints.add(Chargepoint(socket, 42.0, count))
+                if (socket.evmapKey != null) {
+                    chargepoints.add(Chargepoint(socket.evmapKey, null, count))
+                }
                 // TODO: Power parsing
             }
         }

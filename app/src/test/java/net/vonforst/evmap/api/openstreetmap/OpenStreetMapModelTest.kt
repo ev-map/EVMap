@@ -2,6 +2,7 @@ package net.vonforst.evmap.api.openstreetmap
 
 import com.squareup.moshi.Moshi
 import net.vonforst.evmap.api.openchargemap.ZonedDateTimeAdapter
+import net.vonforst.evmap.model.Chargepoint
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.time.Instant
@@ -75,6 +76,11 @@ class OpenStreetMapModelTest {
 
         // Chargepoints
         assertEquals(3, chargeLocation.chargepoints.size)
-        assertEquals(5, chargeLocation.chargepoints.sumOf { it.count })
+        val ccs = chargeLocation.chargepoints.single { it.type == Chargepoint.CCS_TYPE_2 }
+        val type2 = chargeLocation.chargepoints.single { it.type == Chargepoint.TYPE_2_SOCKET }
+        val chademo = chargeLocation.chargepoints.single { it.type == Chargepoint.CHADEMO }
+        assertEquals(2, ccs.count)
+        assertEquals(1, type2.count)
+        assertEquals(2, chademo.count)
     }
 }

@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <import type="net.vonforst.evmap.adapter.ConnectorAdapter.ChargepointWithAvailability" />
         <import type="net.vonforst.evmap.ui.BindingAdaptersKt" />
 
@@ -74,6 +73,7 @@
             android:layout_marginBottom="8dp"
             android:text="@{item.chargepoint.formatPower()}"
             android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+            app:goneUnless="@{item.chargepoint.hasKnownPower()}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

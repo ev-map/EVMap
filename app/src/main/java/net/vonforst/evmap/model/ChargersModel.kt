@@ -64,7 +64,7 @@ data class ChargeLocation(
     /**
      * maximum power available from this charger.
      */
-    val maxPower: Double
+    val maxPower: Double?
         get() {
             return maxPower()
         }
@@ -72,17 +72,20 @@ data class ChargeLocation(
     /**
      * Gets the maximum power available from certain connectors of this charger.
      */
-    fun maxPower(connectors: Set<String>? = null): Double {
-        return chargepoints.filter { connectors?.contains(it.type) ?: true }
-            .map { it.power }.maxOrNull() ?: 0.0
+    fun maxPower(connectors: Set<String>? = null): Double? {
+        return chargepoints
+            .filter { connectors?.contains(it.type) ?: true }
+            .mapNotNull { it.power }
+            .maxOrNull()
     }
 
     fun isMulti(filteredConnectors: Set<String>? = null): Boolean {
         var chargepoints = chargepointsMerged
             .filter { filteredConnectors?.contains(it.type) ?: true }
-        if (maxPower(filteredConnectors) >= 43) {
+        val chargepointMaxPower = maxPower(filteredConnectors)
+        if (chargepointMaxPower != null && chargepointMaxPower >= 43) {
             // fast charger -> only count fast chargers
-            chargepoints = chargepoints.filter { it.power >= 43 }
+            chargepoints = chargepoints.filter {it.power != null && it.power >= 43 }
         }
         val connectors = chargepoints.map { it.type }.distinct().toSet()
 
@@ -306,9 +309,24 @@ data class Address(
 
 @Parcelize
 @JsonClass(generateAdapter = true)
-data class Chargepoint(val type: String, val power: Double, val count: Int) : Equatable,
-    Parcelable {
-    fun formatPower(): String {
+data class Chargepoint(
+    // The chargepoint type (use one of the constants in the companion object)
+    val type: String,
+    // Power in kW (or null if unknown)
+    val power: Double?,
+    // How many instances of this plug/socket are available?
+    val count: Int,
+) : Equatable, Parcelable {
+    fun hasKnownPower(): Boolean = power != null
+
+    /**
+     * If chargepoint power is defined, format it into a string.
+     * Otherwise, return null.
+     */
+    fun formatPower(): String? {
+        if (power == null) {
+            return null
+        }
         val powerFmt = if (power - power.toInt() == 0.0) {
             "%.0f".format(power)
         } else {

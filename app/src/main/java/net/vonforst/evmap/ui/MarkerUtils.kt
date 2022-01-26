@@ -13,12 +13,16 @@ import kotlin.math.max
 fun getMarkerTint(
     charger: ChargeLocation,
     connectors: Set<String>? = null
-): Int = when {
-    charger.maxPower(connectors) >= 100 -> R.color.charger_100kw
-    charger.maxPower(connectors) >= 43 -> R.color.charger_43kw
-    charger.maxPower(connectors) >= 20 -> R.color.charger_20kw
-    charger.maxPower(connectors) >= 11 -> R.color.charger_11kw
-    else -> R.color.charger_low
+): Int {
+    val maxPower = charger.maxPower(connectors)
+    return when {
+        maxPower == null -> R.color.charger_low
+        maxPower >= 100 -> R.color.charger_100kw
+        maxPower >= 43 -> R.color.charger_43kw
+        maxPower >= 20 -> R.color.charger_20kw
+        maxPower >= 11 -> R.color.charger_11kw
+        else -> R.color.charger_low
+    }
 }
 
 class MarkerAnimator(val gen: ChargerIconGenerator) {

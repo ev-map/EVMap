@@ -48,11 +48,9 @@ data class ChargepriceStation(
                 charger.coordinates.lat,
                 charger.chargepriceData.country,
                 charger.chargepriceData.network,
-                charger.chargepoints.zip(plugTypes).filter {
-                    equivalentPlugTypes(it.first.type).any { it in compatibleConnectors }
-                }.map {
-                    ChargepriceChargepoint(it.first.power, it.second)
-                }
+                charger.chargepoints.zip(plugTypes)
+                    .filter { equivalentPlugTypes(it.first.type).any { it in compatibleConnectors } }
+                    .map { ChargepriceChargepoint(it.first.power ?: 0.0, it.second) }
             )
         }
     }

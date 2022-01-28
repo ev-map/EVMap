@@ -4,6 +4,7 @@ import com.squareup.moshi.Moshi
 import net.vonforst.evmap.api.openchargemap.ZonedDateTimeAdapter
 import net.vonforst.evmap.model.Chargepoint
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Test
 import java.time.Instant
 import java.time.Month
@@ -80,7 +81,33 @@ class OpenStreetMapModelTest {
         val type2 = chargeLocation.chargepoints.single { it.type == Chargepoint.TYPE_2_SOCKET }
         val chademo = chargeLocation.chargepoints.single { it.type == Chargepoint.CHADEMO }
         assertEquals(2, ccs.count)
+        assertEquals(150.0, ccs.power)
         assertEquals(1, type2.count)
+        assertEquals(22.0, type2.power)
         assertEquals(2, chademo.count)
+        assertEquals(60.0, chademo.power)
+    }
+
+    @Test
+    fun parseOutputPower() {
+        // Null input -> null output
+        assertNull(OSMChargingStation.parseOutputPower(null))
+
+        // Invalid input -> null output
+        assertNull(OSMChargingStation.parseOutputPower(""))
+        assertNull(OSMChargingStation.parseOutputPower("a"))
+        assertNull(OSMChargingStation.parseOutputPower("22 A"))
+
+        // Invalid number -> null output
+        assertNull(OSMChargingStation.parseOutputPower("22.0.1 kW"))
+
+        // Valid output power values
+        assertEquals(22.0, OSMChargingStation.parseOutputPower("22 kW"))
+        assertEquals(22.0, OSMChargingStation.parseOutputPower("22 kVA"))
+        assertEquals(22.0, OSMChargingStation.parseOutputPower("22. kW"))
+        assertEquals(22.0, OSMChargingStation.parseOutputPower("22.0 kW"))
+        assertEquals(22.0, OSMChargingStation.parseOutputPower("22,0 kW"))
+        assertEquals(22.0, OSMChargingStation.parseOutputPower("22kW"))
+        assertEquals(22.0, OSMChargingStation.parseOutputPower("22    kW"))
     }
 }

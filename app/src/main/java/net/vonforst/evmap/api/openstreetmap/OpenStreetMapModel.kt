@@ -135,9 +135,9 @@ data class OSMChargingStation(
             }
             if (count > 0) {
                 if (socket.evmapKey != null) {
-                    chargepoints.add(Chargepoint(socket.evmapKey, null, count))
+                    val outputPower = parseOutputPower(this.tags["${socket.osmSocketBaseTag()}:output"])
+                    chargepoints.add(Chargepoint(socket.evmapKey, outputPower, count))
                 }
-                // TODO: Power parsing
             }
         }
         return chargepoints
@@ -161,5 +161,28 @@ data class OSMChargingStation(
         // https://github.com/leonardehrenfried/opening-hours-evaluator
         // we could implement an "open now" feature.
         return null
+    }
+
+    companion object {
+        /**
+         * Parse raw OSM output power.
+         *
+         * The proper format to map output power for an EV charging station is "<amount> kW",
+         * for example "22 kW" or "3.7 kW". Some fields in the wild are tagged with the unit "kVA"
+         * instead of "kW", those can be treated as equivalent.
+         *
+         * Sometimes people also mapped plain numbers (e.g. 7000, I assume that's 7 kW),
+         * ranges (5,5 - 11 kW, huh?) or even current (32 A), which is wrong. If we cannot parse,
+         * just ignore the field.
+         */
+        fun parseOutputPower(rawOutput: String?): Double? {
+            if (rawOutput == null) {
+                return null;
+            }
+            val pattern = Regex("([0-9.,]+)\\s*(kW|kVA)", setOf(RegexOption.IGNORE_CASE))
+            val matchResult = pattern.matchEntire(rawOutput) ?: return null
+            val numberString = matchResult.groupValues[1].replace(',', '.')
+            return numberString.toDoubleOrNull()
+        }
     }
 }

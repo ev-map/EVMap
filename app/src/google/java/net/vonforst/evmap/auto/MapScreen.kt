@@ -47,18 +47,12 @@ import kotlin.math.roundToInt
 /**
  * Main map screen showing either nearby chargers or favorites
  */
+@androidx.car.app.annotations.ExperimentalCarApi
 class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boolean = false) :
-    Screen(ctx), LocationAwareScreen {
+    Screen(ctx), LocationAwareScreen, OnContentRefreshListener {
     private var updateCoroutine: Job? = null
-    private var numUpdates = 0
-
-    /* Updating map contents is disabled - if the user uses Chargeprice from the charger
-       detail screen, this already means 4 steps, after which the app would crash.
-       follow https://issuetracker.google.com/issues/176694222 for updates how to solve this. */
-    private val maxNumUpdates = 1
 
     private var location: Location? = null
-    private var lastChargerUpdateLocation: Location? = null
     private var lastDistanceUpdateTime: Instant? = null
     private var chargers: List<ChargeLocation>? = null
     private var prefs = PreferenceDataSource(ctx)
@@ -67,7 +61,6 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
         createApi(prefs.dataSource, ctx)
     }
     private val searchRadius = 5 // kilometers
-    private val chargerUpdateThreshold = 2000 // meters
     private val distanceUpdateThreshold = Duration.ofSeconds(15)
     private val availabilityUpdateThreshold = Duration.ofMinutes(1)
     private var availabilities: MutableMap<Long, Pair<ZonedDateTime, ChargeLocationStatus>> =
@@ -151,7 +144,6 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
                         .setOnClickListener {
                             screenManager.pushForResult(FilterScreen(carContext)) {
                                 chargers = null
-                                numUpdates = 0
                                 filterStatus.value =
                                     prefs.filterStatus.takeUnless { it == FILTERS_CUSTOM || it == FILTERS_FAVORITES }
                                         ?: FILTERS_DISABLED
@@ -162,6 +154,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
                     .build())
             }
             build()
+            setOnContentRefreshListener(this@MapScreen)
         }.build()
     }
 
@@ -264,14 +257,6 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
             // update displayed distances
             invalidate()
         }
-
-        if (lastChargerUpdateLocation == null ||
-            location.distanceTo(lastChargerUpdateLocation) > chargerUpdateThreshold
-        ) {
-            lastChargerUpdateLocation = location
-            // update displayed chargers
-            loadChargers()
-        }
     }
 
     private fun loadChargers() {
@@ -279,13 +264,6 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
         val referenceData = referenceData.value ?: return
         val filters = filtersWithValue.value ?: return
 
-        numUpdates++
-        println(numUpdates)
-        if (numUpdates > maxNumUpdates) {
-            /*CarToast.makeText(carContext, R.string.auto_no_refresh_possible, CarToast.LENGTH_LONG)
-                .show()*/
-            return
-        }
         updateCoroutine = lifecycleScope.launch {
             try {
                 // load chargers
@@ -379,5 +357,9 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
     private fun removeListeners() {
         println("Removing energy level listener")
         hardwareMan.carInfo.removeEnergyLevelListener(::onEnergyLevelUpdated)
+    }
+
+    override fun onContentRefreshRequested() {
+        loadChargers()
     }
 }

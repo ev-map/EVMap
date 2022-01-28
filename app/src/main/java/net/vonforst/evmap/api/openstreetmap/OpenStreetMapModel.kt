@@ -102,7 +102,7 @@ data class OSMChargingStation(
         null,
         null,
         getOpeningHours(),
-        null,
+        getCost(),
         "© OpenStreetMap contributors",
         null,
         dataFetchTimestamp,
@@ -161,6 +161,20 @@ data class OSMChargingStation(
         // https://github.com/leonardehrenfried/opening-hours-evaluator
         // we could implement an "open now" feature.
         return null
+    }
+
+    private fun getCost(): Cost? {
+        val freecharging = when (tags["fee"]?.lowercase()) {
+            "yes", "y" -> false
+            "no", "n" -> true
+            else -> null
+        }
+        val freeparking = when (tags["parking:fee"]?.lowercase()) {
+            "no", "n" -> true
+            "yes", "y", "interval" -> false
+            else -> null
+        }
+        return Cost(freecharging, freeparking)
     }
 
     companion object {

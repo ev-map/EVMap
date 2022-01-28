@@ -75,6 +75,10 @@ class OpenStreetMapModelTest {
         assertEquals("GOFAST", chargeLocation.name) // Fallback to operator because name is not set
         assertEquals(now, chargeLocation.timeRetrieved)
 
+        // Cost
+        assertEquals(false, chargeLocation.cost?.freecharging)
+        assertEquals(true, chargeLocation.cost?.freeparking)
+
         // Chargepoints
         assertEquals(3, chargeLocation.chargepoints.size)
         val ccs = chargeLocation.chargepoints.single { it.type == Chargepoint.CCS_TYPE_2 }

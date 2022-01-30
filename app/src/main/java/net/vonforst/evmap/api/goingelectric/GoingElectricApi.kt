@@ -326,7 +326,7 @@ class GoingElectricApiWrapper(
             } else {
                 true
             }
-        }.map { it.convert(apikey) }
+        }.map { it.convert(apikey, false) }
 
         // apply clustering
         val useClustering = zoom < 13
@@ -350,7 +350,7 @@ class GoingElectricApiWrapper(
             return if (response.isSuccessful && response.body()!!.status == "ok" && response.body()!!.chargelocations.size == 1) {
                 Resource.success(
                     (response.body()!!.chargelocations[0] as GEChargeLocation).convert(
-                        apikey
+                        apikey, true
                     )
                 )
             } else {

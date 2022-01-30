@@ -14,7 +14,7 @@ class FavoritesAdapter(val onDelete: (FavoritesViewModel.FavoritesListItem) -> U
 
     override fun getItemViewType(position: Int): Int = R.layout.item_favorite
 
-    override fun getItemId(position: Int): Long = getItem(position).charger.id
+    override fun getItemId(position: Int): Long = getItem(position).fav.favorite.favoriteId
 
     @SuppressLint("ClickableViewAccessibility")
     override fun bind(

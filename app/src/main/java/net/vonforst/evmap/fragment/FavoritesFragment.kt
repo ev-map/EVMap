@@ -28,7 +28,8 @@ import net.vonforst.evmap.adapter.DataBindingAdapter
 import net.vonforst.evmap.adapter.FavoritesAdapter
 import net.vonforst.evmap.databinding.FragmentFavoritesBinding
 import net.vonforst.evmap.databinding.ItemFavoriteBinding
-import net.vonforst.evmap.model.ChargeLocation
+import net.vonforst.evmap.model.Favorite
+import net.vonforst.evmap.model.FavoriteWithDetail
 import net.vonforst.evmap.utils.checkAnyLocationPermission
 import net.vonforst.evmap.viewmodel.FavoritesViewModel
 import net.vonforst.evmap.viewmodel.viewModelFactory
@@ -36,7 +37,7 @@ import net.vonforst.evmap.viewmodel.viewModelFactory
 class FavoritesFragment : Fragment(), LostApiClient.ConnectionCallbacks {
     private lateinit var binding: FragmentFavoritesBinding
     private var locationClient: LostApiClient? = null
-    private var toDelete: ChargeLocation? = null
+    private var toDelete: Favorite? = null
     private var deleteSnackbar: Snackbar? = null
     private lateinit var adapter: FavoritesAdapter
 
@@ -84,7 +85,7 @@ class FavoritesFragment : Fragment(), LostApiClient.ConnectionCallbacks {
         )
 
         adapter = FavoritesAdapter(onDelete = {
-            delete(it.charger)
+            delete(it.fav)
         }).apply {
             onClickListener = {
                 findNavController().navigate(
@@ -132,18 +133,20 @@ class FavoritesFragment : Fragment(), LostApiClient.ConnectionCallbacks {
         }
     }
 
-    fun delete(fav: ChargeLocation) {
-        val position = vm.listData.value?.indexOfFirst { it.charger == fav } ?: return
+    fun delete(fav: FavoriteWithDetail) {
+        val position =
+            vm.listData.value?.indexOfFirst { it.fav.favorite.favoriteId == fav.favorite.favoriteId }
+                ?: return
         // if there is already a profile to delete, delete it now
         actuallyDelete()
         deleteSnackbar?.dismiss()
 
-        toDelete = fav
+        toDelete = fav.favorite
 
         view?.let {
             val snackbar = Snackbar.make(
                 it,
-                getString(R.string.deleted_filterprofile, fav.name),
+                getString(R.string.deleted_filterprofile, fav.charger.name),
                 Snackbar.LENGTH_LONG
             ).setAction(R.string.undo) {
                 toDelete = null
@@ -182,7 +185,7 @@ class FavoritesFragment : Fragment(), LostApiClient.ConnectionCallbacks {
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val fav = vm.favorites.value?.find { it.id == viewHolder.itemId }
+                val fav = vm.favorites.value?.find { it.favorite.favoriteId == viewHolder.itemId }
                 fav?.let { delete(it) }
             }
 

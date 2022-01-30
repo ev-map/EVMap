@@ -222,8 +222,8 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
         }
     }
 
-    val favorites: LiveData<List<ChargeLocation>> by lazy {
-        db.chargeLocationsDao().getAllChargeLocations()
+    val favorites: LiveData<List<FavoriteWithDetail>> by lazy {
+        db.favoritesDao().getAllFavorites()
     }
 
     val searchResult: MutableLiveData<PlaceWithBounds> by lazy {
@@ -279,12 +279,14 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
     fun insertFavorite(charger: ChargeLocation) {
         viewModelScope.launch {
             db.chargeLocationsDao().insert(charger)
+            db.favoritesDao()
+                .insert(Favorite(chargerId = charger.id, chargerDataSource = charger.dataSource))
         }
     }
 
-    fun deleteFavorite(charger: ChargeLocation) {
+    fun deleteFavorite(favorite: Favorite) {
         viewModelScope.launch {
-            db.chargeLocationsDao().delete(charger)
+            db.favoritesDao().delete(favorite)
         }
     }
 
@@ -310,12 +312,12 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
             if (filterStatus.value == FILTERS_FAVORITES) {
                 // load favorites from local DB
                 val b = mapPosition.bounds
-                var chargers = db.chargeLocationsDao().getChargeLocationsInBoundsAsync(
+                var chargers = db.favoritesDao().getFavoritesInBoundsAsync(
                     b.southwest.latitude,
                     b.northeast.latitude,
                     b.southwest.longitude,
                     b.northeast.longitude
-                ) as List<ChargepointListItem>
+                ).map { it.charger } as List<ChargepointListItem>
 
                 val clusterDistance = getClusterDistance(mapPosition.zoom)
                 clusterDistance?.let {

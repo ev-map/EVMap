@@ -94,7 +94,7 @@ data class OSMChargingStation(
         "https://www.openstreetmap.org/edit?node=$id",
         null,
         false, // We don't know
-        null, // What does this entail?
+        tags["authentication:none"] == "yes",
         tags["operator"],
         tags["description"],
         null,

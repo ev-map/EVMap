@@ -73,6 +73,7 @@ class OpenStreetMapModelTest {
         assertEquals("https://www.openstreetmap.org/node/9084665785", chargeLocation.url)
         assertEquals(true, chargeLocation.openinghours?.twentyfourSeven)
         assertEquals("GOFAST", chargeLocation.name) // Fallback to operator because name is not set
+        assertEquals(false, chargeLocation.barrierFree) // False because `authentication:none` isn't set
         assertEquals(now, chargeLocation.timeRetrieved)
 
         // Cost

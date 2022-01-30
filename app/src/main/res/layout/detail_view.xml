@@ -100,6 +100,7 @@
                 android:maxLines="1"
                 android:text="@{charger.data.address.toString()}"
                 android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+                app:invisibleUnless="@{charger.data.address != null}"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/txtName"

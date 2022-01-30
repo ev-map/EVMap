@@ -87,7 +87,7 @@ data class OSMChargingStation(
         "openstreetmap",
         getName(),
         Coordinate(lat, lon),
-        Address("", "", "", ""), // TODO: Can we determine this with overpass?
+        null, // TODO: Can we determine this with overpass?
         getChargepoints(),
         tags["network"],
         "https://www.openstreetmap.org/node/$id",

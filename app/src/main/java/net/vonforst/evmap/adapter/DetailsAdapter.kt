@@ -44,13 +44,13 @@ fun buildDetails(
     if (loc == null) return emptyList()
 
     return listOfNotNull(
-        DetailsAdapter.Detail(
+        if (loc.address != null) DetailsAdapter.Detail(
             R.drawable.ic_address,
             R.string.address,
             loc.address.toString(),
             loc.locationDescription,
             clickable = true
-        ),
+        ) else null,
         if (loc.operator != null) DetailsAdapter.Detail(
             R.drawable.ic_operator,
             R.string.operator,

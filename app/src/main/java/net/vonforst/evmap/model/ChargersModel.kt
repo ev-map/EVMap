@@ -61,7 +61,7 @@ data class ChargeLocation(
     val dataSource: String,
     val name: String,
     @Embedded val coordinates: Coordinate,
-    @Embedded val address: Address,
+    @Embedded val address: Address?,
     val chargepoints: List<Chargepoint>,
     val network: String?,
     val url: String,

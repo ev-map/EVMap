@@ -34,4 +34,5 @@
     <string name="auto_chargeprice_vehicle_unknown">Keins der in der App ausgewählten Fahrzeuge passt zu diesem Fahrzeug (%1$s %2$s).</string>
     <string name="auto_chargeprice_vehicle_ambiguous">Mehrere der in der App ausgewählten Fahrzeuge passen zu diesem Fahrzeug (%1$s %2$s).</string>
     <string name="settings_android_auto_chargeprice_range">Ladebereich für Preisvergleich</string>
+    <string name="data_sources_hint">In den Einstellungen kannst du auch zwischen Google Maps und OpenStreetMap (Mapbox) für die Kartendaten wechseln.</string>
 </resources>

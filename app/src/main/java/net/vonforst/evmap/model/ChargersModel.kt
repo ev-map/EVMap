@@ -28,6 +28,28 @@ sealed class ChargepointListItem
 /**
  * A whole charging site (potentially with multiple chargepoints).
  *
+ * @param id A unique number per charging site
+ * @param dataSource The name of the data source
+ * @param coordinates The latitude / longitude of this charge location
+ * @param address The charge location address
+ * @param chargepoints List of chargepoints at this location
+ * @param network The charging network (Mobility Service Provider, MSP)
+ * @param url A link to this charging site
+ * @param editUrl A link to a website where this charging site can be edited
+ * @param faultReport Set this if the charging site is reported to be out of service
+ * @param verified For crowdsourced data sources, this means that the data has been verified
+ *   by an independent person
+ * @param barrierFree Whether this charge location can be used without prior registration
+ * @param operator The operator of this charge location (Charge Point Operator, CPO)
+ * @param generalInformation General information about this charging site that does not fit anywhere else
+ * @param amenities Description of amenities available at or near the charging site (toilets, food, accommodation, landmarks, etc.)
+ * @param locationDescription Directions on how to find the charger (e.g. "In the parking garage on level 5")
+ * @param photos List of photos of this charging site
+ * @param chargecards List of charge cards accepted here
+ * @param openinghours List of times when this charging site can be accessed / used
+ * @param cost The cost for charging and/or parking
+ * @param license How the data about this chargepoint is licensed
+ * @param chargepriceData Additional data needed for the Chargeprice implementation
  * @param timeRetrieved Time when this information was retrieved from the data source
  * @param isDetailed Whether this data includes all available details (for many data sources,
  *                   API calls that return a list may only give a compact representation)

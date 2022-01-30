@@ -235,7 +235,7 @@ class OpenChargeMapApiWrapper(
                 .filter { it.power == null || it.power >= (minPower ?: 0.0) }
                 .filter { if (connectorsVal != null && !connectorsVal.all) it.connectionTypeId in connectorsVal.values.map { it.toLong() } else true }
                 .sumOf { it.quantity ?: 1 } >= (minConnectors ?: 0)
-        }.map { it.convert(referenceData) }.distinct() as List<ChargepointListItem>
+        }.map { it.convert(referenceData, false) }.distinct() as List<ChargepointListItem>
 
         // apply clustering
         val useClustering = zoom < 13
@@ -256,7 +256,7 @@ class OpenChargeMapApiWrapper(
         try {
             val response = api.getChargepointDetail(id)
             if (response.isSuccessful && response.body()?.size == 1) {
-                return Resource.success(response.body()!![0].convert(referenceData))
+                return Resource.success(response.body()!![0].convert(referenceData, true))
             } else {
                 return Resource.error(response.message(), null)
             }

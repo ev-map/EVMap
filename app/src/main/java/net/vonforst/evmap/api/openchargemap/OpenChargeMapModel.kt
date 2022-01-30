@@ -7,6 +7,7 @@ import com.squareup.moshi.JsonClass
 import kotlinx.parcelize.Parcelize
 import net.vonforst.evmap.max
 import net.vonforst.evmap.model.*
+import java.time.Instant
 import java.time.ZonedDateTime
 
 // Unknown, Currently Available, Currently In Use, Operational
@@ -44,7 +45,7 @@ data class OCMChargepoint(
     @Json(name = "UserComments") val userComments: List<OCMUserComment>?,
     @Json(name = "DateLastStatusUpdate") val lastStatusUpdateDate: ZonedDateTime?
 ) {
-    fun convert(refData: OCMReferenceData) = ChargeLocation(
+    fun convert(refData: OCMReferenceData, isDetailed: Boolean) = ChargeLocation(
         id,
         "openchargemap",
         addressInfo.title,
@@ -69,7 +70,9 @@ data class OCMChargepoint(
         ChargepriceData(
             addressInfo.countryISOCode(refData),
             operatorId?.toString(),
-            connections.map { "${it.connectionTypeId},${it.currentTypeId}" })
+            connections.map { "${it.connectionTypeId},${it.currentTypeId}" }),
+        Instant.now(),
+        isDetailed
     )
 
     private fun convertFaultReport(): FaultReport? {

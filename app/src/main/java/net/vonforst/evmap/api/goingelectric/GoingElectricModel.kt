@@ -29,7 +29,7 @@ data class GEChargeCardList(
 )
 
 sealed class GEChargepointListItem {
-    abstract fun convert(apikey: String): ChargepointListItem
+    abstract fun convert(apikey: String, isDetailed: Boolean): ChargepointListItem
 }
 
 @JsonClass(generateAdapter = true)
@@ -54,7 +54,7 @@ data class GEChargeLocation(
     val openinghours: GEOpeningHours?,
     val cost: GECost?
 ) : GEChargepointListItem() {
-    override fun convert(apikey: String) = ChargeLocation(
+    override fun convert(apikey: String, isDetailed: Boolean) = ChargeLocation(
         id,
         "goingelectric",
         name,
@@ -76,7 +76,9 @@ data class GEChargeLocation(
         openinghours?.convert(),
         cost?.convert(),
         null,
-        ChargepriceData(address.country, network, chargepoints.map { it.type })
+        ChargepriceData(address.country, network, chargepoints.map { it.type }),
+        Instant.now(),
+        isDetailed
     )
 }
 
@@ -161,7 +163,7 @@ data class GEChargeLocationCluster(
     val clusterCount: Int,
     val coordinates: GECoordinate
 ) : GEChargepointListItem() {
-    override fun convert(apikey: String) =
+    override fun convert(apikey: String, isDetailed: Boolean) =
         ChargeLocationCluster(clusterCount, coordinates.convert())
 }
 

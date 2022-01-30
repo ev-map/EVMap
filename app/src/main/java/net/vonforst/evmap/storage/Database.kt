@@ -32,7 +32,7 @@ import net.vonforst.evmap.model.*
         OCMConnectionType::class,
         OCMCountry::class,
         OCMOperator::class
-    ], version = 15
+    ], version = 16
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -55,7 +55,7 @@ abstract class AppDatabase : RoomDatabase() {
                 .addMigrations(
                     MIGRATION_2, MIGRATION_3, MIGRATION_4, MIGRATION_5, MIGRATION_6,
                     MIGRATION_7, MIGRATION_8, MIGRATION_9, MIGRATION_10, MIGRATION_11,
-                    MIGRATION_12, MIGRATION_13, MIGRATION_14, MIGRATION_15
+                    MIGRATION_12, MIGRATION_13, MIGRATION_14, MIGRATION_15, MIGRATION_16
                 )
                 .addCallback(object : Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
@@ -337,6 +337,13 @@ abstract class AppDatabase : RoomDatabase() {
                 } finally {
                     db.endTransaction()
                 }
+            }
+        }
+
+        private val MIGRATION_16 = object : Migration(15, 16) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE `ChargeLocation` ADD `timeRetrieved` INTEGER NOT NULL DEFAULT 0")
+                db.execSQL("ALTER TABLE `ChargeLocation` ADD `isDetailed` INTEGER NOT NULL DEFAULT 0")
             }
         }
     }

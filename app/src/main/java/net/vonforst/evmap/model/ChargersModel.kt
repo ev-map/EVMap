@@ -24,6 +24,14 @@ import kotlin.math.floor
 
 sealed class ChargepointListItem
 
+
+/**
+ * A whole charging site (potentially with multiple chargepoints).
+ *
+ * @param timeRetrieved Time when this information was retrieved from the data source
+ * @param isDetailed Whether this data includes all available details (for many data sources,
+ *                   API calls that return a list may only give a compact representation)
+ */
 @Entity(primaryKeys = ["id", "dataSource"])
 @Parcelize
 data class ChargeLocation(
@@ -49,7 +57,9 @@ data class ChargeLocation(
     @Embedded val openinghours: OpeningHours?,
     @Embedded val cost: Cost?,
     val license: String?,
-    @Embedded(prefix = "chargeprice") val chargepriceData: ChargepriceData?
+    @Embedded(prefix = "chargeprice") val chargepriceData: ChargepriceData?,
+    val timeRetrieved: Instant,
+    val isDetailed: Boolean
 ) : ChargepointListItem(), Equatable, Parcelable {
     /**
      * maximum power available from this charger.

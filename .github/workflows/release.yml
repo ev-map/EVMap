@@ -1,0 +1,68 @@
+on:
+  push:
+    tags:
+      - '*'
+
+name: Release
+
+jobs:
+  test:
+    name: Build and upload release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Set up Java environment
+        uses: actions/setup-java@v2
+        with:
+          java-version: 11
+          distribution: 'zulu'
+          cache: 'gradle'
+      - name: Decrypt keystore
+        run: openssl aes-256-cbc -K  ${{ secrets.encrypted_53968681344a_key }} -iv  ${{ secrets.encrypted_53968681344a_iv }} -in _ci/keystore.jks.enc -out _ci/keystore.jks -d
+      - name: Extract version code
+        run: echo "VERSION_CODE=$(grep -o "versionCode\s\+.*" app/build.gradle | awk '{ print $2 }' | tr -d \''"\\')" >> $GITHUB_ENV
+
+      - name: Build app release
+        env:
+          GOINGELECTRIC_API_KEY: ${{ secrets.GOINGELECTRIC_API_KEY }}
+          OPENCHARGEMAP_API_KEY: ${{ secrets.OPENCHARGEMAP_API_KEY }}
+          CHARGEPRICE_API_KEY: ${{ secrets.CHARGEPRICE_API_KEY }}
+          MAPBOX_API_KEY: ${{ secrets.MAPBOX_API_KEY }}
+          GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEYSTORE_ALIAS: ${{ secrets.KEYSTORE_ALIAS }}
+          KEYSTORE_ALIAS_PASSWORD: ${{ secrets.KEYSTORE_ALIAS_PASSWORD }}
+        run: ./gradlew assembleRelease --no-daemon
+
+      - name: release
+        uses: actions/create-release@v1
+        id: create_release
+        with:
+          draft: false
+          prerelease: false
+          release_name: ${{ steps.version.outputs.version }}
+          tag_name: ${{ github.ref }}
+          body_path: fastlane/metadata/android/en-US/changelogs/${{ env.VERSION_CODE }}.txt
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: upload Google artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: app/build/outputs/apk/google/release/app-google-release.apk
+          asset_name: app-google-release.apk
+          asset_content_type: application/vnd.android.package-archive
+      - name: upload Foss artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: app/build/outputs/apk/foss/release/app-foss-release.apk
+          asset_name: app-foss-release.apk
+          asset_content_type: application/vnd.android.package-archive

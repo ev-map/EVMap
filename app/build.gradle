@@ -25,13 +25,13 @@ android {
 
     signingConfigs {
         release {
-            def isRunningOnTravis = System.getenv("CI") == "true"
-            if (isRunningOnTravis) {
+            def isRunningOnCI = System.getenv("CI") == "true"
+            if (isRunningOnCI) {
                 // configure keystore
                 storeFile = file("../_ci/keystore.jks")
-                storePassword = System.getenv("keystore_password")
-                keyAlias = System.getenv("keystore_alias")
-                keyPassword = System.getenv("keystore_alias_password")
+                storePassword = System.getenv("KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("KEYSTORE_ALIAS")
+                keyPassword = System.getenv("KEYSTORE_ALIAS_PASSWORD")
             }
         }
     }

@@ -1,0 +1,7 @@
+<resources>
+   <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">ci</string>
+   <string name="mapbox_key" translatable="false">ci</string>
+   <string name="goingelectric_key" translatable="false">ci</string>
+   <string name="chargeprice_key" translatable="false">ci</string>
+   <string name="openchargemap_key" translatable="false">ci</string>
+</resources>

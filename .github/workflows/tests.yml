@@ -1,0 +1,34 @@
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+name: Tests
+
+jobs:
+
+  test:
+    name: Build and Test (${{ matrix.buildvariant }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        buildvariant: [Foss, Google]
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Set up Java environment
+        uses: actions/setup-java@v2
+        with:
+          java-version: 11
+          distribution: 'zulu'
+          cache: 'gradle'
+
+      - name: Copy apikeys.xml
+        run : cp .github/workflows/apikeys-ci.xml app/src/main/res/values/apikeys.xml
+
+      - name: Build app
+        run: ./gradlew assemble${{ matrix.buildvariant }}Debug --no-daemon
+      - name: Run unit tests
+        run: ./gradlew test${{ matrix.buildvariant }}DebugUnitTest --no-daemon

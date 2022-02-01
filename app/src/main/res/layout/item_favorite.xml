@@ -67,6 +67,7 @@
             android:maxLines="1"
             android:text="@{item.charger.address.toString()}"
             android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+            app:invisibleUnless="@{item.charger.address != null}"
             app:layout_constraintEnd_toStartOf="@+id/textView7"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView15"

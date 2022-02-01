@@ -159,7 +159,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
     }
 
     private fun formatCharger(charger: ChargeLocation, showCity: Boolean): Row {
-        val markerTint = if (charger.maxPower > 100) {
+        val markerTint = if ((charger.maxPower ?: 0.0) > 100) {
             R.color.charger_100kw_dark  // slightly darker color for better contrast
         } else {
             getMarkerTint(charger)
@@ -207,8 +207,11 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
             }
 
             // power
-            if (text.isNotEmpty()) text.append(" · ")
-            text.append("${charger.maxPower.roundToInt()} kW")
+            val power = charger.maxPower;
+            if (power != null) {
+                if (text.isNotEmpty()) text.append(" · ")
+                text.append("${power.roundToInt()} kW")
+            }
 
             // availability
             availabilities[charger.id]?.second?.let { av ->

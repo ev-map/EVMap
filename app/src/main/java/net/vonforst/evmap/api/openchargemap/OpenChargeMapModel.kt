@@ -141,7 +141,7 @@ data class OCMConnection(
 ) {
     fun convert(refData: OCMReferenceData) = Chargepoint(
         convertConnectionTypeFromOCM(connectionTypeId, refData),
-        power ?: 0.0,
+        power,
         quantity ?: 1
     )
 

@@ -86,7 +86,7 @@ abstract class BaseAvailabilityDetector(private val client: OkHttpClient) : Avai
                 // find corresponding powers in GE data
                 val gePowers =
                     chargepoints.filter { equivalentPlugTypes(it.type).any { it == type } }
-                        .map { it.power }.distinct().sorted()
+                        .mapNotNull { it.power }.distinct().sorted()
 
                 // if the distinct number of powers is the same, try to match.
                 if (powers.size == gePowers.size) {
@@ -131,7 +131,7 @@ data class ChargeLocationStatus(
             (connectors == null || connectors.map {
                 equivalentPlugTypes(it)
             }.any { equivalent -> it.type in equivalent })
-                    && (minPower == null || it.power > minPower)
+                    && (minPower == null || (it.power != null && it.power > minPower))
         }
         return this.copy(status = statusFiltered)
     }

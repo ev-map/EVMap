@@ -16,6 +16,7 @@ import net.vonforst.evmap.R
 class WelcomeScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx), LocationAwareScreen {
     private var location: Location? = null
 
+    @androidx.car.app.annotations.ExperimentalCarApi
     override fun onGetTemplate(): Template {
         if (!session.locationPermissionGranted()) {
             Handler(Looper.getMainLooper()).post {

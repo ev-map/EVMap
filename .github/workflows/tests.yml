@@ -2,7 +2,7 @@ on:
   pull_request:
   push:
     branches:
-      - master
+      - '*'
 
 name: Tests
 
@@ -26,9 +26,11 @@ jobs:
           cache: 'gradle'
 
       - name: Copy apikeys.xml
-        run : cp .github/workflows/apikeys-ci.xml app/src/main/res/values/apikeys.xml
+        run: cp .github/workflows/apikeys-ci.xml app/src/main/res/values/apikeys.xml
 
       - name: Build app
         run: ./gradlew assemble${{ matrix.buildvariant }}Debug --no-daemon
       - name: Run unit tests
         run: ./gradlew test${{ matrix.buildvariant }}DebugUnitTest --no-daemon
+      - name: Run Android Lint
+        run: ./gradlew lint${{ matrix.buildvariant }}Debug --no-daemon

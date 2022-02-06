@@ -367,6 +367,7 @@ abstract class AppDatabase : RoomDatabase() {
                     db.execSQL("INSERT INTO `FavoriteNew`($columnList) SELECT $columnList FROM `Favorite`")
                     db.execSQL("DROP TABLE `Favorite`")
                     db.execSQL("ALTER TABLE `FavoriteNew` RENAME TO `Favorite`")
+                    db.execSQL("CREATE INDEX IF NOT EXISTS `index_Favorite_chargerId_chargerDataSource` ON `Favorite` (`chargerId`, `chargerDataSource`)")
 
                     db.setTransactionSuccessful()
                 } finally {

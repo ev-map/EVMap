@@ -15,6 +15,7 @@ import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
+import net.vonforst.evmap.BuildConfig
 import net.vonforst.evmap.R
 import net.vonforst.evmap.ui.Gauge
 import kotlin.math.min
@@ -28,10 +29,20 @@ class VehicleDataScreen(ctx: CarContext) : Screen(ctx), LifecycleObserver {
     private var gauge = Gauge((ctx.resources.displayMetrics.density * 128).roundToInt(), ctx)
     private val maxSpeed = 160f / 3.6f // m/s, speed gauge will show max if speed is higher
 
-    private val permissions = listOf(
-        "com.google.android.gms.permission.CAR_FUEL",
-        "com.google.android.gms.permission.CAR_SPEED"
-    )
+    private val permissions = if (BuildConfig.FLAVOR_automotive == "automotive") {
+        listOf(
+            "android.car.permission.CAR_INFO",
+            "android.car.permission.CAR_ENERGY",
+            "android.car.permission.CAR_ENERGY_PORTS",
+            "android.car.permission.READ_CAR_DISPLAY_UNITS",
+            "android.car.permission.CAR_SPEED"
+        )
+    } else {
+        listOf(
+            "com.google.android.gms.permission.CAR_FUEL",
+            "com.google.android.gms.permission.CAR_SPEED"
+        )
+    }
 
     init {
         lifecycle.addObserver(this)

@@ -16,6 +16,7 @@ import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.*
 import com.car2go.maps.model.LatLng
 import kotlinx.coroutines.*
+import net.vonforst.evmap.BuildConfig
 import net.vonforst.evmap.R
 import net.vonforst.evmap.api.availability.ChargeLocationStatus
 import net.vonforst.evmap.api.availability.getAvailability
@@ -77,6 +78,17 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
 
     private val hardwareMan = ctx.getCarService(CarContext.HARDWARE_SERVICE) as CarHardwareManager
     private var energyLevel: EnergyLevel? = null
+    private val permissions = if (BuildConfig.FLAVOR_automotive == "automotive") {
+        listOf(
+            "android.car.permission.CAR_ENERGY",
+            "android.car.permission.CAR_ENERGY_PORTS",
+            "android.car.permission.READ_CAR_DISPLAY_UNITS",
+        )
+    } else {
+        listOf(
+            "com.google.android.gms.permission.CAR_FUEL"
+        )
+    }
 
     init {
         filtersWithValue.observe(this) {
@@ -341,11 +353,12 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     private fun setupListeners() {
-        if (ContextCompat.checkSelfPermission(
-                carContext,
-                "com.google.android.gms.permission.CAR_FUEL"
-            ) != PackageManager.PERMISSION_GRANTED
-        )
+        if (!permissions.all {
+                ContextCompat.checkSelfPermission(
+                    carContext,
+                    it
+                ) == PackageManager.PERMISSION_GRANTED
+            })
             return
 
         println("Setting up energy level listener")

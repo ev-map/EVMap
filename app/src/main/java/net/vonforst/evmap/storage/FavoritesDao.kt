@@ -8,7 +8,7 @@ import net.vonforst.evmap.model.FavoriteWithDetail
 @Dao
 interface FavoritesDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(vararg favorites: Favorite)
+    suspend fun insert(vararg favorites: Favorite): List<Long>
 
     @Delete
     suspend fun delete(vararg favorites: Favorite)

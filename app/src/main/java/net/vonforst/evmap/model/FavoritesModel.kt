@@ -8,7 +8,7 @@ import androidx.room.*
             entity = ChargeLocation::class,
             parentColumns = arrayOf("id", "dataSource"),
             childColumns = arrayOf("chargerId", "chargerDataSource"),
-            onDelete = ForeignKey.RESTRICT,
+            onDelete = ForeignKey.NO_ACTION,
         )
     ],
     indices = [

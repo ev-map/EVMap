@@ -32,7 +32,7 @@ import net.vonforst.evmap.model.*
         OCMConnectionType::class,
         OCMCountry::class,
         OCMOperator::class
-    ], version = 17
+    ], version = 18
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -56,7 +56,7 @@ abstract class AppDatabase : RoomDatabase() {
                     MIGRATION_2, MIGRATION_3, MIGRATION_4, MIGRATION_5, MIGRATION_6,
                     MIGRATION_7, MIGRATION_8, MIGRATION_9, MIGRATION_10, MIGRATION_11,
                     MIGRATION_12, MIGRATION_13, MIGRATION_14, MIGRATION_15, MIGRATION_16,
-                    MIGRATION_17
+                    MIGRATION_17, MIGRATION_18
                 )
                 .addCallback(object : Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
@@ -355,6 +355,25 @@ abstract class AppDatabase : RoomDatabase() {
                 db.execSQL("CREATE INDEX IF NOT EXISTS `index_MultipleChoiceFilterValue_profile_dataSource` ON `MultipleChoiceFilterValue` (`profile`, `dataSource`)")
                 db.execSQL("CREATE INDEX IF NOT EXISTS `index_SliderFilterValue_profile_dataSource` ON `SliderFilterValue` (`profile`, `dataSource`)")
             }
+        }
+
+        private val MIGRATION_18 = object : Migration(17, 18) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                try {
+                    db.beginTransaction()
+                    db.execSQL("CREATE TABLE IF NOT EXISTS `FavoriteNew` (`favoriteId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `chargerId` INTEGER NOT NULL, `chargerDataSource` TEXT NOT NULL, FOREIGN KEY(`chargerId`, `chargerDataSource`) REFERENCES `ChargeLocation`(`id`, `dataSource`) ON UPDATE NO ACTION ON DELETE NO ACTION )");
+                    val columnList =
+                        "`favoriteId`,`chargerId`,`chargerDataSource`"
+                    db.execSQL("INSERT INTO `FavoriteNew`($columnList) SELECT $columnList FROM `Favorite`")
+                    db.execSQL("DROP TABLE `Favorite`")
+                    db.execSQL("ALTER TABLE `FavoriteNew` RENAME TO `Favorite`")
+
+                    db.setTransactionSuccessful()
+                } finally {
+                    db.endTransaction()
+                }
+            }
+
         }
     }
 }

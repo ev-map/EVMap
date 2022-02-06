@@ -37,6 +37,7 @@
     <string name="auto_no_data">Unavailable</string>
     <string name="auto_range">Range</string>
     <string name="auto_speed">Speed</string>
+    <string name="auto_settings">Settings</string>
     <string name="welcome_android_auto">Android Auto support</string>
     <string name="welcome_android_auto_detail">You can also use EVMap from within Android Auto on supported cars. Simply select the EVMap app in the Android Auto menu.</string>
     <string name="sounds_cool">sounds cool</string>

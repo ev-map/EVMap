@@ -27,6 +27,7 @@
     <string name="auto_no_data">Nicht verfügbar</string>
     <string name="auto_range">Reichweite</string>
     <string name="auto_speed">Geschwindigkeit</string>
+    <string name="auto_settings">Einstellungen</string>
     <string name="welcome_android_auto">Android Auto-Unterstützung</string>
     <string name="welcome_android_auto_detail">Auf unterstützen Autos kannst du EVMap auch mit Android Auto nutzen. Öffne dazu einfach die EVMap-App aus dem Menü von Android Auto.</string>
     <string name="sounds_cool">klingt cool</string>

@@ -102,6 +102,24 @@ class WelcomeScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx), L
                                 .build()
                         )
                     }
+                    addItem(
+                        Row.Builder()
+                            .setTitle(carContext.getString(R.string.auto_settings))
+                            .setImage(
+                                CarIcon.Builder(
+                                    IconCompat.createWithResource(
+                                        carContext,
+                                        R.drawable.ic_settings
+                                    )
+                                ).setTint(CarColor.DEFAULT).build()
+                            )
+                            .setBrowsable(true)
+                            .setOnClickListener {
+                                session.mapScreen = null
+                                screenManager.push(SettingsScreen(carContext))
+                            }
+                            .build()
+                    )
                 }.build())
                 setCurrentLocationEnabled(true)
             }

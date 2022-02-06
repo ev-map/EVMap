@@ -244,7 +244,13 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
             )
 
             setOnClickListener {
-                screenManager.push(ChargerDetailScreen(carContext, charger))
+                screenManager.pushForResult(ChargerDetailScreen(carContext, charger)) {
+                    if (favorites) {
+                        // favorites list may have been updated
+                        chargers = null
+                        loadChargers()
+                    }
+                }
             }
         }.build()
     }

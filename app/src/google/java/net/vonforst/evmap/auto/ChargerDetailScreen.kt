@@ -19,6 +19,7 @@ import androidx.lifecycle.lifecycleScope
 import coil.imageLoader
 import coil.request.ImageRequest
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.vonforst.evmap.*
@@ -29,6 +30,7 @@ import net.vonforst.evmap.api.createApi
 import net.vonforst.evmap.api.nameForPlugType
 import net.vonforst.evmap.api.stringProvider
 import net.vonforst.evmap.model.ChargeLocation
+import net.vonforst.evmap.model.Favorite
 import net.vonforst.evmap.storage.AppDatabase
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.ui.ChargerIconGenerator
@@ -65,6 +67,9 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
     } else 2
     private val largeImageSupported =
         ctx.carAppApiLevel >= 4  // since API 4, Row.setImage is supported
+
+    private var favorite: Favorite? = null
+    private var favoriteUpdateJob: Job? = null
 
     init {
         referenceData.observe(this) {
@@ -121,27 +126,79 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
         ).apply {
             setTitle(chargerSparse.name)
             setHeaderAction(Action.BACK)
-            setActionStrip(
-                ActionStrip.Builder().addAction(
-                    Action.Builder()
-                        .setTitle(carContext.getString(R.string.open_in_app))
-                        .setOnClickListener(ParkedOnlyOnClickListener.create {
-                            val intent = Intent(carContext, MapsActivity::class.java)
-                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                .putExtra(EXTRA_CHARGER_ID, chargerSparse.id)
-                                .putExtra(EXTRA_LAT, chargerSparse.coordinates.lat)
-                                .putExtra(EXTRA_LON, chargerSparse.coordinates.lng)
-                            carContext.startActivity(intent)
-                            CarToast.makeText(
-                                carContext,
-                                R.string.opened_on_phone,
-                                CarToast.LENGTH_LONG
-                            ).show()
-                        })
-                        .build()
+            if (BuildConfig.FLAVOR_automotive == "automotive") {
+                charger?.let { charger ->
+                    setActionStrip(
+                        ActionStrip.Builder().addAction(Action.Builder()
+                            .setOnClickListener {
+                                favorite?.let {
+                                    deleteFavorite(it)
+                                } ?: run {
+                                    insertFavorite(charger)
+                                }
+                            }
+                            .setIcon(
+                                CarIcon.Builder(
+                                    IconCompat.createWithResource(
+                                        carContext,
+                                        if (favorite != null) {
+                                            R.drawable.ic_fav
+                                        } else {
+                                            R.drawable.ic_fav_no
+                                        }
+                                    )
+                                )
+                                    .setTint(CarColor.DEFAULT).build()
+                            )
+                            .build())
+                            .build())
+                }
+            } else {
+                setActionStrip(
+                    ActionStrip.Builder().addAction(
+                        Action.Builder()
+                            .setTitle(carContext.getString(R.string.open_in_app))
+                            .setOnClickListener(ParkedOnlyOnClickListener.create {
+                                val intent = Intent(carContext, MapsActivity::class.java)
+                                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                    .putExtra(EXTRA_CHARGER_ID, chargerSparse.id)
+                                    .putExtra(EXTRA_LAT, chargerSparse.coordinates.lat)
+                                    .putExtra(EXTRA_LON, chargerSparse.coordinates.lng)
+                                carContext.startActivity(intent)
+                                CarToast.makeText(
+                                    carContext,
+                                    R.string.opened_on_phone,
+                                    CarToast.LENGTH_LONG
+                                ).show()
+                            })
+                            .build()
+                    ).build()
                 ).build()
-            )
+            }
         }.build()
+    }
+
+    private fun insertFavorite(charger: ChargeLocation) {
+        if (favoriteUpdateJob?.isCompleted == false) return
+        favoriteUpdateJob = lifecycleScope.launch {
+            db.chargeLocationsDao().insert(charger)
+            val fav = Favorite(
+                chargerId = charger.id,
+                chargerDataSource = charger.dataSource
+            )
+            val id = db.favoritesDao().insert(fav)[0]
+            favorite = fav.copy(favoriteId = id)
+            invalidate()
+        }
+    }
+
+    private fun deleteFavorite(fav: Favorite) {
+        if (favoriteUpdateJob?.isCompleted == false) return
+        favoriteUpdateJob = lifecycleScope.launch {
+            db.favoritesDao().delete(fav)
+            favorite = null
+            invalidate()
+        }
     }
 
     private fun generateRows(charger: ChargeLocation): List<Row> {
@@ -297,6 +354,8 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
     private fun loadCharger() {
         val referenceData = referenceData.value ?: return
         lifecycleScope.launch {
+            favorite = db.favoritesDao().findFavorite(chargerSparse.id, chargerSparse.dataSource)
+
             val response = api.getChargepointDetail(referenceData, chargerSparse.id)
             if (response.status == Status.SUCCESS) {
                 val charger = response.data!!

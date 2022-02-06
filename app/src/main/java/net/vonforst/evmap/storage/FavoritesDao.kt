@@ -26,4 +26,7 @@ interface FavoritesDao {
         lng1: Double,
         lng2: Double
     ): List<FavoriteWithDetail>
+
+    @Query("SELECT * FROM favorite WHERE chargerDataSource == :dataSource AND chargerId == :chargerId")
+    suspend fun findFavorite(chargerId: Long, dataSource: String): Favorite?
 }

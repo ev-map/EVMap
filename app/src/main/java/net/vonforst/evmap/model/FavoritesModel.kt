@@ -1,9 +1,6 @@
 package net.vonforst.evmap.model
 
-import androidx.room.Embedded
-import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.PrimaryKey
+import androidx.room.*
 
 @Entity(
     foreignKeys = [
@@ -13,6 +10,9 @@ import androidx.room.PrimaryKey
             childColumns = arrayOf("chargerId", "chargerDataSource"),
             onDelete = ForeignKey.RESTRICT,
         )
+    ],
+    indices = [
+        Index(value = ["chargerId", "chargerDataSource"])
     ]
 )
 data class Favorite(

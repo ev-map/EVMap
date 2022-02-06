@@ -3,6 +3,7 @@ package net.vonforst.evmap.model
 import androidx.databinding.BaseObservable
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import net.vonforst.evmap.adapter.Equatable
 import net.vonforst.evmap.storage.FilterProfile
 import kotlin.reflect.KClass
@@ -59,7 +60,10 @@ sealed class FilterValue : BaseObservable(), Equatable {
         childColumns = arrayOf("profile", "dataSource"),
         onDelete = ForeignKey.CASCADE
     )],
-    primaryKeys = ["key", "profile", "dataSource"]
+    primaryKeys = ["key", "profile", "dataSource"],
+    indices = [
+        Index(value = ["profile", "dataSource"])
+    ]
 )
 data class BooleanFilterValue(
     override val key: String,
@@ -77,7 +81,10 @@ data class BooleanFilterValue(
         childColumns = arrayOf("profile", "dataSource"),
         onDelete = ForeignKey.CASCADE
     )],
-    primaryKeys = ["key", "profile", "dataSource"]
+    primaryKeys = ["key", "profile", "dataSource"],
+    indices = [
+        Index(value = ["profile", "dataSource"])
+    ]
 )
 data class MultipleChoiceFilterValue(
     override val key: String,
@@ -101,7 +108,10 @@ data class MultipleChoiceFilterValue(
         childColumns = arrayOf("profile", "dataSource"),
         onDelete = ForeignKey.CASCADE
     )],
-    primaryKeys = ["key", "profile", "dataSource"]
+    primaryKeys = ["key", "profile", "dataSource"],
+    indices = [
+        Index(value = ["profile", "dataSource"])
+    ]
 )
 data class SliderFilterValue(
     override val key: String,

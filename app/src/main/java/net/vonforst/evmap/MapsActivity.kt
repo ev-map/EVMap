@@ -98,7 +98,7 @@ class MapsActivity : AppCompatActivity(),
         if (!prefs.welcomeDialogShown || !prefs.dataSourceSet) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 // wait for splash screen animation to finish on first start
-                splashScreen.setKeepVisibleCondition(object : SplashScreen.KeepOnScreenCondition {
+                splashScreen.setKeepOnScreenCondition(object : SplashScreen.KeepOnScreenCondition {
                     var startTime: Long? = null
 
                     override fun shouldKeepOnScreen(): Boolean {

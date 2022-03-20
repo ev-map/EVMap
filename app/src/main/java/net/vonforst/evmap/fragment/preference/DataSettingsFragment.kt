@@ -47,8 +47,8 @@ class DataSettingsFragment : BaseSettingsFragment() {
         }
     }
 
-    override fun onPreferenceTreeClick(preference: Preference?): Boolean {
-        return when (preference?.key) {
+    override fun onPreferenceTreeClick(preference: Preference): Boolean {
+        return when (preference.key) {
             "search_delete_recent" -> {
                 Snackbar.make(
                     requireView(),

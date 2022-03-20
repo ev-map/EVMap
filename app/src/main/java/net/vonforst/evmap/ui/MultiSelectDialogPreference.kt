@@ -26,7 +26,7 @@ class MultiSelectDialogPreference(ctx: Context, attrs: AttributeSet) :
             // backwards compatibility when changing a ListPreference into a MultiSelectListPreference
             val value =
                 getPersistedString(null)?.let { setOf(it) } ?: (defaultValue as Set<String>?)
-            sharedPreferences.edit()
+            sharedPreferences!!.edit()
                 .remove(key)
                 .putStringSet(key, value)
                 .apply()
@@ -51,8 +51,8 @@ class MultiSelectDialogPreference(ctx: Context, attrs: AttributeSet) :
     }
 
     var all: Boolean
-        get() = sharedPreferences.getBoolean(key + "_all", defaultToAll)
+        get() = sharedPreferences!!.getBoolean(key + "_all", defaultToAll)
         set(value) {
-            sharedPreferences.edit().putBoolean(key + "_all", value).apply()
+            sharedPreferences!!.edit().putBoolean(key + "_all", value).apply()
         }
 }

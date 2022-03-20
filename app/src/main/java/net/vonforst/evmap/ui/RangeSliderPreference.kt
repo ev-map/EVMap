@@ -46,14 +46,14 @@ class RangeSliderPreference(context: Context, attrs: AttributeSet) : Preference(
     private var dragging = false
 
     var values: List<Float>
-        get() = if ((sharedPreferences.contains(key + "_min") && sharedPreferences.contains(key + "_max"))) {
+        get() = if ((sharedPreferences!!.contains(key + "_min") && sharedPreferences!!.contains(key + "_max"))) {
             listOf(
-                sharedPreferences.getFloat(key + "_min", 0f),
-                sharedPreferences.getFloat(key + "_max", 0f)
+                sharedPreferences!!.getFloat(key + "_min", 0f),
+                sharedPreferences!!.getFloat(key + "_max", 0f)
             )
         } else defaultValue
         set(value) {
-            sharedPreferences.edit()
+            sharedPreferences!!.edit()
                 .putFloat(key + "_min", value[0])
                 .putFloat(key + "_max", value[1])
                 .apply()

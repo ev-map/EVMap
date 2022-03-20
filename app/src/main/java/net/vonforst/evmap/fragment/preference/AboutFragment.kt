@@ -42,8 +42,8 @@ class AboutFragment : PreferenceFragmentCompat() {
         findPreference<Preference>("version")?.summary = BuildConfig.VERSION_NAME
     }
 
-    override fun onPreferenceTreeClick(preference: Preference?): Boolean {
-        return when (preference?.key) {
+    override fun onPreferenceTreeClick(preference: Preference): Boolean {
+        return when (preference.key) {
             "github_link" -> {
                 (activity as? MapsActivity)?.openUrl(getString(R.string.github_link))
                 true

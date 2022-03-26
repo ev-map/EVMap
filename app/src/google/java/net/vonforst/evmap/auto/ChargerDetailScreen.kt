@@ -232,8 +232,10 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
             }
             // row 4: opening hours + location description
             charger.openinghours?.let { hours ->
+                val title =
+                    hours.getStatusText(carContext).ifEmpty { carContext.getString(R.string.hours) }
                 rows.add(Row.Builder().apply {
-                    setTitle(hours.getStatusText(carContext))
+                    setTitle(title)
                     hours.description?.let { addText(it) }
                     charger.locationDescription?.let { addText(it) }
                 }.build())

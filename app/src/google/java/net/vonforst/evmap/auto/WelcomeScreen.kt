@@ -114,10 +114,10 @@ class WelcomeScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx), L
                                 ).setTint(CarColor.DEFAULT).build()
                             )
                             .setBrowsable(true)
-                            .setOnClickListener {
+                            .setOnClickListener(ParkedOnlyOnClickListener.create {
                                 session.mapScreen = null
                                 screenManager.push(SettingsScreen(carContext))
-                            }
+                            })
                             .build()
                     )
                 }.build())

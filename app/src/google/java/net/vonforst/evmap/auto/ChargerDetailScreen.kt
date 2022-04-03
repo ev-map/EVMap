@@ -126,10 +126,32 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
         ).apply {
             setTitle(chargerSparse.name)
             setHeaderAction(Action.BACK)
-            if (BuildConfig.FLAVOR_automotive == "automotive") {
-                charger?.let { charger ->
-                    setActionStrip(
-                        ActionStrip.Builder().addAction(Action.Builder()
+            charger?.let { charger ->
+                setActionStrip(
+                    ActionStrip.Builder().apply {
+                        if (BuildConfig.FLAVOR_automotive != "automotive") {
+                            // show "Open in app" action if not running on Android Automotive
+                            addAction(
+                                Action.Builder()
+                                    .setTitle(carContext.getString(R.string.open_in_app))
+                                    .setOnClickListener(ParkedOnlyOnClickListener.create {
+                                        val intent = Intent(carContext, MapsActivity::class.java)
+                                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                            .putExtra(EXTRA_CHARGER_ID, chargerSparse.id)
+                                            .putExtra(EXTRA_LAT, chargerSparse.coordinates.lat)
+                                            .putExtra(EXTRA_LON, chargerSparse.coordinates.lng)
+                                        carContext.startActivity(intent)
+                                        CarToast.makeText(
+                                            carContext,
+                                            R.string.opened_on_phone,
+                                            CarToast.LENGTH_LONG
+                                        ).show()
+                                    })
+                                    .build()
+                            )
+                        }
+                        // show fav action
+                        addAction(Action.Builder()
                             .setOnClickListener {
                                 favorite?.let {
                                     deleteFavorite(it)
@@ -151,29 +173,9 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
                                     .setTint(CarColor.DEFAULT).build()
                             )
                             .build())
-                            .build())
-                }
-            } else {
-                setActionStrip(
-                    ActionStrip.Builder().addAction(
-                        Action.Builder()
-                            .setTitle(carContext.getString(R.string.open_in_app))
-                            .setOnClickListener(ParkedOnlyOnClickListener.create {
-                                val intent = Intent(carContext, MapsActivity::class.java)
-                                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                    .putExtra(EXTRA_CHARGER_ID, chargerSparse.id)
-                                    .putExtra(EXTRA_LAT, chargerSparse.coordinates.lat)
-                                    .putExtra(EXTRA_LON, chargerSparse.coordinates.lng)
-                                carContext.startActivity(intent)
-                                CarToast.makeText(
-                                    carContext,
-                                    R.string.opened_on_phone,
-                                    CarToast.LENGTH_LONG
-                                ).show()
-                            })
                             .build()
-                    ).build()
-                ).build()
+                    }.build()
+                )
             }
         }.build()
     }

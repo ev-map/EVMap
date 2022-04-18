@@ -5,7 +5,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import kotlinx.coroutines.CoroutineScope
 import net.vonforst.evmap.api.ChargepointApi
-import net.vonforst.evmap.api.StringProvider
 import net.vonforst.evmap.api.goingelectric.GoingElectricApiWrapper
 import net.vonforst.evmap.api.openchargemap.OpenChargeMapApiWrapper
 import net.vonforst.evmap.model.*
@@ -58,15 +57,6 @@ fun filtersWithValue(
             }
         }
     }
-
-fun ChargepointApi<ReferenceData>.getFilters(
-    referenceData: LiveData<out ReferenceData>,
-    stringProvider: StringProvider
-) = MediatorLiveData<List<Filter<FilterValue>>>().apply {
-    addSource(referenceData) { data ->
-        value = getFilters(data, stringProvider)
-    }
-}
 
 fun FilterValueDao.getFilterValues(filterStatus: LiveData<Long>, dataSource: String) =
     MediatorLiveData<List<FilterValue>>().apply {

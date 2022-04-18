@@ -13,10 +13,7 @@ import androidx.car.app.hardware.info.EnergyLevel
 import androidx.car.app.model.*
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.IconCompat
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.OnLifecycleEvent
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.*
 import com.car2go.maps.model.LatLng
 import kotlinx.coroutines.*
 import net.vonforst.evmap.R
@@ -35,7 +32,6 @@ import net.vonforst.evmap.ui.getMarkerTint
 import net.vonforst.evmap.utils.distanceBetween
 import net.vonforst.evmap.viewmodel.filtersWithValue
 import net.vonforst.evmap.viewmodel.getFilterValues
-import net.vonforst.evmap.viewmodel.getFilters
 import net.vonforst.evmap.viewmodel.getReferenceData
 import java.io.IOException
 import java.time.Duration
@@ -75,7 +71,8 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
             ?: FILTERS_DISABLED
     }
     private val filterValues = db.filterValueDao().getFilterValues(filterStatus, prefs.dataSource)
-    private val filters = api.getFilters(referenceData, carContext.stringProvider())
+    private val filters =
+        Transformations.map(referenceData) { api.getFilters(it, carContext.stringProvider()) }
     private val filtersWithValue = filtersWithValue(filters, filterValues)
 
     private val hardwareMan = ctx.getCarService(CarContext.HARDWARE_SERVICE) as CarHardwareManager

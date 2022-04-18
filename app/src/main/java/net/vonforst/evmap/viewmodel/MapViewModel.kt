@@ -45,13 +45,15 @@ internal fun getClusterDistance(zoom: Float): Int? {
 class MapViewModel(application: Application, private val state: SavedStateHandle) :
     AndroidViewModel(application) {
     val apiType: Class<ChargepointApi<ReferenceData>>
-        get() = api.javaClass
+        get() = api.value!!.javaClass
     val apiName: String
-        get() = api.getName()
+        get() = api.value!!.getName()
 
     private var db = AppDatabase.getInstance(application)
     private var prefs = PreferenceDataSource(application)
-    private var api: ChargepointApi<ReferenceData> = createApi(prefs.dataSource, application)
+    private var api = MutableLiveData<ChargepointApi<ReferenceData>>().apply {
+        value = createApi(prefs.dataSource, application)
+    }
 
     val bottomSheetState: MutableLiveData<Int> by lazy {
         state.getLiveData("bottomSheetState")
@@ -71,8 +73,14 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
     }
     private val filterValues: LiveData<List<FilterValue>> =
         db.filterValueDao().getFilterValues(filterStatus, prefs.dataSource)
-    private val referenceData = api.getReferenceData(viewModelScope, application)
-    private val filters = api.getFilters(referenceData, application.stringProvider())
+    private val referenceData =
+        Transformations.switchMap(api) { it.getReferenceData(viewModelScope, application) }
+    private val filters = Transformations.map(referenceData) {
+        api.value!!.getFilters(
+            it,
+            application.stringProvider()
+        )
+    }
 
     private val filtersWithValue: LiveData<FilterValues> by lazy {
         filtersWithValue(filters, filterValues)
@@ -250,6 +258,7 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
 
     fun reloadPrefs() {
         filterStatus.value = prefs.filterStatus
+        api.value = createApi(prefs.dataSource, getApplication())
     }
 
     fun toggleFilters() {
@@ -306,7 +315,7 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
 
             val mapPosition = data.first
             val filters = data.second
-            val api = api
+            val api = api.value!!
             val refData = data.third
 
             if (filterStatus.value == FILTERS_FAVORITES) {
@@ -379,7 +388,7 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
         chargerLoadingTask?.cancel()
         chargerLoadingTask = viewModelScope.launch {
             try {
-                chargerDetails.value = api.getChargepointDetail(referenceData, charger.id)
+                chargerDetails.value = api.value!!.getChargepointDetail(referenceData, charger.id)
             } catch (e: IOException) {
                 chargerDetails.value = Resource.error(e.message, null)
                 e.printStackTrace()
@@ -394,7 +403,7 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
             override fun onChanged(refData: ReferenceData) {
                 referenceData.removeObserver(this)
                 viewModelScope.launch {
-                    val response = api.getChargepointDetail(refData, chargerId)
+                    val response = api.value!!.getChargepointDetail(refData, chargerId)
                     chargerDetails.value = response
                     if (response.status == Status.SUCCESS) {
                         chargerSparse.value = response.data

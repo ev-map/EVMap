@@ -2,6 +2,7 @@ package net.vonforst.evmap.auto
 
 import androidx.car.app.CarContext
 import androidx.car.app.Screen
+import androidx.car.app.constraints.ConstraintManager
 import androidx.car.app.model.*
 import androidx.core.graphics.drawable.IconCompat
 import net.vonforst.evmap.R
@@ -9,6 +10,8 @@ import net.vonforst.evmap.api.chargeprice.ChargepriceApi
 import net.vonforst.evmap.api.chargeprice.ChargepriceCar
 import net.vonforst.evmap.api.chargeprice.ChargepriceTariff
 import net.vonforst.evmap.storage.PreferenceDataSource
+import kotlin.math.max
+import kotlin.math.min
 
 class SettingsScreen(ctx: CarContext) : Screen(ctx) {
     val prefs = PreferenceDataSource(carContext)
@@ -112,6 +115,23 @@ class ChargepriceSettingsScreen(ctx: CarContext) : Screen(ctx) {
                     setBrowsable(true)
                     setOnClickListener {
                         screenManager.push(SelectTariffsScreen(carContext))
+                    }
+                }.build())
+                addItem(Row.Builder().apply {
+                    setTitle(carContext.getString(R.string.settings_android_auto_chargeprice_range))
+                    setBrowsable(true)
+
+                    val range = prefs.chargepriceBatteryRangeAndroidAuto
+                    addText(
+                        carContext.getString(
+                            R.string.chargeprice_battery_range,
+                            range[0],
+                            range[1]
+                        )
+                    )
+
+                    setOnClickListener {
+                        screenManager.push(SelectChargingRangeScreen(carContext))
                     }
                 }.build())
                 addItem(Row.Builder().apply {
@@ -224,5 +244,121 @@ class SelectCurrencyScreen(ctx: CarContext) : MultiSelectSearchScreen<Pair<Strin
         val names = carContext.resources.getStringArray(R.array.pref_chargeprice_currency_names)
         val values = carContext.resources.getStringArray(R.array.pref_chargeprice_currency_values)
         return names.zip(values)
+    }
+}
+
+class SelectChargingRangeScreen(ctx: CarContext) : Screen(ctx) {
+    val prefs = PreferenceDataSource(carContext)
+    private val maxItems = if (ctx.carAppApiLevel >= 2) {
+        ctx.constraintManager.getContentLimit(ConstraintManager.CONTENT_LIMIT_TYPE_GRID)
+    } else 6
+
+    override fun onGetTemplate(): Template {
+        return GridTemplate.Builder().apply {
+            setTitle(carContext.getString(R.string.settings_android_auto_chargeprice_range))
+            setHeaderAction(Action.BACK)
+            setSingleList(
+                ItemList.Builder().apply {
+                    addItem(GridItem.Builder().apply {
+                        setTitle(carContext.getString(R.string.chargeprice_battery_range_from))
+                        setText(
+                            carContext.getString(
+                                R.string.percent_format,
+                                prefs.chargepriceBatteryRangeAndroidAuto[0]
+                            )
+                        )
+                        setImage(
+                            CarIcon.Builder(
+                                IconCompat.createWithResource(
+                                    carContext,
+                                    R.drawable.ic_add
+                                )
+                            ).build()
+                        )
+                        setOnClickListener {
+                            prefs.chargepriceBatteryRangeAndroidAuto =
+                                prefs.chargepriceBatteryRangeAndroidAuto.toMutableList().apply {
+                                    this[0] = min(this[1] - 5, this[0] + 5)
+                                }
+                            invalidate()
+                        }
+                    }.build())
+                    addItem(GridItem.Builder().apply {
+                        setTitle(carContext.getString(R.string.chargeprice_battery_range_to))
+                        setText(
+                            carContext.getString(
+                                R.string.percent_format,
+                                prefs.chargepriceBatteryRangeAndroidAuto[1]
+                            )
+                        )
+                        setImage(
+                            CarIcon.Builder(
+                                IconCompat.createWithResource(
+                                    carContext,
+                                    R.drawable.ic_add
+                                )
+                            ).build()
+                        )
+                        setOnClickListener {
+                            prefs.chargepriceBatteryRangeAndroidAuto =
+                                prefs.chargepriceBatteryRangeAndroidAuto.toMutableList().apply {
+                                    this[1] = min(100f, this[1] + 5)
+                                }
+                            invalidate()
+                        }
+                    }.build())
+
+                    val nSpacers = when {
+                        maxItems % 4 == 0 -> 2
+                        maxItems % 3 == 0 -> 1
+                        else -> 0
+                    }
+
+                    for (i in 0..nSpacers) {
+                        addItem(GridItem.Builder().apply {
+                            setTitle(" ")
+                            setImage(emptyCarIcon)
+                        }.build())
+                    }
+
+                    addItem(GridItem.Builder().apply {
+                        setTitle(" ")
+                        setImage(
+                            CarIcon.Builder(
+                                IconCompat.createWithResource(
+                                    carContext,
+                                    R.drawable.ic_remove
+                                )
+                            ).build()
+                        )
+                        setOnClickListener {
+                            prefs.chargepriceBatteryRangeAndroidAuto =
+                                prefs.chargepriceBatteryRangeAndroidAuto.toMutableList().apply {
+                                    this[0] = max(0f, this[0] - 5)
+                                }
+                            invalidate()
+                        }
+                    }.build())
+                    addItem(GridItem.Builder().apply {
+                        setTitle(" ")
+                        setImage(
+                            CarIcon.Builder(
+                                IconCompat.createWithResource(
+                                    carContext,
+                                    R.drawable.ic_remove
+                                )
+                            ).build()
+                        )
+                        setOnClickListener {
+                            prefs.chargepriceBatteryRangeAndroidAuto =
+                                prefs.chargepriceBatteryRangeAndroidAuto.toMutableList().apply {
+                                    this[1] = max(this[0] + 5, this[1] - 5)
+                                }
+                            invalidate()
+                        }
+                    }.build())
+                }.build()
+            )
+        }.build()
     }
 }

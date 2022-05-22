@@ -1,6 +1,5 @@
 package net.vonforst.evmap.auto
 
-import android.graphics.Bitmap
 import androidx.car.app.CarContext
 import androidx.car.app.Screen
 import androidx.car.app.model.*
@@ -13,7 +12,6 @@ import net.vonforst.evmap.model.FILTERS_FAVORITES
 import net.vonforst.evmap.storage.AppDatabase
 import net.vonforst.evmap.storage.FilterProfile
 import net.vonforst.evmap.storage.PreferenceDataSource
-import kotlin.math.roundToInt
 
 class FilterScreen(ctx: CarContext) : Screen(ctx) {
     private val prefs = PreferenceDataSource(ctx)
@@ -24,16 +22,6 @@ class FilterScreen(ctx: CarContext) : Screen(ctx) {
     private val maxRows = 6
     private val checkIcon =
         CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_check)).build()
-    private val emptyIcon: CarIcon
-
-    init {
-        val size = (ctx.resources.displayMetrics.density * 24).roundToInt()
-        emptyIcon = Bitmap.createBitmap(
-            size,
-            size,
-            Bitmap.Config.ARGB_8888
-        ).asCarIcon()
-    }
 
     init {
         filterProfiles.observe(this) {
@@ -64,7 +52,7 @@ class FilterScreen(ctx: CarContext) : Screen(ctx) {
                 if (FILTERS_DISABLED == filterStatus) {
                     setImage(checkIcon)
                 } else {
-                    setImage(emptyIcon)
+                    setImage(emptyCarIcon)
                 }
                 setOnClickListener {
                     prefs.filterStatus = FILTERS_DISABLED
@@ -79,7 +67,7 @@ class FilterScreen(ctx: CarContext) : Screen(ctx) {
                     if (it.id == filterStatus) {
                         setImage(checkIcon)
                     } else {
-                        setImage(emptyIcon)
+                        setImage(emptyCarIcon)
                     }
                     setOnClickListener {
                         prefs.filterStatus = it.id

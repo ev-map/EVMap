@@ -16,6 +16,7 @@ import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.*
 import com.car2go.maps.model.LatLng
 import kotlinx.coroutines.*
+import net.vonforst.evmap.BuildConfig
 import net.vonforst.evmap.R
 import net.vonforst.evmap.api.availability.ChargeLocationStatus
 import net.vonforst.evmap.api.availability.getAvailability
@@ -45,8 +46,13 @@ import kotlin.math.roundToInt
  */
 @androidx.car.app.annotations.ExperimentalCarApi
 class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boolean = false) :
-    Screen(ctx), LocationAwareScreen, OnContentRefreshListener {
+    Screen(ctx), LocationAwareScreen, OnContentRefreshListener,
+    ItemList.OnItemVisibilityChangedListener {
     private var updateCoroutine: Job? = null
+    private var availabilityUpdateCoroutine: Job? = null
+
+    private var visibleStart: Int? = null
+    private var visibleEnd: Int? = null
 
     private var location: Location? = null
     private var lastDistanceUpdateTime: Instant? = null
@@ -59,7 +65,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
     private val searchRadius = 5 // kilometers
     private val distanceUpdateThreshold = Duration.ofSeconds(15)
     private val availabilityUpdateThreshold = Duration.ofMinutes(1)
-    private var availabilities: MutableMap<Long, Pair<ZonedDateTime, ChargeLocationStatus>> =
+    private var availabilities: MutableMap<Long, Pair<ZonedDateTime, ChargeLocationStatus?>> =
         HashMap()
     private val maxRows = if (ctx.carAppApiLevel >= 2) {
         ctx.constraintManager.getContentLimit(ConstraintManager.CONTENT_LIMIT_TYPE_PLACE_LIST)
@@ -77,6 +83,17 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
 
     private val hardwareMan = ctx.getCarService(CarContext.HARDWARE_SERVICE) as CarHardwareManager
     private var energyLevel: EnergyLevel? = null
+    private val permissions = if (BuildConfig.FLAVOR_automotive == "automotive") {
+        listOf(
+            "android.car.permission.CAR_ENERGY",
+            "android.car.permission.CAR_ENERGY_PORTS",
+            "android.car.permission.READ_CAR_DISPLAY_UNITS",
+        )
+    } else {
+        listOf(
+            "com.google.android.gms.permission.CAR_FUEL"
+        )
+    }
 
     init {
         filtersWithValue.observe(this) {
@@ -115,6 +132,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
                         }
                     )
                 )
+                builder.setOnItemsVisibilityChangedListener(this@MapScreen)
                 setItemList(builder.build())
             } ?: setLoading(true)
             setCurrentLocationEnabled(true)
@@ -150,7 +168,6 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
                         .build())
                     .build())
             }
-            build()
             setOnContentRefreshListener(this@MapScreen)
         }.build()
     }
@@ -232,7 +249,13 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
             )
 
             setOnClickListener {
-                screenManager.push(ChargerDetailScreen(carContext, charger))
+                screenManager.pushForResult(ChargerDetailScreen(carContext, charger)) {
+                    if (favorites) {
+                        // favorites list may have been updated
+                        chargers = null
+                        loadChargers()
+                    }
+                }
             }
         }.build()
     }
@@ -300,28 +323,6 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
                     }
                 }
 
-                // remove outdated availabilities
-                availabilities = availabilities.filter {
-                    Duration.between(
-                        it.value.first,
-                        ZonedDateTime.now()
-                    ) > availabilityUpdateThreshold
-                }.toMutableMap()
-
-                // update availabilities
-                chargers?.take(maxRows)?.map {
-                    lifecycleScope.async {
-                        // update only if not yet stored
-                        if (!availabilities.containsKey(it.id)) {
-                            val date = ZonedDateTime.now()
-                            val availability = getAvailability(it).data
-                            if (availability != null) {
-                                availabilities[it.id] = date to availability
-                            }
-                        }
-                    }
-                }?.awaitAll()
-
                 updateCoroutine = null
                 lastDistanceUpdateTime = Instant.now()
                 invalidate()
@@ -341,11 +342,12 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     private fun setupListeners() {
-        if (ContextCompat.checkSelfPermission(
-                carContext,
-                "com.google.android.gms.permission.CAR_FUEL"
-            ) != PackageManager.PERMISSION_GRANTED
-        )
+        if (!permissions.all {
+                ContextCompat.checkSelfPermission(
+                    carContext,
+                    it
+                ) == PackageManager.PERMISSION_GRANTED
+            })
             return
 
         println("Setting up energy level listener")
@@ -362,5 +364,42 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
 
     override fun onContentRefreshRequested() {
         loadChargers()
+    }
+
+    override fun onItemVisibilityChanged(startIndex: Int, endIndex: Int) {
+        // when the list is scrolled, load corresponding availabilities
+        if (startIndex == visibleStart && endIndex == visibleEnd) return
+        if (availabilityUpdateCoroutine != null) return
+
+        visibleEnd = endIndex
+        visibleStart = startIndex
+
+        // remove outdated availabilities
+        availabilities = availabilities.filter {
+            Duration.between(
+                it.value.first,
+                ZonedDateTime.now()
+            ) <= availabilityUpdateThreshold
+        }.toMutableMap()
+
+        // update availabilities
+        availabilityUpdateCoroutine = lifecycleScope.launch {
+            delay(300L)
+            val tasks = chargers?.subList(startIndex, endIndex)?.mapNotNull {
+                // update only if not yet stored
+                if (!availabilities.containsKey(it.id)) {
+                    lifecycleScope.async {
+                        val availability = getAvailability(it).data
+                        val date = ZonedDateTime.now()
+                        availabilities[it.id] = date to availability
+                    }
+                } else null
+            }
+            if (!tasks.isNullOrEmpty()) {
+                tasks.awaitAll()
+                invalidate()
+            }
+            availabilityUpdateCoroutine = null
+        }
     }
 }

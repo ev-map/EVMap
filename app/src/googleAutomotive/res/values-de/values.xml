@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="grant_on_phone">Zulassen</string>
+    <string name="auto_location_permission_needed">Um EVMap auf deinem Fahrzeug zu nutzen, braucht die App Zugriff auf deinen Standort.</string>
+</resources>

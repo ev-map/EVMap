@@ -54,8 +54,8 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: app/build/outputs/apk/google/release/app-google-release.apk
-          asset_name: app-google-release.apk
+          asset_path: app/build/outputs/apk/googleNormal/release/app-google-normal-release.apk
+          asset_name: app-google-normal-release.apk
           asset_content_type: application/vnd.android.package-archive
       - name: upload Foss artifact
         uses: actions/upload-release-asset@v1
@@ -63,6 +63,15 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: app/build/outputs/apk/foss/release/app-foss-release.apk
-          asset_name: app-foss-release.apk
+          asset_path: app/build/outputs/apk/fossNormal/release/app-foss-normal-release.apk
+          asset_name: app-foss-normal-release.apk
+          asset_content_type: application/vnd.android.package-archive
+      - name: upload Google Automotive artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: app/build/outputs/apk/googleAutomotive/release/app-google-automotive-release.apk
+          asset_name: app-google-automotive-release.apk
           asset_content_type: application/vnd.android.package-archive

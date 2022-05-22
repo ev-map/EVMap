@@ -190,6 +190,8 @@
     <string name="pref_chargeprice_show_provider_customer_tariffs_summary">Einige Anbieter bieten für ihre Kunden (z.B. Haushaltsstrom, Gas) günstigere Tarife an</string>
     <string name="chargeprice_select_car_first">Bitte wähle zuerst dein Auto in den Einstellungen aus.</string>
     <string name="chargeprice_battery_range">Laden von %1$.0f%% bis %2$.0f%%</string>
+    <string name="chargeprice_battery_range_from">Laden von</string>
+    <string name="chargeprice_battery_range_to">bis</string>
     <string name="chargeprice_duration">(ca. %s)</string>
     <string name="chargeprice_vehicle">Fahrzeug</string>
     <string name="edit_on_goingelectric_info">Falls hier nur eine leere Seite erscheint, logge dich bitte zuerst bei GoingElectric.de ein.</string>

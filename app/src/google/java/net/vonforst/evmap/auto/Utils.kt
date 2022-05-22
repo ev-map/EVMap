@@ -35,6 +35,12 @@ val CarContext.constraintManager
 
 fun Bitmap.asCarIcon(): CarIcon = CarIcon.Builder(IconCompat.createWithBitmap(this)).build()
 
+val emptyCarIcon = Bitmap.createBitmap(
+    1,
+    1,
+    Bitmap.Config.ARGB_8888
+).asCarIcon()
+
 private const val kmPerMile = 1.609344
 private const val ftPerMile = 5280
 private const val ydPerMile = 1760

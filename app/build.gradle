@@ -48,7 +48,7 @@ android {
         }
     }
 
-    flavorDimensions "dependencies"
+    flavorDimensions "dependencies", "automotive"
     productFlavors {
         foss {
             dimension "dependencies"
@@ -56,6 +56,21 @@ android {
         google {
             dimension "dependencies"
             versionNameSuffix "-google"
+        }
+        normal {
+            dimension "automotive"
+        }
+        automotive {
+            dimension "automotive"
+            versionNameSuffix "-automotive"
+            minSdkVersion 29
+        }
+    }
+    variantFilter { variant ->
+        def names = variant.flavors*.name
+        // Android Automotive OS app is always based on Google variant
+        if (names.contains("automotive") && !names.contains("google")) {
+            setIgnore(true)
         }
     }
 
@@ -113,6 +128,11 @@ android {
 
 }
 
+configurations {
+    googleNormalImplementation {}
+    googleAutomotiveImplementation {}
+}
+
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.4.1'
@@ -147,8 +167,9 @@ dependencies {
     implementation 'com.github.romandanylyk:PageIndicatorView:b1bad589b5'
 
     // Android Auto
-    googleImplementation 'androidx.car.app:app:1.2.0-beta02'
-    googleImplementation 'androidx.car.app:app-projected:1.2.0-beta02'
+    googleImplementation 'androidx.car.app:app:1.2.0-rc01'
+    googleNormalImplementation 'androidx.car.app:app-projected:1.2.0-rc01'
+    googleAutomotiveImplementation 'androidx.car.app:app-automotive:1.2.0-rc01'
 
     // AnyMaps
     def anyMapsVersion = '751daec281'

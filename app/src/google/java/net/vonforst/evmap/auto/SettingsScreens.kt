@@ -309,8 +309,8 @@ class SelectChargingRangeScreen(ctx: CarContext) : Screen(ctx) {
                     }.build())
 
                     val nSpacers = when {
-                        maxItems % 4 == 0 -> 2
                         maxItems % 3 == 0 -> 1
+                        maxItems % 4 == 0 -> 2
                         else -> 0
                     }
 

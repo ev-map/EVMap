@@ -73,6 +73,9 @@ android {
         dataBinding = true
         viewBinding true
     }
+    lint {
+        disable 'NullSafeMutableLiveData'
+    }
 
     // add API keys from environment variable if not set in apikeys.xml
     applicationVariants.all { variant ->
@@ -108,9 +111,6 @@ android {
         }
     }
 
-    lintOptions {
-        disable 'NullSafeMutableLiveData'
-    }
 }
 
 dependencies {

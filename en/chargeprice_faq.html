@@ -17,12 +17,12 @@
  
 <h3>Where does the pricing data come from?</h3>
 <p>The pricing information is available in EVMap thanks to the service from our friends at <a href="https://chargeprice.app">Chargeprice.app</a>.
-    The data shown within EVMap is identical to those on the Chargeprice website, the EVMap developers have no direct influence
+    The data shown within EVMap are identical to those on the Chargeprice website, the EVMap developers have no direct influence
     on this data and assume no liability for their correctness.</p>
 <p>The calculated total charging cost is an estimate based on the selected vehicle model and the desired state of
     charge, so it should only be considered as an approximate value. The exact cost depends on many factors
     (e.g. reduced charging power with a cold battery, additional consumption through charging loss or heating/cooling
-    during chargin, etc.), which Chargeprice cannot foresee.</p>
+    during charging, etc.), which Chargeprice cannot foresee.</p>
 
 <h3>How can I report incorrect data?</h3>
 <p>If you find an incorrect price, a missing provider, or have questions about the pricing data, you can contact the
@@ -41,6 +41,13 @@
 
 <p>Nevertheless, Chargeprice is committed to maximum transparency — all plans will still be sorted by price, independent
     of whether the provider is a partner or not.</p>
+    
+<h3>Why is the estimated charging power at AC chargers lower than what my car supports?</h3>
+<p>Some European countries with three-phase electricity grids have restrictions on so-called unbalanced loads, i.e. appliances pulling
+    a lot of power from a single phase. If your car's onboard charger does not support two- or three-phase charging, this limitation may apply
+    to your car as well at AC stations. For example, in Germany the limit for unbalanced loads is 20 A, which corresponds to about 4.5 kW.
+    However, not all public charging stations actually enforce this limit. To calculate prices based on the maximum power your car
+    supports, use "Enable unbalanced load" in the app's settings.</p>
 
 </body>
 </html>

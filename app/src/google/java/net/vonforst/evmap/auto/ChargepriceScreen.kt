@@ -22,7 +22,7 @@ import moe.banana.jsonapi2.HasMany
 import moe.banana.jsonapi2.HasOne
 import moe.banana.jsonapi2.JsonBuffer
 import moe.banana.jsonapi2.ResourceIdentifier
-import net.vonforst.evmap.*
+import net.vonforst.evmap.R
 import net.vonforst.evmap.api.chargeprice.*
 import net.vonforst.evmap.model.ChargeLocation
 import net.vonforst.evmap.storage.AppDatabase
@@ -198,7 +198,8 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
                         batteryRange = batteryRange.map { it.toDouble() },
                         providerCustomerTariffs = prefs.chargepriceShowProviderCustomerTariffs,
                         maxMonthlyFees = if (prefs.chargepriceNoBaseFee) 0.0 else null,
-                        currency = prefs.chargepriceCurrency
+                        currency = prefs.chargepriceCurrency,
+                        allowUnbalancedLoad = prefs.chargepriceAllowUnbalancedLoad
                     )
                 }, ChargepriceApi.getChargepriceLanguage())
 

@@ -28,4 +28,10 @@
         android:summary="@string/pref_chargeprice_show_provider_customer_tariffs_summary"
         android:defaultValue="false"
         app:singleLineTitle="false" />
+    <CheckBoxPreference
+        android:key="chargeprice_allow_unbalanced_load"
+        android:title="@string/pref_chargeprice_allow_unbalanced_load"
+        android:summary="@string/pref_chargeprice_allow_unbalanced_load_summary"
+        android:defaultValue="false"
+        app:singleLineTitle="false" />
 </PreferenceScreen>

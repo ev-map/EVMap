@@ -151,6 +151,12 @@ class PreferenceDataSource(val context: Context) {
             sp.edit().putBoolean("chargeprice_show_provider_customer_tariffs", value).apply()
         }
 
+    var chargepriceAllowUnbalancedLoad: Boolean
+        get() = sp.getBoolean("chargeprice_allow_unbalanced_load", false)
+        set(value) {
+            sp.edit().putBoolean("chargeprice_allow_unbalanced_load", value).apply()
+        }
+
     var chargepriceCurrency: String
         get() = sp.getString("chargeprice_currency", null) ?: "EUR"
         set(value) {

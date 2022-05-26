@@ -97,6 +97,9 @@ class ChooseDataSourceScreen(ctx: CarContext) : Screen(ctx) {
 
 class ChargepriceSettingsScreen(ctx: CarContext) : Screen(ctx) {
     val prefs = PreferenceDataSource(carContext)
+    private val maxRows = if (ctx.carAppApiLevel >= 2) {
+        ctx.constraintManager.getContentLimit(ConstraintManager.CONTENT_LIMIT_TYPE_LIST)
+    } else 6
 
     override fun onGetTemplate(): Template {
         return ListTemplate.Builder().apply {
@@ -162,6 +165,15 @@ class ChargepriceSettingsScreen(ctx: CarContext) : Screen(ctx) {
                         prefs.chargepriceShowProviderCustomerTariffs = it
                     }.setChecked(prefs.chargepriceShowProviderCustomerTariffs).build())
                 }.build())
+                if (maxRows > 6) {
+                    addItem(Row.Builder().apply {
+                        setTitle(carContext.getString(R.string.pref_chargeprice_allow_unbalanced_load))
+                        addText(carContext.getString(R.string.pref_chargeprice_allow_unbalanced_load_summary))
+                        setToggle(Toggle.Builder {
+                            prefs.chargepriceAllowUnbalancedLoad = it
+                        }.setChecked(prefs.chargepriceAllowUnbalancedLoad).build())
+                    }.build())
+                }
             }.build())
         }.build()
     }

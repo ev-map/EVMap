@@ -15,7 +15,6 @@ import net.vonforst.evmap.model.Chargepoint
 import net.vonforst.evmap.storage.PreferenceDataSource
 import retrofit2.HttpException
 import java.io.IOException
-import java.util.*
 
 class ChargepriceViewModel(application: Application, chargepriceApiKey: String) :
     AndroidViewModel(application) {
@@ -245,7 +244,8 @@ class ChargepriceViewModel(application: Application, chargepriceApiKey: String) 
                         batteryRange = batteryRange.value!!.map { it.toDouble() },
                         providerCustomerTariffs = prefs.chargepriceShowProviderCustomerTariffs,
                         maxMonthlyFees = if (prefs.chargepriceNoBaseFee) 0.0 else null,
-                        currency = prefs.chargepriceCurrency
+                        currency = prefs.chargepriceCurrency,
+                        allowUnbalancedLoad = prefs.chargepriceAllowUnbalancedLoad
                     )
                 }, ChargepriceApi.getChargepriceLanguage())
                 val meta =

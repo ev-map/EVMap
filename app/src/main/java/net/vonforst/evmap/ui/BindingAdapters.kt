@@ -64,7 +64,14 @@ fun invisibleUnless(view: View, visible: Boolean) {
 
 @BindingAdapter("invisibleUnlessAnimated")
 fun invisibleUnlessAnimated(view: View, oldValue: Boolean, newValue: Boolean) {
-    if (oldValue == newValue) return
+    if (oldValue == newValue) {
+        if (!newValue && view.visibility == View.VISIBLE && view.alpha == 1f) {
+            // view is initially invisible
+            view.visibility = View.GONE
+        } else {
+            return
+        }
+    }
 
     view.animate().cancel()
     if (newValue) {

@@ -102,20 +102,17 @@
                     app:layout_constraintTop_toBottomOf="@+id/connectors_list"
                     tools:text="Charge from 20% to 80%" />
 
+
                 <TextView
                     android:id="@+id/textView4"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginTop="8dp"
-                    android:text="@{@string/chargeprice_duration(BindingAdaptersKt.time((int) Math.round(vm.chargepriceMetaForChargepoint.data.duration)))}"
-                    android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                    android:textColor="?colorPrimary"
+                    android:text="@{@string/chargeprice_stats(vm.chargepriceMetaForChargepoint.data.energy, BindingAdaptersKt.time((int) Math.round(vm.chargepriceMetaForChargepoint.data.duration)), vm.chargepriceMetaForChargepoint.data.power)}"
+                    android:textAppearance="@style/TextAppearance.Material3.BodySmall"
                     app:invisibleUnlessAnimated="@{!vm.batteryRangeSliderDragging &amp;&amp; vm.chargepriceMetaForChargepoint.status == Status.SUCCESS}"
-                    app:layout_constraintStart_toEndOf="@+id/textView2"
-                    app:layout_constraintTop_toBottomOf="@+id/connectors_list"
-                    tools:text="(25 min)" />
-
+                    app:layout_constraintStart_toStartOf="@+id/textView2"
+                    app:layout_constraintTop_toBottomOf="@+id/textView2"
+                    tools:text="(18 kWh, approx. 23 min, ⌀ 50 kW)" />
 
                 <TextView
                     android:id="@+id/tvVehicleHeader"
@@ -155,8 +152,9 @@
                     android:valueFrom="0.0"
                     android:valueTo="100.0"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView2"
+                    app:layout_constraintTop_toBottomOf="@+id/textView4"
                     app:values="@={vm.batteryRange}" />
 
                 <androidx.recyclerview.widget.RecyclerView

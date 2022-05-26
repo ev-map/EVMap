@@ -157,7 +157,8 @@ private val okhttp = OkHttpClient.Builder()
     .cookieJar(JavaNetCookieJar(cookieManager))
     .build()
 val availabilityDetectors = listOf(
-    NewMotionAvailabilityDetector(okhttp)
+    NewMotionAvailabilityDetector(okhttp),
+    EnBwAvailabilityDetector(okhttp)
     /*ChargecloudAvailabilityDetector(
         okhttp,
         "606a0da0dfdd338ee4134605653d4fd8"

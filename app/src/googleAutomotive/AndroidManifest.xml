@@ -19,6 +19,7 @@
 
     <uses-feature
         android:name="android.hardware.wifi"
+        tools:replace="required"
         android:required="false" />
     <uses-feature
         android:name="android.hardware.screen.portrait"

@@ -173,4 +173,9 @@ class NewMotionAvailabilityDetector(client: OkHttpClient, baseUrl: String? = nul
         )
     }
 
+    override fun isCountrySupported(country: String, dataSource: String): Boolean {
+        // NewMotion is our fallback
+        return true
+    }
+
 }

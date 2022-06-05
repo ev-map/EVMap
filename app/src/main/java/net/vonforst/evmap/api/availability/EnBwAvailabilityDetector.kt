@@ -194,4 +194,32 @@ class EnBwAvailabilityDetector(client: OkHttpClient, baseUrl: String? = null) :
         )
     }
 
+    override fun isCountrySupported(country: String, dataSource: String): Boolean =
+        when (dataSource) {
+            // list of countries as of 2021/06/30, according to
+            // https://www.electrive.net/2021/06/30/enbw-expandiert-mit-ladenetz-in-drei-weitere-laender/
+            "goingelectric" -> country in listOf(
+                "Deutschland",
+                "Österreich",
+                "Schweiz",
+                "Frankreich",
+                "Belgien",
+                "Niederlande",
+                "Luxemburg",
+                "Liechtenstein",
+                "Italien",
+            )
+            "openchargemap" -> country in listOf(
+                "DE",
+                "AT",
+                "CH",
+                "FR",
+                "BE",
+                "NE",
+                "LU",
+                "LI",
+                "IT"
+            )
+            else -> false
+        }
 }

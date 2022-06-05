@@ -80,6 +80,10 @@ class ChargecloudAvailabilityDetector(
         }
     }
 
+    override fun isCountrySupported(country: String, dataSource: String): Boolean {
+        TODO("Not yet implemented")
+    }
+
     private fun getType(string: String): String {
         return when (string) {
             "IEC_62196_T2" -> Chargepoint.TYPE_2_UNKNOWN

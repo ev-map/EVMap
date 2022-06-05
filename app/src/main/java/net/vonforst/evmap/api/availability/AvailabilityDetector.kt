@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit
 
 interface AvailabilityDetector {
     suspend fun getAvailability(location: ChargeLocation): ChargeLocationStatus
+    fun isCountrySupported(country: String, dataSource: String): Boolean
 }
 
 abstract class BaseAvailabilityDetector(private val client: OkHttpClient) : AvailabilityDetector {
@@ -157,8 +158,8 @@ private val okhttp = OkHttpClient.Builder()
     .cookieJar(JavaNetCookieJar(cookieManager))
     .build()
 val availabilityDetectors = listOf(
-    NewMotionAvailabilityDetector(okhttp),
-    EnBwAvailabilityDetector(okhttp)
+    EnBwAvailabilityDetector(okhttp),
+    NewMotionAvailabilityDetector(okhttp)
     /*ChargecloudAvailabilityDetector(
         okhttp,
         "606a0da0dfdd338ee4134605653d4fd8"
@@ -171,8 +172,12 @@ val availabilityDetectors = listOf(
 
 suspend fun getAvailability(charger: ChargeLocation): Resource<ChargeLocationStatus> {
     var value: Resource<ChargeLocationStatus>? = null
+    val country = charger.chargepriceData?.country
+        ?: charger.address?.country
+        ?: return Resource.error(null, null)
     withContext(Dispatchers.IO) {
         for (ad in availabilityDetectors) {
+            if (!ad.isCountrySupported(country, charger.dataSource)) continue
             try {
                 value = Resource.success(ad.getAvailability(charger))
                 break

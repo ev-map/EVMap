@@ -1,0 +1,11 @@
+Verbesserungen:
+- Unterstützung für Fahrzeuge mit Android Automotive OS (z.B. Volvo XC40, Polestar 2, Renault Mégane)
+- Android Auto: schnellere Ladezeiten durch dynamisches Laden des Echtzeitstatus
+- Android Auto: zusätzlicher Bildschirm für Einstellungen
+- Android Auto: Favoriten speichern
+- Zusätzliche Datenquelle für Livedaten
+- Anpassungen im Hintergrund in Vorbereitung auf zukünftige neue Funktionen
+
+Fehler behoben:
+- Abstürze unter Android Auto behoben
+- Wechsel der Datenquelle wurde erst nach Neustart der App übernommen

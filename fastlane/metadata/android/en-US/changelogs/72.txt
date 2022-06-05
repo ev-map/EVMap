@@ -1,0 +1,11 @@
+Improvements:
+- Support for Android Automotive OS vehicles (e.g. Volvo XC40, Polestar 2, Renault Mégane)
+- Android Auto: faster loading times by loading real-time status dynamically
+- Android Auto: new settings screen
+- Android Auto: save favorites
+- Additional data source for real-time data
+- Backend changes in preparation for future new features
+
+Bugfixes:
+- Fixed crashes in Android Auto
+- Changing data source was only applied after app restart

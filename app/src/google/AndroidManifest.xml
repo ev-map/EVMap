@@ -39,7 +39,7 @@
             <intent-filter>
                 <action
                     android:name="androidx.car.app.CarAppService"
-                    android:category="androidx.car.app.category.CHARGING" />
+                    android:category="androidx.car.app.category.POI" />
             </intent-filter>
         </service>
 

@@ -3,6 +3,7 @@ package net.vonforst.evmap.api.goingelectric
 import kotlinx.coroutines.runBlocking
 import net.vonforst.evmap.notFoundResponse
 import net.vonforst.evmap.okResponse
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
@@ -33,10 +34,13 @@ class GoingElectricApiTest {
                         if (id != null) {
                             return okResponse("/chargers/$id.json")
                         } else {
+                            val body = request.body.readUtf8()
+                            val bodyQuery = "http://host?$body".toHttpUrl()
+
                             val freeparking =
-                                request.requestUrl!!.queryParameter("freeparking")!!.toBoolean()
+                                bodyQuery.queryParameter("freeparking")!!.toBoolean()
                             val freecharging =
-                                request.requestUrl!!.queryParameter("freecharging")!!.toBoolean()
+                                bodyQuery.queryParameter("freecharging")!!.toBoolean()
                             return if (freeparking && freecharging) {
                                 okResponse("/chargers/list-empty.json")
                             } else if (freecharging) {

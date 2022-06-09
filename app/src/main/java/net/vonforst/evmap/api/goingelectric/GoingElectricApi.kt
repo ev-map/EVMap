@@ -21,50 +21,51 @@ import okhttp3.OkHttpClient
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
-import retrofit2.http.GET
-import retrofit2.http.Query
+import retrofit2.http.*
 import java.io.IOException
 
 interface GoingElectricApi {
-    @GET("chargepoints/")
+    @FormUrlEncoded
+    @POST("chargepoints/")
     suspend fun getChargepoints(
-        @Query("sw_lat") sw_lat: Double, @Query("sw_lng") sw_lng: Double,
-        @Query("ne_lat") ne_lat: Double, @Query("ne_lng") ne_lng: Double,
-        @Query("zoom") zoom: Float,
-        @Query("clustering") clustering: Boolean = false,
-        @Query("cluster_distance") clusterDistance: Int? = null,
-        @Query("freecharging") freecharging: Boolean = false,
-        @Query("freeparking") freeparking: Boolean = false,
-        @Query("min_power") minPower: Int = 0,
-        @Query("plugs") plugs: String? = null,
-        @Query("chargecards") chargecards: String? = null,
-        @Query("networks") networks: String? = null,
-        @Query("categories") categories: String? = null,
-        @Query("startkey") startkey: Int? = null,
-        @Query("open_twentyfourseven") open247: Boolean = false,
-        @Query("barrierfree") barrierfree: Boolean = false,
-        @Query("exclude_faults") excludeFaults: Boolean = false
+        @Field("sw_lat") sw_lat: Double, @Field("sw_lng") sw_lng: Double,
+        @Field("ne_lat") ne_lat: Double, @Field("ne_lng") ne_lng: Double,
+        @Field("zoom") zoom: Float,
+        @Field("clustering") clustering: Boolean = false,
+        @Field("cluster_distance") clusterDistance: Int? = null,
+        @Field("freecharging") freecharging: Boolean = false,
+        @Field("freeparking") freeparking: Boolean = false,
+        @Field("min_power") minPower: Int = 0,
+        @Field("plugs") plugs: String? = null,
+        @Field("chargecards") chargecards: String? = null,
+        @Field("networks") networks: String? = null,
+        @Field("categories") categories: String? = null,
+        @Field("startkey") startkey: Int? = null,
+        @Field("open_twentyfourseven") open247: Boolean = false,
+        @Field("barrierfree") barrierfree: Boolean = false,
+        @Field("exclude_faults") excludeFaults: Boolean = false
     ): Response<GEChargepointList>
 
-    @GET("chargepoints/")
+    @FormUrlEncoded
+    @POST("chargepoints/")
     suspend fun getChargepointsRadius(
-        @Query("lat") lat: Double, @Query("lng") lng: Double,
-        @Query("radius") radius: Int,
-        @Query("zoom") zoom: Float,
-        @Query("orderby") orderby: String = "distance",
-        @Query("clustering") clustering: Boolean = false,
-        @Query("cluster_distance") clusterDistance: Int? = null,
-        @Query("freecharging") freecharging: Boolean = false,
-        @Query("freeparking") freeparking: Boolean = false,
-        @Query("min_power") minPower: Int = 0,
-        @Query("plugs") plugs: String? = null,
-        @Query("chargecards") chargecards: String? = null,
-        @Query("networks") networks: String? = null,
-        @Query("categories") categories: String? = null,
-        @Query("startkey") startkey: Int? = null,
-        @Query("open_twentyfourseven") open247: Boolean = false,
-        @Query("barrierfree") barrierfree: Boolean = false,
-        @Query("exclude_faults") excludeFaults: Boolean = false
+        @Field("lat") lat: Double, @Field("lng") lng: Double,
+        @Field("radius") radius: Int,
+        @Field("zoom") zoom: Float,
+        @Field("orderby") orderby: String = "distance",
+        @Field("clustering") clustering: Boolean = false,
+        @Field("cluster_distance") clusterDistance: Int? = null,
+        @Field("freecharging") freecharging: Boolean = false,
+        @Field("freeparking") freeparking: Boolean = false,
+        @Field("min_power") minPower: Int = 0,
+        @Field("plugs") plugs: String? = null,
+        @Field("chargecards") chargecards: String? = null,
+        @Field("networks") networks: String? = null,
+        @Field("categories") categories: String? = null,
+        @Field("startkey") startkey: Int? = null,
+        @Field("open_twentyfourseven") open247: Boolean = false,
+        @Field("barrierfree") barrierfree: Boolean = false,
+        @Field("exclude_faults") excludeFaults: Boolean = false
     ): Response<GEChargepointList>
 
     @GET("chargepoints/")

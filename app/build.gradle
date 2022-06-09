@@ -174,11 +174,14 @@ dependencies {
     googleAutomotiveImplementation 'androidx.car.app:app-automotive:1.2.0-rc01'
 
     // AnyMaps
-    def anyMapsVersion = '751daec281'
+    def anyMapsVersion = '3c67d7a1dc'
     implementation "com.github.johan12345.AnyMaps:anymaps-base:$anyMapsVersion"
     googleImplementation "com.github.johan12345.AnyMaps:anymaps-google:$anyMapsVersion"
     googleImplementation 'com.google.android.gms:play-services-maps:18.0.2'
-    implementation "com.github.johan12345.AnyMaps:anymaps-mapbox:$anyMapsVersion"
+    implementation("com.github.johan12345.AnyMaps:anymaps-mapbox:$anyMapsVersion") {
+        exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-android-accounts'
+        exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-android-telemetry'
+    }
 
     // Google Places
     implementation 'com.google.android.libraries.places:places:2.5.0'

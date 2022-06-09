@@ -29,6 +29,12 @@ class PreferenceDataSource(val context: Context) {
             sp.edit().putBoolean("navigate_use_maps", value).apply()
         }
 
+    var mapRotateGesturesEnabled: Boolean
+        get() = sp.getBoolean("map_rotate_gestures_enabled", true)
+        set(value) {
+            sp.edit().putBoolean("map_rotate_gestures_enabled", value).apply()
+        }
+
     var lastGeReferenceDataUpdate: Instant
         get() = Instant.ofEpochMilli(sp.getLong("last_ge_reference_data_update", 0L))
         set(value) {

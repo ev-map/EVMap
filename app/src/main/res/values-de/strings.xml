@@ -255,4 +255,7 @@
     <string name="settings_android_auto">Android Auto</string>
     <string name="pref_chargeprice_allow_unbalanced_load">Schieflast erlauben</string>
     <string name="pref_chargeprice_allow_unbalanced_load_summary"><![CDATA[Erlaubt das Laden mit >4.5 kW an AC-Stationen für Autos mit 1-phasigem Lader]]></string>
+    <string name="pref_map_rotate_gestures_enabled">Kartenrotation erlauben</string>
+    <string name="pref_map_rotate_gestures_on">Karte kann mit Zweifingergeste rotiert werden</string>
+    <string name="pref_map_rotate_gestures_off">Karte bleibt fest nach Norden ausgerichtet</string>
 </resources>

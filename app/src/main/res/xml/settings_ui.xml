@@ -16,6 +16,12 @@
         android:defaultValue="default"
         android:summary="@string/pref_darkmode_summary" />
     <CheckBoxPreference
+        android:key="map_rotate_gestures_enabled"
+        android:title="@string/pref_map_rotate_gestures_enabled"
+        android:summaryOn="@string/pref_map_rotate_gestures_on"
+        android:summaryOff="@string/pref_map_rotate_gestures_off"
+        android:defaultValue="true" />
+    <CheckBoxPreference
         android:key="navigate_use_maps"
         android:title="@string/pref_navigate_use_maps"
         android:summaryOn="@string/pref_navigate_use_maps_on"

@@ -23,7 +23,10 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.view.*
+import androidx.core.view.MenuCompat
+import androidx.core.view.doOnLayout
+import androidx.core.view.doOnNextLayout
+import androidx.core.view.updateLayoutParams
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -92,6 +95,28 @@ import net.vonforst.evmap.utils.checkFineLocationPermission
 import net.vonforst.evmap.utils.distanceBetween
 import net.vonforst.evmap.viewmodel.*
 import java.io.IOException
+import kotlin.collections.List
+import kotlin.collections.Set
+import kotlin.collections.any
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.contains
+import kotlin.collections.emptyList
+import kotlin.collections.filterIsInstance
+import kotlin.collections.find
+import kotlin.collections.forEach
+import kotlin.collections.getOrNull
+import kotlin.collections.isNotEmpty
+import kotlin.collections.iterator
+import kotlin.collections.listOf
+import kotlin.collections.map
+import kotlin.collections.mapNotNull
+import kotlin.collections.set
+import kotlin.collections.sortedBy
+import kotlin.collections.sortedByDescending
+import kotlin.collections.toList
+import kotlin.collections.toSet
+import kotlin.collections.toTypedArray
 
 
 class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallback,
@@ -811,6 +836,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
         animator = MarkerAnimator(chargerIconGenerator)
         map.uiSettings.setTiltGesturesEnabled(false)
+        map.uiSettings.setRotateGesturesEnabled(prefs.mapRotateGesturesEnabled)
         map.setIndoorEnabled(false)
         map.uiSettings.setIndoorLevelPickerEnabled(false)
         map.setOnCameraIdleListener {

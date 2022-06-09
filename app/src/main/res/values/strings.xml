@@ -240,4 +240,7 @@
     <string name="settings_android_auto">Android Auto</string>
     <string name="pref_chargeprice_allow_unbalanced_load">Enable unbalanced load</string>
     <string name="pref_chargeprice_allow_unbalanced_load_summary"><![CDATA[Allow charging with >4.5 kW at AC stations for cars with single-phase charger]]></string>
+    <string name="pref_map_rotate_gestures_enabled">Enable map rotation</string>
+    <string name="pref_map_rotate_gestures_on">Map can be rotated with two-finger gesture</string>
+    <string name="pref_map_rotate_gestures_off">Map will be fixed to north-up</string>
 </resources>

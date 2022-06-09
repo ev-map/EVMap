@@ -1,0 +1,6 @@
+Verbesserungen:
+- Neue Einstellung zum Deaktivieren der Kartenrotation
+
+Fehler behoben:
+- Fehler bei Filter nach vielen Verbünden behoben (GoingElectric)
+- geringfügige Verbesserung bei Echtzeitdaten

@@ -11,8 +11,8 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import java.util.*
 
-private const val coordRange = 0.1  // range of latitude and longitude for loading the map
-private const val maxDistance = 15  // max distance between reported positions in meters
+private const val coordRange = 0.005  // range of latitude and longitude for loading the map
+private const val maxDistance = 40  // max distance between reported positions in meters
 
 interface NewMotionApi {
     @GET("markers/{lngMin}/{lngMax}/{latMin}/{latMax}")

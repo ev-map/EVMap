@@ -388,7 +388,12 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
         chargerLoadingTask?.cancel()
         chargerLoadingTask = viewModelScope.launch {
             try {
-                chargerDetails.value = api.value!!.getChargepointDetail(referenceData, charger.id)
+                val chargerDetail = api.value!!.getChargepointDetail(referenceData, charger.id)
+                chargerDetails.value = chargerDetail
+                if (favorites.value?.any { it.charger.id == chargerDetail.data?.id } == true) {
+                    // update data of stored favorite
+                    db.chargeLocationsDao().insert(charger)
+                }
             } catch (e: IOException) {
                 chargerDetails.value = Resource.error(e.message, null)
                 e.printStackTrace()

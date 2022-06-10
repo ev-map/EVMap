@@ -227,26 +227,63 @@ data class OpeningHours(
         if (twentyfourSeven) {
             return HtmlCompat.fromHtml(ctx.getString(R.string.open_247), 0)
         } else if (days != null) {
-            val hours = days.getHoursForDate(LocalDate.now())
-                ?: return HtmlCompat.fromHtml(ctx.getString(R.string.closed), 0)
+            val today = LocalDate.now()
+            val hours = days.getHoursForDate(today)
+            val nextDayHours = days.getHoursForDate(today.plusDays(1))
+            val previousDayHours = days.getHoursForDate(today.minusDays(1))
 
             val now = LocalTime.now()
-            if (hours.start.isBefore(now) && hours.end.isAfter(now)) {
+            val fmt = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
+
+            if (previousDayHours != null && previousDayHours.end.isBefore(previousDayHours.start) && previousDayHours.end.isAfter(
+                    now
+                )
+            ) {
+                // previous day has opening hours that go past midnight
                 return HtmlCompat.fromHtml(
                     ctx.getString(
                         R.string.open_closesat,
-                        hours.end.toString()
+                        previousDayHours.end.format(fmt)
                     ), 0
                 )
-            } else if (hours.end.isBefore(now)) {
-                return HtmlCompat.fromHtml(ctx.getString(R.string.closed), 0)
-            } else {
+            } else if (hours != null && hours.start.isBefore(hours.end)
+                && hours.start.isBefore(now) && hours.end.isAfter(now)
+            ) {
+                // current day has opening hours that do not go past midnight
+                return HtmlCompat.fromHtml(
+                    ctx.getString(
+                        R.string.open_closesat,
+                        hours.end.format(fmt)
+                    ), 0
+                )
+            } else if (hours != null && hours.end.isBefore(hours.start)
+                && hours.start.isBefore(now)
+            ) {
+                // current day has opening hours that go past midnight
+                return HtmlCompat.fromHtml(
+                    ctx.getString(
+                        R.string.open_closesat,
+                        hours.end.format(fmt)
+                    ), 0
+                )
+            } else if (hours != null && !hours.start.isBefore(now)) {
+                // currently closed, will still open on this day
                 return HtmlCompat.fromHtml(
                     ctx.getString(
                         R.string.closed_opensat,
-                        hours.start.toString()
+                        hours.start.format(fmt)
                     ), 0
                 )
+            } else if (nextDayHours != null) {
+                // currently closed, will open next day
+                return HtmlCompat.fromHtml(
+                    ctx.getString(
+                        R.string.closed_opensat,
+                        nextDayHours.start.format(fmt)
+                    ), 0
+                )
+            } else {
+                return HtmlCompat.fromHtml(ctx.getString(R.string.closed), 0)
             }
         } else {
             return ""

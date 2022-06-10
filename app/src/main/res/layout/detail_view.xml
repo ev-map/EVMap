@@ -82,6 +82,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="30dp"
                 android:ellipsize="end"
+                android:hyphenationFrequency="normal"
                 android:maxLines="@{expanded ? 3 : 1}"
                 android:text="@{charger.data.name}"
                 android:textAppearance="@style/TextAppearance.Material3.BodyLarge"

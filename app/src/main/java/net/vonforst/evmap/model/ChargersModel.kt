@@ -199,6 +199,18 @@ data class Cost(
             return ""
         }
     }
+
+    fun getDetailText(): CharSequence? {
+        return if (freecharging == null && freeparking == null) {
+            if (descriptionShort != null && descriptionLong != descriptionShort) {
+                descriptionLong
+            } else {
+                null
+            }
+        } else {
+            descriptionLong ?: descriptionShort
+        }
+    }
 }
 
 @Parcelize

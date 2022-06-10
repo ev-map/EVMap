@@ -266,7 +266,7 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
                 setTitle(operatorText)
                 charger.cost?.let {
                     addText(it.getStatusText(carContext, emoji = true))
-                    (it.descriptionShort ?: it.descriptionLong)?.let { addText(it) }
+                    it.getDetailText()?.let { addText(it) }
                 }
             }.build())
             // row 3: fault report (if exists)

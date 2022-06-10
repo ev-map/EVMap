@@ -91,7 +91,7 @@ fun buildDetails(
             R.drawable.ic_cost,
             R.string.cost,
             loc.cost.getStatusText(ctx),
-            loc.cost.descriptionLong ?: loc.cost.descriptionShort
+            loc.cost.getDetailText()
         )
         else null,
         if (loc.chargecards != null && loc.chargecards.isNotEmpty() || loc.barrierFree == true)

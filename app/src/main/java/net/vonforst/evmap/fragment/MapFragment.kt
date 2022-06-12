@@ -518,7 +518,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 highlight = true,
                 fault = charger.faultReport != null,
                 multi = charger.isMulti(vm.filteredConnectors.value),
-                fav = fav == null
+                fav = fav == null,
+                mini = vm.useMiniMarkers.value == true
             )
         )
     }
@@ -585,6 +586,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 updateMap(chargepoints)
             }
         })
+        vm.useMiniMarkers.observe(viewLifecycleOwner) {
+            vm.chargepoints.value?.data?.let { updateMap(it) }
+        }
         vm.favorites.observe(viewLifecycleOwner, Observer {
             updateFavoriteToggle()
         })
@@ -650,7 +654,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                     highlight = false,
                     fault = c.faultReport != null,
                     multi = c.isMulti(vm.filteredConnectors.value),
-                    fav = c.id in vm.favorites.value?.map { it.charger.id } ?: emptyList()
+                    fav = c.id in vm.favorites.value?.map { it.charger.id } ?: emptyList(),
+                    mini = vm.useMiniMarkers.value == true
                 )
             )
         }
@@ -665,10 +670,11 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 highlight = true,
                 fault = charger.faultReport != null,
                 multi = charger.isMulti(vm.filteredConnectors.value),
-                fav = charger.id in vm.favorites.value?.map { it.charger.id } ?: emptyList()
+                fav = charger.id in vm.favorites.value?.map { it.charger.id } ?: emptyList(),
+                mini = vm.useMiniMarkers.value == true
             )
         )
-        animator.animateMarkerBounce(marker)
+        animator.animateMarkerBounce(marker, vm.useMiniMarkers.value == true)
 
         // un-highlight all other markers
         markers.forEach { (m, c) ->
@@ -679,7 +685,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                         highlight = false,
                         fault = c.faultReport != null,
                         multi = c.isMulti(vm.filteredConnectors.value),
-                        fav = c.id in vm.favorites.value?.map { it.charger.id } ?: emptyList()
+                        fav = c.id in vm.favorites.value?.map { it.charger.id } ?: emptyList(),
+                        mini = vm.useMiniMarkers.value == true
                     )
                 )
             }
@@ -823,15 +830,22 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         map.uiSettings.setRotateGesturesEnabled(prefs.mapRotateGesturesEnabled)
         map.setIndoorEnabled(false)
         map.uiSettings.setIndoorLevelPickerEnabled(false)
+
         map.setOnCameraIdleListener {
             vm.mapPosition.value = MapPosition(
                 map.projection.visibleRegion.latLngBounds, map.cameraPosition.zoom
             )
-            binding.scaleView.update(map.cameraPosition.zoom, map.cameraPosition.target.latitude)
+            vm.reloadChargepoints()
         }
         map.setOnCameraMoveListener {
+            vm.mapPosition.value = MapPosition(
+                map.projection.visibleRegion.latLngBounds, map.cameraPosition.zoom
+            )
+        }
+        vm.mapPosition.observe(viewLifecycleOwner) {
             binding.scaleView.update(map.cameraPosition.zoom, map.cameraPosition.target.latitude)
         }
+
         map.setOnCameraMoveStartedListener { reason ->
             if (reason == AnyMap.OnCameraMoveStartedListener.REASON_GESTURE) {
                 if (vm.myLocationEnabled.value == true) {
@@ -1034,9 +1048,11 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                     highlight = highlight,
                     fault = charger.faultReport != null,
                     multi = charger.isMulti(vm.filteredConnectors.value),
-                    fav = charger.id in vm.favorites.value?.map { it.charger.id } ?: emptyList()
+                    fav = charger.id in vm.favorites.value?.map { it.charger.id } ?: emptyList(),
+                    mini = vm.useMiniMarkers.value == true
                 )
             )
+            marker.setAnchor(0.5f, if (vm.useMiniMarkers.value == true) 0.5f else 1f)
         }
 
         if (chargers.toSet() != markers.values) {
@@ -1054,7 +1070,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                         val multi = charger.isMulti(vm.filteredConnectors.value)
                         val fav =
                             charger.id in vm.favorites.value?.map { it.charger.id } ?: emptyList()
-                        animator.animateMarkerDisappear(marker, tint, highlight, fault, multi, fav)
+                        animator.animateMarkerDisappear(
+                            marker, tint, highlight, fault, multi, fav,
+                            vm.useMiniMarkers.value == true
+                        )
                     } else {
                         animator.deleteMarker(marker)
                     }
@@ -1082,12 +1101,16 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                                     highlight,
                                     fault,
                                     multi,
-                                    fav
+                                    fav,
+                                    vm.useMiniMarkers.value == true
                                 )
                             )
-                            .anchor(0.5f, 1f)
+                            .anchor(0.5f, if (vm.useMiniMarkers.value == true) 0.5f else 1f)
                     )
-                    animator.animateMarkerAppear(marker, tint, highlight, fault, multi, fav)
+                    animator.animateMarkerAppear(
+                        marker, tint, highlight, fault, multi, fav,
+                        vm.useMiniMarkers.value == true
+                    )
                     markers[marker] = charger
                 }
             }

@@ -32,25 +32,32 @@ class FavoritesViewModel(application: Application, geApiKey: String) :
         MediatorLiveData<Map<Long, Resource<ChargeLocationStatus>>>().apply {
             addSource(favorites) { favorites ->
                 if (favorites != null) {
-                    val chargers = favorites.map { it.charger }
-                    viewModelScope.launch {
-                        val data = hashMapOf<Long, Resource<ChargeLocationStatus>>()
-                        chargers.forEach { charger ->
-                            data[charger.id] = Resource.loading(null)
-                        }
-                        availability.value = data
-
-                        chargers.map { charger ->
-                            async {
-                                data[charger.id] = getAvailability(charger)
-                                availability.value = data
-                            }
-                        }.awaitAll()
-                    }
+                    reloadAvailability()
                 } else {
                     value = null
                 }
             }
+        }
+    }
+
+    fun reloadAvailability(callback: (() -> Unit)? = null) {
+        val favorites = favorites.value ?: return
+        val chargers = favorites.map { it.charger }
+
+        viewModelScope.launch {
+            val data = hashMapOf<Long, Resource<ChargeLocationStatus>>()
+            chargers.forEach { charger ->
+                data[charger.id] = Resource.loading(null)
+            }
+            availability.value = data
+
+            chargers.map { charger ->
+                async {
+                    data[charger.id] = getAvailability(charger)
+                    availability.value = data
+                }
+            }.awaitAll()
+            callback?.invoke()
         }
     }
 

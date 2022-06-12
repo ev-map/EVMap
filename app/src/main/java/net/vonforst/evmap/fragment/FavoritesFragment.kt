@@ -110,6 +110,12 @@ class FavoritesFragment : Fragment(), LostApiClient.ConnectionCallbacks {
         createTouchHelper().attachToRecyclerView(binding.favsList)
 
         locationClient!!.connect()
+
+        binding.swipeRefresh.setOnRefreshListener {
+            vm.reloadAvailability() {
+                binding.swipeRefresh.isRefreshing = false
+            }
+        }
     }
 
     override fun onConnected() {

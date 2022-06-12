@@ -115,7 +115,7 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:textColor="@android:color/white"
                 app:backgroundTintAvailability="@{item.available.data}"
-                app:goneUnless="@{item.available.status == Status.SUCCESS}"
+                app:invisibleUnless="@{item.available.status == Status.SUCCESS}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/btnDelete"
                 tools:backgroundTint="@color/available"

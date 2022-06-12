@@ -243,4 +243,5 @@
     <string name="pref_map_rotate_gestures_enabled">Enable map rotation</string>
     <string name="pref_map_rotate_gestures_on">Map can be rotated with two-finger gesture</string>
     <string name="pref_map_rotate_gestures_off">Map will be fixed to north-up</string>
+    <string name="refresh_live_data">refresh real-time status</string>
 </resources>

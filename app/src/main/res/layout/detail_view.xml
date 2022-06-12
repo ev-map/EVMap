@@ -137,7 +137,7 @@
                 android:textColor="@android:color/white"
                 app:backgroundTintAvailability="@{BindingAdaptersKt.flatten(filteredAvailability.data.status.values())}"
                 app:invisibleUnlessAnimated="@{filteredAvailability.data != null &amp;&amp; !expanded}"
-                app:invisibleUnless="@{filteredAvailability.data != null}"
+                app:invisibleUnless="@{filteredAvailability.data != null &amp;&amp; !expanded}"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintTop_toTopOf="@+id/txtName"
                 tools:backgroundTint="@color/available"
@@ -293,10 +293,11 @@
                 android:id="@+id/textView13"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
                 android:gravity="right|end"
                 android:text="@{availability.status == Status.SUCCESS ? @string/realtime_data_source(availability.data.source) : availability.status == Status.LOADING ? @string/realtime_data_loading : @string/realtime_data_unavailable}"
                 android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-                app:layout_constraintEnd_toStartOf="@+id/guideline2"
+                app:layout_constraintEnd_toStartOf="@+id/btnRefreshLiveData"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/connectors"
                 tools:text="Echtzeitdaten nicht verfügbar" />
@@ -375,6 +376,18 @@
                 app:layout_constraintTop_toBottomOf="@+id/sourceButton"
                 app:layout_constraintBottom_toBottomOf="parent"
                 tools:text="The data is provided under the National Oman Open Data LicensE (NOODLE), Version 3.14, and may be used for any purpose whatsoever." />
+
+            <Button
+                android:id="@+id/btnRefreshLiveData"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/Widget.App.Button.OutlinedButton.IconOnly.Small"
+                android:contentDescription="@string/refresh_live_data"
+                android:enabled="@{availability.status != Status.LOADING}"
+                app:icon="@drawable/ic_refresh"
+                app:layout_constraintBottom_toBottomOf="@+id/textView13"
+                app:layout_constraintEnd_toStartOf="@+id/guideline2"
+                app:layout_constraintTop_toBottomOf="@+id/connectors" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

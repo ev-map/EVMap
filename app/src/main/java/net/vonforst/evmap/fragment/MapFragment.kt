@@ -95,28 +95,10 @@ import net.vonforst.evmap.utils.checkFineLocationPermission
 import net.vonforst.evmap.utils.distanceBetween
 import net.vonforst.evmap.viewmodel.*
 import java.io.IOException
-import kotlin.collections.List
-import kotlin.collections.Set
-import kotlin.collections.any
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.contains
-import kotlin.collections.emptyList
-import kotlin.collections.filterIsInstance
-import kotlin.collections.find
-import kotlin.collections.forEach
-import kotlin.collections.getOrNull
-import kotlin.collections.isNotEmpty
-import kotlin.collections.iterator
-import kotlin.collections.listOf
-import kotlin.collections.map
-import kotlin.collections.mapNotNull
 import kotlin.collections.set
-import kotlin.collections.sortedBy
-import kotlin.collections.sortedByDescending
-import kotlin.collections.toList
-import kotlin.collections.toSet
-import kotlin.collections.toTypedArray
 
 
 class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallback,
@@ -422,6 +404,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 }
                 else -> false
             }
+        }
+        binding.detailView.btnRefreshLiveData.setOnClickListener {
+            vm.reloadAvailability()
         }
     }
 

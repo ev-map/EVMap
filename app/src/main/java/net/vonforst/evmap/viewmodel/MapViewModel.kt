@@ -381,6 +381,13 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
         availability.value = getAvailability(charger)
     }
 
+    fun reloadAvailability() {
+        val charger = chargerSparse.value ?: return
+        viewModelScope.launch {
+            loadAvailability(charger)
+        }
+    }
+
     private var chargerLoadingTask: Job? = null
 
     private fun loadChargerDetails(charger: ChargeLocation, referenceData: ReferenceData) {

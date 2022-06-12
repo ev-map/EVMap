@@ -175,6 +175,7 @@ class EnBwAvailabilityDetector(client: OkHttpClient, baseUrl: String? = null) :
             }
             val status = when (statusStr) {
                 "UNAVAILABLE" -> ChargepointStatus.FAULTED
+                "OUT_OF_SERVICE" -> ChargepointStatus.FAULTED
                 "AVAILABLE" -> ChargepointStatus.AVAILABLE
                 "OCCUPIED" -> ChargepointStatus.CHARGING
                 "UNSPECIFIED" -> ChargepointStatus.UNKNOWN

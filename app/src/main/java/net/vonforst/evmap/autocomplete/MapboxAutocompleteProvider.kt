@@ -29,7 +29,7 @@ class MapboxAutocompleteProvider(val context: Context) : AutocompleteProvider {
             location?.let {
                 proximity(Point.fromLngLat(location.longitude, location.latitude))
             }
-            languages(ConfigurationCompat.getLocales(context.resources.configuration)[0].language)
+            languages(ConfigurationCompat.getLocales(context.resources.configuration)[0]?.language)
             accessToken(context.getString(R.string.mapbox_key))
             autocomplete(true)
             this.query(query)

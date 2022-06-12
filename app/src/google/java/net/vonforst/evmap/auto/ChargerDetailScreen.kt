@@ -83,8 +83,10 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
         return PaneTemplate.Builder(
             Pane.Builder().apply {
                 charger?.let { charger ->
-                    if (largeImageSupported && photo != null) {
-                        setImage(CarIcon.Builder(IconCompat.createWithBitmap(photo)).build())
+                    if (largeImageSupported) {
+                        photo?.let {
+                            setImage(CarIcon.Builder(IconCompat.createWithBitmap(it)).build())
+                        }
                     }
                     generateRows(charger).forEach { addRow(it) }
                     addAction(
@@ -205,6 +207,7 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
 
     private fun generateRows(charger: ChargeLocation): List<Row> {
         val rows = mutableListOf<Row>()
+        val photo = photo
 
         // Row 1: address + chargepoints
         rows.add(Row.Builder().apply {

@@ -59,7 +59,7 @@ interface EnBwApi {
     @JsonClass(generateAdapter = true)
     data class EnBwConnector(
         val plugTypeName: String,
-        val maxPowerInKw: Double,
+        val maxPowerInKw: Double?,
     )
 
     @JsonClass(generateAdapter = true)
@@ -162,7 +162,7 @@ class EnBwAvailabilityDetector(client: OkHttpClient, baseUrl: String? = null) :
         val enbwStatus = mutableMapOf<Long, ChargepointStatus>()
         connectorStatus.forEachIndexed { index, (connector, statusStr) ->
             val id = index.toLong()
-            val power = connector.maxPowerInKw
+            val power = connector.maxPowerInKw ?: 0.0
             val type = when (connector.plugTypeName) {
                 "Typ 3A" -> Chargepoint.TYPE_3
                 "Typ 2" -> Chargepoint.TYPE_2_UNKNOWN

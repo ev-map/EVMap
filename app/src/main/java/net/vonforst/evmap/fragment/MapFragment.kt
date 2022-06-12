@@ -805,7 +805,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         this.map = map
         chargerIconGenerator = ChargerIconGenerator(requireContext(), map.bitmapDescriptorFactory)
 
-        if (BuildConfig.FLAVOR == "google" && mapFragment!!.priority[0] == MapFragment.GOOGLE) {
+        if (BuildConfig.FLAVOR.contains("google") && mapFragment!!.priority[0] == MapFragment.GOOGLE) {
             // Google Maps: icons can be generated in background thread
             lifecycleScope.launch {
                 withContext(Dispatchers.IO) {

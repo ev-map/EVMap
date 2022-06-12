@@ -1,0 +1,10 @@
+Verbesserungen:
+- Button um Echtzeitdaten neu zu laden
+
+Fehler behoben:
+- Verfügbarkeit bei defekten Ladestationen wurde als "unbekannt" angezeigt
+- Kostenbeschreibung wurde in manchen Fällen doppelt angezeigt
+- Falsche Darstellung von Öffnungszeiten nach Mitternacht
+- Gespeicherte Details von Favoriten wurden bei Änderungen nicht aktualisiert
+- ggf. falsche Farbe für Echtzeitstatus bei Filter nach Anschlüssen
+- Absturz behoben

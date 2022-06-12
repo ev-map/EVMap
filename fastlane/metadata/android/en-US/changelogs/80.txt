@@ -1,0 +1,10 @@
+Improvements:
+- Added button to reload live availability
+
+Bugfixes:
+- Availability of some broken chargers was shown as "unknown"
+- Cost description was sometimes shown twice
+- Incorrect handling of opening hours after midnight
+- Saved details of favorite chargers were not updated after changes
+- When filtering for specific connectors, realtime status may have had incorrect color
+- Fixed crash

@@ -9,7 +9,7 @@
     <string-array name="pref_search_provider_values" tranlatable="false">
         <item>mapbox</item>
     </string-array>
-    <string name="donations_info" formatted="false">Findest du EVMap nützlich? Unterstütze die Weiterentwicklung der App mit einer Spende an den Entwickler.\n\nGoogle zieht von der Spende 30% Gebühren ab.</string>
+    <string name="donations_info" formatted="false">Findest du EVMap nützlich? Unterstütze die Weiterentwicklung der App mit einer Spende an den Entwickler.</string>
     <string name="donate_paypal">Mit PayPal spenden</string>
     <string name="data_sources_hint">Die Kartendaten für die App stammen von OpenStreetMap (Mapbox).</string>
 </resources>

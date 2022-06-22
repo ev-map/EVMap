@@ -163,7 +163,9 @@ class EVMapSession(val cas: CarAppService) : Session(), DefaultLifecycleObserver
     }
 
 
+    @SuppressLint("MissingPermission")
     private fun removeLocationUpdates() {
+        if (!locationPermissionGranted()) return
         removeCarHardwareLocationUpdates()
         removePhoneLocationUpdates()
     }
@@ -174,6 +176,7 @@ class EVMapSession(val cas: CarAppService) : Session(), DefaultLifecycleObserver
         }
     }
 
+    @RequiresPermission(anyOf = [Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION])
     private fun removePhoneLocationUpdates() {
         locationManager.removeUpdates(this::updateLocation)
     }

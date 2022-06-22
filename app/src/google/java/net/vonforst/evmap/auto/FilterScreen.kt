@@ -20,8 +20,24 @@ class FilterScreen(ctx: CarContext) : Screen(ctx) {
         db.filterProfileDao().getProfiles(prefs.dataSource)
     }
     private val maxRows = 6
-    private val checkIcon =
-        CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_check)).build()
+    private val checkedIcon =
+        CarIcon.Builder(
+            IconCompat.createWithResource(
+                carContext,
+                R.drawable.ic_radio_button_checked
+            )
+        )
+            .setTint(CarColor.PRIMARY)
+            .build()
+    private val uncheckedIcon =
+        CarIcon.Builder(
+            IconCompat.createWithResource(
+                carContext,
+                R.drawable.ic_radio_button_unchecked
+            )
+        )
+            .setTint(CarColor.PRIMARY)
+            .build()
 
     init {
         filterProfiles.observe(this) {
@@ -50,9 +66,9 @@ class FilterScreen(ctx: CarContext) : Screen(ctx) {
             addItem(Row.Builder().apply {
                 setTitle(carContext.getString(R.string.no_filters))
                 if (FILTERS_DISABLED == filterStatus) {
-                    setImage(checkIcon)
+                    setImage(checkedIcon)
                 } else {
-                    setImage(emptyCarIcon)
+                    setImage(uncheckedIcon)
                 }
                 setOnClickListener {
                     prefs.filterStatus = FILTERS_DISABLED
@@ -65,9 +81,9 @@ class FilterScreen(ctx: CarContext) : Screen(ctx) {
                         it.name.ifEmpty { carContext.getString(R.string.unnamed_filter_profile) }
                     setTitle(name)
                     if (it.id == filterStatus) {
-                        setImage(checkIcon)
+                        setImage(checkedIcon)
                     } else {
-                        setImage(emptyCarIcon)
+                        setImage(uncheckedIcon)
                     }
                     setOnClickListener {
                         prefs.filterStatus = it.id

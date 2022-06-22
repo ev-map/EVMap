@@ -73,18 +73,22 @@ abstract class MultiSelectSearchScreen<T>(ctx: CarContext) : Screen(ctx),
         } ?: emptyList()
     }
 
+    private val checkedIcon =
+        CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_checkbox_checked))
+            .setTint(CarColor.PRIMARY)
+            .build()
+    private val uncheckedIcon =
+        CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_checkbox_unchecked))
+            .setTint(CarColor.PRIMARY)
+            .build()
+
     private fun buildItemList(): ItemList {
         return ItemList.Builder().apply {
             currentList.forEach { item ->
                 addItem(
                     Row.Builder()
-                        .setTitle(
-                            if (isSelected(item)) {
-                                "☑  " + getLabel(item)
-                            } else {
-                                "☐  " + getLabel(item)
-                            }
-                        )
+                        .setTitle(getLabel(item))
+                        .setImage(if (isSelected(item)) checkedIcon else uncheckedIcon)
                         .setOnClickListener {
                             toggleSelected(item)
                             if (isMultiSelect) {

@@ -42,11 +42,5 @@
                     android:category="androidx.car.app.category.POI" />
             </intent-filter>
         </service>
-
-        <service
-            android:name=".auto.CarLocationService"
-            android:foregroundServiceType="location"
-            android:enabled="true"
-            android:exported="false" />
     </application>
 </manifest>

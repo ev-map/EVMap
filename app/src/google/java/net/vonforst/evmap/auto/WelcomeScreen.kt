@@ -30,7 +30,7 @@ class WelcomeScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx), L
                         )
                     )
                 ) {
-                    session.bindLocationService()
+                    session.requestLocationUpdates()
                 }
             }
         }

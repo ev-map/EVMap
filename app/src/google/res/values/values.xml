@@ -47,4 +47,6 @@
     <string name="auto_chargeprice_vehicle_ambiguous">Mehrere der in der App ausgewählten Fahrzeuge passen zu diesem Fahrzeug (%1$s %2$s).</string>
     <string name="settings_android_auto_chargeprice_range">Charging range for price comparison</string>
     <string name="data_sources_hint">In the settings you can also switch between Google Maps and OpenStreetMap (Mapbox) for the map data.</string>
+    <string name="selecting_all">selected all items</string>
+    <string name="selecting_none">deselected all items</string>
 </resources>

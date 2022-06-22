@@ -1,11 +1,14 @@
 package net.vonforst.evmap.auto
 
 import androidx.car.app.CarContext
+import androidx.car.app.CarToast
 import androidx.car.app.Screen
 import androidx.car.app.constraints.ConstraintManager
 import androidx.car.app.model.*
+import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
+import net.vonforst.evmap.R
 
 abstract class MultiSelectSearchScreen<T>(ctx: CarContext) : Screen(ctx),
     SearchTemplate.SearchCallback {
@@ -16,6 +19,7 @@ abstract class MultiSelectSearchScreen<T>(ctx: CarContext) : Screen(ctx),
         ctx.constraintManager.getContentLimit(ConstraintManager.CONTENT_LIMIT_TYPE_LIST)
     } else 6
     protected abstract val isMultiSelect: Boolean
+    protected abstract val shouldShowSelectAll: Boolean
 
     override fun onGetTemplate(): Template {
         if (fullList == null) {
@@ -32,6 +36,30 @@ abstract class MultiSelectSearchScreen<T>(ctx: CarContext) : Screen(ctx),
                 setItemList(buildItemList())
             } ?: run {
                 setLoading(true)
+            }
+            if (isMultiSelect) {
+                setActionStrip(ActionStrip.Builder().apply {
+                    addAction(
+                        Action.Builder().setIcon(
+                            CarIcon.Builder(
+                                IconCompat.createWithResource(
+                                    carContext,
+                                    R.drawable.ic_select_all
+                                )
+                            ).build()
+                        ).setOnClickListener(::selectAll).build()
+                    )
+                    addAction(
+                        Action.Builder().setIcon(
+                            CarIcon.Builder(
+                                IconCompat.createWithResource(
+                                    carContext,
+                                    R.drawable.ic_select_none
+                                )
+                            ).build()
+                        ).setOnClickListener(::selectNone).build()
+                    )
+                }.build())
             }
         }.build()
     }
@@ -85,6 +113,16 @@ abstract class MultiSelectSearchScreen<T>(ctx: CarContext) : Screen(ctx),
     }
 
     abstract fun toggleSelected(item: T)
+
+    open fun selectAll() {
+        CarToast.makeText(carContext, R.string.selecting_all, CarToast.LENGTH_SHORT).show()
+        invalidate()
+    }
+
+    open fun selectNone() {
+        CarToast.makeText(carContext, R.string.selecting_none, CarToast.LENGTH_SHORT).show()
+        invalidate()
+    }
 
     abstract fun isSelected(it: T): Boolean
 

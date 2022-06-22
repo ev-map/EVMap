@@ -183,6 +183,7 @@ class SelectVehiclesScreen(ctx: CarContext) : MultiSelectSearchScreen<Chargepric
     private val prefs = PreferenceDataSource(carContext)
     private var api = ChargepriceApi.create(carContext.getString(R.string.chargeprice_key))
     override val isMultiSelect = true
+    override val shouldShowSelectAll = false
 
     override fun isSelected(it: ChargepriceCar): Boolean {
         return prefs.chargepriceMyVehicles.contains(it.id)
@@ -207,6 +208,7 @@ class SelectTariffsScreen(ctx: CarContext) : MultiSelectSearchScreen<Chargeprice
     private val prefs = PreferenceDataSource(carContext)
     private var api = ChargepriceApi.create(carContext.getString(R.string.chargeprice_key))
     override val isMultiSelect = true
+    override val shouldShowSelectAll = true
 
     override fun isSelected(it: ChargepriceTariff): Boolean {
         return prefs.chargepriceMyTariffsAll or (prefs.chargepriceMyTariffs?.contains(it.id)
@@ -230,6 +232,17 @@ class SelectTariffsScreen(ctx: CarContext) : MultiSelectSearchScreen<Chargeprice
         }
     }
 
+    override fun selectAll() {
+        prefs.chargepriceMyTariffsAll = true
+        super.selectAll()
+    }
+
+    override fun selectNone() {
+        prefs.chargepriceMyTariffsAll = false
+        prefs.chargepriceMyTariffs = emptySet()
+        super.selectNone()
+    }
+
     override fun getLabel(it: ChargepriceTariff): String {
         return if (!it.name.lowercase().startsWith(it.provider.lowercase())) {
             "${it.provider} ${it.name}"
@@ -246,6 +259,7 @@ class SelectTariffsScreen(ctx: CarContext) : MultiSelectSearchScreen<Chargeprice
 class SelectCurrencyScreen(ctx: CarContext) : MultiSelectSearchScreen<Pair<String, String>>(ctx) {
     private val prefs = PreferenceDataSource(carContext)
     override val isMultiSelect = false
+    override val shouldShowSelectAll = false
 
     override fun isSelected(it: Pair<String, String>): Boolean =
         prefs.chargepriceCurrency == it.second

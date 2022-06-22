@@ -119,6 +119,19 @@ class ChargepriceSettingsScreen(ctx: CarContext) : Screen(ctx) {
                     setOnClickListener {
                         screenManager.push(SelectTariffsScreen(carContext))
                     }
+                    addText(
+                        if (prefs.chargepriceMyTariffsAll) {
+                            carContext.getString(R.string.chargeprice_all_tariffs_selected)
+                        } else {
+                            val n = prefs.chargepriceMyTariffs?.size ?: 0
+                            carContext.resources
+                                .getQuantityString(
+                                    R.plurals.chargeprice_some_tariffs_selected,
+                                    n,
+                                    n
+                                ) + "\n" + carContext.getString(R.string.pref_my_tariffs_summary)
+                        }
+                    )
                 }.build())
                 addItem(Row.Builder().apply {
                     setTitle(carContext.getString(R.string.settings_android_auto_chargeprice_range))

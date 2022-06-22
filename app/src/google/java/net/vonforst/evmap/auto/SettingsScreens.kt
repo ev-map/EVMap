@@ -221,8 +221,12 @@ class SelectTariffsScreen(ctx: CarContext) : MultiSelectSearchScreen<Chargeprice
         }
         if (isSelected(item)) {
             prefs.chargepriceMyTariffs = tariffs.minus(item.id)
+            prefs.chargepriceMyTariffsAll = false
         } else {
             prefs.chargepriceMyTariffs = tariffs.plus(item.id)
+            if (prefs.chargepriceMyTariffs == fullList!!.map { it.id }.toSet()) {
+                prefs.chargepriceMyTariffsAll = true
+            }
         }
     }
 

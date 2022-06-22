@@ -803,7 +803,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
     override fun onMapReady(map: AnyMap) {
         this.map = map
-        chargerIconGenerator = ChargerIconGenerator(requireContext(), map.bitmapDescriptorFactory)
+        val context = this.context ?: return
+        chargerIconGenerator = ChargerIconGenerator(context, map.bitmapDescriptorFactory)
 
         if (BuildConfig.FLAVOR.contains("google") && mapFragment!!.priority[0] == MapFragment.GOOGLE) {
             // Google Maps: icons can be generated in background thread
@@ -966,7 +967,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 }
             }
         }
-        if (context?.checkAnyLocationPermission() ?: false) {
+        if (context.checkAnyLocationPermission()) {
             enableLocation(!positionSet, false)
             positionSet = true
         }

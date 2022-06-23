@@ -118,8 +118,6 @@ class EnBwAvailabilityDetector(client: OkHttpClient, baseUrl: String? = null) :
             }
         }
 
-        println(markers)
-
         val nearest = markers.minByOrNull { marker ->
             distanceBetween(marker.lat, marker.lon, lat, lng)
         } ?: throw AvailabilityDetectorException("no candidates found.")

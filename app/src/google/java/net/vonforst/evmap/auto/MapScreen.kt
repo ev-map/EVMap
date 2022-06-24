@@ -23,7 +23,6 @@ import net.vonforst.evmap.api.availability.getAvailability
 import net.vonforst.evmap.api.createApi
 import net.vonforst.evmap.api.stringProvider
 import net.vonforst.evmap.model.ChargeLocation
-import net.vonforst.evmap.model.FILTERS_CUSTOM
 import net.vonforst.evmap.model.FILTERS_DISABLED
 import net.vonforst.evmap.model.FILTERS_FAVORITES
 import net.vonforst.evmap.storage.AppDatabase
@@ -48,6 +47,10 @@ import kotlin.math.roundToInt
 class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boolean = false) :
     Screen(ctx), LocationAwareScreen, OnContentRefreshListener,
     ItemList.OnItemVisibilityChangedListener {
+    companion object {
+        val MARKER = "map"
+    }
+
     private var updateCoroutine: Job? = null
     private var availabilityUpdateCoroutine: Job? = null
 
@@ -73,8 +76,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
 
     private val referenceData = api.getReferenceData(lifecycleScope, carContext)
     private val filterStatus = MutableLiveData<Long>().apply {
-        value = prefs.filterStatus.takeUnless { it == FILTERS_CUSTOM || it == FILTERS_FAVORITES }
-            ?: FILTERS_DISABLED
+        value = prefs.filterStatus.takeUnless { it == FILTERS_FAVORITES } ?: FILTERS_DISABLED
     }
     private val filterValues = db.filterValueDao().getFilterValues(filterStatus, prefs.dataSource)
     private val filters =
@@ -99,6 +101,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
         filtersWithValue.observe(this) {
             loadChargers()
         }
+        marker = MARKER
     }
 
     override fun onGetTemplate(): Template {
@@ -160,7 +163,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
                             screenManager.pushForResult(FilterScreen(carContext)) {
                                 chargers = null
                                 filterStatus.value =
-                                    prefs.filterStatus.takeUnless { it == FILTERS_CUSTOM || it == FILTERS_FAVORITES }
+                                    prefs.filterStatus.takeUnless { it == FILTERS_FAVORITES }
                                         ?: FILTERS_DISABLED
                             }
                             session.mapScreen = null

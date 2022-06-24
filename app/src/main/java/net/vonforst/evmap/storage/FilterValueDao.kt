@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.room.*
+import net.vonforst.evmap.await
 import net.vonforst.evmap.model.*
 
 @Dao
@@ -90,6 +91,17 @@ abstract class FilterValueDao {
         deleteBooleanFilterValuesForProfile(profile, dataSource)
         deleteMultipleChoiceFilterValuesForProfile(profile, dataSource)
         deleteSliderFilterValuesForProfile(profile, dataSource)
+    }
+
+    @Transaction
+    open suspend fun copyFiltersToCustom(filterStatus: Long, dataSource: String) {
+        if (filterStatus == FILTERS_CUSTOM) return
+
+        deleteFilterValuesForProfile(FILTERS_CUSTOM, dataSource)
+        val values = getFilterValues(filterStatus, dataSource).await().onEach {
+            it.profile = FILTERS_CUSTOM
+        }
+        insert(*values.toTypedArray())
     }
 
 }

@@ -270,15 +270,7 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
     }
 
     suspend fun copyFiltersToCustom() {
-        if (filterStatus.value == FILTERS_CUSTOM) return
-
-        db.filterValueDao().deleteFilterValuesForProfile(FILTERS_CUSTOM, prefs.dataSource)
-        filterValues.value?.map {
-            it.profile = FILTERS_CUSTOM
-            it
-        }?.let {
-            db.filterValueDao().insert(*it.toTypedArray())
-        }
+        filterStatus.value?.let { db.filterValueDao().copyFiltersToCustom(it, prefs.dataSource) }
     }
 
     fun setMapType(type: AnyMap.Type) {

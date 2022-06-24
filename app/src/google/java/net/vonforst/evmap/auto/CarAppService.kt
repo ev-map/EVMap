@@ -16,6 +16,7 @@ import androidx.annotation.RequiresPermission
 import androidx.car.app.CarContext
 import androidx.car.app.Screen
 import androidx.car.app.Session
+import androidx.car.app.annotations.ExperimentalCarApi
 import androidx.car.app.hardware.CarHardwareManager
 import androidx.car.app.hardware.common.CarValue
 import androidx.car.app.hardware.info.CarHardwareLocation
@@ -34,6 +35,7 @@ interface LocationAwareScreen {
     fun updateLocation(location: Location)
 }
 
+@ExperimentalCarApi
 class CarAppService : androidx.car.app.CarAppService() {
     private val CHANNEL_ID = "car_location"
     private val NOTIFICATION_ID = 1000
@@ -88,6 +90,7 @@ class CarAppService : androidx.car.app.CarAppService() {
     }
 }
 
+@ExperimentalCarApi
 class EVMapSession(val cas: CarAppService) : Session(), DefaultLifecycleObserver {
     private val TAG = "EVMapSession"
     var mapScreen: LocationAwareScreen? = null
@@ -109,7 +112,7 @@ class EVMapSession(val cas: CarAppService) : Session(), DefaultLifecycleObserver
     }
 
     override fun onCreateScreen(intent: Intent): Screen {
-        return WelcomeScreen(carContext, this)
+        return MapScreen(carContext, this)
     }
 
     fun locationPermissionGranted() = carContext.checkAnyLocationPermission()
@@ -181,6 +184,7 @@ class EVMapSession(val cas: CarAppService) : Session(), DefaultLifecycleObserver
         locationManager.removeUpdates(this::updateLocation)
     }
 
+    @SuppressLint("MissingPermission")
     private fun onCarHardwareLocationReceived(loc: CarHardwareLocation) {
         if (loc.location.status == CarValue.STATUS_SUCCESS && loc.location.value != null) {
             updateLocation(loc.location.value)

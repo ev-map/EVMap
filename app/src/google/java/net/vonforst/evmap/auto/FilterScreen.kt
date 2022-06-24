@@ -26,24 +26,6 @@ class FilterScreen(ctx: CarContext) : Screen(ctx) {
     private val maxRows = if (ctx.carAppApiLevel >= 2) {
         ctx.constraintManager.getContentLimit(ConstraintManager.CONTENT_LIMIT_TYPE_LIST)
     } else 6
-    private val checkedIcon =
-        CarIcon.Builder(
-            IconCompat.createWithResource(
-                carContext,
-                R.drawable.ic_radio_button_checked
-            )
-        )
-            .setTint(CarColor.PRIMARY)
-            .build()
-    private val uncheckedIcon =
-        CarIcon.Builder(
-            IconCompat.createWithResource(
-                carContext,
-                R.drawable.ic_radio_button_unchecked
-            )
-        )
-            .setTint(CarColor.PRIMARY)
-            .build()
 
     init {
         filterProfiles.observe(this) {
@@ -52,14 +34,35 @@ class FilterScreen(ctx: CarContext) : Screen(ctx) {
     }
 
     override fun onGetTemplate(): Template {
-        val filterStatus =
-            prefs.filterStatus.takeUnless { it == FILTERS_FAVORITES } ?: FILTERS_DISABLED
+        val filterStatus = prefs.filterStatus
         return ListTemplate.Builder().apply {
             filterProfiles.value?.let {
                 setSingleList(buildFilterProfilesList(it, filterStatus))
             } ?: setLoading(true)
             setTitle(carContext.getString(R.string.menu_filter))
             setHeaderAction(Action.BACK)
+            setActionStrip(
+                ActionStrip.Builder()
+                    .addAction(Action.Builder().apply {
+                        setIcon(
+                            CarIcon.Builder(
+                                IconCompat.createWithResource(
+                                    carContext,
+                                    R.drawable.ic_edit
+                                )
+                            ).build()
+                        )
+                        setTitle(carContext.getString(R.string.menu_edit_filters))
+                        setOnClickListener(ParkedOnlyOnClickListener.create {
+                            lifecycleScope.launch {
+                                db.filterValueDao()
+                                    .copyFiltersToCustom(filterStatus, prefs.dataSource)
+                                screenManager.push(EditFiltersScreen(carContext))
+                            }
+                        })
+                    }.build())
+                    .build()
+            )
         }.build()
     }
 
@@ -72,49 +75,38 @@ class FilterScreen(ctx: CarContext) : Screen(ctx) {
         return ItemList.Builder().apply {
             addItem(Row.Builder().apply {
                 setTitle(carContext.getString(R.string.no_filters))
-                if (FILTERS_DISABLED == filterStatus) {
-                    setImage(checkedIcon)
-                } else {
-                    setImage(uncheckedIcon)
-                }
-                setOnClickListener {
-                    onItemClick(FILTERS_DISABLED)
-                }
+            }.build())
+            addItem(Row.Builder().apply {
+                setTitle(carContext.getString(R.string.filter_favorites))
             }.build())
             profilesToShow.forEach {
                 addItem(Row.Builder().apply {
                     val name =
                         it.name.ifEmpty { carContext.getString(R.string.unnamed_filter_profile) }
                     setTitle(name)
-                    if (it.id == filterStatus) {
-                        setImage(checkedIcon)
-                    } else {
-                        setImage(uncheckedIcon)
-                    }
-                    setOnClickListener {
-                        onItemClick(it.id)
-                    }
                 }.build())
             }
             if (FILTERS_CUSTOM == filterStatus) {
                 addItem(Row.Builder().apply {
                     setTitle(carContext.getString(R.string.filter_custom))
-                    setImage(checkedIcon)
-                    setOnClickListener {
-                        onItemClick(FILTERS_CUSTOM)
-                    }
                 }.build())
             }
-
-            addItem(Row.Builder().apply {
-                setTitle(carContext.getString(R.string.menu_edit_filters))
-                setOnClickListener(ParkedOnlyOnClickListener.create {
-                    lifecycleScope.launch {
-                        db.filterValueDao().copyFiltersToCustom(filterStatus, prefs.dataSource)
-                        screenManager.push(EditFiltersScreen(carContext))
+            setSelectedIndex(when (filterStatus) {
+                FILTERS_DISABLED -> 0
+                FILTERS_FAVORITES -> 1
+                FILTERS_CUSTOM -> profilesToShow.size + 2
+                else -> profilesToShow.indexOfFirst { it.id == filterStatus } + 2
+            })
+            setOnSelectedListener { index ->
+                onItemClick(
+                    when (index) {
+                        0 -> FILTERS_DISABLED
+                        1 -> FILTERS_FAVORITES
+                        profilesToShow.size + 2 -> FILTERS_CUSTOM
+                        else -> profilesToShow[index - 2].id
                     }
-                })
-            }.build())
+                )
+            }
         }.build()
     }
 
@@ -218,6 +210,7 @@ class EditFiltersScreen(ctx: CarContext) : Screen(ctx) {
                             }.setChecked((value as BooleanFilterValue).value).build())
                         }
                         is MultipleChoiceFilter -> {
+                            setBrowsable(true)
                             setOnClickListener {
                                 screenManager.push(
                                     MultipleChoiceFilterScreen(
@@ -227,6 +220,16 @@ class EditFiltersScreen(ctx: CarContext) : Screen(ctx) {
                                     )
                                 )
                             }
+                            addText(
+                                if ((value as MultipleChoiceFilterValue).all) {
+                                    carContext.getString(R.string.all_selected)
+                                } else {
+                                    carContext.getString(
+                                        R.string.number_selected,
+                                        value.values.size
+                                    )
+                                }
+                            )
                         }
                         is SliderFilter -> {
                             // TODO: toggle through possible options on click?
@@ -264,11 +267,13 @@ class MultipleChoiceFilterScreen(
 
     override fun selectAll() {
         value.all = true
+        super.selectAll()
     }
 
     override fun selectNone() {
         value.all = false
         value.values = mutableSetOf()
+        super.selectNone()
     }
 
     override fun getLabel(it: Pair<String, String>): String = it.second

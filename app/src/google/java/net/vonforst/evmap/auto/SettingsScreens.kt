@@ -60,6 +60,22 @@ class SettingsScreen(ctx: CarContext) : Screen(ctx) {
                         screenManager.push(ChargepriceSettingsScreen(carContext))
                     }
                 }.build())
+                if (supportsCarApiLevel3(carContext)) {
+                    addItem(
+                        Row.Builder()
+                            .setTitle(carContext.getString(R.string.auto_vehicle_data))
+                            .setImage(
+                                CarIcon.Builder(
+                                    IconCompat.createWithResource(carContext, R.drawable.ic_car)
+                                ).setTint(CarColor.DEFAULT).build()
+                            )
+                            .setBrowsable(true)
+                            .setOnClickListener {
+                                screenManager.push(VehicleDataScreen(carContext))
+                            }
+                            .build()
+                    )
+                }
             }.build())
         }.build()
     }

@@ -1,7 +1,10 @@
 package net.vonforst.evmap.auto
 
+import android.Manifest
 import android.content.pm.PackageManager
 import android.location.Location
+import android.os.Handler
+import android.os.Looper
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import androidx.car.app.CarContext
@@ -23,7 +26,6 @@ import net.vonforst.evmap.api.availability.getAvailability
 import net.vonforst.evmap.api.createApi
 import net.vonforst.evmap.api.stringProvider
 import net.vonforst.evmap.model.ChargeLocation
-import net.vonforst.evmap.model.FILTERS_DISABLED
 import net.vonforst.evmap.model.FILTERS_FAVORITES
 import net.vonforst.evmap.storage.AppDatabase
 import net.vonforst.evmap.storage.PreferenceDataSource
@@ -44,7 +46,7 @@ import kotlin.math.roundToInt
  * Main map screen showing either nearby chargers or favorites
  */
 @androidx.car.app.annotations.ExperimentalCarApi
-class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boolean = false) :
+class MapScreen(ctx: CarContext, val session: EVMapSession) :
     Screen(ctx), LocationAwareScreen, OnContentRefreshListener,
     ItemList.OnItemVisibilityChangedListener {
     companion object {
@@ -76,7 +78,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
 
     private val referenceData = api.getReferenceData(lifecycleScope, carContext)
     private val filterStatus = MutableLiveData<Long>().apply {
-        value = prefs.filterStatus.takeUnless { it == FILTERS_FAVORITES } ?: FILTERS_DISABLED
+        value = prefs.filterStatus
     }
     private val filterValues = db.filterValueDao().getFilterValues(filterStatus, prefs.dataSource)
     private val filters =
@@ -105,11 +107,13 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
     }
 
     override fun onGetTemplate(): Template {
+        checkLocationPermission()
+
         session.mapScreen = this
         return PlaceListMapTemplate.Builder().apply {
             setTitle(
                 carContext.getString(
-                    if (favorites) {
+                    if (filterStatus.value == FILTERS_FAVORITES) {
                         R.string.auto_favorites
                     } else {
                         R.string.auto_chargers_closeby
@@ -128,7 +132,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
                 }
                 builder.setNoItemsMessage(
                     carContext.getString(
-                        if (favorites) {
+                        if (filterStatus.value == FILTERS_FAVORITES) {
                             R.string.auto_no_favorites_found
                         } else {
                             R.string.auto_no_chargers_found
@@ -139,40 +143,71 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
                 setItemList(builder.build())
             } ?: setLoading(true)
             setCurrentLocationEnabled(true)
-            setHeaderAction(Action.BACK)
-            if (!favorites) {
-                val filtersCount = filtersWithValue.value?.count {
+            setHeaderAction(Action.APP_ICON)
+            val filtersCount = if (filterStatus.value == FILTERS_FAVORITES) 1 else {
+                filtersWithValue.value?.count {
                     !it.value.hasSameValueAs(it.filter.defaultValue())
                 }
+            }
 
-                setActionStrip(
-                    ActionStrip.Builder()
-                        .addAction(
-                            Action.Builder()
-                                .setIcon(
-                                    CarIcon.Builder(
-                                        IconCompat.createWithResource(
-                                            carContext,
-                                            R.drawable.ic_filter
-                                        )
-                                    )
-                                        .setTint(if (filtersCount != null && filtersCount > 0) CarColor.SECONDARY else CarColor.DEFAULT)
-                                        .build()
+            setActionStrip(
+                ActionStrip.Builder()
+                    .addAction(Action.Builder()
+                        .setIcon(
+                            CarIcon.Builder(
+                                IconCompat.createWithResource(
+                                    carContext,
+                                    R.drawable.ic_settings
+                                )
+                            ).setTint(CarColor.DEFAULT).build()
                         )
                         .setOnClickListener {
-                            screenManager.pushForResult(FilterScreen(carContext)) {
-                                chargers = null
-                                filterStatus.value =
-                                    prefs.filterStatus.takeUnless { it == FILTERS_FAVORITES }
-                                        ?: FILTERS_DISABLED
-                            }
+                            screenManager.push(SettingsScreen(carContext))
                             session.mapScreen = null
                         }
                         .build())
+                    .addAction(
+                        Action.Builder()
+                            .setIcon(
+                                CarIcon.Builder(
+                                    IconCompat.createWithResource(
+                                        carContext,
+                                        R.drawable.ic_filter
+                                    )
+                                )
+                                    .setTint(if (filtersCount != null && filtersCount > 0) CarColor.SECONDARY else CarColor.DEFAULT)
+                                    .build()
+                            )
+                            .setOnClickListener {
+                                screenManager.pushForResult(FilterScreen(carContext)) {
+                                    chargers = null
+                                    filterStatus.value = prefs.filterStatus
+                                }
+                                session.mapScreen = null
+                            }
+                            .build())
                     .build())
-            }
             setOnContentRefreshListener(this@MapScreen)
         }.build()
+    }
+
+    private fun checkLocationPermission() {
+        if (!session.locationPermissionGranted()) {
+            Handler(Looper.getMainLooper()).post {
+                screenManager.pushForResult(
+                    PermissionScreen(
+                        carContext,
+                        R.string.auto_location_permission_needed,
+                        listOf(
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION
+                        )
+                    )
+                ) {
+                    session.requestLocationUpdates()
+                }
+            }
+        }
     }
 
     private fun formatCharger(charger: ChargeLocation, showCity: Boolean): Row {
@@ -253,7 +288,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
 
             setOnClickListener {
                 screenManager.pushForResult(ChargerDetailScreen(carContext, charger)) {
-                    if (favorites) {
+                    if (filterStatus.value == FILTERS_FAVORITES) {
                         // favorites list may have been updated
                         chargers = null
                         loadChargers()
@@ -293,7 +328,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession, val favorites: Boole
         updateCoroutine = lifecycleScope.launch {
             try {
                 // load chargers
-                if (favorites) {
+                if (filterStatus.value == FILTERS_FAVORITES) {
                     chargers =
                         db.favoritesDao().getAllFavoritesAsync().map { it.charger }.sortedBy {
                             distanceBetween(

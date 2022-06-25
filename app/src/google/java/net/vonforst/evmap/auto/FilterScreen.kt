@@ -4,6 +4,7 @@ import android.app.Application
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import androidx.car.app.CarContext
+import androidx.car.app.CarToast
 import androidx.car.app.Screen
 import androidx.car.app.constraints.ConstraintManager
 import androidx.car.app.model.*
@@ -45,8 +46,8 @@ class FilterScreen(ctx: CarContext) : Screen(ctx) {
             setTitle(carContext.getString(R.string.menu_filter))
             setHeaderAction(Action.BACK)
             setActionStrip(
-                ActionStrip.Builder()
-                    .addAction(Action.Builder().apply {
+                ActionStrip.Builder().apply {
+                    addAction(Action.Builder().apply {
                         setIcon(
                             CarIcon.Builder(
                                 IconCompat.createWithResource(
@@ -54,6 +55,7 @@ class FilterScreen(ctx: CarContext) : Screen(ctx) {
                                     R.drawable.ic_edit
                                 )
                             ).build()
+
                         )
                         setOnClickListener(ParkedOnlyOnClickListener.create {
                             lifecycleScope.launch {
@@ -63,7 +65,43 @@ class FilterScreen(ctx: CarContext) : Screen(ctx) {
                             }
                         })
                     }.build())
-                    .build()
+                    if (filterStatus !in listOf(
+                            FILTERS_CUSTOM,
+                            FILTERS_FAVORITES,
+                            FILTERS_DISABLED
+                        )
+                    ) {
+                        addAction(Action.Builder().apply {
+                            setIcon(
+                                CarIcon.Builder(
+                                    IconCompat.createWithResource(
+                                        carContext,
+                                        R.drawable.ic_delete
+                                    )
+                                ).build()
+
+                            )
+                            setOnClickListener {
+                                val currentProfile =
+                                    filterProfiles.value?.find { it.id == filterStatus }
+                                        ?: return@setOnClickListener
+                                lifecycleScope.launch {
+                                    db.filterProfileDao().delete(currentProfile)
+                                    prefs.filterStatus = FILTERS_DISABLED
+                                    CarToast.makeText(
+                                        carContext,
+                                        carContext.getString(
+                                            R.string.deleted_filterprofile,
+                                            currentProfile.name
+                                        ),
+                                        CarToast.LENGTH_SHORT
+                                    ).show()
+                                    invalidate()
+                                }
+                            }
+                        }.build())
+                    }
+                }.build()
             )
         }.build()
     }
@@ -73,7 +111,8 @@ class FilterScreen(ctx: CarContext) : Screen(ctx) {
         filterStatus: Long
     ): ItemList {
         val extraRows = if (FILTERS_CUSTOM == filterStatus) 3 else 2
-        val profilesToShow = profiles.take(maxRows - extraRows)
+        val profilesToShow =
+            profiles.sortedByDescending { it.id == filterStatus }.take(maxRows - extraRows)
         return ItemList.Builder().apply {
             addItem(Row.Builder().apply {
                 setTitle(carContext.getString(R.string.no_filters))

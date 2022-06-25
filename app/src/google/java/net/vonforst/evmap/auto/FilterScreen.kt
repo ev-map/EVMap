@@ -1,6 +1,8 @@
 package net.vonforst.evmap.auto
 
 import android.app.Application
+import android.text.SpannableStringBuilder
+import android.text.Spanned
 import androidx.car.app.CarContext
 import androidx.car.app.Screen
 import androidx.car.app.constraints.ConstraintManager
@@ -15,6 +17,7 @@ import net.vonforst.evmap.storage.AppDatabase
 import net.vonforst.evmap.storage.FilterProfile
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.viewmodel.FilterViewModel
+import kotlin.math.roundToInt
 
 @androidx.car.app.annotations.ExperimentalCarApi
 class FilterScreen(ctx: CarContext) : Screen(ctx) {
@@ -52,7 +55,6 @@ class FilterScreen(ctx: CarContext) : Screen(ctx) {
                                 )
                             ).build()
                         )
-                        setTitle(carContext.getString(R.string.menu_edit_filters))
                         setOnClickListener(ParkedOnlyOnClickListener.create {
                             lifecycleScope.launch {
                                 db.filterValueDao()
@@ -232,7 +234,17 @@ class EditFiltersScreen(ctx: CarContext) : Screen(ctx) {
                             )
                         }
                         is SliderFilter -> {
-                            // TODO: toggle through possible options on click?
+                            setBrowsable(true)
+                            addText((value as SliderFilterValue).value.toString() + " " + filter.unit)
+                            setOnClickListener {
+                                screenManager.push(
+                                    SliderFilterScreen(
+                                        carContext,
+                                        filter,
+                                        value
+                                    )
+                                )
+                            }
                         }
                     }
                 }.build())
@@ -280,5 +292,86 @@ class MultipleChoiceFilterScreen(
 
     override suspend fun loadData(): List<Pair<String, String>> {
         return filter.choices.entries.map { it.toPair() }
+    }
+}
+
+
+class SliderFilterScreen(
+    ctx: CarContext,
+    val filter: SliderFilter,
+    val value: SliderFilterValue
+) : Screen(ctx) {
+    override fun onGetTemplate(): Template {
+        return PaneTemplate.Builder(
+            Pane.Builder().apply {
+                addRow(Row.Builder().apply {
+                    setTitle(filter.name)
+                    addText(value.value.toString() + " " + filter.unit)
+                    addText(generateSlider())
+                }.build())
+                addAction(Action.Builder().apply {
+                    setIcon(
+                        CarIcon.Builder(
+                            IconCompat.createWithResource(
+                                carContext,
+                                R.drawable.ic_remove
+                            )
+                        ).build()
+                    )
+                    setOnClickListener(::decrease)
+                }.build())
+                addAction(Action.Builder().apply {
+                    setIcon(
+                        CarIcon.Builder(
+                            IconCompat.createWithResource(
+                                carContext,
+                                R.drawable.ic_add
+                            )
+                        ).build()
+                    )
+                    setOnClickListener(::increase)
+                }.build())
+            }.build()
+        ).apply {
+            setHeaderAction(Action.BACK)
+        }.build()
+    }
+
+    private fun generateSlider(): CharSequence {
+        val bar = "━"
+        val dot = "⬤"
+        val length = 35
+
+        val position =
+            ((filter.inverseMapping(value.value) - filter.min) / (filter.max - filter.min).toDouble() * length).roundToInt()
+
+        val text = SpannableStringBuilder()
+        text.append(
+            bar.repeat(position),
+            ForegroundCarColorSpan.create(CarColor.SECONDARY),
+            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        text.append(
+            dot,
+            ForegroundCarColorSpan.create(CarColor.SECONDARY),
+            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        text.append(bar.repeat(length - position))
+
+        return text
+    }
+
+    private fun increase() {
+        var valueInternal = filter.inverseMapping(value.value)
+        if (valueInternal < filter.max) valueInternal += 1
+        value.value = filter.mapping(valueInternal)
+        invalidate()
+    }
+
+    private fun decrease() {
+        var valueInternal = filter.inverseMapping(value.value)
+        if (valueInternal > filter.min) valueInternal -= 1
+        value.value = filter.mapping(valueInternal)
+        invalidate()
     }
 }

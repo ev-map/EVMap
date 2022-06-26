@@ -60,7 +60,7 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
     private val imageWidthLarge = 854
 
     private val iconGen =
-        ChargerIconGenerator(carContext, null, oversize = 1.4f, height = imageSize)
+        ChargerIconGenerator(carContext, null, height = imageSize)
 
     private val maxRows = if (ctx.carAppApiLevel >= 2) {
         ctx.constraintManager.getContentLimit(ConstraintManager.CONTENT_LIMIT_TYPE_PANE)

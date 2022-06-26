@@ -46,8 +46,8 @@ class ChargerIconGenerator(
     val context: Context,
     val factory: BitmapDescriptorFactory?,
     val scaleResolution: Int = 20,
-    val oversize: Float = 1.4f, // increase to add padding for fault icon or scale > 1
-    val height: Int = 44
+    val oversize: Float = 1f, // increase to add padding for scale > 1
+    val height: Int = 48
 ) {
     private data class BitmapData(
         val tint: Int,
@@ -152,21 +152,26 @@ class ChargerIconGenerator(
         DrawableCompat.setTintMode(vd, PorterDuff.Mode.MULTIPLY);
 
         val density = context.resources.displayMetrics.density
-        val width =
+        val markerWidth =
             (height.toFloat() * density / vd.intrinsicHeight * vd.intrinsicWidth).roundToInt()
-        val height = (height * density).roundToInt()
+        val markerHeight = (height * density).roundToInt()
+        val extraIconSize = (0.75 * markerWidth).roundToInt()
+        val extraIconShift = (0.25 * markerWidth).roundToInt()
 
-        val leftPadding = width * (oversize - 1) / 2
-        val topPadding = height * (oversize - 1)
+        val totalWidth = markerWidth + 2 * extraIconShift
+        val totalHeight = markerHeight + extraIconShift
+
+        val leftPadding = ((totalWidth) * (oversize - 1) / 2).roundToInt() + extraIconShift
+        val topPadding = ((totalHeight) * (oversize - 1)).roundToInt() + extraIconShift
         vd.setBounds(
-            leftPadding.toInt(), topPadding.toInt(),
-            leftPadding.toInt() + width,
-            topPadding.toInt() + height
+            leftPadding, topPadding,
+            leftPadding + markerWidth,
+            topPadding + markerHeight
         )
         vd.alpha = data.alpha
 
         val bm = Bitmap.createBitmap(
-            (width * oversize).toInt(), (height * oversize).toInt(),
+            (totalWidth * oversize).roundToInt(), (totalHeight * oversize).roundToInt(),
             Bitmap.Config.ARGB_8888
         )
         val canvas = Canvas(bm)
@@ -175,8 +180,8 @@ class ChargerIconGenerator(
         canvas.scale(
             scale,
             scale,
-            leftPadding + width / 2f,
-            topPadding + height.toFloat()
+            canvas.width / 2f,
+            canvas.height.toFloat()
         )
 
         vd.draw(canvas)
@@ -185,9 +190,9 @@ class ChargerIconGenerator(
             val hIcon = if (data.multi) highlightIconMulti else highlightIcon
             val highlightDrawable = ContextCompat.getDrawable(context, hIcon)!!
             highlightDrawable.setBounds(
-                leftPadding.toInt(), topPadding.toInt(),
-                leftPadding.toInt() + width,
-                topPadding.toInt() + height
+                leftPadding, topPadding,
+                leftPadding + markerWidth,
+                topPadding + markerHeight
             )
             highlightDrawable.alpha = data.alpha
             highlightDrawable.draw(canvas)
@@ -195,14 +200,11 @@ class ChargerIconGenerator(
 
         if (data.fault) {
             val faultDrawable = ContextCompat.getDrawable(context, faultIcon)!!
-            val faultSize = 0.75
-            val faultShift = 0.25
-            val base = width
             faultDrawable.setBounds(
-                (leftPadding.toInt() + base * (1 - faultSize + faultShift)).toInt(),
-                (topPadding.toInt() - base * faultShift).toInt(),
-                (leftPadding.toInt() + base * (1 + faultShift)).toInt(),
-                (topPadding.toInt() + base * (faultSize - faultShift)).toInt()
+                leftPadding + markerWidth + extraIconShift - extraIconSize,
+                topPadding - extraIconShift,
+                leftPadding + markerWidth + extraIconShift,
+                topPadding + extraIconSize - extraIconShift
             )
             faultDrawable.alpha = data.alpha
             faultDrawable.draw(canvas)
@@ -210,15 +212,13 @@ class ChargerIconGenerator(
 
         if (data.fav) {
             val favDrawable = ContextCompat.getDrawable(context, favIcon)!!
-            val favSize = 0.75
-            val favShiftY = 0.25
-            val favShiftX = if (data.fault) -0.5 else 0.25
-            val base = width
+            val favShiftY = extraIconShift
+            val favShiftX = if (data.fault) extraIconShift - extraIconSize else extraIconShift
             favDrawable.setBounds(
-                (leftPadding.toInt() + base * (1 - favSize + favShiftX)).toInt(),
-                (topPadding.toInt() - base * favShiftY).toInt(),
-                (leftPadding.toInt() + base * (1 + favShiftX)).toInt(),
-                (topPadding.toInt() + base * (favSize - favShiftY)).toInt()
+                leftPadding + markerWidth - extraIconSize + favShiftX,
+                topPadding - favShiftY,
+                leftPadding + markerWidth + favShiftX,
+                topPadding + extraIconSize - favShiftY
             )
             favDrawable.alpha = data.alpha
             favDrawable.draw(canvas)

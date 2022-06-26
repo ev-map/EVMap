@@ -85,10 +85,7 @@ import net.vonforst.evmap.autocomplete.PlaceWithBounds
 import net.vonforst.evmap.databinding.FragmentMapBinding
 import net.vonforst.evmap.model.*
 import net.vonforst.evmap.storage.PreferenceDataSource
-import net.vonforst.evmap.ui.ChargerIconGenerator
-import net.vonforst.evmap.ui.ClusterIconGenerator
-import net.vonforst.evmap.ui.MarkerAnimator
-import net.vonforst.evmap.ui.getMarkerTint
+import net.vonforst.evmap.ui.*
 import net.vonforst.evmap.utils.boundingBox
 import net.vonforst.evmap.utils.checkAnyLocationPermission
 import net.vonforst.evmap.utils.checkFineLocationPermission
@@ -611,6 +608,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 }
                 searchResultMarker = map.addMarker(
                     MarkerOptions()
+                        .z(placeSearchZ)
                         .position(place.latLng)
                         .icon(searchResultIcon)
                         .anchor(0.5f, 1f)
@@ -1029,10 +1027,11 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
         // update icons of existing markers (connector filter may have changed)
         for ((marker, charger) in markers) {
+            val highlight = charger == vm.chargerSparse.value
             marker.setIcon(
                 chargerIconGenerator.getBitmapDescriptor(
                     getMarkerTint(charger, vm.filteredConnectors.value),
-                    highlight = charger == vm.chargerSparse.value,
+                    highlight = highlight,
                     fault = charger.faultReport != null,
                     multi = charger.isMulti(vm.filteredConnectors.value),
                     fav = charger.id in vm.favorites.value?.map { it.charger.id } ?: emptyList()
@@ -1074,6 +1073,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                     val marker = map.addMarker(
                         MarkerOptions()
                             .position(LatLng(charger.coordinates.lat, charger.coordinates.lng))
+                            .z(chargerZ)
                             .icon(
                                 chargerIconGenerator.getBitmapDescriptor(
                                     tint,
@@ -1097,6 +1097,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             map.addMarker(
                 MarkerOptions()
                     .position(LatLng(cluster.coordinates.lat, cluster.coordinates.lng))
+                    .z(clusterZ)
                     .icon(
                         map.bitmapDescriptorFactory.fromBitmap(
                             clusterIconGenerator.makeIcon(

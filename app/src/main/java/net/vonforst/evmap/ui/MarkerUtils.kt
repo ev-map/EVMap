@@ -25,6 +25,10 @@ fun getMarkerTint(
     }
 }
 
+val chargerZ = 1
+val clusterZ = chargerZ + 1
+val placeSearchZ = clusterZ + 1
+
 class MarkerAnimator(val gen: ChargerIconGenerator) {
     private val animatingMarkers = hashMapOf<Marker, ValueAnimator>()
 

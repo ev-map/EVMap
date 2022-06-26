@@ -1,0 +1,10 @@
+Verbesserungen:
+- Neue Mini-Marker zur Vermeidung von Clustering bei bestimmten Zoomstufen
+- Livedaten für Ladestationen in Köln
+- Android Auto: App startet direkt mit Anzeige der nahe gelegenen Ladestationen (Umschaltung zu Favoriten via Filtermenü)
+- Android Auto: Möglichkeit zum Bearbeiten der Filtereinstellungen auf dem Fahrzeugbildschirm
+
+Fehler behoben:
+- Android Auto: Ladetarifauswahl funktionierte nicht
+- Abstürze behoben
+- Text auf Spendenseite in F-Droid-Version korrigiert

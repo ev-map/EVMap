@@ -1,0 +1,8 @@
+Improvements:
+- New mini markers to avoid clustering at some zoom levels
+- Android Auto: App launches directly with nearby chargers (switch to favorites now via filter menu)
+- Android Auto: Ability to create and edit filter profiles on the car screen
+
+Bugfixes:
+- Android Auto: Selecting charging plans did not work
+- Fixed crashes

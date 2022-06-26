@@ -105,6 +105,7 @@ class OpenChargeMapApiWrapper(
     baseurl: String = "https://api.openchargemap.io/v3/",
     context: Context? = null
 ) : ChargepointApi<OCMReferenceData> {
+    private val clusterThreshold = 11
     val api = OpenChargeMapApi.create(apikey, baseurl, context)
 
     override fun getName() = "OpenChargeMap.org"
@@ -238,7 +239,7 @@ class OpenChargeMapApiWrapper(
         }.map { it.convert(referenceData, false) }.distinct() as List<ChargepointListItem>
 
         // apply clustering
-        val useClustering = zoom < 13
+        val useClustering = zoom < clusterThreshold
         if (useClustering) {
             val clusterDistance = getClusterDistance(zoom)
             Dispatchers.IO.run {

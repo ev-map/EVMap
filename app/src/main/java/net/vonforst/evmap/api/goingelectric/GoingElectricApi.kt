@@ -126,6 +126,7 @@ class GoingElectricApiWrapper(
     baseurl: String = "https://api.goingelectric.de",
     context: Context? = null
 ) : ChargepointApi<GEReferenceData> {
+    private val clusterThreshold = 11f
     val api = GoingElectricApi.create(apikey, baseurl, context)
 
     override fun getName() = "GoingElectric.de"
@@ -173,7 +174,7 @@ class GoingElectricApiWrapper(
         val categories = formatMultipleChoice(categoriesVal)
 
         // do not use clustering if filters need to be applied locally.
-        val useClustering = zoom < 13
+        val useClustering = zoom < clusterThreshold
         val geClusteringAvailable = minConnectors == null || minConnectors <= 1
         val useGeClustering = useClustering && geClusteringAvailable
         val clusterDistance = if (useClustering) getClusterDistance(zoom) else null
@@ -267,7 +268,7 @@ class GoingElectricApiWrapper(
         val categories = formatMultipleChoice(categoriesVal)
 
         // do not use clustering if filters need to be applied locally.
-        val useClustering = zoom < 13
+        val useClustering = zoom < clusterThreshold
         val geClusteringAvailable = minConnectors == null || minConnectors <= 1
         val useGeClustering = useClustering && geClusteringAvailable
         val clusterDistance = if (useClustering) getClusterDistance(zoom) else null
@@ -330,7 +331,7 @@ class GoingElectricApiWrapper(
         }.map { it.convert(apikey, false) }
 
         // apply clustering
-        val useClustering = zoom < 13
+        val useClustering = zoom < clusterThreshold
         val geClusteringAvailable = minConnectors == null || minConnectors <= 1
         val clusterDistance = if (useClustering) getClusterDistance(zoom) else null
         if (!geClusteringAvailable && useClustering) {

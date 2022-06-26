@@ -35,9 +35,7 @@ data class MapPosition(val bounds: LatLngBounds, val zoom: Float) : Parcelable
 internal fun getClusterDistance(zoom: Float): Int? {
     return when (zoom) {
         in 0.0..7.0 -> 100
-        in 7.0..11.5 -> 75
-        in 11.5..12.5 -> 60
-        in 12.5..13.0 -> 45
+        in 7.0..11.0 -> 75
         else -> null
     }
 }
@@ -298,6 +296,29 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
         chargepointLoader(Triple(pos, filters, referenceData))
     }
 
+    private val miniMarkerThreshold = 13f
+    private val clusterThreshold = 11f
+    val useMiniMarkers: LiveData<Boolean> = MediatorLiveData<Boolean>().apply {
+        for (source in listOf(filteredMinPower, mapPosition)) {
+            addSource(source) {
+                val minPower = filteredMinPower.value ?: 0
+                val zoom = mapPosition.value?.zoom
+                value = when {
+                    zoom == null -> {
+                        false
+                    }
+                    minPower >= 100 -> {
+                        // when only showing high-power chargers we can use large markers
+                        zoom < clusterThreshold
+                    }
+                    else -> {
+                        zoom < miniMarkerThreshold
+                    }
+                }
+            }
+        }
+    }.distinctUntilChanged()
+
     private var chargepointLoader =
         throttleLatest(
             500L,
@@ -342,7 +363,7 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
                     if (connectorsVal.all) null else connectorsVal.values.map {
                         GEChargepoint.convertTypeFromGE(it)
                     }.toSet()
-                filteredMinPower.value = filters.getSliderValue("minPower")
+                filteredMinPower.value = filters.getSliderValue("min_power")
             } else if (api is OpenChargeMapApiWrapper) {
                 val connectorsVal = filters.getMultipleChoiceValue("connectors")!!
                 filteredConnectors.value =
@@ -352,7 +373,7 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
                             refData as OCMReferenceData
                         )
                     }.toSet()
-                filteredMinPower.value = filters.getSliderValue("minPower")
+                filteredMinPower.value = filters.getSliderValue("min_power")
             } else {
                 filteredConnectors.value = null
                 filteredMinPower.value = null

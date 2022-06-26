@@ -117,7 +117,9 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
         MediatorLiveData<Resource<List<ChargepointListItem>>>()
             .apply {
                 value = Resource.loading(emptyList())
-                listOf(mapPosition, filtersWithValue, referenceData).forEach {
+                // this is not automatically updated with mapPosition, as we only want to update
+                // when map is idle.
+                listOf(filtersWithValue, referenceData).forEach {
                     addSource(it) {
                         reloadChargepoints()
                     }

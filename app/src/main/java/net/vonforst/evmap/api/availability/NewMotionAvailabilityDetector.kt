@@ -173,7 +173,7 @@ class NewMotionAvailabilityDetector(client: OkHttpClient, baseUrl: String? = nul
         )
     }
 
-    override fun isCountrySupported(country: String, dataSource: String): Boolean {
+    override fun isChargerSupported(charger: ChargeLocation): Boolean {
         // NewMotion is our fallback
         return true
     }

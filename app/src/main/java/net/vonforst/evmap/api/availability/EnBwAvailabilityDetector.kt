@@ -193,8 +193,10 @@ class EnBwAvailabilityDetector(client: OkHttpClient, baseUrl: String? = null) :
         )
     }
 
-    override fun isCountrySupported(country: String, dataSource: String): Boolean =
-        when (dataSource) {
+    override fun isChargerSupported(charger: ChargeLocation): Boolean {
+        val country = charger.chargepriceData?.country
+            ?: charger.address?.country ?: return false
+        return when (charger.dataSource) {
             // list of countries as of 2021/06/30, according to
             // https://www.electrive.net/2021/06/30/enbw-expandiert-mit-ladenetz-in-drei-weitere-laender/
             "goingelectric" -> country in listOf(
@@ -221,4 +223,5 @@ class EnBwAvailabilityDetector(client: OkHttpClient, baseUrl: String? = null) :
             )
             else -> false
         }
+    }
 }

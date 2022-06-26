@@ -21,7 +21,14 @@ import java.util.concurrent.TimeUnit
 
 interface AvailabilityDetector {
     suspend fun getAvailability(location: ChargeLocation): ChargeLocationStatus
-    fun isCountrySupported(country: String, dataSource: String): Boolean
+
+    /**
+     * Get a rough estimate whether this charger is supported by this provider.
+     *
+     * This might be done by checking supported countries, or even by matching the operator
+     * for operator-specific availability detectors.
+     */
+    fun isChargerSupported(charger: ChargeLocation): Boolean
 }
 
 abstract class BaseAvailabilityDetector(private val client: OkHttpClient) : AvailabilityDetector {
@@ -158,26 +165,16 @@ private val okhttp = OkHttpClient.Builder()
     .cookieJar(JavaNetCookieJar(cookieManager))
     .build()
 val availabilityDetectors = listOf(
+    RheinenergieAvailabilityDetector(okhttp),
     EnBwAvailabilityDetector(okhttp),
     NewMotionAvailabilityDetector(okhttp)
-    /*ChargecloudAvailabilityDetector(
-        okhttp,
-        "606a0da0dfdd338ee4134605653d4fd8"
-    ), // Maingau
-    ChargecloudAvailabilityDetector(
-        okhttp,
-        "6336fe713f2eb7fa04b97ff6651b76f8"
-    )  // SW Kiel*/
 )
 
 suspend fun getAvailability(charger: ChargeLocation): Resource<ChargeLocationStatus> {
     var value: Resource<ChargeLocationStatus>? = null
-    val country = charger.chargepriceData?.country
-        ?: charger.address?.country
-        ?: return Resource.error(null, null)
     withContext(Dispatchers.IO) {
         for (ad in availabilityDetectors) {
-            if (!ad.isCountrySupported(country, charger.dataSource)) continue
+            if (!ad.isChargerSupported(charger)) continue
             try {
                 value = Resource.success(ad.getAvailability(charger))
                 break

@@ -1,10 +1,7 @@
 package net.vonforst.evmap.auto
 
-import android.Manifest
 import android.content.pm.PackageManager
 import android.location.Location
-import android.os.Handler
-import android.os.Looper
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import androidx.car.app.CarContext
@@ -107,7 +104,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
     }
 
     override fun onGetTemplate(): Template {
-        checkLocationPermission()
+        session.requestLocationUpdates()
 
         session.mapScreen = this
         return PlaceListMapTemplate.Builder().apply {
@@ -189,25 +186,6 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                     .build())
             setOnContentRefreshListener(this@MapScreen)
         }.build()
-    }
-
-    private fun checkLocationPermission() {
-        if (!session.locationPermissionGranted()) {
-            Handler(Looper.getMainLooper()).post {
-                screenManager.pushForResult(
-                    PermissionScreen(
-                        carContext,
-                        R.string.auto_location_permission_needed,
-                        listOf(
-                            Manifest.permission.ACCESS_FINE_LOCATION,
-                            Manifest.permission.ACCESS_COARSE_LOCATION
-                        )
-                    )
-                ) {
-                    session.requestLocationUpdates()
-                }
-            }
-        }
     }
 
     private fun formatCharger(charger: ChargeLocation, showCity: Boolean): Row {

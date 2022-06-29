@@ -15,6 +15,7 @@ import android.util.Log
 import androidx.annotation.RequiresPermission
 import androidx.car.app.CarContext
 import androidx.car.app.Screen
+import androidx.car.app.ScreenManager
 import androidx.car.app.Session
 import androidx.car.app.annotations.ExperimentalCarApi
 import androidx.car.app.hardware.CarHardwareManager
@@ -112,7 +113,22 @@ class EVMapSession(val cas: CarAppService) : Session(), DefaultLifecycleObserver
     }
 
     override fun onCreateScreen(intent: Intent): Screen {
-        return MapScreen(carContext, this)
+        val mapScreen = MapScreen(carContext, this)
+
+        if (!locationPermissionGranted()) {
+            val screenManager = carContext.getCarService(ScreenManager::class.java)
+            screenManager.push(mapScreen)
+            return PermissionScreen(
+                carContext,
+                R.string.auto_location_permission_needed,
+                listOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            )
+        }
+
+        return mapScreen
     }
 
     fun locationPermissionGranted() = carContext.checkAnyLocationPermission()

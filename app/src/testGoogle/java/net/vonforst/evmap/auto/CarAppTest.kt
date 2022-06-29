@@ -1,0 +1,42 @@
+package net.vonforst.evmap.auto
+
+import android.content.ComponentName
+import android.content.Intent
+import androidx.car.app.HandshakeInfo
+import androidx.car.app.testing.SessionController
+import androidx.car.app.testing.TestCarContext
+import androidx.car.app.testing.TestScreenManager
+import androidx.lifecycle.Lifecycle
+import androidx.test.core.app.ApplicationProvider
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.Robolectric
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.internal.DoNotInstrument
+
+@RunWith(RobolectricTestRunner::class)
+@DoNotInstrument
+class CarAppTest {
+    private val testCarContext =
+        TestCarContext.createCarContext(ApplicationProvider.getApplicationContext()).apply {
+            updateHandshakeInfo(HandshakeInfo("auto.testing", 1))
+        }
+
+    @Test
+    fun onCreateScreen_returnsExpectedScreen() {
+        val service = Robolectric.setupService(CarAppService::class.java)
+        val session = service.onCreateSession()
+        val controller = SessionController(
+            session, testCarContext,
+            Intent().setComponent(
+                ComponentName(testCarContext, CarAppService::class.java)
+            )
+        )
+        controller.moveToState(Lifecycle.State.CREATED)
+        val screenCreated =
+            testCarContext.getCarService(TestScreenManager::class.java).screensPushed.last()
+
+        // location permission required
+        assert(screenCreated is PermissionScreen)
+    }
+}

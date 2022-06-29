@@ -82,7 +82,9 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
         Transformations.map(referenceData) { api.getFilters(it, carContext.stringProvider()) }
     private val filtersWithValue = filtersWithValue(filters, filterValues)
 
-    private val hardwareMan = ctx.getCarService(CarContext.HARDWARE_SERVICE) as CarHardwareManager
+    private val hardwareMan: CarHardwareManager by lazy {
+        ctx.getCarService(CarContext.HARDWARE_SERVICE) as CarHardwareManager
+    }
     private var energyLevel: EnergyLevel? = null
     private val permissions = if (BuildConfig.FLAVOR_automotive == "automotive") {
         listOf(
@@ -366,16 +368,19 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
             })
             return
 
-        println("Setting up energy level listener")
-
-        val exec = ContextCompat.getMainExecutor(carContext)
-        hardwareMan.carInfo.addEnergyLevelListener(exec, ::onEnergyLevelUpdated)
+        if (supportsCarApiLevel3(carContext)) {
+            println("Setting up energy level listener")
+            val exec = ContextCompat.getMainExecutor(carContext)
+            hardwareMan.carInfo.addEnergyLevelListener(exec, ::onEnergyLevelUpdated)
+        }
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     private fun removeListeners() {
-        println("Removing energy level listener")
-        hardwareMan.carInfo.removeEnergyLevelListener(::onEnergyLevelUpdated)
+        if (supportsCarApiLevel3(carContext)) {
+            println("Removing energy level listener")
+            hardwareMan.carInfo.removeEnergyLevelListener(::onEnergyLevelUpdated)
+        }
     }
 
     override fun onContentRefreshRequested() {

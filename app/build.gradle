@@ -94,6 +94,10 @@ android {
         disable 'NullSafeMutableLiveData'
     }
 
+    testOptions {
+        unitTests.includeAndroidResources true
+    }
+
     // add API keys from environment variable if not set in apikeys.xml
     applicationVariants.all { variant ->
         ext.env = System.getenv()
@@ -170,9 +174,10 @@ dependencies {
     implementation 'com.github.romandanylyk:PageIndicatorView:b1bad589b5'
 
     // Android Auto
-    googleImplementation 'androidx.car.app:app:1.2.0-rc01'
-    googleNormalImplementation 'androidx.car.app:app-projected:1.2.0-rc01'
-    googleAutomotiveImplementation 'androidx.car.app:app-automotive:1.2.0-rc01'
+    def carAppVersion = '1.2.0-rc01'
+    googleImplementation "androidx.car.app:app:$carAppVersion"
+    googleNormalImplementation "androidx.car.app:app-projected:$carAppVersion"
+    googleAutomotiveImplementation "androidx.car.app:app-automotive:$carAppVersion"
 
     // AnyMaps
     def anyMapsVersion = '3c67d7a1dc'
@@ -220,10 +225,18 @@ dependencies {
     // debug tools
     implementation 'com.facebook.stetho:stetho:1.5.1'
     implementation 'com.facebook.stetho:stetho-okhttp3:1.5.1'
+
+    // testing
     testImplementation 'junit:junit:4.13.2'
     testImplementation "com.squareup.okhttp3:mockwebserver:4.9.0"
     //noinspection GradleDependency
     testImplementation 'org.json:json:20080701'
+
+    // testing for car app
+    testGoogleImplementation "androidx.car.app:app-testing:$carAppVersion"
+    testGoogleImplementation 'org.robolectric:robolectric:4.7.3'
+    testGoogleImplementation 'androidx.test:core:1.4.0'
+
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 

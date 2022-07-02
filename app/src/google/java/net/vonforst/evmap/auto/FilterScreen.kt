@@ -65,42 +65,6 @@ class FilterScreen(ctx: CarContext) : Screen(ctx) {
                             }
                         })
                     }.build())
-                    if (filterStatus !in listOf(
-                            FILTERS_CUSTOM,
-                            FILTERS_FAVORITES,
-                            FILTERS_DISABLED
-                        )
-                    ) {
-                        addAction(Action.Builder().apply {
-                            setIcon(
-                                CarIcon.Builder(
-                                    IconCompat.createWithResource(
-                                        carContext,
-                                        R.drawable.ic_delete
-                                    )
-                                ).build()
-
-                            )
-                            setOnClickListener {
-                                val currentProfile =
-                                    filterProfiles.value?.find { it.id == filterStatus }
-                                        ?: return@setOnClickListener
-                                lifecycleScope.launch {
-                                    db.filterProfileDao().delete(currentProfile)
-                                    prefs.filterStatus = FILTERS_DISABLED
-                                    CarToast.makeText(
-                                        carContext,
-                                        carContext.getString(
-                                            R.string.deleted_filterprofile,
-                                            currentProfile.name
-                                        ),
-                                        CarToast.LENGTH_SHORT
-                                    ).show()
-                                    invalidate()
-                                }
-                            }
-                        }.build())
-                    }
                 }.build()
             )
         }.build()
@@ -190,33 +154,46 @@ class EditFiltersScreen(ctx: CarContext) : Screen(ctx) {
 
             setHeaderAction(Action.BACK)
             setActionStrip(ActionStrip.Builder().apply {
-                addAction(Action.Builder()
-                    .setIcon(
-                        CarIcon.Builder(
-                            IconCompat.createWithResource(
-                                carContext,
-                                R.drawable.ic_check
-                            )
-                        ).build()
-                    )
-                    .setOnClickListener {
-                        lifecycleScope.launch {
-                            vm.saveFilterValues()
-                            screenManager.popTo(MapScreen.MARKER)
+                val currentProfile = vm.filterProfile.value
+                if (currentProfile != null) {
+                    addAction(Action.Builder().apply {
+                        setIcon(
+                            CarIcon.Builder(
+                                IconCompat.createWithResource(
+                                    carContext,
+                                    R.drawable.ic_delete
+                                )
+                            ).build()
+
+                        )
+                        setOnClickListener {
+                            lifecycleScope.launch {
+                                vm.deleteCurrentProfile()
+                                CarToast.makeText(
+                                    carContext,
+                                    carContext.getString(
+                                        R.string.deleted_filterprofile,
+                                        currentProfile.name
+                                    ),
+                                    CarToast.LENGTH_SHORT
+                                ).show()
+                                invalidate()
+                                screenManager.pop()
+                            }
                         }
-                    }
-                    .build()
-                )
-                addAction(Action.Builder()
-                    .setIcon(
-                        CarIcon.Builder(
-                            IconCompat.createWithResource(
-                                carContext,
-                                R.drawable.ic_save
-                            )
-                        ).build()
-                    )
-                    .setOnClickListener {
+                    }.build())
+                }
+                addAction(
+                    Action.Builder()
+                        .setIcon(
+                            CarIcon.Builder(
+                                IconCompat.createWithResource(
+                                    carContext,
+                                    R.drawable.ic_save
+                                )
+                            ).build()
+                        )
+                        .setOnClickListener {
                         val textPromptScreen = TextPromptScreen(
                             carContext,
                             R.string.save_as_profile,
@@ -248,18 +225,21 @@ class EditFiltersScreen(ctx: CarContext) : Screen(ctx) {
                         is BooleanFilter -> {
                             setToggle(Toggle.Builder {
                                 (value as BooleanFilterValue).value = it
+                                lifecycleScope.launch { vm.saveFilterValues() }
                             }.setChecked((value as BooleanFilterValue).value).build())
                         }
                         is MultipleChoiceFilter -> {
                             setBrowsable(true)
                             setOnClickListener {
-                                screenManager.push(
+                                screenManager.pushForResult(
                                     MultipleChoiceFilterScreen(
                                         carContext,
                                         filter,
                                         value as MultipleChoiceFilterValue
                                     )
-                                )
+                                ) {
+                                    lifecycleScope.launch { vm.saveFilterValues() }
+                                }
                             }
                             addText(
                                 if ((value as MultipleChoiceFilterValue).all) {
@@ -276,13 +256,15 @@ class EditFiltersScreen(ctx: CarContext) : Screen(ctx) {
                             setBrowsable(true)
                             addText((value as SliderFilterValue).value.toString() + " " + filter.unit)
                             setOnClickListener {
-                                screenManager.push(
+                                screenManager.pushForResult(
                                     SliderFilterScreen(
                                         carContext,
                                         filter,
                                         value
                                     )
-                                )
+                                ) {
+                                    lifecycleScope.launch { vm.saveFilterValues() }
+                                }
                             }
                         }
                     }

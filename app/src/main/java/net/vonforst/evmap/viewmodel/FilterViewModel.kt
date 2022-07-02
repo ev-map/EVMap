@@ -86,4 +86,11 @@ class FilterViewModel(application: Application) : AndroidViewModel(application) 
         // set selected profile
         prefs.filterStatus = profileId
     }
+
+    suspend fun deleteCurrentProfile() {
+        filterProfile.value?.let {
+            db.filterProfileDao().delete(it)
+            prefs.filterStatus = FILTERS_DISABLED
+        }
+    }
 }

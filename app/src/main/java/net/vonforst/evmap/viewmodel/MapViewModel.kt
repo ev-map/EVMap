@@ -434,6 +434,11 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
                     chargerDetails.value = response
                     if (response.status == Status.SUCCESS) {
                         chargerSparse.value = response.data
+
+                        if (response.data != null && favorites.value?.any { it.charger.id == response.data.id } == true) {
+                            // update data of stored favorite
+                            db.chargeLocationsDao().insert(response.data)
+                        }
                     } else {
                         chargerSparse.value = null
                     }

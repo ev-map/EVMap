@@ -21,7 +21,9 @@ import kotlin.math.min
 import kotlin.math.roundToInt
 
 class VehicleDataScreen(ctx: CarContext) : Screen(ctx), LifecycleObserver {
-    private val hardwareMan = ctx.getCarService(CarContext.HARDWARE_SERVICE) as CarHardwareManager
+    private val carInfo =
+        (ctx.getCarService(CarContext.HARDWARE_SERVICE) as CarHardwareManager).carInfo
+    private val carSensors = carContext.patchedCarSensors
     private var model: Model? = null
     private var energyLevel: EnergyLevel? = null
     private var speed: Speed? = null
@@ -232,15 +234,15 @@ class VehicleDataScreen(ctx: CarContext) : Screen(ctx), LifecycleObserver {
         println("Setting up energy level listener")
 
         val exec = ContextCompat.getMainExecutor(carContext)
-        hardwareMan.carInfo.addEnergyLevelListener(exec, ::onEnergyLevelUpdated)
-        hardwareMan.carInfo.addSpeedListener(exec, ::onSpeedUpdated)
-        hardwareMan.carSensors.addCompassListener(
+        carInfo.addEnergyLevelListener(exec, ::onEnergyLevelUpdated)
+        carInfo.addSpeedListener(exec, ::onSpeedUpdated)
+        carSensors.addCompassListener(
             CarSensors.UPDATE_RATE_NORMAL,
             exec,
             ::onCompassUpdated
         )
 
-        hardwareMan.carInfo.fetchModel(exec) {
+        carInfo.fetchModel(exec) {
             this.model = it
             invalidate()
         }
@@ -249,9 +251,9 @@ class VehicleDataScreen(ctx: CarContext) : Screen(ctx), LifecycleObserver {
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     private fun removeListeners() {
         println("Removing energy level listener")
-        hardwareMan.carInfo.removeEnergyLevelListener(::onEnergyLevelUpdated)
-        hardwareMan.carInfo.removeSpeedListener(::onSpeedUpdated)
-        hardwareMan.carSensors.removeCompassListener(::onCompassUpdated)
+        carInfo.removeEnergyLevelListener(::onEnergyLevelUpdated)
+        carInfo.removeSpeedListener(::onSpeedUpdated)
+        carSensors.removeCompassListener(::onCompassUpdated)
     }
 
     private fun permissionsGranted(): Boolean =

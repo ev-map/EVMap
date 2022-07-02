@@ -163,6 +163,7 @@ class MapsActivity : AppCompatActivity(),
                     .createPendingIntent()
             } else if (intent.hasExtra(EXTRA_FAVORITES)) {
                 deepLink = navController.createDeepLink()
+                    .setGraph(navGraph)
                     .setDestination(R.id.favs)
                     .createPendingIntent()
             }

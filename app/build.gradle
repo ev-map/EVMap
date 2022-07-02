@@ -8,6 +8,7 @@ apply plugin: 'kotlin-parcelize'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
 apply plugin: 'com.mikepenz.aboutlibraries.plugin'
+apply plugin: 'de.timfreiheit.resourceplaceholders'
 
 android {
     compileSdkVersion 31
@@ -96,6 +97,10 @@ android {
 
     testOptions {
         unitTests.includeAndroidResources true
+    }
+
+    resourcePlaceholders {
+        files = ['xml/shortcuts.xml']
     }
 
     // add API keys from environment variable if not set in apikeys.xml

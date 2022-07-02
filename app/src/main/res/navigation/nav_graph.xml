@@ -4,50 +4,54 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph">
 
-    <fragment
+    <navigation
         android:id="@+id/map"
-        android:name="net.vonforst.evmap.fragment.MapFragment"
-        android:label=""
-        tools:layout="@layout/fragment_map">
-        <action
-            android:id="@+id/action_map_to_filterFragment"
-            app:destination="@id/filter"
-            app:exitAnim="@animator/nav_default_exit_anim"
-            app:enterAnim="@animator/nav_default_enter_anim"
-            app:popEnterAnim="@animator/nav_default_pop_enter_anim"
-            app:popExitAnim="@animator/nav_default_pop_exit_anim" />
-        <action
-            android:id="@+id/action_map_to_filterProfilesFragment"
-            app:destination="@id/filter_profiles"
-            app:exitAnim="@animator/nav_default_exit_anim"
-            app:enterAnim="@animator/nav_default_enter_anim"
-            app:popEnterAnim="@animator/nav_default_pop_enter_anim"
-            app:popExitAnim="@animator/nav_default_pop_exit_anim" />
-        <action
-            android:id="@+id/action_map_to_chargepriceFragment"
-            app:destination="@id/chargeprice" />
-        <action
-            android:id="@+id/action_map_to_opensource_donations"
-            app:destination="@id/opensource_donations" />
-        <argument
-            android:name="locationName"
-            android:defaultValue="@null"
-            app:argType="string"
-            app:nullable="true" />
-        <argument
-            android:name="chargerId"
-            android:defaultValue="0L"
-            app:argType="long" />
-        <argument
-            android:name="latLng"
-            android:defaultValue="@null"
-            app:argType="com.car2go.maps.model.LatLng"
-            app:nullable="true" />
-        <argument
-            android:name="appStart"
-            android:defaultValue="false"
-            app:argType="boolean" />
-    </fragment>
+        app:startDestination="@id/map_frag">
+        <fragment
+            android:id="@+id/map_frag"
+            android:name="net.vonforst.evmap.fragment.MapFragment"
+            android:label=""
+            tools:layout="@layout/fragment_map">
+            <action
+                android:id="@+id/action_map_to_filterFragment"
+                app:destination="@id/filter"
+                app:exitAnim="@animator/nav_default_exit_anim"
+                app:enterAnim="@animator/nav_default_enter_anim"
+                app:popEnterAnim="@animator/nav_default_pop_enter_anim"
+                app:popExitAnim="@animator/nav_default_pop_exit_anim" />
+            <action
+                android:id="@+id/action_map_to_filterProfilesFragment"
+                app:destination="@id/filter_profiles"
+                app:exitAnim="@animator/nav_default_exit_anim"
+                app:enterAnim="@animator/nav_default_enter_anim"
+                app:popEnterAnim="@animator/nav_default_pop_enter_anim"
+                app:popExitAnim="@animator/nav_default_pop_exit_anim" />
+            <action
+                android:id="@+id/action_map_to_chargepriceFragment"
+                app:destination="@id/chargeprice" />
+            <action
+                android:id="@+id/action_map_to_opensource_donations"
+                app:destination="@id/opensource_donations" />
+            <argument
+                android:name="locationName"
+                android:defaultValue="@null"
+                app:argType="string"
+                app:nullable="true" />
+            <argument
+                android:name="chargerId"
+                android:defaultValue="0L"
+                app:argType="long" />
+            <argument
+                android:name="latLng"
+                android:defaultValue="@null"
+                app:argType="com.car2go.maps.model.LatLng"
+                app:nullable="true" />
+            <argument
+                android:name="appStart"
+                android:defaultValue="false"
+                app:argType="boolean" />
+        </fragment>
+    </navigation>
     <fragment
         android:id="@+id/about"
         android:name="net.vonforst.evmap.fragment.preference.AboutFragment"
@@ -85,15 +89,19 @@
         android:name="net.vonforst.evmap.fragment.preference.AndroidAutoSettingsFragment"
         android:label="@string/settings_android_auto"
         tools:layout="@layout/fragment_preference" />
-    <fragment
+    <navigation
         android:id="@+id/favs"
-        android:name="net.vonforst.evmap.fragment.FavoritesFragment"
-        android:label="@string/menu_favs"
-        tools:layout="@layout/fragment_favorites">
-        <action
-            android:id="@+id/action_favs_to_map"
-            app:destination="@id/map" />
-    </fragment>
+        app:startDestination="@id/favs_frag">
+        <fragment
+            android:id="@+id/favs_frag"
+            android:name="net.vonforst.evmap.fragment.FavoritesFragment"
+            android:label="@string/menu_favs"
+            tools:layout="@layout/fragment_favorites">
+            <action
+                android:id="@+id/action_favs_to_map"
+                app:destination="@id/map" />
+        </fragment>
+    </navigation>
     <fragment
         android:id="@+id/filter"
         android:name="net.vonforst.evmap.fragment.FilterFragment"

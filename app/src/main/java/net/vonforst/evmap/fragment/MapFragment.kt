@@ -1041,7 +1041,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
         // update icons of existing markers (connector filter may have changed)
         for ((marker, charger) in markers) {
-            val highlight = charger == vm.chargerSparse.value
+            val highlight = charger.id == vm.chargerSparse.value?.id
             marker.setIcon(
                 chargerIconGenerator.getBitmapDescriptor(
                     getMarkerTint(charger, vm.filteredConnectors.value),
@@ -1065,7 +1065,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                     // animate marker if it is visible, otherwise remove immediately
                     if (bounds.contains(marker.position)) {
                         val tint = getMarkerTint(charger, vm.filteredConnectors.value)
-                        val highlight = charger == vm.chargerSparse.value
+                        val highlight = charger.id == vm.chargerSparse.value?.id
                         val fault = charger.faultReport != null
                         val multi = charger.isMulti(vm.filteredConnectors.value)
                         val fav =
@@ -1085,7 +1085,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             for (charger in chargers) {
                 if (!map1.contains(charger.id)) {
                     val tint = getMarkerTint(charger, vm.filteredConnectors.value)
-                    val highlight = charger == vm.chargerSparse.value
+                    val highlight = charger.id == vm.chargerSparse.value?.id
                     val fault = charger.faultReport != null
                     val multi = charger.isMulti(vm.filteredConnectors.value)
                     val fav = charger.id in vm.favorites.value?.map { it.charger.id } ?: emptyList()

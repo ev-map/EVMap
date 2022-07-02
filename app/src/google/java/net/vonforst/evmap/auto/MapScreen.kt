@@ -98,6 +98,8 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
         )
     }
 
+    private var searchLocation: LatLng? = null
+
     init {
         filtersWithValue.observe(this) {
             loadChargers()
@@ -111,7 +113,9 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
         session.mapScreen = this
         return PlaceListMapTemplate.Builder().apply {
             setTitle(
-                carContext.getString(
+                prefs.placeSearchResultAndroidAutoName?.let {
+                    carContext.getString(R.string.auto_chargers_near_location, it)
+                } ?: carContext.getString(
                     if (filterStatus.value == FILTERS_FAVORITES) {
                         R.string.auto_favorites
                     } else {
@@ -119,8 +123,16 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                     }
                 )
             )
-            location?.let {
-                setAnchor(Place.Builder(CarLocation.create(it)).build())
+            searchLocation?.let {
+                setAnchor(Place.Builder(CarLocation.create(it.latitude, it.longitude)).apply {
+                    if (prefs.placeSearchResultAndroidAutoName != null) {
+                        setMarker(
+                            PlaceMarker.Builder()
+                                .setColor(CarColor.PRIMARY)
+                                .build()
+                        )
+                    }
+                }.build())
             } ?: setLoading(true)
             chargers?.take(maxRows)?.let { chargerList ->
                 val builder = ItemList.Builder()
@@ -178,7 +190,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                                     .build()
                             )
                             .setOnClickListener {
-                                screenManager.pushForResult(FilterScreen(carContext)) {
+                                screenManager.pushForResult(FilterScreen(carContext, session)) {
                                     chargers = null
                                     filterStatus.value = prefs.filterStatus
                                 }
@@ -305,6 +317,10 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
         val referenceData = referenceData.value ?: return
         val filters = filtersWithValue.value ?: return
 
+        val searchLocation =
+            prefs.placeSearchResultAndroidAuto ?: LatLng.fromLocation(location)
+        this.searchLocation = searchLocation
+
         updateCoroutine = lifecycleScope.launch {
             try {
                 // load chargers
@@ -319,7 +335,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                 } else {
                     val response = api.getChargepointsRadius(
                         referenceData,
-                        LatLng.fromLocation(location),
+                        searchLocation,
                         searchRadius,
                         zoom = 16f,
                         filters
@@ -330,7 +346,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                             // try again with larger radius
                             val response = api.getChargepointsRadius(
                                 referenceData,
-                                LatLng.fromLocation(location),
+                                searchLocation,
                                 searchRadius * 10,
                                 zoom = 16f,
                                 filters
@@ -354,8 +370,9 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
     }
 
     private fun onEnergyLevelUpdated(energyLevel: EnergyLevel) {
+        val isUpdate = this.energyLevel == null
         this.energyLevel = energyLevel
-        invalidate()
+        if (isUpdate) invalidate()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)

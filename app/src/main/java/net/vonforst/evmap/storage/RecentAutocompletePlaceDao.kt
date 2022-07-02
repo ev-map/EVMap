@@ -65,6 +65,19 @@ abstract class RecentAutocompletePlaceDao {
         limit: Int? = null
     ): List<RecentAutocompletePlace>
 
+    @Query("SELECT * FROM recentautocompleteplace WHERE dataSource = :dataSource AND primaryText LIKE '%' || :query || '%' ORDER BY timestamp DESC LIMIT :limit")
+    abstract suspend fun searchAsync(
+        query: String,
+        dataSource: String,
+        limit: Int? = null
+    ): List<RecentAutocompletePlace>
+
     @Query("SELECT * FROM recentautocompleteplace WHERE dataSource = :dataSource ORDER BY timestamp DESC LIMIT :limit")
     abstract fun getAll(dataSource: String, limit: Int? = null): List<RecentAutocompletePlace>
+
+    @Query("SELECT * FROM recentautocompleteplace WHERE dataSource = :dataSource ORDER BY timestamp DESC LIMIT :limit")
+    abstract suspend fun getAllAsync(
+        dataSource: String,
+        limit: Int? = null
+    ): List<RecentAutocompletePlace>
 }

@@ -29,6 +29,7 @@
     <string name="grant_on_phone">Grant on phone</string>
     <string name="auto_chargers_closeby">Nearby chargers</string>
     <string name="auto_favorites">Favorites</string>
+    <string name="auto_chargers_near_location">Near %s</string>
     <string name="auto_fault_report_date">⚠️ Fault report (%s)</string>
     <string name="auto_no_refresh_possible">Further updates not possible. Please go back and restart.</string>
     <string name="auto_prices">Pricing</string>

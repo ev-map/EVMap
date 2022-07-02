@@ -3,6 +3,7 @@ package net.vonforst.evmap.storage
 import android.content.Context
 import androidx.preference.PreferenceManager
 import com.car2go.maps.AnyMap
+import com.car2go.maps.model.LatLng
 import net.vonforst.evmap.R
 import net.vonforst.evmap.model.FILTERS_CUSTOM
 import net.vonforst.evmap.model.FILTERS_DISABLED
@@ -86,11 +87,14 @@ class PreferenceDataSource(val context: Context) {
             context.getString(R.string.pref_map_provider_default)
         )!!
 
-    val searchProvider: String
+    var searchProvider: String
         get() = sp.getString(
             "search_provider",
             context.getString(R.string.pref_search_provider_default)
         )!!
+        set(value) {
+            sp.edit().putString("search_provider", value).apply()
+        }
 
     var mapType: AnyMap.Type
         get() = AnyMap.Type.valueOf(sp.getString("map_type", null) ?: AnyMap.Type.NORMAL.toString())
@@ -202,5 +206,29 @@ class PreferenceDataSource(val context: Context) {
         get() = sp.getBoolean("opensource_donations_dialog_shown", false)
         set(value) {
             sp.edit().putBoolean("opensource_donations_dialog_shown", value).apply()
+        }
+
+    var placeSearchResultAndroidAuto: LatLng?
+        get() = if (sp.contains("place_search_result_android_auto_lat")) {
+            LatLng(
+                Double.fromBits(sp.getLong("place_search_result_android_auto_lat", 0L)),
+                Double.fromBits(sp.getLong("place_search_result_android_auto_lng", 0L))
+            )
+        } else null
+        set(value) {
+            if (value == null) {
+                sp.edit().remove("place_search_result_android_auto_lat")
+                    .remove("place_search_result_android_auto_lng").apply()
+            } else {
+                sp.edit().putLong("place_search_result_android_auto_lat", value.latitude.toBits())
+                    .putLong("place_search_result_android_auto_lng", value.longitude.toBits())
+                    .apply()
+            }
+        }
+
+    var placeSearchResultAndroidAutoName: String?
+        get() = sp.getString("place_search_result_android_auto_name", null)
+        set(value) {
+            sp.edit().putString("place_search_result_android_auto_name", value).apply()
         }
 }

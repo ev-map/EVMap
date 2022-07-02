@@ -21,7 +21,7 @@ import net.vonforst.evmap.viewmodel.FilterViewModel
 import kotlin.math.roundToInt
 
 @androidx.car.app.annotations.ExperimentalCarApi
-class FilterScreen(ctx: CarContext) : Screen(ctx) {
+class FilterScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx) {
     private val prefs = PreferenceDataSource(ctx)
     private val db = AppDatabase.getInstance(ctx)
     val filterProfiles: LiveData<List<FilterProfile>> by lazy {
@@ -47,6 +47,30 @@ class FilterScreen(ctx: CarContext) : Screen(ctx) {
             setHeaderAction(Action.BACK)
             setActionStrip(
                 ActionStrip.Builder().apply {
+                    addAction(Action.Builder().apply {
+                        setIcon(
+                            CarIcon.Builder(
+                                IconCompat.createWithResource(
+                                    carContext,
+                                    if (prefs.placeSearchResultAndroidAuto != null) {
+                                        R.drawable.ic_search_off
+                                    } else {
+                                        R.drawable.ic_search
+                                    }
+                                )
+                            ).build()
+
+                        )
+                        setOnClickListener(ParkedOnlyOnClickListener.create {
+                            if (prefs.placeSearchResultAndroidAuto != null) {
+                                prefs.placeSearchResultAndroidAutoName = null
+                                prefs.placeSearchResultAndroidAuto = null
+                                screenManager.pop()
+                            } else {
+                                screenManager.push(PlaceSearchScreen(carContext, session))
+                            }
+                        })
+                    }.build())
                     addAction(Action.Builder().apply {
                         setIcon(
                             CarIcon.Builder(

@@ -19,6 +19,7 @@
     <string name="grant_on_phone">Auf Telefon zulassen</string>
     <string name="auto_chargers_closeby">In der Nähe</string>
     <string name="auto_favorites">Favoriten</string>
+    <string name="auto_chargers_near_location">Nahe %s</string>
     <string name="auto_fault_report_date">⚠️ Störungsmeldung (%s)</string>
     <string name="auto_no_refresh_possible">Weitere Aktualisierung nicht möglich. Bitte zurück gehen und neu starten.</string>
     <string name="auto_prices">Preise</string>

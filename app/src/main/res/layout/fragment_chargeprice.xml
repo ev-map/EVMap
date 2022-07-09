@@ -107,7 +107,7 @@
                     android:id="@+id/textView4"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{@string/chargeprice_stats(vm.chargepriceMetaForChargepoint.data.energy, BindingAdaptersKt.time((int) Math.round(vm.chargepriceMetaForChargepoint.data.duration)), vm.chargepriceMetaForChargepoint.data.power)}"
+                    android:text="@{@string/chargeprice_stats(vm.chargepriceMetaForChargepoint.data.energy, BindingAdaptersKt.time((int) Math.round(vm.chargepriceMetaForChargepoint.data.duration)), vm.chargepriceMetaForChargepoint.data.energy / vm.chargepriceMetaForChargepoint.data.duration * 60)}"
                     android:textAppearance="@style/TextAppearance.Material3.BodySmall"
                     app:invisibleUnlessAnimated="@{!vm.batteryRangeSliderDragging &amp;&amp; vm.chargepriceMetaForChargepoint.status == Status.SUCCESS}"
                     app:layout_constraintStart_toStartOf="@+id/textView2"

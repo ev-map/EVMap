@@ -139,7 +139,7 @@ data class ChargeLocationStatus(
             (connectors == null || connectors.map {
                 equivalentPlugTypes(it)
             }.any { equivalent -> it.type in equivalent })
-                    && (minPower == null || (it.power != null && it.power > minPower))
+                    && (minPower == null || (it.power != null && it.power >= minPower))
         }
         return this.copy(status = statusFiltered)
     }

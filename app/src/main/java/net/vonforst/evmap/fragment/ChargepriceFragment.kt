@@ -2,7 +2,10 @@ package net.vonforst.evmap.fragment
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.MotionEvent
+import android.view.View
+import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -147,7 +150,7 @@ class ChargepriceFragment : Fragment() {
         }
 
         binding.btnSettings.setOnClickListener {
-            findNavController().navigate(R.id.action_chargeprice_to_settingsFragment)
+            findNavController().navigate(R.id.action_chargeprice_to_chargepriceSettingsFragment)
         }
 
         binding.batteryRange.setLabelFormatter { value: Float ->

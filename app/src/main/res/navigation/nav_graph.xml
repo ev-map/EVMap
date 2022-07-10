@@ -118,8 +118,8 @@
         android:label="@string/chargeprice_title"
         tools:layout="@layout/fragment_chargeprice">
         <action
-            android:id="@+id/action_chargeprice_to_settingsFragment"
-            app:destination="@id/settings"
+            android:id="@+id/action_chargeprice_to_chargepriceSettingsFragment"
+            app:destination="@id/settings_chargeprice"
             app:exitAnim="@animator/nav_default_exit_anim"
             app:enterAnim="@animator/nav_default_enter_anim"
             app:popEnterAnim="@animator/nav_default_enter_anim"

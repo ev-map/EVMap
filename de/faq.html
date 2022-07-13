@@ -157,5 +157,21 @@
 <h3>Welche Berechtigungen benötigt EVMap, und wofür?</h3>
 <p>Die benötigten und optionalen Berechtigungen sind auf einer <a href="permissions.html">separaten Seite aufgelistet</a>.</p>
 
+<h3>Was ist F-Droid und warum unterscheiden sich die Versionen von EVMap bei F-Droid und dem Google Play Store?</h3>
+<p><a href="https://f-droid.org/">F-Droid</a> ist ein alternativer App Store für Android, der sich auf <i>Free and Open Source Software</i> (FOSS) spezialisiert hat. Nach den Regeln von F-Droid dürfen die dort erhältlichen Apps keine proprietären Abhängigkeiten enthalten, dadurch ist z.B. die Nutzung der meisten Google-Dienste nicht möglich. Die auf F-Droid verfügbare Version von EVMap enthält daher einige Änderungen, um solche Abhängigkeiten zu entfernen. Die Details dazu sind in der Liste unten zu finden.</p>
+
+<p>Wegen der unten genannten Nachteile ist es für die meisten Nutzer <b>empfehlenswert, die App von Google Play zu installieren</b>, um Zugang zu allen Funktionen zu haben. Die Version bei F-Droid ist hauptsächlich als alternative Installationsmethode für Geräte gedacht, die keinen Zugriff auf Google-Dienste haben, oder Nutzer, die diese vermeiden wollen.</p>
+
+<h4>Änderungen in der F-Droid-Version von EVMap:</h4>
+<ul>
+<li>Kartendaten und Ortssuche sind nur von <b>Mapbox (OpenStreetMap)</b> verfügbar (die Google Play-Version bietet eine Auswahlmöglichkeit zwischen Google Maps und Mapbox).</li>
+<li>Es gibt <b>keine Unterstützung für Android Auto und Android Automotive OS</b>, beides sind proprietäre Produkte von Google.</li>
+<li>Spenden werden über einen <b>PayPal</b>-Link akzeptiert statt über den In-App-Kauf-Mechanismus von Google Play.</li>
+<li>Die F-Droid-Version der App sollte dadurch auch auf Geräten ohne die üblicherweise vorinstallierten Google Play-Dienste funktionieren.</li>
+<li>Durch die Bedingungen von F-Droid haben wir weniger Kontrolle über die Veröffentlichung von Updates. Neue Versionen erscheinen typischerweise auf F-Droid ein paar Tage später als bei Google Play.</li>
+</ul>
+
+<p>Die Mapbox-Bibliothek, die zur Darstellung von OpenStreetMap-Karten verwendet wird, enthält normalerweise auch einige proprietäre Komponenten, die für optionale Telemetrie verwendet wird. Diese Komponenten wurden in beiden Versionen von EVMap entfernt, um den Datenschutz bei der Nutzung der Mapbox-Karten zu verbessern.</p>
+
 </body>
 </html>

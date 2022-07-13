@@ -139,7 +139,7 @@
 <ul>
     <li><span style="color:#4caf50">Green</span>: At least one connector of this type is available</li>
     <li><span style="color:#f44336">Red</span>: All connectors of this type are out of order</li>
-    <li><span style="color:#00bcd4">Teal</span>: All connectors of this type in use or out of order</li>
+    <li><span style="color:#00bcd4">Teal</span>: All connectors of this type are in use or out of order</li>
     <li><span style="color:#9e9e9e">Grey</span>: No real-time data available</li>
 </ul>
     
@@ -153,6 +153,22 @@
 
 <h3>Which permissions does EVMap need and why?</h3>
 <p>The required and optional permissions are listed on <a href="permissions.html">a separate page</a>.</p>
+
+<h3>What is F-Droid and why are there differences between the versions of the app available on F-Droid and the Google Play Store?</h3>
+<p><a href="https://f-droid.org/">F-Droid</a> is an alternative Android app store that focuses on free and open source (FOSS) apps. As per F-Droid's policies, apps available through its store must not contain proprietary dependencies, such as certain Google services. Thus, the version of EVMap available on F-Droid contains some changes to remove such dependencies. The details can be found in the list below.</p>
+
+<p>Due to the downsides mentioned below, it is <b>recommended</b> for most users <b>to install the app from Google Play</b> to have access to all features. The F-Droid release is mainly intended to provide an alternative means of installation for devices that cannot access Google services or users who would like to avoid them.</p>
+
+<h4>Changes in the F-Droid version of EVMap:</h4>
+<ul>
+<li>Map data and place search are solely provided by <b>Mapbox (OpenStreetMap)</b>, while the Google Play version offers a choice between Google Maps and Mapbox.</li>
+<li>There is <b>no support for Android Auto and Android Automotive OS</b>, which are both proprietary Google products.</li>
+<li>Donations are accepted through a <b>PayPal</b> link instead of the Google Play in-app purchases mechanism.</li>
+<li>The F-Droid version of the app should also work on Android devices that lack the preinstalled Google Play Services.</li>
+<li>Due to F-Droid's policies, we have less control over the release of new updates. Updates will typically appear on F-Droid a few days later than on Google Play.</li>
+</ul>
+
+<p>The Mapbox library used for displaying OpenStreetMap maps usually also contains certain proprietary components used for optional telemetry services. These have been removed in both the Google Play and the F-Droid versions of EVMap, to enhance the users' privacy while using Mapbox maps.</p>
 
 </body>
 </html>

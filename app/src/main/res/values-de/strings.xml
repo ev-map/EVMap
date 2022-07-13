@@ -158,6 +158,8 @@
     <string name="welcome_2_detail">Du kannst die Farben im Menü unter “Über EVMap → FAQ” erneut ansehen)</string>
     <string name="donation_dialog_title">Danke, dass du EVMap nutzt!</string>
     <string name="donation_dialog_detail">EVMap ist kostenlos und Open Source, ich entwickle es in meiner Freizeit. Über GitHub kann jeder zur Weiterentwicklung der App beitragen. Durch die steigende Beliebtheit der App müssen allerdings auch laufende Kosten, z.B. für den Zugriff auf die Datenquellen, gedeckt werden. Daher freue ich mich auch über Spenden in der App oder über GitHub Sponsors.</string>
+    <string name="chargeprice_donation_dialog_title">Du bist ein richtiger Sparfuchs!</string>
+    <string name="chargeprice_donation_dialog_detail">Es sieht so aus, als wenn du den Preisvergleich sehr gern nutzt. Für den Zugang zu den Preisinformationen muss der Entwickler von EVMap eine monatliche Gebühr an die Datenquelle Chargeprice.app zahlen. Um diesen Dienst weiter anbieten zu können, würde ich mich sehr über Spenden freuen.</string>
     <string name="deleted_filterprofile">„%s” gelöscht</string>
     <string name="undo">Rückgängig</string>
     <string name="rename">Umbenennen</string>

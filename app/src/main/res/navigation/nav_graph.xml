@@ -124,6 +124,9 @@
             app:enterAnim="@animator/nav_default_enter_anim"
             app:popEnterAnim="@animator/nav_default_enter_anim"
             app:popExitAnim="@animator/nav_default_exit_anim" />
+        <action
+            android:id="@+id/action_chargeprice_to_donateFragment"
+            app:destination="@id/donate" />
         <argument
             android:name="charger"
             app:argType="net.vonforst.evmap.model.ChargeLocation" />

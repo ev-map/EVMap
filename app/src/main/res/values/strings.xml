@@ -157,6 +157,8 @@
     <string name="welcome_2_detail">(You can check the colors again under “About EVMap → FAQ” in the menu)</string>
     <string name="donation_dialog_title">Thank you for using EVMap!</string>
     <string name="donation_dialog_detail">EVMap is free and Open Source software that I develop in my spare time. Coding contributions on GitHub are very much appreciated. However, due to increasing popularity of the app, I also need to cover some running costs, e.g. for access to the data sources. Therefore, please consider supporting the app through a donation or via GitHub Sponsors.</string>
+    <string name="chargeprice_donation_dialog_title">You\'re a real bargain hunter!</string>
+    <string name="chargeprice_donation_dialog_detail">It seems like you like the price comparison feature a lot. To access the pricing data, the developer of EVMap needs to pay a monthly fee to the data provider Chargeprice.app. Therefore, please consider supporting EVMap through a donation.</string>
     <string name="deleted_filterprofile">Deleted “%s”</string>
     <string name="undo">Undo</string>
     <string name="rename">Rename</string>

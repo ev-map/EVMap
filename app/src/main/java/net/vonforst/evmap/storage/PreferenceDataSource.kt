@@ -202,6 +202,14 @@ class PreferenceDataSource(val context: Context) {
             sp.edit().putLong("app_start_counter", value).apply()
         }
 
+    /** Counter for how many times the price comparison page was opened,
+     * introduced with Version 1.3.4 **/
+    var chargepriceCounter: Long
+        get() = sp.getLong("chargeprice_counter", 0)
+        set(value) {
+            sp.edit().putLong("chargeprice_counter", value).apply()
+        }
+
     var opensourceDonationsDialogShown: Boolean
         get() = sp.getBoolean("opensource_donations_dialog_shown", false)
         set(value) {

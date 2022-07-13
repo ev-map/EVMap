@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -27,6 +28,7 @@ import net.vonforst.evmap.api.chargeprice.ChargepriceCar
 import net.vonforst.evmap.api.equivalentPlugTypes
 import net.vonforst.evmap.databinding.FragmentChargepriceBinding
 import net.vonforst.evmap.model.Chargepoint
+import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.viewmodel.ChargepriceViewModel
 import net.vonforst.evmap.viewmodel.Status
 import net.vonforst.evmap.viewmodel.viewModelFactory
@@ -48,6 +50,28 @@ class ChargepriceFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         sharedElementEnterTransition = MaterialContainerTransform()
+
+        if (savedInstanceState == null) {
+            val prefs = PreferenceDataSource(requireContext())
+            prefs.chargepriceCounter += 1
+            if ((prefs.chargepriceCounter - 30).mod(50) == 0) {
+                showDonationDialog()
+            }
+        }
+    }
+
+    private fun showDonationDialog() {
+        AlertDialog.Builder(requireContext())
+            .setTitle(R.string.chargeprice_donation_dialog_title)
+            .setMessage(R.string.chargeprice_donation_dialog_detail)
+            .setNegativeButton(R.string.ok) { di, _ ->
+                di.cancel()
+            }
+            .setPositiveButton(R.string.donate) { di, _ ->
+                di.dismiss()
+                findNavController().navigate(R.id.action_chargeprice_to_donateFragment)
+            }
+            .show()
     }
 
     override fun onCreateView(

@@ -195,7 +195,7 @@ dependencies {
     }
 
     // Google Places
-    implementation 'com.google.android.libraries.places:places:2.6.0'
+    googleImplementation 'com.google.android.libraries.places:places:2.6.0'
     googleImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.4.1'
 
     // Mapbox Geocoding

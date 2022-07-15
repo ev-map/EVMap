@@ -192,6 +192,7 @@ dependencies {
     implementation("com.github.johan12345.AnyMaps:anymaps-mapbox:$anyMapsVersion") {
         exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-android-accounts'
         exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-android-telemetry'
+        exclude group: 'com.google.android.gms', module: 'play-services-location'
     }
 
     // Google Places

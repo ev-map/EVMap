@@ -45,7 +45,7 @@ import kotlin.math.roundToInt
 @androidx.car.app.annotations.ExperimentalCarApi
 class MapScreen(ctx: CarContext, val session: EVMapSession) :
     Screen(ctx), LocationAwareScreen, OnContentRefreshListener,
-    ItemList.OnItemVisibilityChangedListener {
+    ItemList.OnItemVisibilityChangedListener, DefaultLifecycleObserver {
     companion object {
         val MARKER = "map"
     }
@@ -375,7 +375,10 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
         if (isUpdate) invalidate()
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    override fun onResume(owner: LifecycleOwner) {
+        setupListeners()
+    }
+
     private fun setupListeners() {
         if (!permissions.all {
                 ContextCompat.checkSelfPermission(
@@ -392,7 +395,10 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
         }
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+    override fun onPause(owner: LifecycleOwner) {
+        removeListeners()
+    }
+
     private fun removeListeners() {
         if (supportsCarApiLevel3(carContext)) {
             println("Removing energy level listener")

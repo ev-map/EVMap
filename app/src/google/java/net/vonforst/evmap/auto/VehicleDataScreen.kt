@@ -10,9 +10,8 @@ import androidx.car.app.hardware.info.*
 import androidx.car.app.model.*
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.IconCompat
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import net.vonforst.evmap.BuildConfig
 import net.vonforst.evmap.R
 import net.vonforst.evmap.ui.CompassNeedle
@@ -20,7 +19,7 @@ import net.vonforst.evmap.ui.Gauge
 import kotlin.math.min
 import kotlin.math.roundToInt
 
-class VehicleDataScreen(ctx: CarContext) : Screen(ctx), LifecycleObserver {
+class VehicleDataScreen(ctx: CarContext) : Screen(ctx), DefaultLifecycleObserver {
     private val carInfo =
         (ctx.getCarService(CarContext.HARDWARE_SERVICE) as CarHardwareManager).carInfo
     private val carSensors = carContext.patchedCarSensors
@@ -227,7 +226,10 @@ class VehicleDataScreen(ctx: CarContext) : Screen(ctx), LifecycleObserver {
         invalidate()
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    override fun onResume(owner: LifecycleOwner) {
+        setupListeners()
+    }
+
     private fun setupListeners() {
         if (!permissionsGranted()) return
 
@@ -248,7 +250,10 @@ class VehicleDataScreen(ctx: CarContext) : Screen(ctx), LifecycleObserver {
         }
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+    override fun onPause(owner: LifecycleOwner) {
+        removeListeners()
+    }
+
     private fun removeListeners() {
         println("Removing energy level listener")
         carInfo.removeEnergyLevelListener(::onEnergyLevelUpdated)

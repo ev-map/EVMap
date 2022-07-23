@@ -408,6 +408,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
 
     override fun onContentRefreshRequested() {
         loadChargers()
+        availabilities.clear()
     }
 
     override fun onItemVisibilityChanged(startIndex: Int, endIndex: Int) {

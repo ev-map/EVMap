@@ -413,6 +413,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
     override fun onItemVisibilityChanged(startIndex: Int, endIndex: Int) {
         // when the list is scrolled, load corresponding availabilities
         if (startIndex == visibleStart && endIndex == visibleEnd) return
+        if (startIndex == -1 || endIndex == -1) return
         if (availabilityUpdateCoroutine != null) return
 
         visibleEnd = endIndex

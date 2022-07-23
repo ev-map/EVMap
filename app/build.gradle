@@ -188,7 +188,7 @@ dependencies {
     def anyMapsVersion = '3c67d7a1dc'
     implementation "com.github.johan12345.AnyMaps:anymaps-base:$anyMapsVersion"
     googleImplementation "com.github.johan12345.AnyMaps:anymaps-google:$anyMapsVersion"
-    googleImplementation 'com.google.android.gms:play-services-maps:18.0.2'
+    googleImplementation 'com.google.android.gms:play-services-maps:18.1.0'
     implementation("com.github.johan12345.AnyMaps:anymaps-mapbox:$anyMapsVersion") {
         exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-android-accounts'
         exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-android-telemetry'

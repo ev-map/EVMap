@@ -84,10 +84,10 @@ class MapsActivity : AppCompatActivity(),
         val navView = findViewById<NavigationView>(R.id.nav_view)
         navView.setupWithNavController(navController)
 
-        val header = navView.getHeaderView(0)
-        ViewCompat.setOnApplyWindowInsetsListener(header) { v, insets ->
-            v.setPadding(0, insets.getInsets(WindowInsetsCompat.Type.statusBars()).top, 0, 0)
-            insets
+        ViewCompat.setOnApplyWindowInsetsListener(navView) { v, insets ->
+            val header = navView.getHeaderView(0)
+            header.setPadding(0, insets.getInsets(WindowInsetsCompat.Type.statusBars()).top, 0, 0)
+            WindowInsetsCompat.CONSUMED
         }
 
         prefs = PreferenceDataSource(this)

@@ -23,10 +23,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.view.MenuCompat
-import androidx.core.view.doOnLayout
-import androidx.core.view.doOnNextLayout
-import androidx.core.view.updateLayoutParams
+import androidx.core.view.*
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -116,6 +113,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
     private var searchResultIcon: BitmapDescriptor? = null
     private var connectionErrorSnackbar: Snackbar? = null
     private var previousChargepointIds: Set<Long>? = null
+    private var mapTopPadding: Int = 0
 
     private lateinit var clusterIconGenerator: ClusterIconGenerator
     private lateinit var chargerIconGenerator: ChargerIconGenerator
@@ -201,19 +199,21 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
         setHasOptionsMenu(true)
 
-        binding.root.setOnApplyWindowInsetsListener { _, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
+            ViewCompat.onApplyWindowInsets(binding.root, insets)
+
+            val systemWindowInsetTop = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
             binding.detailAppBar.toolbar.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-                topMargin = insets.systemWindowInsetTop
+                topMargin = systemWindowInsetTop
             }
 
-            // margin of layers button
+            // margin of layers button: status bar height + toolbar height + margin
             val density = resources.displayMetrics.density
-            // status bar height + toolbar height + margin
             val margin =
                 if (binding.toolbarContainer.layoutParams.width == ViewGroup.LayoutParams.MATCH_PARENT) {
-                    insets.systemWindowInsetTop + (48 * density).toInt() + (28 * density).toInt()
+                    systemWindowInsetTop + (48 * density).toInt() + (28 * density).toInt()
                 } else {
-                    insets.systemWindowInsetTop + (12 * density).toInt()
+                    systemWindowInsetTop + (12 * density).toInt()
                 }
             binding.fabLayers.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 topMargin = margin
@@ -221,6 +221,11 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             binding.layersSheet.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 topMargin = margin
             }
+
+            // set map padding so that compass is not obstructed by toolbar
+            mapTopPadding = systemWindowInsetTop + (48 * density).toInt() + (16 * density).toInt()
+            map?.setPadding(0, mapTopPadding, 0, 0)
+
             insets
         }
 
@@ -888,7 +893,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         map.setTrafficEnabled(vm.mapTrafficEnabled.value ?: false)
 
         // set padding so that compass is not obstructed by toolbar
-        map.setPadding(0, binding.toolbarContainer.height, 0, 0)
+        map.setPadding(0, mapTopPadding, 0, 0)
 
         val mode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
         map.setMapStyle(

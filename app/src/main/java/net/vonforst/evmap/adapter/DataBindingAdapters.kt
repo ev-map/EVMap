@@ -171,7 +171,7 @@ class CheckableConnectorAdapter : DataBindingAdapter<Chargepoint>() {
                 root.post {
                     notifyDataSetChanged()
                 }
-                onCheckedItemChangedListener?.invoke(getCheckedItem()!!)
+                getCheckedItem()?.let { onCheckedItemChangedListener?.invoke(it) }
             }
         }
     }

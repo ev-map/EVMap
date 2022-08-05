@@ -37,6 +37,7 @@ import java.time.Duration
 import java.time.Instant
 import java.time.ZonedDateTime
 import kotlin.collections.set
+import kotlin.math.min
 import kotlin.math.roundToInt
 
 /**
@@ -473,7 +474,14 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
         // update availabilities
         availabilityUpdateCoroutine = lifecycleScope.launch {
             delay(300L)
-            val tasks = chargers?.subList(startIndex, endIndex)?.mapNotNull {
+
+            val chargers = chargers ?: return@launch
+            if (chargers.isEmpty()) return@launch
+
+            val tasks = chargers.subList(
+                min(startIndex, chargers.size - 1),
+                min(endIndex, chargers.size - 1)
+            ).mapNotNull {
                 // update only if not yet stored
                 if (!availabilities.containsKey(it.id)) {
                     lifecycleScope.async {
@@ -483,7 +491,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                     }
                 } else null
             }
-            if (!tasks.isNullOrEmpty()) {
+            if (tasks.isNotEmpty()) {
                 tasks.awaitAll()
                 invalidate()
             }

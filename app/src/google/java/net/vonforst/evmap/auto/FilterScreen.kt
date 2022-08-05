@@ -385,7 +385,7 @@ class SliderFilterScreen(
     private fun generateSlider(): CharSequence {
         val bar = "━"
         val dot = "⬤"
-        val length = 35
+        val length = 30
 
         val position =
             ((filter.inverseMapping(value.value) - filter.min) / (filter.max - filter.min).toDouble() * length).roundToInt()

@@ -56,8 +56,7 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
     private val referenceData = api.getReferenceData(lifecycleScope, carContext)
 
     private val imageSize = 128  // images should be 128dp according to docs
-    private val imageHeightLarge = 480  // images should be 480 x 854 dp according to docs
-    private val imageWidthLarge = 854
+    private val imageSizeLarge = 480  // images should be 480 x 480 dp according to docs
 
     private val iconGen =
         ChargerIconGenerator(carContext, null, height = imageSize)
@@ -369,10 +368,7 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
                 photo?.let {
                     val density = carContext.resources.displayMetrics.density
                     val url = if (largeImageSupported) {
-                        photo.getUrl(
-                            width = (imageWidthLarge * density).roundToInt(),
-                            height = (imageHeightLarge * density).roundToInt()
-                        )
+                        photo.getUrl(size = (imageSizeLarge * density).roundToInt())
                     } else {
                         photo.getUrl(size = (imageSize * density).roundToInt())
                     }

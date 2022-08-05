@@ -1,0 +1,12 @@
+Improvements:
+- Android Auto: Added place search
+
+Bugfixes:
+- Shortcut to favorites: switching to map not possible
+- Favorite data were not updated when viewing details
+- Price comparison: incorrect average power
+- Wrong availability data in compact view (with minimum power filter)
+- Compass hidden behind pinhole
+- Crashes fixed
+- Android Automotive: Availability data not updated on refresh
+- Android Automotive: Driving direction was not shown in vehicle data

@@ -1,0 +1,12 @@
+Verbesserungen:
+- Android Auto: Ortssuche hinzugefügt
+
+Fehler behoben:
+- Shortcut Favoriten: kein Wechsel zur Karte möglich
+- Favoritendaten wurden nicht bei Öffnen aktualisiert
+- Preisvergleich: Durchschnittsladeleistung falsch
+- Verfügbarkeit in kompakter Ansicht falsch (mit Filter nach Leistung)
+- Kompass hinter Pinhole
+- Abstürze behoben
+- Android Automotive: Verfügbarkeitsdaten wurden bei Refresh nicht neu geladen
+- Android Automotive: Fahrtrichtung wurde bei Fahrzeugdaten nicht angezeigt

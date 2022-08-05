@@ -40,4 +40,5 @@
     <string name="data_sources_hint">In den Einstellungen kannst du auch zwischen Google Maps und OpenStreetMap (Mapbox) für die Kartendaten wechseln.</string>
     <string name="selecting_all">alle Einträge ausgewählt</string>
     <string name="selecting_none">alle Einträge abgewählt</string>
+    <string name="loading">Lade…</string>
 </resources>

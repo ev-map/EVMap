@@ -50,4 +50,5 @@
     <string name="data_sources_hint">In the settings you can also switch between Google Maps and OpenStreetMap (Mapbox) for the map data.</string>
     <string name="selecting_all">selected all items</string>
     <string name="selecting_none">deselected all items</string>
+    <string name="loading">Loading…</string>
 </resources>

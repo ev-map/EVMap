@@ -171,7 +171,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         val provider = prefs.mapProvider
         if (mapFragment == null) {
             mapFragment =
-                requireActivity().supportFragmentManager.findFragmentByTag(mapFragmentTag) as MapFragment?
+                childFragmentManager.findFragmentByTag(mapFragmentTag) as MapFragment?
         }
         if (mapFragment == null || mapFragment!!.priority[0] != provider) {
             mapFragment = MapFragment()
@@ -184,7 +184,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 MapFragment.GOOGLE,
                 MapFragment.MAPBOX
             )
-            requireActivity().supportFragmentManager
+            childFragmentManager
                 .beginTransaction()
                 .replace(R.id.map, mapFragment!!, mapFragmentTag)
                 .commit()

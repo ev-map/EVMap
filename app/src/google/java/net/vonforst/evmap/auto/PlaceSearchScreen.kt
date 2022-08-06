@@ -5,6 +5,7 @@ import android.location.Location
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import androidx.car.app.CarContext
+import androidx.car.app.CarToast
 import androidx.car.app.Screen
 import androidx.car.app.annotations.ExperimentalCarApi
 import androidx.car.app.constraints.ConstraintManager
@@ -26,6 +27,7 @@ import net.vonforst.evmap.autocomplete.*
 import net.vonforst.evmap.storage.AppDatabase
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.storage.RecentAutocompletePlace
+import java.io.IOException
 import java.time.Instant
 
 @ExperimentalCarApi
@@ -133,7 +135,15 @@ class PlaceSearchScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx
             if (prefs.searchProvider == "mapbox" && !isShortQuery(searchText)) {
                 delay(500L)
             }
-            loadNewList(searchText)
+            try {
+                loadNewList(searchText)
+            } catch (e: IOException) {
+                CarToast.makeText(
+                    carContext,
+                    R.string.autocomplete_connection_error,
+                    CarToast.LENGTH_SHORT
+                ).show()
+            }
         }
     }
 

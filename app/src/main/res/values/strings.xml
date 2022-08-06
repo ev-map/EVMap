@@ -246,4 +246,5 @@
     <string name="pref_map_rotate_gestures_on">Map can be rotated with two-finger gesture</string>
     <string name="pref_map_rotate_gestures_off">Map will be fixed to north-up</string>
     <string name="refresh_live_data">refresh real-time status</string>
+    <string name="autocomplete_connection_error">Suggestions could not be loaded</string>
 </resources>

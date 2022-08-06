@@ -261,4 +261,5 @@
     <string name="pref_map_rotate_gestures_on">Karte kann mit Zweifingergeste rotiert werden</string>
     <string name="pref_map_rotate_gestures_off">Karte bleibt fest nach Norden ausgerichtet</string>
     <string name="refresh_live_data">Echtzeitstatus aktualisieren</string>
+    <string name="autocomplete_connection_error">Vorschläge konnten nicht geladen werden</string>
 </resources>

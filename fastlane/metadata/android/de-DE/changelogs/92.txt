@@ -1,0 +1,2 @@
+Fehler behoben:
+- OpenStreetMap/Mapbox: Karte ließ sich nicht mehr verschieben

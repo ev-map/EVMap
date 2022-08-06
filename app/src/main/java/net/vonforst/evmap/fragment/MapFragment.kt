@@ -199,7 +199,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
         setHasOptionsMenu(true)
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(
+            binding.root
+        ) { v, insets ->
             ViewCompat.onApplyWindowInsets(binding.root, insets)
 
             val systemWindowInsetTop = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
@@ -224,7 +226,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
             // set map padding so that compass is not obstructed by toolbar
             mapTopPadding = systemWindowInsetTop + (48 * density).toInt() + (16 * density).toInt()
-            map?.setPadding(0, mapTopPadding, 0, 0)
+            // if we actually use map.setPadding here, Mapbox will re-trigger onApplyWindowInsets
+            // and cause an infinite loop. So we rely on onMapReady being called later than
+            // onApplyWindowInsets.
 
             insets
         }

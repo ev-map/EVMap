@@ -30,7 +30,7 @@ import androidx.core.location.LocationListenerCompat
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import net.vonforst.evmap.R
-import net.vonforst.evmap.utils.checkAnyLocationPermission
+import net.vonforst.evmap.utils.checkFineLocationPermission
 
 
 interface LocationAwareScreen {
@@ -132,7 +132,7 @@ class EVMapSession(val cas: CarAppService) : Session(), DefaultLifecycleObserver
         return mapScreen
     }
 
-    fun locationPermissionGranted() = carContext.checkAnyLocationPermission()
+    private fun locationPermissionGranted() = carContext.checkFineLocationPermission()
 
     private fun updateLocation(location: Location?) {
         Log.d(TAG, "Received location: $location")
@@ -159,6 +159,7 @@ class EVMapSession(val cas: CarAppService) : Session(), DefaultLifecycleObserver
         requestPhoneLocationUpdates()
     }
 
+    @RequiresPermission(anyOf = [Manifest.permission.ACCESS_FINE_LOCATION])
     private fun requestCarHardwareLocationUpdates() {
         if (supportsCarApiLevel3(carContext)) {
             val exec = ContextCompat.getMainExecutor(carContext)

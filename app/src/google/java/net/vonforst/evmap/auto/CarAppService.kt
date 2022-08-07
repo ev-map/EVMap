@@ -176,7 +176,7 @@ class EVMapSession(val cas: CarAppService) : Session(), DefaultLifecycleObserver
 
     @RequiresPermission(anyOf = [Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION])
     private fun requestPhoneLocationUpdates() {
-        val location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+        val location = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER)
         updateLocation(location)
         locationManager.requestLocationUpdates(
             LocationManager.GPS_PROVIDER,

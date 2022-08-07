@@ -8,6 +8,7 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
+import android.location.Criteria
 import android.location.Location
 import android.location.LocationManager
 import android.os.Build
@@ -177,10 +178,14 @@ class EVMapSession(val cas: CarAppService) : Session(), DefaultLifecycleObserver
 
     @RequiresPermission(anyOf = [Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION])
     private fun requestPhoneLocationUpdates() {
-        val location = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER)
+        val provider = locationManager.getBestProvider(Criteria().apply {
+            accuracy = Criteria.ACCURACY_FINE
+        }, true) ?: return
+
+        val location = locationManager.getLastKnownLocation(provider)
         updateLocation(location)
         locationManager.requestLocationUpdates(
-            LocationManager.GPS_PROVIDER,
+            provider,
             1000,
             1f,
             phoneLocationListener

@@ -26,6 +26,7 @@ import androidx.car.app.validation.HostValidator
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import androidx.core.location.LocationListenerCompat
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import net.vonforst.evmap.R
@@ -169,6 +170,10 @@ class EVMapSession(val cas: CarAppService) : Session(), DefaultLifecycleObserver
         }
     }
 
+    private val phoneLocationListener = LocationListenerCompat {
+        this.updateLocation(it)
+    }
+
     @RequiresPermission(anyOf = [Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION])
     private fun requestPhoneLocationUpdates() {
         val location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
@@ -177,7 +182,7 @@ class EVMapSession(val cas: CarAppService) : Session(), DefaultLifecycleObserver
             LocationManager.GPS_PROVIDER,
             1000,
             1f,
-            this::updateLocation
+            phoneLocationListener
         )
     }
 
@@ -197,7 +202,7 @@ class EVMapSession(val cas: CarAppService) : Session(), DefaultLifecycleObserver
 
     @RequiresPermission(anyOf = [Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION])
     private fun removePhoneLocationUpdates() {
-        locationManager.removeUpdates(this::updateLocation)
+        locationManager.removeUpdates(phoneLocationListener)
     }
 
     @SuppressLint("MissingPermission")

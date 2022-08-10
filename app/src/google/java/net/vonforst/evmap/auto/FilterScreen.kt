@@ -52,6 +52,30 @@ class FilterScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx) {
                             CarIcon.Builder(
                                 IconCompat.createWithResource(
                                     carContext,
+                                    if (prefs.placeSearchResultAndroidAuto != null) {
+                                        R.drawable.ic_search_off
+                                    } else {
+                                        R.drawable.ic_search
+                                    }
+                                )
+                            ).build()
+
+                        )
+                        setOnClickListener(ParkedOnlyOnClickListener.create {
+                            if (prefs.placeSearchResultAndroidAuto != null) {
+                                prefs.placeSearchResultAndroidAutoName = null
+                                prefs.placeSearchResultAndroidAuto = null
+                                screenManager.pop()
+                            } else {
+                                screenManager.push(PlaceSearchScreen(carContext, session))
+                            }
+                        })
+                    }.build())
+                    addAction(Action.Builder().apply {
+                        setIcon(
+                            CarIcon.Builder(
+                                IconCompat.createWithResource(
+                                    carContext,
                                     R.drawable.ic_edit
                                 )
                             ).build()

@@ -3,13 +3,13 @@ package net.vonforst.evmap.auto
 import android.content.Context
 import android.graphics.Bitmap
 import androidx.car.app.CarContext
-import androidx.car.app.Screen
 import androidx.car.app.constraints.ConstraintManager
 import androidx.car.app.hardware.common.CarUnit
-import androidx.car.app.model.*
+import androidx.car.app.model.CarColor
+import androidx.car.app.model.CarIcon
+import androidx.car.app.model.Distance
 import androidx.car.app.versioning.CarAppApiLevels
 import androidx.core.graphics.drawable.IconCompat
-import net.vonforst.evmap.R
 import net.vonforst.evmap.api.availability.ChargepointStatus
 import java.util.*
 import kotlin.math.roundToInt
@@ -152,17 +152,4 @@ fun supportsCarApiLevel3(ctx: CarContext): Boolean {
         }
     }
     return true
-}
-
-class DummyReturnScreen(ctx: CarContext) : Screen(ctx) {
-    /*
-    Dummy screen to get around template refresh limitations.
-    It immediately pops back to the previous screen.
-     */
-    override fun onGetTemplate(): Template {
-        screenManager.pop()
-        return MessageTemplate.Builder(carContext.getString(R.string.loading)).setLoading(true)
-            .build()
-    }
-
 }

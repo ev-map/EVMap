@@ -1,0 +1,3 @@
+Bugfixes:
+- Possible fix of crashes under Android Auto
+- Filter button disappeared under Android Automotive

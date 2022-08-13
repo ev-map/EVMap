@@ -3,9 +3,11 @@ package net.vonforst.evmap.fragment
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.MenuProvider
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
@@ -22,7 +24,7 @@ import net.vonforst.evmap.ui.showEditTextDialog
 import net.vonforst.evmap.viewmodel.FilterViewModel
 
 
-class FilterFragment : Fragment() {
+class FilterFragment : Fragment(), MenuProvider {
     private lateinit var binding: FragmentFilterBinding
     private val vm: FilterViewModel by viewModels()
 
@@ -40,9 +42,6 @@ class FilterFragment : Fragment() {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_filter, container, false)
         binding.lifecycleOwner = this
         binding.vm = vm
-
-        setHasOptionsMenu(true)
-
         vm.filterProfile.observe(viewLifecycleOwner) {}
 
         return binding.root
@@ -50,6 +49,7 @@ class FilterFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         (requireActivity() as AppCompatActivity).setSupportActionBar(binding.toolbar)
+        requireActivity().addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
         binding.toolbar.setupWithNavController(
             findNavController(),
@@ -81,12 +81,11 @@ class FilterFragment : Fragment() {
         view.setBackgroundColor(MaterialColors.getColor(view, android.R.attr.windowBackground))
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+    override fun onCreateMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.filter, menu)
-        super.onCreateOptionsMenu(menu, inflater)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    override fun onMenuItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.menu_apply -> {
                 lifecycleScope.launch {
@@ -99,7 +98,7 @@ class FilterFragment : Fragment() {
                 saveProfile()
                 true
             }
-            else -> super.onOptionsItemSelected(item)
+            else -> false
         }
     }
 

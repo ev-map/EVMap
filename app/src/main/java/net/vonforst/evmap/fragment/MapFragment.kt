@@ -93,7 +93,7 @@ import kotlin.collections.contains
 import kotlin.collections.set
 
 
-class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallback {
+class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallback, MenuProvider {
     private lateinit var binding: FragmentMapBinding
     private val vm: MapViewModel by viewModels()
     private val galleryVm: GalleryViewModel by activityViewModels()
@@ -192,8 +192,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             searchResultIcon = null
         }
 
-        setHasOptionsMenu(true)
-
         ViewCompat.setOnApplyWindowInsetsListener(
             binding.root
         ) { v, insets ->
@@ -240,6 +238,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        requireActivity().addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
+
         mapFragment!!.getMapAsync(this)
         bottomSheetBehavior = BottomSheetBehaviorGoogleMapsLike.from(binding.bottomSheet)
         detailAppBarBehavior = MergedAppBarLayoutBehavior.from(binding.detailAppBar)
@@ -1156,7 +1156,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+    override fun onCreateMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.map, menu)
 
         val filterItem = menu.findItem(R.id.menu_filter)
@@ -1292,6 +1292,11 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             ).show()
             true
         }
+    }
+
+
+    override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+        return false
     }
 
     override fun getRootView(): View {

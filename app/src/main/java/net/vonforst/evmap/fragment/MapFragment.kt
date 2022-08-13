@@ -7,8 +7,9 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Color
+import android.location.Criteria
 import android.location.Geocoder
-import android.location.Location
+import android.location.LocationManager
 import android.os.Bundle
 import android.text.method.KeyListener
 import android.view.*
@@ -23,6 +24,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.location.LocationListenerCompat
 import androidx.core.view.*
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -60,10 +62,6 @@ import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike
 import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED
 import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN
 import com.mahc.custombottomsheetbehavior.MergedAppBarLayoutBehavior
-import com.mapzen.android.lost.api.LocationListener
-import com.mapzen.android.lost.api.LocationRequest
-import com.mapzen.android.lost.api.LocationServices
-import com.mapzen.android.lost.api.LostApiClient
 import com.stfalcon.imageviewer.StfalconImageViewer
 import io.michaelrocks.bimap.HashBiMap
 import io.michaelrocks.bimap.MutableBiMap
@@ -95,14 +93,13 @@ import kotlin.collections.contains
 import kotlin.collections.set
 
 
-class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallback,
-    LostApiClient.ConnectionCallbacks, LocationListener {
+class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallback {
     private lateinit var binding: FragmentMapBinding
     private val vm: MapViewModel by viewModels()
     private val galleryVm: GalleryViewModel by activityViewModels()
     private var mapFragment: MapFragment? = null
     private var map: AnyMap? = null
-    private lateinit var locationClient: LostApiClient
+    private lateinit var locationManager: LocationManager
     private var requestingLocationUpdates = false
     private lateinit var bottomSheetBehavior: BottomSheetBehaviorGoogleMapsLike<View>
     private lateinit var detailAppBarBehavior: MergedAppBarLayoutBehavior
@@ -147,10 +144,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
         prefs = PreferenceDataSource(requireContext())
 
-        locationClient = LostApiClient.Builder(requireContext())
-            .addConnectionCallbacks(this)
-            .build()
-        locationClient.connect()
+        locationManager =
+            requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         clusterIconGenerator = ClusterIconGenerator(requireContext())
 
         enterTransition = MaterialFadeThrough()
@@ -319,7 +314,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
         vm.reloadPrefs()
         if (requestingLocationUpdates && requireContext().checkAnyLocationPermission()
-            && locationClient.isConnected
         ) {
             requestLocationUpdates()
         }
@@ -1016,16 +1010,16 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         map.uiSettings.setMyLocationButtonEnabled(false)
         if (moveTo) {
             vm.myLocationEnabled.value = true
-            if (locationClient.isConnected) {
-                moveToLastLocation(map, animate)
-                requestLocationUpdates()
-            }
+            moveToLastLocation(map, animate)
+            requestLocationUpdates()
         }
     }
 
     @RequiresPermission(anyOf = [ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION])
     private fun moveToLastLocation(map: AnyMap, animate: Boolean) {
-        val location = LocationServices.FusedLocationApi.getLastLocation(locationClient)
+        val provider = getLocationProvider() ?: return
+
+        val location = locationManager.getLastKnownLocation(provider)
         if (location != null) {
             val latLng = LatLng(location.latitude, location.longitude)
             vm.location.value = latLng
@@ -1037,6 +1031,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             }
         }
     }
+
+    private fun getLocationProvider() = locationManager.getBestProvider(Criteria().apply {
+        accuracy = Criteria.ACCURACY_FINE
+    }, true)
 
     @Synchronized
     private fun updateMap(chargepoints: List<ChargepointListItem>) {
@@ -1300,38 +1298,26 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         return binding.root
     }
 
-    override fun onConnected() {
-        val map = this.map ?: return
-        val context = this.context ?: return
-        if (vm.myLocationEnabled.value == true) {
-            if (context.checkAnyLocationPermission()) {
-                moveToLastLocation(map, false)
-                requestLocationUpdates()
-            }
-        }
-    }
-
     @RequiresPermission(ACCESS_FINE_LOCATION)
     private fun requestLocationUpdates() {
-        val request: LocationRequest = LocationRequest.create()
-            .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-            .setInterval(5000)
-        LocationServices.FusedLocationApi.requestLocationUpdates(locationClient, request, this)
+        val provider = getLocationProvider() ?: return
+
+        locationManager.requestLocationUpdates(
+            provider,
+            5000,
+            1f,
+            locationListener
+        )
         requestingLocationUpdates = true
     }
 
     private fun removeLocationUpdates() {
-        if (locationClient.isConnected) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(locationClient, this)
-        }
+        locationManager.removeUpdates(locationListener)
     }
 
-    override fun onConnectionSuspended() {
-    }
-
-    override fun onLocationChanged(location: Location?) {
-        val map = this.map ?: return
-        if (location == null || vm.myLocationEnabled.value == false) return
+    private val locationListener = LocationListenerCompat { location ->
+        val map = this.map ?: return@LocationListenerCompat
+        if (vm.myLocationEnabled.value == false) return@LocationListenerCompat
 
         val latLng = LatLng(location.latitude, location.longitude)
         val oldLoc = vm.location.value
@@ -1356,8 +1342,5 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
     override fun onDestroy() {
         super.onDestroy()
-        if (locationClient.isConnected) {
-            locationClient.disconnect()
-        }
     }
 }

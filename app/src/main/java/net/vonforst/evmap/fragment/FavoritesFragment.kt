@@ -1,6 +1,9 @@
 package net.vonforst.evmap.fragment
 
+import android.content.Context
 import android.graphics.Canvas
+import android.location.Criteria
+import android.location.LocationManager
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -20,8 +23,6 @@ import com.car2go.maps.model.LatLng
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialFadeThrough
-import com.mapzen.android.lost.api.LocationServices
-import com.mapzen.android.lost.api.LostApiClient
 import net.vonforst.evmap.MapsActivity
 import net.vonforst.evmap.R
 import net.vonforst.evmap.adapter.DataBindingAdapter
@@ -34,9 +35,9 @@ import net.vonforst.evmap.utils.checkAnyLocationPermission
 import net.vonforst.evmap.viewmodel.FavoritesViewModel
 import net.vonforst.evmap.viewmodel.viewModelFactory
 
-class FavoritesFragment : Fragment(), LostApiClient.ConnectionCallbacks {
+class FavoritesFragment : Fragment() {
     private lateinit var binding: FragmentFavoritesBinding
-    private var locationClient: LostApiClient? = null
+    private lateinit var locationManager: LocationManager
     private var toDelete: Favorite? = null
     private var deleteSnackbar: Snackbar? = null
     private lateinit var adapter: FavoritesAdapter
@@ -52,8 +53,9 @@ class FavoritesFragment : Fragment(), LostApiClient.ConnectionCallbacks {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        locationClient = LostApiClient.Builder(requireContext())
-            .addConnectionCallbacks(this).build()
+
+        locationManager =
+            requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
         enterTransition = MaterialFadeThrough()
         exitTransition = MaterialFadeThrough()
@@ -109,8 +111,6 @@ class FavoritesFragment : Fragment(), LostApiClient.ConnectionCallbacks {
         }
         createTouchHelper().attachToRecyclerView(binding.favsList)
 
-        locationClient!!.connect()
-
         binding.swipeRefresh.setOnRefreshListener {
             vm.reloadAvailability() {
                 binding.swipeRefresh.isRefreshing = false
@@ -118,24 +118,18 @@ class FavoritesFragment : Fragment(), LostApiClient.ConnectionCallbacks {
         }
     }
 
-    override fun onConnected() {
-        val context = this.context ?: return
-        if (context.checkAnyLocationPermission()) {
-            val location = LocationServices.FusedLocationApi.getLastLocation(locationClient!!)
-            if (location != null) {
-                vm.location.value = LatLng(location.latitude, location.longitude)
+    override fun onStart() {
+        super.onStart()
+
+        if (requireContext().checkAnyLocationPermission()) {
+            val provider = locationManager.getBestProvider(Criteria().apply {
+                accuracy = Criteria.ACCURACY_FINE
+            }, true) ?: return
+
+            val location = locationManager.getLastKnownLocation(provider)
+            location?.let {
+                vm.location.value = LatLng(it.latitude, it.longitude)
             }
-        }
-    }
-
-    override fun onConnectionSuspended() {
-
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        locationClient?.let {
-            if (it.isConnected) it.disconnect()
         }
     }
 

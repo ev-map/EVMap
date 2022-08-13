@@ -261,17 +261,6 @@
                 android:name="android.app.shortcuts"
                 android:resource="@xml/shortcuts" />
         </activity>
-
-        <!-- Override services of the com.mapzen.android.lost library with exported:false
-             until https://github.com/lostzen/lost/pull/270 is merged -->
-        <service
-            android:name="com.mapzen.android.lost.internal.GeofencingIntentService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.mapzen.lost.action.ACTION_GEOFENCING_SERVICE" />
-            </intent-filter>
-        </service>
-
     </application>
 
 </manifest>

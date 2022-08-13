@@ -186,7 +186,7 @@ dependencies {
     implementation 'com.github.romandanylyk:PageIndicatorView:b1bad589b5'
 
     // Android Auto
-    def carAppVersion = '1.2.0-rc01'
+    def carAppVersion = '1.3.0-alpha01'
     googleImplementation "androidx.car.app:app:$carAppVersion"
     googleNormalImplementation "androidx.car.app:app-projected:$carAppVersion"
     googleAutomotiveImplementation "androidx.car.app:app-automotive:$carAppVersion"

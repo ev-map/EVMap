@@ -71,7 +71,8 @@ class CarAppService : androidx.car.app.CarAppService() {
             .setContentTitle(getString(R.string.app_name))
             .setOngoing(true)
             .setPriority(NotificationManagerCompat.IMPORTANCE_HIGH)
-            .setSmallIcon(R.mipmap.ic_launcher)
+            .setSmallIcon(R.drawable.ic_appicon_notification)
+            .setColor(ContextCompat.getColor(this, R.color.colorPrimary))
             .setTicker(getString(R.string.auto_location_service))
             .setWhen(System.currentTimeMillis())
 

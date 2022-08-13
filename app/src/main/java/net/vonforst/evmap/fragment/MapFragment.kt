@@ -1294,7 +1294,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         return binding.root
     }
 
-    @RequiresPermission(ACCESS_FINE_LOCATION)
+    @RequiresPermission(anyOf = [ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION])
     private fun requestLocationUpdates() {
         val provider = getLocationProvider() ?: return
 
@@ -1307,6 +1307,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         requestingLocationUpdates = true
     }
 
+    @RequiresPermission(anyOf = [ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION])
     private fun removeLocationUpdates() {
         locationManager.removeUpdates(locationListener)
     }
@@ -1333,7 +1334,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
     override fun onPause() {
         super.onPause()
-        removeLocationUpdates()
+        if (context?.checkAnyLocationPermission() == true) {
+            removeLocationUpdates()
+        }
     }
 
     override fun onDestroy() {

@@ -200,7 +200,7 @@ dependencies {
 
     // Google Places
     googleImplementation 'com.google.android.libraries.places:places:2.6.0'
-    googleImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.4.1'
+    googleImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.1'
 
     // Mapbox Geocoding
     implementation 'com.mapbox.mapboxsdk:mapbox-sdk-services:5.5.0'
@@ -232,8 +232,8 @@ dependencies {
     implementation("ch.acra:acra-limiter:$acraVersion")
 
     // debug tools
-    implementation 'com.facebook.stetho:stetho:1.5.1'
-    implementation 'com.facebook.stetho:stetho-okhttp3:1.5.1'
+    implementation 'com.facebook.stetho:stetho:1.6.0'
+    implementation 'com.facebook.stetho:stetho-okhttp3:1.6.0'
 
     // testing
     testImplementation 'junit:junit:4.13.2'
@@ -243,7 +243,7 @@ dependencies {
 
     // testing for car app
     testGoogleImplementation "androidx.car.app:app-testing:$carAppVersion"
-    testGoogleImplementation 'org.robolectric:robolectric:4.7.3'
+    testGoogleImplementation 'org.robolectric:robolectric:4.8.1'
     testGoogleImplementation 'androidx.test:core:1.4.0'
 
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

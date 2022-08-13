@@ -12,7 +12,8 @@ import net.vonforst.evmap.R
 class PermissionScreen(
     ctx: CarContext,
     @StringRes val message: Int,
-    val permissions: List<String>
+    val permissions: List<String>,
+    val finishApp: Boolean = true
 ) : Screen(ctx) {
     override fun onGetTemplate(): Template {
         return MessageTemplate.Builder(carContext.getString(message))
@@ -31,7 +32,13 @@ class PermissionScreen(
                 Action.Builder()
                     .setTitle(carContext.getString(R.string.cancel))
                     .setOnClickListener {
-                        carContext.finishCarApp()
+                        if (finishApp) {
+                            carContext.finishCarApp()
+                        } else {
+                            // pop twice to get away from the screen that requires the permission
+                            screenManager.pop()
+                            screenManager.pop()
+                        }
                     }
                     .build(),
             )

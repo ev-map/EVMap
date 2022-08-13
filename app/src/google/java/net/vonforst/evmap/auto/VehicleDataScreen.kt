@@ -58,7 +58,8 @@ class VehicleDataScreen(ctx: CarContext) : Screen(ctx), DefaultLifecycleObserver
                     PermissionScreen(
                         carContext,
                         R.string.auto_vehicle_data_permission_needed,
-                        permissions
+                        permissions,
+                        finishApp = false
                     )
                 ) {
                     setupListeners()

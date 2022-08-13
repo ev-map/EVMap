@@ -442,6 +442,7 @@ class SelectChargingRangeScreen(ctx: CarContext) : Screen(ctx) {
 
                     val nSpacers = when {
                         maxItems % 3 == 0 -> 1
+                        maxItems == 100 -> 0  // AA has increased the limit to 100 and changed the way items are laid out
                         maxItems % 4 == 0 -> 2
                         else -> 0
                     }

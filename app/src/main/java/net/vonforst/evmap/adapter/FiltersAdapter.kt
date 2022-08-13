@@ -62,6 +62,8 @@ class FiltersAdapter : DataBindingAdapter<FilterWithValue<FilterValue>>() {
                     )
                 }
             }
+            is BooleanFilterValue -> {
+            }
         }
     }
 

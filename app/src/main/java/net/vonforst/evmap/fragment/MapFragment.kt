@@ -1309,9 +1309,11 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         requestingLocationUpdates = true
     }
 
-    @RequiresPermission(anyOf = [ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION])
+    @SuppressLint("MissingPermission")
     private fun removeLocationUpdates() {
-        locationManager.removeUpdates(locationListener)
+        if (context?.checkAnyLocationPermission() == true) {
+            locationManager.removeUpdates(locationListener)
+        }
     }
 
     private val locationListener = LocationListenerCompat { location ->
@@ -1336,9 +1338,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
     override fun onPause() {
         super.onPause()
-        if (context?.checkAnyLocationPermission() == true) {
-            removeLocationUpdates()
-        }
+        removeLocationUpdates()
     }
 
     override fun onDestroy() {

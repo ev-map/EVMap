@@ -323,7 +323,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-            if (context?.checkAnyLocationPermission() == true) {
+            val context = context ?: return@registerForActivityResult
+            if (context.checkAnyLocationPermission()) {
                 enableLocation(moveTo = true, animate = true)
             }
         }

@@ -36,7 +36,6 @@ import net.vonforst.evmap.utils.LocaleContextWrapper
 import net.vonforst.evmap.utils.getLocationFromIntent
 
 
-const val REQUEST_LOCATION_PERMISSION = 1
 const val EXTRA_CHARGER_ID = "chargerId"
 const val EXTRA_LAT = "lat"
 const val EXTRA_LON = "lon"

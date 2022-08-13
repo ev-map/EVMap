@@ -4,7 +4,6 @@ import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Color
 import android.location.Criteria
@@ -19,10 +18,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresPermission
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.location.LocationListenerCompat
 import androidx.core.view.*
@@ -68,7 +67,9 @@ import io.michaelrocks.bimap.MutableBiMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import net.vonforst.evmap.*
+import net.vonforst.evmap.BuildConfig
+import net.vonforst.evmap.MapsActivity
+import net.vonforst.evmap.R
 import net.vonforst.evmap.adapter.ConnectorAdapter
 import net.vonforst.evmap.adapter.DetailsAdapter
 import net.vonforst.evmap.adapter.GalleryAdapter
@@ -77,6 +78,7 @@ import net.vonforst.evmap.api.goingelectric.GoingElectricApiWrapper
 import net.vonforst.evmap.api.openchargemap.OpenChargeMapApiWrapper
 import net.vonforst.evmap.autocomplete.ApiUnavailableException
 import net.vonforst.evmap.autocomplete.PlaceWithBounds
+import net.vonforst.evmap.bold
 import net.vonforst.evmap.databinding.FragmentMapBinding
 import net.vonforst.evmap.model.*
 import net.vonforst.evmap.storage.PreferenceDataSource
@@ -319,13 +321,18 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         }
     }
 
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+            if (context?.checkAnyLocationPermission() == true) {
+                enableLocation(moveTo = true, animate = true)
+            }
+        }
+
     private fun setupClickListeners() {
         binding.fabLocate.setOnClickListener {
             if (!requireContext().checkFineLocationPermission()) {
-                ActivityCompat.requestPermissions(
-                    requireActivity(),
-                    arrayOf(ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION),
-                    REQUEST_LOCATION_PERMISSION
+                requestPermissionLauncher.launch(
+                    arrayOf(ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION)
                 )
             }
             if (requireContext().checkAnyLocationPermission()) {
@@ -1137,22 +1144,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                     )
                     .anchor(0.5f, 0.5f)
             )
-        }
-    }
-
-    @SuppressLint("MissingPermission")
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        when (requestCode) {
-            REQUEST_LOCATION_PERMISSION -> {
-                if ((grantResults.isNotEmpty() && grantResults.any { it == PackageManager.PERMISSION_GRANTED })) {
-                    enableLocation(moveTo = true, animate = true)
-                }
-            }
-            else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }
     }
 

@@ -389,9 +389,10 @@ private fun colorToTransparent(color: Int, targetAlpha: Float = 31f / 255): Int 
     val green = Color.green(color)
     val blue = Color.blue(color)
 
-    val newRed = ((red - (1 - targetAlpha) * 255) / targetAlpha).roundToInt()
-    val newGreen = ((green - (1 - targetAlpha) * 255) / targetAlpha).roundToInt()
-    val newBlue = ((blue - (1 - targetAlpha) * 255) / targetAlpha).roundToInt()
+    val newRed = kotlin.math.max(((red - (1 - targetAlpha) * 255) / targetAlpha).roundToInt(), 0)
+    val newGreen =
+        kotlin.math.max(((green - (1 - targetAlpha) * 255) / targetAlpha).roundToInt(), 0)
+    val newBlue = kotlin.math.max(((blue - (1 - targetAlpha) * 255) / targetAlpha).roundToInt(), 0)
 
     return Color.argb((targetAlpha * 255).roundToInt(), newRed, newGreen, newBlue)
 }

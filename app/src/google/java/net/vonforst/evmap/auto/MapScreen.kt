@@ -102,9 +102,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
     private var searchLocation: LatLng? = null
 
     init {
-        filtersWithValue.observe(this) {
-            loadChargers()
-        }
+        lifecycle.addObserver(this)
         marker = MARKER
     }
 
@@ -192,7 +190,6 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                             )
                             .setOnClickListener {
                                 screenManager.pushForResult(FilterScreen(carContext, session)) {
-                                    chargers = null
                                     filterStatus.value = prefs.filterStatus
                                 }
                                 session.mapScreen = null
@@ -280,13 +277,8 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
             )
 
             setOnClickListener {
-                screenManager.pushForResult(ChargerDetailScreen(carContext, charger)) {
-                    if (filterStatus.value == FILTERS_FAVORITES) {
-                        // favorites list may have been updated
-                        chargers = null
-                        loadChargers()
-                    }
-                }
+                screenManager.push(ChargerDetailScreen(carContext, charger))
+                session.mapScreen = null
             }
         }.build()
     }
@@ -376,8 +368,17 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
         if (isUpdate) invalidate()
     }
 
-    override fun onResume(owner: LifecycleOwner) {
+    override fun onStart(owner: LifecycleOwner) {
         setupListeners()
+
+        // Reloading chargers in onStart does not seem to count towards content limit.
+        // So let's do this so the user gets fresh chargers when re-entering the app.
+        chargers = null
+        availabilities.clear()
+        invalidate()
+        filtersWithValue.observe(this) {
+            loadChargers()
+        }
     }
 
     private fun setupListeners() {
@@ -396,7 +397,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
         }
     }
 
-    override fun onPause(owner: LifecycleOwner) {
+    override fun onStop(owner: LifecycleOwner) {
         removeListeners()
     }
 

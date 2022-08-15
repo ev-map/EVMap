@@ -1,5 +1,6 @@
 package net.vonforst.evmap.viewmodel
 
+import android.os.Parcelable
 import androidx.annotation.MainThread
 import androidx.annotation.Nullable
 import androidx.lifecycle.*
@@ -7,6 +8,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.parcelize.Parcelize
+import kotlinx.parcelize.RawValue
 import java.util.concurrent.atomic.AtomicBoolean
 
 
@@ -24,9 +27,13 @@ enum class Status {
 
 /**
  * A generic class that holds a value with its loading status.
- * @param <T>
-</T> */
-data class Resource<out T>(val status: Status, val data: T?, val message: String?) {
+ *
+ * Note that this class implements Parcelable for convenience, but will give a runtime error when
+ * trying to write it to a Parcel if the type parameter does not implement Parcelable.
+ */
+@Parcelize
+data class Resource<out T>(val status: Status, val data: @RawValue T?, val message: String?) :
+    Parcelable {
     companion object {
         fun <T> success(data: T?): Resource<T> {
             return Resource(Status.SUCCESS, data, null)

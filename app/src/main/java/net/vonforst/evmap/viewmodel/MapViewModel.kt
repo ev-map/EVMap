@@ -141,16 +141,23 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
     }
     val chargerDetails: MediatorLiveData<Resource<ChargeLocation>> by lazy {
         MediatorLiveData<Resource<ChargeLocation>>().apply {
+            value = state["chargerDetails"]
             listOf(chargerSparse, referenceData).forEach {
                 addSource(it) { _ ->
                     val charger = chargerSparse.value
                     val refData = referenceData.value
                     if (charger != null && refData != null) {
-                        loadChargerDetails(charger, refData)
+                        if (charger.id != value?.data?.id) {
+                            loadChargerDetails(charger, refData)
+                        }
                     } else {
                         value = null
                     }
                 }
+            }
+            observeForever {
+                // persist data in case fragment gets recreated
+                state["chargerDetails"] = it
             }
         }
     }

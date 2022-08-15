@@ -163,6 +163,8 @@
         android:label="OnboardingFragment">
         <action
             android:id="@+id/action_onboarding_to_map"
-            app:destination="@id/map" />
+            app:destination="@id/map"
+            app:popUpTo="@id/onboarding"
+            app:popUpToInclusive="true" />
     </fragment>
 </navigation>

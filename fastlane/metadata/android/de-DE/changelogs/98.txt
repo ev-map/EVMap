@@ -1,0 +1,6 @@
+Fehler behoben:
+- Darstellungsprobleme mit einigen hervorgehobenen Tarifen im Preisvergleich behoben
+- Verbesserungen für weitere kleine Darstellungsfehler
+- Android Auto: Richtiges Icon für dauerhafte Benachrichtigung zum Standortzugriff verwenden
+- Android Auto: Ausrichtung von +/- Buttons korrigiert
+- Android Auto: Liste der Ladestationen nach Neustart der App aktualisieren

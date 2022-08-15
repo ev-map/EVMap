@@ -1,0 +1,6 @@
+Bugfixes:
+- Fixed visual problems with some highlighted providers in price comparison
+- Improvements for some other minor visual issues
+- Android Auto: Use proper icon for persistent notification about location access
+- Android Auto: Fix alignment of +/- buttons
+- Android Auto: Refresh chargers after going back to app

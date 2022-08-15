@@ -311,7 +311,8 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
                     }
                     minPower >= 100 -> {
                         // when only showing high-power chargers we can use large markers
-                        zoom < clusterThreshold
+                        // because the density is much lower
+                        false
                     }
                     else -> {
                         zoom < miniMarkerThreshold

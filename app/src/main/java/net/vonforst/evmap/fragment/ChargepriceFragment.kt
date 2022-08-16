@@ -31,7 +31,7 @@ import net.vonforst.evmap.model.Chargepoint
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.viewmodel.ChargepriceViewModel
 import net.vonforst.evmap.viewmodel.Status
-import net.vonforst.evmap.viewmodel.viewModelFactory
+import net.vonforst.evmap.viewmodel.savedStateViewModelFactory
 import java.text.NumberFormat
 
 class ChargepriceFragment : Fragment() {
@@ -39,10 +39,11 @@ class ChargepriceFragment : Fragment() {
     private var connectionErrorSnackbar: Snackbar? = null
 
     private val vm: ChargepriceViewModel by viewModels(factoryProducer = {
-        viewModelFactory {
+        savedStateViewModelFactory { state ->
             ChargepriceViewModel(
                 requireActivity().application,
-                getString(R.string.chargeprice_key)
+                getString(R.string.chargeprice_key),
+                state
             )
         }
     })

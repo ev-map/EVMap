@@ -16,21 +16,25 @@ import net.vonforst.evmap.storage.PreferenceDataSource
 import retrofit2.HttpException
 import java.io.IOException
 
-class ChargepriceViewModel(application: Application, chargepriceApiKey: String) :
+class ChargepriceViewModel(
+    application: Application,
+    chargepriceApiKey: String,
+    private val state: SavedStateHandle
+) :
     AndroidViewModel(application) {
     private var api = ChargepriceApi.create(chargepriceApiKey)
     private var prefs = PreferenceDataSource(application)
 
     val charger: MutableLiveData<ChargeLocation> by lazy {
-        MutableLiveData<ChargeLocation>()
+        state.getLiveData("charger")
     }
 
     val dataSource: MutableLiveData<String> by lazy {
-        MutableLiveData<String>()
+        state.getLiveData("dataSource")
     }
 
     val chargepoint: MutableLiveData<Chargepoint> by lazy {
-        MutableLiveData<Chargepoint>()
+        state.getLiveData("chargepoint")
     }
 
     private val vehicleIds: MutableLiveData<Set<String>> by lazy {
@@ -65,7 +69,7 @@ class ChargepriceViewModel(application: Application, chargepriceApiKey: String) 
     }
 
     val vehicle: MutableLiveData<ChargepriceCar> by lazy {
-        MutableLiveData<ChargepriceCar>()
+        state.getLiveData("vehicle")
     }
 
     val vehicleCompatibleConnectors: LiveData<List<String>> by lazy {
@@ -111,9 +115,9 @@ class ChargepriceViewModel(application: Application, chargepriceApiKey: String) 
         }
     }
 
-    val chargePrices: MediatorLiveData<Resource<List<ChargePrice>>> by lazy {
+    val chargePrices: MutableLiveData<Resource<List<ChargePrice>>> by lazy {
         MediatorLiveData<Resource<List<ChargePrice>>>().apply {
-            value = Resource.loading(null)
+            value = state["chargePrices"] ?: Resource.loading(null)
             listOf(
                 charger,
                 dataSource,
@@ -122,9 +126,13 @@ class ChargepriceViewModel(application: Application, chargepriceApiKey: String) 
                 vehicleCompatibleConnectors,
                 myTariffs, myTariffsAll
             ).forEach {
-                addSource(it) {
+                addSource(it.distinctUntilChanged()) {
                     if (!batteryRangeSliderDragging.value!!) loadPrices()
                 }
+            }
+            observeForever {
+                // persist data in case fragment gets recreated
+                state["chargePrices"] = it
             }
         }
     }

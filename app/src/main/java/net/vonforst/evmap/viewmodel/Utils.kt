@@ -19,6 +19,16 @@ inline fun <VM : ViewModel> viewModelFactory(crossinline f: () -> VM) =
         override fun <T : ViewModel> create(aClass: Class<T>): T = f() as T
     }
 
+@Suppress("UNCHECKED_CAST")
+inline fun <VM : ViewModel> savedStateViewModelFactory(crossinline f: (SavedStateHandle) -> VM) =
+    object : AbstractSavedStateViewModelFactory() {
+        override fun <T : ViewModel> create(
+            key: String,
+            modelClass: Class<T>,
+            handle: SavedStateHandle
+        ) = f(handle) as T
+    }
+
 enum class Status {
     SUCCESS,
     ERROR,

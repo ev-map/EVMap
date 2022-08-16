@@ -60,6 +60,11 @@ class ChargepriceFragment : Fragment() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        vm.reloadPrefs()
+    }
+
     private fun showDonationDialog() {
         AlertDialog.Builder(requireContext())
             .setTitle(R.string.chargeprice_donation_dialog_title)

@@ -33,13 +33,30 @@ class ChargepriceViewModel(application: Application, chargepriceApiKey: String) 
         MutableLiveData<Chargepoint>()
     }
 
-    val vehicles: MutableLiveData<Resource<List<ChargepriceCar>>> by lazy {
-        MutableLiveData<Resource<List<ChargepriceCar>>>().apply {
-            if (prefs.chargepriceMyVehicles.isEmpty()) {
-                value = Resource.success(emptyList())
-            } else {
-                value = Resource.loading(null)
-                loadVehicles()
+    private val vehicleIds: MutableLiveData<Set<String>> by lazy {
+        MutableLiveData<Set<String>>().apply {
+            value = prefs.chargepriceMyVehicles
+        }
+    }
+
+    val vehicles: LiveData<Resource<List<ChargepriceCar>>> by lazy {
+        MediatorLiveData<Resource<List<ChargepriceCar>>>().apply {
+            addSource(vehicleIds.distinctUntilChanged()) { vehicleIds ->
+                if (vehicleIds.isEmpty()) {
+                    value = Resource.success(emptyList())
+                } else {
+                    value = Resource.loading(null)
+                    viewModelScope.launch {
+                        value = try {
+                            val result = api.getVehicles()
+                            Resource.success(result.filter {
+                                it.id in vehicleIds
+                            })
+                        } catch (e: IOException) {
+                            Resource.error(e.message, null)
+                        }
+                    }
+                }
             }
             observeForever {
                 vehicle.value = it.data?.firstOrNull()
@@ -157,6 +174,10 @@ class ChargepriceViewModel(application: Application, chargepriceApiKey: String) 
         }
     }
 
+    fun reloadPrefs() {
+        vehicleIds.value = prefs.chargepriceMyVehicles
+    }
+
     private fun getChargepricePlugType(chargepoint: Chargepoint): String {
         val index = charger.value!!.chargepointsMerged.indexOf(chargepoint)
         val type = charger.value!!.chargepriceData!!.plugTypes?.get(index) ?: chargepoint.type
@@ -258,19 +279,6 @@ class ChargepriceViewModel(application: Application, chargepriceApiKey: String) 
             } catch (e: HttpException) {
                 chargePrices.value = Resource.error(e.message, null)
                 chargePriceMeta.value = Resource.error(e.message, null)
-            }
-        }
-    }
-
-    private fun loadVehicles() {
-        viewModelScope.launch {
-            try {
-                val result = api.getVehicles()
-                vehicles.value = Resource.success(result.filter {
-                    it.id in prefs.chargepriceMyVehicles
-                })
-            } catch (e: IOException) {
-                vehicles.value = Resource.error(e.message, null)
             }
         }
     }

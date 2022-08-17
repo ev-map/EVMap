@@ -9,6 +9,8 @@ import android.graphics.drawable.LayerDrawable
 import android.text.SpannableString
 import android.view.View
 import android.view.ViewGroup.MarginLayoutParams
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.ColorInt
@@ -128,9 +130,18 @@ fun <T> setRecyclerViewData(recyclerView: RecyclerView, items: List<T>?) {
 }
 
 @BindingAdapter("data")
-fun <T> setRecyclerViewData(recyclerView: ViewPager2, items: List<T>?) {
-    if (recyclerView.adapter is ListAdapter<*, *>) {
-        (recyclerView.adapter as ListAdapter<T, *>).submitList(items)
+fun <T> setViewPager2Data(viewPager: ViewPager2, items: List<T>?) {
+    if (viewPager.adapter is ListAdapter<*, *>) {
+        (viewPager.adapter as ListAdapter<T, *>).submitList(items)
+    }
+}
+
+@BindingAdapter("data")
+fun <T> setAutoCompleteTextViewData(atv: AutoCompleteTextView, items: List<T>?) {
+    if (atv.adapter is ArrayAdapter<*>) {
+        val arrayAdapter = atv.adapter as ArrayAdapter<T>
+        arrayAdapter.clear()
+        items?.let { arrayAdapter.addAll(it) }
     }
 }
 

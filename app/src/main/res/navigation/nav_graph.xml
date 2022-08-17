@@ -125,11 +125,43 @@
             app:popEnterAnim="@animator/nav_default_enter_anim"
             app:popExitAnim="@animator/nav_default_exit_anim" />
         <action
+            android:id="@+id/action_chargeprice_to_chargepriceFeedbackFragment"
+            app:destination="@id/chargeprice_feedback"
+            app:exitAnim="@animator/nav_default_exit_anim"
+            app:enterAnim="@animator/nav_default_enter_anim"
+            app:popEnterAnim="@animator/nav_default_enter_anim"
+            app:popExitAnim="@animator/nav_default_exit_anim" />
+        <action
             android:id="@+id/action_chargeprice_to_donateFragment"
             app:destination="@id/donate" />
         <argument
             android:name="charger"
             app:argType="net.vonforst.evmap.model.ChargeLocation" />
+    </fragment>
+    <fragment
+        android:id="@+id/chargeprice_feedback"
+        android:name="net.vonforst.evmap.fragment.ChargepriceFeedbackFragment"
+        android:label="@string/chargeprice_feedback"
+        tools:layout="@layout/fragment_chargeprice_feedback">
+        <argument
+            android:name="feedbackType"
+            app:argType="net.vonforst.evmap.viewmodel.ChargepriceFeedbackType" />
+        <argument
+            android:name="charger"
+            app:argType="net.vonforst.evmap.model.ChargeLocation"
+            app:nullable="true" />
+        <argument
+            android:name="vehicle"
+            app:argType="net.vonforst.evmap.api.chargeprice.ChargepriceCar"
+            app:nullable="true" />
+        <argument
+            android:name="chargePrices"
+            app:argType="net.vonforst.evmap.api.chargeprice.ChargePrice[]"
+            app:nullable="true" />
+        <argument
+            android:name="batteryRange"
+            app:argType="float[]"
+            app:nullable="true" />
     </fragment>
     <fragment
         android:id="@+id/donate"

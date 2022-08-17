@@ -30,6 +30,7 @@ import net.vonforst.evmap.api.equivalentPlugTypes
 import net.vonforst.evmap.databinding.FragmentChargepriceBinding
 import net.vonforst.evmap.model.Chargepoint
 import net.vonforst.evmap.storage.PreferenceDataSource
+import net.vonforst.evmap.viewmodel.ChargepriceFeedbackType
 import net.vonforst.evmap.viewmodel.ChargepriceViewModel
 import net.vonforst.evmap.viewmodel.Status
 import net.vonforst.evmap.viewmodel.savedStateViewModelFactory
@@ -182,6 +183,9 @@ class ChargepriceFragment : Fragment() {
         binding.btnSettings.setOnClickListener {
             findNavController().navigate(R.id.action_chargeprice_to_chargepriceSettingsFragment)
         }
+        binding.btnFeedbackMissingPrice.setOnClickListener {
+            feedbackMissingPrice()
+        }
 
         binding.batteryRange.setLabelFormatter { value: Float ->
             val fmt = NumberFormat.getNumberInstance()
@@ -200,6 +204,14 @@ class ChargepriceFragment : Fragment() {
             when (it.itemId) {
                 R.id.menu_help -> {
                     (activity as? MapsActivity)?.openUrl(getString(R.string.chargeprice_faq_link))
+                    true
+                }
+                R.id.menu_feedback_missing_price -> {
+                    feedbackMissingPrice()
+                    true
+                }
+                R.id.menu_feedback_wrong_price -> {
+                    feedbackWrongPrice()
                     true
                 }
                 else -> false
@@ -233,6 +245,32 @@ class ChargepriceFragment : Fragment() {
 
         // Workaround for AndroidX bug: https://github.com/material-components/material-components-android/issues/1984
         view.setBackgroundColor(MaterialColors.getColor(view, android.R.attr.windowBackground))
+    }
+
+    private fun feedbackMissingPrice() {
+        findNavController().navigate(
+            R.id.action_chargeprice_to_chargepriceFeedbackFragment,
+            ChargepriceFeedbackFragmentArgs(
+                ChargepriceFeedbackType.MISSING_PRICE,
+                vm.charger.value,
+                vm.vehicle.value,
+                vm.chargePricesForChargepoint.value?.data?.toTypedArray(),
+                vm.batteryRange.value?.toFloatArray()
+            ).toBundle()
+        )
+    }
+
+    private fun feedbackWrongPrice() {
+        findNavController().navigate(
+            R.id.action_chargeprice_to_chargepriceFeedbackFragment,
+            ChargepriceFeedbackFragmentArgs(
+                ChargepriceFeedbackType.WRONG_PRICE,
+                vm.charger.value,
+                vm.vehicle.value,
+                vm.chargePricesForChargepoint.value?.data?.toTypedArray(),
+                vm.batteryRange.value?.toFloatArray()
+            ).toBundle()
+        )
     }
 
 }

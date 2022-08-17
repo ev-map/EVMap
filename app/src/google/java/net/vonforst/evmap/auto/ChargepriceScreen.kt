@@ -15,13 +15,13 @@ import androidx.car.app.model.*
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.lifecycleScope
+import jsonapi.Meta
+import jsonapi.Relationship
+import jsonapi.Relationships
+import jsonapi.ResourceIdentifier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import moe.banana.jsonapi2.HasMany
-import moe.banana.jsonapi2.HasOne
-import moe.banana.jsonapi2.JsonBuffer
-import moe.banana.jsonapi2.ResourceIdentifier
 import net.vonforst.evmap.R
 import net.vonforst.evmap.api.chargeprice.*
 import net.vonforst.evmap.model.ChargeLocation
@@ -34,7 +34,10 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
     private val prefs = PreferenceDataSource(ctx)
     private val db = AppDatabase.getInstance(carContext)
     private val api by lazy {
-        ChargepriceApi.create(carContext.getString(R.string.chargeprice_key))
+        ChargepriceApi.create(
+            carContext.getString(R.string.chargeprice_key),
+            carContext.getString(R.string.chargeprice_api_url)
+        )
     }
     private var prices: List<ChargePrice>? = null
     private var meta: ChargepriceChargepointMeta? = null
@@ -94,7 +97,7 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
                             )
                             .build().intent
                         intent.data =
-                            Uri.parse("https://www.chargeprice.app/?poi_id=${charger.id}&poi_source=${getDataAdapter()}")
+                            Uri.parse(ChargepriceApi.getPoiUrl(charger))
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         try {
                             carContext.startActivity(intent)
@@ -169,39 +172,44 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
     }
 
     private fun loadPrices(model: Model?) {
-        val dataAdapter = getDataAdapter() ?: return
+        val dataAdapter = ChargepriceApi.getDataAdapter(charger) ?: return
         val manufacturer = model?.manufacturer?.value
         val modelName = getVehicleModel(model?.manufacturer?.value, model?.name?.value)
         lifecycleScope.launch {
             try {
                 val car = determineVehicle(manufacturer, modelName)
                 val cpStation = ChargepriceStation.fromEvmap(charger, car.compatibleEvmapConnectors)
-                val result = api.getChargePrices(ChargepriceRequest().apply {
-                    this.dataAdapter = dataAdapter
-                    station = cpStation
-                    vehicle = HasOne(car)
-                    tariffs = if (!prefs.chargepriceMyTariffsAll) {
-                        val myTariffs = prefs.chargepriceMyTariffs ?: emptySet()
-                        HasMany<ChargepriceTariff>(*myTariffs.map {
-                            ResourceIdentifier(
-                                "tariff",
-                                it
+                val result = api.getChargePrices(
+                    ChargepriceRequest(
+                        dataAdapter = dataAdapter,
+                        station = cpStation,
+                        vehicle = car,
+                        options = ChargepriceOptions(
+                            batteryRange = batteryRange.map { it.toDouble() },
+                            providerCustomerTariffs = prefs.chargepriceShowProviderCustomerTariffs,
+                            maxMonthlyFees = if (prefs.chargepriceNoBaseFee) 0.0 else null,
+                            currency = prefs.chargepriceCurrency,
+                            allowUnbalancedLoad = prefs.chargepriceAllowUnbalancedLoad
+                        ),
+                        relationships = if (!prefs.chargepriceMyTariffsAll) {
+                            val myTariffs = prefs.chargepriceMyTariffs ?: emptySet()
+                            Relationships(
+                                "tariffs" to Relationship.ToMany(
+                                    myTariffs.map {
+                                        ResourceIdentifier(
+                                            "tariff",
+                                            id = it
+                                        )
+                                    },
+                                    meta = Meta.from(
+                                        ChargepriceRequestTariffMeta(ChargepriceInclude.ALWAYS),
+                                        ChargepriceApi.moshi
+                                    )
+                                )
                             )
-                        }.toTypedArray()).apply {
-                            meta = JsonBuffer.create(
-                                ChargepriceApi.moshi.adapter(ChargepriceRequestTariffMeta::class.java),
-                                ChargepriceRequestTariffMeta(ChargepriceInclude.ALWAYS)
-                            )
-                        }
-                    } else null
-                    options = ChargepriceOptions(
-                        batteryRange = batteryRange.map { it.toDouble() },
-                        providerCustomerTariffs = prefs.chargepriceShowProviderCustomerTariffs,
-                        maxMonthlyFees = if (prefs.chargepriceNoBaseFee) 0.0 else null,
-                        currency = prefs.chargepriceCurrency,
-                        allowUnbalancedLoad = prefs.chargepriceAllowUnbalancedLoad
-                    )
-                }, ChargepriceApi.getChargepriceLanguage())
+                        } else null
+                    ), ChargepriceApi.getChargepriceLanguage()
+                )
 
                 val myTariffs = prefs.chargepriceMyTariffs
 
@@ -215,14 +223,16 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
                     invalidate()
                     return@launch
                 }
-                meta =
-                    (result.meta.get<ChargepriceMeta>(ChargepriceApi.moshi.adapter(ChargepriceMeta::class.java)) as ChargepriceMeta).chargePoints.filterIndexed { i, cp ->
-                        charger.chargepointsMerged[i].type in car.compatibleEvmapConnectors
-                    }.maxByOrNull {
-                        it.power
-                    }
 
-                prices = result.map { cp ->
+                val metaMapped =
+                    result.meta!!.map(ChargepriceMeta::class.java, ChargepriceApi.moshi)!!
+                meta = metaMapped.chargePoints.filterIndexed { i, cp ->
+                    charger.chargepointsMerged[i].type in car.compatibleEvmapConnectors
+                }.maxByOrNull {
+                    it.power
+                }
+
+                prices = result.data!!.map { cp ->
                     val filteredPrices =
                         cp.chargepointPrices.filter {
                             it.plug == chargepoint.plug && it.power == chargepoint.power
@@ -230,15 +240,15 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
                     if (filteredPrices.isEmpty()) {
                         null
                     } else {
-                        cp.clone().apply {
+                        cp.copy(
                             chargepointPrices = filteredPrices
-                        }
+                        )
                     }
                 }.filterNotNull()
                     .sortedBy { it.chargepointPrices.first().price }
                     .sortedByDescending {
                         prefs.chargepriceMyTariffsAll ||
-                                myTariffs != null && it.tariff?.get()?.id in myTariffs
+                                myTariffs != null && it.tariff?.id in myTariffs
                     }
                 invalidate()
             } catch (e: IOException) {
@@ -315,11 +325,5 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
             }
         }
         return vehicles[0]
-    }
-
-    private fun getDataAdapter(): String? = when (charger.dataSource) {
-        "goingelectric" -> ChargepriceApi.DATA_SOURCE_GOINGELECTRIC
-        "openchargemap" -> ChargepriceApi.DATA_SOURCE_OPENCHARGEMAP
-        else -> null
     }
 }

@@ -75,7 +75,6 @@ import net.vonforst.evmap.adapter.DetailsAdapter
 import net.vonforst.evmap.adapter.GalleryAdapter
 import net.vonforst.evmap.adapter.PlaceAutocompleteAdapter
 import net.vonforst.evmap.api.goingelectric.GoingElectricApiWrapper
-import net.vonforst.evmap.api.openchargemap.OpenChargeMapApiWrapper
 import net.vonforst.evmap.autocomplete.ApiUnavailableException
 import net.vonforst.evmap.autocomplete.PlaceWithBounds
 import net.vonforst.evmap.bold
@@ -363,16 +362,11 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         }
         binding.detailView.btnChargeprice.setOnClickListener {
             val charger = vm.charger.value?.data ?: return@setOnClickListener
-            val dataSource = when (vm.apiType) {
-                GoingElectricApiWrapper::class.java -> "going_electric"
-                OpenChargeMapApiWrapper::class.java -> "open_charge_map"
-                else -> throw IllegalArgumentException("unsupported data source")
-            }
             val extras =
                 FragmentNavigatorExtras(binding.detailView.btnChargeprice to getString(R.string.shared_element_chargeprice))
             findNavController().navigate(
                 R.id.action_map_to_chargepriceFragment,
-                ChargepriceFragmentArgs(charger, dataSource).toBundle(),
+                ChargepriceFragmentArgs(charger).toBundle(),
                 null, extras
             )
         }

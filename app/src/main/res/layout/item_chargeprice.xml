@@ -37,7 +37,7 @@
         android:paddingTop="8dp"
         android:paddingRight="16dp"
         android:paddingBottom="8dp"
-        android:background="@{BindingAdaptersKt.tariffBackground(context,!myTariffsAll &amp;&amp; myTariffs.contains(item.tariff.get().id), item.branding.backgroundColor)}">
+        android:background="@{BindingAdaptersKt.tariffBackground(context,!myTariffsAll &amp;&amp; myTariffs.contains(item.tariff.getId()), item.branding.backgroundColor)}">
 
         <TextView
             android:id="@+id/txtTariff"

@@ -16,7 +16,8 @@ class ChargepriceSettingsFragment : BaseSettingsFragment() {
         viewModelFactory {
             SettingsViewModel(
                 requireActivity().application,
-                getString(R.string.chargeprice_key)
+                getString(R.string.chargeprice_key),
+                getString(R.string.chargeprice_api_url)
             )
         }
     })

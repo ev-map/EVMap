@@ -26,7 +26,6 @@ allprojects {
         google()
         mavenCentral()
         //noinspection JcenterRepositoryObsolete
-        jcenter() // still required for https://github.com/kamikat/moshi-jsonapi
         maven { url 'https://jitpack.io' }
     }
 }

@@ -130,9 +130,6 @@
         <argument
             android:name="charger"
             app:argType="net.vonforst.evmap.model.ChargeLocation" />
-        <argument
-            android:name="dataSource"
-            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/donate"

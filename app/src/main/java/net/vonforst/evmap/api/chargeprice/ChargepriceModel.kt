@@ -1,12 +1,12 @@
 package net.vonforst.evmap.api.chargeprice
 
 import android.content.Context
+import android.os.Parcelable
+import android.util.Patterns
 import com.squareup.moshi.Json
-import moe.banana.jsonapi2.HasMany
-import moe.banana.jsonapi2.HasOne
-
-import moe.banana.jsonapi2.JsonApi
-import moe.banana.jsonapi2.Resource
+import com.squareup.moshi.JsonClass
+import jsonapi.*
+import kotlinx.parcelize.Parcelize
 import net.vonforst.evmap.R
 import net.vonforst.evmap.adapter.Equatable
 import net.vonforst.evmap.api.equivalentPlugTypes
@@ -17,16 +17,21 @@ import kotlin.math.ceil
 import kotlin.math.floor
 
 
-@JsonApi(type = "charge_price_request")
-class ChargepriceRequest : Resource() {
-    @field:Json(name = "data_adapter")
-    lateinit var dataAdapter: String
-    lateinit var station: ChargepriceStation
-    lateinit var options: ChargepriceOptions
-    var tariffs: HasMany<ChargepriceTariff>? = null
-    var vehicle: HasOne<ChargepriceCar>? = null
-}
+@Resource("charge_price_request")
+@JsonClass(generateAdapter = true)
+data class ChargepriceRequest(
+    @Json(name = "data_adapter")
+    val dataAdapter: String,
+    val station: ChargepriceStation,
+    val options: ChargepriceOptions,
+    @ToMany("tariffs")
+    val tariffs: List<ChargepriceTariff>? = null,
+    @ToOne("vehicle")
+    val vehicle: ChargepriceCar? = null,
+    @RelationshipsObject var relationships: Relationships? = null
+)
 
+@JsonClass(generateAdapter = true)
 data class ChargepriceStation(
     val longitude: Double,
     val latitude: Double,
@@ -56,11 +61,13 @@ data class ChargepriceStation(
     }
 }
 
+@JsonClass(generateAdapter = true)
 data class ChargepriceChargepoint(
     val power: Double,
     val plug: String
 )
 
+@JsonClass(generateAdapter = true)
 data class ChargepriceOptions(
     @Json(name = "max_monthly_fees") val maxMonthlyFees: Double? = null,
     val energy: Double? = null,
@@ -73,142 +80,109 @@ data class ChargepriceOptions(
     @Json(name = "provider_customer_tariffs") val providerCustomerTariffs: Boolean? = null
 )
 
-@JsonApi(type = "tariff")
-class ChargepriceTariff() : Resource() {
-    lateinit var provider: String
-    lateinit var name: String
-    @field:Json(name = "direct_payment")
-    var directPayment: Boolean = false
-    @field:Json(name = "provider_customer_tariff")
-    var providerCustomerTariff: Boolean = false
-    @field:Json(name = "supported_cuntries")
-    lateinit var supportedCountries: Set<String>
-    @field:Json(name = "charge_card_id")
-    lateinit var chargeCardId: String  // GE charge card ID
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-        if (!super.equals(other)) return false
-
-        other as ChargepriceTariff
-
-        if (provider != other.provider) return false
-        if (name != other.name) return false
-        if (directPayment != other.directPayment) return false
-        if (providerCustomerTariff != other.providerCustomerTariff) return false
-        if (supportedCountries != other.supportedCountries) return false
-        if (chargeCardId != other.chargeCardId) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = super.hashCode()
-        result = 31 * result + provider.hashCode()
-        result = 31 * result + name.hashCode()
-        result = 31 * result + directPayment.hashCode()
-        result = 31 * result + providerCustomerTariff.hashCode()
-        result = 31 * result + supportedCountries.hashCode()
-        result = 31 * result + chargeCardId.hashCode()
-        return result
-    }
+@Resource("tariff")
+@Parcelize
+@JsonClass(generateAdapter = true)
+data class ChargepriceTariff(
+    @Id val id_: String?,
+    val provider: String,
+    val name: String,
+    @Json(name = "direct_payment")
+    val directPayment: Boolean = false,
+    @Json(name = "provider_customer_tariff")
+    val providerCustomerTariff: Boolean = false,
+    @Json(name = "supported_countries")
+    val supportedCountries: Set<String>,
+    @Json(name = "charge_card_id")
+    val chargeCardId: String?,  // GE charge card ID
+) : Parcelable {
+    val id: String
+        get() = id_!!
 }
 
-@JsonApi(type = "car")
-class ChargepriceCar : Resource(), Equatable {
-    lateinit var name: String
-    lateinit var brand: String
+@JsonClass(generateAdapter = true)
+@Resource("car")
+@Parcelize
+data class ChargepriceCar(
+    @Id val id_: String?,
+    val name: String,
+    val brand: String,
 
-    @field:Json(name = "dc_charge_ports")
-    lateinit var dcChargePorts: List<String>
-    lateinit var manufacturer: HasOne<ChargepriceBrand>
+    @Json(name = "dc_charge_ports")
+    val dcChargePorts: List<String>,
+    @ToOne("manufacturer")
+    val manufacturer: ChargepriceBrand?
+) : Equatable, Parcelable {
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-        if (!super.equals(other)) return false
-
-        other as ChargepriceCar
-
-        if (name != other.name) return false
-        if (brand != other.brand) return false
-        if (dcChargePorts != other.dcChargePorts) return false
-        if (manufacturer != other.manufacturer) return false
-
-        return true
+    companion object {
+        private val acConnectors = listOf(
+            Chargepoint.CEE_BLAU,
+            Chargepoint.CEE_ROT,
+            Chargepoint.SCHUKO,
+            Chargepoint.TYPE_1,
+            Chargepoint.TYPE_2_UNKNOWN,
+            Chargepoint.TYPE_2_SOCKET,
+            Chargepoint.TYPE_2_PLUG
+        )
+        private val plugMapping = mapOf(
+            "ccs" to Chargepoint.CCS_UNKNOWN,
+            "tesla_suc" to Chargepoint.SUPERCHARGER,
+            "tesla_ccs" to Chargepoint.CCS_UNKNOWN,
+            "chademo" to Chargepoint.CHADEMO
+        )
     }
 
-    override fun hashCode(): Int {
-        var result = super.hashCode()
-        result = 31 * result + name.hashCode()
-        result = 31 * result + brand.hashCode()
-        result = 31 * result + dcChargePorts.hashCode()
-        result = 31 * result + manufacturer.hashCode()
-        return result
-    }
+    val id: String
+        get() = id_!!
 
-    private val acConnectors = listOf(
-        Chargepoint.CEE_BLAU,
-        Chargepoint.CEE_ROT,
-        Chargepoint.SCHUKO,
-        Chargepoint.TYPE_1,
-        Chargepoint.TYPE_2_UNKNOWN,
-        Chargepoint.TYPE_2_SOCKET,
-        Chargepoint.TYPE_2_PLUG
-    )
-    private val plugMapping = mapOf(
-        "ccs" to Chargepoint.CCS_UNKNOWN,
-        "tesla_suc" to Chargepoint.SUPERCHARGER,
-        "tesla_ccs" to Chargepoint.CCS_UNKNOWN,
-        "chademo" to Chargepoint.CHADEMO
-    )
     val compatibleEvmapConnectors: List<String>
         get() = dcChargePorts.map {
             plugMapping[it]
         }.filterNotNull().plus(acConnectors)
 }
 
-@JsonApi(type = "brand")
-class ChargepriceBrand : Resource()
+@JsonClass(generateAdapter = true)
+@Resource("brand")
+@Parcelize
+data class ChargepriceBrand(
+    @Id val id: String?
+) : Parcelable
 
-@JsonApi(type = "charge_price")
-class ChargePrice : Resource(), Equatable, Cloneable {
-    lateinit var provider: String
+@JsonClass(generateAdapter = true)
+@Resource("charge_price")
+@Parcelize
+data class ChargePrice(
+    val provider: String,
+    @Json(name = "tariff_name")
+    val tariffName: String,
+    val url: String,
+    @Json(name = "monthly_min_sales")
+    val monthlyMinSales: Double = 0.0,
+    @Json(name = "total_monthly_fee")
+    val totalMonthlyFee: Double = 0.0,
+    @Json(name = "flat_rate")
+    val flatRate: Boolean = false,
 
-    @field:Json(name = "tariff_name")
-    lateinit var tariffName: String
-    lateinit var url: String
+    @Json(name = "direct_payment")
+    val directPayment: Boolean = false,
 
-    @field:Json(name = "monthly_min_sales")
-    var monthlyMinSales: Double = 0.0
+    @Json(name = "provider_customer_tariff")
+    val providerCustomerTariff: Boolean = false,
+    val currency: String,
 
-    @field:Json(name = "total_monthly_fee")
-    var totalMonthlyFee: Double = 0.0
+    @Json(name = "start_time")
+    val startTime: Int = 0,
+    val tags: List<ChargepriceTag>,
 
-    @field:Json(name = "flat_rate")
-    var flatRate: Boolean = false
+    @Json(name = "charge_point_prices")
+    val chargepointPrices: List<ChargepointPrice>,
 
-    @field:Json(name = "direct_payment")
-    var directPayment: Boolean = false
+    @Json(name = "branding")
+    val branding: ChargepriceBranding? = null,
 
-    @field:Json(name = "provider_customer_tariff")
-    var providerCustomerTariff: Boolean = false
-    lateinit var currency: String
-
-    @field:Json(name = "start_time")
-    var startTime: Int = 0
-    lateinit var tags: List<ChargepriceTag>
-
-    @field:Json(name = "charge_point_prices")
-    lateinit var chargepointPrices: List<ChargepointPrice>
-
-    @field:Json(name = "branding")
-    var branding: ChargepriceBranding? = null
-
-    var tariff: HasOne<ChargepriceTariff>? = null
-
-
+    @ToOne("tariff")
+    val tariff: ChargepriceTariff?
+) : Equatable, Cloneable, Parcelable {
     fun formatMonthlyFees(ctx: Context): String {
         return listOfNotNull(
             if (totalMonthlyFee > 0) {
@@ -219,69 +193,10 @@ class ChargePrice : Resource(), Equatable, Cloneable {
             } else null
         ).joinToString(", ")
     }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-        if (!super.equals(other)) return false
-
-        other as ChargePrice
-
-        if (provider != other.provider) return false
-        if (tariffName != other.tariffName) return false
-        if (url != other.url) return false
-        if (monthlyMinSales != other.monthlyMinSales) return false
-        if (totalMonthlyFee != other.totalMonthlyFee) return false
-        if (flatRate != other.flatRate) return false
-        if (directPayment != other.directPayment) return false
-        if (providerCustomerTariff != other.providerCustomerTariff) return false
-        if (currency != other.currency) return false
-        if (startTime != other.startTime) return false
-        if (tags != other.tags) return false
-        if (chargepointPrices != other.chargepointPrices) return false
-        if (branding != other.branding) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = super.hashCode()
-        result = 31 * result + provider.hashCode()
-        result = 31 * result + tariffName.hashCode()
-        result = 31 * result + url.hashCode()
-        result = 31 * result + monthlyMinSales.hashCode()
-        result = 31 * result + totalMonthlyFee.hashCode()
-        result = 31 * result + flatRate.hashCode()
-        result = 31 * result + directPayment.hashCode()
-        result = 31 * result + providerCustomerTariff.hashCode()
-        result = 31 * result + currency.hashCode()
-        result = 31 * result + startTime
-        result = 31 * result + tags.hashCode()
-        result = 31 * result + chargepointPrices.hashCode()
-        result = 31 * result + branding.hashCode()
-        return result
-    }
-
-    public override fun clone(): ChargePrice {
-        return ChargePrice().apply {
-            chargepointPrices = this@ChargePrice.chargepointPrices
-            currency = this@ChargePrice.currency
-            directPayment = this@ChargePrice.directPayment
-            flatRate = this@ChargePrice.flatRate
-            monthlyMinSales = this@ChargePrice.monthlyMinSales
-            provider = this@ChargePrice.provider
-            providerCustomerTariff = this@ChargePrice.providerCustomerTariff
-            startTime = this@ChargePrice.startTime
-            tags = this@ChargePrice.tags
-            tariffName = this@ChargePrice.tariffName
-            totalMonthlyFee = this@ChargePrice.totalMonthlyFee
-            url = this@ChargePrice.url
-            tariff = this@ChargePrice.tariff
-            branding = this@ChargePrice.branding
-        }
-    }
 }
 
+@JsonClass(generateAdapter = true)
+@Parcelize
 data class ChargepointPrice(
     val power: Double,
     val plug: String,
@@ -289,7 +204,7 @@ data class ChargepointPrice(
     @Json(name = "price_distribution") val priceDistribution: PriceDistribution,
     @Json(name = "blocking_fee_start") val blockingFeeStart: Int?,
     @Json(name = "no_price_reason") var noPriceReason: String?
-) {
+) : Parcelable {
     fun formatDistribution(ctx: Context): String {
         fun percent(value: Double): String {
             return ctx.getString(R.string.percent_format, value * 100) + "\u00a0"
@@ -332,19 +247,28 @@ data class ChargepointPrice(
     }
 }
 
+@JsonClass(generateAdapter = true)
+@Parcelize
 data class ChargepriceBranding(
     @Json(name = "background_color") val backgroundColor: String,
     @Json(name = "text_color") val textColor: String,
     @Json(name = "logo_url") val logoUrl: String
-)
+) : Parcelable
 
-data class PriceDistribution(val kwh: Double?, val session: Double?, val minute: Double?) {
-    val isOnlyKwh =
-        kwh != null && kwh > 0 && (session == null || session == 0.0) && (minute == null || minute == 0.0)
+@JsonClass(generateAdapter = true)
+@Parcelize
+data class PriceDistribution(val kwh: Double?, val session: Double?, val minute: Double?) :
+    Parcelable {
+    val isOnlyKwh
+        get() = kwh != null && kwh > 0 && (session == null || session == 0.0) && (minute == null || minute == 0.0)
 }
 
-data class ChargepriceTag(val kind: String, val text: String, val url: String?) : Equatable
+@JsonClass(generateAdapter = true)
+@Parcelize
+data class ChargepriceTag(val kind: String, val text: String, val url: String?) : Equatable,
+    Parcelable
 
+@JsonClass(generateAdapter = true)
 data class ChargepriceMeta(
     @Json(name = "charge_points") val chargePoints: List<ChargepriceChargepointMeta>
 )
@@ -358,13 +282,97 @@ enum class ChargepriceInclude {
     EXCLUSIVE
 }
 
+@JsonClass(generateAdapter = true)
+@Parcelize
 data class ChargepriceRequestTariffMeta(
     val include: ChargepriceInclude
-)
+) : Parcelable
 
+@JsonClass(generateAdapter = true)
 data class ChargepriceChargepointMeta(
     val power: Double,
     val plug: String,
     val energy: Double,
     val duration: Double
 )
+
+@Resource("user_feedback")
+sealed class ChargepriceUserFeedback(
+    val notes: String,
+    val email: String,
+    val context: String,
+    val language: String
+) {
+    init {
+        if (email.isBlank() || email.length > 100 || !Patterns.EMAIL_ADDRESS.matcher(email)
+                .matches()
+        ) {
+            throw IllegalArgumentException("invalid email")
+        }
+        if (!ChargepriceApi.supportedLanguages.contains(language)) {
+            throw IllegalArgumentException("invalid language")
+        }
+        if (context.length > 500) throw IllegalArgumentException("invalid context")
+        if (notes.length > 1000) throw IllegalArgumentException("invalid notes")
+    }
+}
+
+@JsonClass(generateAdapter = true)
+@Resource(type = "missing_price")
+class ChargepriceMissingPriceFeedback(
+    val tariff: String,
+    val cpo: String,
+    val price: String,
+    @Json(name = "poi_link") val poiLink: String,
+    notes: String,
+    email: String,
+    context: String,
+    language: String
+) : ChargepriceUserFeedback(notes, email, context, language) {
+    init {
+        if (tariff.isBlank() || tariff.length > 100) throw IllegalArgumentException("invalid tariff")
+        if (cpo.length > 200) throw IllegalArgumentException("invalid cpo")
+        if (price.isBlank() || price.length > 100) throw IllegalArgumentException("invalid price")
+        if (poiLink.isBlank() || poiLink.length > 200) throw IllegalArgumentException("invalid poiLink")
+    }
+}
+
+
+@JsonClass(generateAdapter = true)
+@Resource(type = "wrong_price")
+class ChargepriceWrongPriceFeedback(
+    val tariff: String,
+    val cpo: String,
+    @Json(name = "displayed_price") val displayedPrice: String,
+    @Json(name = "actual_price") val actualPrice: String,
+    @Json(name = "poi_link") val poiLink: String,
+    notes: String,
+    email: String,
+    context: String,
+    language: String,
+) : ChargepriceUserFeedback(notes, email, context, language) {
+    init {
+        if (tariff.length > 100) throw IllegalArgumentException("invalid tariff")
+        if (cpo.length > 200) throw IllegalArgumentException("invalid cpo")
+        if (displayedPrice.length > 100) throw IllegalArgumentException("invalid displayedPrice")
+        if (actualPrice.length > 100) throw IllegalArgumentException("invalid actualPrice")
+        if (poiLink.length > 200) throw IllegalArgumentException("invalid poiLink")
+    }
+}
+
+
+@JsonClass(generateAdapter = true)
+@Resource(type = "missing_vehicle")
+class ChargepriceMissingVehicleFeedback(
+    val brand: String,
+    val model: String,
+    notes: String,
+    email: String,
+    context: String,
+    language: String,
+) : ChargepriceUserFeedback(notes, email, context, language) {
+    init {
+        if (brand.length > 100) throw IllegalArgumentException("invalid brand")
+        if (model.length > 100) throw IllegalArgumentException("invalid model")
+    }
+}

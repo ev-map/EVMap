@@ -63,14 +63,14 @@ class ChargepriceApiTest {
 
             runBlocking {
                 val result = chargeprice.getChargePrices(
-                    ChargepriceRequest().apply {
-                        dataAdapter = "going_electric"
+                    ChargepriceRequest(
+                        dataAdapter = "going_electric",
                         station =
-                            ChargepriceStation.fromEvmap(charger, listOf("Typ2", "Schuko"))
+                        ChargepriceStation.fromEvmap(charger, listOf("Typ2", "Schuko")),
                         options = ChargepriceOptions(energy = 22.0, duration = 60)
-                    }, "en"
+                    ), "en"
                 )
-                assertEquals(25, result.size)
+                assertEquals(25, result.data!!.size)
             }
         }
     }

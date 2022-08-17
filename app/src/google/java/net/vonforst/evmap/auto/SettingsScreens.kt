@@ -283,7 +283,10 @@ class ChargepriceSettingsScreen(ctx: CarContext) : Screen(ctx) {
 
 class SelectVehiclesScreen(ctx: CarContext) : MultiSelectSearchScreen<ChargepriceCar>(ctx) {
     private val prefs = PreferenceDataSource(carContext)
-    private var api = ChargepriceApi.create(carContext.getString(R.string.chargeprice_key))
+    private var api = ChargepriceApi.create(
+        carContext.getString(R.string.chargeprice_key),
+        carContext.getString(R.string.chargeprice_api_url)
+    )
     override val isMultiSelect = true
     override val shouldShowSelectAll = false
 
@@ -308,7 +311,10 @@ class SelectVehiclesScreen(ctx: CarContext) : MultiSelectSearchScreen<Chargepric
 
 class SelectTariffsScreen(ctx: CarContext) : MultiSelectSearchScreen<ChargepriceTariff>(ctx) {
     private val prefs = PreferenceDataSource(carContext)
-    private var api = ChargepriceApi.create(carContext.getString(R.string.chargeprice_key))
+    private var api = ChargepriceApi.create(
+        carContext.getString(R.string.chargeprice_key),
+        carContext.getString(R.string.chargeprice_api_url)
+    )
     override val isMultiSelect = true
     override val shouldShowSelectAll = true
 

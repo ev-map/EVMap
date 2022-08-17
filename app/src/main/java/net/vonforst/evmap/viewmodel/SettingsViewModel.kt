@@ -11,9 +11,13 @@ import net.vonforst.evmap.api.chargeprice.ChargepriceTariff
 import net.vonforst.evmap.storage.AppDatabase
 import java.io.IOException
 
-class SettingsViewModel(application: Application, chargepriceApiKey: String) :
+class SettingsViewModel(
+    application: Application,
+    chargepriceApiKey: String,
+    chargepriceApiUrl: String
+) :
     AndroidViewModel(application) {
-    private var api = ChargepriceApi.create(chargepriceApiKey)
+    private var api = ChargepriceApi.create(chargepriceApiKey, chargepriceApiUrl)
     private var db = AppDatabase.getInstance(application)
 
     val vehicles: MutableLiveData<Resource<List<ChargepriceCar>>> by lazy {

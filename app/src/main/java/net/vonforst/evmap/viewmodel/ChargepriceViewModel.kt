@@ -2,12 +2,12 @@ package net.vonforst.evmap.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.*
+import jsonapi.Meta
+import jsonapi.Relationship
+import jsonapi.Relationships
+import jsonapi.ResourceIdentifier
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import moe.banana.jsonapi2.HasMany
-import moe.banana.jsonapi2.HasOne
-import moe.banana.jsonapi2.JsonBuffer
-import moe.banana.jsonapi2.ResourceIdentifier
 import net.vonforst.evmap.api.chargeprice.*
 import net.vonforst.evmap.api.equivalentPlugTypes
 import net.vonforst.evmap.model.ChargeLocation
@@ -19,18 +19,15 @@ import java.io.IOException
 class ChargepriceViewModel(
     application: Application,
     chargepriceApiKey: String,
+    chargepriceApiUrl: String,
     private val state: SavedStateHandle
 ) :
     AndroidViewModel(application) {
-    private var api = ChargepriceApi.create(chargepriceApiKey)
+    private var api = ChargepriceApi.create(chargepriceApiKey, chargepriceApiUrl)
     private var prefs = PreferenceDataSource(application)
 
     val charger: MutableLiveData<ChargeLocation> by lazy {
         state.getLiveData("charger")
-    }
-
-    val dataSource: MutableLiveData<String> by lazy {
-        state.getLiveData("dataSource")
     }
 
     val chargepoint: MutableLiveData<Chargepoint> by lazy {
@@ -120,7 +117,6 @@ class ChargepriceViewModel(
             value = state["chargePrices"] ?: Resource.loading(null)
             listOf(
                 charger,
-                dataSource,
                 batteryRange,
                 batteryRangeSliderDragging,
                 vehicleCompatibleConnectors,
@@ -165,15 +161,15 @@ class ChargepriceViewModel(
                             if (filteredPrices.isEmpty()) {
                                 null
                             } else {
-                                cp.clone().apply {
+                                cp.copy(
                                     chargepointPrices = filteredPrices
-                                }
+                                )
                             }
                         }.filterNotNull()
                             .sortedBy { it.chargepointPrices.first().price }
                             .sortedByDescending {
                                 prefs.chargepriceMyTariffsAll ||
-                                        myTariffs != null && it.tariff?.get()?.id in myTariffs
+                                        myTariffs != null && it.tariff?.id in myTariffs
                             }
                         )
                     }
@@ -239,10 +235,9 @@ class ChargepriceViewModel(
         val charger = charger.value
         val car = vehicle.value
         val compatibleConnectors = vehicleCompatibleConnectors.value
-        val dataSource = dataSource.value
         val myTariffs = myTariffs.value
         val myTariffsAll = myTariffsAll.value
-        if (charger == null || car == null || compatibleConnectors == null || dataSource == null || myTariffsAll == null || myTariffsAll == false && myTariffs == null) {
+        if (charger == null || car == null || compatibleConnectors == null || myTariffsAll == null || myTariffsAll == false && myTariffs == null) {
             chargePrices.value = Resource.error(null, null)
             return
         }
@@ -252,34 +247,39 @@ class ChargepriceViewModel(
         loadPricesJob?.cancel()
         loadPricesJob = viewModelScope.launch {
             try {
-                val result = api.getChargePrices(ChargepriceRequest().apply {
-                    dataAdapter = dataSource
-                    station = cpStation
-                    vehicle = HasOne(car)
-                    tariffs = if (!myTariffsAll) {
-                        HasMany<ChargepriceTariff>(*myTariffs!!.map {
-                            ResourceIdentifier(
-                                "tariff",
-                                it
+                val result = api.getChargePrices(
+                    ChargepriceRequest(
+                        dataAdapter = ChargepriceApi.getDataAdapter(charger),
+                        station = cpStation,
+                        vehicle = car,
+                        options = ChargepriceOptions(
+                            batteryRange = batteryRange.value!!.map { it.toDouble() },
+                            providerCustomerTariffs = prefs.chargepriceShowProviderCustomerTariffs,
+                            maxMonthlyFees = if (prefs.chargepriceNoBaseFee) 0.0 else null,
+                            currency = prefs.chargepriceCurrency,
+                            allowUnbalancedLoad = prefs.chargepriceAllowUnbalancedLoad
+                        ),
+                        relationships = if (!myTariffsAll) {
+                            Relationships(
+                                "tariffs" to Relationship.ToMany(
+                                    (myTariffs ?: emptySet()).map {
+                                        ResourceIdentifier(
+                                            "tariff",
+                                            id = it
+                                        )
+                                    },
+                                    meta = Meta.from(
+                                        ChargepriceRequestTariffMeta(ChargepriceInclude.ALWAYS),
+                                        ChargepriceApi.moshi
+                                    )
+                                )
                             )
-                        }.toTypedArray()).apply {
-                            meta = JsonBuffer.create(
-                                ChargepriceApi.moshi.adapter(ChargepriceRequestTariffMeta::class.java),
-                                ChargepriceRequestTariffMeta(ChargepriceInclude.ALWAYS)
-                            )
-                        }
-                    } else null
-                    options = ChargepriceOptions(
-                        batteryRange = batteryRange.value!!.map { it.toDouble() },
-                        providerCustomerTariffs = prefs.chargepriceShowProviderCustomerTariffs,
-                        maxMonthlyFees = if (prefs.chargepriceNoBaseFee) 0.0 else null,
-                        currency = prefs.chargepriceCurrency,
-                        allowUnbalancedLoad = prefs.chargepriceAllowUnbalancedLoad
-                    )
-                }, ChargepriceApi.getChargepriceLanguage())
-                val meta =
-                    result.meta.get<ChargepriceMeta>(ChargepriceApi.moshi.adapter(ChargepriceMeta::class.java)) as ChargepriceMeta
-                chargePrices.value = Resource.success(result)
+                        } else null
+                    ), ChargepriceApi.getChargepriceLanguage()
+                )
+
+                val meta = result.meta!!.map(ChargepriceMeta::class.java, ChargepriceApi.moshi)!!
+                chargePrices.value = Resource.success(result.data)
                 chargePriceMeta.value = Resource.success(meta)
             } catch (e: IOException) {
                 chargePrices.value = Resource.error(e.message, null)

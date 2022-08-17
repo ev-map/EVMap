@@ -3,14 +3,16 @@ package net.vonforst.evmap.api.chargeprice
 import android.content.Context
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import moe.banana.jsonapi2.ArrayDocument
-import moe.banana.jsonapi2.JsonApiConverterFactory
-import moe.banana.jsonapi2.ResourceAdapterFactory
+import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
+import jsonapi.Document
+import jsonapi.JsonApiFactory
+import jsonapi.retrofit.DocumentConverterFactory
 import net.vonforst.evmap.BuildConfig
+import net.vonforst.evmap.model.ChargeLocation
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
+import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -20,34 +22,45 @@ import java.util.*
 interface ChargepriceApi {
     @POST("charge_prices")
     suspend fun getChargePrices(
-        @Body request: ChargepriceRequest,
+        @Body @jsonapi.retrofit.Document request: ChargepriceRequest,
         @Header("Accept-Language") language: String
-    ): ArrayDocument<ChargePrice>
+    ): Document<List<ChargePrice>>
 
     @GET("vehicles")
-    suspend fun getVehicles(): ArrayDocument<ChargepriceCar>
+    @jsonapi.retrofit.Document
+    suspend fun getVehicles(): List<ChargepriceCar>
 
     @GET("tariffs")
-    suspend fun getTariffs(): ArrayDocument<ChargepriceTariff>
+    @jsonapi.retrofit.Document
+    suspend fun getTariffs(): List<ChargepriceTariff>
+
+    @POST("user_feedback")
+    suspend fun userFeedback(@Body @jsonapi.retrofit.Document feedback: ChargepriceUserFeedback)
 
     companion object {
         private val cacheSize = 1L * 1024 * 1024 // 1MB
         val supportedLanguages = setOf("de", "en", "fr", "nl")
 
-        val DATA_SOURCE_GOINGELECTRIC = "going_electric"
-        val DATA_SOURCE_OPENCHARGEMAP = "open_charge_map"
+        private val DATA_SOURCE_GOINGELECTRIC = "going_electric"
+        private val DATA_SOURCE_OPENCHARGEMAP = "open_charge_map"
 
-        private val jsonApiAdapterFactory = ResourceAdapterFactory.builder()
-            .add(ChargepriceRequest::class.java)
-            .add(ChargepriceTariff::class.java)
-            .add(ChargepriceBrand::class.java)
-            .add(ChargePrice::class.java)
-            .add(ChargepriceCar::class.java)
+        private val jsonApiAdapterFactory = JsonApiFactory.Builder()
+            .addType(ChargepriceRequest::class.java)
+            .addType(ChargepriceTariff::class.java)
+            .addType(ChargepriceBrand::class.java)
+            .addType(ChargePrice::class.java)
+            .addType(ChargepriceCar::class.java)
             .build()
         val moshi = Moshi.Builder()
             .add(jsonApiAdapterFactory)
-            .add(KotlinJsonAdapterFactory())
+            .add(
+                PolymorphicJsonAdapterFactory.of(ChargepriceUserFeedback::class.java, "type")
+                    .withSubtype(ChargepriceMissingPriceFeedback::class.java, "missing_price")
+                    .withSubtype(ChargepriceWrongPriceFeedback::class.java, "wrong_price")
+                    .withSubtype(ChargepriceMissingVehicleFeedback::class.java, "missing_vehicle")
+            )
             .build()
+
         fun create(
             apikey: String,
             baseurl: String = "https://api.chargeprice.app/v1/",
@@ -73,7 +86,8 @@ interface ChargepriceApi {
 
             val retrofit = Retrofit.Builder()
                 .baseUrl(baseurl)
-                .addConverterFactory(JsonApiConverterFactory.create(moshi))
+                .addConverterFactory(DocumentConverterFactory.create())
+                .addConverterFactory(MoshiConverterFactory.create(moshi))
                 .client(client)
                 .build()
             return retrofit.create(ChargepriceApi::class.java)
@@ -87,6 +101,15 @@ interface ChargepriceApi {
             } else {
                 "en"
             }
+        }
+
+        fun getPoiUrl(charger: ChargeLocation) =
+            "https://www.chargeprice.app/?poi_id=${charger.id}&poi_source=${getDataAdapter(charger)}"
+
+        fun getDataAdapter(charger: ChargeLocation) = when (charger.dataSource) {
+            "goingelectric" -> DATA_SOURCE_GOINGELECTRIC
+            "openchargemap" -> DATA_SOURCE_OPENCHARGEMAP
+            else -> throw IllegalArgumentException()
         }
 
         @JvmStatic

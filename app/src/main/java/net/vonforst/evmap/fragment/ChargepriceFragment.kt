@@ -24,6 +24,7 @@ import net.vonforst.evmap.R
 import net.vonforst.evmap.adapter.ChargepriceAdapter
 import net.vonforst.evmap.adapter.CheckableChargepriceCarAdapter
 import net.vonforst.evmap.adapter.CheckableConnectorAdapter
+import net.vonforst.evmap.api.chargeprice.ChargepriceApi
 import net.vonforst.evmap.api.chargeprice.ChargepriceCar
 import net.vonforst.evmap.api.equivalentPlugTypes
 import net.vonforst.evmap.databinding.FragmentChargepriceBinding
@@ -43,6 +44,7 @@ class ChargepriceFragment : Fragment() {
             ChargepriceViewModel(
                 requireActivity().application,
                 getString(R.string.chargeprice_key),
+                getString(R.string.chargeprice_api_url),
                 state
             )
         }
@@ -109,9 +111,7 @@ class ChargepriceFragment : Fragment() {
 
         val fragmentArgs: ChargepriceFragmentArgs by navArgs()
         val charger = fragmentArgs.charger
-        val dataSource = fragmentArgs.dataSource
         vm.charger.value = charger
-        vm.dataSource.value = dataSource
         if (vm.chargepoint.value == null) {
             vm.chargepoint.value = charger.chargepointsMerged.get(0)
         }
@@ -176,7 +176,7 @@ class ChargepriceFragment : Fragment() {
         }
 
         binding.imgChargepriceLogo.setOnClickListener {
-            (requireActivity() as MapsActivity).openUrl("https://www.chargeprice.app/?poi_id=${charger.id}&poi_source=${dataSource}")
+            (requireActivity() as MapsActivity).openUrl(ChargepriceApi.getPoiUrl(charger))
         }
 
         binding.btnSettings.setOnClickListener {

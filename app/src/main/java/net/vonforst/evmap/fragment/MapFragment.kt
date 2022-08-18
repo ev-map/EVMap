@@ -1259,6 +1259,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                     }
                 })
             })
+            popup.setTouchModal(false)
             popup.show()
         }
 

@@ -1,40 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="pref_language_names">
-        <item>Device default</item>
-        <item>English</item>
-        <item>German</item>
+        <item>@string/pref_language_device_default</item>
+        <item>@string/pref_language_en</item>
+        <item>@string/pref_language_de</item>
     </string-array>
-    <string-array name="pref_language_values" tranlatable="false">
+    <string-array name="pref_language_values" translatable="false">
         <item>default</item>
         <item>en</item>
         <item>de</item>
     </string-array>
     <string-array name="pref_darkmode_names">
-        <item>Device default</item>
-        <item>always on</item>
-        <item>always off</item>
+        <item>@string/pref_darkmode_device_default</item>
+        <item>@string/pref_darkmode_always_on</item>
+        <item>@string/pref_darkmode_always_off</item>
     </string-array>
-    <string-array name="pref_darkmode_values" tranlatable="false">
+    <string-array name="pref_darkmode_values" translatable="false">
         <item>default</item>
         <item>on</item>
         <item>off</item>
     </string-array>
     <string-array name="pref_chargeprice_currency_names">
-        <item>Swiss franc (CHF)</item>
-        <item>Czech koruna (CZK)</item>
-        <item>Danish krone (DKK)</item>
-        <item>Euro (EUR)</item>
-        <item>Pound sterling (GBP)</item>
-        <item>Croatian kuna (HRK)</item>
-        <item>Hungarian forint (HUF)</item>
-        <item>Icelandic króna (ISK)</item>
-        <item>Norwegian krone (NOK)</item>
-        <item>Polish złoty (PLN)</item>
-        <item>Swedish krona (SEK)</item>
-        <item>US dollar (USD)</item>
+        <item>@string/pref_chargeprice_currency_chf</item>
+        <item>@string/pref_chargeprice_currency_czk</item>
+        <item>@string/pref_chargeprice_currency_dkk</item>
+        <item>@string/pref_chargeprice_currency_eur</item>
+        <item>@string/pref_chargeprice_currency_gbp</item>
+        <item>@string/pref_chargeprice_currency_hrk</item>
+        <item>@string/pref_chargeprice_currency_huf</item>
+        <item>@string/pref_chargeprice_currency_isk</item>
+        <item>@string/pref_chargeprice_currency_nok</item>
+        <item>@string/pref_chargeprice_currency_pln</item>
+        <item>@string/pref_chargeprice_currency_sek</item>
+        <item>@string/pref_chargeprice_currency_usd</item>
     </string-array>
-    <string-array name="pref_chargeprice_currency_values" donottranslate="true">
+    <string-array name="pref_chargeprice_currency_values" translatable="false">
         <item>CHF</item>
         <item>CZK</item>
         <item>DKK</item>
@@ -49,8 +49,8 @@
         <item>USD</item>
     </string-array>
     <string-array name="pref_data_source_names">
-        <item>GoingElectric.de</item>
-        <item>Open Charge Map</item>
+        <item>@string/data_source_goingelectric</item>
+        <item>@string/data_source_openchargemap</item>
     </string-array>
     <string-array name="pref_data_source_values" tranlatable="false">
         <item>goingelectric</item>

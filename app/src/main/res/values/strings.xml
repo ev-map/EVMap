@@ -247,4 +247,26 @@
     <string name="pref_map_rotate_gestures_off">Map will be fixed to north-up</string>
     <string name="refresh_live_data">refresh real-time status</string>
     <string name="autocomplete_connection_error">Suggestions could not be loaded</string>
+    <string name="pref_language_device_default">Device default</string>
+    <string name="pref_language_en">English</string>
+    <string name="pref_language_de">German</string>
+    <string name="pref_darkmode_device_default">Device default</string>
+    <string name="pref_darkmode_always_on">always on</string>
+    <string name="pref_darkmode_always_off">always off</string>
+    <string name="pref_chargeprice_currency_chf">Swiss franc (CHF)</string>
+    <string name="pref_chargeprice_currency_czk">Czech koruna (CZK)</string>
+    <string name="pref_chargeprice_currency_dkk">Danish krone (DKK)</string>
+    <string name="pref_chargeprice_currency_eur">Euro (EUR)</string>
+    <string name="pref_chargeprice_currency_gbp">Pound sterling (GBP)</string>
+    <string name="pref_chargeprice_currency_hrk">Croatian kuna (HRK)</string>
+    <string name="pref_chargeprice_currency_huf">Hungarian forint (HUF)</string>
+    <string name="pref_chargeprice_currency_isk">Icelandic króna (ISK)</string>
+    <string name="pref_chargeprice_currency_nok">Norwegian krone (NOK)</string>
+    <string name="pref_chargeprice_currency_pln">Polish złoty (PLN)</string>
+    <string name="pref_chargeprice_currency_sek">Swedish krona (SEK)</string>
+    <string name="pref_chargeprice_currency_usd">US dollar (USD)</string>
+    <string name="pref_map_provider_google_maps">Google Maps</string>
+    <string name="pref_map_provider_osm_mapbox">OpenStreetMap (Mapbox)</string>
+    <string name="pref_search_provider_google_maps">Google Maps</string>
+    <string name="pref_search_provider_osm_mapbox">OpenStreetMap (Mapbox)</string>
 </resources>

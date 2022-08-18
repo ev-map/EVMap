@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="donations_info" formatted="false">Do you find EVMap useful? Support its development by sending a donation to the developer.</string>
+    <string name="donate_paypal">Donate with PayPal</string>
+    <string name="data_sources_hint">Map data in the app is provided by OpenStreetMap (Mapbox).</string>
+</resources>

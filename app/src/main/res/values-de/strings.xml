@@ -208,20 +208,6 @@
     <string name="license">Lizenz</string>
     <string name="settings_charger_data">Ladesäulen</string>
     <string name="pref_data_source">Datenquelle</string>
-    <string-array name="pref_chargeprice_currency_names">
-        <item>Schweizer Franken (CHF)</item>
-        <item>Tschechische Krone (CZK)</item>
-        <item>Dänische Krone (DKK)</item>
-        <item>Euro (EUR)</item>
-        <item>Britisches Pfund (GBP)</item>
-        <item>Kroatische Kuna (HRK)</item>
-        <item>Ungarischer Forint (HUF)</item>
-        <item>Isländische Krone (ISK)</item>
-        <item>Norwegische Krone (NOK)</item>
-        <item>Polnischer Złoty (PLN)</item>
-        <item>Schwedische Krone (SEK)</item>
-        <item>US-Dollar (USD)</item>
-    </string-array>
     <plurals name="chargeprice_some_tariffs_selected">
         <item quantity="one">%d Tarif ausgewählt</item>
         <item quantity="other">%d Tarife ausgewählt</item>
@@ -262,4 +248,26 @@
     <string name="pref_map_rotate_gestures_off">Karte bleibt fest nach Norden ausgerichtet</string>
     <string name="refresh_live_data">Echtzeitstatus aktualisieren</string>
     <string name="autocomplete_connection_error">Vorschläge konnten nicht geladen werden</string>
+    <string name="pref_language_device_default">Gerätesprache verwenden</string>
+    <string name="pref_language_en">Englisch</string>
+    <string name="pref_language_de">Deutsch</string>
+    <string name="pref_darkmode_device_default">Geräteeinstellung verwenden</string>
+    <string name="pref_darkmode_always_on">immer an</string>
+    <string name="pref_darkmode_always_off">immer aus</string>
+    <string name="pref_chargeprice_currency_chf">Schweizer Franken (CHF)</string>
+    <string name="pref_chargeprice_currency_czk">Tschechische Krone (CZK)</string>
+    <string name="pref_chargeprice_currency_dkk">Dänische Krone (DKK)</string>
+    <string name="pref_chargeprice_currency_eur">Euro (EUR)</string>
+    <string name="pref_chargeprice_currency_gbp">Britisches Pfund (GBP)</string>
+    <string name="pref_chargeprice_currency_hrk">Kroatische Kuna (HRK)</string>
+    <string name="pref_chargeprice_currency_huf">Ungarischer Forint (HUF)</string>
+    <string name="pref_chargeprice_currency_isk">Isländische Krone (ISK)</string>
+    <string name="pref_chargeprice_currency_nok">Norwegische Krone (NOK)</string>
+    <string name="pref_chargeprice_currency_pln">Polnischer Złoty (PLN)</string>
+    <string name="pref_chargeprice_currency_sek">Schwedische Krone (SEK)</string>
+    <string name="pref_chargeprice_currency_usd">US-Dollar (USD)</string>
+    <string name="pref_map_provider_google_maps">Google Maps</string>
+    <string name="pref_map_provider_osm_mapbox">OpenStreetMap (Mapbox)</string>
+    <string name="pref_search_provider_google_maps">Google Maps</string>
+    <string name="pref_search_provider_osm_mapbox">OpenStreetMap (Mapbox)</string>
 </resources>

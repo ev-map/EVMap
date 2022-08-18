@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="pref_map_provider_names">
+        <item>@string/pref_map_provider_google_maps</item>
+        <item>@string/pref_map_provider_osm_mapbox</item>
+    </string-array>
+    <string-array name="pref_map_provider_values" translatable="false">
+        <item>google</item>
+        <item>mapbox</item>
+    </string-array>
+    <string-array name="pref_search_provider_names">
+        <item>@string/pref_search_provider_google_maps</item>
+        <item>@string/pref_search_provider_osm_mapbox</item>
+    </string-array>
+    <string-array name="pref_search_provider_values" translatable="false">
+        <item>google</item>
+        <item>mapbox</item>
+    </string-array>
+</resources>

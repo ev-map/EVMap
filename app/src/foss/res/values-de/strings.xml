@@ -1,14 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="pref_map_provider_names">
-        <item>OpenStreetMap (Mapbox)</item>
-    </string-array>
-    <string-array name="pref_search_provider_names">
-        <item>OpenStreetMap (Mapbox)</item>
-    </string-array>
-    <string-array name="pref_search_provider_values" tranlatable="false">
-        <item>mapbox</item>
-    </string-array>
     <string name="donations_info" formatted="false">Findest du EVMap nützlich? Unterstütze die Weiterentwicklung der App mit einer Spende an den Entwickler.</string>
     <string name="donate_paypal">Mit PayPal spenden</string>
     <string name="data_sources_hint">Die Kartendaten für die App stammen von OpenStreetMap (Mapbox).</string>

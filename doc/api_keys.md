@@ -35,8 +35,9 @@ Not all API keys are strictly required if you only want to work on certain parts
 example, you can choose only one of the map providers and one of the charging station databases. The
 Chargeprice API key is also only required if you want to test the price comparison feature.
 
-All API keys are available for free. Some APIs require payment above a certain limit, but the free
-tier should be plenty for local testing and development.
+All APIs can be used for free, at least for testing. Some APIs require payment above a certain usage
+limit or to get access to the full dataset, but the free tiers should be plenty for local testing
+and development.
 
 Below you find a list of all the services and how to obtain the API keys.
 
@@ -152,14 +153,19 @@ Pricing providers
 <details>
 <summary>How to obtain an API key</summary>
 
-1. Check the
-   [Pricing page](https://github.com/chargeprice/chargeprice-api-docs/blob/master/plans.md)
-   for information on the current plans at Chargeprice. There should be a free tier up to a certain
-   limit of API calls per month.
-2. Contact [contact@chargeprice.net](mailto:contact@chargeprice.net), stating that you would like to
-   contribute to the development the open source EVMap app and therefore need access to the
-   Chargeprice API for testing.
-3. When your access to the API is approved, you will receive an API key via email.
+Since February 2022, the Chargeprice API is no longer available for free to new customers. However,
+you can use their
+[staging API](https://github.com/chargeprice/chargeprice-api-docs/blob/master/test_the_api.md)
+for free to test the Chargeprice features. This is already
+[configured](https://github.com/johan12345/EVMap/blob/master/app/src/debug/res/values/donottranslate.xml)
+by default for the debug version of the app, so you can leave the `chargeprice_key` field in your
+new `app/src/main/res/values/apikeys.xml` file blank. Note that the staging API contains only a
+limited dataset, so it only outputs prices for certain charge point operators and payment plans (see
+[here](https://docs.google.com/document/d/14zlFr5IEhhR3uGXO5QePKjNUQANVwA-Ba-cZbOCiOBk/edit) for
+details).
 
+In case you want to pay for access to the full Chargeprice API, check out their
+[API docs](https://github.com/chargeprice/chargeprice-api-docs) on GitHub and contact them at
+[sales@chargeprice.net](mailto:sales@chargeprice.net).
 </details>
 

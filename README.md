@@ -42,12 +42,23 @@ EVMap uses and put them into the app in the form of a resource file called `apik
 features and how they can be obtained in our [documentation page](doc/api_keys.md).
 
 There are three different build flavors, `googleNormal`, `fossNormal` and `googleAutomotive`.
-- The `foss` variant only uses Mapbox data and should run on most Android devices, even without Google Play Services.
+- The `foss` variant only uses Mapbox data and should run on most Android devices, even without
+  Google Play Services.
 - The `google` variants also include access to Google Maps data.
-  - `googleNormal` is intended to run on smartphones and tablets, and also includes the Android Auto app for use
-     on the car display.
-  - `googleAutomotive` variant is intended to be installed directly on car infotainment systems using the
-     Google-flavored Android Automotive OS. It does not provide the usual smartphone UI.
+    - `googleNormal` is intended to run on smartphones and tablets, and also includes the Android
+      Auto app for use on the car display.
+    - `googleAutomotive` variant is intended to be installed directly on car infotainment systems
+      using the Google-flavored Android Automotive OS. It does not provide the usual smartphone UI.
 
 We also have a special [documentation page](doc/android_auto.md) on how to test the Android Auto
 app.
+
+Translations
+------------
+
+You can use our [Weblate page](https://hosted.weblate.org/projects/evmap/) to help translate EVMap
+into new languages.
+
+<a href="https://hosted.weblate.org/engage/evmap/">
+<img src="https://hosted.weblate.org/widgets/evmap/-/open-graph.png" width="500" alt="Translation status" />
+</a>

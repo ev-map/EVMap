@@ -732,6 +732,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                         }
                     }
                     .withStartPosition(position)
+                    .withHiddenStatusBar(false)
                     .show()
 
             }

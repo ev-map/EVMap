@@ -1,1 +1,1 @@
-EVMap - Electric vehicle chargers
+EVMap - EV chargers

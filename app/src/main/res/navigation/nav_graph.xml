@@ -138,7 +138,7 @@
         tools:layout="@layout/fragment_donate" />
     <dialog
         android:id="@+id/opensource_donations"
-        android:name="net.vonforst.evmap.fragment.updatedialogs.OpensourceDonationsDialogFramgent"
+        android:name="net.vonforst.evmap.fragment.updatedialogs.OpensourceDonationsDialogFragment"
         android:label="@string/donation_dialog_title"
         tools:layout="@layout/dialog_opensource_donations">
         <action

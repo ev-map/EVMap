@@ -10,7 +10,7 @@ import net.vonforst.evmap.databinding.DialogOpensourceDonationsBinding
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.ui.MaterialDialogFragment
 
-class OpensourceDonationsDialogFramgent : MaterialDialogFragment() {
+class OpensourceDonationsDialogFragment : MaterialDialogFragment() {
     private lateinit var binding: DialogOpensourceDonationsBinding
 
     override fun onCreateView(

@@ -1,9 +1,6 @@
 package net.vonforst.evmap.fragment
 
-import android.content.Context
 import android.graphics.Canvas
-import android.location.Criteria
-import android.location.LocationManager
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -29,6 +26,8 @@ import net.vonforst.evmap.adapter.DataBindingAdapter
 import net.vonforst.evmap.adapter.FavoritesAdapter
 import net.vonforst.evmap.databinding.FragmentFavoritesBinding
 import net.vonforst.evmap.databinding.ItemFavoriteBinding
+import net.vonforst.evmap.location.FusionEngine
+import net.vonforst.evmap.location.LocationEngine
 import net.vonforst.evmap.model.Favorite
 import net.vonforst.evmap.model.FavoriteWithDetail
 import net.vonforst.evmap.utils.checkAnyLocationPermission
@@ -37,7 +36,7 @@ import net.vonforst.evmap.viewmodel.viewModelFactory
 
 class FavoritesFragment : Fragment() {
     private lateinit var binding: FragmentFavoritesBinding
-    private lateinit var locationManager: LocationManager
+    private lateinit var locationEngine: LocationEngine
     private var toDelete: Favorite? = null
     private var deleteSnackbar: Snackbar? = null
     private lateinit var adapter: FavoritesAdapter
@@ -54,8 +53,7 @@ class FavoritesFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        locationManager =
-            requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        locationEngine = FusionEngine(requireContext())
 
         enterTransition = MaterialFadeThrough()
         exitTransition = MaterialFadeThrough()
@@ -122,11 +120,7 @@ class FavoritesFragment : Fragment() {
         super.onStart()
 
         if (requireContext().checkAnyLocationPermission()) {
-            val provider = locationManager.getBestProvider(Criteria().apply {
-                accuracy = Criteria.ACCURACY_FINE
-            }, true) ?: return
-
-            val location = locationManager.getLastKnownLocation(provider)
+            val location = locationEngine.getLastKnownLocation()
             location?.let {
                 vm.location.value = LatLng(it.latitude, it.longitude)
             }

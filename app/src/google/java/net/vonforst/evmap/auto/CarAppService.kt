@@ -5,12 +5,9 @@ import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
-import android.location.Criteria
 import android.location.Location
-import android.location.LocationManager
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresPermission
@@ -31,6 +28,9 @@ import androidx.core.location.LocationListenerCompat
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import net.vonforst.evmap.R
+import net.vonforst.evmap.location.FusionEngine
+import net.vonforst.evmap.location.LocationEngine
+import net.vonforst.evmap.location.Priority
 import net.vonforst.evmap.utils.checkFineLocationPermission
 
 
@@ -103,8 +103,8 @@ class EVMapSession(val cas: CarAppService) : Session(), DefaultLifecycleObserver
             location?.let { value?.updateLocation(it) }
         }
     private var location: Location? = null
-    private val locationManager: LocationManager by lazy {
-        carContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    private val locationEngine: LocationEngine by lazy {
+        FusionEngine(carContext)
     }
 
     private val hardwareMan: CarHardwareManager by lazy {
@@ -179,16 +179,11 @@ class EVMapSession(val cas: CarAppService) : Session(), DefaultLifecycleObserver
 
     @RequiresPermission(anyOf = [Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION])
     private fun requestPhoneLocationUpdates() {
-        val provider = locationManager.getBestProvider(Criteria().apply {
-            accuracy = Criteria.ACCURACY_FINE
-        }, true) ?: return
-
-        val location = locationManager.getLastKnownLocation(provider)
+        val location = locationEngine.getLastKnownLocation()
         updateLocation(location)
-        locationManager.requestLocationUpdates(
-            provider,
+        locationEngine.requestLocationUpdates(
+            Priority.HIGH_ACCURACY,
             1000,
-            1f,
             phoneLocationListener
         )
     }
@@ -209,7 +204,7 @@ class EVMapSession(val cas: CarAppService) : Session(), DefaultLifecycleObserver
 
     @RequiresPermission(anyOf = [Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION])
     private fun removePhoneLocationUpdates() {
-        locationManager.removeUpdates(phoneLocationListener)
+        locationEngine.removeUpdates(phoneLocationListener)
     }
 
     @SuppressLint("MissingPermission")

@@ -6,9 +6,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Color
-import android.location.Criteria
 import android.location.Geocoder
-import android.location.LocationManager
 import android.os.Bundle
 import android.text.method.KeyListener
 import android.view.*
@@ -79,6 +77,9 @@ import net.vonforst.evmap.autocomplete.ApiUnavailableException
 import net.vonforst.evmap.autocomplete.PlaceWithBounds
 import net.vonforst.evmap.bold
 import net.vonforst.evmap.databinding.FragmentMapBinding
+import net.vonforst.evmap.location.FusionEngine
+import net.vonforst.evmap.location.LocationEngine
+import net.vonforst.evmap.location.Priority
 import net.vonforst.evmap.model.*
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.ui.*
@@ -100,7 +101,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
     private val galleryVm: GalleryViewModel by activityViewModels()
     private var mapFragment: MapFragment? = null
     private var map: AnyMap? = null
-    private lateinit var locationManager: LocationManager
+    private lateinit var locationEngine: LocationEngine
     private var requestingLocationUpdates = false
     private lateinit var bottomSheetBehavior: BottomSheetBehaviorGoogleMapsLike<View>
     private lateinit var detailAppBarBehavior: MergedAppBarLayoutBehavior
@@ -145,8 +146,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
         prefs = PreferenceDataSource(requireContext())
 
-        locationManager =
-            requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        locationEngine = FusionEngine(requireContext())
         clusterIconGenerator = ClusterIconGenerator(requireContext())
 
         enterTransition = MaterialFadeThrough()
@@ -1027,9 +1027,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
     @RequiresPermission(anyOf = [ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION])
     private fun moveToLastLocation(map: AnyMap, animate: Boolean) {
-        val provider = getLocationProvider() ?: return
-
-        val location = locationManager.getLastKnownLocation(provider)
+        val location = locationEngine.getLastKnownLocation()
         if (location != null) {
             val latLng = LatLng(location.latitude, location.longitude)
             vm.location.value = latLng
@@ -1041,10 +1039,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             }
         }
     }
-
-    private fun getLocationProvider() = locationManager.getBestProvider(Criteria().apply {
-        accuracy = Criteria.ACCURACY_FINE
-    }, true)
 
     @Synchronized
     private fun updateMap(chargepoints: List<ChargepointListItem>) {
@@ -1300,12 +1294,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
     @RequiresPermission(anyOf = [ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION])
     private fun requestLocationUpdates() {
-        val provider = getLocationProvider() ?: return
-
-        locationManager.requestLocationUpdates(
-            provider,
+        locationEngine.requestLocationUpdates(
+            Priority.HIGH_ACCURACY,
             5000,
-            1f,
             locationListener
         )
         requestingLocationUpdates = true
@@ -1314,7 +1305,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
     @SuppressLint("MissingPermission")
     private fun removeLocationUpdates() {
         if (context?.checkAnyLocationPermission() == true) {
-            locationManager.removeUpdates(locationListener)
+            locationEngine.removeUpdates(locationListener)
         }
     }
 

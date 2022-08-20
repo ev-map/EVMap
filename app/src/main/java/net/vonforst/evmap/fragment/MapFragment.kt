@@ -599,35 +599,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             updateFavoriteToggle()
         })
         vm.searchResult.observe(viewLifecycleOwner, Observer { place ->
-            val map = this.map ?: return@Observer
-            searchResultMarker?.remove()
-            searchResultMarker = null
-
-            if (place != null) {
-                // disable location following when search result is shown
-                vm.myLocationEnabled.value = false
-                if (place.viewport != null) {
-                    map.animateCamera(map.cameraUpdateFactory.newLatLngBounds(place.viewport, 0))
-                } else {
-                    map.animateCamera(map.cameraUpdateFactory.newLatLngZoom(place.latLng, 12f))
-                }
-
-                if (searchResultIcon == null) {
-                    searchResultIcon =
-                        map.bitmapDescriptorFactory.fromResource(R.drawable.ic_map_marker)
-                }
-                searchResultMarker = map.addMarker(
-                    MarkerOptions()
-                        .z(placeSearchZ)
-                        .position(place.latLng)
-                        .icon(searchResultIcon)
-                        .anchor(0.5f, 1f)
-                )
-            } else {
-                binding.search.setText("")
-            }
-
-            updateBackPressedCallback()
+            displaySearchResult(place, moveCamera = true)
         })
         vm.layersMenuOpen.observe(viewLifecycleOwner, Observer { open ->
             binding.fabLayers.visibility = if (open) View.INVISIBLE else View.VISIBLE
@@ -640,6 +612,40 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         vm.mapTrafficEnabled.observe(viewLifecycleOwner, Observer {
             map?.setTrafficEnabled(it)
         })
+
+        updateBackPressedCallback()
+    }
+
+    private fun displaySearchResult(place: PlaceWithBounds?, moveCamera: Boolean) {
+        val map = this.map ?: return
+        searchResultMarker?.remove()
+        searchResultMarker = null
+
+        if (place != null) {
+            // disable location following when search result is shown
+            if (moveCamera) {
+                vm.myLocationEnabled.value = false
+                if (place.viewport != null) {
+                    map.animateCamera(map.cameraUpdateFactory.newLatLngBounds(place.viewport, 0))
+                } else {
+                    map.animateCamera(map.cameraUpdateFactory.newLatLngZoom(place.latLng, 12f))
+                }
+            }
+
+            if (searchResultIcon == null) {
+                searchResultIcon =
+                    map.bitmapDescriptorFactory.fromResource(R.drawable.ic_map_marker)
+            }
+            searchResultMarker = map.addMarker(
+                MarkerOptions()
+                    .z(placeSearchZ)
+                    .position(place.latLng)
+                    .icon(searchResultIcon)
+                    .anchor(0.5f, 1f)
+            )
+        } else {
+            binding.search.setText("")
+        }
 
         updateBackPressedCallback()
     }
@@ -1003,7 +1009,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
         if (vm.searchResult.value != null) {
             // show search result (after configuration change)
-            vm.searchResult.postValue(vm.searchResult.value)
+            displaySearchResult(vm.searchResult.value, moveCamera = !positionSet)
         }
     }
 

@@ -42,7 +42,5 @@ class OpensourceDonationsDialogFramgent : MaterialDialogFragment() {
 
     override fun onStart() {
         super.onStart()
-
-        setFullSize(maxWidthDp = 500)
     }
 }

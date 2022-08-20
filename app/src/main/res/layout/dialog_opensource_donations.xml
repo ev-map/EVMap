@@ -17,7 +17,7 @@
             android:orientation="vertical">
 
             <FrameLayout
-                android:id="@+id/topPanel"
+                android:id="@+id/topPane"
                 android:layout_width="0dp"
                 android:layout_height="88dp"
                 android:background="@color/colorPrimary"
@@ -46,7 +46,7 @@
                 android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/topPanel" />
+                app:layout_constraintTop_toBottomOf="@+id/topPane" />
 
             <TextView
                 android:id="@+id/welcomeText1"

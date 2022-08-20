@@ -4,20 +4,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
-import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import net.vonforst.evmap.R
 import net.vonforst.evmap.adapter.DataBindingAdapter
 import net.vonforst.evmap.adapter.Equatable
 import net.vonforst.evmap.databinding.DialogMultiSelectBinding
+import net.vonforst.evmap.ui.MaterialDialogFragment
 import java.util.*
-import kotlin.collections.HashMap
-import kotlin.collections.HashSet
-import kotlin.math.roundToInt
 
-class MultiSelectDialog : AppCompatDialogFragment() {
+class MultiSelectDialog : MaterialDialogFragment() {
     companion object {
         fun getInstance(
             title: String,
@@ -54,16 +50,7 @@ class MultiSelectDialog : AppCompatDialogFragment() {
 
     override fun onStart() {
         super.onStart()
-
-        val density = resources.displayMetrics.density
-        val width = resources.displayMetrics.widthPixels
-        val maxWidth = (500 * density).roundToInt()
-
-        // dialog with 95% screen height
-        dialog?.window?.setLayout(
-            if (width < maxWidth) WindowManager.LayoutParams.MATCH_PARENT else maxWidth,
-            (resources.displayMetrics.heightPixels * 0.95).toInt()
-        )
+        setFullSize(maxWidthDp = 500)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

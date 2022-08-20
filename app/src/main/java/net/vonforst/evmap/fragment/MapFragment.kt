@@ -20,7 +20,6 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresPermission
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.core.location.LocationListenerCompat
@@ -52,6 +51,7 @@ import com.car2go.maps.model.BitmapDescriptor
 import com.car2go.maps.model.LatLng
 import com.car2go.maps.model.Marker
 import com.car2go.maps.model.MarkerOptions
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialArcMotion
 import com.google.android.material.transition.MaterialContainerTransform
@@ -805,7 +805,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 it.name
             }
         }
-        AlertDialog.Builder(activity)
+        MaterialAlertDialogBuilder(activity)
             .setTitle(R.string.charge_cards)
             .setItems(names.toTypedArray()) { _, i ->
                 val card = data[i]

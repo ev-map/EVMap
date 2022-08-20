@@ -4,13 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatDialogFragment
 import net.vonforst.evmap.databinding.DialogDataSourceSelectBinding
 import net.vonforst.evmap.model.FILTERS_DISABLED
 import net.vonforst.evmap.storage.PreferenceDataSource
-import java.util.*
+import net.vonforst.evmap.ui.MaterialDialogFragment
 
-class DataSourceSelectDialog : AppCompatDialogFragment() {
+class DataSourceSelectDialog : MaterialDialogFragment() {
     private lateinit var binding: DialogDataSourceSelectBinding
     var okListener: ((String) -> Unit)? = null
 
@@ -41,11 +40,7 @@ class DataSourceSelectDialog : AppCompatDialogFragment() {
     override fun onStart() {
         super.onStart()
 
-        // dialog with 95% screen height
-        dialog?.window?.setLayout(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            (resources.displayMetrics.heightPixels * 0.95).toInt()
-        )
+        setFullSize()
     }
 
     private lateinit var prefs: PreferenceDataSource

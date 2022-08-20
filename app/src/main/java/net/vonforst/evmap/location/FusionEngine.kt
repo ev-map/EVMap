@@ -1,5 +1,6 @@
 package net.vonforst.evmap.location
 
+import android.Manifest
 import android.content.Context
 import android.location.Location
 import android.location.LocationManager
@@ -7,6 +8,7 @@ import android.os.Build
 import android.os.SystemClock
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.annotation.RequiresPermission
 import androidx.core.location.LocationListenerCompat
 
 /**
@@ -35,6 +37,7 @@ class FusionEngine(context: Context) : LocationEngine(context),
             LocationManager.FUSED_PROVIDER
         )
 
+    @RequiresPermission(anyOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
     override fun getLastKnownLocation(): Location? {
         if (supportsSystemFusedProvider) {
             try {
@@ -70,6 +73,7 @@ class FusionEngine(context: Context) : LocationEngine(context),
         return bestLocation
     }
 
+    @RequiresPermission(anyOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
     override fun enable() {
         var networkInterval = Long.MAX_VALUE
         var gpsInterval = Long.MAX_VALUE
@@ -136,12 +140,12 @@ class FusionEngine(context: Context) : LocationEngine(context),
         }
     }
 
-    @Throws(SecurityException::class)
+    @RequiresPermission(anyOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
     override fun disable() {
         locationManager.removeUpdates(this)
     }
 
-    @Throws(SecurityException::class)
+    @RequiresPermission(anyOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
     private fun enableGps(interval: Long) {
         try {
             locationManager.requestLocationUpdates(
@@ -156,7 +160,7 @@ class FusionEngine(context: Context) : LocationEngine(context),
         }
     }
 
-    @Throws(SecurityException::class)
+    @RequiresPermission(anyOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
     private fun enableNetwork(interval: Long) {
         try {
             locationManager.requestLocationUpdates(
@@ -171,7 +175,7 @@ class FusionEngine(context: Context) : LocationEngine(context),
         }
     }
 
-    @Throws(SecurityException::class)
+    @RequiresPermission(anyOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
     private fun enablePassive(interval: Long) {
         try {
             locationManager.requestLocationUpdates(
@@ -187,7 +191,7 @@ class FusionEngine(context: Context) : LocationEngine(context),
     }
 
     @RequiresApi(Build.VERSION_CODES.S)
-    @Throws(SecurityException::class)
+    @RequiresPermission(anyOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
     private fun enableFused(interval: Long) {
         try {
             locationManager.requestLocationUpdates(
@@ -202,23 +206,28 @@ class FusionEngine(context: Context) : LocationEngine(context),
         }
     }
 
+    @RequiresPermission(anyOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
     private fun checkLastKnownGps() {
         checkLastKnownAndNotify(LocationManager.GPS_PROVIDER)
     }
 
+    @RequiresPermission(anyOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
     private fun checkLastKnownNetwork() {
         checkLastKnownAndNotify(LocationManager.NETWORK_PROVIDER)
     }
 
+    @RequiresPermission(anyOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
     private fun checkLastKnownPassive() {
         checkLastKnownAndNotify(LocationManager.PASSIVE_PROVIDER)
     }
 
     @RequiresApi(Build.VERSION_CODES.S)
+    @RequiresPermission(anyOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
     private fun checkLastKnownFused() {
         checkLastKnownAndNotify(LocationManager.FUSED_PROVIDER)
     }
 
+    @RequiresPermission(anyOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
     private fun checkLastKnownAndNotify(provider: String) {
         val location = locationManager.getLastKnownLocation(provider)
         location?.let { onLocationChanged(it) }

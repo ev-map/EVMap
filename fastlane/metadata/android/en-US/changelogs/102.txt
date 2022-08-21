@@ -1,0 +1,11 @@
+At https://hosted.weblate.org/engage/evmap/ you can now help translating EVMap into other languages!
+
+Improvements:
+- New design for dialogs
+- Map can be moved when filter menu is open
+- Preparations for translating the app into other languages
+- Android 11 and lower: Improved localization if GPS is enabled but not available (e.g. in buildings)
+
+Bugfixes:
+- Fixed crash in price comparison
+- Improvements for some more minor visual issues

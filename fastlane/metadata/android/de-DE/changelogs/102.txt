@@ -1,0 +1,12 @@
+Unter https://hosted.weblate.org/engage/evmap/ können Sie jetzt dazu beitragen,
+EVMap in andere Sprachen zu übersetzen!
+
+Verbesserungen:
+- Neues Design für Dialoge
+- Karte kann bei geöffnetem Filtermenü verschoben werden
+- Vorbereitungen für Übersetzung der App in andere Sprachen
+- Android 11 und niedriger: Ortung verbessert, wenn GPS aktiviert aber nicht verfügbar (z.B. in Gebäuden)
+
+Fehler behoben:
+- Absturz im Preisvergleich behoben
+- Verbesserungen für weitere kleine Darstellungsfehler

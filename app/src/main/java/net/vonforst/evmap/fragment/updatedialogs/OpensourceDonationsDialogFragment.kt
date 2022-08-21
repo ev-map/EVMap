@@ -22,9 +22,7 @@ class OpensourceDonationsDialogFragment : MaterialDialogFragment() {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
+    override fun initView(view: View, savedInstanceState: Bundle?) {
         val prefs = PreferenceDataSource(requireContext())
         binding.btnOk.setOnClickListener {
             prefs.opensourceDonationsDialogShown = true

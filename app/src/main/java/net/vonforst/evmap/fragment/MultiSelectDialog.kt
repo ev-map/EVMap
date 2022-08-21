@@ -53,7 +53,7 @@ class MultiSelectDialog : MaterialDialogFragment() {
         setFullSize(maxWidthDp = 500)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun initView(view: View, savedInstanceState: Bundle?) {
         val args = requireArguments()
         val data = args.getSerializable("data") as HashMap<String, String>
         val selected = args.getSerializable("selected") as HashSet<String>

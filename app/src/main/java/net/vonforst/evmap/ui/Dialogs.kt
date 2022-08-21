@@ -63,7 +63,7 @@ fun showEditTextDialog(
  * https://github.com/material-components/material-components-android/issues/540 and
  * https://dev.to/bhullnatik/how-to-use-material-dialogs-with-dialogfragment-28i1
  */
-open class MaterialDialogFragment : AppCompatDialogFragment() {
+abstract class MaterialDialogFragment : AppCompatDialogFragment() {
 
     private lateinit var dialogView: View
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -73,9 +73,11 @@ open class MaterialDialogFragment : AppCompatDialogFragment() {
 
             setView(dialogView)
         }.create()
-        onViewCreated(dialogView, savedInstanceState)
+        initView(dialogView, savedInstanceState)
         return dialog
     }
+
+    abstract fun initView(view: View, savedInstanceState: Bundle?)
 
     override fun getView(): View {
         return dialogView

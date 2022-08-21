@@ -45,7 +45,7 @@ class DataSourceSelectDialog : MaterialDialogFragment() {
 
     private lateinit var prefs: PreferenceDataSource
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun initView(view: View, savedInstanceState: Bundle?) {
         val args = requireArguments()
         binding.btnCancel.visibility =
             if (args.getBoolean("cancel_enabled")) View.VISIBLE else View.GONE

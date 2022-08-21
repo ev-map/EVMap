@@ -6,8 +6,10 @@ import androidx.lifecycle.*
 import com.car2go.maps.AnyMap
 import com.car2go.maps.model.LatLng
 import com.car2go.maps.model.LatLngBounds
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
 import net.vonforst.evmap.api.ChargepointApi
 import net.vonforst.evmap.api.availability.ChargeLocationStatus
@@ -277,7 +279,11 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
     }
 
     suspend fun copyFiltersToCustom() {
-        filterStatus.value?.let { db.filterValueDao().copyFiltersToCustom(it, prefs.dataSource) }
+        filterStatus.value?.let {
+            withContext(Dispatchers.IO) {
+                db.filterValueDao().copyFiltersToCustom(it, prefs.dataSource)
+            }
+        }
     }
 
     fun setMapType(type: AnyMap.Type) {

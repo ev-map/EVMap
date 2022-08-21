@@ -70,7 +70,8 @@ class ChargepriceSettingsFragment : BaseSettingsFragment() {
                         R.plurals.chargeprice_some_tariffs_selected,
                         n,
                         n
-                    ) + "\n" + getString(R.string.pref_my_tariffs_summary)
+                    ) + "\n" + requireContext().resources
+                    .getQuantityString(R.plurals.pref_my_tariffs_summary, n)
             }
     }
 

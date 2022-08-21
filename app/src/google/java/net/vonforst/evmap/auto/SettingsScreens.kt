@@ -218,7 +218,10 @@ class ChargepriceSettingsScreen(ctx: CarContext) : Screen(ctx) {
                                     R.plurals.chargeprice_some_tariffs_selected,
                                     n,
                                     n
-                                ) + "\n" + carContext.getString(R.string.pref_my_tariffs_summary)
+                                ) + "\n" + carContext.resources.getQuantityString(
+                                R.plurals.pref_my_tariffs_summary,
+                                n
+                            )
                         }
                     )
                 }.build())

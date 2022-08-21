@@ -8,8 +8,7 @@
         app:defaultToAll="false" />
     <net.vonforst.evmap.ui.MultiSelectDialogPreference
         android:key="chargeprice_my_tariffs"
-        android:title="@string/pref_my_tariffs"
-        android:summary="@string/pref_my_tariffs_summary" />
+        android:title="@string/pref_my_tariffs" />
     <ListPreference
         android:key="chargeprice_currency"
         android:title="@string/pref_chargeprice_currency"

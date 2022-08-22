@@ -131,7 +131,6 @@
     <string name="pref_chargeprice_currency_czk">Couronne tchèque (CZK)</string>
     <string name="pref_chargeprice_currency_dkk">Couronne danoise (DKK)</string>
     <string name="pref_chargeprice_currency_eur">Euro (EUR)</string>
-    <string name="pref_search_provider_osm_mapbox">OpenStreetMap (Mapbox)</string>
     <string name="show_more">plus…</string>
     <string name="fav_remove">Retirer des favoris</string>
     <string name="amenities">Commodités</string>

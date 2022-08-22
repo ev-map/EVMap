@@ -19,8 +19,10 @@
     <string name="cost_detail"><![CDATA[<b>Laden:</b> %1$s · <b>Parken:</b> %2$s]]></string>
     <string name="cost_detail_charging"><![CDATA[<b>%s laden</b>]]></string>
     <string name="cost_detail_parking"><![CDATA[<b>%s parken</b>]]></string>
-    <string name="free">Kostenlos</string>
-    <string name="paid">Kostenpflichtig</string>
+    <string name="charging_free">Kostenlos</string>
+    <string name="charging_paid">Kostenpflichtig</string>
+    <string name="parking_free">Kostenlos</string>
+    <string name="parking_paid">Kostenpflichtig</string>
     <string name="amenities">Ladeweile</string>
     <string name="general_info">Allgemeine Hinweise</string>
     <string name="realtime_data_unavailable">Echtzeitstatus nicht verfügbar</string>

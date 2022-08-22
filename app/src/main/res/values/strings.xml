@@ -18,8 +18,10 @@
     <string name="cost_detail"><![CDATA[<b>Charging:</b> %1$s · <b>Parking:</b> %2$s]]></string>
     <string name="cost_detail_charging"><![CDATA[<b>%s charging</b>]]></string>
     <string name="cost_detail_parking"><![CDATA[<b>%s parking</b>]]></string>
-    <string name="free">Free</string>
-    <string name="paid">Paid</string>
+    <string name="charging_free">Free</string>
+    <string name="charging_paid">Paid</string>
+    <string name="parking_free">Free</string>
+    <string name="parking_paid">Paid</string>
     <string name="amenities">Amenities</string>
     <string name="general_info">General information</string>
     <string name="realtime_data_unavailable">Real-time status unavailable</string>

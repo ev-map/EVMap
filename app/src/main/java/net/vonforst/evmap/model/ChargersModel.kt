@@ -167,9 +167,9 @@ data class Cost(
     fun getStatusText(ctx: Context, emoji: Boolean = false): CharSequence {
         if (freecharging != null && freeparking != null) {
             val charging =
-                if (freecharging) ctx.getString(R.string.free) else ctx.getString(R.string.paid)
+                if (freecharging) ctx.getString(R.string.charging_free) else ctx.getString(R.string.charging_paid)
             val parking =
-                if (freeparking) ctx.getString(R.string.free) else ctx.getString(R.string.paid)
+                if (freeparking) ctx.getString(R.string.parking_free) else ctx.getString(R.string.parking_paid)
             return if (emoji) {
                 "⚡ $charging · \uD83C\uDD7F️ $parking"
             } else {
@@ -177,7 +177,7 @@ data class Cost(
             }
         } else if (freecharging != null) {
             val charging =
-                if (freecharging) ctx.getString(R.string.free) else ctx.getString(R.string.paid)
+                if (freecharging) ctx.getString(R.string.charging_free) else ctx.getString(R.string.charging_paid)
             return if (emoji) {
                 "⚡ $charging"
             } else {
@@ -185,7 +185,7 @@ data class Cost(
             }
         } else if (freeparking != null) {
             val parking =
-                if (freeparking) ctx.getString(R.string.free) else ctx.getString(R.string.paid)
+                if (freeparking) ctx.getString(R.string.parking_free) else ctx.getString(R.string.parking_paid)
             return if (emoji) {
                 "\uD83C\uDD7F $parking"
             } else {

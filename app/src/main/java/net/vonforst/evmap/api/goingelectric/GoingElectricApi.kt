@@ -467,17 +467,17 @@ class GoingElectricApiWrapper(
                 sp.getString(R.string.filter_networks), "networks",
                 networkMap, manyChoices = true
             ),
-            MultipleChoiceFilter(
-                sp.getString(R.string.categories), "categories",
-                categoryMap,
-                manyChoices = true
-            ),
+            BooleanFilter(sp.getString(R.string.filter_exclude_faults), "exclude_faults"),
             BooleanFilter(sp.getString(R.string.filter_barrierfree), "barrierfree"),
             MultipleChoiceFilter(
                 sp.getString(R.string.filter_chargecards), "chargecards",
                 chargecardMap, manyChoices = true
             ),
-            BooleanFilter(sp.getString(R.string.filter_exclude_faults), "exclude_faults")
+            MultipleChoiceFilter(
+                sp.getString(R.string.categories), "categories",
+                categoryMap,
+                manyChoices = true
+            )
         )
     }
 }

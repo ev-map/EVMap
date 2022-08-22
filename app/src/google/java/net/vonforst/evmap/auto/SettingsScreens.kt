@@ -1,5 +1,6 @@
 package net.vonforst.evmap.auto
 
+import androidx.annotation.StringRes
 import androidx.car.app.CarContext
 import androidx.car.app.CarToast
 import androidx.car.app.Screen
@@ -107,6 +108,7 @@ class DataSettingsScreen(ctx: CarContext) : Screen(ctx) {
                         screenManager.push(
                             ChooseDataSourceScreen(
                                 carContext,
+                                R.string.pref_data_source,
                                 dataSourceNames,
                                 dataSourceValues,
                                 prefs.dataSource,
@@ -127,6 +129,7 @@ class DataSettingsScreen(ctx: CarContext) : Screen(ctx) {
                         screenManager.push(
                             ChooseDataSourceScreen(
                                 carContext,
+                                R.string.pref_search_provider,
                                 searchProviderNames,
                                 searchProviderValues,
                                 prefs.searchProvider
@@ -155,6 +158,7 @@ class DataSettingsScreen(ctx: CarContext) : Screen(ctx) {
 
 class ChooseDataSourceScreen(
     ctx: CarContext,
+    @StringRes val title: Int,
     val names: Array<String>,
     val values: Array<String>,
     val currentValue: String,
@@ -165,7 +169,7 @@ class ChooseDataSourceScreen(
 
     override fun onGetTemplate(): Template {
         return ListTemplate.Builder().apply {
-            setTitle(carContext.getString(R.string.pref_data_source))
+            setTitle(carContext.getString(title))
             setHeaderAction(Action.BACK)
             setSingleList(ItemList.Builder().apply {
                 for (i in names.indices) {

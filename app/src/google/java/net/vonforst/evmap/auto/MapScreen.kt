@@ -373,10 +373,8 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
 
         // Reloading chargers in onStart does not seem to count towards content limit.
         // So let's do this so the user gets fresh chargers when re-entering the app.
-        chargers = null
-        availabilities.clear()
         invalidate()
-        filtersWithValue.observe(this) {
+        filtersWithValue.observe(this@MapScreen) {
             loadChargers()
         }
     }
@@ -398,6 +396,12 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
     }
 
     override fun onStop(owner: LifecycleOwner) {
+        // Reloading chargers in onStart does not seem to count towards content limit.
+        // So let's do this so the user gets fresh chargers when re-entering the app.
+        // Deleting the data already in onStop makes sure that we show a loading screen directly
+        // (i.e. onGetTemplate is not called while the old data is still there)
+        chargers = null
+        availabilities.clear()
         removeListeners()
     }
 

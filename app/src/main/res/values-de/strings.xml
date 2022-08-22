@@ -256,6 +256,7 @@
     <string name="pref_language_device_default">Gerätesprache verwenden</string>
     <string name="pref_language_en">Englisch</string>
     <string name="pref_language_de">Deutsch</string>
+    <string name="pref_language_fr">Französisch</string>
     <string name="pref_darkmode_device_default">Geräteeinstellung verwenden</string>
     <string name="pref_darkmode_always_on">immer an</string>
     <string name="pref_darkmode_always_off">immer aus</string>

@@ -255,6 +255,7 @@
     <string name="pref_language_device_default">Device default</string>
     <string name="pref_language_en">English</string>
     <string name="pref_language_de">German</string>
+    <string name="pref_language_fr">French</string>
     <string name="pref_darkmode_device_default">Device default</string>
     <string name="pref_darkmode_always_on">always on</string>
     <string name="pref_darkmode_always_off">always off</string>

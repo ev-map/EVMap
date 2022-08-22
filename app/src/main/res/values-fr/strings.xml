@@ -246,6 +246,7 @@
     <string name="pref_search_provider_info">Les données pour la recherche de lieux, en particulier celles de Google Maps, sont relativement coûteuses. Si vous utilisez souvent cette fonctionnalité, veuillez envisager de faire un don via \"À propos d’EVMap -&gt; Faire un don\".</string>
     <string name="pref_language_en">Anglais</string>
     <string name="pref_language_de">Allemand</string>
+    <string name="pref_language_fr">Français</string>
     <string name="pref_chargeprice_currency_hrk">Kuna croate (HRK)</string>
     <string name="help">Aide</string>
     <string name="pref_chargeprice_allow_unbalanced_load_summary">Autoriser la charge avec &gt;4,5 kW aux stations AC pour les voitures avec chargeur monophasé</string>

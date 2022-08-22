@@ -270,8 +270,6 @@
     <string name="pref_chargeprice_currency_pln">Polish złoty (PLN)</string>
     <string name="pref_chargeprice_currency_sek">Swedish krona (SEK)</string>
     <string name="pref_chargeprice_currency_usd">US dollar (USD)</string>
-    <string name="pref_map_provider_google_maps">Google Maps</string>
-    <string name="pref_map_provider_osm_mapbox">OpenStreetMap (Mapbox)</string>
-    <string name="pref_search_provider_google_maps">Google Maps</string>
-    <string name="pref_search_provider_osm_mapbox">OpenStreetMap (Mapbox)</string>
+    <string name="pref_provider_google_maps">Google Maps</string>
+    <string name="pref_provider_osm_mapbox">OpenStreetMap (Mapbox)</string>
 </resources>

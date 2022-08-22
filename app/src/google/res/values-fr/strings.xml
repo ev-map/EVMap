@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="donations_info" formatted="false">Trouvez-vous EVMap utile \? Soutenez son développement en envoyant un don au développeur.
+\n
+\nGoogle prend 15% sur chaque don.</string>
+    <string name="auto_location_service">EVMap fonctionne sur Android Auto et utilise votre position.</string>
+    <string name="open_in_app">Ouvrir dans l\'application</string>
+    <string name="opened_on_phone">Ouvert sur le téléphone</string>
+    <string name="auto_location_permission_needed">Pour exécuter EVMap sur Android Auto, vous devez autoriser l\'accès à votre emplacement.</string>
+    <string name="grant_on_phone">Grant au téléphone</string>
+    <string name="auto_prices">Prix</string>
+    <string name="auto_vehicle_data">Données sur le véhicule</string>
+    <string name="auto_range">Autonomie</string>
+    <string name="auto_speed">Vitesse</string>
+    <string name="welcome_android_auto">Prise en charge d’Android Auto</string>
+    <string name="sounds_cool">ça a l\'air cool</string>
+    <string name="auto_chargeprice_vehicle_unknown">Aucun des véhicules sélectionnés dans l\'application ne correspond à ce véhicule (%1$s %2$s).</string>
+    <string name="auto_chargeprice_vehicle_ambiguous">Plusieurs véhicules sélectionnés dans l\'application correspondent à ce véhicule (%1$s %2$s).</string>
+    <string name="selecting_all">tous les éléments sélectionnés</string>
+    <string name="data_sources_hint">Dans les paramètres, vous pouvez également choisir entre Google Maps et OpenStreetMap (Mapbox) pour les données cartographiques.</string>
+    <string name="auto_chargeprice_vehicle_unavailable">EVMap n\'a pas pu déterminer le modèle de votre véhicule.</string>
+    <string name="auto_no_chargers_found">Aucun chargeur à proximité n\'a été trouvé</string>
+    <string name="auto_no_favorites_found">Pas de favoris trouvés</string>
+    <string name="auto_charging_level">Niveau de charge</string>
+    <string name="auto_chargers_closeby">Chargeurs à proximité</string>
+    <string name="auto_chargers_near_location">Près de %s</string>
+    <string name="auto_fault_report_date">⚠️ Rapport d\'anomalie (%s)</string>
+    <string name="auto_no_data">Indisponible</string>
+    <string name="auto_settings">Paramètres</string>
+    <string name="selecting_none">désélectionner tous les éléments</string>
+    <string name="auto_vehicle_data_permission_needed">Pour cette fonction, EVMap doit avoir accès aux données de votre véhicule.</string>
+    <string name="auto_heading">Direction</string>
+    <string name="auto_favorites">Favoris</string>
+    <string name="auto_no_refresh_possible">D\'autres mises à jour ne sont pas possibles. Veuillez revenir en arrière et redémarrer.</string>
+    <string name="settings_android_auto_chargeprice_range">Plage de charge pour la comparaison des prix</string>
+    <string name="welcome_android_auto_detail">Vous pouvez également utiliser EVMap à partir d\'Android Auto sur les voitures prises en charge. Il suffit de sélectionner l\'application EVMap dans le menu Android Auto.</string>
+</resources>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="donations_info" formatted="false">Synes du EVMap er nyttig\? Støtt utviklingen ved å sende penger til utvikleren.
+\n
+\nGoogle tar 15% av alle donasjoner.</string>
+    <string name="auto_favorites">Favoritter</string>
+    <string name="auto_charging_level">Ladingsnivå</string>
+    <string name="auto_chargeprice_vehicle_unavailable">EVMap kunne ikke fastsette kjøretøymodellen.</string>
+    <string name="selecting_none">fravalgte alle elementer</string>
+    <string name="grant_on_phone">Innvilg på mobilenheten</string>
+    <string name="auto_chargers_closeby">Ladere i nærheten</string>
+    <string name="auto_prices">Pris</string>
+    <string name="auto_no_chargers_found">Ingen ladere i nærheten</string>
+    <string name="auto_no_favorites_found">Fant ikke noen favoritter</string>
+    <string name="open_in_app">Åpne i programmet</string>
+    <string name="auto_location_service">EVMap kjører på Android Auto og bruker posisjonen din.</string>
+    <string name="auto_heading">Fartsretning</string>
+    <string name="opened_on_phone">Åpnet på mobilenheten</string>
+    <string name="auto_location_permission_needed">Innvilg posisjonstilgang for å bruke EVMap på Android Auto.</string>
+    <string name="auto_chargers_near_location">Nær %s</string>
+    <string name="auto_fault_report_date">⚠️ Feilrapport (%s)</string>
+    <string name="auto_vehicle_data">Kjøretøydata</string>
+    <string name="auto_no_data">Utilgjengelig</string>
+    <string name="auto_speed">Hastighet</string>
+    <string name="auto_settings">Innstillinger</string>
+    <string name="auto_chargeprice_vehicle_unknown">Ingen av kjøretøyene valgt i programmet samsvarer med dette kjøretøyet (%1$s %2$s).</string>
+    <string name="welcome_android_auto">Android Auto-støtte</string>
+    <string name="auto_chargeprice_vehicle_ambiguous">Flere kjøretøy valgt i programmet samsvarer med dette kjøretøyet (%1$s %2$s).</string>
+    <string name="auto_vehicle_data_permission_needed">EvMap trenger tilgang til kjøretøydata for å bruke denne funksjonen.</string>
+    <string name="auto_no_refresh_possible">Videre oppdateringer er ikke mulig. Gå tilbake og start på ny.</string>
+    <string name="auto_range">Rekkevidde</string>
+    <string name="welcome_android_auto_detail">Du kan også bruke EVMap inne i Android Auto på bilder som støtter dette ved å velge det i Android Auto-menyen.</string>
+    <string name="settings_android_auto_chargeprice_range">Prissammenligning for laderekkevidde fordelt på pris</string>
+    <string name="data_sources_hint">I innstillingene kan du også bytte mellom Google Maps og OpenStreetMap (Mapbox) for kartdata.</string>
+    <string name="selecting_all">valgte alle elementene</string>
+    <string name="sounds_cool">den er grei</string>
+</resources>

@@ -129,7 +129,7 @@
     <string name="category_public_authorities">Offentlige myndigheter</string>
     <string name="category_amusement_park">Fornøyelsespark</string>
     <string name="category_cinema">Kino</string>
-    <string name="category_parking_multi">Parkeringshus i flere etasjer</string>
+    <string name="category_parking_multi">Parkeringshus</string>
     <string name="edit_at_datasource">rediger på %s</string>
     <string name="category_camping">Campingplass</string>
     <string name="category_service_on_motorway">Rasteplass (på motorvei)</string>
@@ -171,7 +171,10 @@
     <string name="close">lukk</string>
     <string name="chargeprice_title">Priser</string>
     <string name="chargeprice_connection_error">Kunne ikke laste inn priser</string>
-    <string name="pref_my_tariffs_summary">(vil bli framhevet i prissammenligningen)</string>
+    <plurals name="pref_my_tariffs_summary">
+        <item quantity="one">(vil bli framhevet i prissammenligningen)</item>
+        <item quantity="other">(vil bli framhevet i prissammenligningen)</item>
+    </plurals>
     <string name="settings_charger_data">Ladestasjoner</string>
     <string name="data_source_goingelectric">GoingElectric.de</string>
     <string name="data_source_openchargemap">Open Charge Map</string>
@@ -181,8 +184,6 @@
     <string name="settings_android_auto">Android Auto</string>
     <string name="pref_map_rotate_gestures_enabled">Skru på kartrotasjon</string>
     <string name="deleted_recent_search_results">Nylige søkeresultater slettet</string>
-    <string name="pref_language_en">Engelsk</string>
-    <string name="pref_language_de">Tysk</string>
     <string name="autocomplete_connection_error">Kunne ikke laste inn forslag</string>
     <string name="pref_language_device_default">Enhetsforvalg</string>
     <string name="pref_chargeprice_currency_chf">Sveitserfranc (CHF)</string>
@@ -266,5 +267,9 @@
     <string name="pref_provider_osm_mapbox">OpenStreetMap (Mapbox)</string>
     <string name="charging_free">Gratis</string>
     <string name="parking_free">Gratis</string>
-    <string name="pref_language_fr">Fransk</string>
+    <string name="charging_paid">Betalt</string>
+    <string name="parking_paid">Betalt</string>
+    <string name="privacy_link">https://evmap.vonforst.net/en/privacy.html</string>
+    <string name="faq_link">https://evmap.vonforst.net/en/faq.html</string>
+    <string name="chargeprice_faq_link">https://evmap.vonforst.net/en/chargeprice_faq.html</string>
 </resources>

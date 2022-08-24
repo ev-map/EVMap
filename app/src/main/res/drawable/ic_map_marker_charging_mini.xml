@@ -4,8 +4,8 @@
     android:height="16dp"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <path
-        android:fillColor="#dddddd"
-        android:pathData="M12,12m-8.5,0a8.5,8.5 0,1 1,17 0a8.5,8.5 0,1 1,-17 0" />
+        android:fillColor="#808080"
+        android:pathData="M12,12m-9,0a9,9 0,1 1,18 0a9,9 0,1 1,-18 0" />
     <path
         android:fillColor="@android:color/white"
         android:pathData="M12,12m-7.5,0a7.5,7.5 0,1 1,15 0a7.5,7.5 0,1 1,-15 0" />

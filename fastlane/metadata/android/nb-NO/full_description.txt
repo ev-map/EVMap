@@ -1,0 +1,19 @@
+Finn steder å lade fra den gemenskapsdrevne databasen til GoingElectric.de og Open Charge Map med din Android-enhet.
+Du finner info om ladestasjoner i hele verden og sanntidsinfo for mange av dem som er å finne i Europa.
+
+- Fri programvare
+- Materiell design
+- Sanntidsinfo (kun i Europa)
+- Integrert sammenligningsinfo ved bruk av Chargeprice.app (kun i Europa)
+- Kartdata fra OpenStreetMap (Mapbox)
+- Søk etter steder
+- Avanserte filtreringsvalg, inkludert lagrede filterprofiler
+- Favorittliste, som også har tilgjengelighetsinfo
+- Ingen reklame
+
+Du finner kildekoden på https://github.com/johan12345/EVMap.
+
+Dette kartet er ikke et offisielt program fra hverken GoingElectric.de eller Open Charge Map.
+Kun de offentlige API-ene derfra benyttes.
+
+Nødvendige tilganger er forklart på https://evmap.vonforst.net/en/permissions.html

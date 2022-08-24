@@ -186,7 +186,7 @@ dependencies {
     googleAutomotiveImplementation "androidx.car.app:app-automotive:$carAppVersion"
 
     // AnyMaps
-    def anyMapsVersion = 'f36bb3c126'
+    def anyMapsVersion = 'a9b3dd7d99'
     implementation "com.github.johan12345.AnyMaps:anymaps-base:$anyMapsVersion"
     googleImplementation "com.github.johan12345.AnyMaps:anymaps-google:$anyMapsVersion"
     googleImplementation 'com.google.android.gms:play-services-maps:18.1.0'

@@ -248,7 +248,7 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
                     .sortedBy { it.chargepointPrices.first().price }
                     .sortedByDescending {
                         prefs.chargepriceMyTariffsAll ||
-                                myTariffs != null && it.tariff?.id in myTariffs
+                                myTariffs != null && it.tariffId in myTariffs
                     }
                 invalidate()
             } catch (e: IOException) {

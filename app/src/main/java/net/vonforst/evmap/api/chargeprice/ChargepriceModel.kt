@@ -109,9 +109,7 @@ data class ChargepriceCar(
     val brand: String,
 
     @Json(name = "dc_charge_ports")
-    val dcChargePorts: List<String>,
-    @ToOne("manufacturer")
-    val manufacturer: ChargepriceBrand?
+    val dcChargePorts: List<String>
 ) : Equatable, Parcelable {
 
     companion object {
@@ -181,7 +179,7 @@ data class ChargePrice(
     val branding: ChargepriceBranding? = null,
 
     @ToOne("tariff")
-    val tariff: ChargepriceTariff?
+    val tariffId: String?
 ) : Equatable, Cloneable, Parcelable {
     fun formatMonthlyFees(ctx: Context): String {
         return listOfNotNull(

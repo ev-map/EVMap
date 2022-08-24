@@ -169,7 +169,7 @@ class ChargepriceViewModel(
                             .sortedBy { it.chargepointPrices.first().price }
                             .sortedByDescending {
                                 prefs.chargepriceMyTariffsAll ||
-                                        myTariffs != null && it.tariff?.id in myTariffs
+                                        myTariffs != null && it.tariffId in myTariffs
                             }
                         )
                     }

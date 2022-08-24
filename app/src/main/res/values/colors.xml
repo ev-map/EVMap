@@ -8,7 +8,7 @@
     <color name="colorSecondaryDark">#00b249</color>
     <color name="colorSecondaryContainer">#b5f4c7</color>
     <color name="colorOnSecondaryContainer">#007c00</color>
-    <color name="charger_100kw">#ffeb3b</color>
+    <color name="charger_100kw">#FDD835</color>
     <color name="charger_43kw">#ff9800</color>
     <color name="charger_20kw">#03a9f4</color>
     <color name="charger_11kw">#9e9e9e</color>

@@ -98,10 +98,8 @@
     <string name="edit">edit</string>
     <string name="cancel">Cancel</string>
     <string name="ok">OK</string>
-    <string name="pref_language">Language</string>
-    <string name="pref_language_summary">App</string>
+    <string name="pref_language">App language</string>
     <string name="pref_darkmode">Dark mode</string>
-    <string name="pref_darkmode_summary">Selects when to use it</string>
     <string name="connection_error">Could not load charging stations</string>
     <string name="retry">Retry</string>
     <string name="filter_open_247">Available 24/7</string>
@@ -155,12 +153,12 @@
     <string name="welcome_to_evmap">Welcome</string>
     <string name="welcome_1">Find electric vehicle chargers around you.</string>
     <string name="welcome_2_title">You\'ve got the power</string>
-    <string name="welcome_2">Chargers are colored based on max charging power.</string>
+    <string name="welcome_2">Charger coloring signifies their max charging power.</string>
     <string name="welcome_2_detail">(Also shown in “About” → “FAQ”)</string>
-    <string name="donation_dialog_title">Thank you for using EVMap.</string>
-    <string name="donation_dialog_detail">Libre software. Its popularity and code contributions are much appreciated. Do help cover the data costs. Pay what it is worth to you.</string>
+    <string name="donation_dialog_title">Thank you for using EVMap</string>
+    <string name="donation_dialog_detail">As libre software, deserved popularity and code contributions are much appreciated. Do help cover the data costs. Pay what it is worth to you. 😊</string>
     <string name="chargeprice_donation_dialog_title">You\'re a real bargain hunter!</string>
-    <string name="chargeprice_donation_dialog_detail">You make great use of the price comparison. You can support EVMap through a donation to pay for the data it uses.</string>
+    <string name="chargeprice_donation_dialog_detail">You make great use of the price comparison. You can also donate to pay for the data it uses.</string>
     <string name="deleted_filterprofile">Deleted “%s”</string>
     <string name="undo">Undo</string>
     <string name="rename">Rename</string>
@@ -171,7 +169,7 @@
     </plurals>
     <string name="navigate">Navigate</string>
     <string name="verified">verified</string>
-    <string name="verified_desc">Charger verified by a member of the %s community. (Not necessarily working now.)</string>
+    <string name="verified_desc">Charger (at one time) confirmed to work by a member of the %s community.</string>
     <string name="charge_price_format">%2$s%1$.2f</string>
     <string name="charge_price_average_format">⌀ %2$s%1$.2f/kWh</string>
     <string name="charge_price_kwh_format">%2$s%1$.2f/kWh</string>
@@ -197,7 +195,7 @@
     <string name="chargeprice_battery_range_to">to</string>
     <string name="chargeprice_stats">(%1$.0f kWh, approx. %2$s, ⌀ %3$.0f kW)</string>
     <string name="chargeprice_vehicle">Vehicle</string>
-    <string name="pref_chargeprice_show_provider_customer_tariffs_summary">Providers of electricity, gas, etc. can sometimes reduce prices for their customers.</string>
+    <string name="pref_chargeprice_show_provider_customer_tariffs_summary">Electricity, gas, etc. companies sometimes reduce prices for their customers.</string>
     <string name="close">Close</string>
     <string name="chargeprice_title">Prices</string>
     <string name="chargeprice_connection_error">Could not load prices</string>
@@ -220,7 +218,7 @@
     <string name="data_sources_description">Please pick a source for charging stations. (Can be changed in the app settings.)</string>
     <string name="data_source_goingelectric">GoingElectric.de</string>
     <string name="data_source_openchargemap">Open Charge Map</string>
-    <string name="data_source_goingelectric_desc">Great in germannic countries. Descriptions in German. Community-maintained.</string>
+    <string name="data_source_goingelectric_desc">Great in German-speaking countries. Descriptions in German. Community-maintained.</string>
     <string name="data_source_openchargemap_desc"><![CDATA[Worldwide, with varying quality. Descriptions in English or the local language. Community-maintained and open government-data in some countries (e.g. North America, UK, France, Norway).]]></string>
     <string name="next">next</string>
     <string name="get_started">OK</string>
@@ -229,10 +227,10 @@
     <string name="crash_report_text">EVMap crashed. Please send a crash report to the developer.</string>
     <string name="crash_report_comment_prompt">Comment below:</string>
     <string name="powered_by_mapbox">powered by Mapbox</string>
-    <string name="pref_search_provider">Geo-searches</string>
-    <string name="pref_search_provider_info"><![CDATA[Data for geo-searches. Expensive to fetch, especially from Google Maps. Please consider donating through “About” → “Donate”.]]></string>
+    <string name="pref_search_provider">Location search</string>
+    <string name="pref_search_provider_info"><![CDATA[Data for positional searches is expensive to fetch, especially from Google Maps. Please consider donating through “About” → “Donate”.]]></string>
     <string name="github_sponsors">GitHub Sponsors</string>
-    <string name="donate_desc">Make a one-time donation to support EVMap development</string>
+    <string name="donate_desc">Make a one-time or recurring donation you heroic philanthropist</string>
     <string name="github_sponsors_desc">Support EVMap</string>
     <string name="unnamed_filter_profile">Unnamed filter profile</string>
     <string name="privacy_link">https://evmap.vonforst.net/en/privacy.html</string>
@@ -246,7 +244,7 @@
     <string name="help">Help</string>
     <string name="settings_android_auto">Android Auto</string>
     <string name="pref_chargeprice_allow_unbalanced_load">Unbalanced load</string>
-    <string name="pref_chargeprice_allow_unbalanced_load_summary"><![CDATA[Allow single-phase charging at over 4.5 kW on three-phase chargers.]]></string>
+    <string name="pref_chargeprice_allow_unbalanced_load_summary"><![CDATA[Allow single-phase AC charging above 4.5 kW.]]></string>
     <string name="pref_map_rotate_gestures_enabled">Map rotation</string>
     <string name="pref_map_rotate_gestures_on">Use two fingers to rotate the map</string>
     <string name="pref_map_rotate_gestures_off">Rotation off (north always upwards)</string>
@@ -256,7 +254,6 @@
     <string name="pref_language_en">English</string>
     <string name="pref_language_de">German</string>
     <string name="pref_language_fr">French</string>
-    <string name="pref_language_nb-rNO">Norwegian Bokmål</string>    
     <string name="pref_darkmode_device_default">Device default</string>
     <string name="pref_darkmode_always_on">always on</string>
     <string name="pref_darkmode_always_off">always off</string>

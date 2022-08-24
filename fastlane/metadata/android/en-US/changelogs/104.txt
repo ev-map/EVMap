@@ -1,0 +1,9 @@
+Improvements:
+- Added Norwegian and French translations (thanks to the contributors!)
+- Improved contrast of markers on map (especially yellow)
+- Android Automotive OS: Filter "exclude chargers with reported faults" available
+
+Bugfixes:
+- "My charging plans" were not sorted and highlighted
+- Dark Mode: Partly fixed white flashing when switching back to map
+- Android Auto: fixed crashes

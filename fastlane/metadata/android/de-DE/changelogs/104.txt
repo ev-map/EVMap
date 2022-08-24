@@ -1,0 +1,9 @@
+Verbesserungen:
+- Übersetzung auf Norwegisch und Französisch (Danke an die Beitragenden!)
+- Kontrast der Marker auf der Karte (v.a. gelb) erhöht
+- Android Automotive OS: Filter "Störung ausschließen" verfügbar
+
+Fehler behoben:
+- "Meine Tarife" wurden nicht mehr oben angeordnet und hervorgehoben
+- Dark Mode: Weißes Aufblitzen bei Wechsel zur Karte teilweise reduziert
+- Android Auto: Abstürze behoben

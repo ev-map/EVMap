@@ -25,7 +25,12 @@ class LocaleContextWrapper(base: Context?) : ContextWrapper(base) {
                 }
             } else {
                 // set selected locale
-                val locale = Locale(language)
+                val locale = if (language.contains("-")) {
+                    val split = language.split("-")
+                    Locale(split[0], split[1])
+                } else {
+                    Locale(language)
+                }
                 Locale.setDefault(locale)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     appConfig.setLocale(locale)

@@ -12,7 +12,7 @@
         <item>en</item>
         <item>de</item>
         <item>fr</item>
-        <item>nb-rNO</item>
+        <item>nb-NO</item>
     </string-array>
     <string-array name="pref_darkmode_names">
         <item>@string/pref_darkmode_device_default</item>

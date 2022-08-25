@@ -8,6 +8,7 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.google.android.material.color.MaterialColors
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.transition.MaterialFadeThrough
 import com.google.android.material.transition.MaterialSharedAxis
 import com.mikepenz.aboutlibraries.LibsBuilder
@@ -44,6 +45,14 @@ class AboutFragment : PreferenceFragmentCompat() {
 
     override fun onPreferenceTreeClick(preference: Preference): Boolean {
         return when (preference.key) {
+            "contributors" -> {
+                MaterialAlertDialogBuilder(requireContext())
+                    .setTitle(R.string.about_contributors)
+                    .setMessage(getString(R.string.about_contributors_text) + "\n\n" + getString(R.string.about_contributors_list))
+                    .setPositiveButton(R.string.ok) { _, _ -> }
+                    .show()
+                true
+            }
             "github_link" -> {
                 (activity as? MapsActivity)?.openUrl(getString(R.string.github_link))
                 true

@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!-- tools:ignore="MissingQuantity" is temporary until Weblate 4.14 is released -->
-<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingQuantity">
+<?xml version="1.0" encoding="utf-8"?>
+<!-- tools:ignore="MissingQuantity" is temporary until Weblate 4.14 is released --><resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingQuantity">
     <string name="app_name">EVMap</string>
     <string name="title_activity_maps">EVMap</string>
     <string name="connectors">Connecteurs</string>
@@ -271,4 +271,6 @@
     <string name="pref_provider_osm_mapbox">OpenStreetMap (Mapbox)</string>
     <string name="charging_paid">Payante</string>
     <string name="charging_free">Gratuite</string>
+    <string name="about_contributors">Contributeurs</string>
+    <string name="about_contributors_text">Merci à tous les contributeurs pour leur contribution au codage et à la traduction d\'EVMap :</string>
 </resources>

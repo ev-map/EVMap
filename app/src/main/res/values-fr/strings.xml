@@ -272,4 +272,5 @@
     <string name="charging_paid">Payante</string>
     <string name="charging_free">Gratuite</string>
     <string name="about_contributors">Contributeurs</string>
+    <string name="about_contributors_text">Merci à tous les contributeurs pour leur contribution au codage et à la traduction d\'EVMap :</string>
 </resources>

@@ -1,0 +1,2 @@
+Fehler behoben:
+- Wechseln der Datenquelle nicht möglich

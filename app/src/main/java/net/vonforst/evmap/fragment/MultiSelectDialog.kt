@@ -39,7 +39,7 @@ class MultiSelectDialog : MaterialDialogFragment() {
     private lateinit var items: List<MultiSelectItem>
     private lateinit var binding: DialogMultiSelectBinding
 
-    override fun onCreateView(
+    override fun createView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?

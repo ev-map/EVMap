@@ -13,7 +13,7 @@ import net.vonforst.evmap.ui.MaterialDialogFragment
 class OpensourceDonationsDialogFragment : MaterialDialogFragment() {
     private lateinit var binding: DialogOpensourceDonationsBinding
 
-    override fun onCreateView(
+    override fun createView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?

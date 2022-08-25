@@ -27,7 +27,7 @@ class DataSourceSelectDialog : MaterialDialogFragment() {
         }
     }
 
-    override fun onCreateView(
+    override fun createView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?

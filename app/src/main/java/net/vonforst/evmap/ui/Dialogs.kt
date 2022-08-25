@@ -69,13 +69,19 @@ abstract class MaterialDialogFragment : AppCompatDialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = MaterialAlertDialogBuilder(requireContext(), theme).apply {
             dialogView =
-                onCreateView(LayoutInflater.from(requireContext()), null, savedInstanceState)!!
+                createView(LayoutInflater.from(requireContext()), null, savedInstanceState)
 
             setView(dialogView)
         }.create()
         initView(dialogView, savedInstanceState)
         return dialog
     }
+
+    abstract fun createView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View
 
     abstract fun initView(view: View, savedInstanceState: Bundle?)
 

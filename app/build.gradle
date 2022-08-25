@@ -93,6 +93,7 @@ android {
     }
     lint {
         disable 'NullSafeMutableLiveData'
+        warning 'MissingTranslation'
     }
 
     testOptions {

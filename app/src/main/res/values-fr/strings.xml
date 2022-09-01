@@ -256,8 +256,8 @@
     <string name="pref_chargeprice_currency_chf">Franc suisse (CHF)</string>
     <string name="pref_chargeprice_currency_usd">Dollar américain (USD)</string>
     <string name="pref_chargeprice_currency_sek">Couronne suédoise (SEK)</string>
-    <string name="cost_detail_charging"><b>recharge %s</b></string>
-    <string name="cost_detail_parking"><b>stationnement %s</b></string>
+    <string name="cost_detail_charging"><b>Recharge %s</b></string>
+    <string name="cost_detail_parking"><b>Stationnement %s</b></string>
     <string name="navigate">Naviguer vers</string>
     <string name="charge_price_format">%1$.2f %2$s</string>
     <string name="charge_price_average_format">⌀ %1$.2f %2$s/kWh</string>
@@ -266,11 +266,11 @@
     <string name="chargeprice_min_spend">Dépenses minimales : %1$.2f %2$s/mois</string>
     <string name="welcome_2_title">Visualisez la puissance</string>
     <string name="pref_provider_google_maps">Google Maps</string>
-    <string name="parking_free">Gratuit</string>
-    <string name="parking_paid">Payant</string>
+    <string name="parking_free">gratuit</string>
+    <string name="parking_paid">payant</string>
     <string name="pref_provider_osm_mapbox">OpenStreetMap (Mapbox)</string>
-    <string name="charging_paid">Payante</string>
-    <string name="charging_free">Gratuite</string>
+    <string name="charging_paid">payante</string>
+    <string name="charging_free">gratuite</string>
     <string name="about_contributors">Contributeurs</string>
     <string name="about_contributors_text">Merci à tous les contributeurs pour leur contribution au codage et à la traduction d\'EVMap :</string>
 </resources>

@@ -23,7 +23,7 @@
     <string name="charging_paid">Kostenpflichtig</string>
     <string name="parking_free">Kostenlos</string>
     <string name="parking_paid">Kostenpflichtig</string>
-    <string name="amenities">Ladeweile</string>
+    <string name="amenities">Ausstattung</string>
     <string name="general_info">Allgemeine Hinweise</string>
     <string name="realtime_data_unavailable">Echtzeitstatus nicht verfügbar</string>
     <string name="realtime_data_loading">Prüfe Echtzeitstatus…</string>
@@ -182,7 +182,7 @@
     <string name="chargeprice_session_fee">Startgebühr</string>
     <string name="chargeprice_per_kwh">pro kWh</string>
     <string name="chargeprice_per_minute">pro min</string>
-    <string name="chargeprice_blocking_fee">Blockiergeb. >%s</string>
+    <string name="chargeprice_blocking_fee">Blockiergeb. &gt;%s</string>
     <string name="chargeprice_no_tariffs_found">Keine geeigneten Tarife für diese Ladestation bei Chargeprice.app gefunden.</string>
     <string name="powered_by_chargeprice">powered by Chargeprice</string>
     <string name="chargeprice_base_fee">Fixkosten: %1$.2f %2$s/Monat</string>

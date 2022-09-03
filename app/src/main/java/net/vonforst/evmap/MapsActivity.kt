@@ -2,7 +2,6 @@ package net.vonforst.evmap
 
 import android.app.PendingIntent
 import android.content.ActivityNotFoundException
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -32,7 +31,6 @@ import net.vonforst.evmap.fragment.MapFragmentArgs
 import net.vonforst.evmap.model.ChargeLocation
 import net.vonforst.evmap.navigation.NavHostFragment
 import net.vonforst.evmap.storage.PreferenceDataSource
-import net.vonforst.evmap.utils.LocaleContextWrapper
 import net.vonforst.evmap.utils.getLocationFromIntent
 
 
@@ -52,14 +50,6 @@ class MapsActivity : AppCompatActivity(),
     lateinit var appBarConfiguration: AppBarConfiguration
     var fragmentCallback: FragmentCallback? = null
     private lateinit var prefs: PreferenceDataSource
-
-    override fun attachBaseContext(newBase: Context) {
-        return super.attachBaseContext(
-            LocaleContextWrapper.wrap(
-                newBase, PreferenceDataSource(newBase).language
-            )
-        );
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

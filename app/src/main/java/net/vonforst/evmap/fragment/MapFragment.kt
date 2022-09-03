@@ -970,7 +970,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             lifecycleScope.launch {
                 val address = withContext(Dispatchers.IO) {
                     try {
-                        Geocoder(requireContext()).getFromLocationName(locationName, 1).getOrNull(0)
+                        Geocoder(requireContext()).getFromLocationName(locationName, 1)
+                            ?.getOrNull(0)
                     } catch (e: IOException) {
                         null
                     }

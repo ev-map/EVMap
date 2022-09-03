@@ -75,8 +75,15 @@ class PreferenceDataSource(val context: Context) {
         }
 
 
-    val language: String
-        get() = sp.getString("language", "default")!!
+    /**
+     * Sets app language. Will be removed and set to null with the next update because storage is
+     * handled by AppCompat.
+     */
+    var language: String?
+        get() = sp.getString("language", null)
+        set(lang) {
+            sp.edit().putString("language", lang).apply()
+        }
 
     val darkmode: String
         get() = sp.getString("darkmode", "default")!!

@@ -3,6 +3,7 @@ package net.vonforst.evmap
 import android.app.Application
 import com.facebook.stetho.Stetho
 import net.vonforst.evmap.storage.PreferenceDataSource
+import net.vonforst.evmap.ui.updateAppLocale
 import net.vonforst.evmap.ui.updateNightMode
 import org.acra.config.dialog
 import org.acra.config.limiter
@@ -13,7 +14,16 @@ import org.acra.ktx.initAcra
 class EvMapApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        updateNightMode(PreferenceDataSource(this))
+        val prefs = PreferenceDataSource(this)
+        updateNightMode(prefs)
+
+        // Convert to new AppCompat storage for app language
+        val lang = prefs.language
+        if (lang != null && lang !in listOf("", "default")) {
+            updateAppLocale(lang)
+            prefs.language = null
+        }
+
         Stetho.initializeWithDefaults(this);
         init(applicationContext)
 

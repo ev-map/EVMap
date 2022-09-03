@@ -168,7 +168,7 @@
     </plurals>
     <string name="navigate">Navigate</string>
     <string name="verified">verified</string>
-    <string name="verified_desc">Charger has once been confirmed to work by a member of the %s community.</string>
+    <string name="verified_desc">Charger has once been confirmed to work by a member of the %s community</string>
     <string name="charge_price_format">%2$s%1$.2f</string>
     <string name="charge_price_average_format">⌀ %2$s%1$.2f/kWh</string>
     <string name="charge_price_kwh_format">%2$s%1$.2f/kWh</string>

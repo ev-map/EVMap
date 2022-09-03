@@ -16,14 +16,12 @@
     <string name="fav_remove">Fjern fra favoritter</string>
     <string name="share">Del</string>
     <string name="filter_free">Kun gratisladere</string>
-    <string name="faq">O-S-S</string>
-    <string name="faq_desc">Ofte stilte spørsmål</string>
+    <string name="faq">Ofte stilte spørsmål</string>
     <string name="menu_edit_filters">Rediger filtre</string>
     <string name="edit">rediger</string>
     <string name="cancel">Avbryt</string>
     <string name="ok">OK</string>
-    <string name="pref_language">Språk</string>
-    <string name="pref_language_summary">Endre programspråket</string>
+    <string name="pref_language">Programspråk</string>
     <string name="and_n_others">og %d andre</string>
     <string name="pref_map_provider">Karttilbyder</string>
     <string name="twitter">Twitter</string>
@@ -229,7 +227,6 @@
     <string name="filter_min_connectors">Min. antall tilkoblinger</string>
     <string name="filter_connectors">Tilkoblinger</string>
     <string name="filter_operators">Operatører</string>
-    <string name="pref_darkmode_summary">Når mørk drakt er iført</string>
     <string name="category_service_off_motorway">Rasteplass (ikke på motorvei)</string>
     <string name="welcome_2_title">Effekten til veies tilgjengeliggjøres</string>
     <string name="chargeprice_donation_dialog_detail">Du bruker prissammenligningen en del. Dette bekostes av utvikleren som månedlig avgift til Chargeprice.app-datatilbyderen.

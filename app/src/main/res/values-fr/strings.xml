@@ -41,15 +41,13 @@
     <string name="map_type">Type de carte</string>
     <string name="map_details">Détails de la carte</string>
     <string name="map_traffic">Trafic</string>
-    <string name="faq">FAQ</string>
-    <string name="faq_desc">Foire aux questions</string>
+    <string name="faq">Foire aux questions</string>
     <string name="menu_filters_active">Filtres actifs</string>
     <string name="filters_activated">Filtres activés</string>
     <string name="filters_deactivated">Filtres désactivés</string>
     <string name="menu_manage_filter_profiles">Gérer les profils de filtrage</string>
     <string name="edit">modifier</string>
-    <string name="pref_language">Langue</string>
-    <string name="pref_language_summary">Changer la langue de l\'application</string>
+    <string name="pref_language">Langue de l\'application</string>
     <string name="connection_error">Impossible de charger les stations de recharge</string>
     <string name="retry">Réessayer</string>
     <string name="filter_open_247">Disponible 24h/24 et 7j/7</string>
@@ -180,7 +178,6 @@
     <string name="cancel">Annuler</string>
     <string name="filter_operators">Opérateurs</string>
     <string name="chargeprice_donation_dialog_detail">Il semble que vous appréciez beaucoup la fonction de comparaison des prix. Pour accéder aux données de tarification, le développeur d\'EVMap doit payer une redevance mensuelle au fournisseur de données Chargeprice.app. Par conséquent, veuillez envisager de soutenir EVMap par un don.</string>
-    <string name="pref_darkmode_summary">Définir lorsque le mode sombre est activé</string>
     <string name="and_n_others">et %d autres</string>
     <string name="contact">Contact</string>
     <string name="pref_map_provider">Fournisseur de cartes</string>

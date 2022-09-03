@@ -3,6 +3,7 @@ package net.vonforst.evmap.viewmodel
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.switchMap
 import kotlinx.coroutines.CoroutineScope
 import net.vonforst.evmap.api.ChargepointApi
 import net.vonforst.evmap.api.goingelectric.GoingElectricApiWrapper
@@ -59,13 +60,6 @@ fun filtersWithValue(
     }
 
 fun FilterValueDao.getFilterValues(filterStatus: LiveData<Long>, dataSource: String) =
-    MediatorLiveData<List<FilterValue>>().apply {
-        var source: LiveData<List<FilterValue>>? = null
-        addSource(filterStatus) { status ->
-            source?.let { removeSource(it) }
-            source = getFilterValues(status, dataSource)
-            addSource(source!!) { result ->
-                value = result
-            }
-        }
+    filterStatus.switchMap {
+        getFilterValues(it, dataSource)
     }

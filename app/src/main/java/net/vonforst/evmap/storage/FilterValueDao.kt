@@ -1,31 +1,28 @@
 package net.vonforst.evmap.storage
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.liveData
 import androidx.room.*
-import net.vonforst.evmap.await
 import net.vonforst.evmap.model.*
 
 @Dao
 abstract class FilterValueDao {
     @Query("SELECT * FROM booleanfiltervalue WHERE profile = :profile AND dataSource = :dataSource")
-    protected abstract fun getBooleanFilterValues(
+    protected abstract suspend fun getBooleanFilterValues(
         profile: Long,
         dataSource: String
-    ): LiveData<List<BooleanFilterValue>>
+    ): List<BooleanFilterValue>
 
     @Query("SELECT * FROM multiplechoicefiltervalue WHERE profile = :profile AND dataSource = :dataSource")
-    protected abstract fun getMultipleChoiceFilterValues(
+    protected abstract suspend fun getMultipleChoiceFilterValues(
         profile: Long,
         dataSource: String
-    ): LiveData<List<MultipleChoiceFilterValue>>
+    ): List<MultipleChoiceFilterValue>
 
     @Query("SELECT * FROM sliderfiltervalue WHERE profile = :profile AND dataSource = :dataSource")
-    protected abstract fun getSliderFilterValues(
+    protected abstract suspend fun getSliderFilterValues(
         profile: Long,
         dataSource: String
-    ): LiveData<List<SliderFilterValue>>
+    ): List<SliderFilterValue>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     protected abstract suspend fun insert(vararg values: BooleanFilterValue)
@@ -54,26 +51,21 @@ abstract class FilterValueDao {
         dataSource: String
     )
 
-    open fun getFilterValues(filterStatus: Long, dataSource: String): LiveData<List<FilterValue>> =
+    open suspend fun getFilterValuesAsync(
+        filterStatus: Long,
+        dataSource: String
+    ): List<FilterValue> =
         if (filterStatus == FILTERS_DISABLED || filterStatus == FILTERS_FAVORITES) {
-            MutableLiveData(emptyList())
+            emptyList()
         } else {
-            MediatorLiveData<List<FilterValue>>().apply {
-                val sources = listOf(
-                    getBooleanFilterValues(filterStatus, dataSource),
-                    getMultipleChoiceFilterValues(filterStatus, dataSource),
+            getBooleanFilterValues(filterStatus, dataSource) +
+                    getMultipleChoiceFilterValues(filterStatus, dataSource) +
                     getSliderFilterValues(filterStatus, dataSource)
-                )
-                for (source in sources) {
-                    addSource(source) {
-                        val values = sources.map { it.value }
-                        if (values.all { it != null }) {
-                            value = values.filterNotNull().flatten()
-                        }
-                    }
-                }
-            }
         }
+
+    open fun getFilterValues(filterStatus: Long, dataSource: String) = liveData {
+        emit(getFilterValuesAsync(filterStatus, dataSource))
+    }
 
     @Transaction
     open suspend fun insert(vararg values: FilterValue) {
@@ -98,7 +90,7 @@ abstract class FilterValueDao {
         if (filterStatus == FILTERS_CUSTOM) return
 
         deleteFilterValuesForProfile(FILTERS_CUSTOM, dataSource)
-        val values = getFilterValues(filterStatus, dataSource).await().onEach {
+        val values = getFilterValuesAsync(filterStatus, dataSource).onEach {
             it.profile = FILTERS_CUSTOM
         }
         insert(*values.toTypedArray())

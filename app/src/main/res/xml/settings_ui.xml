@@ -7,7 +7,7 @@
         android:entries="@array/pref_language_names"
         android:entryValues="@array/pref_language_values"
         android:defaultValue="default"
-        android:summary="@string/pref_language_summary" />
+        android:summary="%s" />
 
     <ListPreference
         android:key="darkmode"
@@ -15,7 +15,7 @@
         android:entries="@array/pref_darkmode_names"
         android:entryValues="@array/pref_darkmode_values"
         android:defaultValue="default"
-        android:summary="@string/pref_darkmode_summary" />
+        android:summary="%s" />
     <CheckBoxPreference
         android:key="map_rotate_gestures_enabled"
         android:title="@string/pref_map_rotate_gestures_enabled"

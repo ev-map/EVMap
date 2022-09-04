@@ -155,7 +155,7 @@
     <string name="welcome_2">Each charger\'s color corresponds to its max charging power</string>
     <string name="welcome_2_detail">This can also be seen in “About” → “Frequently Asked Questions”</string>
     <string name="donation_dialog_title">Thank you for using EVMap</string>
-    <string name="donation_dialog_detail">EVMap is free and libre software. Code contributions on GitHub are much appreciated. To help cover the running costs for data access, please consider donating an amount of your choice to the developer.</string>
+    <string name="donation_dialog_detail">EVMap is libre and free of charge. Code contributions on GitHub are much appreciated. To help cover the running costs for data access, please consider donating an amount of your choice to the developer.</string>
     <string name="chargeprice_donation_dialog_title">You\'re a real bargain hunter!</string>
     <string name="chargeprice_donation_dialog_detail">You make great use of the price comparison feature. Please help cover the costs for this data by supporting EVMap with a donation.</string>
     <string name="deleted_filterprofile">Deleted “%s”</string>

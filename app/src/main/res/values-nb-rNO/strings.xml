@@ -219,7 +219,7 @@
     <string name="plug_cee_blau">CEE blå</string>
     <string name="filter_open_247">Døgnåpent</string>
     <string name="pref_chargeprice_currency_huf">Ungarske forint (HUF)</string>
-    <string name="donation_dialog_detail">Fri programvare er fri programvare. Kodebidrag mottas med takk. Overvei å gi din støtte gjennom GitHub-sponsorer for å dekke løpende utgifter.</string>
+    <string name="donation_dialog_detail">EVMap er fri programvare. Kodebidrag mottas med takk. Overvei å gi din støtte gjennom GitHub-sponsorer for å dekke løpende utgifter.</string>
     <string name="pref_chargeprice_allow_unbalanced_load_summary">Tillat enfaselading over 4.5 kW</string>
     <string name="connectors">Tilkobling</string>
     <string name="operator">Operatør</string>

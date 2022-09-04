@@ -269,4 +269,13 @@
     <string name="pref_provider_osm_mapbox">OpenStreetMap (Mapbox)</string>
     <string name="about_contributors">Contributors</string>
     <string name="about_contributors_text">Thanks to all contributors for their coding and translation contributions to EVMap:</string>
+    <string name="chargeprice_feedback">Feedback</string>
+    <string name="chargeprice_feedback_missing_price">Report missing price</string>
+    <string name="chargeprice_feedback_wrong_price">Report incorrect price</string>
+    <string name="chargeprice_feedback_email">Email address for further questions</string>
+    <string name="chargeprice_feedback_comment">Other details</string>
+    <string name="chargeprice_feedback_price">Price (per kWh, minute, etc.)</string>
+    <string name="chargeprice_feedback_cpo">Station operator (CPO): %s</string>
+    <string name="chargeprice_feedback_tariff">Provider / plan</string>
+    <string name="chargeprice_feedback_send">Submit</string>
 </resources>

@@ -168,7 +168,8 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/battery_range"
                     tools:itemCount="3"
-                    tools:listitem="@layout/item_chargeprice" />
+                    tools:listitem="@layout/item_chargeprice"
+                    tools:visibility="invisible" />
 
                 <TextView
                     android:id="@+id/textView8"
@@ -179,10 +180,11 @@
                     android:gravity="center_horizontal"
                     android:text="@string/chargeprice_no_tariffs_found"
                     app:goneUnless="@{vm.chargePricesForChargepoint.status == Status.SUCCESS &amp;&amp; vm.chargePricesForChargepoint.data.size() == 0}"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintBottom_toTopOf="@+id/btnFeedbackMissingPrice"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/charge_prices_list"
-                    app:layout_constraintTop_toTopOf="@+id/charge_prices_list" />
+                    app:layout_constraintTop_toTopOf="@+id/charge_prices_list"
+                    app:layout_constraintVertical_chainStyle="packed" />
 
                 <TextView
                     android:id="@+id/textView9"
@@ -236,6 +238,20 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textView3" />
+
+                <Button
+                    android:id="@+id/btnFeedbackMissingPrice"
+                    style="@style/Widget.Material3.Button.TonalButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/chargeprice_feedback_missing_price"
+                    app:goneUnless="@{vm.chargePricesForChargepoint.status == Status.SUCCESS &amp;&amp; vm.chargePricesForChargepoint.data.size() == 0}"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView8" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

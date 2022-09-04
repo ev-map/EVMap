@@ -6,6 +6,16 @@
         android:id="@+id/menu_help"
         android:icon="@drawable/ic_help"
         android:title="@string/help"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menu_feedback_missing_price"
+        android:title="@string/chargeprice_feedback_missing_price"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_feedback_wrong_price"
+        android:title="@string/chargeprice_feedback_wrong_price"
+        app:showAsAction="never" />
 
 </menu>

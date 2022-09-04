@@ -143,12 +143,12 @@
     <string name="category_parking_underground">Parkeringsgarasje under bakken</string>
     <string name="reorder">endre rekkefølge</string>
     <string name="save_profile_enter_name">Skriv inn navnet på filterprofilen:</string>
-    <string name="filterprofiles_empty_state">Du har ikke noen lagrede filterprofiler.</string>
+    <string name="filterprofiles_empty_state">Du har ikke noen lagrede filterprofiler</string>
     <string name="chargeprice_donation_dialog_title">Du er en sann gjerrigknark.</string>
     <string name="deleted_filterprofile">Slettet «%s»</string>
     <string name="charging_barrierfree">Kan brukes uten registrering</string>
-    <string name="welcome_1">Finn kjøretøyladere der du er.</string>
-    <string name="welcome_2">Hver laders farge samsvarer med dens høyeste ladeeffekt.</string>
+    <string name="welcome_1">Finn kjøretøyladere der du er</string>
+    <string name="welcome_2">Hver laders farge samsvarer med dens høyeste ladeeffekt</string>
     <string name="welcome_2_detail">Dette er også å finne i «Om» → «O-S-S» i menyen</string>
     <string name="verified_desc">Lader bekreftet av et medlem av %s-gemenskapen. Dette betyr ikke at den virker nå.</string>
     <string name="charge_price_format">%2$s%1$.2f</string>

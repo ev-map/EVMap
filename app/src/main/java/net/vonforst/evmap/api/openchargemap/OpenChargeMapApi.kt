@@ -5,14 +5,11 @@ import com.car2go.maps.model.LatLng
 import com.car2go.maps.model.LatLngBounds
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.squareup.moshi.Moshi
-import kotlinx.coroutines.Dispatchers
 import net.vonforst.evmap.BuildConfig
 import net.vonforst.evmap.R
 import net.vonforst.evmap.api.*
 import net.vonforst.evmap.model.*
-import net.vonforst.evmap.ui.cluster
 import net.vonforst.evmap.viewmodel.Resource
-import net.vonforst.evmap.viewmodel.getClusterDistance
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import retrofit2.Response
@@ -118,6 +115,7 @@ class OpenChargeMapApiWrapper(
         referenceData: ReferenceData,
         bounds: LatLngBounds,
         zoom: Float,
+        useClustering: Boolean,
         filters: FilterValues?,
     ): Resource<List<ChargepointListItem>> {
         val referenceData = referenceData as OCMReferenceData
@@ -160,8 +158,7 @@ class OpenChargeMapApiWrapper(
                 minPower,
                 connectorsVal,
                 minConnectors,
-                referenceData,
-                zoom
+                referenceData
             )
             return Resource.success(result)
         } catch (e: IOException) {
@@ -174,6 +171,7 @@ class OpenChargeMapApiWrapper(
         location: LatLng,
         radius: Int,
         zoom: Float,
+        useClustering: Boolean,
         filters: FilterValues?
     ): Resource<List<ChargepointListItem>> {
         val referenceData = referenceData as OCMReferenceData
@@ -214,8 +212,7 @@ class OpenChargeMapApiWrapper(
                 minPower,
                 connectorsVal,
                 minConnectors,
-                referenceData,
-                zoom
+                referenceData
             )
             return Resource.success(result)
         } catch (e: IOException) {
@@ -228,26 +225,15 @@ class OpenChargeMapApiWrapper(
         minPower: Double?,
         connectorsVal: MultipleChoiceFilterValue?,
         minConnectors: Int?,
-        referenceData: OCMReferenceData,
-        zoom: Float
+        referenceData: OCMReferenceData
     ): List<ChargepointListItem> {
         // apply filters which OCM does not support natively
-        var result = chargers.filter { it ->
+        return chargers.filter { it ->
             it.connections
                 .filter { it.power == null || it.power >= (minPower ?: 0.0) }
                 .filter { if (connectorsVal != null && !connectorsVal.all) it.connectionTypeId in connectorsVal.values.map { it.toLong() } else true }
                 .sumOf { it.quantity ?: 1 } >= (minConnectors ?: 0)
         }.map { it.convert(referenceData, false) }.distinct() as List<ChargepointListItem>
-
-        // apply clustering
-        val useClustering = zoom < clusterThreshold
-        if (useClustering) {
-            val clusterDistance = getClusterDistance(zoom)
-            Dispatchers.IO.run {
-                result = cluster(result, zoom, clusterDistance!!)
-            }
-        }
-        return result
     }
 
     override suspend fun getChargepointDetail(

@@ -327,16 +327,16 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
                     b.northeast.latitude,
                     b.southwest.longitude,
                     b.northeast.longitude
-                ).map { it.charger } as List<ChargepointListItem>
+                ).map { it.charger }
 
                 val clusterDistance = getClusterDistance(mapPosition.zoom)
-                clusterDistance?.let {
-                    chargers = cluster(chargers, mapPosition.zoom, clusterDistance)
-                }
+                val chargersClustered = clusterDistance?.let {
+                    cluster(chargers, mapPosition.zoom, clusterDistance)
+                } ?: chargers
                 filteredConnectors.value = null
                 filteredMinPower.value = null
                 filteredChargeCards.value = null
-                chargepoints.value = Resource.success(chargers)
+                chargepoints.value = Resource.success(chargersClustered)
                 return@throttleLatest
             }
 

@@ -8,15 +8,18 @@ import com.car2go.maps.model.LatLng
 import com.car2go.maps.model.LatLngBounds
 import com.car2go.maps.util.SphericalUtil
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import net.vonforst.evmap.api.ChargepointApi
 import net.vonforst.evmap.api.StringProvider
 import net.vonforst.evmap.api.goingelectric.GEReferenceData
 import net.vonforst.evmap.api.goingelectric.GoingElectricApiWrapper
 import net.vonforst.evmap.api.openchargemap.OpenChargeMapApiWrapper
 import net.vonforst.evmap.model.*
+import net.vonforst.evmap.ui.cluster
 import net.vonforst.evmap.viewmodel.Resource
 import net.vonforst.evmap.viewmodel.Status
 import net.vonforst.evmap.viewmodel.await
+import net.vonforst.evmap.viewmodel.getClusterDistance
 import kotlin.math.sqrt
 
 @Dao
@@ -59,13 +62,17 @@ abstract class ChargeLocationsDao {
 
 /**
  * The ChargeLocationsRepository wraps the ChargepointApi and the DB to provide caching
- * functionality.
+ * and clustering functionality.
  */
 class ChargeLocationsRepository(
     api: ChargepointApi<ReferenceData>, private val scope: CoroutineScope,
     private val db: AppDatabase, private val prefs: PreferenceDataSource
 ) {
     val api = MutableLiveData<ChargepointApi<ReferenceData>>().apply { value = api }
+
+    // if zoom level is below this value, server-side clustering will be used (if the API provides it)
+    val serverSideClusteringThreshold = 9f
+    private fun shouldUseServerSideClustering(zoom: Float) = zoom < serverSideClusteringThreshold
 
     val referenceData = this.api.switchMap { api ->
         when (api) {
@@ -93,41 +100,6 @@ class ChargeLocationsRepository(
 
     private val chargeLocationsDao = db.chargeLocationsDao()
 
-    private fun queryWithFilters(
-        api: ChargepointApi<ReferenceData>,
-        filters: FilterValues,
-        bounds: LatLngBounds
-    ) = try {
-        val query = api.convertFiltersToSQL(filters)
-        val sql = StringBuilder().apply {
-            append("SELECT")
-            if (query.requiresChargeCardQuery or query.requiresChargepointQuery) {
-                append(" DISTINCT chargelocation.*")
-            } else {
-                append(" *")
-            }
-            append(" FROM chargelocation")
-            if (query.requiresChargepointQuery) {
-                append(" JOIN json_each(chargelocation.chargepoints) AS cp")
-            }
-            if (query.requiresChargeCardQuery) {
-                append(" JOIN json_each(chargelocation.chargecards) AS cc")
-            }
-            append(" WHERE dataSource == '${prefs.dataSource}'")
-            append(" AND Within(coordinates, BuildMbr(${bounds.southwest.longitude}, ${bounds.southwest.latitude}, ${bounds.northeast.longitude}, ${bounds.northeast.latitude})) ")
-            append(query.query)
-        }.toString()
-
-        chargeLocationsDao.getChargeLocationsCustom(
-            SimpleSQLiteQuery(
-                sql,
-                null
-            )
-        ) as LiveData<List<ChargepointListItem>>
-    } catch (e: NotImplementedError) {
-        MutableLiveData()  // in this case we cannot get a DB result
-    }
-
     fun getChargepoints(
         bounds: LatLngBounds,
         zoom: Float,
@@ -142,14 +114,15 @@ class ChargeLocationsRepository(
                 bounds.southwest.longitude,
                 bounds.northeast.longitude,
                 prefs.dataSource
-            ) as LiveData<List<ChargepointListItem>>
+            )
         } else {
             queryWithFilters(api, filters, bounds)
-        }
+        }.map { applyLocalClustering(it, zoom) }
+        val useClustering = shouldUseServerSideClustering(zoom)
         val apiResult = liveData {
             val refData = referenceData.await()
-            val result = api.getChargepoints(refData, bounds, zoom, filters)
-
+            var result = api.getChargepoints(refData, bounds, zoom, useClustering, filters)
+            result = applyLocalClustering(result, zoom)
             emit(result)
             if (result.status == Status.SUCCESS) {
                 chargeLocationsDao.insertOrReplaceIfNoDetailedExists(
@@ -181,15 +154,17 @@ class ChargeLocationsRepository(
                 bounds.northeast.latitude,
                 bounds.southwest.longitude,
                 bounds.northeast.longitude,
-                prefs.dataSource,
-            ) as LiveData<List<ChargepointListItem>>
+                prefs.dataSource
+            )
         } else {
             queryWithFilters(api, filters, bounds)
-        }
+        }.map { applyLocalClustering(it, zoom) }
+        val useClustering = shouldUseServerSideClustering(zoom)
         val apiResult = liveData {
             val refData = referenceData.await()
-            val result = api.getChargepointsRadius(refData, location, radius, zoom, filters)
-
+            var result =
+                    api.getChargepointsRadius(refData, location, radius, zoom,  useClustering, filters)
+                result = applyLocalClustering(result, zoom)
             emit(result)
             if (result.status == Status.SUCCESS) {
                 chargeLocationsDao.insertOrReplaceIfNoDetailedExists(
@@ -199,6 +174,32 @@ class ChargeLocationsRepository(
             }
         }
         return CacheLiveData(dbResult, apiResult)
+    }
+
+    private fun applyLocalClustering(
+        result: Resource<List<ChargepointListItem>>,
+        zoom: Float
+    ): Resource<List<ChargepointListItem>> {
+        val list = result.data ?: return result
+        val chargers = list.filterIsInstance<ChargeLocation>()
+
+        if (chargers.size != list.size) return result  // list already contains clusters
+
+        return result.copy(data = applyLocalClustering(chargers, zoom))
+    }
+
+    private fun applyLocalClustering(
+        chargers: List<ChargeLocation>,
+        zoom: Float
+    ): List<ChargepointListItem> {
+        val clusterDistance = getClusterDistance(zoom)
+
+        val chargersClustered = if (clusterDistance != null) {
+            Dispatchers.IO.run {
+                cluster(chargers, zoom, clusterDistance)
+            }
+        } else chargers
+        return chargersClustered
     }
 
     fun getChargepointDetail(
@@ -238,5 +239,40 @@ class ChargeLocationsRepository(
                 null
             }
         }
+    }
+
+    private fun queryWithFilters(
+        api: ChargepointApi<ReferenceData>,
+        filters: FilterValues,
+        bounds: LatLngBounds
+    ) = try {
+        val query = api.convertFiltersToSQL(filters)
+        val sql = StringBuilder().apply {
+            append("SELECT")
+            if (query.requiresChargeCardQuery or query.requiresChargepointQuery) {
+                append(" DISTINCT chargelocation.*")
+            } else {
+                append(" *")
+            }
+            append(" FROM chargelocation")
+            if (query.requiresChargepointQuery) {
+                append(" JOIN json_each(chargelocation.chargepoints) AS cp")
+            }
+            if (query.requiresChargeCardQuery) {
+                append(" JOIN json_each(chargelocation.chargecards) AS cc")
+            }
+            append(" WHERE dataSource == '${prefs.dataSource}'")
+            append(" AND Within(coordinates, BuildMbr(${bounds.southwest.longitude}, ${bounds.southwest.latitude}, ${bounds.northeast.longitude}, ${bounds.northeast.latitude})) ")
+            append(query.query)
+        }.toString()
+
+        chargeLocationsDao.getChargeLocationsCustom(
+            SimpleSQLiteQuery(
+                sql,
+                null
+            )
+        )
+    } catch (e: NotImplementedError) {
+        MutableLiveData()  // in this case we cannot get a DB result
     }
 }

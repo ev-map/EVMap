@@ -10,13 +10,10 @@ import net.vonforst.evmap.model.Coordinate
 
 
 fun cluster(
-    result: List<ChargepointListItem>,
+    locations: List<ChargeLocation>,
     zoom: Float,
     clusterDistance: Int
 ): List<ChargepointListItem> {
-    val clusters = result.filterIsInstance<ChargeLocationCluster>()
-    val locations = result.filterIsInstance<ChargeLocation>()
-
     val clusterItems = locations.map { ChargepointClusterItem(it) }
 
     val algo = NonHierarchicalDistanceBasedAlgorithm<ChargepointClusterItem>()
@@ -28,7 +25,7 @@ fun cluster(
         } else {
             ChargeLocationCluster(it.size, Coordinate(it.position.latitude, it.position.longitude))
         }
-    } + clusters
+    }
 }
 
 private class ChargepointClusterItem(val charger: ChargeLocation) : ClusterItem {

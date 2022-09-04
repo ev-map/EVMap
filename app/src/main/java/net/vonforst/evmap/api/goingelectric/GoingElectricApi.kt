@@ -13,7 +13,6 @@ import net.vonforst.evmap.BuildConfig
 import net.vonforst.evmap.R
 import net.vonforst.evmap.api.*
 import net.vonforst.evmap.model.*
-import net.vonforst.evmap.ui.cluster
 import net.vonforst.evmap.viewmodel.Resource
 import net.vonforst.evmap.viewmodel.getClusterDistance
 import okhttp3.Cache
@@ -126,7 +125,6 @@ class GoingElectricApiWrapper(
     baseurl: String = "https://api.goingelectric.de",
     context: Context? = null
 ) : ChargepointApi<GEReferenceData> {
-    private val clusterThreshold = 11f
     val api = GoingElectricApi.create(apikey, baseurl, context)
 
     override val name = "GoingElectric.de"
@@ -136,6 +134,7 @@ class GoingElectricApiWrapper(
         referenceData: ReferenceData,
         bounds: LatLngBounds,
         zoom: Float,
+        useClustering: Boolean,
         filters: FilterValues?
     ): Resource<List<ChargepointListItem>> {
         val freecharging = filters?.getBooleanValue("freecharging")
@@ -175,7 +174,6 @@ class GoingElectricApiWrapper(
         val categories = formatMultipleChoice(categoriesVal)
 
         // do not use clustering if filters need to be applied locally.
-        val useClustering = zoom < clusterThreshold
         val geClusteringAvailable = minConnectors == null || minConnectors <= 1
         val useGeClustering = useClustering && geClusteringAvailable
         val clusterDistance = if (useClustering) getClusterDistance(zoom) else null
@@ -217,7 +215,7 @@ class GoingElectricApiWrapper(
             }
         } while (startkey != null && startkey < 10000)
 
-        var result = postprocessResult(data, minPower, connectorsVal, minConnectors, zoom)
+        var result = postprocessResult(data, minPower, connectorsVal, minConnectors)
 
         return Resource.success(result)
     }
@@ -230,6 +228,7 @@ class GoingElectricApiWrapper(
         location: LatLng,
         radius: Int,
         zoom: Float,
+        useClustering: Boolean,
         filters: FilterValues?
     ): Resource<List<ChargepointListItem>> {
         val freecharging = filters?.getBooleanValue("freecharging")
@@ -269,7 +268,6 @@ class GoingElectricApiWrapper(
         val categories = formatMultipleChoice(categoriesVal)
 
         // do not use clustering if filters need to be applied locally.
-        val useClustering = zoom < clusterThreshold
         val geClusteringAvailable = minConnectors == null || minConnectors <= 1
         val useGeClustering = useClustering && geClusteringAvailable
         val clusterDistance = if (useClustering) getClusterDistance(zoom) else null
@@ -308,7 +306,7 @@ class GoingElectricApiWrapper(
             }
         } while (startkey != null && startkey < 10000)
 
-        val result = postprocessResult(data, minPower, connectorsVal, minConnectors, zoom)
+        val result = postprocessResult(data, minPower, connectorsVal, minConnectors)
         return Resource.success(result)
     }
 
@@ -316,11 +314,10 @@ class GoingElectricApiWrapper(
         chargers: List<GEChargepointListItem>,
         minPower: Int?,
         connectorsVal: MultipleChoiceFilterValue?,
-        minConnectors: Int?,
-        zoom: Float
+        minConnectors: Int?
     ): List<ChargepointListItem> {
         // apply filters which GoingElectric does not support natively
-        var result = chargers.filter { it ->
+        return chargers.filter { it ->
             if (it is GEChargeLocation) {
                 it.chargepoints
                     .filter { it.power >= (minPower ?: 0) }
@@ -330,18 +327,6 @@ class GoingElectricApiWrapper(
                 true
             }
         }.map { it.convert(apikey, false) }
-
-        // apply clustering
-        val useClustering = zoom < clusterThreshold
-        val geClusteringAvailable = minConnectors == null || minConnectors <= 1
-        val clusterDistance = if (useClustering) getClusterDistance(zoom) else null
-        if (!geClusteringAvailable && useClustering) {
-            // apply local clustering if server side clustering is not available
-            Dispatchers.IO.run {
-                result = cluster(result, zoom, clusterDistance!!)
-            }
-        }
-        return result
     }
 
     override suspend fun getChargepointDetail(

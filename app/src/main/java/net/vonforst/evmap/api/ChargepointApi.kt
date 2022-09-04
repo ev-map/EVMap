@@ -14,6 +14,7 @@ interface ChargepointApi<out T : ReferenceData> {
         referenceData: ReferenceData,
         bounds: LatLngBounds,
         zoom: Float,
+        useClustering: Boolean,
         filters: FilterValues?
     ): Resource<List<ChargepointListItem>>
 
@@ -22,6 +23,7 @@ interface ChargepointApi<out T : ReferenceData> {
         location: LatLng,
         radius: Int,
         zoom: Float,
+        useClustering: Boolean,
         filters: FilterValues?
     ): Resource<List<ChargepointListItem>>
 

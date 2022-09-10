@@ -1,6 +1,7 @@
 package net.vonforst.evmap.storage
 
 import androidx.room.TypeConverter
+import co.anbora.labs.spatia.geometry.Point
 import com.car2go.maps.model.LatLng
 import com.car2go.maps.model.LatLngBounds
 import com.squareup.moshi.Moshi
@@ -12,6 +13,7 @@ import net.vonforst.evmap.autocomplete.AutocompletePlaceType
 import net.vonforst.evmap.model.ChargeCardId
 import net.vonforst.evmap.model.Chargepoint
 import net.vonforst.evmap.model.ChargerPhoto
+import net.vonforst.evmap.model.Coordinate
 import java.time.Instant
 import java.time.LocalTime
 
@@ -153,5 +155,16 @@ class Converters {
     @TypeConverter
     fun toAutocompletePlaceTypeList(value: String): List<AutocompletePlaceType> {
         return value.split(",").map { AutocompletePlaceType.valueOf(it) }
+    }
+
+    @TypeConverter
+    fun toCoordinate(value: Point): Coordinate {
+        if (value.srid != 4326) throw IllegalArgumentException("expected WGS-84")
+        return Coordinate(value.y, value.x)
+    }
+
+    @TypeConverter
+    fun fromCoordinate(value: Coordinate): Point {
+        return Point(value.lng, value.lat)
     }
 }

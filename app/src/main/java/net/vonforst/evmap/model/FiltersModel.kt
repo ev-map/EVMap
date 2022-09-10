@@ -6,6 +6,7 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import net.vonforst.evmap.adapter.Equatable
 import net.vonforst.evmap.storage.FilterProfile
+import java.net.URLEncoder
 import kotlin.reflect.KClass
 
 sealed class Filter<out T : FilterValue> : Equatable {
@@ -51,6 +52,8 @@ sealed class FilterValue : BaseObservable(), Equatable {
     var profile: Long = FILTERS_CUSTOM
 
     abstract fun hasSameValueAs(other: FilterValue): Boolean
+
+    abstract fun serializeValue(): String
 }
 
 @Entity(
@@ -72,6 +75,8 @@ data class BooleanFilterValue(
     override fun hasSameValueAs(other: FilterValue): Boolean {
         return other is BooleanFilterValue && other.value == this.value
     }
+
+    override fun serializeValue(): String = value.toString()
 }
 
 @Entity(
@@ -99,6 +104,12 @@ data class MultipleChoiceFilterValue(
             !this.all && other.values == this.values
         }
     }
+
+    override fun serializeValue(): String = if (all) {
+        "ALL"
+    } else {
+        "[" + values.sorted().joinToString(",") { URLEncoder.encode(it, "UTF-8") } + "]"
+    }
 }
 
 @Entity(
@@ -120,6 +131,8 @@ data class SliderFilterValue(
     override fun hasSameValueAs(other: FilterValue): Boolean {
         return other is SliderFilterValue && other.value == this.value
     }
+
+    override fun serializeValue() = value.toString()
 }
 
 data class FilterWithValue<T : FilterValue>(val filter: Filter<T>, val value: T) : Equatable
@@ -137,6 +150,9 @@ fun FilterValues.getMultipleChoiceFilter(key: String) =
 
 fun FilterValues.getMultipleChoiceValue(key: String) =
     this.find { it.value.key == key }?.value as MultipleChoiceFilterValue?
+
+fun FilterValues.serialize() = this.sortedBy { it.value.key }
+    .joinToString(",") { it.value.key + "=" + it.value.serializeValue() }
 
 const val FILTERS_DISABLED = -2L
 const val FILTERS_CUSTOM = -1L

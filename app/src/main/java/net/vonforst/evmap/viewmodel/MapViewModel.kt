@@ -1,9 +1,11 @@
 package net.vonforst.evmap.viewmodel
 
 import android.app.Application
+import android.graphics.Point
 import android.os.Parcelable
 import androidx.lifecycle.*
 import com.car2go.maps.AnyMap
+import com.car2go.maps.Projection
 import com.car2go.maps.model.LatLng
 import com.car2go.maps.model.LatLngBounds
 import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike
@@ -42,6 +44,7 @@ import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
+import kotlin.math.roundToInt
 
 @Parcelize
 data class MapPosition(val bounds: LatLngBounds, val zoom: Float) : Parcelable
@@ -66,6 +69,7 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
         prefs
     )
     private val availabilityRepo = AvailabilityRepository(application)
+    var mapProjection: Projection? = null
 
     val apiId = repo.api.map { it.id }
 
@@ -516,34 +520,34 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
             val mapPosition = data.first
             val filters = data.second
 
+            val bounds = extendBounds(mapPosition.bounds)
             if (filterStatus.value == FILTERS_FAVORITES) {
                 // load favorites from local DB
-                val b = mapPosition.bounds
-                var chargers = db.favoritesDao().getFavoritesInBoundsAsync(
-                    b.southwest.latitude,
-                    b.northeast.latitude,
-                    b.southwest.longitude,
-                    b.northeast.longitude
-                ).map { it.charger } as List<ChargepointListItem>
+                val chargers = db.favoritesDao().getFavoritesInBoundsAsync(
+                    bounds.southwest.latitude,
+                    bounds.northeast.latitude,
+                    bounds.southwest.longitude,
+                    bounds.northeast.longitude
+                ).map { it.charger }
 
                 val clusterDistance = getClusterDistance(mapPosition.zoom)
-                clusterDistance?.let {
-                    chargers = cluster(chargers, mapPosition.zoom, clusterDistance)
-                }
+                val chargersClustered = clusterDistance?.let {
+                    cluster(chargers, mapPosition.zoom, clusterDistance)
+                } ?: chargers
                 filteredConnectors.value = null
                 filteredMinPower.value = null
                 filteredChargeCards.value = null
-                chargepoints.value = Resource.success(chargers)
+                chargepoints.value = Resource.success(chargersClustered)
                 return@throttleLatest
             }
 
-            val result = repo.getChargepoints(mapPosition.bounds, mapPosition.zoom, filters)
+            val result = repo.getChargepoints(bounds, mapPosition.zoom, filters)
             chargepointsInternal?.let { chargepoints.removeSource(it) }
             chargepointsInternal = result
             chargepoints.addSource(result) {
                 val apiId = apiId.value
                 when (apiId) {
-                    "going_electric" -> {
+                    "goingelectric" -> {
                         val chargeCardsVal = filters.getMultipleChoiceValue("chargecards")!!
                         filteredChargeCards.value =
                             if (chargeCardsVal.all) null else chargeCardsVal.values.map { it.toLong() }
@@ -556,7 +560,8 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
                             }.toSet()
                         filteredMinPower.value = filters.getSliderValue("min_power")
                     }
-                    "open_charge_map" -> {
+
+                    "openchargemap" -> {
                         val connectorsVal = filters.getMultipleChoiceValue("connectors")!!
                         filteredConnectors.value =
                             if (connectorsVal.all) null else connectorsVal.values.map {
@@ -577,6 +582,20 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
                 chargepoints.value = it
             }
         }
+
+    /**
+     * expands LatLngBounds beyond the viewport (1.5x the width and height)
+     */
+    private fun extendBounds(bounds: LatLngBounds): LatLngBounds {
+        val mapProjection = mapProjection ?: return bounds
+        val swPoint = mapProjection.toScreenLocation(bounds.southwest)
+        val nePoint = mapProjection.toScreenLocation(bounds.northeast)
+        val dx = ((nePoint.x - swPoint.x) * 0.25).roundToInt()
+        val dy = ((nePoint.y - swPoint.y) * 0.25).roundToInt()
+        val newSw = mapProjection.fromScreenLocation(Point(swPoint.x - dx, swPoint.y - dy))
+        val newNe = mapProjection.fromScreenLocation(Point(nePoint.x + dx, nePoint.y + dy))
+        return LatLngBounds(newSw, newNe)
+    }
 
     fun reloadAvailability() {
         triggerAvailabilityRefresh.value = true

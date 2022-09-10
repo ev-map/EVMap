@@ -428,14 +428,15 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                 } else {
                     // try multiple search radii until we have enough chargers
                     var chargers: List<ChargeLocation>? = null
-                    for (radius in listOf(searchRadius, searchRadius * 10, searchRadius * 50)) {
+                    val radiusValues = listOf(searchRadius, searchRadius * 10, searchRadius * 50)
+                    for (radius in radiusValues) {
                         val response = repo.getChargepointsRadius(
                             searchLocation,
                             radius,
                             zoom = 16f,
                             filtersWithValue
                         ).awaitFinished()
-                        if (response.status == Status.ERROR) {
+                        if (response.status == Status.ERROR && if (radius == radiusValues.last()) response.data.isNullOrEmpty() else response.data == null) {
                             loadingError = true
                             this@MapScreen.chargers = null
                             invalidate()

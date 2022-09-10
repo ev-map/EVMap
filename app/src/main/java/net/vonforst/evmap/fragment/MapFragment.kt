@@ -422,7 +422,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                     val charger = vm.charger.value?.data
                     if (charger?.editUrl != null) {
                         (activity as? MapsActivity)?.openUrl(charger.editUrl)
-                        if (vm.apiId.value == "going_electric") {
+                        if (vm.apiId.value == "goingelectric") {
                             // instructions specific to GoingElectric
                             Toast.makeText(
                                 requireContext(),
@@ -606,6 +606,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             }
         }
         vm.chargepoints.observe(viewLifecycleOwner, Observer { res ->
+            val chargepoints = res.data
+            if (chargepoints != null) {
+                updateMap(chargepoints)
+            }
             when (res.status) {
                 Status.ERROR -> {
                     val view = view ?: return@Observer
@@ -624,11 +628,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 }
                 Status.LOADING -> {
                 }
-            }
-
-            val chargepoints = res.data
-            if (chargepoints != null) {
-                updateMap(chargepoints)
             }
         })
         vm.useMiniMarkers.observe(viewLifecycleOwner) {
@@ -861,6 +860,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
     override fun onMapReady(map: AnyMap) {
         this.map = map
+        vm.mapProjection = map.projection
         val context = this.context ?: return
         chargerIconGenerator = ChargerIconGenerator(context, map.bitmapDescriptorFactory)
 
@@ -885,12 +885,14 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         map.uiSettings.setIndoorLevelPickerEnabled(false)
 
         map.setOnCameraIdleListener {
+            vm.mapProjection = map.projection
             vm.mapPosition.value = MapPosition(
                 map.projection.visibleRegion.latLngBounds, map.cameraPosition.zoom
             )
             vm.reloadChargepoints()
         }
         map.setOnCameraMoveListener {
+            vm.mapProjection = map.projection
             vm.mapPosition.value = MapPosition(
                 map.projection.visibleRegion.latLngBounds, map.cameraPosition.zoom
             )

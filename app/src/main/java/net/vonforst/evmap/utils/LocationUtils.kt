@@ -16,18 +16,28 @@ import kotlin.math.*
  * Adds a certain distance in meters to a location. Approximate calculation.
  */
 fun Location.plusMeters(dx: Double, dy: Double): Pair<Double, Double> {
-    val lat = this.latitude + (180 / Math.PI) * (dx / 6378137.0)
-    val lon = this.longitude + (180 / Math.PI) * (dy / 6378137.0) / cos(Math.toRadians(lat))
+    val lat = this.latitude + (180 / Math.PI) * (dx / earthRadiusM)
+    val lon = this.longitude + (180 / Math.PI) * (dy / earthRadiusM) / cos(Math.toRadians(lat))
     return Pair(lat, lon)
 }
 
 fun LatLng.plusMeters(dx: Double, dy: Double): LatLng {
-    val lat = this.latitude + (180 / Math.PI) * (dx / 6378137.0)
-    val lon = this.longitude + (180 / Math.PI) * (dy / 6378137.0) / cos(Math.toRadians(lat))
+    val lat = this.latitude + (180 / Math.PI) * (dx / earthRadiusM)
+    val lon = this.longitude + (180 / Math.PI) * (dy / earthRadiusM) / cos(Math.toRadians(lat))
     return LatLng(lat, lon)
 }
 
 const val earthRadiusM = 6378137.0
+
+/**
+ * Approximates a geodesic circle as an ellipse in geographical coordinates by giving its radius
+ * in latitude and longitude in degrees.
+ */
+fun circleAsEllipse(lat: Double, lng: Double, radius: Double): Pair<Double, Double> {
+    val radiusLat = (180 / Math.PI) * (radius / earthRadiusM)
+    val radiusLon = (180 / Math.PI) * (radius / earthRadiusM) / cos(Math.toRadians(lat))
+    return radiusLat to radiusLon
+}
 
 /**
  * Calculates the distance between two points on Earth in meters.

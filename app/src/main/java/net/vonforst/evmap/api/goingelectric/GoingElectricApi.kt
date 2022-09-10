@@ -13,7 +13,6 @@ import net.vonforst.evmap.R
 import net.vonforst.evmap.addDebugInterceptors
 import net.vonforst.evmap.api.*
 import net.vonforst.evmap.model.*
-import net.vonforst.evmap.ui.cluster
 import net.vonforst.evmap.viewmodel.Resource
 import net.vonforst.evmap.viewmodel.getClusterDistance
 import okhttp3.Cache
@@ -23,6 +22,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.*
 import java.io.IOException
+import java.time.Duration
 
 interface GoingElectricApi {
     @FormUrlEncoded
@@ -126,18 +126,19 @@ class GoingElectricApiWrapper(
     baseurl: String = "https://api.goingelectric.de",
     context: Context? = null
 ) : ChargepointApi<GEReferenceData> {
-    private val clusterThreshold = 11f
     val api = GoingElectricApi.create(apikey, baseurl, context)
 
     override val name = "GoingElectric.de"
-    override val id = "going_electric"
+    override val id = "goingelectric"
+    override val cacheLimit = Duration.ofDays(1)
 
     override suspend fun getChargepoints(
         referenceData: ReferenceData,
         bounds: LatLngBounds,
         zoom: Float,
+        useClustering: Boolean,
         filters: FilterValues?
-    ): Resource<List<ChargepointListItem>> {
+    ): Resource<ChargepointList> {
         val freecharging = filters?.getBooleanValue("freecharging")
         val freeparking = filters?.getBooleanValue("freeparking")
         val open247 = filters?.getBooleanValue("open_247")
@@ -149,33 +150,32 @@ class GoingElectricApiWrapper(
         val connectorsVal = filters?.getMultipleChoiceValue("connectors")
         if (connectorsVal != null && connectorsVal.values.isEmpty() && !connectorsVal.all) {
             // no connectors chosen
-            return Resource.success(emptyList())
+            return Resource.success(ChargepointList.empty())
         }
         val connectors = formatMultipleChoice(connectorsVal)
 
         val chargeCardsVal = filters?.getMultipleChoiceValue("chargecards")
         if (chargeCardsVal != null && chargeCardsVal.values.isEmpty() && !chargeCardsVal.all) {
             // no chargeCards chosen
-            return Resource.success(emptyList())
+            return Resource.success(ChargepointList.empty())
         }
         val chargeCards = formatMultipleChoice(chargeCardsVal)
 
         val networksVal = filters?.getMultipleChoiceValue("networks")
         if (networksVal != null && networksVal.values.isEmpty() && !networksVal.all) {
             // no networks chosen
-            return Resource.success(emptyList())
+            return Resource.success(ChargepointList.empty())
         }
         val networks = formatMultipleChoice(networksVal)
 
         val categoriesVal = filters?.getMultipleChoiceValue("categories")
         if (categoriesVal != null && categoriesVal.values.isEmpty() && !categoriesVal.all) {
             // no categories chosen
-            return Resource.success(emptyList())
+            return Resource.success(ChargepointList.empty())
         }
         val categories = formatMultipleChoice(categoriesVal)
 
         // do not use clustering if filters need to be applied locally.
-        val useClustering = zoom < clusterThreshold
         val geClusteringAvailable = minConnectors == null || minConnectors <= 1
         val useGeClustering = useClustering && geClusteringAvailable
         val clusterDistance = if (useClustering) getClusterDistance(zoom) else null
@@ -217,9 +217,9 @@ class GoingElectricApiWrapper(
             }
         } while (startkey != null && startkey < 10000)
 
-        val result = postprocessResult(data, minPower, connectorsVal, minConnectors, zoom)
+        val result = postprocessResult(data, minPower, connectorsVal, minConnectors)
 
-        return Resource.success(result)
+        return Resource.success(ChargepointList(result, startkey == null))
     }
 
     private fun formatMultipleChoice(value: MultipleChoiceFilterValue?) =
@@ -230,8 +230,9 @@ class GoingElectricApiWrapper(
         location: LatLng,
         radius: Int,
         zoom: Float,
+        useClustering: Boolean,
         filters: FilterValues?
-    ): Resource<List<ChargepointListItem>> {
+    ): Resource<ChargepointList> {
         val freecharging = filters?.getBooleanValue("freecharging")
         val freeparking = filters?.getBooleanValue("freeparking")
         val open247 = filters?.getBooleanValue("open_247")
@@ -243,33 +244,32 @@ class GoingElectricApiWrapper(
         val connectorsVal = filters?.getMultipleChoiceValue("connectors")
         if (connectorsVal != null && connectorsVal.values.isEmpty() && !connectorsVal.all) {
             // no connectors chosen
-            return Resource.success(emptyList())
+            return Resource.success(ChargepointList.empty())
         }
         val connectors = formatMultipleChoice(connectorsVal)
 
         val chargeCardsVal = filters?.getMultipleChoiceValue("chargecards")
         if (chargeCardsVal != null && chargeCardsVal.values.isEmpty() && !chargeCardsVal.all) {
             // no chargeCards chosen
-            return Resource.success(emptyList())
+            return Resource.success(ChargepointList.empty())
         }
         val chargeCards = formatMultipleChoice(chargeCardsVal)
 
         val networksVal = filters?.getMultipleChoiceValue("networks")
         if (networksVal != null && networksVal.values.isEmpty() && !networksVal.all) {
             // no networks chosen
-            return Resource.success(emptyList())
+            return Resource.success(ChargepointList.empty())
         }
         val networks = formatMultipleChoice(networksVal)
 
         val categoriesVal = filters?.getMultipleChoiceValue("categories")
         if (categoriesVal != null && categoriesVal.values.isEmpty() && !categoriesVal.all) {
             // no categories chosen
-            return Resource.success(emptyList())
+            return Resource.success(ChargepointList.empty())
         }
         val categories = formatMultipleChoice(categoriesVal)
 
         // do not use clustering if filters need to be applied locally.
-        val useClustering = zoom < clusterThreshold
         val geClusteringAvailable = minConnectors == null || minConnectors <= 1
         val useGeClustering = useClustering && geClusteringAvailable
         val clusterDistance = if (useClustering) getClusterDistance(zoom) else null
@@ -308,19 +308,18 @@ class GoingElectricApiWrapper(
             }
         } while (startkey != null && startkey < 10000)
 
-        val result = postprocessResult(data, minPower, connectorsVal, minConnectors, zoom)
-        return Resource.success(result)
+        val result = postprocessResult(data, minPower, connectorsVal, minConnectors)
+        return Resource.success(ChargepointList(result, startkey == null))
     }
 
     private fun postprocessResult(
         chargers: List<GEChargepointListItem>,
         minPower: Int?,
         connectorsVal: MultipleChoiceFilterValue?,
-        minConnectors: Int?,
-        zoom: Float
+        minConnectors: Int?
     ): List<ChargepointListItem> {
         // apply filters which GoingElectric does not support natively
-        var result = chargers.filter { it ->
+        return chargers.filter { it ->
             if (it is GEChargeLocation) {
                 it.chargepoints
                     .filter { it.power >= (minPower ?: 0) }
@@ -330,18 +329,6 @@ class GoingElectricApiWrapper(
                 true
             }
         }.map { it.convert(apikey, false) }
-
-        // apply clustering
-        val useClustering = zoom < clusterThreshold
-        val geClusteringAvailable = minConnectors == null || minConnectors <= 1
-        val clusterDistance = if (useClustering) getClusterDistance(zoom) else null
-        if (!geClusteringAvailable && useClustering) {
-            // apply local clustering if server side clustering is not available
-            Dispatchers.IO.run {
-                result = cluster(result, zoom, clusterDistance!!)
-            }
-        }
-        return result
     }
 
     override suspend fun getChargepointDetail(
@@ -480,6 +467,84 @@ class GoingElectricApiWrapper(
                 manyChoices = true
             )
         )
+    }
+
+    override fun convertFiltersToSQL(
+        filters: FilterValues,
+        referenceData: ReferenceData
+    ): FiltersSQLQuery {
+        if (filters.isEmpty()) return FiltersSQLQuery("", false, false)
+        var requiresChargepointQuery = false
+        var requiresChargeCardQuery = false
+
+        val result = StringBuilder()
+        if (filters.getBooleanValue("freecharging") == true) {
+            result.append(" AND freecharging IS 1")
+        }
+        if (filters.getBooleanValue("freeparking") == true) {
+            result.append(" AND freeparking IS 1")
+        }
+        if (filters.getBooleanValue("open_247") == true) {
+            result.append(" AND twentyfourSeven IS 1")
+        }
+        if (filters.getBooleanValue("barrierfree") == true) {
+            result.append(" AND barrierFree IS 1")
+        }
+        if (filters.getBooleanValue("exclude_faults") == true) {
+            result.append(" AND fault_report_description IS NULL AND fault_report_created IS NULL")
+        }
+
+        val minPower = filters.getSliderValue("min_power")
+        if (minPower != null && minPower > 0) {
+            result.append(" AND json_extract(cp.value, '$.power') >= ${minPower}")
+            requiresChargepointQuery = true
+        }
+
+        val connectors = filters.getMultipleChoiceValue("connectors")
+        if (connectors != null && !connectors.all) {
+            val connectorsList = if (connectors.values.size == 0) {
+                ""
+            } else {
+                "'" + connectors.values.joinToString("', '") { GEChargepoint.convertTypeFromGE(it) } + "'"
+            }
+            result.append(" AND json_extract(cp.value, '$.type') IN (${connectorsList})")
+            requiresChargepointQuery = true
+        }
+
+        val networks = filters.getMultipleChoiceValue("networks")
+        if (networks != null && !networks.all) {
+            val networksList = if (networks.values.size == 0) {
+                ""
+            } else {
+                "'" + networks.values.joinToString("', '") + "'"
+            }
+            result.append(" AND network IN (${networksList})")
+        }
+
+        val chargecards = filters.getMultipleChoiceValue("chargecards")
+        if (chargecards != null && !chargecards.all) {
+            val chargecardsList = if (chargecards.values.size == 0) {
+                ""
+            } else {
+                chargecards.values.joinToString(",")
+            }
+            result.append(" AND json_extract(cc.value, '$.id') IN (${chargecardsList})")
+            requiresChargeCardQuery = true
+        }
+
+        val categories = filters.getMultipleChoiceValue("categories")
+        if (categories != null && !categories.all) {
+            throw NotImplementedError()  // category cannot be determined in SQL
+        }
+
+
+        val minConnectors = filters.getSliderValue("min_connectors")
+        if (minConnectors != null && minConnectors > 1) {
+            result.append(" GROUP BY ChargeLocation.id HAVING COUNT(1) >= ${minConnectors}")
+            requiresChargepointQuery = true
+        }
+
+        return FiltersSQLQuery(result.toString(), requiresChargepointQuery, requiresChargeCardQuery)
     }
 }
 

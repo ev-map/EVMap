@@ -32,12 +32,13 @@ import net.vonforst.evmap.api.stringProvider
 import net.vonforst.evmap.model.ChargeLocation
 import net.vonforst.evmap.model.Favorite
 import net.vonforst.evmap.storage.AppDatabase
+import net.vonforst.evmap.storage.ChargeLocationsRepository
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.ui.ChargerIconGenerator
 import net.vonforst.evmap.ui.availabilityText
 import net.vonforst.evmap.ui.getMarkerTint
 import net.vonforst.evmap.viewmodel.Status
-import net.vonforst.evmap.viewmodel.getReferenceData
+import net.vonforst.evmap.viewmodel.awaitFinished
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -50,10 +51,8 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
 
     val prefs = PreferenceDataSource(ctx)
     private val db = AppDatabase.getInstance(carContext)
-    private val api by lazy {
-        createApi(prefs.dataSource, ctx)
-    }
-    private val referenceData = api.getReferenceData(lifecycleScope, carContext)
+    private val repo =
+        ChargeLocationsRepository(createApi(prefs.dataSource, ctx), lifecycleScope, db, prefs)
 
     private val imageSize = 128  // images should be 128dp according to docs
     private val imageSizeLarge = 480  // images should be 480 x 480 dp according to docs
@@ -71,9 +70,7 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
     private var favoriteUpdateJob: Job? = null
 
     init {
-        referenceData.observe(this) {
-            loadCharger()
-        }
+        loadCharger()
     }
 
     override fun onGetTemplate(): Template {
@@ -356,11 +353,10 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
     }
 
     private fun loadCharger() {
-        val referenceData = referenceData.value ?: return
         lifecycleScope.launch {
             favorite = db.favoritesDao().findFavorite(chargerSparse.id, chargerSparse.dataSource)
 
-            val response = api.getChargepointDetail(referenceData, chargerSparse.id)
+            val response = repo.getChargepointDetail(chargerSparse.id).awaitFinished()
             if (response.status == Status.SUCCESS) {
                 val charger = response.data!!
 

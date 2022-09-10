@@ -8,21 +8,17 @@ import net.vonforst.evmap.api.createApi
 import net.vonforst.evmap.api.stringProvider
 import net.vonforst.evmap.model.*
 import net.vonforst.evmap.storage.AppDatabase
+import net.vonforst.evmap.storage.ChargeLocationsRepository
 import net.vonforst.evmap.storage.FilterProfile
 import net.vonforst.evmap.storage.PreferenceDataSource
 
 
 class FilterViewModel(application: Application) : AndroidViewModel(application) {
-    private var db = AppDatabase.getInstance(application)
-    private var prefs = PreferenceDataSource(application)
-    private var api: ChargepointApi<ReferenceData> = createApi(prefs.dataSource, application)
-
-    private val referenceData = api.getReferenceData(viewModelScope, application)
-    private val filters = MediatorLiveData<List<Filter<FilterValue>>>().apply {
-        addSource(referenceData) { data ->
-            value = api.getFilters(data, application.stringProvider())
-        }
-    }
+    private val db = AppDatabase.getInstance(application)
+    private val prefs = PreferenceDataSource(application)
+    private val api: ChargepointApi<ReferenceData> = createApi(prefs.dataSource, application)
+    private val repo = ChargeLocationsRepository(api, viewModelScope, db, prefs)
+    private val filters = repo.getFilters(application.stringProvider())
 
     private val filterValues: LiveData<List<FilterValue>> by lazy {
         db.filterValueDao().getFilterValues(FILTERS_CUSTOM, prefs.dataSource)

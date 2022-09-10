@@ -129,7 +129,8 @@ class GoingElectricApiWrapper(
     private val clusterThreshold = 11f
     val api = GoingElectricApi.create(apikey, baseurl, context)
 
-    override fun getName() = "GoingElectric.de"
+    override val name = "GoingElectric.de"
+    override val id = "going_electric"
 
     override suspend fun getChargepoints(
         referenceData: ReferenceData,

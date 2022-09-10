@@ -72,7 +72,6 @@ import net.vonforst.evmap.adapter.ConnectorAdapter
 import net.vonforst.evmap.adapter.DetailsAdapter
 import net.vonforst.evmap.adapter.GalleryAdapter
 import net.vonforst.evmap.adapter.PlaceAutocompleteAdapter
-import net.vonforst.evmap.api.goingelectric.GoingElectricApiWrapper
 import net.vonforst.evmap.autocomplete.ApiUnavailableException
 import net.vonforst.evmap.autocomplete.PlaceWithBounds
 import net.vonforst.evmap.bold
@@ -394,7 +393,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                     val charger = vm.charger.value?.data
                     if (charger?.editUrl != null) {
                         (activity as? MapsActivity)?.openUrl(charger.editUrl)
-                        if (vm.apiType == GoingElectricApiWrapper::class.java) {
+                        if (vm.apiId == "going_electric") {
                             // instructions specific to GoingElectric
                             Toast.makeText(
                                 requireContext(),

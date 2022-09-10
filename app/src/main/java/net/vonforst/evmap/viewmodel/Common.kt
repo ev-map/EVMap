@@ -1,45 +1,14 @@
 package net.vonforst.evmap.viewmodel
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.switchMap
-import kotlinx.coroutines.CoroutineScope
-import net.vonforst.evmap.api.ChargepointApi
-import net.vonforst.evmap.api.goingelectric.GoingElectricApiWrapper
-import net.vonforst.evmap.api.openchargemap.OpenChargeMapApiWrapper
-import net.vonforst.evmap.model.*
-import net.vonforst.evmap.storage.*
+import net.vonforst.evmap.model.Filter
+import net.vonforst.evmap.model.FilterValue
+import net.vonforst.evmap.model.FilterValues
+import net.vonforst.evmap.model.FilterWithValue
+import net.vonforst.evmap.storage.FilterValueDao
 import kotlin.reflect.full.cast
-
-fun ChargepointApi<ReferenceData>.getReferenceData(
-    scope: CoroutineScope,
-    ctx: Context
-): LiveData<out ReferenceData> {
-    val db = AppDatabase.getInstance(ctx)
-    val prefs = PreferenceDataSource(ctx)
-    return when (this) {
-        is GoingElectricApiWrapper -> {
-            GEReferenceDataRepository(
-                this,
-                scope,
-                db.geReferenceDataDao(),
-                prefs
-            ).getReferenceData()
-        }
-        is OpenChargeMapApiWrapper -> {
-            OCMReferenceDataRepository(
-                this,
-                scope,
-                db.ocmReferenceDataDao(),
-                prefs
-            ).getReferenceData()
-        }
-        else -> {
-            throw RuntimeException("no reference data implemented")
-        }
-    }
-}
 
 fun filtersWithValue(
     filters: LiveData<List<Filter<FilterValue>>>,

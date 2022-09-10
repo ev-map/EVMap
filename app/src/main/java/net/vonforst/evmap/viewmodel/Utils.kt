@@ -4,10 +4,7 @@ import android.os.Parcelable
 import androidx.annotation.MainThread
 import androidx.annotation.Nullable
 import androidx.lifecycle.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.RawValue
 import java.util.concurrent.atomic.AtomicBoolean
@@ -105,6 +102,42 @@ fun <T> throttleLatest(
             }
         } else {
             waitingParam = param
+        }
+    }
+}
+
+public suspend fun <T> LiveData<T>.await(): T {
+    return suspendCancellableCoroutine { continuation ->
+        val observer = object : Observer<T> {
+            override fun onChanged(value: T) {
+                removeObserver(this)
+                continuation.resume(value, null)
+            }
+        }
+
+        observeForever(observer)
+
+        continuation.invokeOnCancellation {
+            removeObserver(observer)
+        }
+    }
+}
+
+public suspend fun <T> LiveData<Resource<T>>.awaitFinished(): Resource<T> {
+    return suspendCancellableCoroutine { continuation ->
+        val observer = object : Observer<Resource<T>> {
+            override fun onChanged(value: Resource<T>) {
+                if (value.status != Status.LOADING) {
+                    removeObserver(this)
+                    continuation.resume(value, null)
+                }
+            }
+        }
+
+        observeForever(observer)
+
+        continuation.invokeOnCancellation {
+            removeObserver(observer)
         }
     }
 }

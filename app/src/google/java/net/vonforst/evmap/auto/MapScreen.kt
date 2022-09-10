@@ -25,13 +25,14 @@ import net.vonforst.evmap.api.stringProvider
 import net.vonforst.evmap.model.ChargeLocation
 import net.vonforst.evmap.model.FILTERS_FAVORITES
 import net.vonforst.evmap.storage.AppDatabase
+import net.vonforst.evmap.storage.ChargeLocationsRepository
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.ui.availabilityText
 import net.vonforst.evmap.ui.getMarkerTint
 import net.vonforst.evmap.utils.distanceBetween
+import net.vonforst.evmap.viewmodel.awaitFinished
 import net.vonforst.evmap.viewmodel.filtersWithValue
 import net.vonforst.evmap.viewmodel.getFilterValues
-import net.vonforst.evmap.viewmodel.getReferenceData
 import java.io.IOException
 import java.time.Duration
 import java.time.Instant
@@ -62,9 +63,8 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
     private var chargers: List<ChargeLocation>? = null
     private var prefs = PreferenceDataSource(ctx)
     private val db = AppDatabase.getInstance(carContext)
-    private val api by lazy {
-        createApi(prefs.dataSource, ctx)
-    }
+    private val repo =
+        ChargeLocationsRepository(createApi(prefs.dataSource, ctx), lifecycleScope, db, prefs)
     private val searchRadius = 5 // kilometers
     private val distanceUpdateThreshold = Duration.ofSeconds(15)
     private val availabilityUpdateThreshold = Duration.ofMinutes(1)
@@ -74,13 +74,11 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
         ctx.constraintManager.getContentLimit(ConstraintManager.CONTENT_LIMIT_TYPE_PLACE_LIST)
     } else 6
 
-    private val referenceData = api.getReferenceData(lifecycleScope, carContext)
     private val filterStatus = MutableLiveData<Long>().apply {
         value = prefs.filterStatus
     }
     private val filterValues = db.filterValueDao().getFilterValues(filterStatus, prefs.dataSource)
-    private val filters =
-        Transformations.map(referenceData) { api.getFilters(it, carContext.stringProvider()) }
+    private val filters = repo.getFilters(carContext.stringProvider())
     private val filtersWithValue = filtersWithValue(filters, filterValues)
 
     private val hardwareMan: CarHardwareManager by lazy {
@@ -307,7 +305,6 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
 
     private fun loadChargers() {
         val location = location ?: return
-        val referenceData = referenceData.value ?: return
         val filters = filtersWithValue.value ?: return
 
         val searchLocation =
@@ -326,24 +323,22 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                             )
                         }
                 } else {
-                    val response = api.getChargepointsRadius(
-                        referenceData,
+                    val response = repo.getChargepointsRadius(
                         searchLocation,
                         searchRadius,
                         zoom = 16f,
                         filters
-                    )
+                    ).awaitFinished()
                     chargers = response.data?.filterIsInstance(ChargeLocation::class.java)
                     chargers?.let {
                         if (it.size < maxRows) {
                             // try again with larger radius
-                            val response = api.getChargepointsRadius(
-                                referenceData,
+                            val response = repo.getChargepointsRadius(
                                 searchLocation,
                                 searchRadius * 10,
                                 zoom = 16f,
                                 filters
-                            )
+                            ).awaitFinished()
                             chargers =
                                 response.data?.filterIsInstance(ChargeLocation::class.java)
                         }

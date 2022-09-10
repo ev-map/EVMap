@@ -108,7 +108,8 @@ class OpenChargeMapApiWrapper(
     private val clusterThreshold = 11
     val api = OpenChargeMapApi.create(apikey, baseurl, context)
 
-    override fun getName() = "OpenChargeMap.org"
+    override val name = "OpenChargeMap.org"
+    override val id = "open_charge_map"
 
     private fun formatMultipleChoice(value: MultipleChoiceFilterValue?) =
         if (value == null || value.all) null else value.values.joinToString(",")

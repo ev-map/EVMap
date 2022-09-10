@@ -58,7 +58,7 @@ data class ChargeLocation(
     val id: Long,
     val dataSource: String,
     val name: String,
-    @Embedded val coordinates: Coordinate,
+    val coordinates: Coordinate,
     @Embedded val address: Address?,
     val chargepoints: List<Chargepoint>,
     val network: String?,
@@ -351,7 +351,8 @@ abstract class ChargerPhoto(open val id: String) : Parcelable {
 
 data class ChargeLocationCluster(
     val clusterCount: Int,
-    val coordinates: Coordinate
+    val coordinates: Coordinate,
+    val items: List<ChargeLocation>? = null
 ) : ChargepointListItem()
 
 @Parcelize

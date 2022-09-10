@@ -156,6 +156,12 @@ android {
         }
     }
 
+    packagingOptions {
+        pickFirst 'lib/x86/libc++_shared.so'
+        pickFirst 'lib/arm64-v8a/libc++_shared.so'
+        pickFirst 'lib/x86_64/libc++_shared.so'
+        pickFirst 'lib/armeabi-v7a/libc++_shared.so'
+    }
 }
 
 configurations {
@@ -203,7 +209,7 @@ dependencies {
     googleAutomotiveImplementation "androidx.car.app:app-automotive:$carAppVersion"
 
     // AnyMaps
-    def anyMapsVersion = '7fdcf50fc4'
+    def anyMapsVersion = '8f1226e1c5'
     implementation "com.github.ev-map.AnyMaps:anymaps-base:$anyMapsVersion"
     googleImplementation "com.github.ev-map.AnyMaps:anymaps-google:$anyMapsVersion"
     googleImplementation 'com.google.android.gms:play-services-maps:18.1.0'
@@ -239,6 +245,7 @@ dependencies {
     implementation "androidx.room:room-runtime:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
+    implementation 'com.github.anboralabs:spatia-room:0.2.6'
 
     // billing library
     def billing_version = "6.0.0"
@@ -261,6 +268,9 @@ dependencies {
     testImplementation "com.squareup.okhttp3:mockwebserver:4.11.0"
     //noinspection GradleDependency
     testImplementation 'org.json:json:20080701'
+    testImplementation 'org.robolectric:robolectric:4.9'
+    testImplementation 'androidx.test:core:1.5.0'
+    testImplementation 'androidx.arch.core:core-testing:2.2.0'
 
     // testing for car app
     testGoogleImplementation "androidx.car.app:app-testing:$carAppVersion"
@@ -269,6 +279,7 @@ dependencies {
 
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    androidTestImplementation 'androidx.arch.core:core-testing:2.2.0'
 
     kapt "com.squareup.moshi:moshi-kotlin-codegen:1.15.0"
 

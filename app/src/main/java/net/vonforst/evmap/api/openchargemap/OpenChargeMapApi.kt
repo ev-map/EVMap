@@ -4,15 +4,12 @@ import android.content.Context
 import com.car2go.maps.model.LatLng
 import com.car2go.maps.model.LatLngBounds
 import com.squareup.moshi.Moshi
-import kotlinx.coroutines.Dispatchers
 import net.vonforst.evmap.BuildConfig
 import net.vonforst.evmap.R
 import net.vonforst.evmap.addDebugInterceptors
 import net.vonforst.evmap.api.*
 import net.vonforst.evmap.model.*
-import net.vonforst.evmap.ui.cluster
 import net.vonforst.evmap.viewmodel.Resource
-import net.vonforst.evmap.viewmodel.getClusterDistance
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import retrofit2.Response
@@ -21,6 +18,9 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
 import java.io.IOException
+import java.time.Duration
+
+private const val maxResults = 3000
 
 interface OpenChargeMapApi {
     @GET("poi/")
@@ -30,7 +30,7 @@ interface OpenChargeMapApi {
         @Query("minpowerkw") minPower: Double? = null,
         @Query("operatorid") operators: String? = null,
         @Query("statustypeid") statusType: String? = null,
-        @Query("maxresults") maxresults: Int = 500,
+        @Query("maxresults") maxresults: Int = maxResults,
         @Query("compact") compact: Boolean = true,
         @Query("verbose") verbose: Boolean = false
     ): Response<List<OCMChargepoint>>
@@ -45,7 +45,7 @@ interface OpenChargeMapApi {
         @Query("minpowerkw") minPower: Double? = null,
         @Query("operatorid") operators: String? = null,
         @Query("statustypeid") statusType: String? = null,
-        @Query("maxresults") maxresults: Int = 500,
+        @Query("maxresults") maxresults: Int = maxResults,
         @Query("compact") compact: Boolean = true,
         @Query("verbose") verbose: Boolean = false
     ): Response<List<OCMChargepoint>>
@@ -105,11 +105,11 @@ class OpenChargeMapApiWrapper(
     baseurl: String = "https://api.openchargemap.io/v3/",
     context: Context? = null
 ) : ChargepointApi<OCMReferenceData> {
-    private val clusterThreshold = 11
+    override val cacheLimit = Duration.ofDays(300L)
     val api = OpenChargeMapApi.create(apikey, baseurl, context)
 
     override val name = "OpenChargeMap.org"
-    override val id = "open_charge_map"
+    override val id = "openchargemap"
 
     private fun formatMultipleChoice(value: MultipleChoiceFilterValue?) =
         if (value == null || value.all) null else value.values.joinToString(",")
@@ -118,8 +118,9 @@ class OpenChargeMapApiWrapper(
         referenceData: ReferenceData,
         bounds: LatLngBounds,
         zoom: Float,
+        useClustering: Boolean,
         filters: FilterValues?,
-    ): Resource<List<ChargepointListItem>> {
+    ): Resource<ChargepointList> {
         val refData = referenceData as OCMReferenceData
 
         val minPower = filters?.getSliderValue("min_power")?.toDouble()
@@ -129,14 +130,14 @@ class OpenChargeMapApiWrapper(
         val connectorsVal = filters?.getMultipleChoiceValue("connectors")
         if (connectorsVal != null && connectorsVal.values.isEmpty() && !connectorsVal.all) {
             // no connectors chosen
-            return Resource.success(emptyList())
+            return Resource.success(ChargepointList.empty())
         }
         val connectors = formatMultipleChoice(connectorsVal)
 
         val operatorsVal = filters?.getMultipleChoiceValue("operators")
         if (operatorsVal != null && operatorsVal.values.isEmpty() && !operatorsVal.all) {
             // no operators chosen
-            return Resource.success(emptyList())
+            return Resource.success(ChargepointList.empty())
         }
         val operators = formatMultipleChoice(operatorsVal)
 
@@ -154,16 +155,16 @@ class OpenChargeMapApiWrapper(
                 return Resource.error(response.message(), null)
             }
 
+            val data = response.body()!!
             val result = postprocessResult(
-                response.body()!!,
+                data,
                 minPower,
                 connectorsVal,
                 minConnectors,
                 excludeFaults,
-                refData,
-                zoom
+                refData
             )
-            return Resource.success(result)
+            return Resource.success(ChargepointList(result, data.size < maxResults))
         } catch (e: IOException) {
             return Resource.error(e.message, null)
         }
@@ -174,8 +175,9 @@ class OpenChargeMapApiWrapper(
         location: LatLng,
         radius: Int,
         zoom: Float,
+        useClustering: Boolean,
         filters: FilterValues?
-    ): Resource<List<ChargepointListItem>> {
+    ): Resource<ChargepointList> {
         val refData = referenceData as OCMReferenceData
 
         val minPower = filters?.getSliderValue("min_power")?.toDouble()
@@ -185,14 +187,14 @@ class OpenChargeMapApiWrapper(
         val connectorsVal = filters?.getMultipleChoiceValue("connectors")
         if (connectorsVal != null && connectorsVal.values.isEmpty() && !connectorsVal.all) {
             // no connectors chosen
-            return Resource.success(emptyList())
+            return Resource.success(ChargepointList.empty())
         }
         val connectors = formatMultipleChoice(connectorsVal)
 
         val operatorsVal = filters?.getMultipleChoiceValue("operators")
         if (operatorsVal != null && operatorsVal.values.isEmpty() && !operatorsVal.all) {
             // no operators chosen
-            return Resource.success(emptyList())
+            return Resource.success(ChargepointList.empty())
         }
         val operators = formatMultipleChoice(operatorsVal)
 
@@ -208,16 +210,16 @@ class OpenChargeMapApiWrapper(
                 return Resource.error(response.message(), null)
             }
 
+            val data = response.body()!!
             val result = postprocessResult(
-                response.body()!!,
+                data,
                 minPower,
                 connectorsVal,
                 minConnectors,
                 excludeFaults,
-                refData,
-                zoom
+                refData
             )
-            return Resource.success(result)
+            return Resource.success(ChargepointList(result, data.size < 499))
         } catch (e: IOException) {
             return Resource.error(e.message, null)
         }
@@ -229,28 +231,17 @@ class OpenChargeMapApiWrapper(
         connectorsVal: MultipleChoiceFilterValue?,
         minConnectors: Int?,
         excludeFaults: Boolean?,
-        referenceData: OCMReferenceData,
-        zoom: Float
+        referenceData: OCMReferenceData
     ): List<ChargepointListItem> {
         // apply filters which OCM does not support natively
-        var result = chargers.filter { it ->
+        return chargers.filter { it ->
             it.connections
                 .filter { it.power == null || it.power >= (minPower ?: 0.0) }
                 .filter { if (connectorsVal != null && !connectorsVal.all) it.connectionTypeId in connectorsVal.values.map { it.toLong() } else true }
                 .sumOf { it.quantity ?: 1 } >= (minConnectors ?: 0)
         }.filter {
             it.statusTypeId == null || (it.statusTypeId !in removedStatuses && if (excludeFaults == true) it.statusTypeId !in faultStatuses else true)
-        }.map { it.convert(referenceData, false) }.distinct() as List<ChargepointListItem>
-
-        // apply clustering
-        val useClustering = zoom < clusterThreshold
-        if (useClustering) {
-            val clusterDistance = getClusterDistance(zoom)
-            Dispatchers.IO.run {
-                result = cluster(result, zoom, clusterDistance!!)
-            }
-        }
-        return result
+        }.map { it.convert(referenceData, false) }.distinct()
     }
 
     override suspend fun getChargepointDetail(
@@ -328,6 +319,64 @@ class OpenChargeMapApiWrapper(
                 min = 1
             ),
         )
+    }
+
+    override fun convertFiltersToSQL(
+        filters: FilterValues,
+        referenceData: ReferenceData
+    ): FiltersSQLQuery {
+        if (filters.isEmpty()) return FiltersSQLQuery("", false, false)
+
+        val refData = referenceData as OCMReferenceData
+        var requiresChargepointQuery = false
+
+        val result = StringBuilder()
+
+        if (filters.getBooleanValue("exclude_faults") == true) {
+            result.append(" AND fault_report_description IS NULL AND fault_report_created IS NULL")
+        }
+
+        val minPower = filters.getSliderValue("min_power")
+        if (minPower != null && minPower > 0) {
+            result.append(" AND json_extract(cp.value, '$.power') >= ${minPower}")
+            requiresChargepointQuery = true
+        }
+
+        val connectors = filters.getMultipleChoiceValue("connectors")
+        if (connectors != null && !connectors.all) {
+            val connectorsList = if (connectors.values.size == 0) {
+                ""
+            } else {
+                "'" + connectors.values.joinToString("', '") {
+                    OCMConnection.convertConnectionTypeFromOCM(
+                        it.toLong(),
+                        refData
+                    )
+                } + "'"
+            }
+            result.append(" AND json_extract(cp.value, '$.type') IN (${connectorsList})")
+            requiresChargepointQuery = true
+        }
+
+        val operators = filters.getMultipleChoiceValue("operators")
+        if (operators != null && !operators.all) {
+            val networksList = if (operators.values.size == 0) {
+                ""
+            } else {
+                "'" + operators.values.joinToString("', '") { opId ->
+                    refData.operators.find { it.id == opId.toLong() }?.title.orEmpty()
+                } + "'"
+            }
+            result.append(" AND network IN (${networksList})")
+        }
+
+        val minConnectors = filters.getSliderValue("min_connectors")
+        if (minConnectors != null && minConnectors > 1) {
+            result.append(" GROUP BY ChargeLocation.id HAVING COUNT(1) >= ${minConnectors}")
+            requiresChargepointQuery = true
+        }
+
+        return FiltersSQLQuery(result.toString(), requiresChargepointQuery, false)
     }
 
 }

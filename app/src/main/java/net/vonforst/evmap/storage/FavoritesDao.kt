@@ -19,7 +19,8 @@ interface FavoritesDao {
     @Query("SELECT * FROM favorite LEFT JOIN chargelocation ON favorite.chargerDataSource = chargelocation.dataSource AND favorite.chargerId = chargelocation.id")
     suspend fun getAllFavoritesAsync(): List<FavoriteWithDetail>
 
-    @Query("SELECT * FROM favorite LEFT JOIN chargelocation ON favorite.chargerDataSource = chargelocation.dataSource AND favorite.chargerId = chargelocation.id WHERE lat >= :lat1 AND lat <= :lat2 AND lng >= :lng1 AND lng <= :lng2")
+    @SkipQueryVerification
+    @Query("SELECT * FROM favorite LEFT JOIN chargelocation ON favorite.chargerDataSource = chargelocation.dataSource AND favorite.chargerId = chargelocation.id WHERE Within(chargelocation.coordinates, BuildMbr(:lng1, :lat1, :lng2, :lat2))")
     suspend fun getFavoritesInBoundsAsync(
         lat1: Double,
         lat2: Double,

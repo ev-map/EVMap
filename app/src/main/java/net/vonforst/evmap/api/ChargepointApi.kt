@@ -8,23 +8,35 @@ import net.vonforst.evmap.api.goingelectric.GoingElectricApiWrapper
 import net.vonforst.evmap.api.openchargemap.OpenChargeMapApiWrapper
 import net.vonforst.evmap.model.*
 import net.vonforst.evmap.viewmodel.Resource
+import java.time.Duration
 
 interface ChargepointApi<out T : ReferenceData> {
+    /**
+     * Query for chargepoints within certain geographic bounds
+     */
     suspend fun getChargepoints(
         referenceData: ReferenceData,
         bounds: LatLngBounds,
         zoom: Float,
+        useClustering: Boolean,
         filters: FilterValues?
-    ): Resource<List<ChargepointListItem>>
+    ): Resource<ChargepointList>
 
+    /**
+     * Query for chargepoints within a given radius in kilometers
+     */
     suspend fun getChargepointsRadius(
         referenceData: ReferenceData,
         location: LatLng,
         radius: Int,
         zoom: Float,
+        useClustering: Boolean,
         filters: FilterValues?
-    ): Resource<List<ChargepointListItem>>
+    ): Resource<ChargepointList>
 
+    /**
+     * Fetches detailed data for a specific charging site
+     */
     suspend fun getChargepointDetail(
         referenceData: ReferenceData,
         id: Long
@@ -34,8 +46,15 @@ interface ChargepointApi<out T : ReferenceData> {
 
     fun getFilters(referenceData: ReferenceData, sp: StringProvider): List<Filter<FilterValue>>
 
+    fun convertFiltersToSQL(filters: FilterValues, referenceData: ReferenceData): FiltersSQLQuery
+
     val name: String
     val id: String
+
+    /**
+     * Duration we are limited to if there is a required API local cache time limit.
+     */
+    val cacheLimit: Duration
 }
 
 interface StringProvider {
@@ -65,5 +84,17 @@ fun createApi(type: String, ctx: Context): ChargepointApi<ReferenceData> {
             )
         }
         else -> throw IllegalArgumentException()
+    }
+}
+
+data class FiltersSQLQuery(
+    val query: String,
+    val requiresChargepointQuery: Boolean,
+    val requiresChargeCardQuery: Boolean
+)
+
+data class ChargepointList(val items: List<ChargepointListItem>, val isComplete: Boolean) {
+    companion object {
+        fun empty() = ChargepointList(emptyList(), true)
     }
 }

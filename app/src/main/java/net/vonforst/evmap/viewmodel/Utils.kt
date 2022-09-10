@@ -144,3 +144,19 @@ suspend fun <T> LiveData<Resource<T>>.awaitFinished(): Resource<T> {
         }
     }
 }
+
+inline fun <X, Y> LiveData<X>.singleSwitchMap(crossinline transform: (X) -> LiveData<Y>?): MediatorLiveData<Y> {
+    val result = MediatorLiveData<Y>()
+    result.addSource(this@singleSwitchMap, object : Observer<X> {
+        override fun onChanged(t: X) {
+            if (t == null) return
+            result.removeSource(this@singleSwitchMap)
+            transform(t)?.let { transformed ->
+                result.addSource(transformed) {
+                    result.value = it
+                }
+            }
+        }
+    })
+    return result
+}

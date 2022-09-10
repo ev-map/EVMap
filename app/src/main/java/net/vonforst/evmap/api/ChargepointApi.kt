@@ -34,6 +34,8 @@ interface ChargepointApi<out T : ReferenceData> {
 
     fun getFilters(referenceData: ReferenceData, sp: StringProvider): List<Filter<FilterValue>>
 
+    fun convertFiltersToSQL(filters: FilterValues): FiltersSQLQuery
+
     val name: String
     val id: String
 }
@@ -67,3 +69,9 @@ fun createApi(type: String, ctx: Context): ChargepointApi<ReferenceData> {
         else -> throw IllegalArgumentException()
     }
 }
+
+data class FiltersSQLQuery(
+    val query: String,
+    val requiresChargepointQuery: Boolean,
+    val requiresChargeCardQuery: Boolean
+)

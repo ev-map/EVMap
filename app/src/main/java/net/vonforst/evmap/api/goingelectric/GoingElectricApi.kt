@@ -481,5 +481,80 @@ class GoingElectricApiWrapper(
             )
         )
     }
+
+    override fun convertFiltersToSQL(filters: FilterValues): FiltersSQLQuery {
+        if (filters.isEmpty()) return FiltersSQLQuery("", false, false)
+        var requiresChargepointQuery = false
+        var requiresChargeCardQuery = false
+
+        val result = StringBuilder()
+        if (filters.getBooleanValue("freecharging") == true) {
+            result.append(" AND freecharging IS 1")
+        }
+        if (filters.getBooleanValue("freeparking") == true) {
+            result.append(" AND freeparking IS 1")
+        }
+        if (filters.getBooleanValue("open_247") == true) {
+            result.append(" AND twentyfourSeven IS 1")
+        }
+        if (filters.getBooleanValue("barrierfree") == true) {
+            result.append(" AND barrierFree IS 1")
+        }
+        if (filters.getBooleanValue("exclude_faults") == true) {
+            result.append(" AND fault_report_description IS NULL AND fault_report_created IS NULL")
+        }
+
+        val minPower = filters.getSliderValue("min_power")
+        if (minPower != null && minPower > 0) {
+            result.append(" AND json_extract(cp.value, '$.power') >= ${minPower}")
+            requiresChargepointQuery = true
+        }
+
+        val connectors = filters.getMultipleChoiceValue("connectors")
+        if (connectors != null && !connectors.all) {
+            val connectorsList = if (connectors.values.size == 0) {
+                ""
+            } else {
+                "'" + connectors.values.joinToString("', '") + "'"
+            }
+            result.append(" AND json_extract(cp.value, '$.type') IN (${connectorsList})")
+            requiresChargepointQuery = true
+        }
+
+        val networks = filters.getMultipleChoiceValue("networks")
+        if (networks != null && !networks.all) {
+            val networksList = if (networks.values.size == 0) {
+                ""
+            } else {
+                "'" + networks.values.joinToString("', '") + "'"
+            }
+            result.append(" AND network IN (${networksList})")
+        }
+
+        val chargecards = filters.getMultipleChoiceValue("chargecards")
+        if (chargecards != null && !chargecards.all) {
+            val chargecardsList = if (chargecards.values.size == 0) {
+                ""
+            } else {
+                chargecards.values.joinToString(",")
+            }
+            result.append(" AND json_extract(cc.value, '$.id') IN (${chargecardsList})")
+            requiresChargeCardQuery = true
+        }
+
+        val categories = filters.getMultipleChoiceValue("categories")
+        if (categories != null && !categories.all) {
+            throw NotImplementedError()  // category cannot be determined in SQL
+        }
+
+
+        val minConnectors = filters.getSliderValue("min_connectors")
+        if (minConnectors != null && minConnectors > 1) {
+            result.append(" GROUP BY ChargeLocation.id HAVING COUNT(1) >= ${minConnectors}")
+            requiresChargepointQuery = true
+        }
+
+        return FiltersSQLQuery(result.toString(), requiresChargepointQuery, requiresChargeCardQuery)
+    }
 }
 

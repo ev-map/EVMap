@@ -109,7 +109,8 @@ fun <T> throttleLatest(
 public suspend fun <T> LiveData<T>.await(): T {
     return suspendCancellableCoroutine { continuation ->
         val observer = object : Observer<T> {
-            override fun onChanged(value: T) {
+            override fun onChanged(value: T?) {
+                if (value == null) return
                 removeObserver(this)
                 continuation.resume(value, null)
             }

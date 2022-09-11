@@ -14,7 +14,6 @@ import net.vonforst.evmap.api.availability.ChargeLocationStatus
 import net.vonforst.evmap.api.availability.getAvailability
 import net.vonforst.evmap.api.createApi
 import net.vonforst.evmap.api.goingelectric.GEChargepoint
-import net.vonforst.evmap.api.goingelectric.GEReferenceData
 import net.vonforst.evmap.api.openchargemap.OCMConnection
 import net.vonforst.evmap.api.openchargemap.OCMReferenceData
 import net.vonforst.evmap.api.stringProvider
@@ -83,20 +82,7 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
         db.filterProfileDao().getProfiles(prefs.dataSource)
     }
 
-    val chargeCardMap: LiveData<Map<Long, ChargeCard>> by lazy {
-        MediatorLiveData<Map<Long, ChargeCard>>().apply {
-            value = null
-            addSource(repo.referenceData) { data ->
-                value = if (data is GEReferenceData) {
-                    data.chargecards.map {
-                        it.id to it.convert()
-                    }.toMap()
-                } else {
-                    null
-                }
-            }
-        }
-    }
+    val chargeCardMap = repo.chargeCardMap
 
     val filtersCount: LiveData<Int> by lazy {
         MediatorLiveData<Int>().apply {

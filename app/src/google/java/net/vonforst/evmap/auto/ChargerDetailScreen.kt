@@ -3,6 +3,8 @@ package net.vonforst.evmap.auto
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Matrix
+import android.graphics.RectF
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.text.SpannableStringBuilder
@@ -43,6 +45,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import kotlin.math.roundToInt
+
 
 class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : Screen(ctx) {
     var charger: ChargeLocation? = null
@@ -363,13 +366,11 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
                 val photo = charger.photos?.firstOrNull()
                 photo?.let {
                     val density = carContext.resources.displayMetrics.density
-                    val url = if (largeImageSupported) {
-                        photo.getUrl(size = (imageSizeLarge * density).roundToInt())
-                    } else {
-                        photo.getUrl(size = (imageSize * density).roundToInt())
-                    }
+                    val size =
+                        (density * if (largeImageSupported) imageSizeLarge else imageSize).roundToInt()
+                    val url = photo.getUrl(size = size)
                     val request = ImageRequest.Builder(carContext).data(url).build()
-                    var img =
+                    val img =
                         (carContext.imageLoader.execute(request).drawable as BitmapDrawable).bitmap
 
                     // draw icon on top of image
@@ -379,19 +380,29 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
                         multi = charger.isMulti()
                     )
 
-                    img = img.copy(Bitmap.Config.ARGB_8888, true)
+                    val outImg = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
                     val iconSmall = icon.scale(
-                        (img.height * 0.4 / icon.height * icon.width).roundToInt(),
-                        (img.height * 0.4).roundToInt()
+                        (size * 0.4 / icon.height * icon.width).roundToInt(),
+                        (size * 0.4).roundToInt()
                     )
-                    val canvas = Canvas(img)
+                    val canvas = Canvas(outImg)
+
+                    val m = Matrix()
+                    m.setRectToRect(
+                        RectF(0f, 0f, img.width.toFloat(), img.height.toFloat()),
+                        RectF(0f, 0f, size.toFloat(), size.toFloat()),
+                        Matrix.ScaleToFit.CENTER
+                    )
+                    canvas.drawBitmap(
+                        img.copy(Bitmap.Config.ARGB_8888, false), m, null
+                    )
                     canvas.drawBitmap(
                         iconSmall,
                         0f,
-                        (img.height - iconSmall.height * 1.1).toFloat(),
+                        (size - iconSmall.height * 1.1).toFloat(),
                         null
                     )
-                    this@ChargerDetailScreen.photo = img
+                    this@ChargerDetailScreen.photo = outImg
                 }
                 this@ChargerDetailScreen.charger = charger
 

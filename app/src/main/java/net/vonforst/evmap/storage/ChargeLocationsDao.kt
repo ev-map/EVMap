@@ -13,10 +13,7 @@ import net.vonforst.evmap.api.StringProvider
 import net.vonforst.evmap.api.goingelectric.GEReferenceData
 import net.vonforst.evmap.api.goingelectric.GoingElectricApiWrapper
 import net.vonforst.evmap.api.openchargemap.OpenChargeMapApiWrapper
-import net.vonforst.evmap.model.ChargeLocation
-import net.vonforst.evmap.model.ChargepointListItem
-import net.vonforst.evmap.model.FilterValues
-import net.vonforst.evmap.model.ReferenceData
+import net.vonforst.evmap.model.*
 import net.vonforst.evmap.viewmodel.Resource
 import net.vonforst.evmap.viewmodel.await
 
@@ -39,7 +36,7 @@ class ChargeLocationsRepository(
 ) {
     val api = MutableLiveData<ChargepointApi<ReferenceData>>().apply { value = api }
 
-    private val apiAndReferenceData = this.api.switchMap { api ->
+    val referenceData = this.api.switchMap { api ->
         when (api) {
             is GoingElectricApiWrapper -> {
                 GEReferenceDataRepository(
@@ -47,7 +44,7 @@ class ChargeLocationsRepository(
                     scope,
                     db.geReferenceDataDao(),
                     prefs
-                ).getReferenceData().map { api to it }
+                ).getReferenceData()
             }
             is OpenChargeMapApiWrapper -> {
                 OCMReferenceDataRepository(
@@ -55,14 +52,13 @@ class ChargeLocationsRepository(
                     scope,
                     db.ocmReferenceDataDao(),
                     prefs
-                ).getReferenceData().map { api to it }
+                ).getReferenceData()
             }
             else -> {
                 throw RuntimeException("no reference data implemented")
             }
         }
     }
-    val referenceData = apiAndReferenceData.map { it.second }
 
     private val chargeLocationsDao = db.chargeLocationsDao()
 
@@ -72,8 +68,8 @@ class ChargeLocationsRepository(
         filters: FilterValues?
     ): LiveData<Resource<List<ChargepointListItem>>> {
         return liveData {
-            val (api, refData) = apiAndReferenceData.await()
-            val result = api.getChargepoints(refData, bounds, zoom, filters)
+            val refData = referenceData.await()
+            val result = api.value!!.getChargepoints(refData, bounds, zoom, filters)
 
             emit(result)
         }
@@ -86,8 +82,8 @@ class ChargeLocationsRepository(
         filters: FilterValues?
     ): LiveData<Resource<List<ChargepointListItem>>> {
         return liveData {
-            val (api, refData) = apiAndReferenceData.await()
-            val result = api.getChargepointsRadius(refData, location, radius, zoom, filters)
+            val refData = referenceData.await()
+            val result = api.value!!.getChargepointsRadius(refData, location, radius, zoom, filters)
 
             emit(result)
         }
@@ -97,18 +93,20 @@ class ChargeLocationsRepository(
         id: Long
     ): LiveData<Resource<ChargeLocation>> {
         return liveData {
-            val (api, refData) = apiAndReferenceData.await()
-            val result = api.getChargepointDetail(refData, id)
+            val refData = referenceData.await()
+            val result = api.value!!.getChargepointDetail(refData, id)
             emit(result)
         }
     }
 
-    fun getFilters(sp: StringProvider) = apiAndReferenceData.map { (api, refData) ->
-        api.getFilters(refData, sp)
+    fun getFilters(sp: StringProvider) = MediatorLiveData<List<Filter<FilterValue>>>().apply {
+        addSource(referenceData) { refData: ReferenceData? ->
+            refData?.let { value = api.value!!.getFilters(refData, sp) }
+        }
     }
 
     val chargeCardMap by lazy {
-        apiAndReferenceData.map { (_, refData) ->
+        referenceData.map { refData: ReferenceData? ->
             if (refData is GEReferenceData) {
                 refData.chargecards.associate {
                     it.id to it.convert()

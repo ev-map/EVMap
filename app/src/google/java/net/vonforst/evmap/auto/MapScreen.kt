@@ -13,7 +13,10 @@ import androidx.car.app.hardware.info.EnergyLevel
 import androidx.car.app.model.*
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.IconCompat
-import androidx.lifecycle.*
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.lifecycleScope
 import com.car2go.maps.model.LatLng
 import kotlinx.coroutines.*
 import net.vonforst.evmap.BuildConfig
@@ -30,6 +33,7 @@ import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.ui.availabilityText
 import net.vonforst.evmap.ui.getMarkerTint
 import net.vonforst.evmap.utils.distanceBetween
+import net.vonforst.evmap.viewmodel.await
 import net.vonforst.evmap.viewmodel.awaitFinished
 import net.vonforst.evmap.viewmodel.filtersWithValue
 import net.vonforst.evmap.viewmodel.getFilterValues
@@ -173,7 +177,9 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                             ).setTint(CarColor.DEFAULT).build()
                         )
                         .setOnClickListener {
-                            screenManager.push(SettingsScreen(carContext))
+                            screenManager.pushForResult(SettingsScreen(carContext)) {
+                                repo.api.value = createApi(prefs.dataSource, carContext)
+                            }
                             session.mapScreen = null
                         }
                         .build())
@@ -308,7 +314,6 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
 
     private fun loadChargers() {
         val location = location ?: return
-        val filters = filtersWithValue.value ?: return
 
         val searchLocation =
             prefs.placeSearchResultAndroidAuto ?: LatLng.fromLocation(location)
@@ -316,6 +321,8 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
 
         updateCoroutine = lifecycleScope.launch {
             try {
+                val filters = filtersWithValue.await()
+
                 // load chargers
                 if (filterStatus.value == FILTERS_FAVORITES) {
                     chargers =
@@ -373,9 +380,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
         // Reloading chargers in onStart does not seem to count towards content limit.
         // So let's do this so the user gets fresh chargers when re-entering the app.
         invalidate()
-        filtersWithValue.observe(this@MapScreen) {
-            loadChargers()
-        }
+        loadChargers()
     }
 
     private fun setupListeners() {

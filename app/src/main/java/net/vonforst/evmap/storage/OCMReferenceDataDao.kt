@@ -79,6 +79,7 @@ class OCMReferenceDataRepository(
         val countries = dao.getAllCountries()
         val operators = dao.getAllOperators()
         return MediatorLiveData<OCMReferenceData>().apply {
+            value = null
             listOf(countries, connectionTypes, operators).map { source ->
                 addSource(source) { _ ->
                     val ct = connectionTypes.value

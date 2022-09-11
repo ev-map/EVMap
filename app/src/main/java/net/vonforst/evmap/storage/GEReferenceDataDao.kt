@@ -87,6 +87,7 @@ class GEReferenceDataRepository(
         val networks = dao.getAllNetworks()
         val chargeCards = dao.getAllChargeCards()
         return MediatorLiveData<GEReferenceData>().apply {
+            value = null
             listOf(chargeCards, networks, plugs).map { source ->
                 addSource(source) { _ ->
                     val p = plugs.value ?: return@addSource

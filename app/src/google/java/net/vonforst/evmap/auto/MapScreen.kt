@@ -332,7 +332,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                         zoom = 16f,
                         filters
                     ).awaitFinished()
-                    chargers = response.data?.filterIsInstance(ChargeLocation::class.java)
+                    var chargers = response.data?.filterIsInstance(ChargeLocation::class.java)
                     chargers?.let {
                         if (it.size < maxRows) {
                             // try again with larger radius
@@ -346,6 +346,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                                 response.data?.filterIsInstance(ChargeLocation::class.java)
                         }
                     }
+                    this@MapScreen.chargers = chargers
                 }
 
                 updateCoroutine = null

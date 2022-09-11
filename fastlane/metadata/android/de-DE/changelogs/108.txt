@@ -1,0 +1,8 @@
+Verbesserungen:
+- Einige Texte vereinfacht
+- Unterstützung für Sprachauswahl pro App von Android 13
+
+Fehler behoben:
+- Filtermenü ließ sich nicht öffnen
+- Abstürze / Inkonsistenzen nach Wechsel der Datenquelle
+- Abstürze unter Android Auto

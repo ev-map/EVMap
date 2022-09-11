@@ -1,0 +1,8 @@
+Improvements:
+- Simplified some texts
+- Support for Android 13's per-app language selector
+
+Bugfixes:
+- Filter menu could not be opened
+- Crashes / inconsistencies after switching data source
+- Crashes on Android Auto

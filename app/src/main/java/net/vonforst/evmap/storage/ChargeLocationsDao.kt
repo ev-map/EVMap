@@ -105,6 +105,11 @@ class ChargeLocationsRepository(
         }
     }
 
+    suspend fun getFiltersAsync(sp: StringProvider): List<Filter<FilterValue>> {
+        val refData = referenceData.await()
+        return api.value!!.getFilters(refData, sp)
+    }
+
     val chargeCardMap by lazy {
         referenceData.map { refData: ReferenceData? ->
             if (refData is GEReferenceData) {

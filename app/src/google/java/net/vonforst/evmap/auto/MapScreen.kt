@@ -15,7 +15,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import com.car2go.maps.model.LatLng
 import kotlinx.coroutines.*
@@ -27,16 +26,16 @@ import net.vonforst.evmap.api.createApi
 import net.vonforst.evmap.api.stringProvider
 import net.vonforst.evmap.model.ChargeLocation
 import net.vonforst.evmap.model.FILTERS_FAVORITES
+import net.vonforst.evmap.model.FilterValue
+import net.vonforst.evmap.model.FilterWithValue
 import net.vonforst.evmap.storage.AppDatabase
 import net.vonforst.evmap.storage.ChargeLocationsRepository
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.ui.availabilityText
 import net.vonforst.evmap.ui.getMarkerTint
 import net.vonforst.evmap.utils.distanceBetween
-import net.vonforst.evmap.viewmodel.await
 import net.vonforst.evmap.viewmodel.awaitFinished
 import net.vonforst.evmap.viewmodel.filtersWithValue
-import net.vonforst.evmap.viewmodel.getFilterValues
 import java.io.IOException
 import java.time.Duration
 import java.time.Instant
@@ -81,12 +80,8 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
         )
     } else 6
 
-    private val filterStatus = MutableLiveData<Long>().apply {
-        value = prefs.filterStatus
-    }
-    private val filterValues = db.filterValueDao().getFilterValues(filterStatus, prefs.dataSource)
-    private val filters = repo.getFilters(carContext.stringProvider())
-    private val filtersWithValue = filtersWithValue(filters, filterValues)
+    private var filterStatus = prefs.filterStatus
+    private var filtersWithValue: List<FilterWithValue<FilterValue>>? = null
 
     private val hardwareMan: CarHardwareManager by lazy {
         ctx.getCarService(CarContext.HARDWARE_SERVICE) as CarHardwareManager
@@ -120,7 +115,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                 prefs.placeSearchResultAndroidAutoName?.let {
                     carContext.getString(R.string.auto_chargers_near_location, it)
                 } ?: carContext.getString(
-                    if (filterStatus.value == FILTERS_FAVORITES) {
+                    if (filterStatus == FILTERS_FAVORITES) {
                         R.string.auto_favorites
                     } else {
                         R.string.auto_chargers_closeby
@@ -147,7 +142,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                 }
                 builder.setNoItemsMessage(
                     carContext.getString(
-                        if (filterStatus.value == FILTERS_FAVORITES) {
+                        if (filterStatus == FILTERS_FAVORITES) {
                             R.string.auto_no_favorites_found
                         } else {
                             R.string.auto_no_chargers_found
@@ -159,18 +154,19 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
             } ?: setLoading(true)
             setCurrentLocationEnabled(true)
             setHeaderAction(Action.APP_ICON)
-            val filtersCount = if (filterStatus.value == FILTERS_FAVORITES) 1 else {
-                filtersWithValue.value?.count {
+            val filtersCount = if (filterStatus == FILTERS_FAVORITES) 1 else {
+                filtersWithValue?.count {
                     !it.value.hasSameValueAs(it.filter.defaultValue())
                 }
             }
 
             setActionStrip(
                 ActionStrip.Builder()
-                    .addAction(Action.Builder()
-                        .setIcon(
-                            CarIcon.Builder(
-                                IconCompat.createWithResource(
+                    .addAction(
+                        Action.Builder()
+                            .setIcon(
+                                CarIcon.Builder(
+                                    IconCompat.createWithResource(
                                     carContext,
                                     R.drawable.ic_settings
                                 )
@@ -317,10 +313,14 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
 
         updateCoroutine = lifecycleScope.launch {
             try {
-                val filters = filtersWithValue.await()
+                filterStatus = prefs.filterStatus
+                val filterValues =
+                    db.filterValueDao().getFilterValuesAsync(filterStatus, prefs.dataSource)
+                val filters = repo.getFiltersAsync(carContext.stringProvider())
+                filtersWithValue = filtersWithValue(filters, filterValues)
 
                 // load chargers
-                if (filterStatus.value == FILTERS_FAVORITES) {
+                if (filterStatus == FILTERS_FAVORITES) {
                     chargers =
                         db.favoritesDao().getAllFavoritesAsync().map { it.charger }.sortedBy {
                             distanceBetween(
@@ -333,7 +333,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                         searchLocation,
                         searchRadius,
                         zoom = 16f,
-                        filters
+                        filtersWithValue
                     ).awaitFinished()
                     var chargers = response.data?.filterIsInstance(ChargeLocation::class.java)
                     chargers?.let {
@@ -343,7 +343,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                                 searchLocation,
                                 searchRadius * 10,
                                 zoom = 16f,
-                                filters
+                                filtersWithValue
                             ).awaitFinished()
                             chargers =
                                 response.data?.filterIsInstance(ChargeLocation::class.java)
@@ -378,7 +378,6 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
         if (prefs.dataSource != repo.api.value?.id) {
             repo.api.value = createApi(prefs.dataSource, carContext)
         }
-        filterStatus.value = prefs.filterStatus
         invalidate()
         loadChargers()
     }

@@ -19,14 +19,19 @@ fun filtersWithValue(
             addSource(it) {
                 val f = filters.value ?: return@addSource
                 val values = filterValues.value ?: return@addSource
-                value = f.map { filter ->
-                    val value =
-                        values.find { it.key == filter.key } ?: filter.defaultValue()
-                    FilterWithValue(filter, filter.valueClass.cast(value))
-                }
+                value = filtersWithValue(f, values)
             }
         }
     }
+
+fun filtersWithValue(
+    filters: List<Filter<FilterValue>>,
+    values: List<FilterValue>
+) = filters.map { filter ->
+    val value =
+        values.find { it.key == filter.key } ?: filter.defaultValue()
+    FilterWithValue(filter, filter.valueClass.cast(value))
+}
 
 fun FilterValueDao.getFilterValues(filterStatus: LiveData<Long>, dataSource: String) =
     filterStatus.switchMap {

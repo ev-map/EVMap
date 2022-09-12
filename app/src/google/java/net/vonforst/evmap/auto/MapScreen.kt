@@ -177,9 +177,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                             ).setTint(CarColor.DEFAULT).build()
                         )
                         .setOnClickListener {
-                            screenManager.pushForResult(SettingsScreen(carContext)) {
-                                repo.api.value = createApi(prefs.dataSource, carContext)
-                            }
+                            screenManager.push(SettingsScreen(carContext))
                             session.mapScreen = null
                         }
                         .build())
@@ -196,9 +194,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                                     .build()
                             )
                             .setOnClickListener {
-                                screenManager.pushForResult(FilterScreen(carContext, session)) {
-                                    filterStatus.value = prefs.filterStatus
-                                }
+                                screenManager.push(FilterScreen(carContext, session))
                                 session.mapScreen = null
                             }
                             .build())
@@ -379,6 +375,10 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
 
         // Reloading chargers in onStart does not seem to count towards content limit.
         // So let's do this so the user gets fresh chargers when re-entering the app.
+        if (prefs.dataSource != repo.api.value?.id) {
+            repo.api.value = createApi(prefs.dataSource, carContext)
+        }
+        filterStatus.value = prefs.filterStatus
         invalidate()
         loadChargers()
     }

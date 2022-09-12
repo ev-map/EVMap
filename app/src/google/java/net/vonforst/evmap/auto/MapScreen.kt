@@ -296,10 +296,10 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
         ) {
             return
         }
+        val previousLocation = this.location
         this.location = location
-        if (updateCoroutine != null) {
-            // don't update while still loading last update
-            return
+        if (previousLocation == null) {
+            loadChargers()
         }
 
         val now = Instant.now()

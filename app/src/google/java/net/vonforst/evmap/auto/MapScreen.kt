@@ -34,6 +34,7 @@ import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.ui.availabilityText
 import net.vonforst.evmap.ui.getMarkerTint
 import net.vonforst.evmap.utils.distanceBetween
+import net.vonforst.evmap.viewmodel.Status
 import net.vonforst.evmap.viewmodel.awaitFinished
 import net.vonforst.evmap.viewmodel.filtersWithValue
 import java.io.IOException
@@ -335,6 +336,10 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                         zoom = 16f,
                         filtersWithValue
                     ).awaitFinished()
+                    if (response.status == Status.ERROR) {
+                        withContext(Dispatchers.Main) { showLoadingError() }
+                        return@launch
+                    }
                     var chargers = response.data?.filterIsInstance(ChargeLocation::class.java)
                     chargers?.let {
                         if (it.size < maxRows) {
@@ -345,6 +350,10 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                                 zoom = 16f,
                                 filtersWithValue
                             ).awaitFinished()
+                            if (response.status == Status.ERROR) {
+                                withContext(Dispatchers.Main) { showLoadingError() }
+                                return@launch
+                            }
                             chargers =
                                 response.data?.filterIsInstance(ChargeLocation::class.java)
                         }
@@ -356,12 +365,14 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                 lastDistanceUpdateTime = Instant.now()
                 invalidate()
             } catch (e: IOException) {
-                withContext(Dispatchers.Main) {
-                    CarToast.makeText(carContext, R.string.connection_error, CarToast.LENGTH_LONG)
-                        .show()
-                }
+                withContext(Dispatchers.Main) { showLoadingError() }
             }
         }
+    }
+
+    private fun showLoadingError() {
+        CarToast.makeText(carContext, R.string.connection_error, CarToast.LENGTH_LONG)
+            .show()
     }
 
     private fun onEnergyLevelUpdated(energyLevel: EnergyLevel) {

@@ -152,13 +152,14 @@ class EnBwAvailabilityDetector(client: OkHttpClient, baseUrl: String? = null) :
 
         val connectorStatus = details.flatMap { it.chargePoints }.flatMap { cp ->
             cp.connectors.map { connector ->
-                connector to cp.status
+                Triple(connector, cp.status, cp.evseId)
             }
         }
 
         val enbwConnectors = mutableMapOf<Long, Pair<Double, String>>()
         val enbwStatus = mutableMapOf<Long, ChargepointStatus>()
-        connectorStatus.forEachIndexed { index, (connector, statusStr) ->
+        val enbwEvseId = mutableMapOf<Long, String>()
+        connectorStatus.forEachIndexed { index, (connector, statusStr, evseId) ->
             val id = index.toLong()
             val power = connector.maxPowerInKw ?: 0.0
             val type = when (connector.plugTypeName) {
@@ -179,17 +180,22 @@ class EnBwAvailabilityDetector(client: OkHttpClient, baseUrl: String? = null) :
                 "UNSPECIFIED" -> ChargepointStatus.UNKNOWN
                 else -> ChargepointStatus.UNKNOWN
             }
-            enbwConnectors.put(id, power to type)
-            enbwStatus.put(id, status)
+            enbwConnectors[id] = power to type
+            enbwStatus[id] = status
+            evseId?.let { enbwEvseId[id] = it }
         }
 
         val match = matchChargepoints(enbwConnectors, location.chargepointsMerged)
         val chargepointStatus = match.mapValues { entry ->
             entry.value.map { enbwStatus[it]!! }
         }
+        val evseIds = if (enbwEvseId.size == enbwStatus.size) match.mapValues { entry ->
+            entry.value.map { enbwEvseId[it]!! }
+        } else null
         return ChargeLocationStatus(
             chargepointStatus,
-            "EnBW"
+            "EnBW",
+            evseIds
         )
     }
 

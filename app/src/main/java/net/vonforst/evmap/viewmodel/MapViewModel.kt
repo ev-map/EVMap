@@ -39,11 +39,6 @@ internal fun getClusterDistance(zoom: Float): Int? {
 
 class MapViewModel(application: Application, private val state: SavedStateHandle) :
     AndroidViewModel(application) {
-    val apiId: String
-        get() = repo.api.value!!.id
-    val apiName: String
-        get() = repo.api.value!!.name
-
     private val db = AppDatabase.getInstance(application)
     private val prefs = PreferenceDataSource(application)
     private val repo = ChargeLocationsRepository(
@@ -52,6 +47,9 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
         db,
         prefs
     )
+
+    val apiId = repo.api.map { it.id }
+    val apiName = repo.api.map { it.name }
 
     val bottomSheetState: MutableLiveData<Int> by lazy {
         state.getLiveData("bottomSheetState")
@@ -235,7 +233,7 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
 
     fun reloadPrefs() {
         filterStatus.value = prefs.filterStatus
-        if (prefs.dataSource != apiId) {
+        if (prefs.dataSource != apiId.value) {
             repo.api.value = createApi(prefs.dataSource, getApplication())
         }
     }
@@ -342,32 +340,37 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
             chargepoints.addSource(result) {
                 chargepoints.value = it
 
-                if (apiId == "going_electric") {
-                    val chargeCardsVal = filters.getMultipleChoiceValue("chargecards")!!
-                    filteredChargeCards.value =
-                        if (chargeCardsVal.all) null else chargeCardsVal.values.map { it.toLong() }
-                            .toSet()
+                val apiId = apiId.value
+                when (apiId) {
+                    "going_electric" -> {
+                        val chargeCardsVal = filters.getMultipleChoiceValue("chargecards")!!
+                        filteredChargeCards.value =
+                            if (chargeCardsVal.all) null else chargeCardsVal.values.map { it.toLong() }
+                                .toSet()
 
-                    val connectorsVal = filters.getMultipleChoiceValue("connectors")!!
-                    filteredConnectors.value =
-                        if (connectorsVal.all) null else connectorsVal.values.map {
-                            GEChargepoint.convertTypeFromGE(it)
-                        }.toSet()
-                    filteredMinPower.value = filters.getSliderValue("min_power")
-                } else if (apiId == "open_charge_map") {
-                    val connectorsVal = filters.getMultipleChoiceValue("connectors")!!
-                    filteredConnectors.value =
-                        if (connectorsVal.all) null else connectorsVal.values.map {
-                            OCMConnection.convertConnectionTypeFromOCM(
-                                it.toLong(),
-                                repo.referenceData.value!! as OCMReferenceData
-                            )
-                        }.toSet()
-                    filteredMinPower.value = filters.getSliderValue("min_power")
-                } else {
-                    filteredConnectors.value = null
-                    filteredMinPower.value = null
-                    filteredChargeCards.value = null
+                        val connectorsVal = filters.getMultipleChoiceValue("connectors")!!
+                        filteredConnectors.value =
+                            if (connectorsVal.all) null else connectorsVal.values.map {
+                                GEChargepoint.convertTypeFromGE(it)
+                            }.toSet()
+                        filteredMinPower.value = filters.getSliderValue("min_power")
+                    }
+                    "open_charge_map" -> {
+                        val connectorsVal = filters.getMultipleChoiceValue("connectors")!!
+                        filteredConnectors.value =
+                            if (connectorsVal.all) null else connectorsVal.values.map {
+                                OCMConnection.convertConnectionTypeFromOCM(
+                                    it.toLong(),
+                                    repo.referenceData.value!! as OCMReferenceData
+                                )
+                            }.toSet()
+                        filteredMinPower.value = filters.getSliderValue("min_power")
+                    }
+                    else -> {
+                        filteredConnectors.value = null
+                        filteredMinPower.value = null
+                        filteredChargeCards.value = null
+                    }
                 }
             }
         }

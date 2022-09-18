@@ -393,7 +393,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                     val charger = vm.charger.value?.data
                     if (charger?.editUrl != null) {
                         (activity as? MapsActivity)?.openUrl(charger.editUrl)
-                        if (vm.apiId == "going_electric") {
+                        if (vm.apiId.value == "going_electric") {
                             // instructions specific to GoingElectric
                             Toast.makeText(
                                 requireContext(),

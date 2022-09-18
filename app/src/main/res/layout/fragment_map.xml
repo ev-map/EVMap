@@ -195,6 +195,7 @@
                 app:charger="@{vm.charger}"
                 app:availability="@{vm.availability}"
                 app:filteredAvailability="@{vm.filteredAvailability}"
+                app:predictionGraph="@{vm.predictionGraph}"
                 app:chargeCards="@{vm.chargeCardMap}"
                 app:filteredChargeCards="@{vm.filteredChargeCards}"
                 app:distance="@{vm.chargerDistance}"

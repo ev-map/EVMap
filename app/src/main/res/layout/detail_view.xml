@@ -5,6 +5,10 @@
 
     <data>
 
+        <import type="java.util.Map" />
+
+        <import type="java.time.ZonedDateTime" />
+
         <import type="net.vonforst.evmap.model.ChargeLocation" />
 
         <import type="net.vonforst.evmap.model.Chargepoint" />
@@ -38,6 +42,10 @@
         <variable
             name="availability"
             type="Resource&lt;ChargeLocationStatus&gt;" />
+
+        <variable
+            name="predictionGraph"
+            type="Map&lt;ZonedDateTime, Integer&gt;" />
 
         <variable
             name="filteredAvailability"
@@ -325,7 +333,22 @@
                 app:icon="@drawable/ic_chargeprice"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
-                app:layout_constraintTop_toBottomOf="@+id/textView13" />
+                app:layout_constraintTop_toBottomOf="@+id/prediction" />
+
+            <net.vonforst.evmap.ui.BarGraphView
+                android:id="@+id/prediction"
+                android:layout_width="0dp"
+                android:layout_height="80dp"
+                android:layout_marginTop="16dp"
+                app:goneUnless="@{predictionGraph != null}"
+                app:data="@{predictionGraph}"
+                app:layout_constraintEnd_toStartOf="@+id/guideline2"
+                app:layout_constraintStart_toStartOf="@+id/guideline"
+                app:layout_constraintTop_toBottomOf="@+id/textView13"
+                tools:itemCount="3"
+                tools:layoutManager="LinearLayoutManager"
+                tools:listitem="@layout/item_connector"
+                tools:orientation="horizontal" />
 
             <ImageView
                 android:id="@+id/imgVerified"

@@ -10,9 +10,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
+import net.vonforst.evmap.R
+import net.vonforst.evmap.api.availability.AvailabilityDetectorException
 import net.vonforst.evmap.api.availability.ChargeLocationStatus
 import net.vonforst.evmap.api.availability.getAvailability
 import net.vonforst.evmap.api.createApi
+import net.vonforst.evmap.api.fronyx.FronyxApi
+import net.vonforst.evmap.api.fronyx.FronyxEvseIdResponse
+import net.vonforst.evmap.api.fronyx.FronyxStatus
 import net.vonforst.evmap.api.goingelectric.GEChargepoint
 import net.vonforst.evmap.api.openchargemap.OCMConnection
 import net.vonforst.evmap.api.openchargemap.OCMReferenceData
@@ -25,6 +30,9 @@ import net.vonforst.evmap.storage.FilterProfile
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.ui.cluster
 import net.vonforst.evmap.utils.distanceBetween
+import retrofit2.HttpException
+import java.io.IOException
+import java.time.ZonedDateTime
 
 @Parcelize
 data class MapPosition(val bounds: LatLngBounds, val zoom: Float) : Parcelable
@@ -202,6 +210,60 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
             addSource(filteredMinPower, callback)
         }
     }
+
+    val predictionApi = FronyxApi.create(application.getString(R.string.fronyx_key))
+
+    val prediction: LiveData<Resource<List<FronyxEvseIdResponse>>> by lazy {
+        availability.switchMap { av ->
+            av?.data?.evseIds?.let { evseIds ->
+                liveData {
+                    emit(Resource.loading(null))
+
+                    val allEvseIds = evseIds.flatMap { it.value }
+
+                    try {
+                        val result = allEvseIds.map {
+                            predictionApi.getPredictionsForEvseId(it)
+                        }
+
+                        emit(Resource.success(result))
+                        println(result)
+                    } catch (e: IOException) {
+                        emit(Resource.error(e.message, null))
+                        e.printStackTrace()
+                    } catch (e: HttpException) {
+                        emit(Resource.error(e.message, null))
+                        e.printStackTrace()
+                    } catch (e: AvailabilityDetectorException) {
+                        emit(Resource.error(e.message, null))
+                        e.printStackTrace()
+                    }
+                }
+            } ?: liveData { emit(Resource.success(null)) }
+        }
+    }
+
+    val predictionGraph: LiveData<Map<ZonedDateTime, Int>?> by lazy {
+        prediction.map {
+            it.data?.let { responses ->
+                if (responses.isEmpty()) {
+                    null
+                } else {
+                    val timestamps = responses[0].predictions.map { it.timestamp }
+                    // TODO: implement this in a more elegant way: first ensure that all timestamps are the same, then take them in order
+                    timestamps.associateWith { ts ->
+                        responses.sumOf {
+                            val av =
+                                it.predictions.find { it.timestamp == ts }?.status == FronyxStatus.AVAILABLE
+                            val count = if (av) 1 else 0
+                            count
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     val myLocationEnabled: MutableLiveData<Boolean> by lazy {
         MutableLiveData<Boolean>()
     }

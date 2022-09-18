@@ -26,6 +26,9 @@ be put into the app in the form of a resource file called `apikeys.xml` under
    <string name="openchargemap_key" translatable="false">
       insert your OpenChargeMap key here
    </string>
+   <string name="fronyx_key" translatable="false">
+      insert your Fronyx key here
+   </string>
 </resources>
 ```
 
@@ -169,3 +172,18 @@ In case you want to pay for access to the full Chargeprice API, check out their
 [sales@chargeprice.net](mailto:sales@chargeprice.net).
 </details>
 
+Availability data providers
+---------------------------
+
+### fronyx
+
+[fronyx](https://fronyx.io/) provides us predictions of charging station availability.
+
+<details>
+<summary>How to obtain an API key</summary>
+
+The API is not publically available, contact [fronyx](https://fronyx.io/contact-us/) to get an API
+key and documentation.
+
+If you don't want to test this functionality, simply leave the API key blank.
+</details>

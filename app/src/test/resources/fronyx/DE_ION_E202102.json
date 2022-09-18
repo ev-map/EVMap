@@ -1,0 +1,105 @@
+{
+  "evseId": "DE*ION*E202102",
+  "predictions": [
+    {
+      "timestamp": "2022-09-18T13:45:00.000Z",
+      "status": "AVAILABLE"
+    },
+    {
+      "timestamp": "2022-09-18T14:00:00.000Z",
+      "status": "UNAVAILABLE"
+    },
+    {
+      "timestamp": "2022-09-18T14:15:00.000Z",
+      "status": "UNAVAILABLE"
+    },
+    {
+      "timestamp": "2022-09-18T14:30:00.000Z",
+      "status": "UNAVAILABLE"
+    },
+    {
+      "timestamp": "2022-09-18T14:45:00.000Z",
+      "status": "UNAVAILABLE"
+    },
+    {
+      "timestamp": "2022-09-18T15:00:00.000Z",
+      "status": "UNAVAILABLE"
+    },
+    {
+      "timestamp": "2022-09-18T15:15:00.000Z",
+      "status": "UNAVAILABLE"
+    },
+    {
+      "timestamp": "2022-09-18T15:30:00.000Z",
+      "status": "UNAVAILABLE"
+    },
+    {
+      "timestamp": "2022-09-18T15:45:00.000Z",
+      "status": "UNAVAILABLE"
+    },
+    {
+      "timestamp": "2022-09-18T16:00:00.000Z",
+      "status": "UNAVAILABLE"
+    },
+    {
+      "timestamp": "2022-09-18T16:15:00.000Z",
+      "status": "UNAVAILABLE"
+    },
+    {
+      "timestamp": "2022-09-18T16:30:00.000Z",
+      "status": "UNAVAILABLE"
+    },
+    {
+      "timestamp": "2022-09-18T16:45:00.000Z",
+      "status": "UNAVAILABLE"
+    },
+    {
+      "timestamp": "2022-09-18T17:00:00.000Z",
+      "status": "UNAVAILABLE"
+    },
+    {
+      "timestamp": "2022-09-18T17:15:00.000Z",
+      "status": "UNAVAILABLE"
+    },
+    {
+      "timestamp": "2022-09-18T17:30:00.000Z",
+      "status": "AVAILABLE"
+    },
+    {
+      "timestamp": "2022-09-18T17:45:00.000Z",
+      "status": "AVAILABLE"
+    },
+    {
+      "timestamp": "2022-09-18T18:00:00.000Z",
+      "status": "AVAILABLE"
+    },
+    {
+      "timestamp": "2022-09-18T18:15:00.000Z",
+      "status": "AVAILABLE"
+    },
+    {
+      "timestamp": "2022-09-18T18:30:00.000Z",
+      "status": "AVAILABLE"
+    },
+    {
+      "timestamp": "2022-09-18T18:45:00.000Z",
+      "status": "AVAILABLE"
+    },
+    {
+      "timestamp": "2022-09-18T19:00:00.000Z",
+      "status": "AVAILABLE"
+    },
+    {
+      "timestamp": "2022-09-18T19:15:00.000Z",
+      "status": "AVAILABLE"
+    },
+    {
+      "timestamp": "2022-09-18T19:30:00.000Z",
+      "status": "AVAILABLE"
+    },
+    {
+      "timestamp": "2022-09-18T19:45:00.000Z",
+      "status": "AVAILABLE"
+    }
+  ]
+}

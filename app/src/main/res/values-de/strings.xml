@@ -270,4 +270,5 @@
     <string name="pref_provider_osm_mapbox">OpenStreetMap (Mapbox)</string>
     <string name="about_contributors">Mitwirkende</string>
     <string name="about_contributors_text">Dank an alle Mitwirkenden für ihre Beiträge von Code und Übersetzungen für EVMap:</string>
+    <string name="availability_prediction">Verfügbarkeitsprognose</string>
 </resources>

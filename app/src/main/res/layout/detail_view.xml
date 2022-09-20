@@ -335,16 +335,30 @@
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/prediction" />
 
+            <TextView
+                android:id="@+id/textView8"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/availability_prediction"
+                android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
+                android:textColor="?colorPrimary"
+                app:goneUnlessAnimated="@{predictionGraph != null}"
+                app:layout_constraintEnd_toStartOf="@+id/guideline2"
+                app:layout_constraintStart_toStartOf="@+id/guideline"
+                app:layout_constraintTop_toBottomOf="@+id/textView13" />
+
             <net.vonforst.evmap.ui.BarGraphView
                 android:id="@+id/prediction"
                 android:layout_width="0dp"
                 android:layout_height="80dp"
-                android:layout_marginTop="16dp"
-                app:goneUnless="@{predictionGraph != null}"
+                android:layout_marginTop="8dp"
+                app:goneUnlessAnimated="@{predictionGraph != null}"
                 app:data="@{predictionGraph}"
+                app:maxValue="@{charger.data.totalChargepoints}"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
-                app:layout_constraintTop_toBottomOf="@+id/textView13"
+                app:layout_constraintTop_toBottomOf="@+id/textView8"
                 tools:itemCount="3"
                 tools:layoutManager="LinearLayoutManager"
                 tools:listitem="@layout/item_connector"

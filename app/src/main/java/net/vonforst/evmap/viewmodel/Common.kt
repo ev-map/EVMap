@@ -12,13 +12,19 @@ import kotlin.reflect.full.cast
 
 fun filtersWithValue(
     filters: LiveData<List<Filter<FilterValue>>>,
-    filterValues: LiveData<List<FilterValue>>
-): MediatorLiveData<FilterValues> =
-    MediatorLiveData<FilterValues>().apply {
+    filterValues: LiveData<List<FilterValue>?>
+): MediatorLiveData<FilterValues?> =
+    MediatorLiveData<FilterValues?>().apply {
         listOf(filters, filterValues).forEach {
             addSource(it) {
-                val f = filters.value ?: return@addSource
-                val values = filterValues.value ?: return@addSource
+                val f = filters.value ?: run {
+                    value = null
+                    return@addSource
+                }
+                val values = filterValues.value ?: run {
+                    value = null
+                    return@addSource
+                }
                 value = filtersWithValue(f, values)
             }
         }

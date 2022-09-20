@@ -67,12 +67,12 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
             }
         }
     }
-    private val filterValues: LiveData<List<FilterValue>> = repo.api.switchMap {
+    private val filterValues: LiveData<List<FilterValue>?> = repo.api.switchMap {
         db.filterValueDao().getFilterValues(filterStatus, prefs.dataSource)
     }
     private val filters = repo.getFilters(application.stringProvider())
 
-    private val filtersWithValue: LiveData<FilterValues> by lazy {
+    private val filtersWithValue: LiveData<FilterValues?> by lazy {
         filtersWithValue(filters, filterValues)
     }
 
@@ -86,9 +86,9 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
         MediatorLiveData<Int>().apply {
             value = 0
             addSource(filtersWithValue) { filtersWithValue ->
-                value = filtersWithValue.count {
+                value = filtersWithValue?.count {
                     !it.value.hasSameValueAs(it.filter.defaultValue())
-                }
+                } ?: 0
             }
         }
     }

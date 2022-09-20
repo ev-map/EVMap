@@ -20,11 +20,11 @@ class FilterViewModel(application: Application) : AndroidViewModel(application) 
     private val repo = ChargeLocationsRepository(api, viewModelScope, db, prefs)
     private val filters = repo.getFilters(application.stringProvider())
 
-    private val filterValues: LiveData<List<FilterValue>> by lazy {
+    private val filterValues: LiveData<List<FilterValue>?> by lazy {
         db.filterValueDao().getFilterValues(FILTERS_CUSTOM, prefs.dataSource)
     }
 
-    val filtersWithValue: LiveData<FilterValues> by lazy {
+    val filtersWithValue: LiveData<FilterValues?> by lazy {
         filtersWithValue(filters, filterValues)
     }
 

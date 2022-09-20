@@ -64,6 +64,7 @@ abstract class FilterValueDao {
         }
 
     open fun getFilterValues(filterStatus: Long, dataSource: String) = liveData {
+        emit(null)
         emit(getFilterValuesAsync(filterStatus, dataSource))
     }
 

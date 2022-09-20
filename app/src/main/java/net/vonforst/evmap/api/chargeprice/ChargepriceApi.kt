@@ -114,8 +114,8 @@ interface ChargepriceApi {
 
         @JvmStatic
         fun isCountrySupported(country: String, dataSource: String): Boolean = when (dataSource) {
-            // list of countries updated 2021/08/24
             "goingelectric" -> country in listOf(
+                // list of countries according to Chargeprice.app, 2021/08/24
                 "Deutschland",
                 "Österreich",
                 "Schweiz",
@@ -133,9 +133,28 @@ interface ChargepriceApi {
                 "Italien",
                 "Spanien",
                 "Großbritannien",
-                "Irland"
+                "Irland",
+                // additional countries found 2022/09/17, https://github.com/johan12345/EVMap/issues/234
+                "Finnland",
+                "Lettland",
+                "Litauen",
+                "Estland",
+                "Liechtenstein",
+                "Rumänien",
+                "Slowakei",
+                "Slowenien",
+                "Polen",
+                "Serbien",
+                "Bulgarien",
+                "Kosovo",
+                "Montenegro",
+                "Albanien",
+                "Griechenland",
+                "Portugal",
+                "Island"
             )
             "openchargemap" -> country in listOf(
+                // list of countries according to Chargeprice.app, 2021/08/24
                 "DE",
                 "AT",
                 "CH",
@@ -153,7 +172,25 @@ interface ChargepriceApi {
                 "IT",
                 "ES",
                 "GB",
-                "IE"
+                "IE",
+                // additional countries found 2022/09/17, https://github.com/johan12345/EVMap/issues/234
+                "FI",
+                "LV",
+                "LT",
+                "EE",
+                "LI",
+                "RO",
+                "SK",
+                "SI",
+                "PL",
+                "RS",
+                "BG",
+                "XK",
+                "ME",
+                "AL",
+                "GR",
+                "PT",
+                "IS"
             )
             else -> false
         }

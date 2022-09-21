@@ -28,4 +28,5 @@
     <color name="my_tariff_background">#1F000000</color>
     <color name="background">#FFFFFF</color>
     <color name="pager_unselected">#1F000000</color>
+    <color name="logo_tint_night">@null</color>
 </resources>

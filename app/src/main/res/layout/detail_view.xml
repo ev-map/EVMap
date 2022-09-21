@@ -144,8 +144,8 @@
                 android:textAppearance="@style/TextAppearance.Material3.BodySmall"
                 android:textColor="@android:color/white"
                 app:backgroundTintAvailability="@{BindingAdaptersKt.flatten(filteredAvailability.data.status.values())}"
-                app:invisibleUnlessAnimated="@{filteredAvailability.data != null &amp;&amp; !expanded}"
                 app:invisibleUnless="@{filteredAvailability.data != null &amp;&amp; !expanded}"
+                app:invisibleUnlessAnimated="@{filteredAvailability.data != null &amp;&amp; !expanded}"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintTop_toTopOf="@+id/txtName"
                 tools:backgroundTint="@color/available"
@@ -183,10 +183,11 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
                 android:text="@string/connectors"
                 android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
                 android:textColor="?colorPrimary"
-                app:layout_constraintEnd_toStartOf="@+id/guideline2"
+                app:layout_constraintEnd_toStartOf="@+id/btnRefreshLiveData"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/txtConnectors" />
 
@@ -209,10 +210,10 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:text="@{charger.data.amenities}"
-                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                 android:autoLink="web"
                 android:linksClickable="true"
+                android:text="@{charger.data.amenities}"
+                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                 app:goneUnless="@{charger.data.amenities != null}"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintHorizontal_bias="0.0"
@@ -239,10 +240,10 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:text="@{charger.data.generalInformation}"
-                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                 android:autoLink="web"
                 android:linksClickable="true"
+                android:text="@{charger.data.generalInformation}"
+                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                 app:goneUnless="@{charger.data.generalInformation != null}"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintHorizontal_bias="0.0"
@@ -314,8 +315,8 @@
                 android:id="@+id/topPart"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:text="TextView"
                 android:layout_marginBottom="-10dp"
+                android:text="TextView"
                 app:layout_constraintBottom_toBottomOf="@+id/txtConnectors"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
@@ -333,36 +334,65 @@
                 app:icon="@drawable/ic_chargeprice"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
-                app:layout_constraintTop_toBottomOf="@+id/prediction" />
+                app:layout_constraintTop_toBottomOf="@+id/divider1" />
+
+            <View
+                android:id="@+id/divider2"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="8dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintTop_toBottomOf="@+id/textView13" />
 
             <TextView
                 android:id="@+id/textView8"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="@string/availability_prediction"
                 android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
                 android:textColor="?colorPrimary"
-                app:goneUnlessAnimated="@{predictionGraph != null}"
-                app:layout_constraintEnd_toStartOf="@+id/guideline2"
+                app:goneUnless="@{predictionGraph != null}"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
-                app:layout_constraintTop_toBottomOf="@+id/textView13" />
+                app:layout_constraintTop_toBottomOf="@+id/divider2" />
 
             <net.vonforst.evmap.ui.BarGraphView
                 android:id="@+id/prediction"
                 android:layout_width="0dp"
                 android:layout_height="80dp"
                 android:layout_marginTop="8dp"
-                app:goneUnlessAnimated="@{predictionGraph != null}"
                 app:data="@{predictionGraph}"
-                app:maxValue="@{charger.data.totalChargepoints}"
+                app:goneUnless="@{predictionGraph != null}"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/textView8"
+                app:maxValue="@{charger.data.totalChargepoints}"
                 tools:itemCount="3"
                 tools:layoutManager="LinearLayoutManager"
                 tools:listitem="@layout/item_connector"
                 tools:orientation="horizontal" />
+
+            <ImageView
+                android:id="@+id/imageView4"
+                android:layout_width="wrap_content"
+                android:layout_height="24dp"
+                android:layout_marginTop="4dp"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:background="?selectableItemBackgroundBorderless"
+                app:tint="@color/logo_tint_night"
+                app:goneUnless="@{predictionGraph != null}"
+                app:layout_constraintEnd_toStartOf="@+id/guideline2"
+                app:layout_constraintTop_toBottomOf="@+id/prediction"
+                app:srcCompat="@drawable/ic_powered_by_fronyx" />
+
+            <View
+                android:id="@+id/divider1"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="8dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintTop_toBottomOf="@+id/imageView4" />
 
             <ImageView
                 android:id="@+id/imgVerified"
@@ -372,13 +402,13 @@
                 android:layout_marginTop="2dp"
                 android:layout_marginBottom="2dp"
                 android:contentDescription="@string/verified"
-                app:tooltipTextCompat="@{@string/verified_desc(apiName)}"
                 app:goneUnless="@{ charger.data.verified }"
                 app:layout_constraintBottom_toBottomOf="@+id/txtName"
                 app:layout_constraintStart_toEndOf="@+id/imgFaultReport"
                 app:layout_constraintTop_toTopOf="@+id/txtName"
                 app:srcCompat="@drawable/ic_verified"
                 app:tint="@color/available"
+                app:tooltipTextCompat="@{@string/verified_desc(apiName)}"
                 tools:targetApi="o" />
 
             <ImageView
@@ -389,12 +419,12 @@
                 android:layout_marginTop="2dp"
                 android:layout_marginBottom="2dp"
                 android:contentDescription="@string/fault_report"
-                app:tooltipTextCompat="@{@string/fault_report}"
                 app:goneUnless="@{ charger.data.faultReport != null }"
                 app:layout_constraintBottom_toBottomOf="@+id/txtName"
                 app:layout_constraintStart_toEndOf="@+id/txtName"
                 app:layout_constraintTop_toTopOf="@+id/txtName"
                 app:srcCompat="@drawable/ic_map_marker_fault"
+                app:tooltipTextCompat="@{@string/fault_report}"
                 tools:targetApi="o" />
 
             <TextView
@@ -402,29 +432,28 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:breakStrategy="balanced"
+                android:text="@{charger.data.license}"
                 android:textAlignment="center"
                 android:textAppearance="@style/TextAppearance.Material3.BodySmall"
                 android:textStyle="italic"
-                android:text="@{charger.data.license}"
-                android:breakStrategy="balanced"
                 app:goneUnless="@{charger.data.license != null}"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/sourceButton"
-                app:layout_constraintBottom_toBottomOf="parent"
                 tools:text="The data is provided under the National Oman Open Data LicensE (NOODLE), Version 3.14, and may be used for any purpose whatsoever." />
 
             <Button
                 android:id="@+id/btnRefreshLiveData"
+                style="@style/Widget.App.Button.OutlinedButton.IconOnly.Small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="@style/Widget.App.Button.OutlinedButton.IconOnly.Small"
                 android:contentDescription="@string/refresh_live_data"
                 android:enabled="@{availability.status != Status.LOADING}"
                 app:icon="@drawable/ic_refresh"
                 app:layout_constraintBottom_toBottomOf="@+id/textView13"
-                app:layout_constraintEnd_toStartOf="@+id/guideline2"
-                app:layout_constraintTop_toBottomOf="@+id/connectors" />
+                app:layout_constraintEnd_toStartOf="@+id/guideline2" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

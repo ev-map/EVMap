@@ -2,4 +2,5 @@
 <resources>
     <color name="background">#121212</color>
     <color name="my_tariff_background">#1FFFFFFF</color>
+    <color name="logo_tint_night">#FFFFFF</color>
 </resources>

@@ -249,14 +249,24 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
                 if (responses.isEmpty()) {
                     null
                 } else {
-                    val timestamps = responses[0].predictions.map { it.timestamp }
-                    // TODO: implement this in a more elegant way: first ensure that all timestamps are the same, then take them in order
-                    timestamps.associateWith { ts ->
-                        responses.sumOf {
-                            val av =
-                                it.predictions.find { it.timestamp == ts }?.status == FronyxStatus.AVAILABLE
-                            val count = if (av) 1 else 0
-                            count
+                    val evseIds = responses.map { it.evseId }
+                    val groupByTimestamp = responses.flatMap { response ->
+                        response.predictions.map {
+                            Triple(
+                                it.timestamp,
+                                response.evseId,
+                                it.status
+                            )
+                        }
+                    }
+                        .groupBy { it.first }  // group by timestamp
+                        .mapValues { it.value.map { it.second to it.third } }  // only keep EVSEID and status
+                        .filterValues { it.map { it.first } == evseIds }  // remove values where status is not given for all EVSEs
+                        .filterKeys { it > ZonedDateTime.now() }  // only show predictions in the future
+
+                    groupByTimestamp.mapValues {
+                        it.value.count {
+                            it.second == FronyxStatus.AVAILABLE
                         }
                     }
                 }

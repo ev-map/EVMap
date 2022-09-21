@@ -162,15 +162,15 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
     val location: MutableLiveData<LatLng> by lazy {
         MutableLiveData<LatLng>()
     }
-    val availability: MediatorLiveData<Resource<ChargeLocationStatus>> by lazy {
-        MediatorLiveData<Resource<ChargeLocationStatus>>().apply {
-            addSource(chargerSparse) { charger ->
-                if (charger != null) {
-                    viewModelScope.launch {
-                        loadAvailability(charger)
+    private val triggerAvailabilityRefresh = MutableLiveData<Boolean>(true)
+    val availability: LiveData<Resource<ChargeLocationStatus>> by lazy {
+        chargerSparse.switchMap { charger ->
+            charger?.let {
+                triggerAvailabilityRefresh.switchMap {
+                    liveData {
+                        emit(Resource.loading(null))
+                        emit(getAvailability(charger))
                     }
-                } else {
-                    value = null
                 }
             }
         }
@@ -375,16 +375,8 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
             }
         }
 
-    private suspend fun loadAvailability(charger: ChargeLocation) {
-        availability.value = Resource.loading(null)
-        availability.value = getAvailability(charger)
-    }
-
     fun reloadAvailability() {
-        val charger = chargerSparse.value ?: return
-        viewModelScope.launch {
-            loadAvailability(charger)
-        }
+        triggerAvailabilityRefresh.value = true
     }
 
     fun loadChargerById(chargerId: Long) {

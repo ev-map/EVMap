@@ -244,7 +244,7 @@
     <string name="help">Hilfe</string>
     <string name="settings_android_auto">Android Auto</string>
     <string name="pref_chargeprice_allow_unbalanced_load">Schieflast erlauben</string>
-    <string name="pref_chargeprice_allow_unbalanced_load_summary">Einphasiges laden mit mehr als 4.5 kW erlauben</string>
+    <string name="pref_chargeprice_allow_unbalanced_load_summary">Einphasiges Laden mit mehr als 4.5 kW erlauben</string>
     <string name="pref_map_rotate_gestures_enabled">Kartenrotation</string>
     <string name="pref_map_rotate_gestures_on">Karte mit zwei Fingern rotieren</string>
     <string name="pref_map_rotate_gestures_off">Karte immer nach Norden ausrichten</string>

@@ -369,6 +369,15 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 null, extras
             )
         }
+        binding.detailView.imgPredictionSource.setOnClickListener {
+            (activity as? MapsActivity)?.openUrl(getString(R.string.fronyx_url))
+        }
+        binding.detailView.btnPredictionHelp.setOnClickListener {
+            MaterialAlertDialogBuilder(requireContext())
+                .setMessage(getString(R.string.prediction_help))
+                .setPositiveButton(R.string.ok) { _, _ -> }
+                .show()
+        }
         binding.detailView.topPart.setOnClickListener {
             bottomSheetBehavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT
         }

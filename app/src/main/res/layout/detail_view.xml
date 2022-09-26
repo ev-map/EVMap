@@ -269,13 +269,12 @@
                 android:id="@+id/details"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
                 android:nestedScrollingEnabled="false"
                 app:data="@{DetailsAdapterKt.buildDetails(charger.data, chargeCards, filteredChargeCards, context)}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/btnChargeprice"
+                app:layout_constraintTop_toBottomOf="@+id/divider3"
                 tools:itemCount="3"
                 tools:listitem="@layout/item_detail" />
 
@@ -296,17 +295,17 @@
                 android:text="@{@string/source(apiName)}"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
-                app:layout_constraintTop_toBottomOf="@+id/textView4" />
+                app:layout_constraintTop_toBottomOf="@+id/textView4"
+                tools:text="Source: DataSource" />
 
             <TextView
                 android:id="@+id/textView13"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
                 android:gravity="right|end"
                 android:text="@{availability.status == Status.SUCCESS ? @string/realtime_data_source(availability.data.source) : availability.status == Status.LOADING ? @string/realtime_data_loading : @string/realtime_data_unavailable}"
                 android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-                app:layout_constraintEnd_toStartOf="@+id/btnRefreshLiveData"
+                app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/connectors"
                 tools:text="Echtzeitdaten nicht verfügbar" />
@@ -344,22 +343,45 @@
                 android:background="?android:attr/listDivider"
                 app:layout_constraintTop_toBottomOf="@+id/textView13" />
 
+            <View
+                android:id="@+id/divider3"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="8dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintTop_toBottomOf="@+id/btnChargeprice" />
+
             <TextView
                 android:id="@+id/textView8"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
                 android:text="@string/utilization_prediction"
                 android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
                 android:textColor="?colorPrimary"
                 app:goneUnless="@{predictionGraph != null}"
+                app:layout_constraintEnd_toStartOf="@+id/btnPredictionHelp"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/divider2" />
+
+            <Button
+                android:id="@+id/btnPredictionHelp"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/help"
+                app:goneUnless="@{predictionGraph != null}"
+                app:icon="@drawable/ic_help"
+                app:iconTint="?android:textColorSecondary"
+                app:layout_constraintBottom_toBottomOf="@+id/textView8"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/textView8" />
 
             <net.vonforst.evmap.ui.BarGraphView
                 android:id="@+id/prediction"
                 android:layout_width="0dp"
-                android:layout_height="80dp"
+                android:layout_height="100dp"
                 android:layout_marginTop="8dp"
                 app:data="@{predictionGraph}"
                 app:goneUnless="@{predictionGraph != null}"
@@ -373,7 +395,7 @@
                 tools:orientation="horizontal" />
 
             <ImageView
-                android:id="@+id/imageView4"
+                android:id="@+id/imgPredictionSource"
                 android:layout_width="wrap_content"
                 android:layout_height="24dp"
                 android:layout_marginTop="4dp"
@@ -391,8 +413,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginTop="8dp"
+                app:goneUnless="@{predictionGraph != null}"
                 android:background="?android:attr/listDivider"
-                app:layout_constraintTop_toBottomOf="@+id/imageView4" />
+                app:layout_constraintTop_toBottomOf="@+id/imgPredictionSource" />
 
             <ImageView
                 android:id="@+id/imgVerified"
@@ -438,7 +461,6 @@
                 android:textAppearance="@style/TextAppearance.Material3.BodySmall"
                 android:textStyle="italic"
                 app:goneUnless="@{charger.data.license != null}"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/sourceButton"
@@ -446,14 +468,16 @@
 
             <Button
                 android:id="@+id/btnRefreshLiveData"
-                style="@style/Widget.App.Button.OutlinedButton.IconOnly.Small"
+                style="@style/Widget.Material3.Button.IconButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/refresh_live_data"
                 android:enabled="@{availability.status != Status.LOADING}"
                 app:icon="@drawable/ic_refresh"
-                app:layout_constraintBottom_toBottomOf="@+id/textView13"
-                app:layout_constraintEnd_toStartOf="@+id/guideline2" />
+                app:iconTint="?android:textColorSecondary"
+                app:layout_constraintBottom_toBottomOf="@+id/textView7"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/textView7" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

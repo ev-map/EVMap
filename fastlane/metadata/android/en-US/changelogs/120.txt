@@ -1,0 +1,8 @@
+Improvements:
+- More European countries supported for price comparison with Chargeprice.app
+- Android Auto: Search button is now located on main screen
+- Android Auto: Replaced emojis with proper icons
+
+Bugfixes:
+- Crashes / inconsistencies after switching data source
+- Problems when loading realtime availability data

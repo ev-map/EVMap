@@ -1,0 +1,8 @@
+Verbesserungen:
+- Weitere unterstützte Länder für Preisvergleich mit Chargeprice.app
+- Android Auto: Suchbutton nun auf dem Hauptbildschirm
+- Android Auto: Emoji durch Icons ersetzt
+
+Fehler behoben:
+- Abstürze / Inkonsistenzen nach Wechsel der Datenquelle
+- Probleme beim Laden der Echtzeitdaten

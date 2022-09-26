@@ -271,4 +271,10 @@
     <string name="about_contributors">Mitwirkende</string>
     <string name="about_contributors_text">Dank an alle Mitwirkenden für ihre Beiträge von Code und Übersetzungen für EVMap:</string>
     <string name="utilization_prediction">Auslastungsprognose</string>
+    <string name="prediction_help">Die Prognose basiert auf Faktoren wie Wochentag, Uhrzeit und Nutzung in der Vergangenheit. So kannst du stark ausgelastete Ladesäulen vermeiden. Keine Garantie.</string>
+    <string name="prediction_time_colon">%s Uhr:</string>
+    <plurals name="prediction_number_available">
+        <item quantity="one">%1$d/%2$d verfügbar</item>
+        <item quantity="other">%1$d/%2$d verfügbar</item>
+    </plurals>
 </resources>

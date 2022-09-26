@@ -266,7 +266,7 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
 
                     groupByTimestamp.mapValues {
                         it.value.count {
-                            it.second == FronyxStatus.AVAILABLE
+                            it.second == FronyxStatus.UNAVAILABLE
                         }
                     }
                 }

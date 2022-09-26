@@ -349,7 +349,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="@string/availability_prediction"
+                android:text="@string/utilization_prediction"
                 android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
                 android:textColor="?colorPrimary"
                 app:goneUnless="@{predictionGraph != null}"

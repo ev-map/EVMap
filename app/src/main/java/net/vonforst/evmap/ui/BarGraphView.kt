@@ -84,7 +84,7 @@ class BarGraphView(context: Context, attrs: AttributeSet) : View(context, attrs)
 
             legendPaint.textAlign = Paint.Align.CENTER
             data.entries.forEachIndexed { i, (t, v) ->
-                val drawable = if (v > 0) barDrawableAvailable else barDrawableUnavailable
+                val drawable = if (v < maxValue) barDrawableAvailable else barDrawableUnavailable
 
                 val height =
                     zeroHeight + (graphBounds.height() - zeroHeight) * v.toFloat() / maxValue

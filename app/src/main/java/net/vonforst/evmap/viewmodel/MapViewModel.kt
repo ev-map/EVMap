@@ -49,6 +49,12 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
     )
 
     val apiId = repo.api.map { it.id }
+
+    init {
+        // necessary so that apiId is updated
+        apiId.observeForever { }
+    }
+
     val apiName = repo.api.map { it.name }
 
     val bottomSheetState: MutableLiveData<Int> by lazy {

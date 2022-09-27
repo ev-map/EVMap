@@ -5,7 +5,6 @@ import android.location.Location
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import androidx.car.app.CarContext
-import androidx.car.app.CarToast
 import androidx.car.app.Screen
 import androidx.car.app.constraints.ConstraintManager
 import androidx.car.app.hardware.CarHardwareManager
@@ -65,6 +64,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
     private var location: Location? = null
     private var lastDistanceUpdateTime: Instant? = null
     private var chargers: List<ChargeLocation>? = null
+    private var loadingError = false
     private var prefs = PreferenceDataSource(ctx)
     private val db = AppDatabase.getInstance(carContext)
     private val repo =
@@ -156,7 +156,17 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                 )
                 builder.setOnItemsVisibilityChangedListener(this@MapScreen)
                 setItemList(builder.build())
-            } ?: setLoading(true)
+            } ?: run {
+                if (loadingError) {
+                    val builder = ItemList.Builder()
+                    builder.setNoItemsMessage(
+                        carContext.getString(R.string.connection_error)
+                    )
+                    setItemList(builder.build())
+                } else {
+                    setLoading(true)
+                }
+            }
             setCurrentLocationEnabled(true)
             setHeaderAction(Action.APP_ICON)
             val filtersCount = if (filterStatus == FILTERS_FAVORITES) 1 else {
@@ -355,6 +365,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
         this.searchLocation = searchLocation
 
         updateCoroutine = lifecycleScope.launch {
+            loadingError = false
             try {
                 filterStatus = prefs.filterStatus
                 val filterValues =
@@ -379,7 +390,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                         filtersWithValue
                     ).awaitFinished()
                     if (response.status == Status.ERROR) {
-                        withContext(Dispatchers.Main) { showLoadingError() }
+                        loadingError = true
                         return@launch
                     }
                     var chargers = response.data?.filterIsInstance(ChargeLocation::class.java)
@@ -393,7 +404,8 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                                 filtersWithValue
                             ).awaitFinished()
                             if (response.status == Status.ERROR) {
-                                withContext(Dispatchers.Main) { showLoadingError() }
+                                loadingError = true
+                                invalidate()
                                 return@launch
                             }
                             chargers =
@@ -407,14 +419,10 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                 lastDistanceUpdateTime = Instant.now()
                 invalidate()
             } catch (e: IOException) {
-                withContext(Dispatchers.Main) { showLoadingError() }
+                loadingError = true
+                invalidate()
             }
         }
-    }
-
-    private fun showLoadingError() {
-        CarToast.makeText(carContext, R.string.connection_error, CarToast.LENGTH_LONG)
-            .show()
     }
 
     private fun onEnergyLevelUpdated(energyLevel: EnergyLevel) {

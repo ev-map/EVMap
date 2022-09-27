@@ -108,8 +108,6 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
     }
 
     override fun onGetTemplate(): Template {
-        session.requestLocationUpdates()
-
         session.mapScreen = this
         return PlaceListMapTemplate.Builder().apply {
             setTitle(
@@ -123,17 +121,23 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                     }
                 )
             )
-            searchLocation?.let {
-                setAnchor(Place.Builder(CarLocation.create(it.latitude, it.longitude)).apply {
-                    if (prefs.placeSearchResultAndroidAutoName != null) {
-                        setMarker(
-                            PlaceMarker.Builder()
-                                .setColor(CarColor.PRIMARY)
-                                .build()
-                        )
-                    }
-                }.build())
-            } ?: setLoading(true)
+            if (prefs.placeSearchResultAndroidAutoName != null) {
+                searchLocation?.let {
+                    setAnchor(Place.Builder(CarLocation.create(it.latitude, it.longitude)).apply {
+                        if (prefs.placeSearchResultAndroidAutoName != null) {
+                            setMarker(
+                                PlaceMarker.Builder()
+                                    .setColor(CarColor.PRIMARY)
+                                    .build()
+                            )
+                        }
+                    }.build())
+                } ?: setLoading(true)
+            } else {
+                location?.let {
+                    setAnchor(Place.Builder(CarLocation.create(it.latitude, it.longitude)).build())
+                } ?: setLoading(true)
+            }
             chargers?.take(maxRows)?.let { chargerList ->
                 val builder = ItemList.Builder()
                 // only show the city if not all chargers are in the same city
@@ -421,6 +425,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
 
     override fun onStart(owner: LifecycleOwner) {
         setupListeners()
+        session.requestLocationUpdates()
 
         // Reloading chargers in onStart does not seem to count towards content limit.
         // So let's do this so the user gets fresh chargers when re-entering the app.

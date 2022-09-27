@@ -26,7 +26,9 @@ abstract class LocationEngine(protected val context: Context) {
      */
     @RequiresPermission(anyOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
     fun requestLocationUpdates(priority: Priority, intervalMs: Long, listener: LocationListener) {
-        requests.add(LocationRequest(priority, intervalMs, listener))
+        if (!requests.any { it.listener == listener }) {
+            requests.add(LocationRequest(priority, intervalMs, listener))
+        }
         enable()
     }
 

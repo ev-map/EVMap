@@ -1,0 +1,1 @@
+Änderungen in Android Auto aus 1.3.12 rückgängig gemacht, da diese für Abstürze sorgten.

@@ -7,7 +7,6 @@ import android.graphics.Matrix
 import android.graphics.RectF
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
-import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import androidx.car.app.CarContext
@@ -33,8 +32,6 @@ import net.vonforst.evmap.api.createApi
 import net.vonforst.evmap.api.nameForPlugType
 import net.vonforst.evmap.api.stringProvider
 import net.vonforst.evmap.model.ChargeLocation
-import net.vonforst.evmap.model.Cost
-import net.vonforst.evmap.model.FaultReport
 import net.vonforst.evmap.model.Favorite
 import net.vonforst.evmap.storage.AppDatabase
 import net.vonforst.evmap.storage.ChargeLocationsRepository
@@ -247,9 +244,15 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
                 val operatorText = generateOperatorText(charger)
                 setTitle(operatorText)
 
-                charger.cost?.let { addText(generateCostStatusText(it)) }
+                charger.cost?.let { addText(it.getStatusText(carContext, emoji = true)) }
                 charger.faultReport?.let { fault ->
-                    addText(generateFaultReportTitle(fault))
+                    addText(
+                        carContext.getString(
+                            R.string.auto_fault_report_date,
+                            fault.created?.atZone(ZoneId.systemDefault())
+                                ?.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT))
+                        )
+                    )
                 }
             }.build())
         } else {
@@ -264,14 +267,20 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
                 val operatorText = generateOperatorText(charger)
                 setTitle(operatorText)
                 charger.cost?.let {
-                    addText(generateCostStatusText(it))
+                    addText(it.getStatusText(carContext, emoji = true))
                     it.getDetailText()?.let { addText(it) }
                 }
             }.build())
             // row 3: fault report (if exists)
             charger.faultReport?.let { fault ->
                 rows.add(Row.Builder().apply {
-                    setTitle(generateFaultReportTitle(fault))
+                    setTitle(
+                        carContext.getString(
+                            R.string.auto_fault_report_date,
+                            fault.created?.atZone(ZoneId.systemDefault())
+                                ?.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT))
+                        )
+                    )
                     fault.description?.let {
                         addText(
                             HtmlCompat.fromHtml(
@@ -294,59 +303,6 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
             }
         }
         return rows
-    }
-
-    private fun generateCostStatusText(cost: Cost): CharSequence {
-        val string = SpannableString(cost.getStatusText(carContext, emoji = true))
-        // replace emoji with CarIcon
-        string.indexOf('⚡').takeIf { it >= 0 }?.let { index ->
-            string.setSpan(
-                CarIconSpan.create(
-                    CarIcon.Builder(
-                        IconCompat.createWithResource(
-                            carContext,
-                            R.drawable.ic_lightning
-                        )
-                    ).setTint(CarColor.YELLOW).build()
-                ), index, index + 1, SpannableString.SPAN_INCLUSIVE_EXCLUSIVE
-            )
-        }
-        string.indexOf('\uD83C').takeIf { it >= 0 }?.let { index ->
-            string.setSpan(
-                CarIconSpan.create(
-                    CarIcon.Builder(
-                        IconCompat.createWithResource(
-                            carContext,
-                            R.drawable.ic_parking
-                        )
-                    ).setTint(CarColor.BLUE).build()
-                ), index, index + 2, SpannableString.SPAN_INCLUSIVE_EXCLUSIVE
-            )
-        }
-        return string
-    }
-
-
-    private fun generateFaultReportTitle(fault: FaultReport): CharSequence {
-        val string = SpannableString(
-            carContext.getString(
-                R.string.auto_fault_report_date,
-                fault.created?.atZone(ZoneId.systemDefault())
-                    ?.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT))
-            )
-        )
-        // replace emoji with CarIcon
-        string.setSpan(
-            CarIconSpan.create(
-                CarIcon.Builder(
-                    IconCompat.createWithResource(
-                        carContext,
-                        R.drawable.ic_fault_report
-                    )
-                ).setTint(CarColor.YELLOW).build()
-            ), 0, 1, SpannableString.SPAN_INCLUSIVE_EXCLUSIVE
-        )
-        return string
     }
 
     private fun generateChargepointsText(charger: ChargeLocation): SpannableStringBuilder {

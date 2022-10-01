@@ -3,7 +3,6 @@ package net.vonforst.evmap.auto
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Matrix
 import android.graphics.RectF
 import android.graphics.drawable.BitmapDrawable
@@ -31,7 +30,6 @@ import net.vonforst.evmap.api.availability.ChargeLocationStatus
 import net.vonforst.evmap.api.availability.getAvailability
 import net.vonforst.evmap.api.chargeprice.ChargepriceApi
 import net.vonforst.evmap.api.createApi
-import net.vonforst.evmap.api.iconForPlugType
 import net.vonforst.evmap.api.nameForPlugType
 import net.vonforst.evmap.api.stringProvider
 import net.vonforst.evmap.model.ChargeLocation
@@ -356,21 +354,13 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
         charger.chargepointsMerged.forEachIndexed { i, cp ->
             if (i > 0) chargepointsText.append(" · ")
             chargepointsText.append(
-                "${cp.count}× "
-            ).append(
-                nameForPlugType(carContext.stringProvider(), cp.type),
-                CarIconSpan.create(
-                    CarIcon.Builder(
-                        IconCompat.createWithResource(
-                            carContext,
-                            iconForPlugType(cp.type)
-                        )
-                    ).setTint(
-                        CarColor.createCustom(Color.WHITE, Color.BLACK)
-                    ).build()
-                ),
-                Spanned.SPAN_INCLUSIVE_EXCLUSIVE
-            ).append(" ").append(cp.formatPower())
+                "${cp.count}× ${
+                    nameForPlugType(
+                        carContext.stringProvider(),
+                        cp.type
+                    )
+                } ${cp.formatPower()}"
+            )
             availability?.status?.get(cp)?.let { status ->
                 chargepointsText.append(
                     " (${availabilityText(status)}/${cp.count})",

@@ -246,9 +246,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                             }
                             .build())
                     .build())
-            if (carContext.carAppApiLevel >= 5) {
-                setOnContentRefreshListener(this@MapScreen)
-            }
+            setOnContentRefreshListener(this@MapScreen)
         }.build()
     }
 

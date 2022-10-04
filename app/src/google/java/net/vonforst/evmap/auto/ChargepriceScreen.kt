@@ -213,10 +213,9 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
 
                 val myTariffs = prefs.chargepriceMyTariffs
 
-                // choose the highest power chargepoint compatible with the car
-                val chargepoint = cpStation.chargePoints.filterIndexed { i, cp ->
-                    charger.chargepointsMerged[i].type in car.compatibleEvmapConnectors
-                }.maxByOrNull { it.power }
+                // choose the highest power chargepoint
+                // (we have already filtered so that only compatible ones are included)
+                val chargepoint = cpStation.chargePoints.maxByOrNull { it.power }
                 if (chargepoint == null) {
                     errorMessage =
                         carContext.getString(R.string.chargeprice_no_compatible_connectors)
@@ -226,11 +225,7 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
 
                 val metaMapped =
                     result.meta!!.map(ChargepriceMeta::class.java, ChargepriceApi.moshi)!!
-                meta = metaMapped.chargePoints.filterIndexed { i, cp ->
-                    charger.chargepointsMerged[i].type in car.compatibleEvmapConnectors
-                }.maxByOrNull {
-                    it.power
-                }
+                meta = metaMapped.chargePoints.maxByOrNull { it.power }
 
                 prices = result.data!!.map { cp ->
                     val filteredPrices =

@@ -24,11 +24,17 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.vonforst.evmap.R
 import net.vonforst.evmap.api.chargeprice.*
+import net.vonforst.evmap.api.equivalentPlugTypes
+import net.vonforst.evmap.api.nameForPlugType
+import net.vonforst.evmap.api.stringProvider
 import net.vonforst.evmap.model.ChargeLocation
+import net.vonforst.evmap.model.Chargepoint
 import net.vonforst.evmap.storage.AppDatabase
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.ui.currency
+import net.vonforst.evmap.ui.time
 import java.io.IOException
+import kotlin.math.roundToInt
 
 class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(ctx) {
     private val prefs = PreferenceDataSource(ctx)
@@ -41,6 +47,7 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
     }
     private var prices: List<ChargePrice>? = null
     private var meta: ChargepriceChargepointMeta? = null
+    private var chargepoint: Chargepoint? = null
     private val maxRows = if (ctx.carAppApiLevel >= 2) {
         ctx.constraintManager.getContentLimit(ConstraintManager.CONTENT_LIMIT_TYPE_LIST)
     } else 6
@@ -62,7 +69,22 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
             if (prices == null && errorMessage == null) {
                 setLoading(true)
             } else {
-                setSingleList(ItemList.Builder().apply {
+                val header = meta?.let { meta ->
+                    chargepoint?.let { chargepoint ->
+                        "${
+                            nameForPlugType(
+                                carContext.stringProvider(),
+                                chargepoint.type
+                            )
+                        } ${chargepoint.formatPower()} " + carContext.getString(
+                            R.string.chargeprice_stats,
+                            meta.energy,
+                            time(meta.duration.roundToInt()),
+                            meta.energy / meta.duration * 60
+                        )
+                    }
+                } ?: ""
+                addSectionedList(SectionedItemList.create(ItemList.Builder().apply {
                     setNoItemsMessage(
                         errorMessage ?: carContext.getString(R.string.chargeprice_no_tariffs_found)
                     )
@@ -72,7 +94,7 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
                             addText(formatPrice(price))
                         }.build())
                     }
-                }.build())
+                }.build(), header))
             }
             setActionStrip(
                 ActionStrip.Builder().addAction(
@@ -216,6 +238,11 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
                 // choose the highest power chargepoint
                 // (we have already filtered so that only compatible ones are included)
                 val chargepoint = cpStation.chargePoints.maxByOrNull { it.power }
+
+                val index = cpStation.chargePoints.indexOf(chargepoint)
+                this@ChargepriceScreen.chargepoint =
+                    charger.chargepoints.filter { equivalentPlugTypes(it.type).any { it in car.compatibleEvmapConnectors } }[index]
+
                 if (chargepoint == null) {
                     errorMessage =
                         carContext.getString(R.string.chargeprice_no_compatible_connectors)

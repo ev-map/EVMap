@@ -196,6 +196,7 @@
                 app:availability="@{vm.availability}"
                 app:filteredAvailability="@{vm.filteredAvailability}"
                 app:predictionGraph="@{vm.predictionGraph}"
+                app:predictionMaxValue="@{vm.predictionMaxValue}"
                 app:chargeCards="@{vm.chargeCardMap}"
                 app:filteredChargeCards="@{vm.filteredChargeCards}"
                 app:distance="@{vm.chargerDistance}"

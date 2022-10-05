@@ -215,11 +215,14 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
 
     val prediction: LiveData<Resource<List<FronyxEvseIdResponse>>> by lazy {
         availability.switchMap { av ->
-            av?.data?.evseIds?.let { evseIds ->
+            av.data?.evseIds?.let { evseIds ->
                 liveData {
                     emit(Resource.loading(null))
 
-                    val allEvseIds = evseIds.flatMap { it.value }
+                    val charger = charger.value?.data ?: return@liveData
+                    val allEvseIds =
+                        evseIds.filterKeys { FronyxApi.isChargepointSupported(charger, it) }
+                            .flatMap { it.value }
 
                     try {
                         val result = allEvseIds.map {
@@ -268,9 +271,18 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
                         it.value.count {
                             it.second == FronyxStatus.UNAVAILABLE
                         }
-                    }
+                    }.ifEmpty { null }
                 }
             }
+        }
+    }
+
+    val predictionMaxValue: LiveData<Int> by lazy {
+        charger.map {
+            it.data?.let { charger ->
+                charger.chargepoints.filter { FronyxApi.isChargepointSupported(charger, it) }
+                    .sumOf { it.count }
+            } ?: 0
         }
     }
 

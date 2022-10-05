@@ -4,6 +4,8 @@ import android.content.Context
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.squareup.moshi.Moshi
 import net.vonforst.evmap.BuildConfig
+import net.vonforst.evmap.model.ChargeLocation
+import net.vonforst.evmap.model.Chargepoint
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -55,6 +57,31 @@ interface FronyxApi {
                 .client(client)
                 .build()
             return retrofit.create(FronyxApi::class.java)
+        }
+
+        /**
+         * Checks if a chargepoint is supported by Fronyx.
+         *
+         * This function just applies some heuristics on the charger's data without making API
+         * calls. If it returns true, that is not a guarantee that Fronyx will have information
+         * on this chargepoint. But if it is false, it is pretty unlikely that Fronyx will have
+         * useful data, so we do not try to load the data in this case.
+         */
+        fun isChargepointSupported(charger: ChargeLocation, chargepoint: Chargepoint): Boolean {
+            if (charger.address?.country !in listOf("Deutschland", "Germany")) {
+                // fronyx only predicts for chargers in Germany for now
+                return false
+            }
+            if (chargepoint.type !in listOf(
+                    Chargepoint.CCS_UNKNOWN,
+                    Chargepoint.CCS_TYPE_2,
+                    Chargepoint.CHADEMO
+                )
+            ) {
+                // fronyx only predicts DC chargers for now
+                return false
+            }
+            return true
         }
     }
 }

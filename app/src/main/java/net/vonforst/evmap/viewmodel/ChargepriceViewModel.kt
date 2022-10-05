@@ -243,6 +243,12 @@ class ChargepriceViewModel(
         }
 
         val cpStation = ChargepriceStation.fromEvmap(charger, compatibleConnectors)
+        if (cpStation.chargePoints.isEmpty()) {
+            // no compatible connectors
+            chargePrices.value = Resource.success(emptyList())
+            chargePriceMeta.value = Resource.success(ChargepriceMeta(emptyList()))
+            return
+        }
 
         loadPricesJob?.cancel()
         loadPricesJob = viewModelScope.launch {

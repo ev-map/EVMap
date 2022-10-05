@@ -112,18 +112,47 @@ interface ChargepriceApi {
             else -> throw IllegalArgumentException()
         }
 
+        /**
+         * Checks if a charger is supported by Chargeprice.
+         *
+         * This function just applies some heuristics on the charger's data without making API
+         * calls. If it returns true, that is not a guarantee that Chargeprice will have information
+         * on this charger. But if it is false, it is pretty unlikely that Chargeprice will have
+         * useful data, so we do not show the price comparison button in this case.
+         */
         @JvmStatic
-        fun isCountrySupported(country: String, dataSource: String): Boolean = when (dataSource) {
-            "goingelectric" -> country in listOf(
-                // list of countries according to Chargeprice.app, 2021/08/24
-                "Deutschland",
-                "Österreich",
-                "Schweiz",
-                "Frankreich",
-                "Belgien",
-                "Niederlande",
-                "Luxemburg",
-                "Dänemark",
+        fun isChargerSupported(charger: ChargeLocation): Boolean {
+            val dataSourceSupported = charger.dataSource in listOf("goingelectric", "openchargemap")
+            val countrySupported =
+                charger.chargepriceData?.country?.let { isCountrySupported(it, charger.dataSource) }
+                    ?: false
+            val networkSupported = charger.chargepriceData?.network?.let {
+                if (charger.dataSource == "openchargemap") {
+                    it !in listOf(
+                        "1", // unknown operator
+                        "44", // private residence/individual
+                        "45"  // business owner at location
+                    )
+                } else {
+                    true
+                }
+            } ?: false
+            val powerAvailable = charger.chargepoints.all { it.hasKnownPower() }
+            return dataSourceSupported && countrySupported && networkSupported && powerAvailable
+        }
+
+        private fun isCountrySupported(country: String, dataSource: String): Boolean =
+            when (dataSource) {
+                "goingelectric" -> country in listOf(
+                    // list of countries according to Chargeprice.app, 2021/08/24
+                    "Deutschland",
+                    "Österreich",
+                    "Schweiz",
+                    "Frankreich",
+                    "Belgien",
+                    "Niederlande",
+                    "Luxemburg",
+                    "Dänemark",
                 "Norwegen",
                 "Schweden",
                 "Slowenien",

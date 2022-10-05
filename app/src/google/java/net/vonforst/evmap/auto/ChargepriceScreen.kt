@@ -201,6 +201,14 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
             try {
                 val car = determineVehicle(manufacturer, modelName)
                 val cpStation = ChargepriceStation.fromEvmap(charger, car.compatibleEvmapConnectors)
+
+                if (cpStation.chargePoints.isEmpty()) {
+                    errorMessage =
+                        carContext.getString(R.string.chargeprice_no_compatible_connectors)
+                    invalidate()
+                    return@launch
+                }
+
                 val result = api.getChargePrices(
                     ChargepriceRequest(
                         dataAdapter = dataAdapter,

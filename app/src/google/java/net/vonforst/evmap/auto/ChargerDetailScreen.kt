@@ -104,24 +104,23 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
                             navigateToCharger(charger)
                         }
                         .build())
-                    charger.chargepriceData?.country?.let { country ->
-                        if (ChargepriceApi.isCountrySupported(country, charger.dataSource)) {
-                            addAction(Action.Builder()
-                                .setIcon(
-                                    CarIcon.Builder(
-                                        IconCompat.createWithResource(
-                                            carContext,
-                                            R.drawable.ic_chargeprice
-                                        )
-                                    ).build()
-                                )
-                                .setTitle(carContext.getString(R.string.auto_prices))
+                        if (ChargepriceApi.isChargerSupported(charger)) {
+                            addAction(
+                                Action.Builder()
+                                    .setIcon(
+                                        CarIcon.Builder(
+                                            IconCompat.createWithResource(
+                                                carContext,
+                                                R.drawable.ic_chargeprice
+                                            )
+                                        ).build()
+                                    )
+                                    .setTitle(carContext.getString(R.string.auto_prices))
                                 .setOnClickListener {
                                     screenManager.push(ChargepriceScreen(carContext, charger))
                                 }
                                 .build())
                         }
-                    }
                 } ?: setLoading(true)
             }.build()
         ).apply {

@@ -48,6 +48,10 @@
             type="Map&lt;ZonedDateTime, Integer&gt;" />
 
         <variable
+            name="predictionMaxValue"
+            type="Integer" />
+
+        <variable
             name="filteredAvailability"
             type="Resource&lt;ChargeLocationStatus&gt;" />
 
@@ -388,7 +392,7 @@
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/textView8"
-                app:maxValue="@{charger.data.totalChargepoints}"
+                app:maxValue="@{predictionMaxValue}"
                 tools:itemCount="3"
                 tools:layoutManager="LinearLayoutManager"
                 tools:listitem="@layout/item_connector"

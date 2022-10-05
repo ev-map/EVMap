@@ -93,6 +93,7 @@ class ChargeLocationsRepository(
         id: Long
     ): LiveData<Resource<ChargeLocation>> {
         return liveData {
+            emit(Resource.loading(null))
             val refData = referenceData.await()
             val result = api.value!!.getChargepointDetail(refData, id)
             emit(result)

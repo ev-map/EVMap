@@ -1,1 +1,1 @@
-Änderungen in Android Auto aus 1.3.12 rückgängig gemacht, da diese für Abstürze sorgten.
+Reverted Android Auto changes in 1.3.13, which caused crashes

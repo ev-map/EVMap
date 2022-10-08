@@ -15,6 +15,7 @@ import net.vonforst.evmap.api.availability.AvailabilityDetectorException
 import net.vonforst.evmap.api.availability.ChargeLocationStatus
 import net.vonforst.evmap.api.availability.getAvailability
 import net.vonforst.evmap.api.createApi
+import net.vonforst.evmap.api.equivalentPlugTypes
 import net.vonforst.evmap.api.fronyx.FronyxApi
 import net.vonforst.evmap.api.fronyx.FronyxEvseIdResponse
 import net.vonforst.evmap.api.fronyx.FronyxStatus
@@ -224,8 +225,14 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
 
                     val charger = charger.value?.data ?: return@liveData
                     val allEvseIds =
-                        evseIds.filterKeys { FronyxApi.isChargepointSupported(charger, it) }
-                            .flatMap { it.value }
+                        evseIds.filterKeys {
+                            FronyxApi.isChargepointSupported(charger, it) &&
+                                    filteredConnectors.value?.let { filtered ->
+                                        equivalentPlugTypes(
+                                            it.type
+                                        ).any { filtered.contains(it) }
+                                    } ?: true
+                        }.flatMap { it.value }
 
                     try {
                         val result = allEvseIds.map {
@@ -282,7 +289,16 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
 
     private val predictedChargepoints = charger.map {
         it.data?.let { charger ->
-            charger.chargepoints.filter { FronyxApi.isChargepointSupported(charger, it) }
+            charger.chargepoints.filter {
+                FronyxApi.isChargepointSupported(charger, it) &&
+                        filteredConnectors.value?.let { filtered ->
+                            equivalentPlugTypes(it.type).any {
+                                filtered.contains(
+                                    it
+                                )
+                            }
+                        } ?: true
+            }
         }
     }
 

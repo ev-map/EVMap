@@ -279,4 +279,6 @@
     </plurals>
     <string name="pref_prediction_enabled">Auslastungsprognosen anzeigen</string>
     <string name="pref_prediction_enabled_summary">für unterstützte Ladestationen\n(momentan nur Schnellader in Deutschland)</string>
+    <string name="prediction_only">(nur %s)</string>
+    <string name="prediction_dc_plugs_only">DC-Anschlüsse</string>
 </resources>

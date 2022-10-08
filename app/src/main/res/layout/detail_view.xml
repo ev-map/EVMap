@@ -52,6 +52,10 @@
             type="Integer" />
 
         <variable
+            name="predictionDescription"
+            type="String" />
+
+        <variable
             name="filteredAvailability"
             type="Resource&lt;ChargeLocationStatus&gt;" />
 
@@ -357,17 +361,29 @@
 
             <TextView
                 android:id="@+id/textView8"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
                 android:text="@string/utilization_prediction"
                 android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
                 android:textColor="?colorPrimary"
                 app:goneUnless="@{predictionGraph != null}"
-                app:layout_constraintEnd_toStartOf="@+id/btnPredictionHelp"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/divider2" />
+
+            <TextView
+                android:id="@+id/textView29"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+                android:text="@{predictionDescription}"
+                app:goneUnless="@{predictionGraph != null}"
+                app:layout_constraintBaseline_toBaselineOf="@+id/textView8"
+                app:layout_constraintEnd_toStartOf="@+id/btnPredictionHelp"
+                app:layout_constraintStart_toEndOf="@+id/textView8"
+                tools:text="(DC plugs only)" />
 
             <Button
                 android:id="@+id/btnPredictionHelp"

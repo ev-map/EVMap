@@ -19,6 +19,7 @@ import net.vonforst.evmap.api.fronyx.FronyxApi
 import net.vonforst.evmap.api.fronyx.FronyxEvseIdResponse
 import net.vonforst.evmap.api.fronyx.FronyxStatus
 import net.vonforst.evmap.api.goingelectric.GEChargepoint
+import net.vonforst.evmap.api.nameForPlugType
 import net.vonforst.evmap.api.openchargemap.OCMConnection
 import net.vonforst.evmap.api.openchargemap.OCMReferenceData
 import net.vonforst.evmap.api.stringProvider
@@ -279,12 +280,37 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
         }
     }
 
+    private val predictedChargepoints = charger.map {
+        it.data?.let { charger ->
+            charger.chargepoints.filter { FronyxApi.isChargepointSupported(charger, it) }
+        }
+    }
+
     val predictionMaxValue: LiveData<Int> by lazy {
-        charger.map {
-            it.data?.let { charger ->
-                charger.chargepoints.filter { FronyxApi.isChargepointSupported(charger, it) }
-                    .sumOf { it.count }
-            } ?: 0
+        predictedChargepoints.map {
+            it?.sumOf { it.count } ?: 0
+        }
+    }
+
+    val predictionDescription: LiveData<String?> by lazy {
+        predictedChargepoints.map { predictedChargepoints ->
+            if (predictedChargepoints == null) return@map null
+            val allChargepoints = charger.value?.data?.chargepoints ?: return@map null
+
+            val predictedChargepointTypes = predictedChargepoints.map { it.type }.distinct()
+            if (allChargepoints == predictedChargepoints) {
+                null
+            } else if (predictedChargepointTypes.size == 1) {
+                application.getString(
+                    R.string.prediction_only,
+                    nameForPlugType(application.stringProvider(), predictedChargepointTypes[0])
+                )
+            } else {
+                application.getString(
+                    R.string.prediction_only,
+                    application.getString(R.string.prediction_dc_plugs_only)
+                )
+            }
         }
     }
 

@@ -277,4 +277,6 @@
         <item quantity="one">%1$d/%2$d verfügbar</item>
         <item quantity="other">%1$d/%2$d verfügbar</item>
     </plurals>
+    <string name="pref_prediction_enabled">Auslastungsprognosen anzeigen</string>
+    <string name="pref_prediction_enabled_summary">für unterstützte Ladestationen\n(momentan nur Schnellader in Deutschland)</string>
 </resources>

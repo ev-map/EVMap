@@ -9,6 +9,12 @@
             android:entryValues="@array/pref_data_source_values"
             android:defaultValue="goingelectric"
             app:useSimpleSummaryProvider="true" />
+
+        <CheckBoxPreference
+            android:key="prediction_enabled"
+            android:title="@string/pref_prediction_enabled"
+            android:defaultValue="true"
+            android:summary="@string/pref_prediction_enabled_summary" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/settings_map">
 

@@ -246,4 +246,7 @@ class PreferenceDataSource(val context: Context) {
         set(value) {
             sp.edit().putString("place_search_result_android_auto_name", value).apply()
         }
+
+    val predictionEnabled: Boolean
+        get() = sp.getBoolean("prediction_enabled", true)
 }

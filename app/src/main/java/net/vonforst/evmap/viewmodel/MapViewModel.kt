@@ -215,6 +215,8 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
 
     val prediction: LiveData<Resource<List<FronyxEvseIdResponse>>> by lazy {
         availability.switchMap { av ->
+            if (!prefs.predictionEnabled) return@switchMap null
+
             av.data?.evseIds?.let { evseIds ->
                 liveData {
                     emit(Resource.loading(null))

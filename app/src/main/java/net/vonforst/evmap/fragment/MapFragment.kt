@@ -568,28 +568,32 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         vm.chargepoints.observe(viewLifecycleOwner, Observer { res ->
 
             val chargepoints = res.data
+            var haveCache = false
             if (chargepoints != null) {
                 updateMap(chargepoints)
-                when (res.status) {
-                    Status.ERROR -> {
-                        if( chargepoints.size < 1) { //No error complaint if cached are shown.
-                            val view = view ?: return@Observer
+                if (!chargepoints.isEmpty()) {
+                    haveCache = true
+                }
+            }
+            when (res.status) {
+                Status.ERROR -> {
+                    if( !haveCache ) { //No error complaint if cached are shown.
+                        val view = view ?: return@Observer
 
-                            connectionErrorSnackbar?.dismiss()
-                            connectionErrorSnackbar = Snackbar
-                                .make(view, R.string.connection_error, Snackbar.LENGTH_INDEFINITE)
-                                .setAction(R.string.retry) {
-                                    connectionErrorSnackbar?.dismiss()
-                                    vm.reloadChargepoints()
-                                }
-                            connectionErrorSnackbar!!.show()
-                        }
-                    }
-                    Status.SUCCESS -> {
                         connectionErrorSnackbar?.dismiss()
+                        connectionErrorSnackbar = Snackbar
+                            .make(view, R.string.connection_error, Snackbar.LENGTH_INDEFINITE)
+                            .setAction(R.string.retry) {
+                                connectionErrorSnackbar?.dismiss()
+                                vm.reloadChargepoints()
+                            }
+                        connectionErrorSnackbar!!.show()
                     }
-                    Status.LOADING -> {
-                    }
+                }
+                Status.SUCCESS -> {
+                    connectionErrorSnackbar?.dismiss()
+                }
+                Status.LOADING -> {
                 }
             }
         })

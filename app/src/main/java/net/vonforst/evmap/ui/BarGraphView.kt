@@ -208,7 +208,7 @@ class BarGraphView(context: Context, attrs: AttributeSet) : View(context, attrs)
 
     private fun drawBubble(canvas: Canvas, data: SortedMap<ZonedDateTime, Int>, maxValue: Int) {
         val data = data.toList()
-        if (data.size < selectedBar) return
+        if (data.size <= selectedBar) return
         canvas.apply {
             val center = graphBounds.left + selectedBar * (barWidth + barMargin) + barWidth * 0.5f
             val (t, v) = data[selectedBar]

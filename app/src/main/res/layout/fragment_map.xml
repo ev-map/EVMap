@@ -175,7 +175,7 @@
             app:backgroundTint="?android:colorBackground"
             app:borderWidth="0dp"
             app:isFabActive="@{ vm.myLocationEnabled }"
-            app:layout_behavior="net.vonforst.evmap.ui.HideOnScrollFabBehavior" />
+            app:layout_behavior="@string/hide_on_scroll_fab_behavior" />
 
         <androidx.core.widget.NestedScrollView
             android:id="@+id/bottom_sheet"
@@ -243,7 +243,7 @@
             app:borderWidth="0dp"
             app:fabSize="mini"
             app:srcCompat="@drawable/ic_layers"
-            app:layout_behavior="net.vonforst.evmap.ui.HideOnExpandFabBehavior"
+            app:layout_behavior="@string/hide_on_scroll_fab_behavior"
             android:theme="@style/NoElevationOverlay" />
 
         <androidx.cardview.widget.CardView

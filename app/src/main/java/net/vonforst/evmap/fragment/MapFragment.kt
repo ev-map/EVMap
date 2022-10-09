@@ -56,8 +56,7 @@ import com.google.android.material.transition.MaterialContainerTransform
 import com.google.android.material.transition.MaterialFadeThrough
 import com.google.android.material.transition.MaterialSharedAxis
 import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike
-import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED
-import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN
+import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike.*
 import com.mahc.custombottomsheetbehavior.MergedAppBarLayoutBehavior
 import com.stfalcon.imageviewer.StfalconImageViewer
 import io.michaelrocks.bimap.HashBiMap
@@ -131,7 +130,11 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
             val state = bottomSheetBehavior.state
             if (state != STATE_COLLAPSED && state != STATE_HIDDEN) {
-                bottomSheetBehavior.state = STATE_COLLAPSED
+                if (bottomSheetCollapsible) {
+                    bottomSheetBehavior.state = STATE_COLLAPSED
+                } else {
+                    vm.chargerSparse.value = null
+                }
             } else if (state == STATE_COLLAPSED) {
                 vm.chargerSparse.value = null
             } else if (state == STATE_HIDDEN) {
@@ -237,6 +240,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         return binding.root
     }
 
+    val bottomSheetCollapsible
+        get() = resources.getBoolean(R.bool.bottom_sheet_collapsible)
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         requireActivity().addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
@@ -252,6 +258,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         binding.detailView.topPart.doOnNextLayout {
             bottomSheetBehavior.peekHeight = binding.detailView.topPart.bottom
         }
+        bottomSheetBehavior.isCollapsible = bottomSheetCollapsible
 
         setupObservers()
         setupClickListeners()
@@ -383,7 +390,11 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         }
         setupSearchAutocomplete()
         binding.detailAppBar.toolbar.setNavigationOnClickListener {
-            bottomSheetBehavior.state = STATE_COLLAPSED
+            if (bottomSheetCollapsible) {
+                bottomSheetBehavior.state = STATE_COLLAPSED
+            } else {
+                vm.chargerSparse.value = null
+            }
         }
         binding.detailAppBar.toolbar.setOnMenuItemClickListener {
             when (it.itemId) {
@@ -562,7 +573,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         vm.chargerSparse.observe(viewLifecycleOwner, Observer {
             if (it != null) {
                 if (vm.bottomSheetState.value != BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT) {
-                    bottomSheetBehavior.state = STATE_COLLAPSED
+                    bottomSheetBehavior.state =
+                        if (bottomSheetCollapsible) STATE_COLLAPSED else STATE_ANCHOR_POINT
                 }
                 removeSearchFocus()
                 binding.fabDirections.show()

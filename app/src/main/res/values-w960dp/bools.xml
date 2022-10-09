@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <bool name="bottom_sheet_collapsible">false</bool>
+</resources>

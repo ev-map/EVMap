@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hide_on_scroll_fab_behavior">@null</string>
+</resources>

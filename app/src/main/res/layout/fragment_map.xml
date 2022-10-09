@@ -19,7 +19,8 @@
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/root"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:clipChildren="false">
 
         <FrameLayout
             android:id="@+id/map"
@@ -142,7 +143,7 @@
 
         <FrameLayout
             android:id="@+id/gallery_container"
-            android:layout_width="match_parent"
+            android:layout_width="@dimen/map_toolbar_width"
             android:layout_height="@dimen/gallery_height_with_margin"
             android:background="?android:colorBackground"
             app:layout_behavior="@string/BackDropBottomSheetBehavior">
@@ -174,11 +175,11 @@
             app:backgroundTint="?android:colorBackground"
             app:borderWidth="0dp"
             app:isFabActive="@{ vm.myLocationEnabled }"
-            app:layout_behavior="net.vonforst.evmap.ui.HideOnScrollFabBehavior" />
+            app:layout_behavior="@string/hide_on_scroll_fab_behavior" />
 
         <androidx.core.widget.NestedScrollView
             android:id="@+id/bottom_sheet"
-            android:layout_width="match_parent"
+            android:layout_width="@dimen/map_toolbar_width"
             android:layout_height="match_parent"
             android:fillViewport="true"
             android:orientation="vertical"
@@ -187,6 +188,7 @@
             app:behavior_peekHeight="@dimen/peek_height"
             app:bottomsheetbehavior_defaultState="stateHidden"
             app:layout_behavior="@string/BottomSheetBehaviorGoogleMapsLike"
+            android:clipToPadding="false"
             tools:bottomsheetbehavior_defaultState="stateCollapsed">
 
             <include
@@ -214,6 +216,7 @@
             android:clickable="true"
             android:focusable="true"
             android:src="@drawable/ic_directions"
+            android:translationX="@dimen/directions_fab_translationx"
             app:layout_anchor="@id/bottom_sheet"
             app:layout_anchorGravity="top|right|end"
             app:layout_behavior="@string/ScrollAwareFABBehavior"
@@ -221,7 +224,7 @@
 
         <com.mahc.custombottomsheetbehavior.MergedAppBarLayout
             android:id="@+id/detail_app_bar"
-            android:layout_width="match_parent"
+            android:layout_width="@dimen/map_toolbar_width"
             android:layout_height="wrap_content"
             app:layout_behavior="@string/MergedAppBarLayoutBehavior"
             android:theme="@style/ThemeOverlay.Material3.Dark.ActionBar" />
@@ -240,7 +243,7 @@
             app:borderWidth="0dp"
             app:fabSize="mini"
             app:srcCompat="@drawable/ic_layers"
-            app:layout_behavior="net.vonforst.evmap.ui.HideOnExpandFabBehavior"
+            app:layout_behavior="@string/hide_on_scroll_fab_behavior"
             android:theme="@style/NoElevationOverlay" />
 
         <androidx.cardview.widget.CardView

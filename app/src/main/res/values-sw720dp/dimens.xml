@@ -2,4 +2,5 @@
 <resources>
     <dimen name="map_toolbar_width">500dp</dimen>
     <dimen name="layers_fab_top_padding">20dp</dimen>
+    <dimen name="directions_fab_translationx">-44dp</dimen>
 </resources>

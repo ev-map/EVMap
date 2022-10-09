@@ -11,4 +11,5 @@
     <item name="match_parent" type="dimen">-1</item>
     <dimen name="map_toolbar_width">@dimen/match_parent</dimen>
     <dimen name="layers_fab_top_padding">100dp</dimen>
+    <dimen name="directions_fab_translationx">0dp</dimen>
 </resources>

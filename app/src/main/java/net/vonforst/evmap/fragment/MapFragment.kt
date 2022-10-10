@@ -566,29 +566,34 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             }
         })
         vm.chargepoints.observe(viewLifecycleOwner, Observer { res ->
+            val chargepoints = res.data
+            var haveCache = false
+            if (chargepoints != null) {
+                updateMap(chargepoints)
+                if (!chargepoints.isEmpty()) {
+                    haveCache = true
+                }
+            }
             when (res.status) {
                 Status.ERROR -> {
-                    val view = view ?: return@Observer
+                    if (!haveCache) { // No error complaint if cached are shown.
+                        val view = view ?: return@Observer
 
-                    connectionErrorSnackbar?.dismiss()
-                    connectionErrorSnackbar = Snackbar
-                        .make(view, R.string.connection_error, Snackbar.LENGTH_INDEFINITE)
-                        .setAction(R.string.retry) {
-                            connectionErrorSnackbar?.dismiss()
-                            vm.reloadChargepoints()
-                        }
-                    connectionErrorSnackbar!!.show()
+                        connectionErrorSnackbar?.dismiss()
+                        connectionErrorSnackbar = Snackbar
+                            .make(view, R.string.connection_error, Snackbar.LENGTH_INDEFINITE)
+                            .setAction(R.string.retry) {
+                                connectionErrorSnackbar?.dismiss()
+                                vm.reloadChargepoints()
+                            }
+                        connectionErrorSnackbar!!.show()
+                    }
                 }
                 Status.SUCCESS -> {
                     connectionErrorSnackbar?.dismiss()
                 }
                 Status.LOADING -> {
                 }
-            }
-
-            val chargepoints = res.data
-            if (chargepoints != null) {
-                updateMap(chargepoints)
             }
         })
         vm.useMiniMarkers.observe(viewLifecycleOwner) {

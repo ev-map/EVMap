@@ -566,7 +566,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             }
         })
         vm.chargepoints.observe(viewLifecycleOwner, Observer { res ->
-
             val chargepoints = res.data
             var haveCache = false
             if (chargepoints != null) {
@@ -577,7 +576,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             }
             when (res.status) {
                 Status.ERROR -> {
-                    if( !haveCache ) { //No error complaint if cached are shown.
+                    if (!haveCache) { // No error complaint if cached are shown.
                         val view = view ?: return@Observer
 
                         connectionErrorSnackbar?.dismiss()

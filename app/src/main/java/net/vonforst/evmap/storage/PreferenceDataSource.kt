@@ -247,6 +247,12 @@ class PreferenceDataSource(val context: Context) {
             sp.edit().putString("place_search_result_android_auto_name", value).apply()
         }
 
+    var showChargersAheadAndroidAuto: Boolean
+        get() = sp.getBoolean("show_chargers_ahead_android_auto", false)
+        set(value) {
+            sp.edit().putBoolean("show_chargers_ahead_android_auto", value).apply()
+        }
+
     val predictionEnabled: Boolean
         get() = sp.getBoolean("prediction_enabled", true)
 }

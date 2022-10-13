@@ -19,6 +19,8 @@ import kotlin.math.max
 import kotlin.math.min
 
 class SettingsScreen(ctx: CarContext) : Screen(ctx) {
+    val prefs = PreferenceDataSource(ctx)
+
     override fun onGetTemplate(): Template {
         return ListTemplate.Builder().apply {
             setTitle(carContext.getString(R.string.auto_settings))
@@ -71,6 +73,14 @@ class SettingsScreen(ctx: CarContext) : Screen(ctx) {
                             .setOnClickListener {
                                 screenManager.push(VehicleDataScreen(carContext))
                             }
+                            .build()
+                    )
+                    addItem(
+                        Row.Builder()
+                            .setTitle(carContext.getString(R.string.auto_chargers_ahead))
+                            .setToggle(Toggle.Builder {
+                                prefs.showChargersAheadAndroidAuto = it
+                            }.setChecked(prefs.showChargersAheadAndroidAuto).build())
                             .build()
                     )
                 }

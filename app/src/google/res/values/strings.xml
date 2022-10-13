@@ -28,6 +28,7 @@
     <string name="auto_chargeprice_vehicle_unavailable">EVMap could not determine your vehicle model.</string>
     <string name="auto_chargeprice_vehicle_unknown">None of the vehicles selected in the app matches this vehicle (%1$s %2$s).</string>
     <string name="auto_chargeprice_vehicle_ambiguous">Multiple vehicles selected in the app match this vehicle (%1$s %2$s).</string>
+    <string name="auto_chargers_ahead">Only chargers along driving direction</string>
     <string name="settings_android_auto_chargeprice_range">Charging range for price comparison</string>
     <string name="data_sources_hint">In the settings you can also switch between Google Maps and OpenStreetMap (Mapbox) for the map data.</string>
     <string name="selecting_all">selected all items</string>

@@ -192,6 +192,42 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                             session.mapScreen = null
                         }
                         .build())
+                    .addAction(Action.Builder().apply {
+                        setIcon(
+                            CarIcon.Builder(
+                                IconCompat.createWithResource(
+                                    carContext,
+                                    if (prefs.placeSearchResultAndroidAuto != null) {
+                                        R.drawable.ic_search_off
+                                    } else {
+                                        R.drawable.ic_search
+                                    }
+                                )
+                            ).build()
+
+                        )
+                        setOnClickListener(ParkedOnlyOnClickListener.create {
+                            if (prefs.placeSearchResultAndroidAuto != null) {
+                                prefs.placeSearchResultAndroidAutoName = null
+                                prefs.placeSearchResultAndroidAuto = null
+                                screenManager.pushForResult(DummyReturnScreen(carContext)) {
+                                    chargers = null
+                                    loadChargers()
+                                }
+                            } else {
+                                screenManager.pushForResult(
+                                    PlaceSearchScreen(
+                                        carContext,
+                                        session
+                                    )
+                                ) {
+                                    chargers = null
+                                    loadChargers()
+                                }
+                                session.mapScreen = null
+                            }
+                        })
+                    }.build())
                     .addAction(
                         Action.Builder()
                             .setIcon(

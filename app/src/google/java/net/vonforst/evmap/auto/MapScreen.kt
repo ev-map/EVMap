@@ -8,6 +8,9 @@ import androidx.car.app.CarContext
 import androidx.car.app.Screen
 import androidx.car.app.constraints.ConstraintManager
 import androidx.car.app.hardware.CarHardwareManager
+import androidx.car.app.hardware.info.CarInfo
+import androidx.car.app.hardware.info.CarSensors
+import androidx.car.app.hardware.info.Compass
 import androidx.car.app.hardware.info.EnergyLevel
 import androidx.car.app.model.*
 import androidx.core.content.ContextCompat
@@ -32,7 +35,9 @@ import net.vonforst.evmap.storage.ChargeLocationsRepository
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.ui.availabilityText
 import net.vonforst.evmap.ui.getMarkerTint
+import net.vonforst.evmap.utils.bearingBetween
 import net.vonforst.evmap.utils.distanceBetween
+import net.vonforst.evmap.utils.headingDiff
 import net.vonforst.evmap.viewmodel.Status
 import net.vonforst.evmap.viewmodel.awaitFinished
 import net.vonforst.evmap.viewmodel.filtersWithValue
@@ -41,6 +46,7 @@ import java.time.Duration
 import java.time.Instant
 import java.time.ZonedDateTime
 import kotlin.collections.set
+import kotlin.math.abs
 import kotlin.math.min
 import kotlin.math.roundToInt
 
@@ -84,10 +90,12 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
     private var filterStatus = prefs.filterStatus
     private var filtersWithValue: List<FilterWithValue<FilterValue>>? = null
 
-    private val hardwareMan: CarHardwareManager by lazy {
-        ctx.getCarService(CarContext.HARDWARE_SERVICE) as CarHardwareManager
+    private val carInfo: CarInfo by lazy {
+        (ctx.getCarService(CarContext.HARDWARE_SERVICE) as CarHardwareManager).carInfo
     }
+    private val carSensors: CarSensors by lazy { carContext.patchedCarSensors }
     private var energyLevel: EnergyLevel? = null
+    private var heading: Compass? = null
     private val permissions = if (BuildConfig.FLAVOR_automotive == "automotive") {
         listOf(
             "android.car.permission.CAR_ENERGY",
@@ -192,6 +200,42 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                             session.mapScreen = null
                         }
                         .build())
+                    .addAction(Action.Builder().apply {
+                        setIcon(
+                            CarIcon.Builder(
+                                IconCompat.createWithResource(
+                                    carContext,
+                                    if (prefs.placeSearchResultAndroidAuto != null) {
+                                        R.drawable.ic_search_off
+                                    } else {
+                                        R.drawable.ic_search
+                                    }
+                                )
+                            ).build()
+
+                        )
+                        setOnClickListener(ParkedOnlyOnClickListener.create {
+                            if (prefs.placeSearchResultAndroidAuto != null) {
+                                prefs.placeSearchResultAndroidAutoName = null
+                                prefs.placeSearchResultAndroidAuto = null
+                                screenManager.pushForResult(DummyReturnScreen(carContext)) {
+                                    chargers = null
+                                    loadChargers()
+                                }
+                            } else {
+                                screenManager.pushForResult(
+                                    PlaceSearchScreen(
+                                        carContext,
+                                        session
+                                    )
+                                ) {
+                                    chargers = null
+                                    loadChargers()
+                                }
+                                session.mapScreen = null
+                            }
+                        })
+                    }.build())
                     .addAction(
                         Action.Builder()
                             .setIcon(
@@ -210,7 +254,9 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                             }
                             .build())
                     .build())
-            setOnContentRefreshListener(this@MapScreen)
+            if (carContext.carAppApiLevel >= 5) {
+                setOnContentRefreshListener(this@MapScreen)
+            }
         }.build()
     }
 
@@ -345,33 +391,25 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                             )
                         }
                 } else {
-                    val response = repo.getChargepointsRadius(
-                        searchLocation,
-                        searchRadius,
-                        zoom = 16f,
-                        filtersWithValue
-                    ).awaitFinished()
-                    if (response.status == Status.ERROR) {
-                        loadingError = true
-                        return@launch
-                    }
-                    var chargers = response.data?.filterIsInstance(ChargeLocation::class.java)
-                    chargers?.let {
-                        if (it.size < maxRows) {
-                            // try again with larger radius
-                            val response = repo.getChargepointsRadius(
-                                searchLocation,
-                                searchRadius * 10,
-                                zoom = 16f,
-                                filtersWithValue
-                            ).awaitFinished()
-                            if (response.status == Status.ERROR) {
-                                loadingError = true
-                                invalidate()
-                                return@launch
-                            }
-                            chargers =
-                                response.data?.filterIsInstance(ChargeLocation::class.java)
+                    // try multiple search radii until we have enough chargers
+                    var chargers: List<ChargeLocation>? = null
+                    for (radius in listOf(searchRadius, searchRadius * 10, searchRadius * 50)) {
+                        val response = repo.getChargepointsRadius(
+                            searchLocation,
+                            radius,
+                            zoom = 16f,
+                            filtersWithValue
+                        ).awaitFinished()
+                        if (response.status == Status.ERROR) {
+                            loadingError = true
+                            return@launch
+                        }
+                        chargers = headingFilter(
+                            response.data?.filterIsInstance(ChargeLocation::class.java),
+                            searchLocation
+                        )
+                        if (chargers == null || chargers.size >= maxRows) {
+                            break
                         }
                     }
                     this@MapScreen.chargers = chargers
@@ -387,10 +425,36 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
         }
     }
 
+    /**
+     * Filters by heading if heading available and enabled
+     */
+    private fun headingFilter(
+        chargers: List<ChargeLocation>?,
+        searchLocation: LatLng
+    ): List<ChargeLocation>? =
+        heading?.orientations?.value?.get(0)?.let { heading ->
+            if (!prefs.showChargersAheadAndroidAuto) return@let chargers
+
+            chargers?.filter {
+                val bearing = bearingBetween(
+                    searchLocation.latitude,
+                    searchLocation.longitude,
+                    it.coordinates.lat,
+                    it.coordinates.lng
+                )
+                val diff = headingDiff(bearing, heading.toDouble())
+                abs(diff) < 30
+            }
+        } ?: chargers
+
     private fun onEnergyLevelUpdated(energyLevel: EnergyLevel) {
         val isUpdate = this.energyLevel == null
         this.energyLevel = energyLevel
         if (isUpdate) invalidate()
+    }
+
+    private fun onCompassUpdated(compass: Compass) {
+        this.heading = compass
     }
 
     override fun onStart(owner: LifecycleOwner) {
@@ -407,6 +471,14 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
     }
 
     private fun setupListeners() {
+        val exec = ContextCompat.getMainExecutor(carContext)
+        if (supportsCarApiLevel3(carContext)) {
+            carSensors.addCompassListener(
+                CarSensors.UPDATE_RATE_NORMAL,
+                exec,
+                ::onCompassUpdated
+            )
+        }
         if (!permissions.all {
                 ContextCompat.checkSelfPermission(
                     carContext,
@@ -417,8 +489,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
 
         if (supportsCarApiLevel3(carContext)) {
             println("Setting up energy level listener")
-            val exec = ContextCompat.getMainExecutor(carContext)
-            hardwareMan.carInfo.addEnergyLevelListener(exec, ::onEnergyLevelUpdated)
+            carInfo.addEnergyLevelListener(exec, ::onEnergyLevelUpdated)
         }
     }
 
@@ -435,7 +506,8 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
     private fun removeListeners() {
         if (supportsCarApiLevel3(carContext)) {
             println("Removing energy level listener")
-            hardwareMan.carInfo.removeEnergyLevelListener(::onEnergyLevelUpdated)
+            carInfo.removeEnergyLevelListener(::onEnergyLevelUpdated)
+            carSensors.removeCompassListener(::onCompassUpdated)
         }
     }
 

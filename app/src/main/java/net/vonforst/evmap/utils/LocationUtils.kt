@@ -47,6 +47,25 @@ fun distanceBetween(
 }
 
 
+fun bearingBetween(startLat: Double, startLng: Double, endLat: Double, endLng: Double): Double {
+    val dLon = Math.toRadians(-endLng) - Math.toRadians(-startLng)
+    val originLat = Math.toRadians(startLat)
+    val destinationLat = Math.toRadians(endLat)
+
+    return Math.toDegrees(
+        atan2(
+            sin(dLon) * cos(destinationLat),
+            cos(originLat) * sin(destinationLat) - sin(originLat) * cos(destinationLat) * cos(dLon)
+        )
+    )
+}
+
+
+fun headingDiff(h1: Double, h2: Double): Double {
+    return (h1 - h2 + 540) % 360 - 180
+}
+
+
 fun getLocationFromIntent(intent: Intent): List<Double>? {
     val pos = intent.data?.schemeSpecificPart?.split("?")?.get(0)
     var coords = stringToCoords(pos)

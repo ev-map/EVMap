@@ -84,6 +84,8 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
                         )
                     }
                 }
+                val myTariffs = prefs.chargepriceMyTariffs
+                val myTariffsAll = prefs.chargepriceMyTariffsAll
                 val list = ItemList.Builder().apply {
                     setNoItemsMessage(
                         errorMessage ?: carContext.getString(R.string.chargeprice_no_tariffs_found)
@@ -92,6 +94,9 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
                         addItem(Row.Builder().apply {
                             setTitle(formatProvider(price))
                             addText(formatPrice(price))
+                            if (carContext.carAppApiLevel >= 5) {
+                                setEnabled(myTariffsAll || myTariffs != null && price.tariffId in myTariffs)
+                            }
                         }.build())
                     }
                 }.build()

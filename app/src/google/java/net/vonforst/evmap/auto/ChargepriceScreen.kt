@@ -83,8 +83,8 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
                             meta.energy / meta.duration * 60
                         )
                     }
-                } ?: ""
-                addSectionedList(SectionedItemList.create(ItemList.Builder().apply {
+                }
+                val list = ItemList.Builder().apply {
                     setNoItemsMessage(
                         errorMessage ?: carContext.getString(R.string.chargeprice_no_tariffs_found)
                     )
@@ -94,7 +94,12 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
                             addText(formatPrice(price))
                         }.build())
                     }
-                }.build(), header))
+                }.build()
+                if (header != null && list.items.isNotEmpty()) {
+                    addSectionedList(SectionedItemList.create(list, header))
+                } else {
+                    setSingleList(list)
+                }
             }
             setActionStrip(
                 ActionStrip.Builder().addAction(

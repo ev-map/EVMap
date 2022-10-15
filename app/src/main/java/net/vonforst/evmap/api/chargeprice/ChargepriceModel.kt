@@ -1,12 +1,15 @@
 package net.vonforst.evmap.api.chargeprice
 
 import android.content.Context
+import android.os.Parcel
 import android.os.Parcelable
 import android.util.Patterns
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import jsonapi.*
+import kotlinx.parcelize.Parceler
 import kotlinx.parcelize.Parcelize
+import kotlinx.parcelize.WriteWith
 import net.vonforst.evmap.R
 import net.vonforst.evmap.adapter.Equatable
 import net.vonforst.evmap.api.equivalentPlugTypes
@@ -178,9 +181,12 @@ data class ChargePrice(
     @Json(name = "branding")
     val branding: ChargepriceBranding? = null,
 
-    @ToOne("tariff")
-    val tariffId: String?
+    @RelationshipsObject
+    val relationships: @WriteWith<RelationshipsParceler>() Relationships? = null,
 ) : Equatable, Cloneable, Parcelable {
+    val tariffId: String?
+        get() = (relationships?.get("tariff") as? Relationship.ToOne)?.data?.id
+
     fun formatMonthlyFees(ctx: Context): String {
         return listOfNotNull(
             if (totalMonthlyFee > 0) {
@@ -190,6 +196,70 @@ data class ChargePrice(
                 ctx.getString(R.string.chargeprice_min_spend, monthlyMinSales, currency(currency))
             } else null
         ).joinToString(", ")
+    }
+}
+
+/**
+ * Parceler implementation for the Relationships object.
+ * Note that this ignores certain fields that we don't need (links, meta, etc.)
+ */
+internal object RelationshipsParceler : Parceler<Relationships?> {
+    override fun create(parcel: Parcel): Relationships? {
+        if (parcel.readInt() == 0) return null
+
+        val nMembers = parcel.readInt()
+        val members = (0 until nMembers).map { _ ->
+            val key = parcel.readString()!!
+            val value = if (parcel.readInt() == 0) {
+                val type = parcel.readString()
+                val id = parcel.readString()
+                val ri = if (type != null && id != null) {
+                    ResourceIdentifier(type, id)
+                } else null
+                Relationship.ToOne(ri)
+            } else {
+                val size = parcel.readInt()
+                val ris = (0 until size).map { _ ->
+                    val type = parcel.readString()!!
+                    val id = parcel.readString()!!
+                    ResourceIdentifier(type, id)
+                }
+                Relationship.ToMany(ris)
+            }
+            key to value
+        }.toMap()
+
+        return Relationships(members)
+    }
+
+    override fun Relationships?.write(parcel: Parcel, flags: Int) {
+        if (this == null) {
+            parcel.writeInt(0)
+            return
+        } else {
+            parcel.writeInt(1)
+        }
+
+        parcel.writeInt(members.size)
+        for (member in this.members) {
+            parcel.writeString(member.key)
+            when (val value = member.value) {
+                is Relationship.ToOne -> {
+                    parcel.writeInt(0)
+                    parcel.writeString(value.data?.type)
+                    parcel.writeString(value.data?.id)
+                }
+                is Relationship.ToMany -> {
+                    parcel.writeInt(1)
+                    parcel.writeInt(value.data.size)
+                    for (ri in value.data) {
+                        parcel.writeString(ri.type)
+                        parcel.writeString(ri.id)
+                    }
+                }
+            }
+        }
+
     }
 }
 

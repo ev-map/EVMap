@@ -141,6 +141,13 @@ android {
         if (chargepriceKey != null) {
             variant.resValue "string", "chargeprice_key", chargepriceKey
         }
+        def fronyxKey = env.FRONYX_API_KEY ?: project.findProperty("FRONYX_API_KEY")
+        if (fronyxKey == null && project.hasProperty("FRONYX_API_KEY_ENCRYPTED")) {
+            fronyxKey = decode(project.findProperty("FRONYX_API_KEY_ENCRYPTED"), "FmK.d,-f*p+rD+WK!eds")
+        }
+        if (fronyxKey != null) {
+            variant.resValue "string", "fronyx_key", fronyxKey
+        }
     }
 
 }

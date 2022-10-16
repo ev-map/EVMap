@@ -20,6 +20,7 @@ import net.vonforst.evmap.viewmodel.Resource
 import net.vonforst.evmap.viewmodel.Status
 import net.vonforst.evmap.viewmodel.await
 import net.vonforst.evmap.viewmodel.getClusterDistance
+import java.time.Instant
 import kotlin.math.sqrt
 
 @Dao
@@ -27,13 +28,15 @@ abstract class ChargeLocationsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract suspend fun insert(vararg locations: ChargeLocation)
 
-    // TODO: add max age here
-    @Query("SELECT EXISTS(SELECT 1 FROM chargelocation WHERE dataSource == :dataSource AND id == :id AND isDetailed == 1)")
-    abstract suspend fun checkExistsDetailed(id: Long, dataSource: String): Boolean
+    @Query("SELECT EXISTS(SELECT 1 FROM chargelocation WHERE dataSource == :dataSource AND id == :id AND isDetailed == 1 AND timeRetrieved > :after )")
+    abstract suspend fun checkExistsDetailed(id: Long, dataSource: String, after: Long): Boolean
 
-    suspend fun insertOrReplaceIfNoDetailedExists(vararg locations: ChargeLocation) {
+    suspend fun insertOrReplaceIfNoDetailedExists(
+        afterDate: Long,
+        vararg locations: ChargeLocation
+    ) {
         locations.forEach {
-            if (it.isDetailed || !checkExistsDetailed(it.id, it.dataSource)) {
+            if (it.isDetailed || !checkExistsDetailed(it.id, it.dataSource, afterDate)) {
                 insert(it)
             }
         }
@@ -42,9 +45,12 @@ abstract class ChargeLocationsDao {
     @Delete
     abstract suspend fun delete(vararg locations: ChargeLocation)
 
-    // TODO: add max age here
-    @Query("SELECT * FROM chargelocation WHERE dataSource == :dataSource AND id == :id AND isDetailed == 1")
-    abstract fun getChargeLocationById(id: Long, dataSource: String): LiveData<ChargeLocation>
+    @Query("SELECT * FROM chargelocation WHERE dataSource == :dataSource AND id == :id AND isDetailed == 1 AND timeRetrieved > :after")
+    abstract fun getChargeLocationById(
+        id: Long,
+        dataSource: String,
+        after: Long
+    ): LiveData<ChargeLocation>
 
     @SkipQueryVerification
     @Query("SELECT * FROM chargelocation WHERE dataSource == :dataSource AND Within(coordinates, BuildMbr(:lng1, :lat1, :lng2, :lat2))")
@@ -126,6 +132,7 @@ class ChargeLocationsRepository(
             emit(result)
             if (result.status == Status.SUCCESS) {
                 chargeLocationsDao.insertOrReplaceIfNoDetailedExists(
+                    afterDate(),
                     *result.data!!.filterIsInstance(ChargeLocation::class.java)
                         .toTypedArray()
                 )
@@ -163,11 +170,12 @@ class ChargeLocationsRepository(
         val apiResult = liveData {
             val refData = referenceData.await()
             var result =
-                    api.getChargepointsRadius(refData, location, radius, zoom,  useClustering, filters)
-                result = applyLocalClustering(result, zoom)
+                api.getChargepointsRadius(refData, location, radius, zoom, useClustering, filters)
+            result = applyLocalClustering(result, zoom)
             emit(result)
             if (result.status == Status.SUCCESS) {
                 chargeLocationsDao.insertOrReplaceIfNoDetailedExists(
+                    afterDate(),
                     *result.data!!.filterIsInstance(ChargeLocation::class.java)
                         .toTypedArray()
                 )
@@ -205,7 +213,11 @@ class ChargeLocationsRepository(
     fun getChargepointDetail(
         id: Long
     ): LiveData<Resource<ChargeLocation>> {
-        val dbResult = chargeLocationsDao.getChargeLocationById(id, prefs.dataSource)
+        val dbResult = chargeLocationsDao.getChargeLocationById(
+            id,
+            prefs.dataSource,
+            afterDate()
+        )
         val apiResult = liveData {
             emit(Resource.loading(null))
             val refData = referenceData.await()
@@ -216,6 +228,14 @@ class ChargeLocationsRepository(
             }
         }
         return CacheLiveData(dbResult, apiResult)
+    }
+
+    /**
+     * Numeric date for database limit required limit on some APIs
+     */
+    private fun afterDate(): Long {
+        val cacheLimit = this.api.value!!.cacheLimit
+        return Instant.now().minus(cacheLimit).toEpochMilli()
     }
 
     fun getFilters(sp: StringProvider) = MediatorLiveData<List<Filter<FilterValue>>>().apply {
@@ -247,6 +267,7 @@ class ChargeLocationsRepository(
         bounds: LatLngBounds
     ) = try {
         val query = api.convertFiltersToSQL(filters)
+        val after = afterDate()
         val sql = StringBuilder().apply {
             append("SELECT")
             if (query.requiresChargeCardQuery or query.requiresChargepointQuery) {
@@ -263,6 +284,7 @@ class ChargeLocationsRepository(
             }
             append(" WHERE dataSource == '${prefs.dataSource}'")
             append(" AND Within(coordinates, BuildMbr(${bounds.southwest.longitude}, ${bounds.southwest.latitude}, ${bounds.northeast.longitude}, ${bounds.northeast.latitude})) ")
+            append(" AND timeRetrieved > ${after}")
             append(query.query)
         }.toString()
 

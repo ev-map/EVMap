@@ -22,6 +22,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.*
 import java.io.IOException
+import java.time.Duration
 
 interface GoingElectricApi {
     @FormUrlEncoded
@@ -129,6 +130,7 @@ class GoingElectricApiWrapper(
 
     override val name = "GoingElectric.de"
     override val id = "going_electric"
+    override val cacheLimit = Duration.ofDays(1)
 
     override suspend fun getChargepoints(
         referenceData: ReferenceData,

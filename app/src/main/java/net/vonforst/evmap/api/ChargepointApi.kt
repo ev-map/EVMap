@@ -8,6 +8,7 @@ import net.vonforst.evmap.api.goingelectric.GoingElectricApiWrapper
 import net.vonforst.evmap.api.openchargemap.OpenChargeMapApiWrapper
 import net.vonforst.evmap.model.*
 import net.vonforst.evmap.viewmodel.Resource
+import java.time.Duration
 
 interface ChargepointApi<out T : ReferenceData> {
     suspend fun getChargepoints(
@@ -40,6 +41,11 @@ interface ChargepointApi<out T : ReferenceData> {
 
     val name: String
     val id: String
+
+    /**
+     * Duration we are limited to if there is a required API local cache time limit.
+     */
+    val cacheLimit: Duration
 }
 
 interface StringProvider {

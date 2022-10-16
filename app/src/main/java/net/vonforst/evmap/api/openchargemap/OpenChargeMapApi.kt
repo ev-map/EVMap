@@ -18,6 +18,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
 import java.io.IOException
+import java.time.Duration
 
 interface OpenChargeMapApi {
     @GET("poi/")
@@ -103,6 +104,7 @@ class OpenChargeMapApiWrapper(
     context: Context? = null
 ) : ChargepointApi<OCMReferenceData> {
     private val clusterThreshold = 11
+    override val cacheLimit = Duration.ofDays(300L)
     val api = OpenChargeMapApi.create(apikey, baseurl, context)
 
     override val name = "OpenChargeMap.org"

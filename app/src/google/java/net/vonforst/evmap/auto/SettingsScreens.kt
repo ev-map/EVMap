@@ -92,12 +92,9 @@ class SettingsScreen(ctx: CarContext) : Screen(ctx) {
 class DataSettingsScreen(ctx: CarContext) : Screen(ctx) {
     val prefs = PreferenceDataSource(ctx)
     val db = AppDatabase.getInstance(ctx)
+
     val dataSourceNames = carContext.resources.getStringArray(R.array.pref_data_source_names)
     val dataSourceValues = carContext.resources.getStringArray(R.array.pref_data_source_values)
-    val dataSourceDescriptions = listOf(
-        carContext.getString(R.string.data_source_goingelectric_desc),
-        carContext.getString(R.string.data_source_openchargemap_desc)
-    )
     val searchProviderNames =
         carContext.resources.getStringArray(R.array.pref_search_provider_names)
     val searchProviderValues =
@@ -118,14 +115,9 @@ class DataSettingsScreen(ctx: CarContext) : Screen(ctx) {
                         screenManager.push(
                             ChooseDataSourceScreen(
                                 carContext,
-                                R.string.pref_data_source,
-                                dataSourceNames,
-                                dataSourceValues,
-                                prefs.dataSource,
-                                dataSourceDescriptions
-                            ) {
-                                prefs.dataSource = it
-                            })
+                                ChooseDataSourceScreen.Type.CHARGER_DATA_SOURCE
+                            )
+                        )
                     }
                 }.build())
                 addItem(Row.Builder().apply {
@@ -139,13 +131,9 @@ class DataSettingsScreen(ctx: CarContext) : Screen(ctx) {
                         screenManager.push(
                             ChooseDataSourceScreen(
                                 carContext,
-                                R.string.pref_search_provider,
-                                searchProviderNames,
-                                searchProviderValues,
-                                prefs.searchProvider
-                            ) {
-                                prefs.searchProvider = it
-                            })
+                                ChooseDataSourceScreen.Type.SEARCH_PROVIDER
+                            )
+                        )
                     }
                 }.build())
                 addItem(Row.Builder().apply {
@@ -168,33 +156,84 @@ class DataSettingsScreen(ctx: CarContext) : Screen(ctx) {
 
 class ChooseDataSourceScreen(
     ctx: CarContext,
-    @StringRes val title: Int,
-    val names: Array<String>,
-    val values: Array<String>,
-    val currentValue: String,
-    val descriptions: List<String>? = null,
-    val callback: (String) -> Unit
+    val type: Type,
+    val initialChoice: Boolean = false,
+    @StringRes val extraDesc: Int? = null
 ) : Screen(ctx) {
+    enum class Type {
+        CHARGER_DATA_SOURCE, SEARCH_PROVIDER
+    }
+
     val prefs = PreferenceDataSource(carContext)
+    val title = when (type) {
+        Type.CHARGER_DATA_SOURCE -> R.string.pref_data_source
+        Type.SEARCH_PROVIDER -> R.string.pref_search_provider
+    }
+    val names = when (type) {
+        Type.CHARGER_DATA_SOURCE -> carContext.resources.getStringArray(R.array.pref_data_source_names)
+        Type.SEARCH_PROVIDER -> carContext.resources.getStringArray(R.array.pref_search_provider_names)
+    }
+    val values = when (type) {
+        Type.CHARGER_DATA_SOURCE -> carContext.resources.getStringArray(R.array.pref_data_source_values)
+        Type.SEARCH_PROVIDER -> carContext.resources.getStringArray(R.array.pref_search_provider_values)
+    }
+    val currentValue: String = when (type) {
+        Type.CHARGER_DATA_SOURCE -> prefs.dataSource
+        Type.SEARCH_PROVIDER -> prefs.searchProvider
+    }
+    val descriptions = when (type) {
+        Type.CHARGER_DATA_SOURCE -> listOf(
+            carContext.getString(R.string.data_source_goingelectric_desc),
+            carContext.getString(R.string.data_source_openchargemap_desc)
+        )
+        Type.SEARCH_PROVIDER -> null
+    }
+    val callback: (String) -> Unit = when (type) {
+        Type.CHARGER_DATA_SOURCE -> { it ->
+            prefs.dataSourceSet = true
+            prefs.dataSource = it
+        }
+        Type.SEARCH_PROVIDER -> { it ->
+            prefs.searchProvider = it
+        }
+    }
 
     override fun onGetTemplate(): Template {
         return ListTemplate.Builder().apply {
             setTitle(carContext.getString(title))
-            setHeaderAction(Action.BACK)
-            setSingleList(ItemList.Builder().apply {
+            setHeaderAction(if (initialChoice) Action.APP_ICON else Action.BACK)
+
+            val list = ItemList.Builder().apply {
                 for (i in names.indices) {
                     addItem(Row.Builder().apply {
                         setTitle(names[i])
                         descriptions?.let { addText(it[i]) }
+                        if (initialChoice) {
+                            setBrowsable(true)
+                            setOnClickListener {
+                                itemSelected(i)
+                            }
+                        }
                     }.build())
                 }
-                setOnSelectedListener {
-                    callback(values[it])
-                    screenManager.pop()
+                if (!initialChoice) {
+                    setOnSelectedListener {
+                        itemSelected(it)
+                    }
+                    setSelectedIndex(values.indexOf(currentValue))
                 }
-                setSelectedIndex(values.indexOf(currentValue))
-            }.build())
+            }.build()
+            if (extraDesc != null) {
+                addSectionedList(SectionedItemList.create(list, carContext.getString(extraDesc)))
+            } else {
+                setSingleList(list)
+            }
         }.build()
+    }
+
+    private fun itemSelected(i: Int) {
+        callback(values[i])
+        screenManager.pop()
     }
 }
 

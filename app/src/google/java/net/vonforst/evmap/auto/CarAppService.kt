@@ -31,6 +31,7 @@ import net.vonforst.evmap.R
 import net.vonforst.evmap.location.FusionEngine
 import net.vonforst.evmap.location.LocationEngine
 import net.vonforst.evmap.location.Priority
+import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.utils.checkFineLocationPermission
 
 
@@ -111,27 +112,49 @@ class EVMapSession(val cas: CarAppService) : Session(), DefaultLifecycleObserver
         carContext.getCarService(CarContext.HARDWARE_SERVICE) as CarHardwareManager
     }
 
+    private val prefs: PreferenceDataSource by lazy {
+        PreferenceDataSource(carContext)
+    }
+
     init {
         lifecycle.addObserver(this)
     }
 
     override fun onCreateScreen(intent: Intent): Screen {
         val mapScreen = MapScreen(carContext, this)
+        val screens = mutableListOf<Screen>(mapScreen)
 
+        if (!prefs.dataSourceSet) {
+            screens.add(
+                ChooseDataSourceScreen(
+                    carContext,
+                    ChooseDataSourceScreen.Type.CHARGER_DATA_SOURCE,
+                    initialChoice = true,
+                    extraDesc = R.string.data_sources_description
+                )
+            )
+        }
         if (!locationPermissionGranted()) {
-            val screenManager = carContext.getCarService(ScreenManager::class.java)
-            screenManager.push(mapScreen)
-            return PermissionScreen(
-                carContext,
-                R.string.auto_location_permission_needed,
-                listOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
+            screens.add(
+                PermissionScreen(
+                    carContext,
+                    R.string.auto_location_permission_needed,
+                    listOf(
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    )
                 )
             )
         }
 
-        return mapScreen
+        if (screens.size > 1) {
+            val screenManager = carContext.getCarService(ScreenManager::class.java)
+            for (i in 0 until screens.size - 1) {
+                screenManager.push(screens[i])
+            }
+        }
+
+        return screens.last()
     }
 
     private fun locationPermissionGranted() = carContext.checkFineLocationPermission()

@@ -402,6 +402,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                         ).awaitFinished()
                         if (response.status == Status.ERROR) {
                             loadingError = true
+                            invalidate()
                             return@launch
                         }
                         chargers = headingFilter(
@@ -500,6 +501,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
         // (i.e. onGetTemplate is not called while the old data is still there)
         chargers = null
         availabilities.clear()
+        location = null
         removeListeners()
     }
 

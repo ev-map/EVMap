@@ -2,6 +2,8 @@ package net.vonforst.evmap.auto
 
 import android.content.pm.PackageManager
 import android.location.Location
+import android.os.Handler
+import android.os.Looper
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import androidx.car.app.CarContext
@@ -71,6 +73,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
     private var lastDistanceUpdateTime: Instant? = null
     private var chargers: List<ChargeLocation>? = null
     private var loadingError = false
+    private var locationError = false
     private var prefs = PreferenceDataSource(ctx)
     private val db = AppDatabase.getInstance(carContext)
     private val repo =
@@ -140,11 +143,11 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                             )
                         }
                     }.build())
-                } ?: setLoading(true)
+                }
             } else {
                 location?.let {
                     setAnchor(Place.Builder(CarLocation.create(it.latitude, it.longitude)).build())
-                } ?: setLoading(true)
+                }
             }
             chargers?.take(maxRows)?.let { chargerList ->
                 val builder = ItemList.Builder()
@@ -169,6 +172,12 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                     val builder = ItemList.Builder()
                     builder.setNoItemsMessage(
                         carContext.getString(R.string.connection_error)
+                    )
+                    setItemList(builder.build())
+                } else if (locationError) {
+                    val builder = ItemList.Builder()
+                    builder.setNoItemsMessage(
+                        carContext.getString(R.string.location_error)
                     )
                     setItemList(builder.build())
                 } else {
@@ -461,6 +470,13 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
     override fun onStart(owner: LifecycleOwner) {
         setupListeners()
         session.requestLocationUpdates()
+        locationError = false
+        Handler(Looper.getMainLooper()).postDelayed({
+            if (location == null) {
+                locationError = true
+                invalidate()
+            }
+        }, 5000)
 
         // Reloading chargers in onStart does not seem to count towards content limit.
         // So let's do this so the user gets fresh chargers when re-entering the app.

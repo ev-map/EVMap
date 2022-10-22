@@ -271,4 +271,17 @@
     <string name="chargeprice_faq_link">https://evmap.vonforst.net/en/chargeprice_faq.html</string>
     <string name="about_contributors">Bidragsytere</string>
     <string name="about_contributors_text">Takk til alle som har kodet og oversatt EVMap:</string>
+    <plurals name="prediction_number_available">
+        <item quantity="one">%1$d/%2$d tilgjengelig</item>
+        <item quantity="other">%1$d/%2$d tilgjengelig</item>
+    </plurals>
+    <string name="prediction_help">Basert på hvilken dag det er, tid på dagen, og tidligere bruk, slik at du kan finne ledige ladere. Ingen garanti dog.</string>
+    <string name="prediction_time_colon">%s:</string>
+    <string name="prediction_dc_plugs_only">Likestrømmsstøpsel</string>
+    <string name="location_error">Klarte ikke å fastsette posisjon. Sjekk systeminnstillingene.</string>
+    <string name="utilization_prediction">Bruksprognose</string>
+    <string name="prediction_only">(kun %s)</string>
+    <string name="pref_prediction_enabled">Vis bruksprognoser</string>
+    <string name="pref_prediction_enabled_summary">for støttede ladere
+\n(foreløpig kun for likestrøm i Tyskland)</string>
 </resources>

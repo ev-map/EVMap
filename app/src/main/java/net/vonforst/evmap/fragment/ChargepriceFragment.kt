@@ -13,6 +13,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.setupWithNavController
+import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.color.MaterialColors
@@ -24,10 +25,12 @@ import net.vonforst.evmap.R
 import net.vonforst.evmap.adapter.ChargepriceAdapter
 import net.vonforst.evmap.adapter.CheckableChargepriceCarAdapter
 import net.vonforst.evmap.adapter.CheckableConnectorAdapter
+import net.vonforst.evmap.adapter.SingleViewAdapter
 import net.vonforst.evmap.api.chargeprice.ChargepriceApi
 import net.vonforst.evmap.api.chargeprice.ChargepriceCar
 import net.vonforst.evmap.api.equivalentPlugTypes
 import net.vonforst.evmap.databinding.FragmentChargepriceBinding
+import net.vonforst.evmap.databinding.FragmentChargepriceHeaderBinding
 import net.vonforst.evmap.model.Chargepoint
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.viewmodel.ChargepriceViewModel
@@ -37,6 +40,7 @@ import java.text.NumberFormat
 
 class ChargepriceFragment : Fragment() {
     private lateinit var binding: FragmentChargepriceBinding
+    private lateinit var headerBinding: FragmentChargepriceHeaderBinding
     private var connectionErrorSnackbar: Snackbar? = null
 
     private val vm: ChargepriceViewModel by viewModels(factoryProducer = {
@@ -91,8 +95,14 @@ class ChargepriceFragment : Fragment() {
             inflater,
             R.layout.fragment_chargeprice, container, false
         )
+        headerBinding = DataBindingUtil.inflate(
+            inflater,
+            R.layout.fragment_chargeprice_header, container, false
+        )
         binding.lifecycleOwner = this
         binding.vm = vm
+        headerBinding.lifecycleOwner = this
+        headerBinding.vm = vm
 
         binding.toolbar.inflateMenu(R.menu.chargeprice)
         binding.toolbar.setTitle(R.string.chargeprice_title)
@@ -117,7 +127,7 @@ class ChargepriceFragment : Fragment() {
         }
 
         val vehicleAdapter = CheckableChargepriceCarAdapter()
-        binding.vehicleSelection.adapter = vehicleAdapter
+        headerBinding.vehicleSelection.adapter = vehicleAdapter
         val vehicleObserver: Observer<ChargepriceCar> = Observer {
             vehicleAdapter.setCheckedItem(it)
         }
@@ -133,8 +143,12 @@ class ChargepriceFragment : Fragment() {
                 (requireActivity() as MapsActivity).openUrl(it.url)
             }
         }
+        val joinedAdapter = ConcatAdapter(
+            SingleViewAdapter(headerBinding.root),
+            chargepriceAdapter
+        )
         binding.chargePricesList.apply {
-            adapter = chargepriceAdapter
+            adapter = joinedAdapter
             layoutManager =
                 LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             addItemDecoration(
@@ -151,6 +165,9 @@ class ChargepriceFragment : Fragment() {
         }
         vm.myTariffsAll.observe(viewLifecycleOwner) {
             chargepriceAdapter.myTariffsAll = it
+        }
+        vm.chargePricesForChargepoint.observe(viewLifecycleOwner) {
+            chargepriceAdapter.submitList(it.data)
         }
 
         val connectorsAdapter = CheckableConnectorAdapter()
@@ -170,7 +187,7 @@ class ChargepriceFragment : Fragment() {
                 plugs?.flatMap { plug -> equivalentPlugTypes(plug) }
         }
 
-        binding.connectorsList.apply {
+        headerBinding.connectorsList.apply {
             adapter = connectorsAdapter
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         }
@@ -183,12 +200,12 @@ class ChargepriceFragment : Fragment() {
             findNavController().navigate(R.id.action_chargeprice_to_chargepriceSettingsFragment)
         }
 
-        binding.batteryRange.setLabelFormatter { value: Float ->
+        headerBinding.batteryRange.setLabelFormatter { value: Float ->
             val fmt = NumberFormat.getNumberInstance()
             fmt.maximumFractionDigits = 0
             fmt.format(value.toDouble()) + "%"
         }
-        binding.batteryRange.setOnTouchListener { _: View, motionEvent: MotionEvent ->
+        headerBinding.batteryRange.setOnTouchListener { _: View, motionEvent: MotionEvent ->
             when (motionEvent.actionMasked) {
                 MotionEvent.ACTION_DOWN -> vm.batteryRangeSliderDragging.value = true
                 MotionEvent.ACTION_UP -> vm.batteryRangeSliderDragging.value = false

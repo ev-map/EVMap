@@ -14,7 +14,7 @@
             type="ChargepriceViewModel" />
     </data>
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/linearLayout5"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -54,192 +54,87 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <androidx.core.widget.NestedScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fillViewport="true">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/charge_prices_list"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar_container"
+            tools:itemCount="1"
+            tools:listitem="@layout/fragment_chargeprice_preview" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+        <ProgressBar
+            android:id="@+id/progressBar5"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="280dp"
+            app:goneUnless="@{vm.chargePricesForChargepoint.status == Status.LOADING || vm.vehicles.status == Status.LOADING}"
+            app:layout_constraintBottom_toBottomOf="@+id/charge_prices_list"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/charge_prices_list"
+            app:layout_constraintTop_toTopOf="@+id/charge_prices_list" />
 
-                <TextView
-                    android:id="@+id/textView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
-                    android:text="@string/chargeprice_select_connector"
-                    android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                    android:textColor="?colorPrimary"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/vehicle_selection" />
+        <TextView
+            android:id="@+id/textView8"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="280dp"
+            android:gravity="center_horizontal"
+            android:text="@string/chargeprice_no_tariffs_found"
+            app:goneUnless="@{vm.chargePricesForChargepoint.status == Status.SUCCESS &amp;&amp; vm.chargePricesForChargepoint.data.size() == 0}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/charge_prices_list"
+            app:layout_constraintTop_toTopOf="@+id/charge_prices_list" />
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/connectors_list"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    app:data="@{vm.charger.chargepointsMerged}"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView"
-                    tools:itemCount="3"
-                    tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    tools:listitem="@layout/item_connector_button"
-                    tools:orientation="horizontal" />
+        <TextView
+            android:id="@+id/textView9"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="280dp"
+            android:gravity="center_horizontal"
+            android:text="@string/chargeprice_no_compatible_connectors"
+            app:goneUnless="@{vm.noCompatibleConnectors}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/charge_prices_list"
+            app:layout_constraintTop_toTopOf="@+id/charge_prices_list" />
 
-                <TextView
-                    android:id="@+id/textView2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
-                    android:text="@{String.format(@string/chargeprice_battery_range, vm.batteryRange[0], vm.batteryRange[1])}"
-                    android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                    android:textColor="?colorPrimary"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/connectors_list"
-                    tools:text="Charge from 20% to 80%" />
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="280dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="center_horizontal"
+            android:text="@string/chargeprice_select_car_first"
+            app:goneUnless="@{vm.vehicles.status == Status.SUCCESS &amp;&amp; vm.vehicles.data.size() == 0}"
+            app:layout_constraintBottom_toTopOf="@+id/btnSettings"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/charge_prices_list"
+            app:layout_constraintTop_toTopOf="@+id/charge_prices_list"
+            app:layout_constraintVertical_chainStyle="packed" />
 
+        <Button
+            android:id="@+id/btnSettings"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/settings"
+            app:goneUnless="@{vm.vehicles.status == Status.SUCCESS &amp;&amp; vm.vehicles.data.size() == 0}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
-                <TextView
-                    android:id="@+id/textView4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@{@string/chargeprice_stats(vm.chargepriceMetaForChargepoint.data.energy, BindingAdaptersKt.time((int) Math.round(vm.chargepriceMetaForChargepoint.data.duration)), vm.chargepriceMetaForChargepoint.data.energy / vm.chargepriceMetaForChargepoint.data.duration * 60)}"
-                    android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-                    app:invisibleUnlessAnimated="@{!vm.batteryRangeSliderDragging &amp;&amp; vm.chargepriceMetaForChargepoint.status == Status.SUCCESS}"
-                    app:layout_constraintStart_toStartOf="@+id/textView2"
-                    app:layout_constraintTop_toBottomOf="@+id/textView2"
-                    tools:text="(18 kWh, approx. 23 min, ⌀ 50 kW)" />
-
-                <TextView
-                    android:id="@+id/tvVehicleHeader"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
-                    android:text="@string/chargeprice_vehicle"
-                    android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
-                    android:textColor="?colorPrimary"
-                    app:goneUnless="@{vm.vehicles.data != null &amp;&amp; vm.vehicles.data.size() > 1}"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/vehicle_selection"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginEnd="16dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tvVehicleHeader"
-                    app:data="@{vm.vehicles.data}"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:goneUnless="@{vm.vehicles.data != null &amp;&amp; vm.vehicles.data.size() > 1}"
-                    android:orientation="horizontal"
-                    tools:listitem="@layout/item_chargeprice_vehicle_chip" />
-
-                <com.google.android.material.slider.RangeSlider
-                    android:id="@+id/battery_range"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:valueFrom="0.0"
-                    android:valueTo="100.0"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView4"
-                    app:values="@={vm.batteryRange}" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/charge_prices_list"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:nestedScrollingEnabled="false"
-                    app:data="@{vm.chargePricesForChargepoint.data}"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/battery_range"
-                    tools:itemCount="3"
-                    tools:listitem="@layout/item_chargeprice" />
-
-                <TextView
-                    android:id="@+id/textView8"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:gravity="center_horizontal"
-                    android:text="@string/chargeprice_no_tariffs_found"
-                    app:goneUnless="@{vm.chargePricesForChargepoint.status == Status.SUCCESS &amp;&amp; vm.chargePricesForChargepoint.data.size() == 0}"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="@+id/charge_prices_list"
-                    app:layout_constraintTop_toTopOf="@+id/charge_prices_list" />
-
-                <TextView
-                    android:id="@+id/textView9"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:gravity="center_horizontal"
-                    android:text="@string/chargeprice_no_compatible_connectors"
-                    app:goneUnless="@{vm.noCompatibleConnectors}"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="@+id/charge_prices_list"
-                    app:layout_constraintTop_toTopOf="@+id/charge_prices_list" />
-
-                <TextView
-                    android:id="@+id/textView3"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:gravity="center_horizontal"
-                    android:text="@string/chargeprice_select_car_first"
-                    app:goneUnless="@{vm.vehicles.status == Status.SUCCESS &amp;&amp; vm.vehicles.data.size() == 0}"
-                    app:layout_constraintBottom_toTopOf="@+id/btnSettings"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="@+id/charge_prices_list"
-                    app:layout_constraintTop_toTopOf="@+id/charge_prices_list"
-                    app:layout_constraintVertical_chainStyle="packed" />
-
-                <ProgressBar
-                    android:id="@+id/progressBar5"
-                    style="?android:attr/progressBarStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:goneUnless="@{vm.chargePricesForChargepoint.status == Status.LOADING || vm.vehicles.status == Status.LOADING}"
-                    app:layout_constraintBottom_toBottomOf="@+id/charge_prices_list"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="@+id/charge_prices_list"
-                    app:layout_constraintTop_toTopOf="@+id/charge_prices_list" />
-
-                <Button
-                    android:id="@+id/btnSettings"
-                    style="@style/Widget.Material3.Button.TonalButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="@string/settings"
-                    app:goneUnless="@{vm.vehicles.status == Status.SUCCESS &amp;&amp; vm.vehicles.data.size() == 0}"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView3" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </androidx.core.widget.NestedScrollView>
-
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

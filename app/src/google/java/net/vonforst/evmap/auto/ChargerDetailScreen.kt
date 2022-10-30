@@ -1,11 +1,7 @@
 package net.vonforst.evmap.auto
 
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Matrix
-import android.graphics.RectF
+import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.text.SpannableString
@@ -104,6 +100,7 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
                                 ).build()
                             )
                             .setTitle(carContext.getString(R.string.navigate))
+                            .setFlags(Action.FLAG_PRIMARY)
                         .setBackgroundColor(CarColor.PRIMARY)
                         .setOnClickListener {
                             navigateToCharger(charger)

@@ -22,6 +22,7 @@ import jsonapi.ResourceIdentifier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import net.vonforst.evmap.BuildConfig
 import net.vonforst.evmap.R
 import net.vonforst.evmap.api.chargeprice.*
 import net.vonforst.evmap.api.equivalentPlugTypes
@@ -133,11 +134,14 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         try {
                             carContext.startActivity(intent)
-                            CarToast.makeText(
-                                carContext,
-                                R.string.opened_on_phone,
-                                CarToast.LENGTH_LONG
-                            ).show()
+                            if (BuildConfig.FLAVOR_automotive != "automotive") {
+                                // only show the toast "opened on phone" if we're running on a phone
+                                CarToast.makeText(
+                                    carContext,
+                                    R.string.opened_on_phone,
+                                    CarToast.LENGTH_LONG
+                                ).show()
+                            }
                         } catch (e: ActivityNotFoundException) {
                             CarToast.makeText(
                                 carContext,

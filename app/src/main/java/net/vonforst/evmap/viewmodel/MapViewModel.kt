@@ -477,8 +477,6 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
             chargepointsInternal?.let { chargepoints.removeSource(it) }
             chargepointsInternal = result
             chargepoints.addSource(result) {
-                chargepoints.value = it
-
                 val apiId = apiId.value
                 when (apiId) {
                     "going_electric" -> {
@@ -511,7 +509,8 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
                         filteredChargeCards.value = null
                     }
                 }
-            }
+
+                chargepoints.value = it
         }
 
     fun reloadAvailability() {

@@ -105,6 +105,7 @@
                 app:layout_constrainedWidth="true"
                 app:layout_constraintEnd_toStartOf="@+id/imgFaultReport"
                 app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintHorizontal_chainStyle="packed"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="Parkhaus" />
@@ -378,8 +379,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
-                android:textAppearance="@style/TextAppearance.Material3.BodySmall"
                 android:text="@{predictionDescription}"
+                android:textAppearance="@style/TextAppearance.Material3.BodySmall"
                 app:goneUnless="@{predictionGraph != null}"
                 app:layout_constraintBaseline_toBaselineOf="@+id/textView8"
                 app:layout_constraintEnd_toStartOf="@+id/btnPredictionHelp"
@@ -421,21 +422,21 @@
                 android:layout_height="24dp"
                 android:layout_marginTop="4dp"
                 android:adjustViewBounds="true"
-                android:scaleType="fitCenter"
                 android:background="?selectableItemBackgroundBorderless"
-                app:tint="@color/logo_tint_night"
+                android:scaleType="fitCenter"
                 app:goneUnless="@{predictionGraph != null}"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintTop_toBottomOf="@+id/prediction"
-                app:srcCompat="@drawable/ic_powered_by_fronyx" />
+                app:srcCompat="@drawable/ic_powered_by_fronyx"
+                app:tint="@color/logo_tint_night" />
 
             <View
                 android:id="@+id/divider1"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginTop="8dp"
-                app:goneUnless="@{predictionGraph != null}"
                 android:background="?android:attr/listDivider"
+                app:goneUnless="@{predictionGraph != null}"
                 app:layout_constraintTop_toBottomOf="@+id/imgPredictionSource" />
 
             <ImageView
@@ -464,6 +465,7 @@
                 android:layout_marginTop="2dp"
                 android:contentDescription="@string/fault_report"
                 app:goneUnless="@{ charger.data.faultReport != null }"
+                app:layout_constraintEnd_toStartOf="@+id/imgVerified"
                 app:layout_constraintStart_toEndOf="@+id/txtName"
                 app:layout_constraintTop_toTopOf="@+id/txtName"
                 app:srcCompat="@drawable/ic_map_marker_fault"

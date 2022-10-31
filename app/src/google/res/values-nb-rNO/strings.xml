@@ -34,4 +34,6 @@
     <string name="data_sources_hint">I innstillingene kan du også bytte mellom Google Maps og OpenStreetMap (Mapbox) for kartdata.</string>
     <string name="selecting_all">valgte alle elementene</string>
     <string name="sounds_cool">den er grei</string>
+    <string name="auto_chargers_ahead">Kun ladere i kjøreretningen</string>
+    <string name="loading">Laster inn …</string>
 </resources>

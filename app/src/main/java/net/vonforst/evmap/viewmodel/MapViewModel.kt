@@ -511,6 +511,7 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
                 }
 
                 chargepoints.value = it
+            }
         }
 
     fun reloadAvailability() {

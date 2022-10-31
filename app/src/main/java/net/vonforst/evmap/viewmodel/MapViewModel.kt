@@ -72,8 +72,19 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
         state.getLiveData("bottomSheetState")
     }
 
-    val bottomSheetExpanded = bottomSheetState.map {
-        it != BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED && it != BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN
+    val bottomSheetExpanded = MediatorLiveData<Boolean>().apply {
+        addSource(bottomSheetState) {
+            when (it) {
+                BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED,
+                BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN -> {
+                    value = false
+                }
+                BottomSheetBehaviorGoogleMapsLike.STATE_EXPANDED,
+                BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT -> {
+                    value = true
+                }
+            }
+        }
     }.distinctUntilChanged()
 
     val mapPosition: MutableLiveData<MapPosition> by lazy {

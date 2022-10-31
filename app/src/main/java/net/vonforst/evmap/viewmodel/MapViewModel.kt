@@ -6,6 +6,7 @@ import androidx.lifecycle.*
 import com.car2go.maps.AnyMap
 import com.car2go.maps.model.LatLng
 import com.car2go.maps.model.LatLngBounds
+import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -70,6 +71,10 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
     val bottomSheetState: MutableLiveData<Int> by lazy {
         state.getLiveData("bottomSheetState")
     }
+
+    val bottomSheetExpanded = bottomSheetState.map {
+        it != BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED && it != BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN
+    }.distinctUntilChanged()
 
     val mapPosition: MutableLiveData<MapPosition> by lazy {
         state.getLiveData("mapPosition")

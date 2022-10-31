@@ -34,4 +34,5 @@
     <string name="auto_no_refresh_possible">D\'autres mises à jour ne sont pas possibles. Veuillez revenir en arrière et redémarrer.</string>
     <string name="settings_android_auto_chargeprice_range">Plage de charge pour la comparaison des prix</string>
     <string name="welcome_android_auto_detail">Vous pouvez également utiliser EVMap à partir d\'Android Auto sur les voitures prises en charge. Il suffit de sélectionner l\'application EVMap dans le menu Android Auto.</string>
+    <string name="loading">Chargement…</string>
 </resources>

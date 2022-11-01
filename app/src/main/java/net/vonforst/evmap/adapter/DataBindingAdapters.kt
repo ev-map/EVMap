@@ -161,6 +161,7 @@ class CheckableConnectorAdapter : DataBindingAdapter<Chargepoint>() {
         val binding = holder.binding as ItemConnectorButtonBinding
         binding.enabled = enabledConnectors?.let { item.type in it } ?: true
         val root = binding.root as CheckableConstraintLayout
+        root.setOnCheckedChangeListener { _, _ -> }
         root.isChecked = checkedItem == position
         root.setOnClickListener {
             root.isChecked = true

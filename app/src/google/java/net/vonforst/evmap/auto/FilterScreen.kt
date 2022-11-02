@@ -10,7 +10,6 @@ import androidx.car.app.constraints.ConstraintManager
 import androidx.car.app.model.*
 import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import net.vonforst.evmap.R
@@ -19,8 +18,8 @@ import net.vonforst.evmap.storage.AppDatabase
 import net.vonforst.evmap.storage.FilterProfile
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.viewmodel.FilterViewModel
-import kotlin.math.roundToInt
 import kotlin.math.min
+import kotlin.math.roundToInt
 
 @androidx.car.app.annotations.ExperimentalCarApi
 class FilterScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx) {
@@ -148,7 +147,8 @@ class FilterScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx) {
                             carContext,
                             R.drawable.ic_close
                         )
-                    ).build()
+                    ).build(),
+                    Row.IMAGE_TYPE_ICON
                 )
             }.build())
             addItem(Row.Builder().apply {
@@ -159,7 +159,8 @@ class FilterScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx) {
                             carContext,
                             R.drawable.ic_fav
                         )
-                    ).build()
+                    ).build(),
+                    Row.IMAGE_TYPE_ICON
                 )
             }.build())
             profilesToShow.forEach {

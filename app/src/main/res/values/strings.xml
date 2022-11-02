@@ -32,8 +32,6 @@
     <string name="menu_map">Map</string>
     <string name="menu_favs">Favorites</string>
     <string name="menu_filter">Filter</string>
-    <string name="menu_filter_1">Filter 1/2</string>
-    <string name="menu_filter_2">Filter 2/2</string>
     <string name="not_implemented">not implemented yet</string>
     <string name="about">About</string>
     <string name="version">Version</string>
@@ -239,9 +237,7 @@
     <string name="faq_link">https://evmap.vonforst.net/en/faq.html</string>
     <string name="chargeprice_faq_link">https://evmap.vonforst.net/en/chargeprice_faq.html</string>
     <string name="required">required</string>
-    <string name="edit_filter_more">More</string>
-    <string name="edit_filter_profile">Edit “%s” 1/2</string>
-    <string name="edit_filter_profile_2">Edit “%s” 2/2</string>
+    <string name="edit_filter_profile">Edit “%s”</string>
     <string name="pref_search_delete_recent">Delete recent search results</string>
     <string name="deleted_recent_search_results">Recent search results have been deleted</string>
     <string name="settings_data_sources">Data sources</string>

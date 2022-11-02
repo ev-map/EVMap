@@ -438,6 +438,9 @@ class GoingElectricApiWrapper(
             "Wohnmobilstellplatz" to sp.getString(R.string.category_caravan_site)
         )
         return listOf(
+            BooleanFilter(sp.getString(R.string.filter_free), "freecharging"),
+            BooleanFilter(sp.getString(R.string.filter_free_parking), "freeparking"),
+            BooleanFilter(sp.getString(R.string.filter_open_247), "open_247"),
             SliderFilter(
                 sp.getString(R.string.filter_min_power), "min_power",
                 powerSteps.size - 1,
@@ -455,10 +458,18 @@ class GoingElectricApiWrapper(
                 ).map { GEChargepoint.convertTypeToGE(it)!! }.toSet(),
                 manyChoices = true
             ),
+            SliderFilter(
+                sp.getString(R.string.filter_min_connectors),
+                "min_connectors",
+                10,
+                min = 1
+            ),
             MultipleChoiceFilter(
                 sp.getString(R.string.filter_networks), "networks",
                 networkMap, manyChoices = true
             ),
+            BooleanFilter(sp.getString(R.string.filter_exclude_faults), "exclude_faults"),
+            BooleanFilter(sp.getString(R.string.filter_barrierfree), "barrierfree"),
             MultipleChoiceFilter(
                 sp.getString(R.string.filter_chargecards), "chargecards",
                 chargecardMap, manyChoices = true
@@ -467,18 +478,7 @@ class GoingElectricApiWrapper(
                 sp.getString(R.string.categories), "categories",
                 categoryMap,
                 manyChoices = true
-            ),
-            SliderFilter(
-                sp.getString(R.string.filter_min_connectors),
-                "min_connectors",
-                10,
-                min = 1
-            ),
-            BooleanFilter(sp.getString(R.string.filter_free), "freecharging"),
-            BooleanFilter(sp.getString(R.string.filter_free_parking), "freeparking"),
-            BooleanFilter(sp.getString(R.string.filter_open_247), "open_247"),
-            BooleanFilter(sp.getString(R.string.filter_exclude_faults), "exclude_faults"),
-            BooleanFilter(sp.getString(R.string.filter_barrierfree), "barrierfree")
+            )
         )
     }
 }

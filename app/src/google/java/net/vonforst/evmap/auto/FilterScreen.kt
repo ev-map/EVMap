@@ -1,6 +1,8 @@
 package net.vonforst.evmap.auto
 
 import android.app.Application
+import android.os.Handler
+import android.os.Looper
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import androidx.car.app.CarContext
@@ -208,6 +210,9 @@ class EditFiltersScreen(ctx: CarContext, val numProfiles: Int) : Screen(ctx) {
         ctx.constraintManager.getContentLimit(ConstraintManager.CONTENT_LIMIT_TYPE_LIST)
     } else 6
 
+    private var page = 0
+    private val maxPages = 2
+
     init {
         vm.filtersWithValue.observe(this) {
             vm.filterProfile.observe(this) {
@@ -221,180 +226,93 @@ class EditFiltersScreen(ctx: CarContext, val numProfiles: Int) : Screen(ctx) {
 
         return ListTemplate.Builder().apply {
             vm.filtersWithValue.value?.let { filtersWithValue ->
-                setSingleList(buildFiltersList(filtersWithValue.subList(0, min( maxRows,filtersWithValue.lastIndex + 1))))
-            }?: setLoading(true)
+                val start = page * maxRows
+                val end = min(start + maxRows, filtersWithValue.lastIndex + 1)
+                setSingleList(buildFiltersList(filtersWithValue.subList(start, end)))
+            } ?: setLoading(true)
 
-            setTitle(currentProfileName?.let {
+            var title = currentProfileName?.let {
                 carContext.getString(
                     R.string.edit_filter_profile,
                     it,
                 )
-            } ?: carContext.getString(R.string.menu_filter_1))
+            } ?: carContext.getString(R.string.menu_filter)
+            if ((vm.filtersWithValue.value?.size ?: 0) > maxRows) {
+                title += " " + carContext.getString(R.string.auto_multipage, page + 1, maxPages)
+            }
+            setTitle(title)
 
             setHeaderAction(Action.BACK)
 
-            if (screenManager.stackSize < 4) {
-                setActionStrip(ActionStrip.Builder().apply {
-                    addAction(
-                        Action.Builder()
-                            .setIcon(
-                                CarIcon.Builder(
-                                    IconCompat.createWithResource(
-                                        carContext,
-                                        R.drawable.ic_save
-                                    )
-                                ).build()
-                            )
-                            .setOnClickListener {
-                                val textPromptScreen = TextPromptScreen(
-                                    carContext,
-                                    R.string.save_as_profile,
-                                    R.string.save_profile_enter_name,
-                                    currentProfileName
-                                )
-                                screenManager.pushForResult(textPromptScreen) { name ->
-                                    if (name == null) return@pushForResult
-                                    var saveSuccess = false
-                                    lifecycleScope.launch {
-                                        saveSuccess = vm.saveAsProfile(
-                                            name as String,
-                                            numProfiles < maxRows - 3
-                                        )
-                                        if (saveSuccess) {
-                                            screenManager.popTo(MapScreen.MARKER)
-                                        } else {
-                                            CarToast.makeText(
-                                                carContext,
-                                                "No more Space",
-                                                CarToast.LENGTH_SHORT
-                                            ).show()
-                                        }
-                                    }
-                                    if (!saveSuccess) return@pushForResult
-                                }
-                                invalidate()
-                            }
-                            .build()
-                    )
-                    addAction(Action.Builder().apply {
-                        setTitle(
-                            CarText.Builder(
-                                carContext.getString(R.string.edit_filter_more)
-                            ).build()
-                        )
-                        setIcon(
+            setActionStrip(ActionStrip.Builder().apply {
+                addAction(
+                    Action.Builder()
+                        .setIcon(
                             CarIcon.Builder(
                                 IconCompat.createWithResource(
                                     carContext,
-                                    R.drawable.ic_arrow_forward
+                                    R.drawable.ic_save
                                 )
                             ).build()
-
                         )
-                        setOnClickListener {
-                            screenManager.push(EditFiltersScreenPage2(carContext, maxRows, vm))
-                        }
-                    }
-                    .build())
-                }
-                .build())
-            }
-        }.build()
-    }
-
-    private fun buildFiltersList(filters: List<FilterWithValue<out FilterValue>>): ItemList {
-
-        return ItemList.Builder().apply {
-            filters.forEach {
-                val filter = it.filter
-                val value = it.value
-                addItem(Row.Builder().apply {
-                    setTitle(filter.name)
-                    when (filter) {
-                        is BooleanFilter -> {
-                            setToggle(Toggle.Builder {
-                                (value as BooleanFilterValue).value = it
-                                lifecycleScope.launch { vm.saveFilterValues() }
-                            }.setChecked((value as BooleanFilterValue).value).build())
-                        }
-                        is MultipleChoiceFilter -> {
-                            setBrowsable(true)
-                            setOnClickListener {
-                                screenManager.pushForResult(
-                                    MultipleChoiceFilterScreen(
-                                        carContext,
-                                        filter,
-                                        value as MultipleChoiceFilterValue
-                                    )
-                                ) {
-                                    lifecycleScope.launch { vm.saveFilterValues() }
-                                }
-                            }
-                            addText(
-                                if ((value as MultipleChoiceFilterValue).all) {
-                                    carContext.getString(R.string.all_selected)
-                                } else {
-                                    carContext.getString(
-                                        R.string.number_selected,
-                                        value.values.size
-                                    )
-                                }
+                        .setOnClickListener {
+                            val textPromptScreen = TextPromptScreen(
+                                carContext,
+                                R.string.save_as_profile,
+                                R.string.save_profile_enter_name,
+                                currentProfileName
                             )
-                        }
-                        is SliderFilter -> {
-                            setBrowsable(true)
-                            addText((value as SliderFilterValue).value.toString() + " " + filter.unit)
-                            setOnClickListener {
-                                screenManager.pushForResult(
-                                    SliderFilterScreen(
-                                        carContext,
-                                        filter,
-                                        value
+                            screenManager.pushForResult(textPromptScreen) { name ->
+                                if (name == null) return@pushForResult
+                                var saveSuccess = false
+                                lifecycleScope.launch {
+                                    saveSuccess = vm.saveAsProfile(
+                                        name as String,
+                                        numProfiles < maxRows - 3
                                     )
-                                ) {
-                                    lifecycleScope.launch { vm.saveFilterValues() }
+                                    if (saveSuccess) {
+                                        screenManager.popTo(MapScreen.MARKER)
+                                    } else {
+                                        CarToast.makeText(
+                                            carContext,
+                                            "No more Space",
+                                            CarToast.LENGTH_SHORT
+                                        ).show()
+                                    }
                                 }
+                                if (!saveSuccess) return@pushForResult
+                            }
+                            invalidate()
+                        }
+                        .build()
+                )
+                addAction(Action.Builder().apply {
+                    setTitle(
+                        CarText.Builder(
+                            carContext.getString(if (page == 0) R.string.auto_multipage_more else R.string.auto_multipage_back)
+                        ).build()
+                    )
+                    setIcon(
+                        CarIcon.Builder(
+                            IconCompat.createWithResource(
+                                carContext,
+                                if (page == 0) R.drawable.ic_arrow_forward else R.drawable.ic_arrow_back
+                            )
+                        ).build()
+
+                    )
+                    setOnClickListener {
+                        if (page == 0) page = 1 else page = 0
+                        screenManager.pushForResult(DummyReturnScreen(carContext)) {
+                            Handler(Looper.getMainLooper()).post {
+                                invalidate()
                             }
                         }
                     }
-                }.build())
+                }
+                    .build())
             }
-        }.build()
-    }
-}
-
-@androidx.car.app.annotations.ExperimentalCarApi
-class EditFiltersScreenPage2(ctx: CarContext, val startIndex: Int, val vm: FilterViewModel) : Screen(ctx) {
-
-    private val maxRows = if (ctx.carAppApiLevel >= 2) {
-        ctx.constraintManager.getContentLimit(ConstraintManager.CONTENT_LIMIT_TYPE_LIST)
-    } else 6
-
-    init {
-        vm.filtersWithValue.observe(this) {
-            vm.filterProfile.observe(this) {
-                invalidate()
-            }
-        }
-    }
-
-    override fun onGetTemplate(): Template {
-        val currentProfileName = vm.filterProfile.value?.name
-
-        return ListTemplate.Builder().apply {
-            vm.filtersWithValue.value?.let { filtersWithValue ->
-                setSingleList(buildFiltersList(filtersWithValue.subList(startIndex, min(startIndex + maxRows,filtersWithValue.lastIndex + 1))))
-            }?: setLoading(true)
-
-            setTitle(currentProfileName?.let {
-                carContext.getString(
-                    R.string.edit_filter_profile_2,
-                    it
-                )
-            } ?: carContext.getString(R.string.menu_filter_2))
-
-            setHeaderAction(Action.BACK)
-
+                .build())
         }.build()
     }
 

@@ -31,20 +31,6 @@ class FilterScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx) {
         db.filterProfileDao().getProfiles(prefs.dataSource)
     }
 
-    val filterStatus = prefs.filterStatus
-
-    /*
-    private val currentProfile: LiveData<FilterProfile> by lazy {
-        MediatorLiveData<FilterProfile>().apply {
-            if (filterStatus >= 0) {
-                lifecycleScope.launch {
-                    value = db.filterProfileDao().getProfileById(filterStatus, prefs.dataSource)
-                }
-            }
-        }
-    }
-
-     */
     private val maxRows = if (ctx.carAppApiLevel >= 2) {
         ctx.constraintManager.getContentLimit(ConstraintManager.CONTENT_LIMIT_TYPE_LIST)
     } else 6
@@ -56,6 +42,7 @@ class FilterScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx) {
     }
 
     override fun onGetTemplate(): Template {
+        val filterStatus = prefs.filterStatus
         return ListTemplate.Builder().apply {
             filterProfiles.value?.let {
                 setSingleList(buildFilterProfilesList(it, filterStatus))

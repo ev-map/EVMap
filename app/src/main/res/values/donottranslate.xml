@@ -13,6 +13,13 @@
     <string name="pref_language_de">Deutsch</string>
     <string name="pref_language_fr">Français</string>
     <string name="pref_language_nb_rNO">Norsk Bokmål</string>
-    <string name="about_contributors_list">Danilo Bargen\nAltonss\nAllan Nordhøy\nLicaon_Kter\npt2121\nnautilusx</string>
+    <string name="about_contributors_list">
+        Danilo Bargen\n
+        Altonss\n
+        Allan Nordhøy\n
+        Licaon_Kter\n
+        pt2121\n
+        nautilusx
+    </string>
     <string name="hide_on_scroll_fab_behavior">net.vonforst.evmap.ui.HideOnScrollFabBehavior</string>
 </resources>

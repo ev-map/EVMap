@@ -412,6 +412,8 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
             val response = repo.getChargepointDetail(chargerSparse.id).awaitFinished()
             if (response.status == Status.SUCCESS) {
                 val charger = response.data!!
+                this@ChargerDetailScreen.charger = charger
+                invalidate()
 
                 val photo = charger.photos?.firstOrNull()
                 photo?.let {
@@ -454,7 +456,8 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
                     )
                     this@ChargerDetailScreen.photo = outImg
                 }
-                this@ChargerDetailScreen.charger = charger
+
+                invalidate()
 
                 availability = getAvailability(charger).data
 

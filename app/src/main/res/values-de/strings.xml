@@ -196,6 +196,7 @@
     <string name="chargeprice_battery_range_to">bis</string>
     <string name="chargeprice_stats">(%1$.0f kWh, ca. %2$s, ⌀ %3$.0f kW)</string>
     <string name="chargeprice_vehicle">Fahrzeug</string>
+    <string name="chargeprice_price_not_available">Preis nicht verfügbar</string>
     <string name="edit_on_goingelectric_info">Logge dich zuerst bei GoingElectric.de ein, falls hier nur eine leere Seite erscheint</string>
     <string name="close">Schließen</string>
     <string name="chargeprice_title">Preise</string>

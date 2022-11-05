@@ -80,7 +80,9 @@ data class ChargepriceOptions(
     val currency: String? = null,
     @Json(name = "start_time") val startTime: Int? = null,
     @Json(name = "allow_unbalanced_load") val allowUnbalancedLoad: Boolean? = null,
-    @Json(name = "provider_customer_tariffs") val providerCustomerTariffs: Boolean? = null
+    @Json(name = "provider_customer_tariffs") val providerCustomerTariffs: Boolean? = null,
+    @Json(name = "show_price_unavailable") val showPriceUnavailable: Boolean? = null,
+    @Json(name = "show_all_brand_restricted_tariffs") val showAllBrandRestrictedTariffs: Boolean? = null
 )
 
 @Resource("tariff")
@@ -268,7 +270,7 @@ internal object RelationshipsParceler : Parceler<Relationships?> {
 data class ChargepointPrice(
     val power: Double,
     val plug: String,
-    val price: Double,
+    val price: Double?,
     @Json(name = "price_distribution") val priceDistribution: PriceDistribution,
     @Json(name = "blocking_fee_start") val blockingFeeStart: Int?,
     @Json(name = "no_price_reason") var noPriceReason: String?

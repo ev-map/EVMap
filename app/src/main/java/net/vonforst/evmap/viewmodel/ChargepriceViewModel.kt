@@ -166,7 +166,7 @@ class ChargepriceViewModel(
                                 )
                             }
                         }.filterNotNull()
-                            .sortedBy { it.chargepointPrices.first().price }
+                            .sortedBy { it.chargepointPrices.first().price ?: Double.MAX_VALUE }
                             .sortedByDescending {
                                 prefs.chargepriceMyTariffsAll ||
                                         myTariffs != null && it.tariffId in myTariffs
@@ -263,7 +263,8 @@ class ChargepriceViewModel(
                             providerCustomerTariffs = prefs.chargepriceShowProviderCustomerTariffs,
                             maxMonthlyFees = if (prefs.chargepriceNoBaseFee) 0.0 else null,
                             currency = prefs.chargepriceCurrency,
-                            allowUnbalancedLoad = prefs.chargepriceAllowUnbalancedLoad
+                            allowUnbalancedLoad = prefs.chargepriceAllowUnbalancedLoad,
+                            showPriceUnavailable = true
                         ),
                         relationships = if (!myTariffsAll) {
                             Relationships(

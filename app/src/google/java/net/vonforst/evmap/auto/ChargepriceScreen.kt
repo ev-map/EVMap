@@ -164,19 +164,21 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
     }
 
     private fun formatPrice(price: ChargePrice): String {
+        val amount = price.chargepointPrices.first().price
+            ?: return "${carContext.getString(R.string.chargeprice_price_not_available)} (${price.chargepointPrices.first().noPriceReason})"
         val totalPrice = carContext.getString(
             R.string.charge_price_format,
-            price.chargepointPrices.first().price,
+            amount,
             currency(price.currency)
         )
-        val kwhPrice = if (price.chargepointPrices.first().price > 0f) {
+        val kwhPrice = if (amount > 0f) {
             carContext.getString(
                 if (price.chargepointPrices[0].priceDistribution.isOnlyKwh) {
                     R.string.charge_price_kwh_format
                 } else {
                     R.string.charge_price_average_format
                 },
-                price.chargepointPrices.get(0).price / meta!!.energy,
+                amount / meta!!.energy,
                 currency(price.currency)
             )
         } else null
@@ -233,7 +235,8 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
                             providerCustomerTariffs = prefs.chargepriceShowProviderCustomerTariffs,
                             maxMonthlyFees = if (prefs.chargepriceNoBaseFee) 0.0 else null,
                             currency = prefs.chargepriceCurrency,
-                            allowUnbalancedLoad = prefs.chargepriceAllowUnbalancedLoad
+                            allowUnbalancedLoad = prefs.chargepriceAllowUnbalancedLoad,
+                            showPriceUnavailable = true
                         ),
                         relationships = if (!prefs.chargepriceMyTariffsAll) {
                             val myTariffs = prefs.chargepriceMyTariffs ?: emptySet()
@@ -289,7 +292,7 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
                         )
                     }
                 }.filterNotNull()
-                    .sortedBy { it.chargepointPrices.first().price }
+                    .sortedBy { it.chargepointPrices.first().price ?: Double.MAX_VALUE }
                     .sortedByDescending {
                         prefs.chargepriceMyTariffsAll ||
                                 myTariffs != null && it.tariffId in myTariffs

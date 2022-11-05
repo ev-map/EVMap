@@ -6,6 +6,7 @@ import androidx.lifecycle.*
 import com.car2go.maps.AnyMap
 import com.car2go.maps.model.LatLng
 import com.car2go.maps.model.LatLngBounds
+import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -70,6 +71,21 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
     val bottomSheetState: MutableLiveData<Int> by lazy {
         state.getLiveData("bottomSheetState")
     }
+
+    val bottomSheetExpanded = MediatorLiveData<Boolean>().apply {
+        addSource(bottomSheetState) {
+            when (it) {
+                BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED,
+                BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN -> {
+                    value = false
+                }
+                BottomSheetBehaviorGoogleMapsLike.STATE_EXPANDED,
+                BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT -> {
+                    value = true
+                }
+            }
+        }
+    }.distinctUntilChanged()
 
     val mapPosition: MutableLiveData<MapPosition> by lazy {
         state.getLiveData("mapPosition")
@@ -472,8 +488,6 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
             chargepointsInternal?.let { chargepoints.removeSource(it) }
             chargepointsInternal = result
             chargepoints.addSource(result) {
-                chargepoints.value = it
-
                 val apiId = apiId.value
                 when (apiId) {
                     "going_electric" -> {
@@ -506,6 +520,8 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
                         filteredChargeCards.value = null
                     }
                 }
+
+                chargepoints.value = it
             }
         }
 

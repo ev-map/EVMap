@@ -35,11 +35,13 @@ val CarContext.constraintManager
 
 fun Bitmap.asCarIcon(): CarIcon = CarIcon.Builder(IconCompat.createWithBitmap(this)).build()
 
-val emptyCarIcon = Bitmap.createBitmap(
-    1,
-    1,
-    Bitmap.Config.ARGB_8888
-).asCarIcon()
+val emptyCarIcon: CarIcon by lazy {
+    Bitmap.createBitmap(
+        1,
+        1,
+        Bitmap.Config.ARGB_8888
+    ).asCarIcon()
+}
 
 private const val kmPerMile = 1.609344
 private const val ftPerMile = 5280
@@ -132,6 +134,40 @@ fun roundValueToDistance(value: Double, unit: Int? = null): Distance {
 
 private fun roundToMultipleOf(num: Double, step: Double): Double {
     return (num / step).roundToInt() * step
+}
+
+/**
+ * Paginates data based on specific limits for each page.
+ * If the data fits on a single page, this page can have a maximum size nSingle. Otherwise, the
+ * first page has maximum nFirst items, the last page nLast items, and all intermediate pages nOther
+ * items.
+ */
+fun <T> List<T>.paginate(nSingle: Int, nFirst: Int, nOther: Int, nLast: Int): List<List<T>> {
+    if (nOther > nFirst || nOther > nLast || nOther > nSingle) {
+        throw IllegalArgumentException("nFirst, nLast and nSingle have to be larger than or equal to nOther")
+    }
+    return if (size <= nSingle) {
+        listOf(this)
+    } else {
+        val result = mutableListOf<List<T>>()
+        var i = 0
+        var page = 0
+        while (true) {
+            val remaining = size - i
+            if (page == 0) {
+                result.add(subList(i, i + nFirst))
+                i += nFirst
+            } else if (remaining <= nLast) {
+                result.add(subList(i, size))
+                break
+            } else {
+                result.add(subList(i, i + nOther))
+                i += nOther
+            }
+            page++
+        }
+        result
+    }
 }
 
 fun getAndroidAutoVersion(ctx: Context): List<String> {

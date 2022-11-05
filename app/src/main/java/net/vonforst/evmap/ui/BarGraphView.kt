@@ -82,8 +82,8 @@ class BarGraphView(context: Context, attrs: AttributeSet) : View(context, attrs)
         textSize = bubbleTextSize.toFloat()
     }
 
-    private lateinit var graphBounds: Rect
-    private lateinit var bubbleBounds: Rect
+    private var graphBounds: Rect? = null
+    private var bubbleBounds: Rect? = null
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         val bottom = (paddingBottom + legendWidth).roundToInt()
@@ -127,6 +127,8 @@ class BarGraphView(context: Context, attrs: AttributeSet) : View(context, attrs)
         data: SortedMap<ZonedDateTime, Int>,
         maxValue: Int
     ) {
+        val graphBounds = graphBounds ?: return
+
         canvas.apply {
             drawLine(
                 graphBounds.left.toFloat(),
@@ -207,7 +209,10 @@ class BarGraphView(context: Context, attrs: AttributeSet) : View(context, attrs)
         if (v < maxValue) colorAvailable else colorUnavailable
 
     private fun drawBubble(canvas: Canvas, data: SortedMap<ZonedDateTime, Int>, maxValue: Int) {
+        val bubbleBounds = bubbleBounds ?: return
+        val graphBounds = graphBounds ?: return
         val data = data.toList()
+
         if (data.size <= selectedBar) return
         canvas.apply {
             val center = graphBounds.left + selectedBar * (barWidth + barMargin) + barWidth * 0.5f
@@ -273,6 +278,7 @@ class BarGraphView(context: Context, attrs: AttributeSet) : View(context, attrs)
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
+        val graphBounds = graphBounds ?: return super.onTouchEvent(event)
         val x = event.x.roundToInt()
         val y = event.y.roundToInt()
         if (graphBounds.contains(x, y) && event.action == MotionEvent.ACTION_DOWN) {
@@ -290,6 +296,7 @@ class BarGraphView(context: Context, attrs: AttributeSet) : View(context, attrs)
     }
 
     private fun updateSelectedBar(x: Int) {
+        val graphBounds = graphBounds ?: return
         val bar = (x - graphBounds.left) / (barWidth + barMargin)
         if (bar != selectedBar) {
             selectedBar = bar

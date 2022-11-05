@@ -1,0 +1,11 @@
+New features:
+- Utilization prediction (only for DC chargers in Germany, powered by fronyx)
+
+Improvements:
+- Map and detail view adapted for large tablets
+- Android Auto: More details on price comparison screen, Search button is now located on main screen, Replaced emojis with proper icons
+
+Bugfixes:
+- Inconsistent display while loading charger details
+- Price comparison: Slowdown while switching connectors
+- Android Auto: Fixed selecting highest-power chargepoint for price comparison

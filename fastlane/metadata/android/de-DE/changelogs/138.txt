@@ -1,0 +1,11 @@
+Neue Features:
+- Auslastungsprognose (nur für DC-Ladestationen in Deutschland, powered by fronyx)
+
+Verbesserungen:
+- Layout für die Karten- und Detailansicht für große Tablets angepasst
+- Android Auto: Mehr Details im Preisvergleich, Suchbutton auf dem Hauptbildschirm, Android Auto: Emoji durch Icons ersetzt
+
+Fehler behoben:
+- Inkonsistente Anzeige beim Laden der Details
+- Preisvergleich: Langsames Wechseln der Anschlüsse
+- Android Auto: Korrektur Auswahl des Ladepunkts für Preisvergleich

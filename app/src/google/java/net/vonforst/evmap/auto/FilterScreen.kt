@@ -13,6 +13,7 @@ import androidx.car.app.model.*
 import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.map
 import kotlinx.coroutines.launch
 import net.vonforst.evmap.R
 import net.vonforst.evmap.model.*
@@ -20,7 +21,6 @@ import net.vonforst.evmap.storage.AppDatabase
 import net.vonforst.evmap.storage.FilterProfile
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.viewmodel.FilterViewModel
-import kotlin.math.min
 import kotlin.math.roundToInt
 
 @androidx.car.app.annotations.ExperimentalCarApi
@@ -59,7 +59,6 @@ class FilterScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx) {
             setHeaderAction(Action.BACK)
             setActionStrip(
                 ActionStrip.Builder().apply {
-
                     if (filterStatus !in listOf(
                             FILTERS_CUSTOM,
                             FILTERS_FAVORITES,
@@ -198,10 +197,12 @@ class EditFiltersScreen(ctx: CarContext, val numProfiles: Int) : Screen(ctx) {
     } else 6
 
     private var page = 0
-    private val maxPages = 2
+    private var paginatedFilters = vm.filtersWithValue.map {
+        it?.paginate(maxRows, maxRows - 1, maxRows - 2, maxRows - 1)
+    }
 
     init {
-        vm.filtersWithValue.observe(this) {
+        paginatedFilters.observe(this) {
             vm.filterProfile.observe(this) {
                 invalidate()
             }
@@ -212,10 +213,8 @@ class EditFiltersScreen(ctx: CarContext, val numProfiles: Int) : Screen(ctx) {
         val currentProfileName = vm.filterProfile.value?.name
 
         return ListTemplate.Builder().apply {
-            vm.filtersWithValue.value?.let { filtersWithValue ->
-                val start = page * maxRows
-                val end = min(start + maxRows, filtersWithValue.lastIndex + 1)
-                setSingleList(buildFiltersList(filtersWithValue.subList(start, end)))
+            paginatedFilters.value?.let { paginatedFilters ->
+                setSingleList(buildFiltersList(paginatedFilters))
             } ?: setLoading(true)
 
             var title = currentProfileName?.let {
@@ -224,8 +223,12 @@ class EditFiltersScreen(ctx: CarContext, val numProfiles: Int) : Screen(ctx) {
                     it,
                 )
             } ?: carContext.getString(R.string.menu_filter)
-            if ((vm.filtersWithValue.value?.size ?: 0) > maxRows) {
-                title += " " + carContext.getString(R.string.auto_multipage, page + 1, maxPages)
+            if ((paginatedFilters.value?.size ?: 0) > 0) {
+                title += " " + carContext.getString(
+                    R.string.auto_multipage,
+                    page + 1,
+                    paginatedFilters.value!!.size
+                )
             }
             setTitle(title)
 
@@ -273,40 +276,42 @@ class EditFiltersScreen(ctx: CarContext, val numProfiles: Int) : Screen(ctx) {
                         }
                         .build()
                 )
-                addAction(Action.Builder().apply {
+            }
+                .build())
+        }.build()
+    }
+
+    private fun buildFiltersList(paginatedFilters: List<FilterValues>): ItemList {
+
+        return ItemList.Builder().apply {
+            if (page > 0) {
+                addItem(Row.Builder().apply {
                     setTitle(
                         CarText.Builder(
-                            carContext.getString(if (page == 0) R.string.auto_multipage_more else R.string.auto_multipage_back)
+                            carContext.getString(R.string.auto_multipage_back)
                         ).build()
                     )
-                    setIcon(
+                    setImage(
                         CarIcon.Builder(
                             IconCompat.createWithResource(
                                 carContext,
-                                if (page == 0) R.drawable.ic_arrow_forward else R.drawable.ic_arrow_back
+                                R.drawable.ic_arrow_back
                             )
-                        ).build()
-
+                        ).build(),
+                        Row.IMAGE_TYPE_ICON
                     )
                     setOnClickListener {
-                        if (page == 0) page = 1 else page = 0
+                        page -= 1
                         screenManager.pushForResult(DummyReturnScreen(carContext)) {
                             Handler(Looper.getMainLooper()).post {
                                 invalidate()
                             }
                         }
                     }
-                }
-                    .build())
+                }.build())
             }
-                .build())
-        }.build()
-    }
 
-    private fun buildFiltersList(filters: List<FilterWithValue<out FilterValue>>): ItemList {
-
-        return ItemList.Builder().apply {
-            filters.forEach {
+            paginatedFilters[page].forEach {
                 val filter = it.filter
                 val value = it.value
                 addItem(Row.Builder().apply {
@@ -355,6 +360,33 @@ class EditFiltersScreen(ctx: CarContext, val numProfiles: Int) : Screen(ctx) {
                                 ) {
                                     lifecycleScope.launch { vm.saveFilterValues() }
                                 }
+                            }
+                        }
+                    }
+                }.build())
+            }
+
+            if (page < paginatedFilters.size - 1) {
+                addItem(Row.Builder().apply {
+                    setTitle(
+                        CarText.Builder(
+                            carContext.getString(R.string.auto_multipage_more)
+                        ).build()
+                    )
+                    setImage(
+                        CarIcon.Builder(
+                            IconCompat.createWithResource(
+                                carContext,
+                                R.drawable.ic_arrow_forward
+                            )
+                        ).build(),
+                        Row.IMAGE_TYPE_ICON
+                    )
+                    setOnClickListener {
+                        page += 1
+                        screenManager.pushForResult(DummyReturnScreen(carContext)) {
+                            Handler(Looper.getMainLooper()).post {
+                                invalidate()
                             }
                         }
                     }

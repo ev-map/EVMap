@@ -59,42 +59,6 @@ class FilterScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx) {
             setHeaderAction(Action.BACK)
             setActionStrip(
                 ActionStrip.Builder().apply {
-                    if (filterStatus !in listOf(
-                            FILTERS_CUSTOM,
-                            FILTERS_FAVORITES,
-                            FILTERS_DISABLED
-                        )
-                    ) {
-                        addAction(Action.Builder().apply {
-                            setIcon(
-                                CarIcon.Builder(
-                                    IconCompat.createWithResource(
-                                        carContext,
-                                        R.drawable.ic_delete
-                                    )
-                                ).build()
-
-                            )
-                            setOnClickListener {
-                                val currentProfile =
-                                    filterProfiles.value?.find { it.id == filterStatus }
-                                        ?: return@setOnClickListener
-                                lifecycleScope.launch {
-                                    db.filterProfileDao().delete(currentProfile)
-                                    prefs.filterStatus = FILTERS_DISABLED
-                                    CarToast.makeText(
-                                        carContext,
-                                        carContext.getString(
-                                            R.string.deleted_filterprofile,
-                                            currentProfile.name
-                                        ),
-                                        CarToast.LENGTH_SHORT
-                                    ).show()
-                                    invalidate()
-                                }
-                            }
-                        }.build())
-                    }
                     addAction(Action.Builder().apply {
                         setIcon(
                             CarIcon.Builder(
@@ -235,6 +199,35 @@ class EditFiltersScreen(ctx: CarContext, val numProfiles: Int) : Screen(ctx) {
             setHeaderAction(Action.BACK)
 
             setActionStrip(ActionStrip.Builder().apply {
+                val currentProfile = vm.filterProfile.value
+                if (currentProfile != null) {
+                    addAction(Action.Builder().apply {
+                        setIcon(
+                            CarIcon.Builder(
+                                IconCompat.createWithResource(
+                                    carContext,
+                                    R.drawable.ic_delete
+                                )
+                            ).build()
+
+                        )
+                        setOnClickListener {
+                            lifecycleScope.launch {
+                                vm.deleteCurrentProfile()
+                                CarToast.makeText(
+                                    carContext,
+                                    carContext.getString(
+                                        R.string.deleted_filterprofile,
+                                        currentProfile.name
+                                    ),
+                                    CarToast.LENGTH_SHORT
+                                ).show()
+                                invalidate()
+                                screenManager.pop()
+                            }
+                        }
+                    }.build())
+                }
                 addAction(
                     Action.Builder()
                         .setIcon(

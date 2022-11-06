@@ -35,8 +35,22 @@ class FilterScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx) {
         ctx.constraintManager.getContentLimit(ConstraintManager.CONTENT_LIMIT_TYPE_LIST)
     } else 6
 
+    private var page = 0
+    private var paginatedProfiles = filterProfiles.map {
+        val filterStatus = prefs.filterStatus
+        val extraRows = if (FILTERS_CUSTOM == filterStatus) 3 else 2
+        val paginated =
+            it.paginate(maxRows - extraRows, maxRows - extraRows - 1, maxRows - 2, maxRows - 1)
+        if (filterStatus in listOf(FILTERS_DISABLED, FILTERS_FAVORITES, FILTERS_CUSTOM)) {
+            page = 0
+        } else {
+            page = paginated.indexOfFirst { it.any { it.id == filterStatus } }
+        }
+        paginated
+    }
+
     init {
-        filterProfiles.observe(this) {
+        paginatedProfiles.observe(this) {
             invalidate()
         }
     }
@@ -44,17 +58,20 @@ class FilterScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx) {
     override fun onGetTemplate(): Template {
         val filterStatus = prefs.filterStatus
         return ListTemplate.Builder().apply {
-            filterProfiles.value?.let {
+            paginatedProfiles.value?.let {
                 setSingleList(buildFilterProfilesList(it, filterStatus))
             } ?: setLoading(true)
 
-            var numProfiles = 0
-
-            filterProfiles.value?.let {
-                numProfiles = it.size
+            var title = carContext.getString(R.string.menu_filter)
+            val numPages = paginatedProfiles.value?.size ?: 0
+            if (numPages > 0) {
+                title += " " + carContext.getString(
+                    R.string.auto_multipage,
+                    page + 1,
+                    numPages
+                )
             }
-
-            setTitle(carContext.getString(R.string.menu_filter))
+            setTitle(title)
 
             setHeaderAction(Action.BACK)
             setActionStrip(
@@ -67,13 +84,12 @@ class FilterScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx) {
                                     R.drawable.ic_edit
                                 )
                             ).build()
-
                         )
                         setOnClickListener(ParkedOnlyOnClickListener.create {
                             lifecycleScope.launch {
                                 db.filterValueDao()
                                     .copyFiltersToCustom(filterStatus, prefs.dataSource)
-                                screenManager.push(EditFiltersScreen(carContext,numProfiles))
+                                screenManager.push(EditFiltersScreen(carContext))
                             }
                         })
                     }.build())
@@ -83,65 +99,128 @@ class FilterScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx) {
     }
 
     private fun buildFilterProfilesList(
-        profiles: List<FilterProfile>,
+        paginatedProfiles: List<List<FilterProfile>>,
         filterStatus: Long
     ): ItemList {
-        //val extraRows = if (FILTERS_CUSTOM == filterStatus) 3 else 2
-        val extraRows = 3
-        val profilesToShow =
-            profiles.sortedByDescending { it.id == filterStatus }.take(maxRows - extraRows)
         return ItemList.Builder().apply {
-            addItem(Row.Builder().apply {
-                setTitle(carContext.getString(R.string.no_filters))
-                setImage(
-                    CarIcon.Builder(
-                        IconCompat.createWithResource(
-                            carContext,
-                            R.drawable.ic_close
-                        )
-                    ).build(),
-                    Row.IMAGE_TYPE_ICON
-                )
-            }.build())
-            addItem(Row.Builder().apply {
-                setTitle(carContext.getString(R.string.filter_favorites))
-                setImage(
-                    CarIcon.Builder(
-                        IconCompat.createWithResource(
-                            carContext,
-                            R.drawable.ic_fav
-                        )
-                    ).build(),
-                    Row.IMAGE_TYPE_ICON
-                )
-            }.build())
-            profilesToShow.forEach {
+            if (page > 0) {
                 addItem(Row.Builder().apply {
-                    val name =
-                        it.name.ifEmpty { carContext.getString(R.string.unnamed_filter_profile) }
-                    setTitle(name)
+                    setTitle(
+                        CarText.Builder(
+                            carContext.getString(R.string.auto_multipage_back)
+                        ).build()
+                    )
+                    setImage(
+                        CarIcon.Builder(
+                            IconCompat.createWithResource(
+                                carContext,
+                                R.drawable.ic_arrow_back
+                            )
+                        ).build(),
+                        Row.IMAGE_TYPE_ICON
+                    )
+                    setOnClickListener {
+                        page -= 1
+                        screenManager.pushForResult(DummyReturnScreen(carContext)) {
+                            Handler(Looper.getMainLooper()).post {
+                                invalidate()
+                            }
+                        }
+                    }
+                }.build())
+            }
+
+            if (page == 0) {
+                addItem(Row.Builder().apply {
+                    val active = filterStatus == FILTERS_DISABLED
+                    setTitle(carContext.getString(R.string.no_filters))
+                    setImage(
+                        CarIcon.Builder(
+                            IconCompat.createWithResource(
+                                carContext,
+                                R.drawable.ic_close
+                            )
+                        ).setTint(if (active) CarColor.SECONDARY else CarColor.DEFAULT)
+                            .build(),
+                        Row.IMAGE_TYPE_ICON
+                    )
+                    setOnClickListener { onItemClick(FILTERS_DISABLED) }
+                }.build())
+                addItem(Row.Builder().apply {
+                    val active = filterStatus == FILTERS_FAVORITES
+                    setTitle(carContext.getString(R.string.filter_favorites))
+                    setImage(
+                        CarIcon.Builder(
+                            IconCompat.createWithResource(
+                                carContext,
+                                R.drawable.ic_fav
+                            )
+                        ).setTint(if (active) CarColor.SECONDARY else CarColor.DEFAULT)
+                            .build(),
+                        Row.IMAGE_TYPE_ICON
+                    )
+                    setOnClickListener { onItemClick(FILTERS_FAVORITES) }
                 }.build())
             }
             if (FILTERS_CUSTOM == filterStatus) {
                 addItem(Row.Builder().apply {
                     setTitle(carContext.getString(R.string.filter_custom))
+                    setImage(
+                        CarIcon.Builder(
+                            IconCompat.createWithResource(
+                                carContext,
+                                R.drawable.ic_checkbox_checked
+                            )
+                        ).setTint(CarColor.PRIMARY).build(),
+                        Row.IMAGE_TYPE_ICON
+                    )
+                    setOnClickListener { onItemClick(FILTERS_CUSTOM) }
                 }.build())
             }
-            setSelectedIndex(when (filterStatus) {
-                FILTERS_DISABLED -> 0
-                FILTERS_FAVORITES -> 1
-                FILTERS_CUSTOM -> profilesToShow.size + 2
-                else -> profilesToShow.indexOfFirst { it.id == filterStatus } + 2
-            })
-            setOnSelectedListener { index ->
-                onItemClick(
-                    when (index) {
-                        0 -> FILTERS_DISABLED
-                        1 -> FILTERS_FAVORITES
-                        profilesToShow.size + 2 -> FILTERS_CUSTOM
-                        else -> profilesToShow[index - 2].id
+            paginatedProfiles[page].forEach {
+                addItem(Row.Builder().apply {
+                    val name =
+                        it.name.ifEmpty { carContext.getString(R.string.unnamed_filter_profile) }
+                    val active = filterStatus == it.id
+                    setTitle(name)
+                    setImage(
+                        if (active)
+                            CarIcon.Builder(
+                                IconCompat.createWithResource(
+                                    carContext,
+                                    R.drawable.ic_check
+                                )
+                            ).setTint(CarColor.SECONDARY).build() else emptyCarIcon,
+                        Row.IMAGE_TYPE_ICON
+                    )
+                    setOnClickListener { onItemClick(it.id) }
+                }.build())
+            }
+            if (page < paginatedProfiles.size - 1) {
+                addItem(Row.Builder().apply {
+                    setTitle(
+                        CarText.Builder(
+                            carContext.getString(R.string.auto_multipage_more)
+                        ).build()
+                    )
+                    setImage(
+                        CarIcon.Builder(
+                            IconCompat.createWithResource(
+                                carContext,
+                                R.drawable.ic_arrow_forward
+                            )
+                        ).build(),
+                        Row.IMAGE_TYPE_ICON
+                    )
+                    setOnClickListener {
+                        page += 1
+                        screenManager.pushForResult(DummyReturnScreen(carContext)) {
+                            Handler(Looper.getMainLooper()).post {
+                                invalidate()
+                            }
+                        }
                     }
-                )
+                }.build())
             }
         }.build()
     }
@@ -153,7 +232,7 @@ class FilterScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx) {
 }
 
 @androidx.car.app.annotations.ExperimentalCarApi
-class EditFiltersScreen(ctx: CarContext, val numProfiles: Int) : Screen(ctx) {
+class EditFiltersScreen(ctx: CarContext) : Screen(ctx) {
     private val vm = FilterViewModel(carContext.applicationContext as Application)
 
     private val maxRows = if (ctx.carAppApiLevel >= 2) {
@@ -187,11 +266,12 @@ class EditFiltersScreen(ctx: CarContext, val numProfiles: Int) : Screen(ctx) {
                     it,
                 )
             } ?: carContext.getString(R.string.menu_filter)
-            if ((paginatedFilters.value?.size ?: 0) > 0) {
+            val numPages = paginatedFilters.value?.size ?: 0
+            if (numPages > 0) {
                 title += " " + carContext.getString(
                     R.string.auto_multipage,
                     page + 1,
-                    paginatedFilters.value!!.size
+                    numPages
                 )
             }
             setTitle(title)
@@ -249,19 +329,8 @@ class EditFiltersScreen(ctx: CarContext, val numProfiles: Int) : Screen(ctx) {
                                 if (name == null) return@pushForResult
                                 var saveSuccess = false
                                 lifecycleScope.launch {
-                                    saveSuccess = vm.saveAsProfile(
-                                        name as String,
-                                        numProfiles < maxRows - 3
-                                    )
-                                    if (saveSuccess) {
-                                        screenManager.popTo(MapScreen.MARKER)
-                                    } else {
-                                        CarToast.makeText(
-                                            carContext,
-                                            "No more Space",
-                                            CarToast.LENGTH_SHORT
-                                        ).show()
-                                    }
+                                    saveSuccess = vm.saveAsProfile(name as String)
+                                    screenManager.popTo(MapScreen.MARKER)
                                 }
                                 if (!saveSuccess) return@pushForResult
                             }

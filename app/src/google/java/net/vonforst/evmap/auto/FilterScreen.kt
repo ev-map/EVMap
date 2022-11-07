@@ -107,7 +107,7 @@ class FilterScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx) {
                 addItem(Row.Builder().apply {
                     setTitle(
                         CarText.Builder(
-                            carContext.getString(R.string.auto_multipage_back)
+                            carContext.getString(R.string.auto_multipage_goto, page)
                         ).build()
                     )
                     setImage(
@@ -200,7 +200,7 @@ class FilterScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx) {
                 addItem(Row.Builder().apply {
                     setTitle(
                         CarText.Builder(
-                            carContext.getString(R.string.auto_multipage_more)
+                            carContext.getString(R.string.auto_multipage_goto, page + 2)
                         ).build()
                     )
                     setImage(
@@ -350,7 +350,7 @@ class EditFiltersScreen(ctx: CarContext) : Screen(ctx) {
                 addItem(Row.Builder().apply {
                     setTitle(
                         CarText.Builder(
-                            carContext.getString(R.string.auto_multipage_back)
+                            carContext.getString(R.string.auto_multipage_goto, page)
                         ).build()
                     )
                     setImage(
@@ -432,7 +432,7 @@ class EditFiltersScreen(ctx: CarContext) : Screen(ctx) {
                 addItem(Row.Builder().apply {
                     setTitle(
                         CarText.Builder(
-                            carContext.getString(R.string.auto_multipage_more)
+                            carContext.getString(R.string.auto_multipage_goto, page + 2)
                         ).build()
                     )
                     setImage(

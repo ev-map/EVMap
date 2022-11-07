@@ -61,11 +61,9 @@ class FilterViewModel(application: Application) : AndroidViewModel(application) 
         prefs.filterStatus = FILTERS_CUSTOM
     }
 
-    suspend fun saveAsProfile(name: String, displaySpace: Boolean = true): Boolean {
+    suspend fun saveAsProfile(name: String): Boolean {
         // get or create profile
         var profileId = db.filterProfileDao().getProfileByName(name, prefs.dataSource)?.id
-
-        if (profileId == null && !displaySpace) return false
 
         if (profileId == null) {
             profileId = db.filterProfileDao().getNewId(prefs.dataSource)

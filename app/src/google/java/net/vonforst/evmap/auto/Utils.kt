@@ -143,8 +143,8 @@ private fun roundToMultipleOf(num: Double, step: Double): Double {
  * items.
  */
 fun <T> List<T>.paginate(nSingle: Int, nFirst: Int, nOther: Int, nLast: Int): List<List<T>> {
-    if (nOther > nFirst || nOther > nLast || nOther > nSingle) {
-        throw IllegalArgumentException("nFirst, nLast and nSingle have to be larger than or equal to nOther")
+    if (nOther > nLast) {
+        throw IllegalArgumentException("nLast has to be larger than or equal to nOther")
     }
     return if (size <= nSingle) {
         listOf(this)

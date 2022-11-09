@@ -34,8 +34,6 @@
     <string name="selecting_all">selected all items</string>
     <string name="selecting_none">deselected all items</string>
     <string name="loading">Loading…</string>
-    <string name="auto_multipage_more">More</string>
-    <string name="auto_multipage_back">Back</string>
     <string name="auto_multipage_goto">Page %d</string>
     <string name="auto_multipage">(%d/%d)</string>
 </resources>

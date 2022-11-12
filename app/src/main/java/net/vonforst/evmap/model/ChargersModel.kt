@@ -374,7 +374,21 @@ data class Address(
     val street: String?
 ) : Parcelable {
     override fun toString(): String {
-        return "${street ?: ""}, ${postcode ?: ""} ${city ?: ""}"
+        // TODO: the order here follows a German-style format (i.e. street, postcode city).
+        // in principle this should be country-dependent (e.g. UK has postcode after city)
+        return buildString {
+            street?.let {
+                append(it)
+                append(", ")
+            }
+            postcode?.let {
+                append(it)
+                append(" ")
+            }
+            city?.let {
+                append(it)
+            }
+        }
     }
 }
 

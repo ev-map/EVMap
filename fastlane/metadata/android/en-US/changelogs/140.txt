@@ -1,0 +1,9 @@
+Improvements:
+- Price comparison: Also show plans with unknown pricing
+- Links from openchargemap.org can be opened with EVMap
+- Android Auto: Improved loading speed for detail view
+- Android Auto: Multi-page views for filters and filter profiles (if necessary)
+
+Bugfixes:
+- fixed multiple minor display bugs
+- fixed crashes

@@ -1,0 +1,9 @@
+Verbesserungen:
+- Preisvergleich: Auch Tarife mit fehlenden Preisdaten anzeigen
+- Links von openchargemap.org können in EVMap geöffnet werden
+- Android Auto: Ladegeschwindigkeit bei der Detailansicht optimiert
+- Android Auto: Mehrseitige Ansichten für Filter und Filterprofile (falls nötig)
+
+Fehler behoben:
+- diverse kleine Darstellungsfehler behoben
+- Abstürze behoben

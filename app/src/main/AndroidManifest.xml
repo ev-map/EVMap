@@ -252,6 +252,10 @@
                     android:host="www.goingelectric.de"
                     android:pathPattern="/stromtankstellen/Ungarn/..*/..*/..*/"
                     android:scheme="https" />
+                <data
+                    android:host="openchargemap.org"
+                    android:pathPattern="/site/poi/details/..*"
+                    android:scheme="https" />
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />

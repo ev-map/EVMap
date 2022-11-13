@@ -282,4 +282,5 @@
     <string name="pref_prediction_enabled_summary">for supported chargers\n(currently only DC in Germany)</string>
     <string name="prediction_only">(%s only)</string>
     <string name="prediction_dc_plugs_only">DC plugs</string>
+    <string name="data_source_switched_to">Data source switched to %s</string>
 </resources>

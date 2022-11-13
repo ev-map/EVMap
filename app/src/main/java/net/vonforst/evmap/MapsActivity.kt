@@ -8,6 +8,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
@@ -131,6 +132,37 @@ class MapsActivity : AppCompatActivity(),
             } else if (intent?.scheme == "https" && intent?.data?.host == "www.goingelectric.de") {
                 val id = intent.data?.pathSegments?.last()?.toLongOrNull()
                 if (id != null) {
+                    if (prefs.dataSource != "goingelectric") {
+                        prefs.dataSource = "goingelectric"
+                        Toast.makeText(
+                            this,
+                            getString(
+                                R.string.data_source_switched_to,
+                                getString(R.string.data_source_goingelectric)
+                            ),
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                    deepLink = navController.createDeepLink()
+                        .setGraph(R.navigation.nav_graph)
+                        .setDestination(R.id.map)
+                        .setArguments(MapFragmentArgs(chargerId = id).toBundle())
+                        .createPendingIntent()
+                }
+            } else if (intent?.scheme == "https" && intent?.data?.host == "openchargemap.org") {
+                val id = intent.data?.pathSegments?.last()?.toLongOrNull()
+                if (id != null) {
+                    if (prefs.dataSource != "openchargemap") {
+                        prefs.dataSource = "openchargemap"
+                        Toast.makeText(
+                            this,
+                            getString(
+                                R.string.data_source_switched_to,
+                                getString(R.string.data_source_openchargemap)
+                            ),
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
                     deepLink = navController.createDeepLink()
                         .setGraph(R.navigation.nav_graph)
                         .setDestination(R.id.map)

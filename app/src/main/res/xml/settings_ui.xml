@@ -28,4 +28,8 @@
         android:summaryOn="@string/pref_navigate_use_maps_on"
         android:summaryOff="@string/pref_navigate_use_maps_off"
         android:defaultValue="true" />
+    <Preference
+        android:key="applink_associate"
+        android:title="@string/pref_applink_associate"
+        android:summary="@string/pref_applink_associate_summary" />
 </PreferenceScreen>

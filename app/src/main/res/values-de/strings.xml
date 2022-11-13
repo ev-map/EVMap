@@ -284,4 +284,6 @@
     <string name="prediction_only">(nur %s)</string>
     <string name="prediction_dc_plugs_only">DC-Anschlüsse</string>
     <string name="data_source_switched_to">Datenquelle zu %s umgeschaltet</string>
+    <string name="pref_applink_associate">Unterstützte Links öffnen</string>
+    <string name="pref_applink_associate_summary">von goingelectric.de und openchargemap.org</string>
 </resources>

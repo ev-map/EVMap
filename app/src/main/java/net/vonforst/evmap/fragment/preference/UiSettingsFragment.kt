@@ -1,8 +1,13 @@
 package net.vonforst.evmap.fragment.preference
 
+import android.content.Intent
 import android.content.SharedPreferences
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import androidx.preference.ListPreference
+import androidx.preference.Preference
 import net.vonforst.evmap.R
 import net.vonforst.evmap.ui.getAppLocale
 import net.vonforst.evmap.ui.updateAppLocale
@@ -20,6 +25,9 @@ class UiSettingsFragment : BaseSettingsFragment() {
             updateAppLocale(newValue as String)
             true
         }
+
+        val appLinkPref = findPreference<Preference>("applink_associate")!!
+        appLinkPref.isVisible = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
     }
 
     override fun onResume() {
@@ -33,5 +41,22 @@ class UiSettingsFragment : BaseSettingsFragment() {
                 updateNightMode(prefs)
             }
         }
+    }
+
+    override fun onPreferenceTreeClick(preference: Preference): Boolean {
+        when (preference.key) {
+            "applink_associate" -> {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    val context = context ?: return false
+                    val intent = Intent(
+                        Settings.ACTION_APP_OPEN_BY_DEFAULT_SETTINGS,
+                        Uri.parse("package:${context.packageName}")
+                    )
+                    context.startActivity(intent)
+                }
+                return true
+            }
+        }
+        return super.onPreferenceTreeClick(preference)
     }
 }

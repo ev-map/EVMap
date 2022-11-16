@@ -20,7 +20,7 @@ class FronyxApiTest {
         webServer.start()
 
         val apikey = ""
-        fronyx = FronyxApi.create(
+        fronyx = FronyxApi(
             apikey,
             webServer.url("/").toString()
         )
@@ -36,6 +36,14 @@ class FronyxApiTest {
                         val id = segments[2]
                         return okResponse("/fronyx/${id.replace("*", "_")}.json")
                     }
+                    "predictions/evses" -> {
+                        val ids = request.requestUrl!!.queryParameter("evseIds")!!.split(",")
+                        return okResponse(
+                            "/fronyx/${
+                                ids.map { it.replace("*", "_") }.joinToString(",")
+                            }.json"
+                        )
+                    }
                     else -> return notFoundResponse
                 }
             }
@@ -43,7 +51,7 @@ class FronyxApiTest {
     }
 
     @Test
-    fun apiTest() {
+    fun apiTestSingle() {
         val evseId = "DE*ION*E202102"
 
         runBlocking {
@@ -55,6 +63,27 @@ class FronyxApiTest {
                 result.predictions[0].timestamp
             )
             assertEquals(FronyxStatus.AVAILABLE, result.predictions[0].status)
+        }
+    }
+
+    @Test
+    fun apiTestMultiple() {
+        val evseIds = listOf("DE*ION*E202101", "DE*ION*E202102")
+
+        runBlocking {
+            val results = fronyx.getPredictionsForEvseIds(evseIds)
+            results.forEachIndexed { i, result ->
+                assertEquals(result.evseId, evseIds[i])
+                assertEquals(25, result.predictions.size)
+                assertEquals(
+                    ZonedDateTime.of(2022, 11, 16, 18, 0, 0, 0, ZoneOffset.UTC),
+                    result.predictions[0].timestamp
+                )
+                assertEquals(
+                    if (i == 0) FronyxStatus.UNAVAILABLE else FronyxStatus.AVAILABLE,
+                    result.predictions[0].status
+                )
+            }
         }
     }
 }

@@ -229,7 +229,7 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
         }
     }
 
-    val predictionApi = FronyxApi.create(application.getString(R.string.fronyx_key))
+    val predictionApi = FronyxApi(application.getString(R.string.fronyx_key))
 
     val prediction: LiveData<Resource<List<FronyxEvseIdResponse>>> by lazy {
         availability.switchMap { av ->
@@ -249,14 +249,13 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
                                         ).any { filtered.contains(it) }
                                     } ?: true
                         }.flatMap { it.value }
-
                     try {
-                        val result = allEvseIds.map {
-                            predictionApi.getPredictionsForEvseId(it)
+                        val result = predictionApi.getPredictionsForEvseIds(allEvseIds)
+                        if (result.size == allEvseIds.size) {
+                            emit(Resource.success(result))
+                        } else {
+                            emit(Resource.error("not all EVSEIDs found", null))
                         }
-
-                        emit(Resource.success(result))
-                        println(result)
                     } catch (e: IOException) {
                         emit(Resource.error(e.message, null))
                         e.printStackTrace()

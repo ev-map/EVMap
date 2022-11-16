@@ -14,12 +14,17 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-interface FronyxApi {
+private interface FronyxApiRetrofit {
     @GET("predictions/evse-id/{evseId}")
     suspend fun getPredictionsForEvseId(
         @Path("evseId") evseId: String,
         @Query("timeframe") timeframe: Int? = null
     ): FronyxEvseIdResponse
+
+    @GET("predictions/evses")
+    suspend fun getPredictionsForEvseIds(
+        @Query("evseIds", encoded = true) evseIds: String  // comma-separated
+    ): List<FronyxEvseIdResponse>
 
     companion object {
         private val cacheSize = 1L * 1024 * 1024 // 1MB
@@ -32,7 +37,7 @@ interface FronyxApi {
             apikey: String,
             baseurl: String = "https://api.fronyx.io/api/",
             context: Context? = null
-        ): FronyxApi {
+        ): FronyxApiRetrofit {
             val client = OkHttpClient.Builder().apply {
                 addInterceptor { chain ->
                     // add API key to every request
@@ -56,9 +61,28 @@ interface FronyxApi {
                 .addConverterFactory(MoshiConverterFactory.create(moshi))
                 .client(client)
                 .build()
-            return retrofit.create(FronyxApi::class.java)
+            return retrofit.create(FronyxApiRetrofit::class.java)
         }
+    }
+}
 
+class FronyxApi(
+    apikey: String,
+    baseurl: String = "https://api.fronyx.io/api/",
+    context: Context? = null
+) {
+    private val api = FronyxApiRetrofit.create(apikey, baseurl, context)
+
+    suspend fun getPredictionsForEvseId(
+        evseId: String,
+        timeframe: Int? = null
+    ): FronyxEvseIdResponse = api.getPredictionsForEvseId(evseId, timeframe)
+
+    suspend fun getPredictionsForEvseIds(
+        evseIds: List<String>
+    ): List<FronyxEvseIdResponse> = api.getPredictionsForEvseIds(evseIds.joinToString(","))
+
+    companion object {
         /**
          * Checks if a chargepoint is supported by Fronyx.
          *

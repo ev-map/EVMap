@@ -6,7 +6,8 @@ import java.time.ZonedDateTime
 @JsonClass(generateAdapter = true)
 data class FronyxEvseIdResponse(
     val evseId: String,
-    val predictions: List<FronyxPrediction>
+    val predictions: List<FronyxPrediction>,
+    val locationId: String?
 )
 
 @JsonClass(generateAdapter = true)

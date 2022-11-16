@@ -1,0 +1,214 @@
+[
+  {
+    "evseId": "DE*ION*E202101",
+    "locationId": "DE-ION-03e2876e-0fd0-4e9d-abc1-d2caa1473947",
+    "predictions": [
+      {
+        "timestamp": "2022-11-16T18:00:00.000Z",
+        "status": "UNAVAILABLE"
+      },
+      {
+        "timestamp": "2022-11-16T18:15:00.000Z",
+        "status": "UNAVAILABLE"
+      },
+      {
+        "timestamp": "2022-11-16T18:30:00.000Z",
+        "status": "UNAVAILABLE"
+      },
+      {
+        "timestamp": "2022-11-16T18:45:00.000Z",
+        "status": "UNAVAILABLE"
+      },
+      {
+        "timestamp": "2022-11-16T19:00:00.000Z",
+        "status": "UNAVAILABLE"
+      },
+      {
+        "timestamp": "2022-11-16T19:15:00.000Z",
+        "status": "UNAVAILABLE"
+      },
+      {
+        "timestamp": "2022-11-16T19:30:00.000Z",
+        "status": "UNAVAILABLE"
+      },
+      {
+        "timestamp": "2022-11-16T19:45:00.000Z",
+        "status": "UNAVAILABLE"
+      },
+      {
+        "timestamp": "2022-11-16T20:00:00.000Z",
+        "status": "UNAVAILABLE"
+      },
+      {
+        "timestamp": "2022-11-16T20:15:00.000Z",
+        "status": "UNAVAILABLE"
+      },
+      {
+        "timestamp": "2022-11-16T20:30:00.000Z",
+        "status": "UNAVAILABLE"
+      },
+      {
+        "timestamp": "2022-11-16T20:45:00.000Z",
+        "status": "UNAVAILABLE"
+      },
+      {
+        "timestamp": "2022-11-16T21:00:00.000Z",
+        "status": "UNAVAILABLE"
+      },
+      {
+        "timestamp": "2022-11-16T21:15:00.000Z",
+        "status": "UNAVAILABLE"
+      },
+      {
+        "timestamp": "2022-11-16T21:30:00.000Z",
+        "status": "UNAVAILABLE"
+      },
+      {
+        "timestamp": "2022-11-16T21:45:00.000Z",
+        "status": "UNAVAILABLE"
+      },
+      {
+        "timestamp": "2022-11-16T22:00:00.000Z",
+        "status": "UNAVAILABLE"
+      },
+      {
+        "timestamp": "2022-11-16T22:15:00.000Z",
+        "status": "UNAVAILABLE"
+      },
+      {
+        "timestamp": "2022-11-16T22:30:00.000Z",
+        "status": "UNAVAILABLE"
+      },
+      {
+        "timestamp": "2022-11-16T22:45:00.000Z",
+        "status": "UNAVAILABLE"
+      },
+      {
+        "timestamp": "2022-11-16T23:00:00.000Z",
+        "status": "UNAVAILABLE"
+      },
+      {
+        "timestamp": "2022-11-16T23:15:00.000Z",
+        "status": "UNAVAILABLE"
+      },
+      {
+        "timestamp": "2022-11-16T23:30:00.000Z",
+        "status": "UNAVAILABLE"
+      },
+      {
+        "timestamp": "2022-11-16T23:45:00.000Z",
+        "status": "UNAVAILABLE"
+      },
+      {
+        "timestamp": "2022-11-17T00:00:00.000Z",
+        "status": "UNAVAILABLE"
+      }
+    ]
+  },
+  {
+    "evseId": "DE*ION*E202102",
+    "locationId": "DE-ION-03e2876e-0fd0-4e9d-abc1-d2caa1473947",
+    "predictions": [
+      {
+        "timestamp": "2022-11-16T18:00:00.000Z",
+        "status": "AVAILABLE"
+      },
+      {
+        "timestamp": "2022-11-16T18:15:00.000Z",
+        "status": "AVAILABLE"
+      },
+      {
+        "timestamp": "2022-11-16T18:30:00.000Z",
+        "status": "UNAVAILABLE"
+      },
+      {
+        "timestamp": "2022-11-16T18:45:00.000Z",
+        "status": "UNAVAILABLE"
+      },
+      {
+        "timestamp": "2022-11-16T19:00:00.000Z",
+        "status": "UNAVAILABLE"
+      },
+      {
+        "timestamp": "2022-11-16T19:15:00.000Z",
+        "status": "UNAVAILABLE"
+      },
+      {
+        "timestamp": "2022-11-16T19:30:00.000Z",
+        "status": "UNAVAILABLE"
+      },
+      {
+        "timestamp": "2022-11-16T19:45:00.000Z",
+        "status": "UNAVAILABLE"
+      },
+      {
+        "timestamp": "2022-11-16T20:00:00.000Z",
+        "status": "UNAVAILABLE"
+      },
+      {
+        "timestamp": "2022-11-16T20:15:00.000Z",
+        "status": "UNAVAILABLE"
+      },
+      {
+        "timestamp": "2022-11-16T20:30:00.000Z",
+        "status": "UNAVAILABLE"
+      },
+      {
+        "timestamp": "2022-11-16T20:45:00.000Z",
+        "status": "UNAVAILABLE"
+      },
+      {
+        "timestamp": "2022-11-16T21:00:00.000Z",
+        "status": "UNAVAILABLE"
+      },
+      {
+        "timestamp": "2022-11-16T21:15:00.000Z",
+        "status": "AVAILABLE"
+      },
+      {
+        "timestamp": "2022-11-16T21:30:00.000Z",
+        "status": "AVAILABLE"
+      },
+      {
+        "timestamp": "2022-11-16T21:45:00.000Z",
+        "status": "AVAILABLE"
+      },
+      {
+        "timestamp": "2022-11-16T22:00:00.000Z",
+        "status": "AVAILABLE"
+      },
+      {
+        "timestamp": "2022-11-16T22:15:00.000Z",
+        "status": "AVAILABLE"
+      },
+      {
+        "timestamp": "2022-11-16T22:30:00.000Z",
+        "status": "AVAILABLE"
+      },
+      {
+        "timestamp": "2022-11-16T22:45:00.000Z",
+        "status": "AVAILABLE"
+      },
+      {
+        "timestamp": "2022-11-16T23:00:00.000Z",
+        "status": "AVAILABLE"
+      },
+      {
+        "timestamp": "2022-11-16T23:15:00.000Z",
+        "status": "AVAILABLE"
+      },
+      {
+        "timestamp": "2022-11-16T23:30:00.000Z",
+        "status": "AVAILABLE"
+      },
+      {
+        "timestamp": "2022-11-16T23:45:00.000Z",
+        "status": "AVAILABLE"
+      },
+      {
+        "timestamp": "2022-11-17T00:00:00.000Z",
+        "status": "AVAILABLE"
+      }
+    ]
+  }
+]

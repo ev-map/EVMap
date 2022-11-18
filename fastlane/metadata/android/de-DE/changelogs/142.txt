@@ -1,0 +1,2 @@
+Fehler behoben:
+- Links zur Datenquelle werden im Browser geöffnet auch wenn EVMap als Standard für Links von GoingElectric/OpenChargeMap gesetzt ist

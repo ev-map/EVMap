@@ -1,0 +1,2 @@
+Bugfixes:
+- Open links to data source in browser even if EVMap is set to open GoingElectric/OpenChargeMap links by default

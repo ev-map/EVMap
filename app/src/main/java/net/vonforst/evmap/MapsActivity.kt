@@ -11,6 +11,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.browser.customtabs.CustomTabColorSchemeParams
+import androidx.browser.customtabs.CustomTabsClient
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen
@@ -228,6 +229,7 @@ class MapsActivity : AppCompatActivity(),
     }
 
     fun openUrl(url: String) {
+        val pkg = CustomTabsClient.getPackageName(this, null)
         val intent = CustomTabsIntent.Builder()
             .setDefaultColorSchemeParams(
                 CustomTabColorSchemeParams.Builder()
@@ -235,6 +237,11 @@ class MapsActivity : AppCompatActivity(),
                     .build()
             )
             .build()
+        pkg?.let {
+            // prefer to open URL in custom tab, even if native app
+            // available (such as EVMap itself)
+            intent.intent.setPackage(pkg)
+        }
         try {
             intent.launchUrl(this, Uri.parse(url))
         } catch (e: ActivityNotFoundException) {

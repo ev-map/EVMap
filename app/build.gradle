@@ -171,7 +171,7 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation 'androidx.browser:browser:1.4.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
-    implementation 'com.github.johan12345:CustomBottomSheetBehavior:3529a5a9f1'
+    implementation 'com.github.johan12345:CustomBottomSheetBehavior:f4f641aab5'
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-moshi:2.9.0'
     implementation 'com.squareup.okhttp3:okhttp:4.9.0'

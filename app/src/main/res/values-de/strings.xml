@@ -149,7 +149,7 @@
     <string name="reorder">Reihenfolge ändern</string>
     <string name="delete">Löschen</string>
     <string name="save_as_profile">Als Profil speichern</string>
-    <string name="save_profile_enter_name">Geben Sie den Namen des Filterprofils ein:</string>
+    <string name="save_profile_enter_name">Gib den Namen des Filterprofils ein:</string>
     <string name="filterprofiles_empty_state">Du hast keine Filterprofile gespeichert</string>
     <string name="welcome_to_evmap">Willkommen bei EVMap</string>
     <string name="welcome_1">Finde Ladestationen für Elektroautos in deiner Nähe</string>

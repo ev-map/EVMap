@@ -105,15 +105,15 @@ class PlaceSearchScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx
                             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
                         )
                         addText(text)
+                    }
 
-                        setOnClickListener {
-                            lifecycleScope.launch {
-                                val placeDetails = getDetails(place.id)
-                                prefs.placeSearchResultAndroidAuto = placeDetails.latLng
-                                prefs.placeSearchResultAndroidAutoName =
-                                    place.primaryText.toString()
-                                screenManager.popTo(MapScreen.MARKER)
-                            }
+                    setOnClickListener {
+                        lifecycleScope.launch {
+                            val placeDetails = getDetails(place.id)
+                            prefs.placeSearchResultAndroidAuto = placeDetails.latLng
+                            prefs.placeSearchResultAndroidAutoName =
+                                place.primaryText.toString()
+                            screenManager.popTo(MapScreen.MARKER)
                         }
                     }
                 }.build())

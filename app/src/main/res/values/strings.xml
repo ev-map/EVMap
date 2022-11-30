@@ -285,4 +285,6 @@
     <string name="data_source_switched_to">Data source switched to %s</string>
     <string name="pref_applink_associate">Open supported links</string>
     <string name="pref_applink_associate_summary">from goingelectric.de and openchargemap.org</string>
+    <string name="chargeprice_header_my_tariffs">My plans</string>
+    <string name="chargeprice_header_other_tariffs">Other plans</string>
 </resources>

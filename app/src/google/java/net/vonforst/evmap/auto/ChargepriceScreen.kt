@@ -77,34 +77,44 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
                                 carContext.stringProvider(),
                                 chargepoint.type
                             )
-                        } ${chargepoint.formatPower()} " + carContext.getString(
-                            R.string.chargeprice_stats,
-                            meta.energy,
-                            time(meta.duration.roundToInt()),
-                            meta.energy / meta.duration * 60
-                        )
+                        } ${chargepoint.formatPower()} ${
+                            carContext.getString(
+                                R.string.chargeprice_stats,
+                                meta.energy,
+                                time(meta.duration.roundToInt()),
+                                meta.energy / meta.duration * 60
+                            )
+                        }"
                     }
                 }
                 val myTariffs = prefs.chargepriceMyTariffs
                 val myTariffsAll = prefs.chargepriceMyTariffsAll
-                val list = ItemList.Builder().apply {
-                    setNoItemsMessage(
-                        errorMessage ?: carContext.getString(R.string.chargeprice_no_tariffs_found)
+
+                val prices = prices?.take(maxRows)
+                if (prices != null && prices.isNotEmpty() && !myTariffsAll && myTariffs != null) {
+                    val (myPrices, otherPrices) = prices.partition { price -> price.tariffId in myTariffs }
+                    val myPricesList = buildPricesList(myPrices)
+                    val otherPricesList = buildPricesList(otherPrices)
+                    addSectionedList(
+                        SectionedItemList.create(
+                            myPricesList,
+                            (header?.let { it + "\n" } ?: "") +
+                                    carContext.getString(R.string.chargeprice_header_my_tariffs)
+                        )
                     )
-                    prices?.take(maxRows)?.forEach { price ->
-                        addItem(Row.Builder().apply {
-                            setTitle(formatProvider(price))
-                            addText(formatPrice(price))
-                            if (carContext.carAppApiLevel >= 5) {
-                                setEnabled(myTariffsAll || myTariffs != null && price.tariffId in myTariffs)
-                            }
-                        }.build())
-                    }
-                }.build()
-                if (header != null && list.items.isNotEmpty()) {
-                    addSectionedList(SectionedItemList.create(list, header))
+                    addSectionedList(
+                        SectionedItemList.create(
+                            otherPricesList,
+                            carContext.getString(R.string.chargeprice_header_other_tariffs)
+                        )
+                    )
                 } else {
-                    setSingleList(list)
+                    val list = buildPricesList(prices)
+                    if (header != null) {
+                        addSectionedList(SectionedItemList.create(list, header))
+                    } else {
+                        setSingleList(list)
+                    }
                 }
             }
             setActionStrip(
@@ -152,6 +162,21 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
                     }.build()
                 ).build()
             )
+        }.build()
+    }
+
+    private fun buildPricesList(prices: List<ChargePrice>?): ItemList {
+        return ItemList.Builder().apply {
+            setNoItemsMessage(
+                errorMessage
+                    ?: carContext.getString(R.string.chargeprice_no_tariffs_found)
+            )
+            prices?.forEach { price ->
+                addItem(Row.Builder().apply {
+                    setTitle(formatProvider(price))
+                    addText(formatPrice(price))
+                }.build())
+            }
         }.build()
     }
 

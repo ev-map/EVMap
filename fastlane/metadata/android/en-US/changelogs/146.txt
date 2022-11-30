@@ -1,0 +1,8 @@
+Improvements:
+- Faster loading of availability prediction
+- Android Auto: highlight "my plans" in price comparison
+
+Bugfixes:
+- Android Automotive: refresh button was missing
+- fixed visual bug after scrolling detail view
+- fixed crashes

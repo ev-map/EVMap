@@ -1,0 +1,8 @@
+Verbesserungen:
+- Laden der Verfügbarkeitsprognosen beschleunigt
+- Android Auto: "Meine Tarife" im Preisvergleich hervorheben
+
+Fehler behoben:
+- Android Automotive: Aktualisieren-Button fehlte
+- Darstellungsfehler nach dem Scrollen der Detailansicht behoben
+- Abstürze behoben

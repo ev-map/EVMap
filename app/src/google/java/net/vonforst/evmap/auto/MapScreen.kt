@@ -223,7 +223,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                             ).build()
 
                         )
-                        setOnClickListener(ParkedOnlyOnClickListener.create {
+                        setOnClickListener {
                             if (prefs.placeSearchResultAndroidAuto != null) {
                                 prefs.placeSearchResultAndroidAutoName = null
                                 prefs.placeSearchResultAndroidAuto = null
@@ -243,7 +243,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                                 }
                                 session.mapScreen = null
                             }
-                        })
+                        }
                     }.build())
                     .addAction(
                         Action.Builder()

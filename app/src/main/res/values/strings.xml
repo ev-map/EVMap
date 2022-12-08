@@ -287,4 +287,8 @@
     <string name="pref_applink_associate_summary">from goingelectric.de and openchargemap.org</string>
     <string name="chargeprice_header_my_tariffs">My plans</string>
     <string name="chargeprice_header_other_tariffs">Other plans</string>
+    <string name="developer_mode_enabled">Developer mode enabled</string>
+    <string name="developer_options">Developer options</string>
+    <string name="disable_developer_mode">Disable developer mode</string>
+    <string name="developer_mode_disabled">Developer mode disabled</string>
 </resources>

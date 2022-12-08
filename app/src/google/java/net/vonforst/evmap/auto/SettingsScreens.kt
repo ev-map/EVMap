@@ -1,5 +1,8 @@
 package net.vonforst.evmap.auto
 
+import android.content.Context
+import android.hardware.Sensor
+import android.hardware.SensorManager
 import androidx.annotation.StringRes
 import androidx.car.app.CarContext
 import androidx.car.app.CarToast
@@ -9,6 +12,7 @@ import androidx.car.app.model.*
 import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
+import net.vonforst.evmap.BuildConfig
 import net.vonforst.evmap.R
 import net.vonforst.evmap.api.chargeprice.ChargepriceApi
 import net.vonforst.evmap.api.chargeprice.ChargepriceCar
@@ -20,6 +24,7 @@ import kotlin.math.min
 
 class SettingsScreen(ctx: CarContext) : Screen(ctx) {
     val prefs = PreferenceDataSource(ctx)
+    var developerOptionsCounter = 0
 
     override fun onGetTemplate(): Template {
         return ListTemplate.Builder().apply {
@@ -84,6 +89,37 @@ class SettingsScreen(ctx: CarContext) : Screen(ctx) {
                             .build()
                     )
                 }
+                addItem(
+                    Row.Builder()
+                        .setTitle(carContext.getString(R.string.about))
+                        .addText(carContext.getString(R.string.version) + " " + BuildConfig.VERSION_NAME)
+                        .addText(
+                            carContext.getString(R.string.copyright) + " " + carContext.getString(
+                                R.string.copyright_summary
+                            )
+                        )
+                        .setBrowsable(prefs.developerModeEnabled)
+                        .setOnClickListener {
+                            if (!prefs.developerModeEnabled) {
+                                developerOptionsCounter += 1
+                                if (developerOptionsCounter >= 7) {
+                                    prefs.developerModeEnabled = true
+                                    invalidate()
+                                    CarToast.makeText(
+                                        carContext,
+                                        carContext.getString(R.string.developer_mode_enabled),
+                                        CarToast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            } else {
+                                screenManager.pushForResult(DeveloperOptionsScreen(carContext)) {
+                                    developerOptionsCounter = 0
+                                    invalidate()
+                                }
+                            }
+                        }
+                        .build()
+                )
             }.build())
         }.build()
     }
@@ -554,6 +590,43 @@ class SelectChargingRangeScreen(ctx: CarContext) : Screen(ctx) {
                     }.build())
                 }.build()
             )
+        }.build()
+    }
+}
+
+class DeveloperOptionsScreen(ctx: CarContext) : Screen(ctx) {
+    val prefs = PreferenceDataSource(ctx)
+
+    override fun onGetTemplate(): Template {
+        return ListTemplate.Builder().apply {
+            setTitle(carContext.getString(R.string.developer_options))
+            setHeaderAction(Action.BACK)
+            setSingleList(ItemList.Builder().apply {
+                addItem(
+                    Row.Builder()
+                        .setTitle("Car app API Level: ${carContext.carAppApiLevel}")
+                        .addText(
+                            "Sensor list: ${
+                                (carContext.getSystemService(Context.SENSOR_SERVICE) as SensorManager).getSensorList(
+                                    Sensor.TYPE_ALL
+                                ).map { it.type }.joinToString(",")
+                            }"
+                        )
+                        .build()
+                )
+                addItem(Row.Builder().apply {
+                    setTitle(carContext.getString(R.string.disable_developer_mode))
+                    setOnClickListener {
+                        prefs.developerModeEnabled = false
+                        CarToast.makeText(
+                            carContext,
+                            carContext.getString(R.string.developer_mode_disabled),
+                            CarToast.LENGTH_SHORT
+                        ).show()
+                        screenManager.pop()
+                    }
+                }.build())
+            }.build())
         }.build()
     }
 }

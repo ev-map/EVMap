@@ -288,4 +288,8 @@
     <string name="pref_applink_associate_summary">von goingelectric.de und openchargemap.org</string>
     <string name="chargeprice_header_my_tariffs">Meine Tarife</string>
     <string name="chargeprice_header_other_tariffs">Andere Tarife</string>
+    <string name="developer_mode_enabled">Entwicklermodus aktiviert</string>
+    <string name="developer_options">Entwicklereinstellungen</string>
+    <string name="disable_developer_mode">Entwicklermodus deaktivieren</string>
+    <string name="developer_mode_disabled">Entwicklermodus deaktiviert</string>
 </resources>

@@ -255,4 +255,10 @@ class PreferenceDataSource(val context: Context) {
 
     val predictionEnabled: Boolean
         get() = sp.getBoolean("prediction_enabled", true)
+
+    var developerModeEnabled: Boolean
+        get() = sp.getBoolean("dev_mode_enabled", false)
+        set(value) {
+            sp.edit().putBoolean("dev_mode_enabled", value).apply()
+        }
 }

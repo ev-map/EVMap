@@ -95,19 +95,29 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
                     val (myPrices, otherPrices) = prices.partition { price -> price.tariffId in myTariffs }
                     val myPricesList = buildPricesList(myPrices)
                     val otherPricesList = buildPricesList(otherPrices)
-                    addSectionedList(
-                        SectionedItemList.create(
-                            myPricesList,
-                            (header?.let { it + "\n" } ?: "") +
-                                    carContext.getString(R.string.chargeprice_header_my_tariffs)
+                    if (myPricesList.items.isNotEmpty() && otherPricesList.items.isNotEmpty()) {
+                        addSectionedList(
+                            SectionedItemList.create(
+                                myPricesList,
+                                (header?.let { it + "\n" } ?: "") +
+                                        carContext.getString(R.string.chargeprice_header_my_tariffs)
+                            )
                         )
-                    )
-                    addSectionedList(
-                        SectionedItemList.create(
-                            otherPricesList,
-                            carContext.getString(R.string.chargeprice_header_other_tariffs)
+                        addSectionedList(
+                            SectionedItemList.create(
+                                otherPricesList,
+                                carContext.getString(R.string.chargeprice_header_other_tariffs)
+                            )
                         )
-                    )
+                    } else {
+                        val list =
+                            if (myPricesList.items.isNotEmpty()) myPricesList else otherPricesList
+                        if (header != null) {
+                            addSectionedList(SectionedItemList.create(list, header))
+                        } else {
+                            setSingleList(list)
+                        }
+                    }
                 } else {
                     val list = buildPricesList(prices)
                     if (header != null && list.items.isNotEmpty()) {

@@ -110,7 +110,7 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
                     )
                 } else {
                     val list = buildPricesList(prices)
-                    if (header != null) {
+                    if (header != null && list.items.isNotEmpty()) {
                         addSectionedList(SectionedItemList.create(list, header))
                     } else {
                         setSingleList(list)

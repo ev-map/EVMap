@@ -2,6 +2,7 @@ package net.vonforst.evmap.auto
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager.NameNotFoundException
 import android.hardware.Sensor
 import android.hardware.SensorManager
 import androidx.annotation.StringRes
@@ -712,16 +713,27 @@ class DeveloperOptionsScreen(ctx: CarContext) : Screen(ctx) {
             setHeaderAction(Action.BACK)
             setSingleList(ItemList.Builder().apply {
                 addItem(
-                    Row.Builder()
-                        .setTitle("Car app API Level: ${carContext.carAppApiLevel}")
-                        .addText(
-                            "Sensor list: ${
-                                (carContext.getSystemService(Context.SENSOR_SERVICE) as SensorManager).getSensorList(
-                                    Sensor.TYPE_ALL
-                                ).map { it.type }.joinToString(",")
-                            }"
-                        )
-                        .build()
+                    Row.Builder().apply {
+                        setTitle("Car app API Level: ${carContext.carAppApiLevel}")
+                        val hostPackage = carContext.hostInfo?.packageName
+                        val hostVersion = hostPackage?.let {
+                            try {
+                                carContext.packageManager.getPackageInfo(it, 0).versionName
+                            } catch (e: NameNotFoundException) {
+                                null
+                            }
+                        }
+                        addText("$hostPackage $hostVersion")
+                        if (BuildConfig.FLAVOR_automotive == "automotive") {
+                            addText(
+                                "Sensor list: ${
+                                    (carContext.getSystemService(Context.SENSOR_SERVICE) as SensorManager).getSensorList(
+                                        Sensor.TYPE_ALL
+                                    ).map { it.type }.joinToString(",")
+                                }"
+                            )
+                        }
+                    }.build()
                 )
                 addItem(Row.Builder().apply {
                     setTitle(carContext.getString(R.string.disable_developer_mode))

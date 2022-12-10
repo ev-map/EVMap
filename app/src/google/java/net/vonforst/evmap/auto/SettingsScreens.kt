@@ -22,7 +22,7 @@ import net.vonforst.evmap.storage.PreferenceDataSource
 import kotlin.math.max
 import kotlin.math.min
 
-class SettingsScreen(ctx: CarContext) : Screen(ctx) {
+class SettingsScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx) {
     val prefs = PreferenceDataSource(ctx)
     var developerOptionsCounter = 0
 
@@ -76,7 +76,7 @@ class SettingsScreen(ctx: CarContext) : Screen(ctx) {
                             )
                             .setBrowsable(true)
                             .setOnClickListener {
-                                screenManager.push(VehicleDataScreen(carContext))
+                                screenManager.push(VehicleDataScreen(carContext, session))
                             }
                             .build()
                     )

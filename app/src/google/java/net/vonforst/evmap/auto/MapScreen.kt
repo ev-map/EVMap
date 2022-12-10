@@ -205,7 +205,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                             ).setTint(CarColor.DEFAULT).build()
                         )
                         .setOnClickListener {
-                            screenManager.push(SettingsScreen(carContext))
+                            screenManager.push(SettingsScreen(carContext, session))
                             session.mapScreen = null
                         }
                         .build())
@@ -416,10 +416,13 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                             invalidate()
                             return@launch
                         }
-                        chargers = headingFilter(
-                            response.data?.filterIsInstance(ChargeLocation::class.java),
-                            searchLocation
-                        )
+                        chargers = response.data?.filterIsInstance(ChargeLocation::class.java)
+                        if (prefs.placeSearchResultAndroidAutoName == null) {
+                            chargers = headingFilter(
+                                chargers,
+                                searchLocation
+                            )
+                        }
                         if (chargers == null || chargers.size >= maxRows) {
                             break
                         }
@@ -443,8 +446,12 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
     private fun headingFilter(
         chargers: List<ChargeLocation>?,
         searchLocation: LatLng
-    ): List<ChargeLocation>? =
-        heading?.orientations?.value?.get(0)?.let { heading ->
+    ): List<ChargeLocation>? {
+        // use compass heading if available, otherwise fall back to GPS
+        val location = location
+        val heading = heading?.orientations?.value?.get(0)
+            ?: if (location?.hasBearing() == true) location.bearing else null
+        return heading?.let { heading ->
             if (!prefs.showChargersAheadAndroidAuto) return@let chargers
 
             chargers?.filter {
@@ -458,6 +465,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                 abs(diff) < 30
             }
         } ?: chargers
+    }
 
     private fun onEnergyLevelUpdated(energyLevel: EnergyLevel) {
         val isUpdate = this.energyLevel == null

@@ -10,6 +10,8 @@ import net.vonforst.evmap.model.ChargeCardId
 import net.vonforst.evmap.model.ChargeLocation
 import net.vonforst.evmap.model.OpeningHoursDays
 import net.vonforst.evmap.plus
+import net.vonforst.evmap.utils.formatDMS
+import net.vonforst.evmap.utils.formatDecimal
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle

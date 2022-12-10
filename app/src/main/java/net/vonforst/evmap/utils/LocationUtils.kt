@@ -8,6 +8,8 @@ import android.location.Location
 import androidx.core.content.ContextCompat
 import com.car2go.maps.model.LatLng
 import com.car2go.maps.model.LatLngBounds
+import net.vonforst.evmap.model.Coordinate
+import java.util.*
 import kotlin.math.*
 
 /**
@@ -48,7 +50,7 @@ fun distanceBetween(
 
 
 fun bearingBetween(startLat: Double, startLng: Double, endLat: Double, endLng: Double): Double {
-    val dLon = Math.toRadians(-endLng) - Math.toRadians(-startLng)
+    val dLon = Math.toRadians(endLng) - Math.toRadians(startLng)
     val originLat = Math.toRadians(startLat)
     val destinationLat = Math.toRadians(endLat)
 
@@ -112,3 +114,32 @@ fun Context.checkFineLocationPermission() = ContextCompat.checkSelfPermission(
     this,
     Manifest.permission.ACCESS_FINE_LOCATION
 ) == PackageManager.PERMISSION_GRANTED
+
+fun Coordinate.formatDMS(): String {
+    return "${dms(lat, false)}, ${dms(lng, true)}"
+}
+
+fun Location.formatDMS(): String {
+    return "${dms(latitude, false)}, ${dms(longitude, true)}"
+}
+
+private fun dms(value: Double, lon: Boolean): String {
+    val hemisphere = if (lon) {
+        if (value >= 0) "E" else "W"
+    } else {
+        if (value >= 0) "N" else "S"
+    }
+    val d = abs(value)
+    val degrees = floor(d).toInt()
+    val minutes = floor((d - degrees) * 60).toInt()
+    val seconds = ((d - degrees) * 60 - minutes) * 60
+    return "%d°%02d'%02.1f\"%s".format(Locale.ENGLISH, degrees, minutes, seconds, hemisphere)
+}
+
+fun Coordinate.formatDecimal(accuracy: Int = 6): String {
+    return "%.${accuracy}f, %.${accuracy}f".format(Locale.ENGLISH, lat, lng)
+}
+
+fun Location.formatDecimal(accuracy: Int = 6): String {
+    return "%.${accuracy}f, %.${accuracy}f".format(Locale.ENGLISH, latitude, longitude)
+}

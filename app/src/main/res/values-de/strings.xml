@@ -292,4 +292,6 @@
     <string name="developer_options">Entwicklereinstellungen</string>
     <string name="disable_developer_mode">Entwicklermodus deaktivieren</string>
     <string name="developer_mode_disabled">Entwicklermodus deaktiviert</string>
+    <string name="gps">GPS</string>
+    <string name="compass">Kompass</string>
 </resources>

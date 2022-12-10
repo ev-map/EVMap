@@ -19,8 +19,6 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.*
-import kotlin.math.abs
-import kotlin.math.floor
 
 sealed class ChargepointListItem
 
@@ -343,28 +341,7 @@ data class ChargeLocationCluster(
 ) : ChargepointListItem()
 
 @Parcelize
-data class Coordinate(val lat: Double, val lng: Double) : Parcelable {
-    fun formatDMS(): String {
-        return "${dms(lat, false)}, ${dms(lng, true)}"
-    }
-
-    private fun dms(value: Double, lon: Boolean): String {
-        val hemisphere = if (lon) {
-            if (value >= 0) "E" else "W"
-        } else {
-            if (value >= 0) "N" else "S"
-        }
-        val d = abs(value)
-        val degrees = floor(d).toInt()
-        val minutes = floor((d - degrees) * 60).toInt()
-        val seconds = ((d - degrees) * 60 - minutes) * 60
-        return "%d°%02d'%02.1f\"%s".format(Locale.ENGLISH, degrees, minutes, seconds, hemisphere)
-    }
-
-    fun formatDecimal(): String {
-        return "%.6f, %.6f".format(Locale.ENGLISH, lat, lng)
-    }
-}
+data class Coordinate(val lat: Double, val lng: Double) : Parcelable
 
 @Parcelize
 data class Address(

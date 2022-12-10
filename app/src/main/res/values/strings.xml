@@ -291,4 +291,6 @@
     <string name="developer_options">Developer options</string>
     <string name="disable_developer_mode">Disable developer mode</string>
     <string name="developer_mode_disabled">Developer mode disabled</string>
+    <string name="gps">GPS</string>
+    <string name="compass">Compass</string>
 </resources>

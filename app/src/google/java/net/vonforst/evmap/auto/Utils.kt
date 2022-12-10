@@ -54,6 +54,10 @@ fun CarContext.getContentLimit(id: Int) = if (carAppApiLevel >= 2) {
     }
 }
 
+val CarContext.isAppDrivenRefreshSupported
+    @androidx.car.app.annotations.ExperimentalCarApi
+    get() = if (carAppApiLevel >= 6) constraintManager.isAppDrivenRefreshEnabled else false
+
 fun Bitmap.asCarIcon(): CarIcon = CarIcon.Builder(IconCompat.createWithBitmap(this)).build()
 
 val emptyCarIcon: CarIcon by lazy {

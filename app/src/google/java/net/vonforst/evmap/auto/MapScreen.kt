@@ -71,6 +71,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
 
     private var location: Location? = null
     private var lastDistanceUpdateTime: Instant? = null
+    private var lastChargersUpdateTime: Instant? = null
     private var chargers: List<ChargeLocation>? = null
     private var loadingError = false
     private var locationError = false
@@ -81,10 +82,13 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
     private val searchRadius = 5 // kilometers
     private val distanceUpdateThreshold = Duration.ofSeconds(15)
     private val availabilityUpdateThreshold = Duration.ofMinutes(1)
+    private val chargersUpdateThresholdDistance = 500  // meters
+    private val chargersUpdateThresholdTime = Duration.ofSeconds(30)
     private var availabilities: MutableMap<Long, Pair<ZonedDateTime, ChargeLocationStatus?>> =
         HashMap()
     private val maxRows =
         min(ctx.getContentLimit(ConstraintManager.CONTENT_LIMIT_TYPE_PLACE_LIST), 25)
+    private val supportsRefresh = ctx.isAppDrivenRefreshSupported
 
     private var filterStatus = prefs.filterStatus
     private var filtersWithValue: List<FilterWithValue<FilterValue>>? = null
@@ -223,7 +227,12 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                             if (prefs.placeSearchResultAndroidAuto != null) {
                                 prefs.placeSearchResultAndroidAutoName = null
                                 prefs.placeSearchResultAndroidAuto = null
-                                screenManager.pushForResult(DummyReturnScreen(carContext)) {
+                                if (!supportsRefresh) {
+                                    screenManager.pushForResult(DummyReturnScreen(carContext)) {
+                                        chargers = null
+                                        loadChargers()
+                                    }
+                                } else {
                                     chargers = null
                                     loadChargers()
                                 }
@@ -360,6 +369,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
         this.location = location
         if (previousLocation == null) {
             loadChargers()
+            return
         }
 
         val now = Instant.now()
@@ -369,6 +379,23 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
             lastDistanceUpdateTime = now
             // update displayed distances
             invalidate()
+        }
+
+        // if chargers are searched around current location, consider app-driven refresh
+        val searchLocation =
+            if (prefs.placeSearchResultAndroidAuto == null) searchLocation else null
+        val distance = searchLocation?.let {
+            distanceBetween(
+                it.latitude, it.longitude, location.latitude, location.longitude
+            )
+        } ?: 0.0
+        if (supportsRefresh && (lastChargersUpdateTime == null ||
+                    Duration.between(
+                        lastChargersUpdateTime,
+                        now
+                    ) > chargersUpdateThresholdTime) && (distance > chargersUpdateThresholdDistance)
+        ) {
+            onContentRefreshRequested()
         }
     }
 
@@ -427,6 +454,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                 }
 
                 updateCoroutine = null
+                lastChargersUpdateTime = Instant.now()
                 lastDistanceUpdateTime = Instant.now()
                 invalidate()
             } catch (e: IOException) {

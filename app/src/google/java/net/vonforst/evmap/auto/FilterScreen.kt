@@ -32,7 +32,7 @@ class FilterScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx) {
     }
 
     private val maxRows = ctx.getContentLimit(ConstraintManager.CONTENT_LIMIT_TYPE_LIST)
-
+    private val supportsRefresh = ctx.isAppDrivenRefreshSupported
     private var page = 0
 
     init {
@@ -127,10 +127,14 @@ class FilterScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx) {
                     )
                     setOnClickListener {
                         page -= 1
-                        screenManager.pushForResult(DummyReturnScreen(carContext)) {
-                            Handler(Looper.getMainLooper()).post {
-                                invalidate()
+                        if (!supportsRefresh) {
+                            screenManager.pushForResult(DummyReturnScreen(carContext)) {
+                                Handler(Looper.getMainLooper()).post {
+                                    invalidate()
+                                }
                             }
+                        } else {
+                            invalidate()
                         }
                     }
                 }.build())
@@ -220,10 +224,14 @@ class FilterScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx) {
                     )
                     setOnClickListener {
                         page += 1
-                        screenManager.pushForResult(DummyReturnScreen(carContext)) {
-                            Handler(Looper.getMainLooper()).post {
-                                invalidate()
+                        if (!supportsRefresh) {
+                            screenManager.pushForResult(DummyReturnScreen(carContext)) {
+                                Handler(Looper.getMainLooper()).post {
+                                    invalidate()
+                                }
                             }
+                        } else {
+                            invalidate()
                         }
                     }
                 }.build())
@@ -242,6 +250,7 @@ class EditFiltersScreen(ctx: CarContext) : Screen(ctx) {
     private val vm = FilterViewModel(carContext.applicationContext as Application)
 
     private val maxRows = ctx.getContentLimit(ConstraintManager.CONTENT_LIMIT_TYPE_LIST)
+    private val supportsRefresh = ctx.isAppDrivenRefreshSupported
 
     private var page = 0
     private var paginatedFilters = vm.filtersWithValue.map {
@@ -368,10 +377,14 @@ class EditFiltersScreen(ctx: CarContext) : Screen(ctx) {
                     )
                     setOnClickListener {
                         page -= 1
-                        screenManager.pushForResult(DummyReturnScreen(carContext)) {
-                            Handler(Looper.getMainLooper()).post {
-                                invalidate()
+                        if (!supportsRefresh) {
+                            screenManager.pushForResult(DummyReturnScreen(carContext)) {
+                                Handler(Looper.getMainLooper()).post {
+                                    invalidate()
+                                }
                             }
+                        } else {
+                            invalidate()
                         }
                     }
                 }.build())
@@ -450,10 +463,14 @@ class EditFiltersScreen(ctx: CarContext) : Screen(ctx) {
                     )
                     setOnClickListener {
                         page += 1
-                        screenManager.pushForResult(DummyReturnScreen(carContext)) {
-                            Handler(Looper.getMainLooper()).post {
-                                invalidate()
+                        if (!supportsRefresh) {
+                            screenManager.pushForResult(DummyReturnScreen(carContext)) {
+                                Handler(Looper.getMainLooper()).post {
+                                    invalidate()
+                                }
                             }
+                        } else {
+                            invalidate()
                         }
                     }
                 }.build())

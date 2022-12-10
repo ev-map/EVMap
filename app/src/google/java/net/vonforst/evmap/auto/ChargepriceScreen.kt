@@ -43,9 +43,7 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
     private var prices: List<ChargePrice>? = null
     private var meta: ChargepriceChargepointMeta? = null
     private var chargepoint: Chargepoint? = null
-    private val maxRows = if (ctx.carAppApiLevel >= 2) {
-        ctx.constraintManager.getContentLimit(ConstraintManager.CONTENT_LIMIT_TYPE_LIST)
-    } else 6
+    private val maxRows = ctx.getContentLimit(ConstraintManager.CONTENT_LIMIT_TYPE_LIST)
     private var errorMessage: String? = null
     private val batteryRange = prefs.chargepriceBatteryRangeAndroidAuto
 

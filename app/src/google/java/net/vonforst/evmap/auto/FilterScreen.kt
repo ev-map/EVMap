@@ -31,9 +31,7 @@ class FilterScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx) {
         db.filterProfileDao().getProfiles(prefs.dataSource)
     }
 
-    private val maxRows = if (ctx.carAppApiLevel >= 2) {
-        ctx.constraintManager.getContentLimit(ConstraintManager.CONTENT_LIMIT_TYPE_LIST)
-    } else 6
+    private val maxRows = ctx.getContentLimit(ConstraintManager.CONTENT_LIMIT_TYPE_LIST)
 
     private var page = 0
 
@@ -243,9 +241,7 @@ class FilterScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx) {
 class EditFiltersScreen(ctx: CarContext) : Screen(ctx) {
     private val vm = FilterViewModel(carContext.applicationContext as Application)
 
-    private val maxRows = if (ctx.carAppApiLevel >= 2) {
-        ctx.constraintManager.getContentLimit(ConstraintManager.CONTENT_LIMIT_TYPE_LIST)
-    } else 6
+    private val maxRows = ctx.getContentLimit(ConstraintManager.CONTENT_LIMIT_TYPE_LIST)
 
     private var page = 0
     private var paginatedFilters = vm.filtersWithValue.map {

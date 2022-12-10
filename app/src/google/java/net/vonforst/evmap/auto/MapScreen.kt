@@ -83,12 +83,8 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
     private val availabilityUpdateThreshold = Duration.ofMinutes(1)
     private var availabilities: MutableMap<Long, Pair<ZonedDateTime, ChargeLocationStatus?>> =
         HashMap()
-    private val maxRows = if (ctx.carAppApiLevel >= 2) {
-        min(
-            ctx.constraintManager.getContentLimit(ConstraintManager.CONTENT_LIMIT_TYPE_PLACE_LIST),
-            25
-        )
-    } else 6
+    private val maxRows =
+        min(ctx.getContentLimit(ConstraintManager.CONTENT_LIMIT_TYPE_PLACE_LIST), 25)
 
     private var filterStatus = prefs.filterStatus
     private var filtersWithValue: List<FilterWithValue<FilterValue>>? = null

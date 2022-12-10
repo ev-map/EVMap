@@ -273,9 +273,7 @@ class ChooseDataSourceScreen(
 
 class ChargepriceSettingsScreen(ctx: CarContext) : Screen(ctx) {
     val prefs = PreferenceDataSource(carContext)
-    private val maxRows = if (ctx.carAppApiLevel >= 2) {
-        ctx.constraintManager.getContentLimit(ConstraintManager.CONTENT_LIMIT_TYPE_LIST)
-    } else 6
+    private val maxRows = ctx.getContentLimit(ConstraintManager.CONTENT_LIMIT_TYPE_LIST)
 
     override fun onGetTemplate(): Template {
         return ListTemplate.Builder().apply {
@@ -595,9 +593,7 @@ class SelectChargingRangeScreen(ctx: CarContext) : Screen(ctx) {
 class AboutScreen(ctx: CarContext) : Screen(ctx) {
     val prefs = PreferenceDataSource(ctx)
     var developerOptionsCounter = 0
-    private val maxRows = if (ctx.carAppApiLevel >= 2) {
-        ctx.constraintManager.getContentLimit(ConstraintManager.CONTENT_LIMIT_TYPE_LIST)
-    } else 6
+    private val maxRows = ctx.getContentLimit(ConstraintManager.CONTENT_LIMIT_TYPE_LIST)
 
     override fun onGetTemplate(): Template {
         return ListTemplate.Builder().apply {

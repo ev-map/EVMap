@@ -64,9 +64,7 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
     private val iconGen =
         ChargerIconGenerator(carContext, null, height = imageSize)
 
-    private val maxRows = if (ctx.carAppApiLevel >= 2) {
-        ctx.constraintManager.getContentLimit(ConstraintManager.CONTENT_LIMIT_TYPE_PANE)
-    } else 2
+    private val maxRows = ctx.getContentLimit(ConstraintManager.CONTENT_LIMIT_TYPE_PANE)
     private val largeImageSupported =
         ctx.carAppApiLevel >= 4  // since API 4, Row.setImage is supported
 

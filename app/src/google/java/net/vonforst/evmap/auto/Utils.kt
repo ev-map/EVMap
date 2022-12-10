@@ -41,6 +41,19 @@ fun carAvailabilityColor(status: List<ChargepointStatus>): CarColor {
 val CarContext.constraintManager
     get() = getCarService(CarContext.CONSTRAINT_SERVICE) as ConstraintManager
 
+fun CarContext.getContentLimit(id: Int) = if (carAppApiLevel >= 2) {
+    constraintManager.getContentLimit(id)
+} else {
+    when (id) {
+        ConstraintManager.CONTENT_LIMIT_TYPE_GRID -> 6
+        ConstraintManager.CONTENT_LIMIT_TYPE_LIST -> 6
+        ConstraintManager.CONTENT_LIMIT_TYPE_PANE -> 4
+        ConstraintManager.CONTENT_LIMIT_TYPE_PLACE_LIST -> 6
+        ConstraintManager.CONTENT_LIMIT_TYPE_ROUTE_LIST -> 3
+        else -> throw IllegalArgumentException("unknown limit ID")
+    }
+}
+
 fun Bitmap.asCarIcon(): CarIcon = CarIcon.Builder(IconCompat.createWithBitmap(this)).build()
 
 val emptyCarIcon: CarIcon by lazy {

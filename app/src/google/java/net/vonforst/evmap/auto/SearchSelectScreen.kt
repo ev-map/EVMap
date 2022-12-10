@@ -15,9 +15,7 @@ abstract class MultiSelectSearchScreen<T>(ctx: CarContext) : Screen(ctx),
     protected var fullList: List<T>? = null
     private var currentList: List<T> = emptyList()
     private var query: String = ""
-    private val maxRows = if (ctx.carAppApiLevel >= 2) {
-        ctx.constraintManager.getContentLimit(ConstraintManager.CONTENT_LIMIT_TYPE_LIST)
-    } else 6
+    private val maxRows = ctx.getContentLimit(ConstraintManager.CONTENT_LIMIT_TYPE_LIST)
     protected abstract val isMultiSelect: Boolean
     protected abstract val shouldShowSelectAll: Boolean
 

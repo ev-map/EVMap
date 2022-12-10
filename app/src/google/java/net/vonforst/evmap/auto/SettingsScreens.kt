@@ -1,6 +1,7 @@
 package net.vonforst.evmap.auto
 
 import android.content.Context
+import android.content.Intent
 import android.hardware.Sensor
 import android.hardware.SensorManager
 import androidx.annotation.StringRes
@@ -14,6 +15,8 @@ import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import net.vonforst.evmap.BuildConfig
+import net.vonforst.evmap.EXTRA_DONATE
+import net.vonforst.evmap.MapsActivity
 import net.vonforst.evmap.R
 import net.vonforst.evmap.api.chargeprice.ChargepriceApi
 import net.vonforst.evmap.api.chargeprice.ChargepriceCar
@@ -26,7 +29,6 @@ import kotlin.math.min
 @ExperimentalCarApi
 class SettingsScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx) {
     val prefs = PreferenceDataSource(ctx)
-    var developerOptionsCounter = 0
 
     override fun onGetTemplate(): Template {
         return ListTemplate.Builder().apply {
@@ -88,37 +90,31 @@ class SettingsScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx) {
                             .setToggle(Toggle.Builder {
                                 prefs.showChargersAheadAndroidAuto = it
                             }.setChecked(prefs.showChargersAheadAndroidAuto).build())
+                            .setImage(
+                                CarIcon.Builder(
+                                    IconCompat.createWithResource(
+                                        carContext,
+                                        R.drawable.ic_navigation
+                                    )
+                                ).setTint(CarColor.DEFAULT).build()
+                            )
                             .build()
                     )
                 }
                 addItem(
                     Row.Builder()
                         .setTitle(carContext.getString(R.string.about))
-                        .addText(carContext.getString(R.string.version) + " " + BuildConfig.VERSION_NAME)
-                        .addText(
-                            carContext.getString(R.string.copyright) + " " + carContext.getString(
-                                R.string.copyright_summary
-                            )
+                        .setImage(
+                            CarIcon.Builder(
+                                IconCompat.createWithResource(
+                                    carContext,
+                                    R.drawable.ic_about
+                                )
+                            ).setTint(CarColor.DEFAULT).build()
                         )
-                        .setBrowsable(prefs.developerModeEnabled)
+                        .setBrowsable(true)
                         .setOnClickListener {
-                            if (!prefs.developerModeEnabled) {
-                                developerOptionsCounter += 1
-                                if (developerOptionsCounter >= 7) {
-                                    prefs.developerModeEnabled = true
-                                    invalidate()
-                                    CarToast.makeText(
-                                        carContext,
-                                        carContext.getString(R.string.developer_mode_enabled),
-                                        CarToast.LENGTH_SHORT
-                                    ).show()
-                                }
-                            } else {
-                                screenManager.pushForResult(DeveloperOptionsScreen(carContext)) {
-                                    developerOptionsCounter = 0
-                                    invalidate()
-                                }
-                            }
+                            screenManager.push(AboutScreen(carContext))
                         }
                         .build()
                 )
@@ -592,6 +588,121 @@ class SelectChargingRangeScreen(ctx: CarContext) : Screen(ctx) {
                     }.build())
                 }.build()
             )
+        }.build()
+    }
+}
+
+class AboutScreen(ctx: CarContext) : Screen(ctx) {
+    val prefs = PreferenceDataSource(ctx)
+    var developerOptionsCounter = 0
+    private val maxRows = if (ctx.carAppApiLevel >= 2) {
+        ctx.constraintManager.getContentLimit(ConstraintManager.CONTENT_LIMIT_TYPE_LIST)
+    } else 6
+
+    override fun onGetTemplate(): Template {
+        return ListTemplate.Builder().apply {
+            setTitle(carContext.getString(R.string.about))
+            setHeaderAction(Action.BACK)
+            addSectionedList(SectionedItemList.create(ItemList.Builder().apply {
+                addItem(
+                    Row.Builder()
+                        .setTitle(carContext.getString(R.string.version))
+                        .addText(BuildConfig.VERSION_NAME)
+                        .addText(
+                            carContext.getString(R.string.copyright) + " " + carContext.getString(
+                                R.string.copyright_summary
+                            )
+                        )
+                        .setBrowsable(prefs.developerModeEnabled)
+                        .setOnClickListener {
+                            if (!prefs.developerModeEnabled) {
+                                developerOptionsCounter += 1
+                                if (developerOptionsCounter >= 7) {
+                                    prefs.developerModeEnabled = true
+                                    invalidate()
+                                    CarToast.makeText(
+                                        carContext,
+                                        carContext.getString(R.string.developer_mode_enabled),
+                                        CarToast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            } else {
+                                screenManager.pushForResult(DeveloperOptionsScreen(carContext)) {
+                                    developerOptionsCounter = 0
+                                    invalidate()
+                                }
+                            }
+                        }.build()
+                )
+                addItem(
+                    Row.Builder()
+                        .setTitle(carContext.getString(R.string.faq))
+                        .setBrowsable(true)
+                        .setOnClickListener(ParkedOnlyOnClickListener.create {
+                            openUrl(carContext, carContext.getString(R.string.faq_link))
+                        }).build()
+                )
+                addItem(
+                    Row.Builder()
+                        .setTitle(carContext.getString(R.string.donate))
+                        .addText(carContext.getString(R.string.donate_desc))
+                        .setBrowsable(true)
+                        .setOnClickListener(ParkedOnlyOnClickListener.create {
+                            if (BuildConfig.FLAVOR_automotive == "automotive") {
+                                // we can't open the donation page on the phone in this case
+                                openUrl(carContext, carContext.getString(R.string.paypal_link))
+                            } else {
+                                val intent = Intent(carContext, MapsActivity::class.java)
+                                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                    .putExtra(EXTRA_DONATE, true)
+                                carContext.startActivity(intent)
+                                CarToast.makeText(
+                                    carContext,
+                                    R.string.opened_on_phone,
+                                    CarToast.LENGTH_LONG
+                                ).show()
+                            }
+                        }).build()
+                )
+            }.build(), carContext.getString(R.string.about)))
+            addSectionedList(SectionedItemList.create(ItemList.Builder().apply {
+                addItem(Row.Builder()
+                    .setTitle(carContext.getString(R.string.twitter))
+                    .addText(carContext.getString(R.string.twitter_handle))
+                    .setBrowsable(true)
+                    .setOnClickListener(ParkedOnlyOnClickListener.create {
+                        openUrl(carContext, carContext.getString(R.string.twitter_url))
+                    }).build()
+                )
+                if (maxRows > 6) {
+                    addItem(Row.Builder()
+                        .setTitle(carContext.getString(R.string.goingelectric_forum))
+                        .setBrowsable(true)
+                        .setOnClickListener(ParkedOnlyOnClickListener.create {
+                            openUrl(
+                                carContext,
+                                carContext.getString(R.string.goingelectric_forum_url)
+                            )
+                        }).build()
+                    )
+                }
+            }.build(), carContext.getString(R.string.contact)))
+            addSectionedList(SectionedItemList.create(ItemList.Builder().apply {
+                addItem(Row.Builder()
+                    .setTitle(carContext.getString(R.string.github_link_title))
+                    .setBrowsable(true)
+                    .setOnClickListener(ParkedOnlyOnClickListener.create {
+                        openUrl(carContext, carContext.getString(R.string.github_link))
+                    }).build()
+                )
+                addItem(Row.Builder()
+                    .setTitle(carContext.getString(R.string.privacy))
+                    .setBrowsable(true)
+                    .setOnClickListener(ParkedOnlyOnClickListener.create {
+                        openUrl(carContext, carContext.getString(R.string.privacy_link))
+                    }).build()
+                )
+            }.build(), carContext.getString(R.string.other)))
         }.build()
     }
 }

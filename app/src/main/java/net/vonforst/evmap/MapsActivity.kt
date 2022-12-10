@@ -40,6 +40,7 @@ const val EXTRA_CHARGER_ID = "chargerId"
 const val EXTRA_LAT = "lat"
 const val EXTRA_LON = "lon"
 const val EXTRA_FAVORITES = "favorites"
+const val EXTRA_DONATE = "donate"
 
 class MapsActivity : AppCompatActivity(),
     PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
@@ -187,6 +188,11 @@ class MapsActivity : AppCompatActivity(),
                 deepLink = navController.createDeepLink()
                     .setGraph(navGraph)
                     .setDestination(R.id.favs)
+                    .createPendingIntent()
+            } else if (intent.hasExtra(EXTRA_DONATE)) {
+                deepLink = navController.createDeepLink()
+                    .setGraph(navGraph)
+                    .setDestination(R.id.donate)
                     .createPendingIntent()
             }
 

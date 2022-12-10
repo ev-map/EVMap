@@ -1,14 +1,22 @@
 package net.vonforst.evmap.auto
 
+import android.content.ActivityNotFoundException
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
+import android.net.Uri
+import androidx.browser.customtabs.CustomTabColorSchemeParams
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.car.app.CarContext
+import androidx.car.app.CarToast
 import androidx.car.app.Screen
 import androidx.car.app.constraints.ConstraintManager
 import androidx.car.app.hardware.common.CarUnit
 import androidx.car.app.model.*
 import androidx.car.app.versioning.CarAppApiLevels
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.IconCompat
+import net.vonforst.evmap.BuildConfig
 import net.vonforst.evmap.R
 import net.vonforst.evmap.api.availability.ChargepointStatus
 import java.util.*
@@ -188,6 +196,40 @@ fun supportsCarApiLevel3(ctx: CarContext): Boolean {
         }
     }
     return true
+}
+
+fun openUrl(carContext: CarContext, url: String) {
+    val intent = CustomTabsIntent.Builder()
+        .setDefaultColorSchemeParams(
+            CustomTabColorSchemeParams.Builder()
+                .setToolbarColor(
+                    ContextCompat.getColor(
+                        carContext,
+                        R.color.colorPrimary
+                    )
+                )
+                .build()
+        )
+        .build().intent
+    intent.data = Uri.parse(url)
+    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    try {
+        carContext.startActivity(intent)
+        if (BuildConfig.FLAVOR_automotive != "automotive") {
+            // only show the toast "opened on phone" if we're running on a phone
+            CarToast.makeText(
+                carContext,
+                R.string.opened_on_phone,
+                CarToast.LENGTH_LONG
+            ).show()
+        }
+    } catch (e: ActivityNotFoundException) {
+        CarToast.makeText(
+            carContext,
+            R.string.no_browser_app_found,
+            CarToast.LENGTH_LONG
+        ).show()
+    }
 }
 
 class DummyReturnScreen(ctx: CarContext) : Screen(ctx) {

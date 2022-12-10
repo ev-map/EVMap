@@ -1,10 +1,5 @@
 package net.vonforst.evmap.auto
 
-import android.content.ActivityNotFoundException
-import android.content.Intent
-import android.net.Uri
-import androidx.browser.customtabs.CustomTabColorSchemeParams
-import androidx.browser.customtabs.CustomTabsIntent
 import androidx.car.app.CarContext
 import androidx.car.app.CarToast
 import androidx.car.app.Screen
@@ -22,7 +17,6 @@ import jsonapi.ResourceIdentifier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import net.vonforst.evmap.BuildConfig
 import net.vonforst.evmap.R
 import net.vonforst.evmap.api.chargeprice.*
 import net.vonforst.evmap.api.equivalentPlugTypes
@@ -137,38 +131,7 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
                             )
                         ).build()
                     ).setOnClickListener {
-                        val intent = CustomTabsIntent.Builder()
-                            .setDefaultColorSchemeParams(
-                                CustomTabColorSchemeParams.Builder()
-                                    .setToolbarColor(
-                                        ContextCompat.getColor(
-                                            carContext,
-                                            R.color.colorPrimary
-                                        )
-                                    )
-                                    .build()
-                            )
-                            .build().intent
-                        intent.data =
-                            Uri.parse(ChargepriceApi.getPoiUrl(charger))
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        try {
-                            carContext.startActivity(intent)
-                            if (BuildConfig.FLAVOR_automotive != "automotive") {
-                                // only show the toast "opened on phone" if we're running on a phone
-                                CarToast.makeText(
-                                    carContext,
-                                    R.string.opened_on_phone,
-                                    CarToast.LENGTH_LONG
-                                ).show()
-                            }
-                        } catch (e: ActivityNotFoundException) {
-                            CarToast.makeText(
-                                carContext,
-                                R.string.no_browser_app_found,
-                                CarToast.LENGTH_LONG
-                            ).show()
-                        }
+                        openUrl(carContext, ChargepriceApi.getPoiUrl(charger))
                     }.build()
                 ).build()
             )

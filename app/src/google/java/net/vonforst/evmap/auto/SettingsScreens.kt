@@ -7,6 +7,7 @@ import androidx.annotation.StringRes
 import androidx.car.app.CarContext
 import androidx.car.app.CarToast
 import androidx.car.app.Screen
+import androidx.car.app.annotations.ExperimentalCarApi
 import androidx.car.app.constraints.ConstraintManager
 import androidx.car.app.model.*
 import androidx.core.graphics.drawable.IconCompat
@@ -22,6 +23,7 @@ import net.vonforst.evmap.storage.PreferenceDataSource
 import kotlin.math.max
 import kotlin.math.min
 
+@ExperimentalCarApi
 class SettingsScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx) {
     val prefs = PreferenceDataSource(ctx)
     var developerOptionsCounter = 0

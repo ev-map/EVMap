@@ -133,7 +133,7 @@ class OpenChargeMapApiWrapper(
         }
         val connectors = formatMultipleChoice(connectorsVal)
 
-        val operatorsVal = filters?.getMultipleChoiceValue("operators")!!
+        val operatorsVal = filters?.getMultipleChoiceValue("operators")
         if (operatorsVal != null && operatorsVal.values.isEmpty() && !operatorsVal.all) {
             // no operators chosen
             return Resource.success(emptyList())

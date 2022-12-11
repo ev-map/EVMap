@@ -163,7 +163,7 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.core:core-splashscreen:1.0.0'
     implementation "androidx.activity:activity-ktx:1.6.1"
-    implementation "androidx.fragment:fragment-ktx:1.5.4"
+    implementation "androidx.fragment:fragment-ktx:1.5.5"
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.preference:preference-ktx:1.2.0'
     implementation 'com.google.android.material:material:1.7.0'
@@ -232,7 +232,7 @@ dependencies {
     implementation "androidx.room:room-ktx:$room_version"
 
     // billing library
-    def billing_version = "4.1.0"
+    def billing_version = "5.1.0"
     googleImplementation "com.android.billingclient:billing:$billing_version"
     googleImplementation "com.android.billingclient:billing-ktx:$billing_version"
 

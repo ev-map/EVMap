@@ -5,6 +5,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.android.billingclient.api.*
+import com.android.billingclient.api.BillingClient.ProductType
 import net.vonforst.evmap.BuildConfig
 import net.vonforst.evmap.adapter.Equatable
 
@@ -24,10 +25,15 @@ class DonateViewModel(application: Application) : AndroidViewModel(application),
                 loadProducts()
 
                 // consume pending purchases
-                val purchases = billingClient.queryPurchases(BillingClient.SkuType.INAPP)
-                purchases.purchasesList?.forEach {
-                    if (!it.isAcknowledged) {
-                        consumePurchase(it.purchaseToken, false)
+                billingClient.queryPurchasesAsync(
+                    QueryPurchasesParams.newBuilder()
+                        .setProductType(ProductType.INAPP)
+                        .build()
+                ) { _, purchasesList ->
+                    purchasesList.forEach {
+                        if (!it.isAcknowledged) {
+                            consumePurchase(it.purchaseToken, false)
+                        }
                     }
                 }
             }
@@ -36,26 +42,26 @@ class DonateViewModel(application: Application) : AndroidViewModel(application),
     }
 
     private fun loadProducts() {
-        val params = SkuDetailsParams.newBuilder()
-            .setType(BillingClient.SkuType.INAPP)
-            .setSkusList(
-                listOf(
-                    "donate_1_eur", "donate_2_eur", "donate_5_eur", "donate_10_eur"
-                ) +
-                        if (BuildConfig.DEBUG) {
-                            listOf(
-                                "android.test.purchased", "android.test.canceled",
-                                "android.test.item_unavailable"
-                            )
-                        } else {
-                            emptyList()
-                        }
+        val productIds = listOf(
+            "donate_1_eur", "donate_2_eur", "donate_5_eur", "donate_10_eur"
+        ) + if (BuildConfig.DEBUG) {
+            listOf(
+                "android.test.purchased", "android.test.canceled",
+                "android.test.item_unavailable"
             )
+        } else {
+            emptyList()
+        }
+        val params = QueryProductDetailsParams.newBuilder()
+            .setProductList(productIds.map {
+                QueryProductDetailsParams.Product.newBuilder().setProductType(ProductType.INAPP)
+                    .setProductId(it).build()
+            })
             .build()
-        billingClient.querySkuDetailsAsync(params) { result, details ->
-            if (result.responseCode == BillingClient.BillingResponseCode.OK && details != null) {
+        billingClient.queryProductDetailsAsync(params) { result, details ->
+            if (result.responseCode == BillingClient.BillingResponseCode.OK) {
                 products.postValue(Resource.success(details
-                    .sortedBy { it.priceAmountMicros }
+                    .sortedBy { it.oneTimePurchaseOfferDetails!!.priceAmountMicros }
                     .map { DonationItem(it) }
                 ))
             } else {
@@ -97,7 +103,13 @@ class DonateViewModel(application: Application) : AndroidViewModel(application),
 
     fun startPurchase(it: DonationItem, activity: Activity) {
         val flowParams = BillingFlowParams.newBuilder()
-            .setSkuDetails(it.sku)
+            .setProductDetailsParamsList(
+                listOf(
+                    BillingFlowParams.ProductDetailsParams.newBuilder()
+                        .setProductDetails(it.product)
+                        .build()
+                )
+            )
             .build()
         val response = billingClient.launchBillingFlow(activity, flowParams)
         if (response.responseCode != BillingClient.BillingResponseCode.OK) {
@@ -110,4 +122,4 @@ class DonateViewModel(application: Application) : AndroidViewModel(application),
     }
 }
 
-data class DonationItem(val sku: SkuDetails) : Equatable
+data class DonationItem(val product: ProductDetails) : Equatable

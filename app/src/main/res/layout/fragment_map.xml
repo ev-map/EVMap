@@ -230,6 +230,7 @@
             android:theme="@style/ThemeOverlay.Material3.Dark.ActionBar" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
+            style="@style/Widget.Material3.FloatingActionButton.Small.Surface"
             android:id="@+id/fab_layers"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -239,9 +240,7 @@
             android:layout_marginEnd="20dp"
             android:layout_marginTop="@dimen/layers_fab_top_padding"
             app:tint="?android:colorControlNormal"
-            app:backgroundTint="?android:colorBackground"
             app:borderWidth="0dp"
-            app:fabSize="mini"
             app:srcCompat="@drawable/ic_layers"
             app:layout_behavior="@string/hide_on_scroll_fab_behavior"
             android:theme="@style/NoElevationOverlay" />

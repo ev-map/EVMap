@@ -10,8 +10,10 @@ import android.text.Spanned
 import androidx.car.app.CarContext
 import androidx.car.app.CarToast
 import androidx.car.app.Screen
+import androidx.car.app.annotations.ExperimentalCarApi
 import androidx.car.app.constraints.ConstraintManager
 import androidx.car.app.model.*
+import androidx.car.app.model.TabTemplate.TabCallback
 import androidx.core.graphics.drawable.IconCompat
 import androidx.core.graphics.scale
 import androidx.core.text.HtmlCompat
@@ -48,7 +50,10 @@ import java.time.format.FormatStyle
 import kotlin.math.roundToInt
 
 
+@ExperimentalCarApi
 class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : Screen(ctx) {
+    private val TAB_MAIN = "main"
+
     var charger: ChargeLocation? = null
     var photo: Bitmap? = null
     private var availability: ChargeLocationStatus? = null
@@ -68,6 +73,8 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
     private val maxRows = ctx.getContentLimit(ConstraintManager.CONTENT_LIMIT_TYPE_PANE)
     private val largeImageSupported =
         ctx.carAppApiLevel >= 4  // since API 4, Row.setImage is supported
+    private val tabsSupported = ctx.carAppApiLevel >= 6
+    private var currentTab = TAB_MAIN
 
     private var favorite: Favorite? = null
     private var favoriteUpdateJob: Job? = null
@@ -79,6 +86,45 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
     override fun onGetTemplate(): Template {
         if (charger == null) loadCharger()
 
+        if (tabsSupported) {
+            return generateTabs()
+        } else {
+            return generateMainPane()
+        }
+    }
+
+    private fun generateTabs(): TabTemplate {
+        return TabTemplate.Builder(object : TabCallback {
+            override fun onTabSelected(tabContentId: String) {
+                currentTab = tabContentId
+                invalidate()
+            }
+        }).apply {
+            charger?.let {
+                addTab(
+                    Tab.Builder()
+                        .setTitle(carContext.getString(R.string.general_info))
+                        .setIcon(CarIcon.APP_ICON)
+                        .setContentId(TAB_MAIN).build()
+                )
+                addTab(
+                    Tab.Builder()
+                        .setTitle("bla")
+                        .setIcon(CarIcon.APP_ICON)
+                        .setContentId("bla").build()
+                )
+                val contents = when (currentTab) {
+                    TAB_MAIN -> generateMainPane()
+                    else -> throw IllegalArgumentException("invalid tab")
+                }
+                setTabContents(TabContents.Builder(contents).build())
+                setActiveTabContentId(currentTab)
+            } ?: setLoading(true)
+            setHeaderAction(Action.APP_ICON)
+        }.build()
+    }
+
+    private fun generateMainPane(): PaneTemplate {
         return PaneTemplate.Builder(
             Pane.Builder().apply {
                 charger?.let { charger ->
@@ -100,28 +146,28 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
                             )
                             .setTitle(carContext.getString(R.string.navigate))
                             .setFlags(Action.FLAG_PRIMARY)
-                        .setBackgroundColor(CarColor.PRIMARY)
-                        .setOnClickListener {
-                            navigateToCharger(charger)
-                        }
-                        .build())
-                        if (ChargepriceApi.isChargerSupported(charger)) {
-                            addAction(
-                                Action.Builder()
-                                    .setIcon(
-                                        CarIcon.Builder(
-                                            IconCompat.createWithResource(
-                                                carContext,
-                                                R.drawable.ic_chargeprice
-                                            )
-                                        ).build()
-                                    )
-                                    .setTitle(carContext.getString(R.string.auto_prices))
+                            .setBackgroundColor(CarColor.PRIMARY)
+                            .setOnClickListener {
+                                navigateToCharger(charger)
+                            }
+                            .build())
+                    if (ChargepriceApi.isChargerSupported(charger)) {
+                        addAction(
+                            Action.Builder()
+                                .setIcon(
+                                    CarIcon.Builder(
+                                        IconCompat.createWithResource(
+                                            carContext,
+                                            R.drawable.ic_chargeprice
+                                        )
+                                    ).build()
+                                )
+                                .setTitle(carContext.getString(R.string.auto_prices))
                                 .setOnClickListener {
                                     screenManager.push(ChargepriceScreen(carContext, charger))
                                 }
                                 .build())
-                        }
+                    }
                 } ?: setLoading(true)
             }.build()
         ).apply {

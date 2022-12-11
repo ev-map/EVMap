@@ -348,23 +348,31 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
     private fun generateChargepointsText(charger: ChargeLocation): SpannableStringBuilder {
         val chargepointsText = SpannableStringBuilder()
         charger.chargepointsMerged.forEachIndexed { i, cp ->
-            if (i > 0) chargepointsText.append(" · ")
-            chargepointsText.append(
-                "${cp.count}× "
-            ).append(
-                nameForPlugType(carContext.stringProvider(), cp.type),
-                CarIconSpan.create(
-                    CarIcon.Builder(
-                        IconCompat.createWithResource(
-                            carContext,
-                            iconForPlugType(cp.type)
-                        )
-                    ).setTint(
-                        CarColor.createCustom(Color.WHITE, Color.BLACK)
-                    ).build()
-                ),
-                Spanned.SPAN_INCLUSIVE_EXCLUSIVE
-            ).append(" ").append(cp.formatPower())
+            chargepointsText.apply {
+                if (i > 0) append(" · ")
+                append("${cp.count}× ")
+                val plugIcon = iconForPlugType(cp.type)
+                if (plugIcon != 0) {
+                    append(
+                        nameForPlugType(carContext.stringProvider(), cp.type),
+                        CarIconSpan.create(
+                            CarIcon.Builder(
+                                IconCompat.createWithResource(
+                                    carContext,
+                                    plugIcon
+                                )
+                            ).setTint(
+                                CarColor.createCustom(Color.WHITE, Color.BLACK)
+                            ).build()
+                        ),
+                        Spanned.SPAN_INCLUSIVE_EXCLUSIVE
+                    )
+                } else {
+                    append(nameForPlugType(carContext.stringProvider(), cp.type))
+                }
+                append(" ")
+                append(cp.formatPower())
+            }
             availability?.status?.get(cp)?.let { status ->
                 chargepointsText.append(
                     " (${availabilityText(status)}/${cp.count})",

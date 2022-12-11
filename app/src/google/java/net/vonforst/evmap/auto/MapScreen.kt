@@ -436,6 +436,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                         ).awaitFinished()
                         if (response.status == Status.ERROR) {
                             loadingError = true
+                            this@MapScreen.chargers = null
                             invalidate()
                             return@launch
                         }

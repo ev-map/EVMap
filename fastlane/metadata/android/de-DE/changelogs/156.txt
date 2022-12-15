@@ -1,0 +1,5 @@
+Verbesserungen:
+- Android Auto: Suchbutton während der Fahrt freigeschaltet (ggf. ohne Tastatur)
+
+Fehler behoben:
+- Abstürze behoben

@@ -1,0 +1,5 @@
+Improvements:
+- Android Auto: Search button available while driving (possibly without keyboard)
+
+Bugs fixed:
+- Fixed crashes

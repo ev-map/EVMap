@@ -284,4 +284,16 @@
     <string name="pref_prediction_enabled">Vis bruksprognoser</string>
     <string name="pref_prediction_enabled_summary">for støttede ladere
 \n(foreløpig kun for likestrøm i Tyskland)</string>
+    <string name="chargeprice_price_not_available">Pris ikke tilgjengelig</string>
+    <string name="developer_mode_disabled">Utviklermodus avslått</string>
+    <string name="gps">GPS</string>
+    <string name="compass">Kompass</string>
+    <string name="pref_applink_associate">Åpne støttede lenker</string>
+    <string name="pref_applink_associate_summary">fra goingelectric.de og openchargemap.org</string>
+    <string name="chargeprice_header_other_tariffs">Andre ladeabonnementer</string>
+    <string name="disable_developer_mode">Skru av utviklermodus</string>
+    <string name="chargeprice_header_my_tariffs">Mine ladeabonnementer</string>
+    <string name="developer_options">Utvikleralternativer</string>
+    <string name="data_source_switched_to">Datakilde byttet til %s</string>
+    <string name="developer_mode_enabled">Utviklermodus påslått</string>
 </resources>

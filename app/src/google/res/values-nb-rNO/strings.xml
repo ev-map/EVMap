@@ -36,4 +36,6 @@
     <string name="sounds_cool">den er grei</string>
     <string name="auto_chargers_ahead">Kun ladere i kjøreretningen</string>
     <string name="loading">Laster inn …</string>
+    <string name="auto_multipage_goto">Side %d</string>
+    <string name="auto_multipage">(%d/%d)</string>
 </resources>

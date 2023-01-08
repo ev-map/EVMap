@@ -72,7 +72,7 @@ fun max(a: Int?, b: Int?): Int? {
      * otherwise the non-null value or null
      */
     return if (a != null && b != null) {
-        max(a, b)
+        kotlin.math.max(a, b)
     } else {
         a ?: b
     }

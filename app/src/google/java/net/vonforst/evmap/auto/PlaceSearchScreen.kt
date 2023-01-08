@@ -148,6 +148,7 @@ class PlaceSearchScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx
     }
 
     private suspend fun loadNewList(query: String) {
+        val location = location?.let { LatLng.fromLocation(it) }
         for (provider in providers) {
             try {
                 recentResults.clear()
@@ -161,7 +162,7 @@ class PlaceSearchScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx
                 }
                 recentResults.addAll(recentPlaces)
                 resultList =
-                    recentPlaces.map { it.asAutocompletePlace(LatLng.fromLocation(location)) }
+                    recentPlaces.map { it.asAutocompletePlace(location) }
                 invalidate()
 
                 // if we already have enough results or the query is short, stop here
@@ -170,7 +171,7 @@ class PlaceSearchScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx
                 // then search online
                 val recentIds = recentPlaces.map { it.id }
                 resultList = withContext(Dispatchers.IO) {
-                    (resultList!! + provider.autocomplete(query, LatLng.fromLocation(location))
+                    (resultList!! + provider.autocomplete(query, location)
                         .filter { !recentIds.contains(it.id) }).take(maxItems)
                 }
                 invalidate()

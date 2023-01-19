@@ -7,6 +7,7 @@ import android.text.style.StyleSpan
 import com.car2go.maps.google.adapter.AnyMapAdapter
 import com.car2go.maps.util.SphericalUtil
 import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.tasks.Tasks.await
@@ -19,6 +20,7 @@ import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRe
 import com.google.android.libraries.places.api.net.PlacesStatusCodes
 import kotlinx.coroutines.tasks.await
 import net.vonforst.evmap.R
+import java.io.IOException
 import java.util.concurrent.ExecutionException
 import kotlin.math.sqrt
 
@@ -58,6 +60,13 @@ class GooglePlacesAutocompleteProvider(val context: Context) : AutocompleteProvi
             if (cause is ApiException) {
                 if (cause.statusCode == PlacesStatusCodes.OVER_QUERY_LIMIT) {
                     throw ApiUnavailableException()
+                } else if (cause.statusCode in listOf(
+                        CommonStatusCodes.NETWORK_ERROR,
+                        CommonStatusCodes.TIMEOUT, CommonStatusCodes.RECONNECTION_TIMED_OUT,
+                        CommonStatusCodes.RECONNECTION_TIMED_OUT_DURING_UPDATE
+                    )
+                ) {
+                    throw IOException(cause)
                 }
             }
             throw e

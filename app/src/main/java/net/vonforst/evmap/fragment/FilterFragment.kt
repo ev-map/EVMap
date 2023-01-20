@@ -98,6 +98,12 @@ class FilterFragment : Fragment(), MenuProvider {
                 saveProfile()
                 true
             }
+            R.id.menu_reset -> {
+                lifecycleScope.launch {
+                    vm.resetValues()
+                }
+                true
+            }
             else -> false
         }
     }

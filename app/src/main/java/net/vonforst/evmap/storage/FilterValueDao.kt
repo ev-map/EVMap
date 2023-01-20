@@ -1,28 +1,48 @@
 package net.vonforst.evmap.storage
 
-import androidx.lifecycle.liveData
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.room.*
 import net.vonforst.evmap.model.*
 
 @Dao
 abstract class FilterValueDao {
     @Query("SELECT * FROM booleanfiltervalue WHERE profile = :profile AND dataSource = :dataSource")
-    protected abstract suspend fun getBooleanFilterValues(
+    protected abstract suspend fun getBooleanFilterValuesAsync(
         profile: Long,
         dataSource: String
     ): List<BooleanFilterValue>
 
     @Query("SELECT * FROM multiplechoicefiltervalue WHERE profile = :profile AND dataSource = :dataSource")
-    protected abstract suspend fun getMultipleChoiceFilterValues(
+    protected abstract suspend fun getMultipleChoiceFilterValuesAsync(
         profile: Long,
         dataSource: String
     ): List<MultipleChoiceFilterValue>
 
     @Query("SELECT * FROM sliderfiltervalue WHERE profile = :profile AND dataSource = :dataSource")
-    protected abstract suspend fun getSliderFilterValues(
+    protected abstract suspend fun getSliderFilterValuesAsync(
         profile: Long,
         dataSource: String
     ): List<SliderFilterValue>
+
+    @Query("SELECT * FROM booleanfiltervalue WHERE profile = :profile AND dataSource = :dataSource")
+    protected abstract fun getBooleanFilterValues(
+        profile: Long,
+        dataSource: String
+    ): LiveData<List<BooleanFilterValue>>
+
+    @Query("SELECT * FROM multiplechoicefiltervalue WHERE profile = :profile AND dataSource = :dataSource")
+    protected abstract fun getMultipleChoiceFilterValues(
+        profile: Long,
+        dataSource: String
+    ): LiveData<List<MultipleChoiceFilterValue>>
+
+    @Query("SELECT * FROM sliderfiltervalue WHERE profile = :profile AND dataSource = :dataSource")
+    protected abstract fun getSliderFilterValues(
+        profile: Long,
+        dataSource: String
+    ): LiveData<List<SliderFilterValue>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     protected abstract suspend fun insert(vararg values: BooleanFilterValue)
@@ -58,15 +78,32 @@ abstract class FilterValueDao {
         if (filterStatus == FILTERS_DISABLED || filterStatus == FILTERS_FAVORITES) {
             emptyList()
         } else {
-            getBooleanFilterValues(filterStatus, dataSource) +
-                    getMultipleChoiceFilterValues(filterStatus, dataSource) +
-                    getSliderFilterValues(filterStatus, dataSource)
+            getBooleanFilterValuesAsync(filterStatus, dataSource) +
+                    getMultipleChoiceFilterValuesAsync(filterStatus, dataSource) +
+                    getSliderFilterValuesAsync(filterStatus, dataSource)
         }
 
-    open fun getFilterValues(filterStatus: Long, dataSource: String) = liveData {
-        emit(null)
-        emit(getFilterValuesAsync(filterStatus, dataSource))
-    }
+    open fun getFilterValues(filterStatus: Long, dataSource: String): LiveData<List<FilterValue>?> =
+        if (filterStatus == FILTERS_DISABLED || filterStatus == FILTERS_FAVORITES) {
+            MutableLiveData(emptyList())
+        } else {
+            MediatorLiveData<List<FilterValue>?>().apply {
+                value = null
+                val sources = listOf(
+                    getBooleanFilterValues(filterStatus, dataSource),
+                    getMultipleChoiceFilterValues(filterStatus, dataSource),
+                    getSliderFilterValues(filterStatus, dataSource)
+                )
+                for (source in sources) {
+                    addSource(source) {
+                        val values = sources.map { it.value }
+                        if (values.all { it != null }) {
+                            value = values.filterNotNull().flatten()
+                        }
+                    }
+                }
+            }
+        }
 
     @Transaction
     open suspend fun insert(vararg values: FilterValue) {

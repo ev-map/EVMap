@@ -143,6 +143,7 @@
     <string name="category_caravan_site">Wohnmobilstellplatz</string>
     <string name="menu_apply">Filter anwenden</string>
     <string name="menu_save_profile">Als Profil speichern</string>
+    <string name="menu_reset">Filter zurücksetzen</string>
     <string name="no_filters">Keine Filter</string>
     <string name="filter_custom">Verändertes Filterprofil</string>
     <string name="filter_favorites">Favoriten</string>

@@ -142,6 +142,7 @@
     <string name="category_caravan_site">Caravan site</string>
     <string name="menu_apply">Apply filters</string>
     <string name="menu_save_profile">Save as profile</string>
+    <string name="menu_reset">Reset filter settings</string>
     <string name="no_filters">No filters</string>
     <string name="filter_custom">Modified filter</string>
     <string name="filter_favorites">Favorites</string>

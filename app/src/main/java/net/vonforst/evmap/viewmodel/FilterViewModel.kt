@@ -92,4 +92,8 @@ class FilterViewModel(application: Application) : AndroidViewModel(application) 
             prefs.filterStatus = FILTERS_DISABLED
         }
     }
+
+    suspend fun resetValues() {
+        db.filterValueDao().deleteFilterValuesForProfile(FILTERS_CUSTOM, prefs.dataSource)
+    }
 }

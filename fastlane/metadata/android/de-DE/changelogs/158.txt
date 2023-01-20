@@ -1,0 +1,7 @@
+Verbesserungen:
+- Neuer Knopf zum Zurücksetzen der Filtereinstellungen
+- Filtermenü mit neuen Icons
+- Übersetzungen aktualisiert
+
+Fehler behoben:
+- Abstürze behoben

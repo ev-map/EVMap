@@ -1189,6 +1189,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             )
             popup.menuInflater.inflate(R.menu.popup_filter, popup.menu)
             MenuCompat.setGroupDividerEnabled(popup.menu, true)
+            popup.setForceShowIcon(true)
             popup.setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.menu_edit_filters -> {

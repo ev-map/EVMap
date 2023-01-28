@@ -399,10 +399,10 @@ class GoingElectricApiWrapper(
         referenceData: ReferenceData,
         sp: StringProvider
     ): List<Filter<FilterValue>> {
-        val referenceData = referenceData as GEReferenceData
-        val plugs = referenceData.plugs
-        val networks = referenceData.networks
-        val chargeCards = referenceData.chargecards
+        val refData = referenceData as GEReferenceData
+        val plugs = refData.plugs
+        val networks = refData.networks
+        val chargeCards = refData.chargecards
 
         val plugMap = plugs.map { plug ->
             plug to nameForPlugType(sp, GEChargepoint.convertTypeFromGE(plug))

@@ -1,7 +1,6 @@
 package net.vonforst.evmap.adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
@@ -166,7 +165,7 @@ class CheckableConnectorAdapter : DataBindingAdapter<Chargepoint>() {
         root.setOnClickListener {
             root.isChecked = true
         }
-        root.setOnCheckedChangeListener { v: View, checked: Boolean ->
+        root.setOnCheckedChangeListener { _, checked: Boolean ->
             if (checked) {
                 checkedItem = holder.bindingAdapterPosition.takeIf { it != -1 }
                 root.post {
@@ -205,7 +204,7 @@ class CheckableChargepriceCarAdapter : DataBindingAdapter<ChargepriceCar>() {
         root.setOnClickListener {
             root.isChecked = true
         }
-        root.setOnCheckedChangeListener { v: View, checked: Boolean ->
+        root.setOnCheckedChangeListener { _, checked: Boolean ->
             if (checked && item != checkedItem) {
                 checkedItem = item
                 root.post {

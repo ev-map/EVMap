@@ -16,7 +16,7 @@ import net.vonforst.evmap.model.FavoriteWithDetail
 import net.vonforst.evmap.storage.AppDatabase
 import net.vonforst.evmap.utils.distanceBetween
 
-class FavoritesViewModel(application: Application, geApiKey: String) :
+class FavoritesViewModel(application: Application) :
     AndroidViewModel(application) {
     private var db = AppDatabase.getInstance(application)
 
@@ -69,7 +69,7 @@ class FavoritesViewModel(application: Application, geApiKey: String) :
                     FavoritesListItem(
                         favorite,
                         totalAvailable(charger.id),
-                        charger.chargepoints.sumBy { it.count },
+                        charger.chargepoints.sumOf { it.count },
                         location.value.let { loc ->
                             if (loc == null) null else {
                                 distanceBetween(

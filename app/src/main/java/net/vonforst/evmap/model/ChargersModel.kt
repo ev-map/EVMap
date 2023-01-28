@@ -111,7 +111,7 @@ data class ChargeLocation(
 
         // check if there is more than one plug for any connector type
         val chargepointsPerConnector =
-            connectors.map { conn -> chargepoints.filter { it.type == conn }.sumBy { it.count } }
+            connectors.map { conn -> chargepoints.filter { it.type == conn }.sumOf { it.count } }
         return chargepointsPerConnector.any { it > 1 }
     }
 
@@ -127,13 +127,13 @@ data class ChargeLocation(
             return variants.map { variant ->
                 val count = chargepoints
                     .filter { it.type == variant.type && it.power == variant.power }
-                    .sumBy { it.count }
+                    .sumOf { it.count }
                 Chargepoint(variant.type, variant.power, count)
             }
         }
 
     val totalChargepoints: Int
-        get() = chargepoints.sumBy { it.count }
+        get() = chargepoints.sumOf { it.count }
 
     fun formatChargepoints(sp: StringProvider): String {
         return chargepointsMerged.map {

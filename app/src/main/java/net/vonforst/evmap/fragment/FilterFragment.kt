@@ -120,7 +120,7 @@ class FilterFragment : Fragment(), MenuProvider {
 
             dialog.setTitle(R.string.save_as_profile)
                 .setMessage(R.string.save_profile_enter_name)
-                .setPositiveButton(R.string.ok) { di, button ->
+                .setPositiveButton(R.string.ok) { _, _ ->
                     if (input.text.isBlank()) {
                         saveProfile(true)
                     } else {
@@ -130,7 +130,7 @@ class FilterFragment : Fragment(), MenuProvider {
                         }
                     }
                 }
-                .setNegativeButton(R.string.cancel) { di, button ->
+                .setNegativeButton(R.string.cancel) { _, _ ->
 
                 }
         }

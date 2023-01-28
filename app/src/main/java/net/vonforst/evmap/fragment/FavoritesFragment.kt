@@ -44,8 +44,7 @@ class FavoritesFragment : Fragment() {
     private val vm: FavoritesViewModel by viewModels(factoryProducer = {
         viewModelFactory {
             FavoritesViewModel(
-                requireActivity().application,
-                getString(R.string.goingelectric_key)
+                requireActivity().application
             )
         }
     })

@@ -51,7 +51,7 @@ interface ChargecloudApi {
     )
 
     companion object {
-        fun create(client: OkHttpClient, baseUrl: String? = null): ChargecloudApi {
+        fun create(client: OkHttpClient, baseUrl: String): ChargecloudApi {
             val retrofit = Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .addConverterFactory(MoshiConverterFactory.create())

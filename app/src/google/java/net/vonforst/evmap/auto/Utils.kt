@@ -19,6 +19,7 @@ import androidx.core.graphics.drawable.IconCompat
 import net.vonforst.evmap.BuildConfig
 import net.vonforst.evmap.R
 import net.vonforst.evmap.api.availability.ChargepointStatus
+import net.vonforst.evmap.getPackageInfoCompat
 import java.util.*
 import kotlin.math.roundToInt
 
@@ -196,7 +197,7 @@ fun <T> List<T>.paginate(nSingle: Int, nFirst: Int, nOther: Int, nLast: Int): Li
 }
 
 fun getAndroidAutoVersion(ctx: Context): List<String> {
-    val info = ctx.packageManager.getPackageInfo("com.google.android.projection.gearhead", 0)
+    val info = ctx.packageManager.getPackageInfoCompat("com.google.android.projection.gearhead", 0)
     return info.versionName.split(".")
 }
 

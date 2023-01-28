@@ -89,12 +89,12 @@ class RangeSliderPreference(context: Context, attrs: AttributeSet) : Preference(
         slider.valueTo = valueTo
         stepSize?.let { slider.stepSize = it }
 
-        slider.addOnChangeListener { slider, value, fromUser ->
+        slider.addOnChangeListener { slider, _, fromUser ->
             if (fromUser && (updatesContinuously || !dragging)) {
                 syncValueInternal(slider)
             }
         }
-        slider.setOnTouchListener { v, event ->
+        slider.setOnTouchListener { _, event ->
             when (event.actionMasked) {
                 MotionEvent.ACTION_DOWN -> dragging = true
                 MotionEvent.ACTION_UP -> dragging = false

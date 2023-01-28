@@ -197,7 +197,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
         ViewCompat.setOnApplyWindowInsetsListener(
             binding.root
-        ) { v, insets ->
+        ) { _, insets ->
             ViewCompat.onApplyWindowInsets(binding.root, insets)
 
             val systemWindowInsetTop = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
@@ -465,7 +465,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                     }
                 )
             }
-        binding.search.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
+        binding.search.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
                 binding.search.keyListener = searchKeyListener
                 binding.search.text = binding.search.text  // workaround to fix copy/paste

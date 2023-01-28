@@ -121,6 +121,7 @@ private fun activeTint(
 }
 
 @BindingAdapter("data")
+@Suppress("UNCHECKED_CAST")
 fun <T> setRecyclerViewData(recyclerView: RecyclerView, items: List<T>?) {
     if (recyclerView.adapter is ListAdapter<*, *>) {
         (recyclerView.adapter as ListAdapter<T, *>).submitList(items)
@@ -128,6 +129,7 @@ fun <T> setRecyclerViewData(recyclerView: RecyclerView, items: List<T>?) {
 }
 
 @BindingAdapter("data")
+@Suppress("UNCHECKED_CAST")
 fun <T> setRecyclerViewData(recyclerView: ViewPager2, items: List<T>?) {
     if (recyclerView.adapter is ListAdapter<*, *>) {
         (recyclerView.adapter as ListAdapter<T, *>).submitList(items)
@@ -325,10 +327,10 @@ fun distance(meters: Number?): String? {
     }
 }
 
-@InverseBindingAdapter(attribute = "app:values")
+@InverseBindingAdapter(attribute = "values")
 fun getRangeSliderValue(slider: RangeSlider) = slider.values
 
-@BindingAdapter("app:valuesAttrChanged")
+@BindingAdapter("valuesAttrChanged")
 fun setRangeSliderListeners(slider: RangeSlider, attrChange: InverseBindingListener) {
     slider.addOnChangeListener { _, _, _ ->
         attrChange.onChange()
@@ -348,7 +350,7 @@ fun colorEnabled(ctx: Context, enabled: Boolean): Int {
     return color
 }
 
-@BindingAdapter("app:tint")
+@BindingAdapter("tint")
 fun setImageTintList(view: ImageView, @ColorInt color: Int) {
     view.imageTintList = ColorStateList.valueOf(color)
 }

@@ -211,12 +211,12 @@ class BarGraphView(context: Context, attrs: AttributeSet) : View(context, attrs)
     private fun drawBubble(canvas: Canvas, data: SortedMap<ZonedDateTime, Int>, maxValue: Int) {
         val bubbleBounds = bubbleBounds ?: return
         val graphBounds = graphBounds ?: return
-        val data = data.toList()
+        val d = data.toList()
 
-        if (data.size <= selectedBar) return
+        if (d.size <= selectedBar) return
         canvas.apply {
             val center = graphBounds.left + selectedBar * (barWidth + barMargin) + barWidth * 0.5f
-            val (t, v) = data[selectedBar]
+            val (t, v) = d[selectedBar]
             val tformat = context.getString(
                 R.string.prediction_time_colon,
                 t.withZoneSameInstant(ZoneId.systemDefault()).format(timeFormat)

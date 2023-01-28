@@ -335,7 +335,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
             availabilities[charger.id]?.second?.let { av ->
                 val status = av.status.values.flatten()
                 val available = availabilityText(status)
-                val total = charger.chargepoints.sumBy { it.count }
+                val total = charger.chargepoints.sumOf { it.count }
 
                 if (text.isNotEmpty()) text.append(" · ")
                 text.append(
@@ -476,7 +476,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
         val location = location
         val heading = heading?.orientations?.value?.get(0)
             ?: if (location?.hasBearing() == true) location.bearing else null
-        return heading?.let { heading ->
+        return heading?.let {
             if (!prefs.showChargersAheadAndroidAuto) return@let chargers
 
             chargers?.filter {

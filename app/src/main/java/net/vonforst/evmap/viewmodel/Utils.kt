@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 @Suppress("UNCHECKED_CAST")
 inline fun <VM : ViewModel> viewModelFactory(crossinline f: () -> VM) =
     object : ViewModelProvider.Factory {
-        override fun <T : ViewModel> create(aClass: Class<T>): T = f() as T
+        override fun <T : ViewModel> create(modelClass: Class<T>): T = f() as T
     }
 
 @Suppress("UNCHECKED_CAST")
@@ -106,7 +106,8 @@ fun <T> throttleLatest(
     }
 }
 
-public suspend fun <T> LiveData<T>.await(): T {
+@ExperimentalCoroutinesApi
+suspend fun <T> LiveData<T>.await(): T {
     return suspendCancellableCoroutine { continuation ->
         val observer = object : Observer<T> {
             override fun onChanged(value: T?) {
@@ -124,7 +125,8 @@ public suspend fun <T> LiveData<T>.await(): T {
     }
 }
 
-public suspend fun <T> LiveData<Resource<T>>.awaitFinished(): Resource<T> {
+@ExperimentalCoroutinesApi
+suspend fun <T> LiveData<Resource<T>>.awaitFinished(): Resource<T> {
     return suspendCancellableCoroutine { continuation ->
         val observer = object : Observer<Resource<T>> {
             override fun onChanged(value: Resource<T>) {

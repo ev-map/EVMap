@@ -140,7 +140,7 @@ class NewMotionAvailabilityDetector(client: OkHttpClient, baseUrl: String? = nul
         connectorStatus.forEach { (connector, statusStr, evseId) ->
             val id = connector.uid
             val power = connector.electricalProperties.getPower()
-            val type = when (connector.connectorType.toLowerCase(Locale.ROOT)) {
+            val type = when (connector.connectorType.lowercase(Locale.ROOT)) {
                 "type3" -> Chargepoint.TYPE_3
                 "type2" -> Chargepoint.TYPE_2_UNKNOWN
                 "type1" -> Chargepoint.TYPE_1

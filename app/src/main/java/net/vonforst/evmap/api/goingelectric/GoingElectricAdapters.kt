@@ -71,10 +71,10 @@ internal class JsonObjectOrFalseAdapter<T> private constructor(
     private val clazz: Class<*>
 ) : JsonAdapter<T>() {
 
-    class Factory() : JsonAdapter.Factory {
+    class Factory : JsonAdapter.Factory {
         override fun create(
             type: Type,
-            annotations: Set<Annotation>?,
+            annotations: Set<Annotation>,
             moshi: Moshi
         ): JsonAdapter<Any>? {
             val clazz = Types.getRawType(type)

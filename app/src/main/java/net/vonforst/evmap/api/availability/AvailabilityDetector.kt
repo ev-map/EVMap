@@ -71,19 +71,19 @@ abstract class BaseAvailabilityDetector(private val client: OkHttpClient) : Avai
             connectors: Map<Long, Pair<Double, String>>,
             chargepoints: List<Chargepoint>
         ): Map<Chargepoint, Set<Long>> {
-            var chargepoints = chargepoints
+            var cpts = chargepoints
 
             // iterate over each connector type
             val types = connectors.map { it.value.second }.distinct().toSet()
             val equivalentTypes = types.map { equivalentPlugTypes(it).plus(it) }.cartesianProduct()
-            var geTypes = chargepoints.map { it.type }.distinct().toSet()
+            var geTypes = cpts.map { it.type }.distinct().toSet()
             if (!equivalentTypes.any { it == geTypes } && geTypes.size > 1 && geTypes.contains(
                     Chargepoint.SCHUKO
                 )) {
                 // If charger has household plugs and other plugs, try removing the household plugs
                 // (common e.g. in Hamburg -> 2x Type 2 + 2x Schuko, but NM only lists Type 2)
                 geTypes = geTypes.filter { it != Chargepoint.SCHUKO }.toSet()
-                chargepoints = chargepoints.filter { it.type != Chargepoint.SCHUKO }
+                cpts = cpts.filter { it.type != Chargepoint.SCHUKO }
             }
             if (!equivalentTypes.any { it == geTypes }) throw AvailabilityDetectorException("chargepoints do not match")
             return types.flatMap { type ->
@@ -93,14 +93,14 @@ abstract class BaseAvailabilityDetector(private val client: OkHttpClient) : Avai
                 val powers = connsOfType.map { it.value.first }.distinct().sorted()
                 // find corresponding powers in GE data
                 val gePowers =
-                    chargepoints.filter { equivalentPlugTypes(it.type).any { it == type } }
+                    cpts.filter { equivalentPlugTypes(it.type).any { it == type } }
                         .mapNotNull { it.power }.distinct().sorted()
 
                 // if the distinct number of powers is the same, try to match.
                 if (powers.size == gePowers.size) {
                     gePowers.zip(powers).map { (gePower, power) ->
                         val chargepoint =
-                            chargepoints.find { equivalentPlugTypes(it.type).any { it == type } && it.power == gePower }!!
+                            cpts.find { equivalentPlugTypes(it.type).any { it == type } && it.power == gePower }!!
                         val ids = connsOfType.filter { it.value.first == power }.keys
                         if (chargepoint.count != ids.size) {
                             throw AvailabilityDetectorException("chargepoints do not match")
@@ -108,7 +108,7 @@ abstract class BaseAvailabilityDetector(private val client: OkHttpClient) : Avai
                         chargepoint to ids
                     }
                 } else if (powers.size == 1 && gePowers.size == 2
-                    && chargepoints.sumOf { it.count } == connsOfType.size
+                    && cpts.sumOf { it.count } == connsOfType.size
                 ) {
                     // special case: dual charger(s) with load balancing
                     // GoingElectric shows 2 different powers, NewMotion just one
@@ -116,7 +116,7 @@ abstract class BaseAvailabilityDetector(private val client: OkHttpClient) : Avai
                     var i = 0
                     gePowers.map { gePower ->
                         val chargepoint =
-                            chargepoints.find { it.type in equivalentPlugTypes(type) && it.power == gePower }!!
+                            cpts.find { it.type in equivalentPlugTypes(type) && it.power == gePower }!!
                         val ids = allIds.subList(i, i + chargepoint.count).toSet()
                         i += chargepoint.count
                         chargepoint to ids

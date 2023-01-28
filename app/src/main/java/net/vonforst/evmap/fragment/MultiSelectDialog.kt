@@ -71,7 +71,7 @@ class MultiSelectDialog : MaterialDialogFragment() {
         binding.btnAll.visibility = if (showAllButton) View.VISIBLE else View.INVISIBLE
 
         items = data.entries.toList()
-            .sortedBy { it.value.toLowerCase(Locale.getDefault()) }
+            .sortedBy { it.value.lowercase(Locale.getDefault()) }
             .sortedBy {
                 when {
                     selected.contains(it.key) && commonChoices?.contains(it.key) == true -> 0
@@ -117,7 +117,7 @@ private fun search(
 ): List<MultiSelectItem> {
     return items.filter { item ->
         // search for string within name
-        text.toLowerCase(Locale.getDefault()) in item.name.toLowerCase(Locale.getDefault())
+        text.lowercase(Locale.getDefault()) in item.name.lowercase(Locale.getDefault())
     }
 }
 

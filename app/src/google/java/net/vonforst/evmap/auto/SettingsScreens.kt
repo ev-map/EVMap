@@ -15,10 +15,7 @@ import androidx.car.app.model.*
 import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
-import net.vonforst.evmap.BuildConfig
-import net.vonforst.evmap.EXTRA_DONATE
-import net.vonforst.evmap.MapsActivity
-import net.vonforst.evmap.R
+import net.vonforst.evmap.*
 import net.vonforst.evmap.api.chargeprice.ChargepriceApi
 import net.vonforst.evmap.api.chargeprice.ChargepriceCar
 import net.vonforst.evmap.api.chargeprice.ChargepriceTariff
@@ -718,7 +715,7 @@ class DeveloperOptionsScreen(ctx: CarContext) : Screen(ctx) {
                         val hostPackage = carContext.hostInfo?.packageName
                         val hostVersion = hostPackage?.let {
                             try {
-                                carContext.packageManager.getPackageInfo(it, 0).versionName
+                                carContext.packageManager.getPackageInfoCompat(it).versionName
                             } catch (e: NameNotFoundException) {
                                 null
                             }

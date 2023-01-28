@@ -46,7 +46,7 @@ class PermissionScreen(
     }
 
     private fun requestPermissions() {
-        carContext.requestPermissions(permissions) { granted, rejected ->
+        carContext.requestPermissions(permissions) { granted, _ ->
             if (granted.containsAll(permissions)) {
                 screenManager.pop()
             } else {

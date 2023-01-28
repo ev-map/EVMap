@@ -76,7 +76,7 @@ class MapsActivity : AppCompatActivity(),
         val navView = findViewById<NavigationView>(R.id.nav_view)
         navView.setupWithNavController(navController)
 
-        ViewCompat.setOnApplyWindowInsetsListener(navView) { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(navView) { _, insets ->
             val header = navView.getHeaderView(0)
             header.setPadding(0, insets.getInsets(WindowInsetsCompat.Type.statusBars()).top, 0, 0)
             insets

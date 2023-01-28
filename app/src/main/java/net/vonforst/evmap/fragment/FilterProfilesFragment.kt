@@ -188,12 +188,12 @@ class FilterProfilesFragment : Fragment() {
 
                 dialog.setTitle(R.string.rename)
                     .setMessage(R.string.save_profile_enter_name)
-                    .setPositiveButton(R.string.ok) { di, button ->
+                    .setPositiveButton(R.string.ok) { _, _ ->
                         lifecycleScope.launch {
                             vm.update(fp.copy(name = input.text.toString()))
                         }
                     }
-                    .setNegativeButton(R.string.cancel) { di, button ->
+                    .setNegativeButton(R.string.cancel) { _, _ ->
 
                     }
             }

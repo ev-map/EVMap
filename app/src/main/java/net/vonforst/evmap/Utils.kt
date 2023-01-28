@@ -1,8 +1,11 @@
 package net.vonforst.evmap
 
 import android.content.Context
+import android.content.pm.PackageInfo
+import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Typeface
+import android.os.Build
 import android.os.Bundle
 import android.text.*
 import android.text.style.StyleSpan
@@ -89,3 +92,10 @@ const val meterPerFt = 0.3048
 fun shouldUseImperialUnits(): Boolean {
     return Locale.getDefault().country in listOf("US", "GB", "MM", "LR")
 }
+
+fun PackageManager.getPackageInfoCompat(packageName: String, flags: Int = 0): PackageInfo =
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(flags.toLong()))
+    } else {
+        @Suppress("DEPRECATION") getPackageInfo(packageName, flags)
+    }

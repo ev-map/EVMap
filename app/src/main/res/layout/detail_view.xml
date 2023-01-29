@@ -31,6 +31,12 @@
 
         <import type="net.vonforst.evmap.api.chargeprice.ChargepriceApi" />
 
+        <import type="android.text.format.DateUtils" />
+
+        <import type="java.time.Instant" />
+
+        <import type="java.time.Duration" />
+
         <variable
             name="charger"
             type="Resource&lt;ChargeLocation&gt;" />
@@ -99,7 +105,7 @@
             android:layout_height="wrap_content"
             android:background="?android:colorBackground"
             android:paddingTop="8dp"
-            android:paddingBottom="8dp">
+            android:paddingBottom="16dp">
 
             <TextView
                 android:id="@+id/txtName"
@@ -470,10 +476,26 @@
                 tools:targetApi="o" />
 
             <TextView
-                android:id="@+id/txtLicense"
+                android:id="@+id/txtTimeRetrieved"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:breakStrategy="balanced"
+                android:text="@{@string/data_retrieved_at(DateUtils.getRelativeTimeSpanString(charger.data.timeRetrieved.toEpochMilli(), Instant.now().toEpochMilli(), 0))}"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+                android:textStyle="italic"
+                app:goneUnless="@{charger.data.timeRetrieved == null || Duration.between(charger.data.timeRetrieved, Instant.now()).compareTo(Duration.ofHours(1)) > 0}"
+                app:layout_constraintEnd_toStartOf="@+id/guideline2"
+                app:layout_constraintStart_toStartOf="@+id/guideline"
+                app:layout_constraintTop_toBottomOf="@+id/sourceButton"
+                tools:text="Data retrieved 4 hours ago" />
+
+            <TextView
+                android:id="@+id/txtLicense"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
                 android:breakStrategy="balanced"
                 android:text="@{charger.data.license}"
                 android:textAlignment="center"
@@ -482,7 +504,7 @@
                 app:goneUnless="@{charger.data.license != null}"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
-                app:layout_constraintTop_toBottomOf="@+id/sourceButton"
+                app:layout_constraintTop_toBottomOf="@+id/txtTimeRetrieved"
                 tools:text="The data is provided under the National Oman Open Data LicensE (NOODLE), Version 3.14, and may be used for any purpose whatsoever." />
 
             <Button

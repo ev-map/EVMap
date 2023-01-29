@@ -43,7 +43,6 @@ import coil.memory.MemoryCache
 import coil.size.OriginalSize
 import coil.size.SizeResolver
 import com.car2go.maps.AnyMap
-import com.car2go.maps.MapFragment
 import com.car2go.maps.OnMapReadyCallback
 import com.car2go.maps.model.BitmapDescriptor
 import com.car2go.maps.model.LatLng
@@ -91,6 +90,7 @@ import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.contains
 import kotlin.collections.set
+import kotlin.math.min
 
 
 class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallback, MenuProvider {
@@ -553,7 +553,17 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         bottomSheetBehavior.addBottomSheetCallback(object :
             BottomSheetBehaviorGoogleMapsLike.BottomSheetCallback() {
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
-
+                if (bottomSheetBehavior.state == STATE_HIDDEN) {
+                    map?.setPadding(0, mapTopPadding, 0, 0)
+                } else {
+                    val height = binding.root.height - bottomSheet.top
+                    map?.setPadding(
+                        0,
+                        mapTopPadding,
+                        0,
+                        min(bottomSheetBehavior.peekHeight, height)
+                    )
+                }
             }
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
@@ -561,9 +571,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 updateBackPressedCallback()
 
                 if (vm.layersMenuOpen.value!! && newState !in listOf(
-                        BottomSheetBehaviorGoogleMapsLike.STATE_SETTLING,
-                        BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN,
-                        BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED
+                        STATE_SETTLING,
+                        STATE_HIDDEN,
+                        STATE_COLLAPSED
                     )
                 ) {
                     closeLayersMenu()

@@ -1,6 +1,9 @@
 package net.vonforst.evmap
 
 import android.app.Application
+import android.os.Build
+import androidx.work.*
+import net.vonforst.evmap.storage.CleanupCacheWorker
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.ui.updateAppLocale
 import net.vonforst.evmap.ui.updateNightMode
@@ -9,8 +12,9 @@ import org.acra.config.limiter
 import org.acra.config.mailSender
 import org.acra.data.StringFormat
 import org.acra.ktx.initAcra
+import java.time.Duration
 
-class EvMapApplication : Application() {
+class EvMapApplication : Application(), Configuration.Provider {
     override fun onCreate() {
         super.onCreate()
         val prefs = PreferenceDataSource(this)
@@ -48,5 +52,20 @@ class EvMapApplication : Application() {
                 }
             }
         }
+
+        val cleanupCacheRequest = PeriodicWorkRequestBuilder<CleanupCacheWorker>(Duration.ofDays(1))
+            .setConstraints(Constraints.Builder().apply {
+                setRequiresBatteryNotLow(true)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    setRequiresDeviceIdle(true)
+                }
+            }.build()).build()
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            "CleanupCacheWorker", ExistingPeriodicWorkPolicy.REPLACE, cleanupCacheRequest
+        )
+    }
+
+    override fun getWorkManagerConfiguration(): Configuration {
+        return Configuration.Builder().build()
     }
 }

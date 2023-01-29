@@ -43,6 +43,7 @@ import coil.memory.MemoryCache
 import coil.size.OriginalSize
 import coil.size.SizeResolver
 import com.car2go.maps.AnyMap
+import com.car2go.maps.MapFragment
 import com.car2go.maps.OnMapReadyCallback
 import com.car2go.maps.model.BitmapDescriptor
 import com.car2go.maps.model.LatLng

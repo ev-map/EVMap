@@ -7,6 +7,7 @@ import com.car2go.maps.AnyMap
 import com.car2go.maps.model.LatLng
 import com.car2go.maps.model.LatLngBounds
 import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike
+import com.squareup.moshi.JsonDataException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -263,6 +264,10 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
                         emit(Resource.error(e.message, null))
                         e.printStackTrace()
                     } catch (e: AvailabilityDetectorException) {
+                        emit(Resource.error(e.message, null))
+                        e.printStackTrace()
+                    } catch (e: JsonDataException) {
+                        // malformed JSON response from fronyx API
                         emit(Resource.error(e.message, null))
                         e.printStackTrace()
                     }

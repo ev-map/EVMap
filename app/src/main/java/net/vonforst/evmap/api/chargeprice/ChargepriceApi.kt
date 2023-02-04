@@ -163,7 +163,7 @@ interface ChargepriceApi {
                 "Spanien",
                 "Großbritannien",
                 "Irland",
-                // additional countries found 2022/09/17, https://github.com/johan12345/EVMap/issues/234
+                // additional countries found 2022/09/17, https://github.com/ev-map/EVMap/issues/234
                 "Finnland",
                 "Lettland",
                 "Litauen",
@@ -202,7 +202,7 @@ interface ChargepriceApi {
                 "ES",
                 "GB",
                 "IE",
-                // additional countries found 2022/09/17, https://github.com/johan12345/EVMap/issues/234
+                // additional countries found 2022/09/17, https://github.com/ev-map/EVMap/issues/234
                 "FI",
                 "LV",
                 "LT",

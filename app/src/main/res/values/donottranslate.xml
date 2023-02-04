@@ -2,7 +2,7 @@
 <resources>
     <string name="shared_element_picture">picture</string>
     <string name="shared_element_chargeprice">chargeprice</string>
-    <string name="github_link">https://github.com/johan12345/EVMap</string>
+    <string name="github_link">https://github.com/ev-map/EVMap</string>
     <string name="twitter_handle">\@ev_map</string>
     <string name="twitter_url">https://twitter.com/ev_map</string>
     <string name="goingelectric_forum_url"><![CDATA[https://www.goingelectric.de/forum/viewtopic.php?f=5&t=56342]]></string>

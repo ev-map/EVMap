@@ -47,7 +47,7 @@ Below you find a list of all the services and how to obtain the API keys.
 Map providers
 -------------
 
-The different Map SDKs are wrapped by our [fork](https://github.com/johan12345/AnyMaps) of the
+The different Map SDKs are wrapped by our [fork](https://github.com/ev-map/AnyMaps) of the
 [AnyMaps](https://github.com/sharenowTech/AnyMaps) library to provide a common API. The `google`
 build flavor of the app includes both Google Maps and Mapbox and allows the user to switch between
 the two, while the `foss` flavor only includes the Mapbox SDK.
@@ -118,7 +118,7 @@ in German.
    - website (*Webseite*, optional)
    - phone number (*Telefonnummer*, optional)
    - name of the app (*Name der App*): EVMap
-   - app website (*Webseite der App*): https://github.com/johan12345/EVMap
+   - app website (*Webseite der App*): https://github.com/ev-map/EVMap
    - description (*kurze Beschreibung der App*): please explain that you would like to contribute to
      the development of EVMap and therefore need access to the GoingElectric.de API.
    - Referrer (*Herkunft*): leave this field blank!
@@ -137,7 +137,7 @@ in German.
 1. [Sign up](https://openchargemap.org/site/loginprovider/register) for an account at OpenChargeMap
 2. Go to the [My Apps](https://openchargemap.org/site/profile/applications) page and click
    *Register an application*
-3. Enter the name of the app (EVMap) and website (https://github.com/johan12345/EVMap), and in the
+3. Enter the name of the app (EVMap) and website (https://github.com/ev-map/EVMap), and in the
    description field describe that you would like to contribute to the development of EVMap and
    therefore need access to the OpenChargeMap API. Do not tick the *List App in Public Showcase*
    box. Then, click *save*.
@@ -160,7 +160,7 @@ Since February 2022, the Chargeprice API is no longer available for free to new 
 you can use their
 [staging API](https://github.com/chargeprice/chargeprice-api-docs/blob/master/test_the_api.md)
 for free to test the Chargeprice features. This is already
-[configured](https://github.com/johan12345/EVMap/blob/master/app/src/debug/res/values/donottranslate.xml)
+[configured](https://github.com/ev-map/EVMap/blob/master/app/src/debug/res/values/donottranslate.xml)
 by default for the debug version of the app, so you can leave the `chargeprice_key` field in your
 new `app/src/main/res/values/apikeys.xml` file blank. Note that the staging API contains only a
 limited dataset, so it only outputs prices for certain charge point operators and payment plans (see

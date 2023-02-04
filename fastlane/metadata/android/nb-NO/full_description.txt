@@ -11,7 +11,7 @@ Du finner info om ladestasjoner i hele verden og sanntidsinfo for mange av dem s
 - Favorittliste, som også har tilgjengelighetsinfo
 - Ingen reklame
 
-Du finner kildekoden på https://github.com/johan12345/EVMap.
+Du finner kildekoden på https://github.com/ev-map/EVMap.
 
 Dette kartet er ikke et offisielt program fra hverken GoingElectric.de eller Open Charge Map.
 Kun de offentlige API-ene derfra benyttes.

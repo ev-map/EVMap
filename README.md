@@ -1,7 +1,7 @@
-EVMap [![Build Status](https://github.com/johan12345/EVMap/actions/workflows/tests.yml/badge.svg)](https://github.com/johan12345/EVMap/actions)
+EVMap [![Build Status](https://github.com/ev-map/EVMap/actions/workflows/tests.yml/badge.svg)](https://github.com/ev-map/EVMap/actions)
 =====
 
-<img src="https://raw.githubusercontent.com/johan12345/EVMap/master/_img/feature_graphic.svg" width=700 alt="Logo"/>
+<img src="https://raw.githubusercontent.com/ev-map/EVMap/master/_img/feature_graphic.svg" width=700 alt="Logo"/>
 
 Android app to find electric vehicle charging stations.
 
@@ -28,7 +28,7 @@ Features
 Screenshots
 -----------
 
-<img src="https://raw.githubusercontent.com/johan12345/EVMap/master/_img/screenshots/phone/en/mapbox/01_map.png" width=250 alt="Screenshot 1"/><img src="https://raw.githubusercontent.com/johan12345/EVMap/master/_img/screenshots/phone/en/mapbox/02_detail.png" width=250 alt="Screenshot 2"/>
+<img src="https://raw.githubusercontent.com/ev-map/EVMap/master/_img/screenshots/phone/en/mapbox/01_map.png" width=250 alt="Screenshot 1"/><img src="https://raw.githubusercontent.com/ev-map/EVMap/master/_img/screenshots/phone/en/mapbox/02_detail.png" width=250 alt="Screenshot 2"/>
 
 Development setup
 -----------------

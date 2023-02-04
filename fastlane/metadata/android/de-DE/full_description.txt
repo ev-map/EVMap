@@ -11,7 +11,7 @@ Funktionen:
 - Favoritenliste, auch mit Anzeige der Verfügbarkeit
 - Keine nervige Werbung
 
-EVMap ist ein Open-Source-Projekt und unter https://github.com/johan12345/EVMap zu finden.
+EVMap ist ein Open-Source-Projekt und unter https://github.com/ev-map/EVMap zu finden.
 
 Die App ist kein offizielles Angebot von GoingElectric.de oder Open Charge Map, sondern nutzt die öffentlichen APIs dieser Seiten.
 

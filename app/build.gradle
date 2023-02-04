@@ -167,7 +167,7 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation 'androidx.browser:browser:1.4.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
-    implementation 'com.github.johan12345:CustomBottomSheetBehavior:f4f641aab5'
+    implementation 'com.github.ev-map:CustomBottomSheetBehavior:f4f641aab5'
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-moshi:2.9.0'
     implementation 'com.squareup.okhttp3:okhttp:4.9.0'
@@ -176,7 +176,7 @@ dependencies {
     implementation 'com.squareup.moshi:moshi-adapters:1.13.0'
     implementation 'com.markomilos.jsonapi:jsonapi-retrofit:1.1.0'
     implementation 'io.coil-kt:coil:1.1.0'
-    implementation 'com.github.johan12345:StfalconImageViewer:5082ebd392'
+    implementation 'com.github.ev-map:StfalconImageViewer:5082ebd392'
     implementation "com.mikepenz:aboutlibraries-core:$about_libs_version"
     implementation "com.mikepenz:aboutlibraries:$about_libs_version"
     implementation 'com.airbnb.android:lottie:4.1.0'
@@ -193,17 +193,17 @@ dependencies {
 
     // AnyMaps
     def anyMapsVersion = '7fdcf50fc4'
-    implementation "com.github.johan12345.AnyMaps:anymaps-base:$anyMapsVersion"
-    googleImplementation "com.github.johan12345.AnyMaps:anymaps-google:$anyMapsVersion"
+    implementation "com.github.ev-map.AnyMaps:anymaps-base:$anyMapsVersion"
+    googleImplementation "com.github.ev-map.AnyMaps:anymaps-google:$anyMapsVersion"
     googleImplementation 'com.google.android.gms:play-services-maps:18.1.0'
-    implementation("com.github.johan12345.AnyMaps:anymaps-mapbox:$anyMapsVersion") {
+    implementation("com.github.ev-map.AnyMaps:anymaps-mapbox:$anyMapsVersion") {
         exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-android-accounts'
         exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-android-telemetry'
         exclude group: 'com.google.android.gms', module: 'play-services-location'
         exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-android-core'
     }
     // patched version of mapbox-android-core that removes build-time dependency on GMS
-    implementation 'com.github.johan12345:mapbox-events-android:a21c324501'
+    implementation 'com.github.ev-map:mapbox-events-android:a21c324501'
 
     // Google Places
     googleImplementation 'com.google.android.libraries.places:places:3.0.0'

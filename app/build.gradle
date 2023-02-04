@@ -202,8 +202,10 @@ dependencies {
         exclude group: 'com.google.android.gms', module: 'play-services-location'
         exclude group: 'com.mapbox.mapboxsdk', module: 'mapbox-android-core'
     }
-    // patched version of mapbox-android-core that removes build-time dependency on GMS
-    implementation 'com.github.ev-map:mapbox-events-android:a21c324501'
+    // original version of mapbox-android-core
+    googleImplementation 'com.mapbox.mapboxsdk:mapbox-android-core:2.0.1'
+    // patched version that removes build-time dependency on GMS (-> no Google location services)
+    fossImplementation 'com.github.ev-map:mapbox-events-android:a21c324501'
 
     // Google Places
     googleImplementation 'com.google.android.libraries.places:places:3.0.0'

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">EVMap</string>
     <string name="title_activity_maps">EVMap</string>
@@ -41,7 +42,7 @@
     <string name="settings_ui">Interface</string>
     <string name="settings_map">Map</string>
     <string name="copyright">Copyright</string>
-    <string name="copyright_summary">©2020–2022 Johan von Forstner</string>
+    <string name="copyright_summary">©2020–2023 Johan von Forstner</string>
     <string name="other">Other</string>
     <string name="privacy">Privacy</string>
     <string name="fav_add">Save as favorite</string>
@@ -181,7 +182,7 @@
     <string name="chargeprice_session_fee">session fee</string>
     <string name="chargeprice_per_kwh">per kWh</string>
     <string name="chargeprice_per_minute">per min</string>
-    <string name="chargeprice_blocking_fee">Blocking fee >%s</string>
+    <string name="chargeprice_blocking_fee">Blocking fee &gt;%s</string>
     <string name="chargeprice_no_tariffs_found">No charging plans for this charger on Chargeprice.app</string>
     <string name="powered_by_chargeprice">powered by Chargeprice</string>
     <string name="chargeprice_base_fee">Base fee: %2$s%1$.2f/month</string>

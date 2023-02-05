@@ -93,7 +93,7 @@
     <string name="realtime_data_unavailable">Sanntidsstatus utilgjengelig</string>
     <string name="other">Andre</string>
     <string name="cost_detail"><b>Lading:</b> %1$s · <b>Parkering:</b> %2$s</string>
-    <string name="copyright_summary">©2020–2022 Johan von Forstner</string>
+    <string name="copyright_summary">©2020–2023 Johan von Forstner</string>
     <string name="pref_navigate_use_maps_on">Navigasjonsnkappen starter ruteveiledning på Google Maps</string>
     <string name="filter_free_parking">Kun ladere med gratis parkering</string>
     <string name="filter_min_power">Min. effekt</string>

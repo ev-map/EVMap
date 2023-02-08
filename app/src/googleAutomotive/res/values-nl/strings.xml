@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="grant_on_phone">Toestaan</string>
+    <string name="auto_location_permission_needed">Om EVmap te gebruiken in je wagen, moet je toegang geven tot je locatie.</string>
+</resources>

@@ -1,0 +1,18 @@
+Met EVMap vind je op een eenvoudige manier EV laders op je Android toestel. Het geeft mobiele toegang tot de door de community onderhouden databases van GoingElectric.de en Open Charge Map, die informatie bevatten over laadstations over de hele wereld. Voor heel wat laadpunten in Europa kan je de real-time status zien.
+
+Kenmerken:
+- Material Design
+- Toont alle laadpunten van de GoingElectric.de en Open Charge Map databanken
+- Real-time status (enkel in Europa)
+- Geïntegreerde prijsvergelijking via Chargeprice.app (enkel in Europe)
+- Kaartgegevens van OpenStreetMap (Mapbox)
+- Zoek naar locaties
+- Geavanceerde filtermogelijkheden, inclusief bewaarde filterprofielen
+- Lijst van favorieten, met statusinformatie
+- Geen advertenties, volledig open source
+
+EVMap is een open source project en is te vinden op https://github.com/ev-map/EVMap.
+
+Deze app is geen officieel product van GoingElectric.de of Open Charge Map; ze gebruikt enkel hun publieke APIs.
+
+Een lijst van noodzakelijke permissies is hier te vinden: https://evmap.vonforst.net/en/permissions.html

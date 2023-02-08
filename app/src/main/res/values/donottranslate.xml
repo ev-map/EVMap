@@ -13,6 +13,7 @@
     <string name="pref_language_de">Deutsch</string>
     <string name="pref_language_fr">Français</string>
     <string name="pref_language_nb_rNO">Norsk Bokmål</string>
+    <string name="pref_language_nl">Nederlands</string>
     <string name="about_contributors_list">
         Danilo Bargen\n
         Altonss\n

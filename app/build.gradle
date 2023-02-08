@@ -9,7 +9,7 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
 apply plugin: 'com.mikepenz.aboutlibraries.plugin'
 
-def supportedLocales = "en,de,fr,nb-rNO"
+def supportedLocales = "en,de,fr,nb-rNO,nl"
 
 android {
     compileSdkVersion 33

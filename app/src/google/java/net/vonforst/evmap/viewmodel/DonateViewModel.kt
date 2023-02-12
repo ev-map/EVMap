@@ -15,6 +15,12 @@ class DonateViewModel(application: Application) : AndroidViewModel(application),
         .setListener(this)
         .enablePendingPurchases()
         .build()
+    
+    val products: MutableLiveData<Resource<List<DonationItem>>> by lazy {
+        MutableLiveData<Resource<List<DonationItem>>>().apply {
+            value = Resource.loading(null)
+        }
+    }
 
     init {
         billingClient.startConnection(object : BillingClientStateListener {
@@ -67,12 +73,6 @@ class DonateViewModel(application: Application) : AndroidViewModel(application),
             } else {
                 products.postValue(Resource.error(result.debugMessage, null))
             }
-        }
-    }
-
-    val products: MutableLiveData<Resource<List<DonationItem>>> by lazy {
-        MutableLiveData<Resource<List<DonationItem>>>().apply {
-            value = Resource.loading(null)
         }
     }
 

@@ -250,6 +250,10 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
                                         ).any { filtered.contains(it) }
                                     } ?: true
                         }.flatMap { it.value }
+                    if (allEvseIds.isEmpty()) {
+                        emit(Resource.success(emptyList()))
+                        return@liveData
+                    }
                     try {
                         val result = predictionApi.getPredictionsForEvseIds(allEvseIds)
                         if (result.size == allEvseIds.size) {

@@ -17,7 +17,7 @@ class MultiSelectDialog : MaterialDialogFragment() {
     companion object {
         fun getInstance(
             title: String,
-            data: Map<String, String>,
+            data: Map<String, CharSequence>,
             selected: Set<String>,
             commonChoices: Set<String>?,
             showAllButton: Boolean = true
@@ -55,7 +55,7 @@ class MultiSelectDialog : MaterialDialogFragment() {
 
     override fun initView(view: View, savedInstanceState: Bundle?) {
         val args = requireArguments()
-        val data = args.getSerializable("data") as HashMap<String, String>
+        val data = args.getSerializable("data") as HashMap<String, CharSequence>
         val selected = args.getSerializable("selected") as HashSet<String>
         val title = args.getString("title")
         val commonChoices = if (args.containsKey("commonChoices")) {
@@ -71,7 +71,7 @@ class MultiSelectDialog : MaterialDialogFragment() {
         binding.btnAll.visibility = if (showAllButton) View.VISIBLE else View.INVISIBLE
 
         items = data.entries.toList()
-            .sortedBy { it.value.lowercase(Locale.getDefault()) }
+            .sortedBy { it.value.toString().lowercase(Locale.getDefault()) }
             .sortedBy {
                 when {
                     selected.contains(it.key) && commonChoices?.contains(it.key) == true -> 0
@@ -117,7 +117,7 @@ private fun search(
 ): List<MultiSelectItem> {
     return items.filter { item ->
         // search for string within name
-        text.lowercase(Locale.getDefault()) in item.name.lowercase(Locale.getDefault())
+        text.lowercase(Locale.getDefault()) in item.name.toString().lowercase(Locale.getDefault())
     }
 }
 
@@ -125,4 +125,5 @@ class Adapter() : DataBindingAdapter<MultiSelectItem>({ it.key }) {
     override fun getItemViewType(position: Int) = R.layout.dialog_multi_select_item
 }
 
-data class MultiSelectItem(val key: String, val name: String, var selected: Boolean) : Equatable
+data class MultiSelectItem(val key: String, val name: CharSequence, var selected: Boolean) :
+    Equatable

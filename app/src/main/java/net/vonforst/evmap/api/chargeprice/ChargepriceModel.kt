@@ -114,7 +114,16 @@ data class ChargepriceCar(
     val brand: String,
 
     @Json(name = "dc_charge_ports")
-    val dcChargePorts: List<String>
+    val dcChargePorts: List<String>,
+
+    @Json(name = "usable_battery_size")
+    val usableBatterySize: Float,
+
+    @Json(name = "ac_max_power")
+    val acMaxPower: Float,
+
+    @Json(name = "dc_max_power")
+    val dcMaxPower: Float?
 ) : Equatable, Parcelable {
 
     companion object {

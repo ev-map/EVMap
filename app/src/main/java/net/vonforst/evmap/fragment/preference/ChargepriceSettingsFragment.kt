@@ -2,12 +2,18 @@ package net.vonforst.evmap.fragment.preference
 
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.style.ImageSpan
+import android.text.style.RelativeSizeSpan
 import android.view.View
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.viewModels
-import androidx.preference.MultiSelectListPreference
 import net.vonforst.evmap.R
+import net.vonforst.evmap.ui.MultiSelectDialogPreference
 import net.vonforst.evmap.viewmodel.SettingsViewModel
 import net.vonforst.evmap.viewmodel.viewModelFactory
+
 
 class ChargepriceSettingsFragment : BaseSettingsFragment() {
     override val isTopLevel = false
@@ -22,8 +28,8 @@ class ChargepriceSettingsFragment : BaseSettingsFragment() {
         }
     })
 
-    private lateinit var myVehiclePreference: MultiSelectListPreference
-    private lateinit var myTariffsPreference: MultiSelectListPreference
+    private lateinit var myVehiclePreference: MultiSelectDialogPreference
+    private lateinit var myTariffsPreference: MultiSelectDialogPreference
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -34,8 +40,21 @@ class ChargepriceSettingsFragment : BaseSettingsFragment() {
             res.data?.let { cars ->
                 val sortedCars = cars.sortedBy { it.brand }
                 myVehiclePreference.entryValues = sortedCars.map { it.id }.toTypedArray()
-                myVehiclePreference.entries =
-                    sortedCars.map { "${it.brand} ${it.name}" }.toTypedArray()
+                myVehiclePreference.entries = sortedCars.map {
+                    SpannableStringBuilder().apply {
+                        appendLine("${it.brand} ${it.name}")
+                        append(SpannableStringBuilder().apply {
+                            append("%.0f kWh".format(it.usableBatterySize))
+                            append(" | ")
+                            append("AC %.0f kW".format(it.acMaxPower))
+                            it.dcMaxPower?.let {
+                                append(" | ")
+                                append("DC %.0f kW".format(it))
+                            }
+                        }, RelativeSizeSpan(0.86f), Spanned.SPAN_INCLUSIVE_EXCLUSIVE)
+
+                    }
+                }.toTypedArray()
                 myVehiclePreference.isEnabled = true
                 updateMyVehiclesSummary()
             }

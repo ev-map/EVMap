@@ -38,7 +38,7 @@ class MultiSelectDialogPreference(ctx: Context, attrs: AttributeSet) :
         val dialog =
             MultiSelectDialog.getInstance(
                 title.toString(),
-                entryValues.map { it.toString() }.zip(entries.map { it.toString() }).toMap(),
+                entryValues.map { it.toString() }.zip(entries).toMap(),
                 if (all) entryValues.map { it.toString() }.toSet() else values,
                 emptySet(),
                 showAllButton

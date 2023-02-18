@@ -8,6 +8,9 @@ package net.vonforst.evmap.auto
 private val models = mapOf(
     "Audi" to mapOf(
         "516 (G4x)" to "e-tron"
+    ),
+    "Renault" to mapOf(
+        "BCB" to "Megane E-Tech"
     )
 )
 

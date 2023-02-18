@@ -352,7 +352,7 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
                 } else if (vehicles.size > 1) {
                     if (modelName != null) {
                         vehicles = vehicles.filter {
-                            it.name.startsWith(modelName)
+                            it.name.lowercase().startsWith(modelName.lowercase())
                         }
                         if (vehicles.isEmpty()) {
                             throw VehicleUnknownException()

@@ -5,6 +5,7 @@ import com.squareup.moshi.*
 import java.lang.reflect.Type
 import java.time.Instant
 import java.time.LocalTime
+import java.time.format.DateTimeParseException
 
 
 internal class ChargepointListItemJsonAdapterFactory : JsonAdapter.Factory {
@@ -138,7 +139,12 @@ internal class HoursAdapter {
                 val end = if (match.groupValues[2] == "24:00") {
                     LocalTime.MAX
                 } else {
-                    LocalTime.parse(match.groupValues[2])
+                    try {
+                        LocalTime.parse(match.groupValues[2])
+                    } catch (e: DateTimeParseException) {
+                        // got a rare bug report where the value is 24:0000
+                        LocalTime.MIN
+                    }
                 }
                 return GEHours(start, end)
             } else {

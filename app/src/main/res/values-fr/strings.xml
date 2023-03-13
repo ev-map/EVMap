@@ -273,4 +273,30 @@
     <string name="charging_free">gratuite</string>
     <string name="about_contributors">Contributeurs</string>
     <string name="about_contributors_text">Merci à tous les contributeurs pour leur contribution au codage et à la traduction d\'EVMap :</string>
+    <string name="location_error">Localisation non détectée. Veuillez vérifier les paramètres du système</string>
+    <string name="developer_mode_enabled">Mode développeur activé</string>
+    <string name="pref_prediction_enabled">Afficher les prévisions d\'utilisation</string>
+    <string name="pref_prediction_enabled_summary">pour les chargeurs pris en charge
+\n(actuellement seulement chargeurs rapides en Allemagne)</string>
+    <string name="pref_applink_associate">Ouvrir les liens pris en charge</string>
+    <string name="pref_applink_associate_summary">de goingelectric.de et openchargemap.org</string>
+    <string name="chargeprice_header_my_tariffs">Mes tarifs</string>
+    <string name="chargeprice_header_other_tariffs">Autres tarifs</string>
+    <string name="disable_developer_mode">Désactiver le mode développeur</string>
+    <string name="developer_mode_disabled">Mode développeur désactivé</string>
+    <string name="gps">GPS</string>
+    <string name="compass">Boussole</string>
+    <string name="prediction_dc_plugs_only">Prises DC</string>
+    <string name="data_source_switched_to">Source de données basculée vers %s</string>
+    <string name="menu_reset">Réinitialiser le filtre</string>
+    <string name="chargeprice_price_not_available">Prix non disponible</string>
+    <string name="utilization_prediction">Prévision d\'utilisation</string>
+    <string name="prediction_help">La prédiction est basée sur des facteurs tels que le jour de la semaine, l\'heure de la journée et l\'utilisation passée, ce qui vous permet d\'éviter les chargeurs surchargés. Pas de garantie.</string>
+    <plurals name="prediction_number_available">
+        <item quantity="one">%1$d/%2$d disponible</item>
+        <item quantity="many">%1$d/%2$d disponibles</item>
+        <item quantity="other">%1$d/%2$d disponibles</item>
+    </plurals>
+    <string name="developer_options">Paramètres développeur</string>
+    <string name="prediction_time_colon">%s :</string>
 </resources>

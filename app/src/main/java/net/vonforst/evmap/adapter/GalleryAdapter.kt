@@ -43,7 +43,6 @@ class GalleryAdapter(context: Context, val itemClickListener: ItemClickListener?
         holder.view.load(
             url
         ) {
-            size(SizeResolver(OriginalSize))
             allowHardware(false)
             listener(
                 onSuccess = { _, metadata ->

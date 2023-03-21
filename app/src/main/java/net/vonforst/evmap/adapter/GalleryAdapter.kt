@@ -43,7 +43,6 @@ class GalleryAdapter(context: Context, val itemClickListener: ItemClickListener?
         holder.view.load(
             url
         ) {
-            allowHardware(false)
             listener(
                 onSuccess = { _, metadata ->
                     memoryKeys[id] = metadata.memoryCacheKey

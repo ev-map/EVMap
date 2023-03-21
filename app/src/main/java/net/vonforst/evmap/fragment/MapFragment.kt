@@ -753,7 +753,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 val photos = vm.charger.value?.data?.photos ?: return
 
                 viewer = StfalconImageViewer.Builder(context, photos) { imageView, photo ->
-                    imageView.load(photo.getUrl(size = 1000)) {
+                    imageView.load(photo.getUrl(size = 1000, allowOriginal = true)) {
                         if (photo == photos[position] && imageCacheKey != null) {
                             placeholderMemoryCacheKey(imageCacheKey)
                         }

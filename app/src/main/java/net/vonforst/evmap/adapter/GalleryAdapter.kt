@@ -5,14 +5,13 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import android.widget.ImageView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import coil.memory.MemoryCache
-import coil.size.OriginalSize
-import coil.size.SizeResolver
 import net.vonforst.evmap.R
 import net.vonforst.evmap.model.ChargerPhoto
 
@@ -37,23 +36,40 @@ class GalleryAdapter(context: Context, val itemClickListener: ItemClickListener?
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val id = getItem(position).id
-        val url = getItem(position).getUrl(height = holder.view.height)
+        val item = getItem(position)
+
+        if (holder.view.height == 0) {
+            holder.view.viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
+                override fun onGlobalLayout() {
+                    holder.view.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                    loadImage(item, holder)
+                }
+            })
+        } else {
+            loadImage(item, holder)
+        }
+
+        if (itemClickListener != null) {
+            holder.view.setOnClickListener {
+                itemClickListener.onItemClick(holder.view, position, memoryKeys[item.id])
+            }
+        }
+    }
+
+    private fun loadImage(
+        item: ChargerPhoto,
+        holder: ViewHolder
+    ) {
+        val url = item.getUrl(height = holder.view.height)
 
         holder.view.load(
             url
         ) {
             listener(
                 onSuccess = { _, metadata ->
-                    memoryKeys[id] = metadata.memoryCacheKey
+                    memoryKeys[item.id] = metadata.memoryCacheKey
                 }
             )
-        }
-
-        if (itemClickListener != null) {
-            holder.view.setOnClickListener {
-                itemClickListener.onItemClick(holder.view, position, memoryKeys[id])
-            }
         }
     }
 }

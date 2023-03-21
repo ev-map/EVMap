@@ -332,7 +332,19 @@ data class Hours(
 }
 
 abstract class ChargerPhoto(open val id: String) : Parcelable {
-    abstract fun getUrl(height: Int? = null, width: Int? = null, size: Int? = null): String
+    /**
+     * Gets a URL of the image corresponding to a given size.
+     *
+     * If the data source supports accessing the image in its original (potentially unlimited) size,
+     * this size will only be returned if allowOriginal is set to true. Otherwise, only scaled
+     * versions of the images will be returned.
+     */
+    abstract fun getUrl(
+        height: Int? = null,
+        width: Int? = null,
+        size: Int? = null,
+        allowOriginal: Boolean = false
+    ): String
 }
 
 data class ChargeLocationCluster(

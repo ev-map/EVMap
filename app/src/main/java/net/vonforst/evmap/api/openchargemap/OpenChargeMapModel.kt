@@ -251,14 +251,13 @@ class OCMChargerPhotoAdapter(
     val largeUrl: String,
     val thumbUrl: String
 ) : ChargerPhoto(id) {
-    override fun getUrl(height: Int?, width: Int?, size: Int?): String {
+    override fun getUrl(height: Int?, width: Int?, size: Int?, allowOriginal: Boolean): String {
         val maxSize = size ?: max(height, width)
         val mediumUrl = thumbUrl.replace(".thmb.", ".medi.")
         return when (maxSize) {
-            0 -> mediumUrl
-            in 1..100 -> thumbUrl
+            in 0..100 -> thumbUrl
             in 101..400 -> mediumUrl
-            else -> largeUrl
+            else -> if (allowOriginal) largeUrl else mediumUrl
         }
     }
 }

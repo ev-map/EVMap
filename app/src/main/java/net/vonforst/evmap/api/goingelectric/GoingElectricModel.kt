@@ -147,7 +147,7 @@ data class GEChargerPhoto(val id: String) {
 @JsonClass(generateAdapter = true)
 class GEChargerPhotoAdapter(override val id: String, val apikey: String) :
     ChargerPhoto(id) {
-    override fun getUrl(height: Int?, width: Int?, size: Int?): String {
+    override fun getUrl(height: Int?, width: Int?, size: Int?, allowOriginal: Boolean): String {
         return "https://api.goingelectric.de/chargepoints/photo/?key=${apikey}&id=$id" +
                 when {
                     size != null -> "&size=$size"

@@ -390,6 +390,8 @@ class SelectVehiclesScreen(ctx: CarContext) : MultiSelectSearchScreen<Chargepric
 
     override fun getLabel(it: ChargepriceCar) = "${it.brand} ${it.name}"
 
+    override fun getDetails(it: ChargepriceCar) = it.formatSpecs()
+
     override suspend fun loadData(): List<ChargepriceCar> {
         return api.getVehicles()
     }

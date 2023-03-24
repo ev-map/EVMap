@@ -86,6 +86,7 @@ abstract class MultiSelectSearchScreen<T>(ctx: CarContext) : Screen(ctx),
                 addItem(
                     Row.Builder()
                         .setTitle(getLabel(item))
+                        .apply { getDetails(item)?.let { addText(it) } }
                         .setImage(if (isSelected(item)) checkedIcon else uncheckedIcon)
                         .setOnClickListener {
                             toggleSelected(item)
@@ -129,6 +130,8 @@ abstract class MultiSelectSearchScreen<T>(ctx: CarContext) : Screen(ctx),
     abstract fun isSelected(it: T): Boolean
 
     abstract fun getLabel(it: T): String
+
+    open fun getDetails(it: T): String? = null
 
     abstract suspend fun loadData(): List<T>
 }

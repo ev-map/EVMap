@@ -125,6 +125,15 @@ data class ChargepriceCar(
     @Json(name = "dc_max_power")
     val dcMaxPower: Float?
 ) : Equatable, Parcelable {
+    fun formatSpecs(): String = buildString {
+        append("%.0f kWh".format(usableBatterySize))
+        append(" | ")
+        append("AC %.0f kW".format(acMaxPower))
+        dcMaxPower?.let {
+            append(" | ")
+            append("DC %.0f kW".format(it))
+        }
+    }
 
     companion object {
         private val acConnectors = listOf(

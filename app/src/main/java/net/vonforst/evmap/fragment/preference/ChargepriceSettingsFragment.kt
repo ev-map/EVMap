@@ -43,16 +43,11 @@ class ChargepriceSettingsFragment : BaseSettingsFragment() {
                 myVehiclePreference.entries = sortedCars.map {
                     SpannableStringBuilder().apply {
                         appendLine("${it.brand} ${it.name}")
-                        append(SpannableStringBuilder().apply {
-                            append("%.0f kWh".format(it.usableBatterySize))
-                            append(" | ")
-                            append("AC %.0f kW".format(it.acMaxPower))
-                            it.dcMaxPower?.let {
-                                append(" | ")
-                                append("DC %.0f kW".format(it))
-                            }
-                        }, RelativeSizeSpan(0.86f), Spanned.SPAN_INCLUSIVE_EXCLUSIVE)
-
+                        append(
+                            it.formatSpecs(),
+                            RelativeSizeSpan(0.86f),
+                            Spanned.SPAN_INCLUSIVE_EXCLUSIVE
+                        )
                     }
                 }.toTypedArray()
                 myVehiclePreference.isEnabled = true

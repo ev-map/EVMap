@@ -1,0 +1,7 @@
+Improvements:
+- Vehicle selection for price comparison: Added vehicle details
+- Updated translations
+
+Bugfixes:
+- Fixed crashes
+- Open Charge Map: Improved loading of images

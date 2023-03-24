@@ -1,0 +1,7 @@
+Verbesserungen:
+- Fahrzeugauswahl für Preisvergleich: Details der Fahrzeuge hinzugefügt
+- Übersetzungen aktualisiert
+
+Fehler behoben:
+- Abstürze behoben
+- Open Charge Map: Laden von Bildern verbessert

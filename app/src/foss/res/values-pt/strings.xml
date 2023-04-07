@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="data_sources_hint">Os dados do mapa são fornecidos pelo OpenStreetMap (Mapbox).</string>
+    <string name="donate_paypal">Doar com o PayPal</string>
+    <string name="donations_info" formatted="false">Acha que o EVMap é útil\? Apoie a manutenção e desenvolvimento com uma doação para o desenvolvedor da app.</string>
+</resources>

@@ -14,6 +14,7 @@
     <string name="pref_language_fr">Français</string>
     <string name="pref_language_nb_rNO">Norsk Bokmål</string>
     <string name="pref_language_nl">Nederlands</string>
+    <string name="pref_language_pt">Português</string>
     <string name="about_contributors_list">
         Danilo Bargen\n
         Altonss\n
@@ -21,6 +22,7 @@
         Maximilian Goldschmidt\n
         Wim Lamotte\n
         Licaon_Kter\n
+        Celso Azevedo\n
         pt2121\n
         nautilusx
     </string>

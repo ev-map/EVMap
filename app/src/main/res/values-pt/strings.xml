@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="copyright_summary">©2020–2023 Johan von Forstner</string>
     <string name="menu_reset">Repor filtros</string>
     <string name="filter_custom">Filtro modificado</string>
@@ -24,8 +24,7 @@
     <string name="pref_chargeprice_show_provider_customer_tariffs_summary">As empresas de serviços públicos às vezes oferecem planos especiais para os seus clientes</string>
     <plurals name="chargeprice_some_tariffs_selected">
         <item quantity="one">%d plano selecionado</item>
-        <item quantity="many">%d planos selecionados</item>
-        <item quantity="other"></item>
+        <item quantity="other">%d planos selecionados</item>
     </plurals>
     <string name="data_sources_description">Escolha uma fonte de informação para as estações de carregamento. Pode alterar mais tarde nas definições da app.</string>
     <string name="about_contributors_text">Obrigado a todos os contribuidores de código e traduções para o EVMap:</string>
@@ -106,8 +105,7 @@
     <string name="charging_barrierfree">Não necessita de registo</string>
     <plurals name="charge_cards_compatible_num">
         <item quantity="one">%d forma de pagamento compatível</item>
-        <item quantity="many">%d formas de pagamento compatíveis</item>
-        <item quantity="other"></item>
+        <item quantity="other">%d formas de pagamento compatíveis</item>
     </plurals>
     <string name="chargeprice_session_fee">custo da sessão</string>
     <string name="edit_on_goingelectric_info">Por favor faça o login em GoingElectric.de se esta página estiver vazia</string>
@@ -136,9 +134,8 @@
     <string name="chargeprice_price_not_available">Preço não disponível</string>
     <string name="pref_my_tariffs">Os meus planos de carregamento</string>
     <plurals name="pref_my_tariffs_summary">
-        <item quantity="one">(será destacado na comparação de preços)</item>
-        <item quantity="many">(serão destacados na comparação de preços)</item>
-        <item quantity="other"></item>
+        <item quantity="one" tools:ignore="ImpliedQuantity">(será destacado na comparação de preços)</item>
+        <item quantity="other">(serão destacados na comparação de preços)</item>
     </plurals>
     <string name="data_source_goingelectric">GoingElectric.de</string>
     <string name="chargeprice_all_tariffs_selected">todos os planos selecionados</string>
@@ -191,8 +188,7 @@
     <string name="compass">Compasso</string>
     <plurals name="prediction_number_available">
         <item quantity="one">%1$d/%2$d disponível</item>
-        <item quantity="many">%1$d/%2$d disponíveis</item>
-        <item quantity="other"></item>
+        <item quantity="other">%1$d/%2$d disponíveis</item>
     </plurals>
     <string name="pref_prediction_enabled">Mostrar previsões de utilização</string>
     <string name="developer_mode_enabled">Modo de desenvolvedor ativado</string>

@@ -203,29 +203,45 @@ class EnBwAvailabilityDetector(client: OkHttpClient, baseUrl: String? = null) :
         val country = charger.chargepriceData?.country
             ?: charger.address?.country ?: return false
         return when (charger.dataSource) {
-            // list of countries as of 2021/06/30, according to
-            // https://www.electrive.net/2021/06/30/enbw-expandiert-mit-ladenetz-in-drei-weitere-laender/
+            // list of countries as of 2023/04/14, according to
+            // https://www.enbw.com/elektromobilitaet/produkte/ladetarife
             "goingelectric" -> country in listOf(
                 "Deutschland",
                 "Österreich",
                 "Schweiz",
-                "Frankreich",
                 "Belgien",
-                "Niederlande",
-                "Luxemburg",
-                "Liechtenstein",
+                "Dänemark",
+                "Frankreich",
                 "Italien",
+                "Kroatien",
+                "Liechtenstein",
+                "Luxemburg",
+                "Niederlande",
+                "Polen",
+                "Schweden",
+                "Slowakei",
+                "Slowenien",
+                "Spanien",
+                "Tschechien"
             )
             "openchargemap" -> country in listOf(
                 "DE",
                 "AT",
                 "CH",
-                "FR",
                 "BE",
-                "NE",
-                "LU",
+                "DK",
+                "FR",
+                "IT",
+                "HR",
                 "LI",
-                "IT"
+                "LU",
+                "NE",
+                "PL",
+                "SE",
+                "SK",
+                "SI",
+                "ES",
+                "CZ"
             )
             else -> false
         }

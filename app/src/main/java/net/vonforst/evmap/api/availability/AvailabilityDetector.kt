@@ -1,5 +1,6 @@
 package net.vonforst.evmap.api.availability
 
+import android.content.Context
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import net.vonforst.evmap.api.RateLimitInterceptor
@@ -9,6 +10,8 @@ import net.vonforst.evmap.cartesianProduct
 import net.vonforst.evmap.addDebugInterceptors
 import net.vonforst.evmap.model.ChargeLocation
 import net.vonforst.evmap.model.Chargepoint
+import net.vonforst.evmap.storage.EncryptedPreferenceDataStore
+import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.viewmodel.Resource
 import okhttp3.JavaNetCookieJar
 import okhttp3.OkHttpClient
@@ -158,38 +161,41 @@ private val cookieManager = CookieManager().apply {
     setCookiePolicy(CookiePolicy.ACCEPT_ALL)
 }
 
-private val okhttp = OkHttpClient.Builder()
-    .addInterceptor(RateLimitInterceptor())
-    .addDebugInterceptors()
-    .readTimeout(10, TimeUnit.SECONDS)
-    .connectTimeout(10, TimeUnit.SECONDS)
-    .cookieJar(JavaNetCookieJar(cookieManager))
-    .build()
-val availabilityDetectors = listOf(
-    RheinenergieAvailabilityDetector(okhttp),
-    EnBwAvailabilityDetector(okhttp),
-    NewMotionAvailabilityDetector(okhttp)
-)
+class AvailabilityRepository(context: Context) {
+    private val okhttp = OkHttpClient.Builder()
+        .addInterceptor(RateLimitInterceptor())
+        .addDebugInterceptors()
+        .readTimeout(10, TimeUnit.SECONDS)
+        .connectTimeout(10, TimeUnit.SECONDS)
+        .cookieJar(JavaNetCookieJar(cookieManager))
+        .build()
+    private val availabilityDetectors = listOf(
+        RheinenergieAvailabilityDetector(okhttp),
+        TeslaAvailabilityDetector(okhttp, EncryptedPreferenceDataStore(context)),
+        EnBwAvailabilityDetector(okhttp),
+        NewMotionAvailabilityDetector(okhttp)
+    )
 
-suspend fun getAvailability(charger: ChargeLocation): Resource<ChargeLocationStatus> {
-    var value: Resource<ChargeLocationStatus>? = null
-    withContext(Dispatchers.IO) {
-        for (ad in availabilityDetectors) {
-            if (!ad.isChargerSupported(charger)) continue
-            try {
-                value = Resource.success(ad.getAvailability(charger))
-                break
-            } catch (e: IOException) {
-                value = Resource.error(e.message, null)
-                e.printStackTrace()
-            } catch (e: HttpException) {
-                value = Resource.error(e.message, null)
-                e.printStackTrace()
-            } catch (e: AvailabilityDetectorException) {
-                value = Resource.error(e.message, null)
-                e.printStackTrace()
+    suspend fun getAvailability(charger: ChargeLocation): Resource<ChargeLocationStatus> {
+        var value: Resource<ChargeLocationStatus>? = null
+        withContext(Dispatchers.IO) {
+            for (ad in availabilityDetectors) {
+                if (!ad.isChargerSupported(charger)) continue
+                try {
+                    value = Resource.success(ad.getAvailability(charger))
+                    break
+                } catch (e: IOException) {
+                    value = Resource.error(e.message, null)
+                    e.printStackTrace()
+                } catch (e: HttpException) {
+                    value = Resource.error(e.message, null)
+                    e.printStackTrace()
+                } catch (e: AvailabilityDetectorException) {
+                    value = Resource.error(e.message, null)
+                    e.printStackTrace()
+                }
             }
         }
+        return value ?: Resource.error(null, null)
     }
-    return value ?: Resource.error(null, null)
 }

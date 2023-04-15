@@ -15,6 +15,10 @@
             android:title="@string/pref_prediction_enabled"
             android:defaultValue="true"
             android:summary="@string/pref_prediction_enabled_summary" />
+
+        <Preference
+            android:key="tesla_account"
+            android:title="@string/pref_tesla_account" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/settings_map">
 

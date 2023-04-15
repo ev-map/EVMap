@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import coil.memory.MemoryCache
+import net.vonforst.evmap.BuildConfig
 import net.vonforst.evmap.R
 import net.vonforst.evmap.model.ChargerPhoto
 
@@ -70,6 +71,7 @@ class GalleryAdapter(context: Context, val itemClickListener: ItemClickListener?
                     memoryKeys[item.id] = metadata.memoryCacheKey
                 }
             )
+            allowHardware(!BuildConfig.DEBUG)
         }
     }
 }

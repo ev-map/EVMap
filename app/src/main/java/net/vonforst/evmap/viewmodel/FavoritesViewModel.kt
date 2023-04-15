@@ -7,9 +7,9 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import net.vonforst.evmap.adapter.Equatable
+import net.vonforst.evmap.api.availability.AvailabilityRepository
 import net.vonforst.evmap.api.availability.ChargeLocationStatus
 import net.vonforst.evmap.api.availability.ChargepointStatus
-import net.vonforst.evmap.api.availability.getAvailability
 import net.vonforst.evmap.model.ChargeLocation
 import net.vonforst.evmap.model.Favorite
 import net.vonforst.evmap.model.FavoriteWithDetail
@@ -19,6 +19,7 @@ import net.vonforst.evmap.utils.distanceBetween
 class FavoritesViewModel(application: Application) :
     AndroidViewModel(application) {
     private var db = AppDatabase.getInstance(application)
+    private val availabilityRepo = AvailabilityRepository(application)
 
     val favorites: LiveData<List<FavoriteWithDetail>> by lazy {
         db.favoritesDao().getAllFavorites()
@@ -53,7 +54,7 @@ class FavoritesViewModel(application: Application) :
 
             chargers.map { charger ->
                 async {
-                    data[charger.id] = getAvailability(charger)
+                    data[charger.id] = availabilityRepo.getAvailability(charger)
                     availability.value = data
                 }
             }.awaitAll()

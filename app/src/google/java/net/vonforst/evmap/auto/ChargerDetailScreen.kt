@@ -23,8 +23,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.vonforst.evmap.*
+import net.vonforst.evmap.api.availability.AvailabilityRepository
 import net.vonforst.evmap.api.availability.ChargeLocationStatus
-import net.vonforst.evmap.api.availability.getAvailability
 import net.vonforst.evmap.api.chargeprice.ChargepriceApi
 import net.vonforst.evmap.api.createApi
 import net.vonforst.evmap.api.iconForPlugType
@@ -57,6 +57,7 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
     private val db = AppDatabase.getInstance(carContext)
     private val repo =
         ChargeLocationsRepository(createApi(prefs.dataSource, ctx), lifecycleScope, db, prefs)
+    private val availabilityRepo = AvailabilityRepository(ctx)
 
     private val imageSize = 128  // images should be 128dp according to docs
     private val imageSizeLarge = 480  // images should be 480 x 480 dp according to docs
@@ -465,7 +466,7 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
 
                 invalidate()
 
-                availability = getAvailability(charger).data
+                availability = availabilityRepo.getAvailability(charger).data
 
                 invalidate()
             } else {

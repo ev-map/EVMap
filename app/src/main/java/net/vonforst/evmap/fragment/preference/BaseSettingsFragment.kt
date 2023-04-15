@@ -12,15 +12,18 @@ import com.google.android.material.transition.MaterialFadeThrough
 import com.google.android.material.transition.MaterialSharedAxis
 import net.vonforst.evmap.MapsActivity
 import net.vonforst.evmap.R
+import net.vonforst.evmap.storage.EncryptedPreferenceDataStore
 import net.vonforst.evmap.storage.PreferenceDataSource
 
 abstract class BaseSettingsFragment : PreferenceFragmentCompat(),
     SharedPreferences.OnSharedPreferenceChangeListener {
     protected lateinit var prefs: PreferenceDataSource
+    protected lateinit var encryptedPrefs: EncryptedPreferenceDataStore
     protected abstract val isTopLevel: Boolean
 
     override fun onCreate(savedInstanceState: Bundle?) {
         prefs = PreferenceDataSource(requireContext())
+        encryptedPrefs = EncryptedPreferenceDataStore(requireContext())
         super.onCreate(savedInstanceState)
 
         if (isTopLevel) {

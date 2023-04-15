@@ -211,6 +211,7 @@ data class GEChargepoint(val type: String, val power: Double, val count: Int) {
                 "Typ1" -> Chargepoint.TYPE_1
                 "Typ2" -> Chargepoint.TYPE_2_UNKNOWN
                 "Typ3" -> Chargepoint.TYPE_3
+                "Tesla Supercharger CCS" -> Chargepoint.CCS_UNKNOWN
                 "CCS" -> Chargepoint.CCS_UNKNOWN
                 "Schuko" -> Chargepoint.SCHUKO
                 "CHAdeMO" -> Chargepoint.CHADEMO

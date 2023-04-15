@@ -24,8 +24,8 @@ import com.car2go.maps.model.LatLng
 import kotlinx.coroutines.*
 import net.vonforst.evmap.BuildConfig
 import net.vonforst.evmap.R
+import net.vonforst.evmap.api.availability.AvailabilityRepository
 import net.vonforst.evmap.api.availability.ChargeLocationStatus
-import net.vonforst.evmap.api.availability.getAvailability
 import net.vonforst.evmap.api.createApi
 import net.vonforst.evmap.api.stringProvider
 import net.vonforst.evmap.model.ChargeLocation
@@ -79,6 +79,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
     private val db = AppDatabase.getInstance(carContext)
     private val repo =
         ChargeLocationsRepository(createApi(prefs.dataSource, ctx), lifecycleScope, db, prefs)
+    private val availabilityRepo = AvailabilityRepository(ctx)
     private val searchRadius = 5 // kilometers
     private val distanceUpdateThreshold = Duration.ofSeconds(15)
     private val availabilityUpdateThreshold = Duration.ofMinutes(1)
@@ -606,7 +607,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                 // update only if not yet stored
                 if (!availabilities.containsKey(it.id)) {
                     lifecycleScope.async {
-                        val availability = getAvailability(it).data
+                        val availability = availabilityRepo.getAvailability(it).data
                         val date = ZonedDateTime.now()
                         availabilities[it.id] = date to availability
                     }

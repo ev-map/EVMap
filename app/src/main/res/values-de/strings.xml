@@ -296,4 +296,12 @@
     <string name="compass">Kompass</string>
     <string name="charger_website">Website</string>
     <string name="location_status">Standortdienste-Status</string>
+    <string name="pref_tesla_account">Tesla-Account</string>
+    <string name="pref_tesla_account_enabled">Angemeldet als %s</string>
+    <string name="pref_tesla_account_disabled">Anmelden, um Echtzeitdaten für Tesla Supercharger zu sehen. Kein Tesla-Fahrzeug notwendig</string>
+    <string name="logging_in">Anmelden…</string>
+    <string name="log_out">Abmelden</string>
+    <string name="logged_out">Abgemeldet</string>
+    <string name="login">Login</string>
+    <string name="login_error">Login fehlgeschlagen</string>
 </resources>

@@ -14,8 +14,8 @@ import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
 import net.vonforst.evmap.R
 import net.vonforst.evmap.api.availability.AvailabilityDetectorException
+import net.vonforst.evmap.api.availability.AvailabilityRepository
 import net.vonforst.evmap.api.availability.ChargeLocationStatus
-import net.vonforst.evmap.api.availability.getAvailability
 import net.vonforst.evmap.api.createApi
 import net.vonforst.evmap.api.equivalentPlugTypes
 import net.vonforst.evmap.api.fronyx.FronyxApi
@@ -59,6 +59,7 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
         db,
         prefs
     )
+    private val availabilityRepo = AvailabilityRepository(application)
 
     val apiId = repo.api.map { it.id }
 
@@ -202,7 +203,7 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
                 triggerAvailabilityRefresh.switchMap {
                     liveData {
                         emit(Resource.loading(null))
-                        emit(getAvailability(charger))
+                        emit(availabilityRepo.getAvailability(charger))
                     }
                 }
             }

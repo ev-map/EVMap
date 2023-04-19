@@ -24,7 +24,7 @@ android {
         versionName "1.4.10"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        resourceConfigurations += [',']
+        resConfigs supportedLocales.split(',')
         buildConfigField("String", "supportedLocales", '"' + supportedLocales + '"')
     }
 

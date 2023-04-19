@@ -168,6 +168,7 @@
     <plurals name="charge_cards_compatible_num">
         <item quantity="one">%d metoda de plata compatibila</item>
         <item quantity="other">%d metode de plata compatibile</item>
+        <item quantity="few">%d metode de plata compatibile</item>
     </plurals>
     <string name="navigate">Navigare</string>
     <string name="verified">verificat</string>
@@ -207,7 +208,8 @@
     <string name="pref_my_tariffs">Abonamentele mele</string>
     <plurals name="pref_my_tariffs_summary">
         <item quantity="one">(va fi evidentiat in comparatia preturilor)</item>
-        <item quantity="other">(va fi evidentiat in comparatia preturilor)</item>
+        <item quantity="other">(vor fi evidentiate in comparatia preturilor)</item>
+        <item quantity="few">(vor fi evidentiate in comparatia preturilor)</item>
     </plurals>
     <string name="chargeprice_all_tariffs_selected">toate abonamentele selectate</string>
     <string name="license">Licenta</string>
@@ -216,6 +218,7 @@
     <plurals name="chargeprice_some_tariffs_selected">
         <item quantity="one">%d abonament selectat</item>
         <item quantity="other">%d abonamente selectate</item>
+        <item quantity="few">%d abonamente selectate</item>
     </plurals>
     <string name="unknown_operator">Operator necunoscut</string>
     <string name="data_sources_description">Alegeti o sursa pentru statiile de incarcare. Puteti modifica ulterior in setarile aplicatiei.</string>
@@ -278,7 +281,8 @@
     <string name="prediction_time_colon">%s:</string>
     <plurals name="prediction_number_available">
         <item quantity="one">%1$d/%2$d disponibil</item>
-        <item quantity="other">%1$d/%2$d disponibil</item>
+        <item quantity="other">%1$d/%2$d disponibile</item>
+        <item quantity="few">%1$d/%2$d disponibile</item>
     </plurals>
     <string name="pref_prediction_enabled">Arata estimare utilizare</string>
     <string name="pref_prediction_enabled_summary">pentru statiile de incarcare suportate\n(momentan doar DC in Germania)</string>

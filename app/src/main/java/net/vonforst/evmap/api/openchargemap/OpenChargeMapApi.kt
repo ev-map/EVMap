@@ -148,8 +148,7 @@ class OpenChargeMapApiWrapper(
                 ),
                 minPower = minPower,
                 plugs = connectors,
-                operators = operators,
-                statusType = if (excludeFaults == true) noFaultStatuses.joinToString(",") else null
+                operators = operators
             )
             if (!response.isSuccessful) {
                 return Resource.error(response.message(), null)
@@ -160,6 +159,7 @@ class OpenChargeMapApiWrapper(
                 minPower,
                 connectorsVal,
                 minConnectors,
+                excludeFaults,
                 refData,
                 zoom
             )
@@ -202,8 +202,7 @@ class OpenChargeMapApiWrapper(
                 radius.toDouble(),
                 minPower = minPower,
                 plugs = connectors,
-                operators = operators,
-                statusType = if (excludeFaults == true) noFaultStatuses.joinToString(",") else null
+                operators = operators
             )
             if (!response.isSuccessful) {
                 return Resource.error(response.message(), null)
@@ -214,6 +213,7 @@ class OpenChargeMapApiWrapper(
                 minPower,
                 connectorsVal,
                 minConnectors,
+                excludeFaults,
                 refData,
                 zoom
             )
@@ -228,6 +228,7 @@ class OpenChargeMapApiWrapper(
         minPower: Double?,
         connectorsVal: MultipleChoiceFilterValue?,
         minConnectors: Int?,
+        excludeFaults: Boolean?,
         referenceData: OCMReferenceData,
         zoom: Float
     ): List<ChargepointListItem> {
@@ -237,6 +238,8 @@ class OpenChargeMapApiWrapper(
                 .filter { it.power == null || it.power >= (minPower ?: 0.0) }
                 .filter { if (connectorsVal != null && !connectorsVal.all) it.connectionTypeId in connectorsVal.values.map { it.toLong() } else true }
                 .sumOf { it.quantity ?: 1 } >= (minConnectors ?: 0)
+        }.filter {
+            it.statusTypeId == null || (it.statusTypeId !in removedStatuses && if (excludeFaults == true) it.statusTypeId !in faultStatuses else true)
         }.map { it.convert(referenceData, false) }.distinct() as List<ChargepointListItem>
 
         // apply clustering

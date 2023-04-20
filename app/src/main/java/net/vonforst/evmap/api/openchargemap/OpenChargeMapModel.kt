@@ -11,11 +11,14 @@ import java.time.Instant
 import java.time.ZonedDateTime
 
 // Unknown, Currently Available, Currently In Use, Operational
-val noFaultStatuses = listOf(0, 10, 20, 50)
+val noFaultStatuses = listOf(0L, 10L, 20L, 50L)
 
-// Temporarily Unavailable, Partly Operational, Not Operational, Planned For Future Date, Removed (Decommissioned)
-val faultStatuses = listOf(30L, 75L, 100L, 150L, 200L)
+// Temporarily Unavailable, Partly Operational, Not Operational, Planned For Future Date
+val faultStatuses = listOf(30L, 75L, 100L, 150L)
 val faultReportCommentType = 1000L
+
+// Removed (Decommissioned), Removed (Duplicate Listing)
+val removedStatuses = listOf(200L, 210L)
 
 data class OCMBoundingBox(
     val sw_lat: Double, val sw_lng: Double,

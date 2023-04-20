@@ -330,20 +330,6 @@
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toTopOf="@+id/txtName" />
 
-            <Button
-                android:id="@+id/btnChargeprice"
-                style="@style/Widget.Material3.Button.TonalButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/go_to_chargeprice"
-                android:transitionName="@string/shared_element_chargeprice"
-                app:goneUnless="@{charger.data != null &amp;&amp; ChargepriceApi.isChargerSupported(charger.data)}"
-                app:icon="@drawable/ic_chargeprice"
-                app:layout_constraintEnd_toStartOf="@+id/guideline2"
-                app:layout_constraintStart_toStartOf="@+id/guideline"
-                app:layout_constraintTop_toBottomOf="@+id/divider1" />
-
             <View
                 android:id="@+id/divider2"
                 android:layout_width="match_parent"
@@ -359,7 +345,7 @@
                 android:layout_marginTop="8dp"
                 android:background="?android:attr/listDivider"
                 app:goneUnless="@{charger.data != null &amp;&amp; ChargepriceApi.isChargerSupported(charger.data)}"
-                app:layout_constraintTop_toBottomOf="@+id/btnChargeprice" />
+                app:layout_constraintTop_toBottomOf="@+id/buttonsScroller" />
 
             <TextView
                 android:id="@+id/textView8"
@@ -500,6 +486,45 @@
                 app:layout_constraintBottom_toBottomOf="@+id/textView7"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/textView7" />
+
+            <HorizontalScrollView
+                android:id="@+id/buttonsScroller"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toStartOf="@+id/guideline2"
+                app:layout_constraintStart_toStartOf="@+id/guideline"
+                app:layout_constraintTop_toBottomOf="@+id/divider1"
+                app:layout_constrainedWidth="true"
+                android:fillViewport="true">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btnChargeprice"
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/go_to_chargeprice"
+                        android:transitionName="@string/shared_element_chargeprice"
+                        app:goneUnless="@{charger.data != null &amp;&amp; ChargepriceApi.isChargerSupported(charger.data)}"
+                        app:icon="@drawable/ic_chargeprice" />
+
+                    <Button
+                        android:id="@+id/btnChargerWebsite"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="@string/charger_website"
+                        app:goneUnless="@{charger.data != null &amp;&amp; charger.data.chargerUrl != null}"
+                        app:icon="@drawable/ic_link" />
+
+                </LinearLayout>
+            </HorizontalScrollView>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -77,6 +77,8 @@ data class GEChargeLocation(
         cost?.convert(),
         null,
         ChargepriceData(address.country, network, chargepoints.map { it.type }),
+        null,
+        null,
         Instant.now(),
         isDetailed
     )

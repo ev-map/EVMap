@@ -105,6 +105,8 @@ data class OSMChargingStation(
         getCost(),
         "© OpenStreetMap contributors",
         null,
+        null,
+        null,
         dataFetchTimestamp,
         true,
     )

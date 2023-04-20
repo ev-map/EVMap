@@ -71,6 +71,8 @@ data class OCMChargepoint(
             addressInfo.countryISOCode(refData),
             operatorId?.toString(),
             connections.map { "${it.connectionTypeId},${it.currentTypeId}" }),
+        operatorInfo?.websiteUrl,
+        addressInfo.relatedUrl,
         Instant.now(),
         isDetailed
     )

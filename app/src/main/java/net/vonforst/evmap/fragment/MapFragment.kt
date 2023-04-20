@@ -377,6 +377,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 null, extras
             )
         }
+        binding.detailView.btnChargerWebsite.setOnClickListener {
+            val charger = vm.charger.value?.data ?: return@setOnClickListener
+            charger.chargerUrl?.let { (activity as? MapsActivity)?.openUrl(it) }
+        }
         binding.detailView.imgPredictionSource.setOnClickListener {
             (activity as? MapsActivity)?.openUrl(getString(R.string.fronyx_url))
         }
@@ -807,6 +811,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                             }
                             R.drawable.ic_payment -> {
                                 showPaymentMethodsDialog(charger)
+                            }
+                            R.drawable.ic_network -> {
+                                charger.networkUrl?.let { (activity as? MapsActivity)?.openUrl(it) }
                             }
                         }
                     }

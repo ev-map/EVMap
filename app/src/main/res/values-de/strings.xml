@@ -295,4 +295,5 @@
     <string name="developer_mode_disabled">Entwicklermodus deaktiviert</string>
     <string name="gps">GPS</string>
     <string name="compass">Kompass</string>
+    <string name="charger_website">Website</string>
 </resources>

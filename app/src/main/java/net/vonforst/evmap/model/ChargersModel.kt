@@ -62,8 +62,8 @@ data class ChargeLocation(
     @Embedded val address: Address?,
     val chargepoints: List<Chargepoint>,
     val network: String?,
-    val url: String,
-    val editUrl: String?,
+    val url: String,  // URL of this charger at the data source
+    val editUrl: String?,  // URL to edit this charger at the data source
     @Embedded(prefix = "fault_report_") val faultReport: FaultReport?,
     val verified: Boolean,
     val barrierFree: Boolean?,
@@ -78,6 +78,8 @@ data class ChargeLocation(
     @Embedded val cost: Cost?,
     val license: String?,
     @Embedded(prefix = "chargeprice") val chargepriceData: ChargepriceData?,
+    val networkUrl: String?,  // Website of the network
+    val chargerUrl: String?,  // Website for this specific charging site. Might be an ad-hoc payment page.
     val timeRetrieved: Instant,
     val isDetailed: Boolean
 ) : ChargepointListItem(), Equatable, Parcelable {

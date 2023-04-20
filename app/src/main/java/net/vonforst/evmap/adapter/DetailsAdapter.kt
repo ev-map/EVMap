@@ -61,7 +61,8 @@ fun buildDetails(
         if (loc.network != null) DetailsAdapter.Detail(
             R.drawable.ic_network,
             R.string.network,
-            loc.network
+            loc.network,
+            clickable = loc.networkUrl != null
         ) else null,
         if (loc.faultReport != null) DetailsAdapter.Detail(
             R.drawable.ic_fault_report,

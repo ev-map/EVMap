@@ -75,10 +75,14 @@ data class OCMChargepoint(
             operatorId?.toString(),
             connections.map { "${it.connectionTypeId},${it.currentTypeId}" }),
         operatorInfo?.websiteUrl,
-        addressInfo.relatedUrl,
+        if (operatorInfo?.websiteUrl?.withoutTrailingSlash() != addressInfo.relatedUrl?.withoutTrailingSlash()) addressInfo.relatedUrl else null,
         Instant.now(),
         isDetailed
     )
+
+    private fun String.withoutTrailingSlash(): String {
+        return this.replace(Regex("/$"), "")
+    }
 
     private fun convertFaultReport(): FaultReport? {
         if (statusTypeId in faultStatuses || connections.any { it.statusTypeId in faultStatuses }) {

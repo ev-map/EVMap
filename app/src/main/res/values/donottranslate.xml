@@ -15,6 +15,7 @@
     <string name="pref_language_nb_rNO">Norsk Bokmål</string>
     <string name="pref_language_nl">Nederlands</string>
     <string name="pref_language_pt">Português</string>
+    <string name="pref_language_ro">Romana</string>
     <string name="about_contributors_list">
         Danilo Bargen\n
         Altonss\n
@@ -24,7 +25,8 @@
         Licaon_Kter\n
         Celso Azevedo\n
         pt2121\n
-        nautilusx
+        nautilusx\n
+        Bobby Galati
     </string>
     <string name="hide_on_scroll_fab_behavior">net.vonforst.evmap.ui.HideOnScrollFabBehavior</string>
     <string name="paypal_link" translatable="false">https://paypal.me/johan98</string>

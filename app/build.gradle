@@ -9,7 +9,7 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
 apply plugin: 'com.mikepenz.aboutlibraries.plugin'
 
-def supportedLocales = "en,de,fr,nb-rNO,nl,pt"
+def supportedLocales = "en,de,fr,nb-rNO,nl,pt,ro"
 
 android {
     compileSdkVersion 33
@@ -20,8 +20,8 @@ android {
         minSdkVersion 21
         targetSdkVersion 33
         // NOTE: always increase versionCode by 2 since automotive flavor uses versionCode + 1
-        versionCode 166
-        versionName "1.4.9"
+        versionCode 168
+        versionName "1.4.10"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         resConfigs supportedLocales.split(',')

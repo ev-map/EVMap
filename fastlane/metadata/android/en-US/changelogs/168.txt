@@ -1,0 +1,7 @@
+Improvements:
+- New translations: Portuguese, Romanian
+- Open Charge Map: Added links to operators
+
+Bugfixes:
+- Open Charge Map: Do not show deleted chargers
+- Open Charge Map: Fixed filter "Exclude faults"

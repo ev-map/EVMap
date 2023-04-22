@@ -1,0 +1,7 @@
+Verbesserungen:
+- Neue Übersetzungen: Portugiesisch, Rumänisch
+- Open Charge Map: Links zu Betreiber hinzugefügt
+
+Fehler behoben:
+- Open Charge Map: Gelöschte Ladestationen nicht anzeigen
+- Open Charge Map: Filter "Störung ausschließen" korrigiert

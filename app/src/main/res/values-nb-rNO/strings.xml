@@ -296,4 +296,6 @@
     <string name="developer_options">Utvikleralternativer</string>
     <string name="data_source_switched_to">Datakilde byttet til %s</string>
     <string name="developer_mode_enabled">Utviklermodus påslått</string>
+    <string name="menu_reset">Tilbakestill filterinnstillinger</string>
+    <string name="charger_website">Nettside</string>
 </resources>

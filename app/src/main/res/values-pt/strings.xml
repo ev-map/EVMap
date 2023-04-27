@@ -6,7 +6,7 @@
     <string name="filter_favorites">Favoritos</string>
     <string name="reorder">reordenar</string>
     <string name="delete">Apagar</string>
-    <string name="welcome_2_detail">Também pode encontrar esta informação em \"Sobre\" → \"Questões frequentes\"</string>
+    <string name="welcome_2_detail">Também pode encontrar esta informação em \"Sobre\" → \"Perguntas frequentes\"</string>
     <string name="chargeprice_donation_dialog_title">Você é um verdadeiro caçador de pechinchas!</string>
     <string name="donation_dialog_title">Obrigado por usar o EVMap</string>
     <string name="deleted_filterprofile">“%s” removido</string>
@@ -24,9 +24,10 @@
     <string name="pref_chargeprice_show_provider_customer_tariffs_summary">As empresas de serviços públicos às vezes oferecem planos especiais para os seus clientes</string>
     <plurals name="chargeprice_some_tariffs_selected">
         <item quantity="one">%d plano selecionado</item>
-        <item quantity="other">%d planos selecionados</item>
+        <item quantity="many">%d planos selecionados</item>
+        <item quantity="other"></item>
     </plurals>
-    <string name="data_sources_description">Escolha uma fonte de informação para as estações de carregamento. Pode alterar mais tarde nas definições da app.</string>
+    <string name="data_sources_description">Escolha uma fonte para as estações de carregamento. Pode alterar mais tarde nas definições da app.</string>
     <string name="about_contributors_text">Obrigado a todos os contribuidores de código e traduções para o EVMap:</string>
     <string name="utilization_prediction">Previsão de utilização</string>
     <string name="prediction_time_colon">%s:</string>
@@ -41,7 +42,7 @@
     <string name="donation_successful">Obrigado ❤️</string>
     <string name="category_car_dealership">Stand de carros</string>
     <string name="map_traffic">Trânsito</string>
-    <string name="faq">Questões frequentes</string>
+    <string name="faq">Perguntas frequentes</string>
     <string name="menu_filters_active">Filtros ativos</string>
     <string name="menu_edit_filters">Editar filtros</string>
     <string name="filters_activated">Filtros ativados</string>
@@ -96,16 +97,17 @@
     <string name="save_profile_enter_name">Insira o nome do perfil com este filtro:</string>
     <string name="save_as_profile">Guardar como perfil</string>
     <string name="filterprofiles_empty_state">Não existem filtros guardados</string>
-    <string name="welcome_2">Cada cor corresponde à uma potência máxima</string>
+    <string name="welcome_2">Cada cor corresponde a potência máxima do carregador</string>
     <string name="welcome_to_evmap">Bem-vindo ao EVMap</string>
-    <string name="pref_darkmode_always_off">sempre desligado</string>
+    <string name="pref_darkmode_always_off">Sempre desligado</string>
     <string name="welcome_2_title">Escolha a potência</string>
     <string name="navigate">Navegar</string>
     <string name="donation_dialog_detail">O EVMap é gratuito e de código aberto. Contribuições de código no GitHub são bem-vindas. Para ajudar a cobrir os custos de operação, por favor considere fazer uma doação ao criador da app.</string>
     <string name="charging_barrierfree">Não necessita de registo</string>
     <plurals name="charge_cards_compatible_num">
         <item quantity="one">%d forma de pagamento compatível</item>
-        <item quantity="other">%d formas de pagamento compatíveis</item>
+        <item quantity="many">%d formas de pagamento compatíveis</item>
+        <item quantity="other"></item>
     </plurals>
     <string name="chargeprice_session_fee">custo da sessão</string>
     <string name="edit_on_goingelectric_info">Por favor faça o login em GoingElectric.de se esta página estiver vazia</string>
@@ -134,11 +136,12 @@
     <string name="chargeprice_price_not_available">Preço não disponível</string>
     <string name="pref_my_tariffs">Os meus planos de carregamento</string>
     <plurals name="pref_my_tariffs_summary">
-        <item quantity="one" tools:ignore="ImpliedQuantity">(será destacado na comparação de preços)</item>
-        <item quantity="other">(serão destacados na comparação de preços)</item>
+        <item quantity="one">(será destacado na comparação de preços)</item>
+        <item quantity="many">(serão destacados na comparação de preços)</item>
+        <item quantity="other"></item>
     </plurals>
     <string name="data_source_goingelectric">GoingElectric.de</string>
-    <string name="chargeprice_all_tariffs_selected">todos os planos selecionados</string>
+    <string name="chargeprice_all_tariffs_selected">Todos os planos selecionados</string>
     <string name="license">Licença</string>
     <string name="unknown_operator">Operador desconhecido</string>
     <string name="settings_charger_data">Estações de carregamento</string>
@@ -153,13 +156,13 @@
     <string name="crash_report_comment_prompt">Pode adicionar um comentário abaixo:</string>
     <string name="pref_search_provider">Fornecedor da pesquisa</string>
     <string name="powered_by_mapbox">via Mapbox</string>
-    <string name="github_sponsors">Patrocinadores no GitHub</string>
+    <string name="github_sponsors">GitHub Sponsors</string>
     <string name="donate_desc">Apoie o desenvolvimento do EVMap com uma única doação</string>
     <string name="pref_map_rotate_gestures_on">Use dois dedos para girar o mapa</string>
     <string name="pref_map_rotate_gestures_off">Rotação desligada (norte sempre para cima)</string>
     <string name="refresh_live_data">atualizar estado em tempo real</string>
     <string name="pref_search_provider_info">As pesquisas são caras, especialmente quando o Google Maps é usado. Por favor considere doar através de \"Sobre\" → \"Doar\".</string>
-    <string name="github_sponsors_desc">Apoie o EVMap no GitHub Sponsors</string>
+    <string name="github_sponsors_desc">Apoie o EVMap através do GitHub</string>
     <string name="unnamed_filter_profile">Filtro sem nome</string>
     <string name="deleted_recent_search_results">As pesquisas recentes foram eliminadas</string>
     <string name="help">Ajuda</string>
@@ -174,7 +177,7 @@
     <string name="autocomplete_connection_error">Não foi possível carregar as sugestões</string>
     <string name="pref_language_device_default">Língua do dispositivo</string>
     <string name="pref_darkmode_device_default">Padrão do dispositivo</string>
-    <string name="pref_darkmode_always_on">sempre ligado</string>
+    <string name="pref_darkmode_always_on">Sempre ligado</string>
     <string name="pref_chargeprice_currency_chf">Franco suíço (CHF)</string>
     <string name="pref_chargeprice_currency_czk">Coroa checa (CZK)</string>
     <string name="pref_chargeprice_currency_dkk">Coroa dinamarquesa (DKK)</string>
@@ -188,7 +191,8 @@
     <string name="compass">Compasso</string>
     <plurals name="prediction_number_available">
         <item quantity="one">%1$d/%2$d disponível</item>
-        <item quantity="other">%1$d/%2$d disponíveis</item>
+        <item quantity="many">%1$d/%2$d disponíveis</item>
+        <item quantity="other"></item>
     </plurals>
     <string name="pref_prediction_enabled">Mostrar previsões de utilização</string>
     <string name="developer_mode_enabled">Modo de desenvolvedor ativado</string>
@@ -227,7 +231,7 @@
     <string name="general_info">Informação geral</string>
     <string name="realtime_data_unavailable">Estado em tempo real não disponível</string>
     <string name="realtime_data_loading">Verificado estado em tempo real…</string>
-    <string name="realtime_data_source">Fonte do estado em tempo real (beta) %s</string>
+    <string name="realtime_data_source">Fonte do estado em tempo real (beta): %s</string>
     <string name="source">Fonte: %s</string>
     <string name="search">Pesquisa</string>
     <string name="menu_map">Mapa</string>
@@ -296,4 +300,5 @@
     <string name="about_contributors">Contribuidores</string>
     <string name="pref_chargeprice_allow_unbalanced_load">Permitir carga não balanceada</string>
     <string name="pref_chargeprice_allow_unbalanced_load_summary">Permitir carregamento CA/AC monofásico (1 fase) com mais de 4.5 kW</string>
+    <string name="charger_website">Website</string>
 </resources>

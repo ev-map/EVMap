@@ -24,6 +24,16 @@ fun addDebugInterceptors(context: Context) {
 }
 
 fun OkHttpClient.Builder.addDebugInterceptors(): OkHttpClient.Builder {
-    this.addNetworkInterceptor(FlipperOkhttpInterceptor(networkFlipperPlugin))
+    // Flipper does not work during unit tests - so check whether we are running tests first
+    var isRunningTest = true
+    try {
+        Class.forName("org.junit.Test")
+    } catch (e: ClassNotFoundException) {
+        isRunningTest = false
+    }
+    
+    if (!isRunningTest) {
+        this.addNetworkInterceptor(FlipperOkhttpInterceptor(networkFlipperPlugin))
+    }
     return this
 }

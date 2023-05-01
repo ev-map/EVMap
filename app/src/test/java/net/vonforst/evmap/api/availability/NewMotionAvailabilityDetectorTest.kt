@@ -43,8 +43,8 @@ class NewMotionAvailabilityDetectorTest {
                     "nm/markers" -> {
                         val urlTail = segments.subList(2, segments.size).joinToString("/")
                         val id = when (urlTail) {
-                            "9.56608/9.576080000000001/54.5066/54.516600000000004" -> 2105
-                            "9.539283999999999/9.549284/54.471699/54.481699000000006" -> 18284
+                            "9.56608/9.576080000000001/54.5066/54.516600000000004/22" -> 2105
+                            "9.539283999999999/9.549284/54.471699/54.481699000000006/22" -> 18284
                             else -> -1
                         }
                         return okResponse("/newmotion/$id/markers.json")

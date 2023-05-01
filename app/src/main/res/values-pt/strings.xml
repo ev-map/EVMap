@@ -106,8 +106,7 @@
     <string name="charging_barrierfree">Não necessita de registo</string>
     <plurals name="charge_cards_compatible_num">
         <item quantity="one">%d forma de pagamento compatível</item>
-        <item quantity="many">%d formas de pagamento compatíveis</item>
-        <item quantity="other"></item>
+        <item quantity="other">%d formas de pagamento compatíveis</item>
     </plurals>
     <string name="chargeprice_session_fee">custo da sessão</string>
     <string name="edit_on_goingelectric_info">Por favor faça o login em GoingElectric.de se esta página estiver vazia</string>
@@ -136,9 +135,8 @@
     <string name="chargeprice_price_not_available">Preço não disponível</string>
     <string name="pref_my_tariffs">Os meus planos de carregamento</string>
     <plurals name="pref_my_tariffs_summary">
-        <item quantity="one">(será destacado na comparação de preços)</item>
-        <item quantity="many">(serão destacados na comparação de preços)</item>
-        <item quantity="other"></item>
+        <item quantity="one" tools:ignore="ImpliedQuantity">(será destacado na comparação de preços)</item>
+        <item quantity="other">(serão destacados na comparação de preços)</item>
     </plurals>
     <string name="data_source_goingelectric">GoingElectric.de</string>
     <string name="chargeprice_all_tariffs_selected">Todos os planos selecionados</string>

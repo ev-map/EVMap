@@ -3,11 +3,11 @@ package net.vonforst.evmap.api.openchargemap
 import android.content.Context
 import com.car2go.maps.model.LatLng
 import com.car2go.maps.model.LatLngBounds
-import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
 import net.vonforst.evmap.BuildConfig
 import net.vonforst.evmap.R
+import net.vonforst.evmap.addDebugInterceptors
 import net.vonforst.evmap.api.*
 import net.vonforst.evmap.model.*
 import net.vonforst.evmap.ui.cluster
@@ -83,7 +83,7 @@ interface OpenChargeMapApi {
                     chain.proceed(new)
                 }
                 if (BuildConfig.DEBUG) {
-                    addNetworkInterceptor(StethoInterceptor())
+                    addDebugInterceptors()
                 }
                 if (context != null) {
                     cache(Cache(context.cacheDir, cacheSize))

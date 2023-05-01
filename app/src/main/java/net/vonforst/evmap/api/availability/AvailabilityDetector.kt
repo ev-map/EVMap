@@ -1,12 +1,12 @@
 package net.vonforst.evmap.api.availability
 
-import com.facebook.stetho.okhttp3.StethoInterceptor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import net.vonforst.evmap.api.RateLimitInterceptor
 import net.vonforst.evmap.api.await
 import net.vonforst.evmap.api.equivalentPlugTypes
 import net.vonforst.evmap.cartesianProduct
+import net.vonforst.evmap.addDebugInterceptors
 import net.vonforst.evmap.model.ChargeLocation
 import net.vonforst.evmap.model.Chargepoint
 import net.vonforst.evmap.viewmodel.Resource
@@ -160,7 +160,7 @@ private val cookieManager = CookieManager().apply {
 
 private val okhttp = OkHttpClient.Builder()
     .addInterceptor(RateLimitInterceptor())
-    .addNetworkInterceptor(StethoInterceptor())
+    .addDebugInterceptors()
     .readTimeout(10, TimeUnit.SECONDS)
     .connectTimeout(10, TimeUnit.SECONDS)
     .cookieJar(JavaNetCookieJar(cookieManager))

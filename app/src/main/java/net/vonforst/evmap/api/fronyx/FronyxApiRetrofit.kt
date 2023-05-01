@@ -1,9 +1,9 @@
 package net.vonforst.evmap.api.fronyx
 
 import android.content.Context
-import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.squareup.moshi.Moshi
 import net.vonforst.evmap.BuildConfig
+import net.vonforst.evmap.addDebugInterceptors
 import net.vonforst.evmap.model.ChargeLocation
 import net.vonforst.evmap.model.Chargepoint
 import okhttp3.Cache
@@ -49,7 +49,7 @@ private interface FronyxApiRetrofit {
                     chain.proceed(new)
                 }
                 if (BuildConfig.DEBUG) {
-                    addNetworkInterceptor(StethoInterceptor())
+                    addDebugInterceptors()
                 }
                 if (context != null) {
                     cache(Cache(context.getCacheDir(), cacheSize))

@@ -241,8 +241,9 @@ dependencies {
     implementation("ch.acra:acra-limiter:$acraVersion")
 
     // debug tools
-    implementation 'com.facebook.stetho:stetho:1.6.0'
-    implementation 'com.facebook.stetho:stetho-okhttp3:1.6.0'
+    debugImplementation 'com.facebook.flipper:flipper:0.190.0'
+    debugImplementation 'com.facebook.soloader:soloader:0.10.5'
+    debugImplementation 'com.facebook.flipper:flipper-network-plugin:0.190.0'
 
     // testing
     testImplementation 'junit:junit:4.13.2'

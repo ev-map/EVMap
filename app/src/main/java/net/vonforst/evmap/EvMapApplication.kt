@@ -1,7 +1,6 @@
 package net.vonforst.evmap
 
 import android.app.Application
-import com.facebook.stetho.Stetho
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.ui.updateAppLocale
 import net.vonforst.evmap.ui.updateNightMode
@@ -24,8 +23,8 @@ class EvMapApplication : Application() {
             prefs.language = null
         }
 
-        Stetho.initializeWithDefaults(this);
         init(applicationContext)
+        addDebugInterceptors(applicationContext)
 
         if (!BuildConfig.DEBUG) {
             initAcra {

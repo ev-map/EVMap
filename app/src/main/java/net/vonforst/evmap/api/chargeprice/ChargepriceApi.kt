@@ -1,13 +1,13 @@
 package net.vonforst.evmap.api.chargeprice
 
 import android.content.Context
-import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
 import jsonapi.Document
 import jsonapi.JsonApiFactory
 import jsonapi.retrofit.DocumentConverterFactory
 import net.vonforst.evmap.BuildConfig
+import net.vonforst.evmap.addDebugInterceptors
 import net.vonforst.evmap.model.ChargeLocation
 import okhttp3.Cache
 import okhttp3.OkHttpClient
@@ -77,7 +77,7 @@ interface ChargepriceApi {
                     chain.proceed(new)
                 }
                 if (BuildConfig.DEBUG) {
-                    addNetworkInterceptor(StethoInterceptor())
+                    addDebugInterceptors()
                 }
                 if (context != null) {
                     cache(Cache(context.getCacheDir(), cacheSize))

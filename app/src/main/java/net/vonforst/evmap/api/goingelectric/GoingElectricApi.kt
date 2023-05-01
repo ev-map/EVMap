@@ -3,7 +3,6 @@ package net.vonforst.evmap.api.goingelectric
 import android.content.Context
 import com.car2go.maps.model.LatLng
 import com.car2go.maps.model.LatLngBounds
-import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -11,6 +10,7 @@ import kotlinx.coroutines.supervisorScope
 import kotlinx.coroutines.withContext
 import net.vonforst.evmap.BuildConfig
 import net.vonforst.evmap.R
+import net.vonforst.evmap.addDebugInterceptors
 import net.vonforst.evmap.api.*
 import net.vonforst.evmap.model.*
 import net.vonforst.evmap.ui.cluster
@@ -104,7 +104,7 @@ interface GoingElectricApi {
                     chain.proceed(original)
                 }
                 if (BuildConfig.DEBUG) {
-                    addNetworkInterceptor(StethoInterceptor())
+                    addDebugInterceptors()
                 }
                 if (context != null) {
                     cache(Cache(context.getCacheDir(), cacheSize))

@@ -15,12 +15,13 @@ private const val coordRange = 0.005  // range of latitude and longitude for loa
 private const val maxDistance = 40  // max distance between reported positions in meters
 
 interface NewMotionApi {
-    @GET("markers/{lngMin}/{lngMax}/{latMin}/{latMax}")
+    @GET("markers/{lngMin}/{lngMax}/{latMin}/{latMax}/{zoom}")
     suspend fun getMarkers(
         @Path("lngMin") lngMin: Double,
         @Path("lngMax") lngMax: Double,
         @Path("latMin") latMin: Double,
-        @Path("latMax") latMax: Double
+        @Path("latMax") latMax: Double,
+        @Path("zoom") zoom: Int = 22
     ): List<NMMarker>
 
     @GET("locations/{id}")
@@ -76,7 +77,7 @@ interface NewMotionApi {
     companion object {
         fun create(client: OkHttpClient, baseUrl: String? = null): NewMotionApi {
             val retrofit = Retrofit.Builder()
-                .baseUrl(baseUrl ?: "https://my.newmotion.com/api/map/v2/")
+                .baseUrl(baseUrl ?: "https://ui-map.shellrecharge.com/api/map/v2/")
                 .addConverterFactory(MoshiConverterFactory.create())
                 .client(client)
                 .build()

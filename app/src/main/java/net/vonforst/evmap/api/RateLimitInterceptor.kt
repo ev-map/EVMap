@@ -10,7 +10,7 @@ class RateLimitInterceptor : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
-        if (request.url.host == "my.newmotion.com") {
+        if (request.url.host == "ui-map.shellrecharge.com") {
             // limit requests sent to NewMotion to 3 per second
             rateLimiter.acquire(1)
 

@@ -170,8 +170,8 @@ dependencies {
     implementation 'com.github.ev-map:CustomBottomSheetBehavior:e48f73ea7b'
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-moshi:2.9.0'
-    implementation 'com.squareup.okhttp3:okhttp:4.9.0'
-    implementation 'com.squareup.okhttp3:okhttp-urlconnection:4.9.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.11.0'
+    implementation 'com.squareup.okhttp3:okhttp-urlconnection:4.11.0'
     implementation 'com.squareup.moshi:moshi-kotlin:1.13.0'
     implementation 'com.squareup.moshi:moshi-adapters:1.13.0'
     implementation 'com.markomilos.jsonapi:jsonapi-retrofit:1.1.0'
@@ -247,7 +247,7 @@ dependencies {
 
     // testing
     testImplementation 'junit:junit:4.13.2'
-    testImplementation "com.squareup.okhttp3:mockwebserver:4.9.0"
+    testImplementation "com.squareup.okhttp3:mockwebserver:4.11.0"
     //noinspection GradleDependency
     testImplementation 'org.json:json:20080701'
 

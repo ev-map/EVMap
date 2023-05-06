@@ -1,6 +1,7 @@
 package net.vonforst.evmap
 
 import android.content.Context
+import android.os.Build
 import com.facebook.flipper.android.AndroidFlipperClient
 import com.facebook.flipper.plugins.databases.DatabasesFlipperPlugin
 import com.facebook.flipper.plugins.inspector.DescriptorMapping
@@ -14,6 +15,8 @@ import okhttp3.OkHttpClient
 private val networkFlipperPlugin = NetworkFlipperPlugin()
 
 fun addDebugInterceptors(context: Context) {
+    if (Build.FINGERPRINT == "robolectric") return
+
     SoLoader.init(context, false)
     val client = AndroidFlipperClient.getInstance(context)
     client.addPlugin(InspectorFlipperPlugin(context, DescriptorMapping.withDefaults()))

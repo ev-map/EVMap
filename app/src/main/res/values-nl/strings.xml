@@ -53,7 +53,6 @@
     <string name="settings_ui">Interface</string>
     <string name="settings_map">Kaart</string>
     <string name="copyright">Copyright</string>
-    <string name="copyright_summary">©2020–2023 Johan von Forstner</string>
     <string name="other">Andere</string>
     <string name="privacy">Privacy</string>
     <string name="pref_navigate_use_maps_off">Navigatieknop opent de kaart app met de locatie van het laadstation</string>

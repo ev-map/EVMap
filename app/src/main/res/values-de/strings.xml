@@ -42,7 +42,6 @@
     <string name="settings_ui">Oberfläche</string>
     <string name="settings_map">Karte</string>
     <string name="copyright">Copyright</string>
-    <string name="copyright_summary">©2020–2023 Johan von Forstner</string>
     <string name="other">Sonstiges</string>
     <string name="privacy">Datenschutzerklärung</string>
     <string name="fav_add">Als Favorit speichern</string>

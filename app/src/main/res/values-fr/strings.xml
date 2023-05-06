@@ -154,7 +154,6 @@
     <string name="fault_report_date">Rapport d\'anomalie (dernière mise à jour : %s)</string>
     <string name="menu_report_new_charger">Nouveau chargeur</string>
     <string name="filter_connectors">Connecteurs</string>
-    <string name="copyright_summary">©2020–2023 Johan von Forstner</string>
     <string name="other">Autre</string>
     <string name="pref_navigate_use_maps_off">Le bouton de navigation lance l’application de cartes à l’emplacement du chargeur</string>
     <string name="settings_map">Carte</string>

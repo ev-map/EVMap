@@ -144,11 +144,11 @@
     <string name="license">Licença</string>
     <string name="unknown_operator">Operador desconhecido</string>
     <string name="settings_charger_data">Estações de carregamento</string>
-    <string name="data_source_goingelectric_desc">Boa escolha para países de lingua alemã. Descrições em alemão. Mantido pela comunidade.</string>
+    <string name="data_source_goingelectric_desc">Boa escolha para países de língua alemã. Descrições em alemão. Mantido pela comunidade.</string>
     <string name="pref_data_source">Fonte da informação</string>
     <string name="data_source_openchargemap">Open Charge Map</string>
     <string name="next">próximo</string>
-    <string name="data_source_openchargemap_desc">Mundial, com vários níveis de qualidade. Descrições em inglês ou lingua local. Mantido pela comunidade e usa informação governamental publica em alguns países (ex: América do Norte, Reino Unido, França, Noruega, etc).</string>
+    <string name="data_source_openchargemap_desc">Mundial, com vários níveis de qualidade. Descrições em inglês ou língua local. Mantido pela comunidade e usa informação governamental publica em alguns países (ex: América do Norte, Reino Unido, França, Noruega, etc).</string>
     <string name="get_started">Começar</string>
     <string name="lets_go">Vamos lá</string>
     <string name="crash_report_text">O EVMap encontrou um problema. Por favor envie um relatório do erro para o criador da app.</string>

@@ -20,6 +20,7 @@ abstract class BaseSettingsFragment : PreferenceFragmentCompat(),
     protected abstract val isTopLevel: Boolean
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        prefs = PreferenceDataSource(requireContext())
         super.onCreate(savedInstanceState)
 
         if (isTopLevel) {
@@ -39,8 +40,6 @@ abstract class BaseSettingsFragment : PreferenceFragmentCompat(),
             findNavController(),
             (requireActivity() as MapsActivity).appBarConfiguration
         )
-
-        prefs = PreferenceDataSource(requireContext())
 
         // Workaround for AndroidX bug: https://github.com/material-components/material-components-android/issues/1984
         view.setBackgroundColor(MaterialColors.getColor(view, android.R.attr.windowBackground))

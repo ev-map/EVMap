@@ -295,4 +295,5 @@
     <string name="gps">GPS</string>
     <string name="compass">Compass</string>
     <string name="charger_website">Website</string>
+    <string name="location_status">Location provider status</string>
 </resources>

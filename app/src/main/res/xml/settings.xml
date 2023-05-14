@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <Preference
         android:fragment="net.vonforst.evmap.fragment.preference.UiSettingsFragment"
         android:title="@string/settings_ui"
@@ -12,4 +13,9 @@
         android:fragment="net.vonforst.evmap.fragment.preference.ChargepriceSettingsFragment"
         android:title="@string/settings_chargeprice"
         android:icon="@drawable/ic_chargeprice" />
+    <Preference
+        android:key="developer_options"
+        android:fragment="net.vonforst.evmap.fragment.preference.DeveloperSettingsFragment"
+        android:title="@string/developer_options"
+        android:icon="@drawable/ic_developer" />
 </PreferenceScreen>

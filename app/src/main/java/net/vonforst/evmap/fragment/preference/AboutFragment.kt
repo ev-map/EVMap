@@ -2,6 +2,7 @@ package net.vonforst.evmap.fragment.preference
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
@@ -15,9 +16,13 @@ import com.mikepenz.aboutlibraries.LibsBuilder
 import net.vonforst.evmap.BuildConfig
 import net.vonforst.evmap.MapsActivity
 import net.vonforst.evmap.R
+import net.vonforst.evmap.storage.PreferenceDataSource
 
 
 class AboutFragment : PreferenceFragmentCompat() {
+    private lateinit var prefs: PreferenceDataSource
+    private var developerOptionsCounter = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enterTransition = MaterialFadeThrough()
@@ -33,6 +38,8 @@ class AboutFragment : PreferenceFragmentCompat() {
             (requireActivity() as MapsActivity).appBarConfiguration
         )
 
+        prefs = PreferenceDataSource(requireContext())
+
         // Workaround for AndroidX bug: https://github.com/material-components/material-components-android/issues/1984
         view.setBackgroundColor(MaterialColors.getColor(view, android.R.attr.windowBackground))
     }
@@ -45,6 +52,21 @@ class AboutFragment : PreferenceFragmentCompat() {
 
     override fun onPreferenceTreeClick(preference: Preference): Boolean {
         return when (preference.key) {
+            "version" -> {
+                if (!prefs.developerModeEnabled) {
+                    developerOptionsCounter += 1
+                    if (developerOptionsCounter >= 7) {
+                        prefs.developerModeEnabled = true
+                        Toast.makeText(
+                            requireContext(),
+                            getString(R.string.developer_mode_enabled),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+                true
+            }
+
             "contributors" -> {
                 MaterialAlertDialogBuilder(requireContext())
                     .setTitle(R.string.about_contributors)
@@ -53,6 +75,7 @@ class AboutFragment : PreferenceFragmentCompat() {
                     .show()
                 true
             }
+
             "github_link" -> {
                 (activity as? MapsActivity)?.openUrl(getString(R.string.github_link))
                 true

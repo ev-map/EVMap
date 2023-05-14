@@ -143,6 +143,9 @@ class FusionEngine(context: Context) : LocationEngine(context),
     @RequiresPermission(anyOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
     override fun disable() {
         locationManager.removeUpdates(this)
+        gpsLocation = null
+        networkLocation = null
+        fusedLocation = null
     }
 
     @RequiresPermission(anyOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])

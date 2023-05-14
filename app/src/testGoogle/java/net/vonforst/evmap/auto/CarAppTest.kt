@@ -8,6 +8,8 @@ import androidx.car.app.testing.TestCarContext
 import androidx.car.app.testing.TestScreenManager
 import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ApplicationProvider
+import net.vonforst.evmap.FakeAndroidKeyStore
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
@@ -21,6 +23,11 @@ class CarAppTest {
         TestCarContext.createCarContext(ApplicationProvider.getApplicationContext()).apply {
             updateHandshakeInfo(HandshakeInfo("auto.testing", 1))
         }
+
+    @Before
+    fun before() {
+        FakeAndroidKeyStore.setup
+    }
 
     @Test
     fun onCreateScreen_returnsExpectedScreen() {

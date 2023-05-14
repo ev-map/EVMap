@@ -66,7 +66,7 @@ class DeveloperSettingsFragment : BaseSettingsFragment() {
                     )
                 ) {
                     append("Last fused location: ")
-                    appendLine(printLocation(locationManager.getLastKnownLocation(LocationManager.FUSED_PROVIDER)))
+                    append(printLocation(locationManager.getLastKnownLocation(LocationManager.FUSED_PROVIDER)))
                 } else {
                     append("System's fused location provider not available")
                 }

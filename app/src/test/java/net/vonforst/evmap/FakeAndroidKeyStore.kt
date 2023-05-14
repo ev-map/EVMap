@@ -18,6 +18,8 @@ import javax.crypto.SecretKey
 
 
 /**
+ * https://proandroiddev.com/testing-jetpack-security-with-robolectric-9f9cf2aa4f61
+ *
  * To use, add to your test:
  *
  * companion object {

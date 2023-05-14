@@ -31,6 +31,7 @@ class FusionEngine(context: Context) : LocationEngine(context),
         context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
     private var gpsLocation: Location? = null
     private var networkLocation: Location? = null
+    private var fusedLocation: Location? = null
 
     private val supportsSystemFusedProvider: Boolean
         get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && locationManager.allProviders.contains(
@@ -101,7 +102,6 @@ class FusionEngine(context: Context) : LocationEngine(context),
             try {
                 enableFused(gpsInterval)
                 checkLastKnownFused()
-                return
             } catch (e: SecurityException) {
                 Log.e(TAG, "Permissions not granted for fused provider", e)
             }
@@ -235,15 +235,16 @@ class FusionEngine(context: Context) : LocationEngine(context),
 
     override fun onLocationChanged(location: Location) {
         if (LocationManager.FUSED_PROVIDER == location.provider) {
+            fusedLocation = location
             requests.forEach { it.listener.onLocationChanged(location) }
         } else if (LocationManager.GPS_PROVIDER == location.provider) {
             gpsLocation = location
-            if (gpsLocation.isBetterThan(networkLocation)) {
+            if (gpsLocation.isBetterThan(networkLocation) && fusedLocation == null) {
                 requests.forEach { it.listener.onLocationChanged(location) }
             }
         } else if (LocationManager.NETWORK_PROVIDER == location.provider) {
             networkLocation = location
-            if (networkLocation.isBetterThan(gpsLocation)) {
+            if (networkLocation.isBetterThan(gpsLocation) && fusedLocation == null) {
                 requests.forEach { it.listener.onLocationChanged(location) }
             }
         }

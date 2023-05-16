@@ -131,8 +131,11 @@ interface ChargepriceApi {
                     it !in listOf(
                         "1", // unknown operator
                         "44", // private residence/individual
-                        "45"  // business owner at location
+                        "45",  // business owner at location
+                        "23", "3534" // Tesla
                     )
+                } else if (charger.dataSource == "goingelectric") {
+                    it !== "Tesla Supercharger"
                 } else {
                     true
                 }

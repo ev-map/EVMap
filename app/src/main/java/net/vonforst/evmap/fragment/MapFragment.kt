@@ -381,6 +381,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             val charger = vm.charger.value?.data ?: return@setOnClickListener
             charger.chargerUrl?.let { (activity as? MapsActivity)?.openUrl(it) }
         }
+        binding.detailView.btnLogin.setOnClickListener {
+            findNavController().navigate(R.id.settings_data)
+        }
         binding.detailView.imgPredictionSource.setOnClickListener {
             (activity as? MapsActivity)?.openUrl(getString(R.string.fronyx_url))
         }

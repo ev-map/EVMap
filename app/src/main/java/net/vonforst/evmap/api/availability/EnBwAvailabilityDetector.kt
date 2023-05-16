@@ -223,7 +223,7 @@ class EnBwAvailabilityDetector(client: OkHttpClient, baseUrl: String? = null) :
                 "Slowenien",
                 "Spanien",
                 "Tschechien"
-            )
+            ) && charger.network != "Tesla Supercharger"
             "openchargemap" -> country in listOf(
                 "DE",
                 "AT",
@@ -242,7 +242,7 @@ class EnBwAvailabilityDetector(client: OkHttpClient, baseUrl: String? = null) :
                 "SI",
                 "ES",
                 "CZ"
-            )
+            ) && charger.chargepriceData?.network !in listOf("23", "3534")
             else -> false
         }
     }

@@ -311,10 +311,11 @@
                 android:id="@+id/textView13"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
                 android:gravity="right|end"
-                android:text="@{availability.status == Status.SUCCESS ? @string/realtime_data_source(availability.data.source) : availability.status == Status.LOADING ? @string/realtime_data_loading : @string/realtime_data_unavailable}"
+                android:text="@{availability.status == Status.SUCCESS ? @string/realtime_data_source(availability.data.source) : availability.status == Status.LOADING ? @string/realtime_data_loading : availability.message == &quot;not signed in&quot; ? @string/realtime_data_login_needed : @string/realtime_data_unavailable}"
                 android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-                app:layout_constraintEnd_toStartOf="@+id/guideline2"
+                app:layout_constraintEnd_toStartOf="@+id/btnLogin"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/connectors"
                 tools:text="Echtzeitdaten nicht verfügbar" />
@@ -525,6 +526,17 @@
 
                 </LinearLayout>
             </HorizontalScrollView>
+
+            <Button
+                android:id="@+id/btnLogin"
+                style="@style/Widget.Material3.Button.TextButton.Dialog"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:text="@string/login"
+                app:goneUnless="@{availability.status == Status.ERROR &amp;&amp; availability.message == &quot;not signed in&quot;}"
+                app:layout_constraintBottom_toBottomOf="@+id/textView13"
+                app:layout_constraintEnd_toStartOf="@+id/guideline2"
+                app:layout_constraintTop_toTopOf="@+id/textView13" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

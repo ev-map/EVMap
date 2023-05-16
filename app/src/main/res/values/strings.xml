@@ -26,6 +26,7 @@
     <string name="amenities">Amenities</string>
     <string name="general_info">General info</string>
     <string name="realtime_data_unavailable">Real-time status unavailable</string>
+    <string name="realtime_data_login_needed">Tesla account needed for real-time data</string>
     <string name="realtime_data_loading">Checking real-time status…</string>
     <string name="realtime_data_source">Real-time status source (beta): %s</string>
     <string name="source">Source: %s</string>

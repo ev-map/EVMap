@@ -5,6 +5,7 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
+import kotlinx.coroutines.runBlocking
 import net.vonforst.evmap.model.ChargeLocation
 import net.vonforst.evmap.model.Chargepoint
 import net.vonforst.evmap.model.Coordinate
@@ -15,6 +16,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
+import java.io.IOException
 import java.security.MessageDigest
 import java.security.SecureRandom
 import java.time.Instant
@@ -55,8 +57,6 @@ interface TeslaAuthenticationApi {
     )
 
     companion object {
-        private val charSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
-
         fun create(client: OkHttpClient, baseUrl: String? = null): TeslaAuthenticationApi {
             val retrofit = Retrofit.Builder()
                 .baseUrl(baseUrl ?: "https://auth.tesla.com")
@@ -368,12 +368,17 @@ interface TeslaGraphQlApi {
     }
 
     companion object {
-        fun create(client: OkHttpClient, token: String, baseUrl: String? = null): TeslaGraphQlApi {
+        fun create(
+            client: OkHttpClient,
+            baseUrl: String? = null,
+            token: suspend () -> String
+        ): TeslaGraphQlApi {
             val clientWithInterceptor = client.newBuilder()
                 .addInterceptor { chain ->
+                    val t = runBlocking { token() }
                     // add API key to every request
                     val request = chain.request().newBuilder()
-                        .header("Authorization", "Bearer $token")
+                        .header("Authorization", "Bearer $t")
                         .header("User-Agent", "okhttp/4.9.2")
                         .header("x-tesla-user-agent", "TeslaApp/4.19.5-1667/3a5d531cc3/android/27")
                         .header("Accept", "*/*")
@@ -497,20 +502,27 @@ class TeslaAvailabilityDetector(
     }
 
     private suspend fun initApi(): TeslaGraphQlApi {
+
         return api ?: run {
-            val now = Instant.now().epochSecond
-            val token =
-                tokenStore.teslaAccessToken.takeIf { tokenStore.teslaAccessTokenExpiry > now }
-                    ?: run {
-                        val refreshToken = tokenStore.teslaRefreshToken
-                            ?: throw AvailabilityDetectorException("not signed in")
-                        val response =
-                            authApi.getToken(TeslaAuthenticationApi.RefreshTokenRequest(refreshToken))
-                        tokenStore.teslaAccessToken = response.accessToken
-                        tokenStore.teslaAccessTokenExpiry = now + response.expiresIn
-                        response.accessToken
-                    }
-            val newApi = TeslaGraphQlApi.create(client, token, baseUrl)
+            val newApi = TeslaGraphQlApi.create(client, baseUrl) {
+                val now = Instant.now().epochSecond
+                val token =
+                    tokenStore.teslaAccessToken.takeIf { tokenStore.teslaAccessTokenExpiry > now }
+                        ?: run {
+                            val refreshToken = tokenStore.teslaRefreshToken
+                                ?: throw IOException("not signed in")
+                            val response =
+                                authApi.getToken(
+                                    TeslaAuthenticationApi.RefreshTokenRequest(
+                                        refreshToken
+                                    )
+                                )
+                            tokenStore.teslaAccessToken = response.accessToken
+                            tokenStore.teslaAccessTokenExpiry = now + response.expiresIn
+                            response.accessToken
+                        }
+                token
+            }
             api = newApi
             newApi
         }

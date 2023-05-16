@@ -26,6 +26,7 @@
     <string name="amenities">Ausstattung</string>
     <string name="general_info">Allgemein</string>
     <string name="realtime_data_unavailable">Echtzeitstatus nicht verfügbar</string>
+    <string name="realtime_data_login_needed">Tesla-Account für Echtzeitdaten benötigt</string>
     <string name="realtime_data_loading">Prüfe Echtzeitstatus…</string>
     <string name="realtime_data_source">Quelle Echtzeitdaten (beta): %s</string>
     <string name="source">Quelle: %s</string>

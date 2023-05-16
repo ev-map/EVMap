@@ -182,7 +182,11 @@ class NewMotionAvailabilityDetector(client: OkHttpClient, baseUrl: String? = nul
 
     override fun isChargerSupported(charger: ChargeLocation): Boolean {
         // NewMotion is our fallback
-        return true
+        return when (charger.dataSource) {
+            "goingelectric" -> charger.network != "Tesla Supercharger"
+            "openchargemap" -> charger.chargepriceData?.network !in listOf("23", "3534")
+            else -> false
+        }
     }
 
 }

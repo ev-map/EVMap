@@ -42,6 +42,7 @@ class DataSettingsFragment : BaseSettingsFragment() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.settings_data, rootKey)
         teslaAccountPreference = findPreference<Preference>("tesla_account")!!
+        refreshTeslaAccountStatus()
     }
 
     override fun onResume() {

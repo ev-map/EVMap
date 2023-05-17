@@ -15,6 +15,7 @@
     <color name="charger_low">#607d8b</color>
     <color name="available">#4caf50</color>
     <color name="charging">#00bcd4</color>
+    <color name="some_available">#ffc107</color>
     <color name="unavailable">#f44336</color>
     <color name="unknown">#9e9e9e</color>
     <color name="status_bar_scrim">#C3000000</color>

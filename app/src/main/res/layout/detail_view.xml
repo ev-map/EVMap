@@ -45,11 +45,15 @@
 
         <variable
             name="predictionGraph"
-            type="Map&lt;ZonedDateTime, Integer&gt;" />
+            type="Map&lt;ZonedDateTime, Double&gt;" />
 
         <variable
             name="predictionMaxValue"
-            type="Integer" />
+            type="Double" />
+
+        <variable
+            name="predictionIsPercentage"
+            type="Boolean" />
 
         <variable
             name="predictionDescription"
@@ -357,7 +361,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="@string/utilization_prediction"
+                android:text="@{predictionIsPercentage ? @string/average_utilization : @string/utilization_prediction}"
+                tools:text="@string/utilization_prediction"
                 android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
                 android:textColor="?colorPrimary"
                 app:goneUnless="@{predictionGraph != null}"
@@ -372,7 +377,7 @@
                 android:layout_marginEnd="8dp"
                 android:text="@{predictionDescription}"
                 android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-                app:goneUnless="@{predictionGraph != null}"
+                app:goneUnless="@{predictionGraph != null &amp;&amp; !predictionIsPercentage}"
                 app:layout_constraintBaseline_toBaselineOf="@+id/textView8"
                 app:layout_constraintEnd_toStartOf="@+id/btnPredictionHelp"
                 app:layout_constraintStart_toEndOf="@+id/textView8"
@@ -384,7 +389,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/help"
-                app:goneUnless="@{predictionGraph != null}"
+                app:goneUnless="@{predictionGraph != null &amp;&amp; !predictionIsPercentage}"
                 app:icon="@drawable/ic_help"
                 app:iconTint="?android:textColorSecondary"
                 app:layout_constraintBottom_toBottomOf="@+id/textView8"
@@ -402,6 +407,7 @@
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/textView8"
                 app:maxValue="@{predictionMaxValue}"
+                app:isPercentage="@{predictionIsPercentage}"
                 tools:itemCount="3"
                 tools:layoutManager="LinearLayoutManager"
                 tools:listitem="@layout/item_connector"
@@ -415,7 +421,7 @@
                 android:adjustViewBounds="true"
                 android:background="?selectableItemBackgroundBorderless"
                 android:scaleType="fitCenter"
-                app:goneUnless="@{predictionGraph != null}"
+                app:goneUnless="@{predictionGraph != null &amp;&amp; !predictionIsPercentage}"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintTop_toBottomOf="@+id/prediction"
                 app:srcCompat="@drawable/ic_powered_by_fronyx"

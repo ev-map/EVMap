@@ -37,6 +37,9 @@ import net.vonforst.evmap.ui.cluster
 import net.vonforst.evmap.utils.distanceBetween
 import retrofit2.HttpException
 import java.io.IOException
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.ZoneId
 import java.time.ZonedDateTime
 
 @Parcelize
@@ -286,33 +289,45 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
         }
     }
 
-    val predictionGraph: LiveData<Map<ZonedDateTime, Int>?> by lazy {
-        prediction.map {
-            it.data?.let { responses ->
-                if (responses.isEmpty()) {
-                    null
-                } else {
-                    val evseIds = responses.map { it.evseId }
-                    val groupByTimestamp = responses.flatMap { response ->
-                        response.predictions.map {
-                            Triple(
-                                it.timestamp,
-                                response.evseId,
-                                it.status
-                            )
+    val predictionGraph: LiveData<Map<ZonedDateTime, Double>?> =
+        MediatorLiveData<Map<ZonedDateTime, Double>?>().apply {
+            listOf(prediction, availability).forEach {
+                addSource(it) {
+                    val congestionHistogram = availability.value?.data?.congestionHistogram
+                    val prediction = prediction.value?.data
+                    value = if (congestionHistogram != null && prediction == null) {
+                        congestionHistogram.mapIndexed { i, value ->
+                            LocalTime.of(i, 0).atDate(LocalDate.now())
+                                .atZone(ZoneId.systemDefault()) to value
+                        }.toMap()
+                    } else {
+                        prediction?.let { responses ->
+                            if (responses.isEmpty()) {
+                                null
+                            } else {
+                                val evseIds = responses.map { it.evseId }
+                                val groupByTimestamp = responses.flatMap { response ->
+                                    response.predictions.map {
+                                        Triple(
+                                            it.timestamp,
+                                            response.evseId,
+                                            it.status
+                                        )
+                                    }
+                                }
+                                    .groupBy { it.first }  // group by timestamp
+                                    .mapValues { it.value.map { it.second to it.third } }  // only keep EVSEID and status
+                                    .filterValues { it.map { it.first } == evseIds }  // remove values where status is not given for all EVSEs
+                                    .filterKeys { it > ZonedDateTime.now() }  // only show predictions in the future
+
+                                groupByTimestamp.mapValues {
+                                    it.value.count {
+                                        it.second == FronyxStatus.UNAVAILABLE
+                                    }.toDouble()
+                                }.ifEmpty { null }
+                            }
                         }
                     }
-                        .groupBy { it.first }  // group by timestamp
-                        .mapValues { it.value.map { it.second to it.third } }  // only keep EVSEID and status
-                        .filterValues { it.map { it.first } == evseIds }  // remove values where status is not given for all EVSEs
-                        .filterKeys { it > ZonedDateTime.now() }  // only show predictions in the future
-
-                    groupByTimestamp.mapValues {
-                        it.value.count {
-                            it.second == FronyxStatus.UNAVAILABLE
-                        }
-                    }.ifEmpty { null }
-                }
             }
         }
     }
@@ -332,9 +347,25 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
         }
     }
 
-    val predictionMaxValue: LiveData<Int> by lazy {
-        predictedChargepoints.map {
-            it?.sumOf { it.count } ?: 0
+    val predictionMaxValue: LiveData<Double> = MediatorLiveData<Double>().apply {
+        listOf(prediction, availability).forEach {
+            addSource(it) {
+                value =
+                    if (availability.value?.data?.congestionHistogram != null && prediction.value?.data == null) {
+                        1.0
+                    } else {
+                        (predictedChargepoints.value?.sumOf { it.count } ?: 0).toDouble()
+                    }
+            }
+        }
+    }
+
+    val predictionIsPercentage: LiveData<Boolean> = MediatorLiveData<Boolean>().apply {
+        listOf(prediction, availability).forEach {
+            addSource(it) {
+                value =
+                    availability.value?.data?.congestionHistogram != null && prediction.value?.data == null
+            }
         }
     }
 

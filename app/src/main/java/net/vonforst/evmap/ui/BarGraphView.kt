@@ -14,6 +14,7 @@ import android.view.View
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import net.vonforst.evmap.R
+import java.time.Duration
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -28,8 +29,8 @@ class BarGraphView(context: Context, attrs: AttributeSet) : View(context, attrs)
     private val dp = context.resources.displayMetrics.density
     private val sp = context.resources.displayMetrics.scaledDensity
     var zeroHeight = 4 * dp
-    var barWidth = (16 * dp).roundToInt()
-    var barMargin = (2 * dp).roundToInt()
+    var barWidth = 16 * dp
+    var barMargin = 2 * dp
     var legendWidth = 12 * dp
     var legendLineLength = 4 * dp
     var legendLineWidth = 1 * dp
@@ -42,18 +43,20 @@ class BarGraphView(context: Context, attrs: AttributeSet) : View(context, attrs)
     var barDrawable =
         AppCompatResources.getDrawable(context, R.drawable.bar_graph)!!
     var colorAvailable = ContextCompat.getColor(context, R.color.available)
+    var colorSomeAvailable = ContextCompat.getColor(context, R.color.some_available)
     var colorUnavailable = ContextCompat.getColor(context, R.color.unavailable)
 
-    var data: Map<ZonedDateTime, Int>? = null
+    var data: Map<ZonedDateTime, Double>? = null
         set(value) {
             field = value
             invalidate()
         }
-    var maxValue: Int? = null
+    var maxValue: Double? = null
         set(value) {
             field = value
             invalidate()
         }
+    var isPercentage: Boolean = false
 
     var activeAlpha = 0.87f
     var inactiveAlpha = 0.60f
@@ -110,13 +113,19 @@ class BarGraphView(context: Context, attrs: AttributeSet) : View(context, attrs)
                 plusMinutes((minutesRound - minute).toLong())
             }
             data = (0..20).associate {
-                now.plusMinutes(15L * it) to (Math.random() * 8).roundToInt()
+                now.plusMinutes(15L * it) to (Math.random() * 8)
             }
-            maxValue = 8
+            maxValue = 8.0
         }
         val data = data?.toSortedMap() ?: return
         if (data.isEmpty()) return
         val maxValue = maxValue ?: data.maxOf { it.value }
+
+        val graphWidth = graphBounds?.width() ?: return
+        val n = data.size
+        val barMarginFactor = 0.1f
+        barWidth = graphWidth / (n + barMarginFactor * (n - 1))
+        barMargin = barWidth * barMarginFactor
 
         drawGraph(canvas, data, maxValue)
         drawBubble(canvas, data, maxValue)
@@ -124,8 +133,8 @@ class BarGraphView(context: Context, attrs: AttributeSet) : View(context, attrs)
 
     private fun drawGraph(
         canvas: Canvas,
-        data: SortedMap<ZonedDateTime, Int>,
-        maxValue: Int
+        data: SortedMap<ZonedDateTime, Double>,
+        maxValue: Double
     ) {
         val graphBounds = graphBounds ?: return
 
@@ -139,26 +148,30 @@ class BarGraphView(context: Context, attrs: AttributeSet) : View(context, attrs)
             )
 
             legendPaint.textAlign = Paint.Align.CENTER
+
             data.entries.forEachIndexed { i, (t, v) ->
                 val height =
-                    zeroHeight + (graphBounds.height() - zeroHeight) * v.toFloat() / maxValue
+                    zeroHeight + (graphBounds.height() - zeroHeight) * v.toFloat() / maxValue.toFloat()
                 val left = graphBounds.left + (barWidth + barMargin) * i
 
                 if (left + barWidth > graphBounds.right) return@forEachIndexed
 
                 barDrawable.setBounds(
-                    left,
+                    0,
                     graphBounds.bottom - height.roundToInt(),
-                    left + barWidth,
+                    barWidth.roundToInt(),
                     graphBounds.bottom
                 )
+
+                canvas.translate(left, 0f)
                 barDrawable.alpha =
                     ((if (i == selectedBar) activeAlpha else inactiveAlpha) * 255).roundToInt()
                 barDrawable.setTint(getColor(v, maxValue))
                 barDrawable.draw(canvas)
+                canvas.translate(-left, 0f)
 
-                val center = left.toFloat() + barWidth / 2
-                if (t.minute == 0) {
+                val center = left + barWidth / 2
+                if (shouldDrawLabel(t, data)) {
                     drawLine(
                         center, graphBounds.bottom.toFloat(),
                         center, graphBounds.bottom + legendLineLength, legendPaint
@@ -196,19 +209,44 @@ class BarGraphView(context: Context, attrs: AttributeSet) : View(context, attrs)
             )
 
             legendPaint.textAlign = Paint.Align.LEFT
-            drawText(
-                this@BarGraphView.maxValue.toString(),
-                graphBounds.right.toFloat() + legendLineLength,
-                graphBounds.top + (legendWidth - legendLineLength) / 3,
-                legendPaint
-            )
+            if (!isPercentage) {
+                drawText(
+                    maxValue.roundToInt().toString(),
+                    graphBounds.right.toFloat() + legendLineLength,
+                    graphBounds.top + (legendWidth - legendLineLength) / 3,
+                    legendPaint
+                )
+            }
         }
     }
 
-    private fun getColor(v: Int, maxValue: Int) =
-        if (v < maxValue) colorAvailable else colorUnavailable
+    private fun shouldDrawLabel(t: ZonedDateTime, data: SortedMap<ZonedDateTime, Double>): Boolean {
+        val ts = data.keys.toList()
+        return if (Duration.between(ts[0], ts[1]) > Duration.ofMinutes(31)) {
+            // label every 6 hours
+            t.hour % 6 == 0
+        } else {
+            // label every 15 minutes
+            t.minute == 0
+        }
+    }
 
-    private fun drawBubble(canvas: Canvas, data: SortedMap<ZonedDateTime, Int>, maxValue: Int) {
+    private fun getColor(v: Double, maxValue: Double) =
+        if (isPercentage) {
+            when (v) {
+                in 0.0..0.5 -> colorAvailable
+                in 0.5..0.8 -> colorSomeAvailable
+                else -> colorUnavailable
+            }
+        } else {
+            if (v < maxValue) colorAvailable else colorUnavailable
+        }
+
+    private fun drawBubble(
+        canvas: Canvas,
+        data: SortedMap<ZonedDateTime, Double>,
+        maxValue: Double
+    ) {
         val bubbleBounds = bubbleBounds ?: return
         val graphBounds = graphBounds ?: return
         val d = data.toList()
@@ -221,12 +259,16 @@ class BarGraphView(context: Context, attrs: AttributeSet) : View(context, attrs)
                 R.string.prediction_time_colon,
                 t.withZoneSameInstant(ZoneId.systemDefault()).format(timeFormat)
             )
-            val availableformat = context.resources.getQuantityString(
-                R.plurals.prediction_number_available,
-                maxValue - v,
-                maxValue - v,
-                maxValue
-            )
+            val availableformat = if (isPercentage) {
+                "%.0f %%".format(v * 100)
+            } else {
+                context.resources.getQuantityString(
+                    R.plurals.prediction_number_available,
+                    (maxValue - v).roundToInt(),
+                    (maxValue - v).roundToInt(),
+                    maxValue.roundToInt()
+                )
+            }
             val text = SpannableString("$tformat $availableformat").apply {
                 setSpan(
                     ForegroundColorSpan(getColor(v, maxValue)),
@@ -297,7 +339,7 @@ class BarGraphView(context: Context, attrs: AttributeSet) : View(context, attrs)
 
     private fun updateSelectedBar(x: Int) {
         val graphBounds = graphBounds ?: return
-        val bar = (x - graphBounds.left) / (barWidth + barMargin)
+        val bar = ((x - graphBounds.left) / (barWidth + barMargin)).roundToInt()
         if (bar != selectedBar) {
             selectedBar = bar
             invalidate()

@@ -421,3 +421,8 @@ fun setImageTint(view: ImageView, @ColorInt tint: Int?) {
         view.imageTintList = null
     }
 }
+
+@BindingAdapter("isPercentage")
+fun setIsPercentage(view: BarGraphView, value: Boolean) {
+    view.isPercentage = value
+}

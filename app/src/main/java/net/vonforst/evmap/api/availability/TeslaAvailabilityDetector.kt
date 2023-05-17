@@ -23,6 +23,7 @@ import java.security.MessageDigest
 import java.security.SecureRandom
 import java.time.Instant
 import java.time.LocalTime
+import java.util.Collections
 
 private const val coordRange = 0.005  // range of latitude and longitude for loading the map
 
@@ -277,10 +278,10 @@ interface TeslaGraphQlApi {
 
     @JsonClass(generateAdapter = true)
     data class ChargingSiteInformation(
-        // TODO: congestionPriceHistogram, pricing
         val siteDynamic: SiteDynamic,
         val siteStatic: SiteStatic,
-        val pricing: Pricing
+        val pricing: Pricing,
+        val congestionPriceHistogram: CongestionPriceHistogram,
     )
 
     @JsonClass(generateAdapter = true)
@@ -378,6 +379,18 @@ interface TeslaGraphQlApi {
         val startTime: LocalTime,
         val endTime: LocalTime,
         val rates: List<Double>
+    )
+
+    @JsonClass(generateAdapter = true)
+    data class CongestionPriceHistogram(
+        val data: List<Double>,
+        val dataAttributes: List<CongestionHistogramDataAttributes>
+    )
+
+    @JsonClass(generateAdapter = true)
+    data class CongestionHistogramDataAttributes(
+        val congestionThreshold: String,  // "LEVEL_1"
+        val label: String  // "1AM", "2AM", etc.
     )
 
     enum class ChargerAvailability {
@@ -561,7 +574,20 @@ class TeslaAvailabilityDetector(
             i += connector.count
         }
 
-        return ChargeLocationStatus(statusMap, "Tesla", extraData = details.pricing)
+        val indexOfMidnight =
+            details.congestionPriceHistogram.dataAttributes.indexOfFirst { it.label == "12AM" }
+        val congestionHistogram = indexOfMidnight.takeIf { it >= 0 }?.let { index ->
+            val data = details.congestionPriceHistogram.data.toMutableList()
+            Collections.rotate(data, -index)
+            data
+        }
+
+        return ChargeLocationStatus(
+            statusMap,
+            "Tesla",
+            congestionHistogram = congestionHistogram,
+            extraData = details.pricing
+        )
     }
 
     override fun isChargerSupported(charger: ChargeLocation): Boolean {

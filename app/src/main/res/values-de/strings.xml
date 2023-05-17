@@ -312,4 +312,5 @@
     <string name="pricing_up_to">bis zu %s</string>
     <string name="tesla_pricing_other_times">Andere Zeiten:</string>
     <string name="tesla_pricing_blocking_fee">Blockiergebühr: %s</string>
+    <string name="average_utilization">Durchschnittliche Auslastung</string>
 </resources>

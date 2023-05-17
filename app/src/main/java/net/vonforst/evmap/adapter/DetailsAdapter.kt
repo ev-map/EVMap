@@ -1,8 +1,13 @@
 package net.vonforst.evmap.adapter
 
 import android.content.Context
+import android.graphics.Typeface
+import android.text.Spannable
+import android.text.style.StyleSpan
 import androidx.core.text.HtmlCompat
+import androidx.core.text.buildSpannedString
 import net.vonforst.evmap.R
+import net.vonforst.evmap.api.availability.TeslaGraphQlApi
 import net.vonforst.evmap.bold
 import net.vonforst.evmap.joinToSpannedString
 import net.vonforst.evmap.model.ChargeCard
@@ -10,8 +15,10 @@ import net.vonforst.evmap.model.ChargeCardId
 import net.vonforst.evmap.model.ChargeLocation
 import net.vonforst.evmap.model.OpeningHoursDays
 import net.vonforst.evmap.plus
+import net.vonforst.evmap.ui.currency
 import net.vonforst.evmap.utils.formatDMS
 import net.vonforst.evmap.utils.formatDecimal
+import java.time.LocalTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -41,11 +48,18 @@ fun buildDetails(
     loc: ChargeLocation?,
     chargeCards: Map<Long, ChargeCard>?,
     filteredChargeCards: Set<Long>?,
+    teslaPricing: TeslaGraphQlApi.Pricing?,
     ctx: Context
 ): List<DetailsAdapter.Detail> {
     if (loc == null) return emptyList()
 
     return listOfNotNull(
+        if (teslaPricing != null) DetailsAdapter.Detail(
+            R.drawable.ic_tesla,
+            R.string.cost,
+            formatTeslaPricing(teslaPricing, ctx),
+            formatTeslaParkingFee(teslaPricing, ctx)
+        ) else null,
         if (loc.address != null) DetailsAdapter.Detail(
             R.drawable.ic_address,
             R.string.address,
@@ -124,6 +138,128 @@ fun buildDetails(
             clickable = true
         ),
     )
+}
+
+private fun formatTeslaParkingFee(teslaPricing: TeslaGraphQlApi.Pricing, ctx: Context) =
+    teslaPricing.memberRates?.activePricebook?.parking?.let { parkingFee ->
+        ctx.getString(
+            R.string.tesla_pricing_blocking_fee,
+            formatTeslaPricingRate(parkingFee.rates, parkingFee.currencyCode, parkingFee.uom, ctx)
+        )
+    }
+
+private fun formatTeslaPricing(teslaPricing: TeslaGraphQlApi.Pricing, ctx: Context) =
+    buildSpannedString {
+        teslaPricing.memberRates?.let { memberRates ->
+            append(
+                ctx.getString(if (teslaPricing.userRates != null) R.string.tesla_pricing_members else R.string.tesla_pricing_owners),
+                StyleSpan(Typeface.BOLD),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            append(formatTeslaPricingRates(memberRates, ctx))
+        }
+        teslaPricing.userRates?.let { userRates ->
+            append("\n\n")
+            append(
+                ctx.getString(R.string.tesla_pricing_others),
+                StyleSpan(Typeface.BOLD),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            append(formatTeslaPricingRates(userRates, ctx))
+        }
+    }
+
+private fun formatTeslaPricingRates(rates: TeslaGraphQlApi.Rates, ctx: Context) =
+    buildSpannedString {
+        val timeFmt = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
+        if (rates.activePricebook.charging.touRates.enabled) {
+            // time-of-day-based rates
+            val ratesByTime = rates.activePricebook.charging.touRates.activeRatesByTime
+            val distinctRates =
+                ratesByTime.map { it.rates }.distinct().sortedByDescending { it.max() }
+            if (distinctRates.size == 2) {
+                // special case: only list periods with higher price
+                val highPriceTimes = ratesByTime.filter { it.rates == distinctRates[0] }
+                append("\n")
+                append(highPriceTimes.joinToString(", ") {
+                    timeFmt.format(it.startTime) + " - " + timeFmt.format(it.endTime)
+                } + ": ", StyleSpan(Typeface.ITALIC), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                append(
+                    formatTeslaPricingRate(
+                        distinctRates[0],
+                        rates.activePricebook.charging.currencyCode,
+                        rates.activePricebook.charging.uom,
+                        ctx
+                    )
+                )
+                append("\n")
+                append(
+                    ctx.getString(R.string.tesla_pricing_other_times),
+                    StyleSpan(Typeface.ITALIC),
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+                append(" ")
+                append(
+                    formatTeslaPricingRate(
+                        distinctRates[1],
+                        rates.activePricebook.charging.currencyCode,
+                        rates.activePricebook.charging.uom,
+                        ctx
+                    )
+                )
+            } else {
+                // general case
+                ratesByTime.forEach { rate ->
+                    append("\n")
+                    append(
+                        timeFmt.format(rate.startTime) + " - " + timeFmt.format(rate.endTime) + ": ",
+                        StyleSpan(Typeface.ITALIC),
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+                    append(
+                        formatTeslaPricingRate(
+                            rate.rates,
+                            rates.activePricebook.charging.currencyCode,
+                            rates.activePricebook.charging.uom,
+                            ctx
+                        )
+                    )
+                }
+            }
+        } else {
+            // fixed rates
+            append(" ")
+            append(
+                formatTeslaPricingRate(
+                    rates.activePricebook.charging.rates,
+                    rates.activePricebook.charging.currencyCode,
+                    rates.activePricebook.charging.uom,
+                    ctx
+                )
+            )
+        }
+    }
+
+private fun formatTeslaPricingRate(
+    rates: List<Double>,
+    currencyCode: String,
+    uom: String,
+    ctx: Context
+): String {
+    if (rates.isEmpty()) return ""
+    val rate = rates.max()
+    val value = ctx.getString(
+        when (uom) {
+            "kwh" -> R.string.charge_price_kwh_format
+            "min" -> R.string.charge_price_minute_format
+            else -> return ""
+        }, rate, currency(currencyCode)
+    )
+    return if (rates.size > 1) {
+        ctx.getString(R.string.pricing_up_to, value)
+    } else {
+        value
+    }
 }
 
 fun formatChargeCards(

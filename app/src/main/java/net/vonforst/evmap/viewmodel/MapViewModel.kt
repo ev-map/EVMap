@@ -16,6 +16,7 @@ import net.vonforst.evmap.R
 import net.vonforst.evmap.api.availability.AvailabilityDetectorException
 import net.vonforst.evmap.api.availability.AvailabilityRepository
 import net.vonforst.evmap.api.availability.ChargeLocationStatus
+import net.vonforst.evmap.api.availability.TeslaGraphQlApi
 import net.vonforst.evmap.api.createApi
 import net.vonforst.evmap.api.equivalentPlugTypes
 import net.vonforst.evmap.api.fronyx.FronyxApi
@@ -229,6 +230,10 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
             addSource(filteredConnectors, callback)
             addSource(filteredMinPower, callback)
         }
+    }
+
+    val teslaPricing = availability.map {
+        it.data?.extraData as? TeslaGraphQlApi.Pricing
     }
 
     val predictionApi = FronyxApi(application.getString(R.string.fronyx_key))

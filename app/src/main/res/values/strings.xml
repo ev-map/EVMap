@@ -175,6 +175,7 @@
     <string name="charge_price_format">%2$s%1$.2f</string>
     <string name="charge_price_average_format">⌀ %2$s%1$.2f/kWh</string>
     <string name="charge_price_kwh_format">%2$s%1$.2f/kWh</string>
+    <string name="charge_price_minute_format">%2$s%1$.2f/min</string>
     <string name="chargeprice_select_connector">Choose connector</string>
     <string name="chargeprice_provider_customer_tariff">Only for tie-in customers</string>
     <string name="edit_on_goingelectric_info">Please log in at GoingElectric.de if this page is empty</string>
@@ -305,4 +306,10 @@
     <string name="logged_out">Logged out</string>
     <string name="login">Login</string>
     <string name="login_error">Login failed</string>
+    <string name="tesla_pricing_owners">Tesla vehicles only:</string>
+    <string name="tesla_pricing_members">Tesla vehicles &amp; members:</string>
+    <string name="tesla_pricing_others">Other customers:</string>
+    <string name="pricing_up_to">up to %s</string>
+    <string name="tesla_pricing_other_times">Other times:</string>
+    <string name="tesla_pricing_blocking_fee">Blocking fee: %s</string>
 </resources>

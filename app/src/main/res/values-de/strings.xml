@@ -175,6 +175,7 @@
     <string name="charge_price_format">%1$.2f %2$s</string>
     <string name="charge_price_average_format">⌀ %1$.2f %2$s/kWh</string>
     <string name="charge_price_kwh_format">%1$.2f %2$s/kWh</string>
+    <string name="charge_price_minute_format">%1$.2f %2$s/min</string>
     <string name="chargeprice_select_connector">Anschluss auswählen</string>
     <string name="chargeprice_provider_customer_tariff">Nur für Energiekunden</string>
     <string name="percent_format">%.0f%%</string>
@@ -305,4 +306,10 @@
     <string name="logged_out">Abgemeldet</string>
     <string name="login">Login</string>
     <string name="login_error">Login fehlgeschlagen</string>
+    <string name="tesla_pricing_owners">Nur Tesla-Fahrzeuge:</string>
+    <string name="tesla_pricing_members">Tesla-Fahrzeuge &amp; Mitglieder:</string>
+    <string name="tesla_pricing_others">Andere Kunden:</string>
+    <string name="pricing_up_to">bis zu %s</string>
+    <string name="tesla_pricing_other_times">Andere Zeiten:</string>
+    <string name="tesla_pricing_blocking_fee">Blockiergebühr: %s</string>
 </resources>

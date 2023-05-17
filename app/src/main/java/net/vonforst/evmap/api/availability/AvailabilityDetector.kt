@@ -136,7 +136,8 @@ abstract class BaseAvailabilityDetector(private val client: OkHttpClient) : Avai
 data class ChargeLocationStatus(
     val status: Map<Chargepoint, List<ChargepointStatus>>,
     val source: String,
-    val evseIds: Map<Chargepoint, List<String>>? = null
+    val evseIds: Map<Chargepoint, List<String>>? = null,
+    val extraData: Any? = null  // API-specific data
 ) {
     fun applyFilters(connectors: Set<String>?, minPower: Int?): ChargeLocationStatus {
         val statusFiltered = status.filterKeys {

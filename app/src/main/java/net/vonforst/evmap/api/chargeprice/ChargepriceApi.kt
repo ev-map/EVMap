@@ -135,7 +135,7 @@ interface ChargepriceApi {
                         "23", "3534" // Tesla
                     )
                 } else if (charger.dataSource == "goingelectric") {
-                    it !== "Tesla Supercharger"
+                    it != "Tesla Supercharger"
                 } else {
                     true
                 }

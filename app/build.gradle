@@ -90,6 +90,12 @@ android {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
 
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs).configureEach {
+        kotlinOptions {
+            jvmTarget = "1.8"
+        }
+    }
+
     buildFeatures {
         dataBinding = true
         viewBinding true
@@ -173,8 +179,8 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-moshi:2.9.0'
     implementation 'com.squareup.okhttp3:okhttp:4.11.0'
     implementation 'com.squareup.okhttp3:okhttp-urlconnection:4.11.0'
-    implementation 'com.squareup.moshi:moshi-kotlin:1.13.0'
-    implementation 'com.squareup.moshi:moshi-adapters:1.13.0'
+    implementation 'com.squareup.moshi:moshi-kotlin:1.15.0'
+    implementation 'com.squareup.moshi:moshi-adapters:1.15.0'
     implementation 'com.markomilos.jsonapi:jsonapi-retrofit:1.1.0'
     implementation 'io.coil-kt:coil:1.1.0'
     implementation 'com.github.ev-map:StfalconImageViewer:5082ebd392'
@@ -260,7 +266,7 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
-    kapt "com.squareup.moshi:moshi-kotlin-codegen:1.13.0"
+    kapt "com.squareup.moshi:moshi-kotlin-codegen:1.15.0"
 
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.2'
 }

@@ -275,7 +275,7 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
                     result.meta!!.map(ChargepriceMeta::class.java, ChargepriceApi.moshi)!!
                 meta = metaMapped.chargePoints.maxByOrNull { it.power }
 
-                prices = result.data!!.map { cp ->
+                prices = result.data!!.mapNotNull { cp ->
                     val filteredPrices =
                         cp.chargepointPrices.filter {
                             it.plug == chargepoint.plug && it.power == chargepoint.power
@@ -287,7 +287,7 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
                             chargepointPrices = filteredPrices
                         )
                     }
-                }.filterNotNull()
+                }
                     .sortedBy { it.chargepointPrices.first().price ?: Double.MAX_VALUE }
                     .sortedByDescending {
                         prefs.chargepriceMyTariffsAll ||

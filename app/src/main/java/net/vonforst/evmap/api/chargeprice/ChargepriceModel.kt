@@ -157,9 +157,9 @@ data class ChargepriceCar(
         get() = id_!!
 
     val compatibleEvmapConnectors: List<String>
-        get() = dcChargePorts.map {
+        get() = dcChargePorts.mapNotNull {
             plugMapping[it]
-        }.filterNotNull().plus(acConnectors)
+        }.plus(acConnectors)
 }
 
 @JsonClass(generateAdapter = true)
@@ -228,7 +228,7 @@ internal object RelationshipsParceler : Parceler<Relationships?> {
         if (parcel.readInt() == 0) return null
 
         val nMembers = parcel.readInt()
-        val members = (0 until nMembers).map { _ ->
+        val members = (0 until nMembers).associate { _ ->
             val key = parcel.readString()!!
             val value = if (parcel.readInt() == 0) {
                 val type = parcel.readString()
@@ -247,7 +247,7 @@ internal object RelationshipsParceler : Parceler<Relationships?> {
                 Relationship.ToMany(ris)
             }
             key to value
-        }.toMap()
+        }
 
         return Relationships(members)
     }
@@ -299,12 +299,12 @@ data class ChargepointPrice(
         }
 
         fun time(value: Int): String {
-            val h = floor(value.toDouble() / 60).toInt();
-            val min = ceil(value.toDouble() % 60).toInt();
-            if (h == 0 && min > 0) return "${min}min";
+            val h = floor(value.toDouble() / 60).toInt()
+            val min = ceil(value.toDouble() % 60).toInt()
+            return if (h == 0 && min > 0) "${min}min";
             // be slightly sloppy (3:01 is shown as 3h) to save space
-            else if (h > 0 && (min == 0 || min == 1)) return "${h}h";
-            else return "%d:%02dh".format(h, min);
+            else if (h > 0 && (min == 0 || min == 1)) "${h}h";
+            else "%d:%02dh".format(h, min)
         }
 
         // based on https://github.com/chargeprice/chargeprice-client/blob/d420bb2f216d9ad91a210a36dd0859a368a8229a/src/views/priceList.js

@@ -23,6 +23,6 @@ data class Favorite(
 )
 
 data class FavoriteWithDetail(
-    @Embedded() val favorite: Favorite,
+    @Embedded val favorite: Favorite,
     @Embedded val charger: ChargeLocation
 )

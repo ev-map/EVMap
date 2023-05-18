@@ -3,15 +3,14 @@ package net.vonforst.evmap.api.availability
 import android.content.Context
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import net.vonforst.evmap.addDebugInterceptors
 import net.vonforst.evmap.api.RateLimitInterceptor
 import net.vonforst.evmap.api.await
 import net.vonforst.evmap.api.equivalentPlugTypes
 import net.vonforst.evmap.cartesianProduct
-import net.vonforst.evmap.addDebugInterceptors
 import net.vonforst.evmap.model.ChargeLocation
 import net.vonforst.evmap.model.Chargepoint
 import net.vonforst.evmap.storage.EncryptedPreferenceDataStore
-import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.viewmodel.Resource
 import okhttp3.JavaNetCookieJar
 import okhttp3.OkHttpClient

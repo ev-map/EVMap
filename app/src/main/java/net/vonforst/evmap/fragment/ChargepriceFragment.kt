@@ -123,7 +123,7 @@ class ChargepriceFragment : Fragment() {
         val charger = fragmentArgs.charger
         vm.charger.value = charger
         if (vm.chargepoint.value == null) {
-            vm.chargepoint.value = charger.chargepointsMerged.get(0)
+            vm.chargepoint.value = charger.chargepointsMerged[0]
         }
 
         val vehicleAdapter = CheckableChargepriceCarAdapter()

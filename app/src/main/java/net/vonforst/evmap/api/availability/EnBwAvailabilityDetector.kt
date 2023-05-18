@@ -142,7 +142,7 @@ class EnBwAvailabilityDetector(client: OkHttpClient, baseUrl: String? = null) :
             ) < maxDistance
         }
 
-        var details = markers.filter {
+        val details = markers.filter {
             // only include stations from same operator
             it.operator == nearest.operator && it.stationId != null
         }.map {

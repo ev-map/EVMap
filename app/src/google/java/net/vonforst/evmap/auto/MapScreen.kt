@@ -326,7 +326,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
             }
 
             // power
-            val power = charger.maxPower;
+            val power = charger.maxPower
             if (power != null) {
                 if (text.isNotEmpty()) text.append(" · ")
                 text.append("${power.roundToInt()} kW")
@@ -578,7 +578,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
 
     override fun onItemVisibilityChanged(startIndex: Int, endIndex: Int) {
         // when the list is scrolled, load corresponding availabilities
-        if (startIndex == visibleStart && endIndex == visibleEnd && !availabilities.isEmpty()) return
+        if (startIndex == visibleStart && endIndex == visibleEnd && availabilities.isNotEmpty()) return
         if (startIndex == -1 || endIndex == -1) return
         if (availabilityUpdateCoroutine != null) return
 

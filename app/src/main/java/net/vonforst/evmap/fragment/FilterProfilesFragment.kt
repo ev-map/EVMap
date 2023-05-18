@@ -80,8 +80,8 @@ class FilterProfilesFragment : Fragment() {
                 viewHolder: RecyclerView.ViewHolder,
                 target: RecyclerView.ViewHolder
             ): Boolean {
-                val fromPos = viewHolder.bindingAdapterPosition;
-                val toPos = target.bindingAdapterPosition;
+                val fromPos = viewHolder.bindingAdapterPosition
+                val toPos = target.bindingAdapterPosition
 
                 val list = vm.filterProfiles.value?.toMutableList()
                 if (list != null) {

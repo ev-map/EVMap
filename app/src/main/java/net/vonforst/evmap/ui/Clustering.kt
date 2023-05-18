@@ -1,4 +1,4 @@
-package net.vonforst.evmap.ui;
+package net.vonforst.evmap.ui
 
 import com.car2go.maps.model.LatLng
 import com.google.maps.android.clustering.ClusterItem

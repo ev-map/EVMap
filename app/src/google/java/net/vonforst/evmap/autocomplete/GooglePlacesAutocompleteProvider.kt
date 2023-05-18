@@ -38,10 +38,10 @@ class GooglePlacesAutocompleteProvider(val context: Context) : AutocompleteProvi
     ): List<AutocompletePlace> {
         val request = FindAutocompletePredictionsRequest.builder().apply {
             if (location != null) {
-                setLocationBias(calcLocationBias(location))
-                setOrigin(LatLng(location.latitude, location.longitude))
+                locationBias = calcLocationBias(location)
+                origin = LatLng(location.latitude, location.longitude)
             }
-            setSessionToken(token)
+            sessionToken = token
             setQuery(query)
         }.build()
         try {

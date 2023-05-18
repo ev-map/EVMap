@@ -90,7 +90,7 @@ class ConnectorAdapter : DataBindingAdapter<ConnectorAdapter.ChargepointWithAvai
 class ChargepriceAdapter() :
     DataBindingAdapter<ChargePrice>() {
 
-    val viewPool = RecyclerView.RecycledViewPool();
+    val viewPool = RecyclerView.RecycledViewPool()
     var meta: ChargepriceChargepointMeta? = null
         set(value) {
             field = value

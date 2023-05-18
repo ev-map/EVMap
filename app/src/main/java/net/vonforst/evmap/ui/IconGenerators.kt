@@ -64,7 +64,7 @@ class ChargerIconGenerator(
     // 340 items:
     // large: (21 sizes, 5 colors, multi on/off) + highlight + fault + fav (only with scale = 1)
     // mini: (11 sizes, 5 colors) + highlight (only with scale = 1)
-    private val cacheSize = (scaleResolution + 8) * 5 * 2 + (scaleResolutionMini + 2) * 5;
+    private val cacheSize = (scaleResolution + 8) * 5 * 2 + (scaleResolutionMini + 2) * 5
     private val cache = LruCache<BitmapData, BitmapDescriptor>(cacheSize)
     private val icon = R.drawable.ic_map_marker_charging
     private val multiIcon = R.drawable.ic_map_marker_charging_multiple

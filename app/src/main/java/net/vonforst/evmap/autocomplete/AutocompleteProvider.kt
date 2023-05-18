@@ -176,10 +176,10 @@ enum class AutocompletePlaceType {
 
     companion object {
         fun valueOfOrNull(value: String): AutocompletePlaceType? {
-            try {
-                return valueOf(value)
+            return try {
+                valueOf(value)
             } catch (e: IllegalArgumentException) {
-                return null
+                null
             }
         }
     }

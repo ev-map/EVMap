@@ -80,7 +80,7 @@ interface ChargepriceApi {
                     addDebugInterceptors()
                 }
                 if (context != null) {
-                    cache(Cache(context.getCacheDir(), cacheSize))
+                    cache(Cache(context.cacheDir, cacheSize))
                 }
             }.build()
 
@@ -127,17 +127,16 @@ interface ChargepriceApi {
                 charger.chargepriceData?.country?.let { isCountrySupported(it, charger.dataSource) }
                     ?: false
             val networkSupported = charger.chargepriceData?.network?.let {
-                if (charger.dataSource == "openchargemap") {
-                    it !in listOf(
+                when (charger.dataSource) {
+                    "openchargemap" -> it !in listOf(
                         "1", // unknown operator
                         "44", // private residence/individual
                         "45",  // business owner at location
                         "23", "3534" // Tesla
                     )
-                } else if (charger.dataSource == "goingelectric") {
-                    it != "Tesla Supercharger"
-                } else {
-                    true
+
+                    "goingelectric" -> it != "Tesla Supercharger"
+                    else -> true
                 }
             } ?: false
             val powerAvailable = charger.chargepoints.all { it.hasKnownPower() }

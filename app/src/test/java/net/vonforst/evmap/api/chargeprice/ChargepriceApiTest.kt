@@ -35,16 +35,18 @@ class ChargepriceApiTest {
             override fun dispatch(request: RecordedRequest): MockResponse {
                 val segments = request.requestUrl!!.pathSegments
                 val urlHead = segments.subList(0, 2).joinToString("/")
-                when (urlHead) {
+                return when (urlHead) {
                     "ge/chargepoints" -> {
                         val id = request.requestUrl!!.queryParameter("ge_id")
-                        return okResponse("/chargers/$id.json")
+                        okResponse("/chargers/$id.json")
                     }
+
                     "cp/charge_prices" -> {
                         val body = request.body.readUtf8()
-                        return okResponse("/chargeprice/2105.json")
+                        okResponse("/chargeprice/2105.json")
                     }
-                    else -> return notFoundResponse
+
+                    else -> notFoundResponse
                 }
             }
         }

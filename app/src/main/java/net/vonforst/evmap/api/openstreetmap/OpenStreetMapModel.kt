@@ -120,7 +120,7 @@ data class OSMChargingStation(
         // If that is missing as well, use a generic "Charging Station" string.
         return tags["name"]
             ?: tags["operator"]
-            ?: "Charging Station";
+            ?: "Charging Station"
     }
 
     /**
@@ -193,7 +193,7 @@ data class OSMChargingStation(
          */
         fun parseOutputPower(rawOutput: String?): Double? {
             if (rawOutput == null) {
-                return null;
+                return null
             }
             val pattern = Regex("([0-9.,]+)\\s*(kW|kVA)", setOf(RegexOption.IGNORE_CASE))
             val matchResult = pattern.matchEntire(rawOutput) ?: return null

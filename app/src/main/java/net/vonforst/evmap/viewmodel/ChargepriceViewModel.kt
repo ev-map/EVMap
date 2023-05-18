@@ -153,7 +153,7 @@ class ChargepriceViewModel(
                         value = Resource.loading(null)
                     } else {
                         val myTariffs = prefs.chargepriceMyTariffs
-                        value = Resource.success(cps.data!!.map { cp ->
+                        value = Resource.success(cps.data!!.mapNotNull { cp ->
                             val filteredPrices =
                                 cp.chargepointPrices.filter {
                                     it.plug == getChargepricePlugType(chargepoint) && it.power == chargepoint.power
@@ -165,7 +165,7 @@ class ChargepriceViewModel(
                                     chargepointPrices = filteredPrices
                                 )
                             }
-                        }.filterNotNull()
+                        }
                             .sortedBy { it.chargepointPrices.first().price ?: Double.MAX_VALUE }
                             .sortedByDescending {
                                 prefs.chargepriceMyTariffsAll ||

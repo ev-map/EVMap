@@ -207,7 +207,7 @@ class MapsActivity : AppCompatActivity(),
         intent.data = Uri.parse("google.navigation:q=${coord.lat},${coord.lng}")
         intent.`package` = "com.google.android.apps.maps"
         if (prefs.navigateUseMaps && intent.resolveActivity(packageManager) != null) {
-            startActivity(intent);
+            startActivity(intent)
         } else {
             // fallback: generic geo intent
             showLocation(charger)
@@ -223,7 +223,7 @@ class MapsActivity : AppCompatActivity(),
             })"
         )
         if (intent.resolveActivity(packageManager) != null) {
-            startActivity(intent);
+            startActivity(intent)
         } else {
             val cb = fragmentCallback ?: return
             Snackbar.make(
@@ -262,7 +262,7 @@ class MapsActivity : AppCompatActivity(),
 
     fun shareUrl(url: String) {
         val intent = Intent(Intent.ACTION_SEND).apply {
-            setType("text/plain")
+            type = "text/plain"
             putExtra(Intent.EXTRA_TEXT, url)
         }
         startActivity(intent)

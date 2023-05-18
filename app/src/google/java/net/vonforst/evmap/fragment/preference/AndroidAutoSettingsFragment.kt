@@ -3,12 +3,8 @@ package net.vonforst.evmap.fragment.preference
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.viewModels
-import androidx.preference.MultiSelectListPreference
 import net.vonforst.evmap.R
 import net.vonforst.evmap.ui.RangeSliderPreference
-import net.vonforst.evmap.viewmodel.SettingsViewModel
-import net.vonforst.evmap.viewmodel.viewModelFactory
 import java.text.NumberFormat
 
 class AndroidAutoSettingsFragment : BaseSettingsFragment() {

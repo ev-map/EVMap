@@ -154,7 +154,7 @@ class OpenChargeMapApiWrapper(
                 return Resource.error(response.message(), null)
             }
 
-            var result = postprocessResult(
+            val result = postprocessResult(
                 response.body()!!,
                 minPower,
                 connectorsVal,
@@ -289,8 +289,8 @@ class OpenChargeMapApiWrapper(
     ): List<Filter<FilterValue>> {
         val refData = referenceData as OCMReferenceData
 
-        val operatorsMap = refData.operators.map { it.id.toString() to it.title }.toMap()
-        val plugMap = refData.connectionTypes.map { it.id.toString() to it.title }.toMap()
+        val operatorsMap = refData.operators.associate { it.id.toString() to it.title }
+        val plugMap = refData.connectionTypes.associate { it.id.toString() to it.title }
 
         return listOf(
             // supported by OCM API

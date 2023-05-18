@@ -138,9 +138,9 @@ data class ChargeLocation(
         get() = chargepoints.sumOf { it.count }
 
     fun formatChargepoints(sp: StringProvider): String {
-        return chargepointsMerged.map {
+        return chargepointsMerged.joinToString(" · ") {
             "${it.count} × ${nameForPlugType(sp, it.type)} ${it.formatPower()}"
-        }.joinToString(" · ")
+        }
     }
 }
 

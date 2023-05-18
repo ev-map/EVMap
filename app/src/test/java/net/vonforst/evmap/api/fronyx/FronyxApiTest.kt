@@ -40,7 +40,7 @@ class FronyxApiTest {
                         val ids = request.requestUrl!!.queryParameter("evseIds")!!.split(",")
                         return okResponse(
                             "/fronyx/${
-                                ids.map { it.replace("*", "_") }.joinToString(",")
+                                ids.joinToString(",") { it.replace("*", "_") }
                             }.json"
                         )
                     }

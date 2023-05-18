@@ -18,7 +18,6 @@ import net.vonforst.evmap.plus
 import net.vonforst.evmap.ui.currency
 import net.vonforst.evmap.utils.formatDMS
 import net.vonforst.evmap.utils.formatDecimal
-import java.time.LocalTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle

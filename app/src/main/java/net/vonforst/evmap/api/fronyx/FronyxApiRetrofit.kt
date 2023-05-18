@@ -52,7 +52,7 @@ private interface FronyxApiRetrofit {
                     addDebugInterceptors()
                 }
                 if (context != null) {
-                    cache(Cache(context.getCacheDir(), cacheSize))
+                    cache(Cache(context.cacheDir, cacheSize))
                 }
             }.build()
 

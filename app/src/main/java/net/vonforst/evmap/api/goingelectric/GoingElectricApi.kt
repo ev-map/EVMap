@@ -107,7 +107,7 @@ interface GoingElectricApi {
                     addDebugInterceptors()
                 }
                 if (context != null) {
-                    cache(Cache(context.getCacheDir(), cacheSize))
+                    cache(Cache(context.cacheDir, cacheSize))
                 }
             }.build()
 
@@ -146,7 +146,7 @@ class GoingElectricApiWrapper(
         val minPower = filters?.getSliderValue("min_power")
         val minConnectors = filters?.getSliderValue("min_connectors")
 
-        var connectorsVal = filters?.getMultipleChoiceValue("connectors")
+        val connectorsVal = filters?.getMultipleChoiceValue("connectors")
         if (connectorsVal != null && connectorsVal.values.isEmpty() && !connectorsVal.all) {
             // no connectors chosen
             return Resource.success(emptyList())
@@ -217,7 +217,7 @@ class GoingElectricApiWrapper(
             }
         } while (startkey != null && startkey < 10000)
 
-        var result = postprocessResult(data, minPower, connectorsVal, minConnectors, zoom)
+        val result = postprocessResult(data, minPower, connectorsVal, minConnectors, zoom)
 
         return Resource.success(result)
     }
@@ -240,7 +240,7 @@ class GoingElectricApiWrapper(
         val minPower = filters?.getSliderValue("min_power")
         val minConnectors = filters?.getSliderValue("min_connectors")
 
-        var connectorsVal = filters?.getMultipleChoiceValue("connectors")
+        val connectorsVal = filters?.getMultipleChoiceValue("connectors")
         if (connectorsVal != null && connectorsVal.values.isEmpty() && !connectorsVal.all) {
             // no connectors chosen
             return Resource.success(emptyList())
@@ -404,11 +404,11 @@ class GoingElectricApiWrapper(
         val networks = refData.networks
         val chargeCards = refData.chargecards
 
-        val plugMap = plugs.map { plug ->
-            plug to nameForPlugType(sp, GEChargepoint.convertTypeFromGE(plug))
-        }.toMap()
-        val networkMap = networks.map { it to it }.toMap()
-        val chargecardMap = chargeCards.map { it.id.toString() to it.name }.toMap()
+        val plugMap = plugs.associateWith { plug ->
+            nameForPlugType(sp, GEChargepoint.convertTypeFromGE(plug))
+        }
+        val networkMap = networks.associateWith { it }
+        val chargecardMap = chargeCards.associate { it.id.toString() to it.name }
         val categoryMap = mapOf(
             "Autohaus" to sp.getString(R.string.category_car_dealership),
             "Autobahnraststätte" to sp.getString(R.string.category_service_on_motorway),

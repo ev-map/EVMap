@@ -554,14 +554,14 @@ class TeslaAvailabilityDetector(
             .sortedBy { it.charger.labelNumber }
 
         val statusMap = emptyMap<Chargepoint, List<ChargepointStatus>>().toMutableMap()
-        var i = 0;
+        var i = 0
         for (connector in scV2Connectors) {
             statusMap[connector] =
                 statusSorted.subList(i, i + connector.count).map { it.availability.toStatus() }
             i += connector.count
         }
         if (scV2CCSConnectors.isNotEmpty()) {
-            i = 0;
+            i = 0
             for (connector in scV2CCSConnectors) {
                 statusMap[connector] =
                     statusSorted.subList(i, i + connector.count).map { it.availability.toStatus() }

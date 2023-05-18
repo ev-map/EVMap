@@ -4,10 +4,8 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.text.Spanned
-import android.text.style.ImageSpan
 import android.text.style.RelativeSizeSpan
 import android.view.View
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.viewModels
 import net.vonforst.evmap.R
 import net.vonforst.evmap.ui.MultiSelectDialogPreference
@@ -92,9 +90,9 @@ class ChargepriceSettingsFragment : BaseSettingsFragment() {
     private fun updateMyVehiclesSummary() {
         vm.vehicles.value?.data?.let { cars ->
             val vehicles = cars.filter { it.id in prefs.chargepriceMyVehicles }
-            val summary = vehicles.map {
+            val summary = vehicles.joinToString(", ") {
                 "${it.brand} ${it.name}"
-            }.joinToString(", ")
+            }
             myVehiclePreference.summary = summary
         }
     }

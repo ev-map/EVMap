@@ -14,12 +14,12 @@ internal class ChargepointListItemJsonAdapterFactory : JsonAdapter.Factory {
         annotations: MutableSet<out Annotation>,
         moshi: Moshi
     ): JsonAdapter<*>? {
-        if (Types.getRawType(type) == GEChargepointListItem::class.java) {
-            return ChargepointListItemJsonAdapter(
+        return if (Types.getRawType(type) == GEChargepointListItem::class.java) {
+            ChargepointListItemJsonAdapter(
                 moshi
             )
         } else {
-            return null
+            null
         }
     }
 

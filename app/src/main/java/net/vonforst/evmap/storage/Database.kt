@@ -78,7 +78,7 @@ abstract class AppDatabase : RoomDatabase() {
                 // SQL for creating tables copied from build/generated/source/kapt/debug/net/vonforst/evmap/storage/AppDatbase_Impl
                 db.execSQL("CREATE TABLE IF NOT EXISTS `BooleanFilterValue` (`key` TEXT NOT NULL, `value` INTEGER NOT NULL, PRIMARY KEY(`key`))")
                 db.execSQL("CREATE TABLE IF NOT EXISTS `MultipleChoiceFilterValue` (`key` TEXT NOT NULL, `values` TEXT NOT NULL, `all` INTEGER NOT NULL, PRIMARY KEY(`key`))")
-                db.execSQL("CREATE TABLE IF NOT EXISTS `SliderFilterValue` (`key` TEXT NOT NULL, `value` INTEGER NOT NULL, PRIMARY KEY(`key`))");
+                db.execSQL("CREATE TABLE IF NOT EXISTS `SliderFilterValue` (`key` TEXT NOT NULL, `value` INTEGER NOT NULL, PRIMARY KEY(`key`))")
             }
         }
 
@@ -87,8 +87,8 @@ abstract class AppDatabase : RoomDatabase() {
                 // recreate ChargeLocation table to make postcode nullable
                 db.beginTransaction()
                 try {
-                    db.execSQL("CREATE TABLE `ChargeLocationNew` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `chargepoints` TEXT NOT NULL, `network` TEXT, `url` TEXT NOT NULL, `verified` INTEGER NOT NULL, `operator` TEXT, `generalInformation` TEXT, `amenities` TEXT, `locationDescription` TEXT, `photos` TEXT, `lat` REAL NOT NULL, `lng` REAL NOT NULL, `city` TEXT NOT NULL, `country` TEXT NOT NULL, `postcode` TEXT, `street` TEXT NOT NULL, `twentyfourSeven` INTEGER, `description` TEXT, `mostart` TEXT, `moend` TEXT, `tustart` TEXT, `tuend` TEXT, `westart` TEXT, `weend` TEXT, `thstart` TEXT, `thend` TEXT, `frstart` TEXT, `frend` TEXT, `sastart` TEXT, `saend` TEXT, `sustart` TEXT, `suend` TEXT, `hostart` TEXT, `hoend` TEXT, `freecharging` INTEGER, `freeparking` INTEGER, `descriptionShort` TEXT, `descriptionLong` TEXT, PRIMARY KEY(`id`))");
-                    db.execSQL("INSERT INTO `ChargeLocationNew` SELECT * FROM `ChargeLocation`");
+                    db.execSQL("CREATE TABLE `ChargeLocationNew` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `chargepoints` TEXT NOT NULL, `network` TEXT, `url` TEXT NOT NULL, `verified` INTEGER NOT NULL, `operator` TEXT, `generalInformation` TEXT, `amenities` TEXT, `locationDescription` TEXT, `photos` TEXT, `lat` REAL NOT NULL, `lng` REAL NOT NULL, `city` TEXT NOT NULL, `country` TEXT NOT NULL, `postcode` TEXT, `street` TEXT NOT NULL, `twentyfourSeven` INTEGER, `description` TEXT, `mostart` TEXT, `moend` TEXT, `tustart` TEXT, `tuend` TEXT, `westart` TEXT, `weend` TEXT, `thstart` TEXT, `thend` TEXT, `frstart` TEXT, `frend` TEXT, `sastart` TEXT, `saend` TEXT, `sustart` TEXT, `suend` TEXT, `hostart` TEXT, `hoend` TEXT, `freecharging` INTEGER, `freeparking` INTEGER, `descriptionShort` TEXT, `descriptionLong` TEXT, PRIMARY KEY(`id`))")
+                    db.execSQL("INSERT INTO `ChargeLocationNew` SELECT * FROM `ChargeLocation`")
                     db.execSQL("DROP TABLE `ChargeLocation`")
                     db.execSQL("ALTER TABLE `ChargeLocationNew` RENAME TO `ChargeLocation`")
                     db.setTransactionSuccessful()
@@ -109,8 +109,8 @@ abstract class AppDatabase : RoomDatabase() {
                 // recreate ChargeLocation table to make other address fields nullable
                 db.beginTransaction()
                 try {
-                    db.execSQL("CREATE TABLE `ChargeLocationNew` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `chargepoints` TEXT NOT NULL, `network` TEXT, `url` TEXT NOT NULL, `verified` INTEGER NOT NULL, `operator` TEXT, `generalInformation` TEXT, `amenities` TEXT, `locationDescription` TEXT, `photos` TEXT, `lat` REAL NOT NULL, `lng` REAL NOT NULL, `city` TEXT, `country` TEXT, `postcode` TEXT, `street` TEXT, `twentyfourSeven` INTEGER, `description` TEXT, `mostart` TEXT, `moend` TEXT, `tustart` TEXT, `tuend` TEXT, `westart` TEXT, `weend` TEXT, `thstart` TEXT, `thend` TEXT, `frstart` TEXT, `frend` TEXT, `sastart` TEXT, `saend` TEXT, `sustart` TEXT, `suend` TEXT, `hostart` TEXT, `hoend` TEXT, `freecharging` INTEGER, `freeparking` INTEGER, `descriptionShort` TEXT, `descriptionLong` TEXT, PRIMARY KEY(`id`))");
-                    db.execSQL("INSERT INTO `ChargeLocationNew` SELECT * FROM `ChargeLocation`");
+                    db.execSQL("CREATE TABLE `ChargeLocationNew` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `chargepoints` TEXT NOT NULL, `network` TEXT, `url` TEXT NOT NULL, `verified` INTEGER NOT NULL, `operator` TEXT, `generalInformation` TEXT, `amenities` TEXT, `locationDescription` TEXT, `photos` TEXT, `lat` REAL NOT NULL, `lng` REAL NOT NULL, `city` TEXT, `country` TEXT, `postcode` TEXT, `street` TEXT, `twentyfourSeven` INTEGER, `description` TEXT, `mostart` TEXT, `moend` TEXT, `tustart` TEXT, `tuend` TEXT, `westart` TEXT, `weend` TEXT, `thstart` TEXT, `thend` TEXT, `frstart` TEXT, `frend` TEXT, `sastart` TEXT, `saend` TEXT, `sustart` TEXT, `suend` TEXT, `hostart` TEXT, `hoend` TEXT, `freecharging` INTEGER, `freeparking` INTEGER, `descriptionShort` TEXT, `descriptionLong` TEXT, PRIMARY KEY(`id`))")
+                    db.execSQL("INSERT INTO `ChargeLocationNew` SELECT * FROM `ChargeLocation`")
                     db.execSQL("DROP TABLE `ChargeLocation`")
                     db.execSQL("ALTER TABLE `ChargeLocationNew` RENAME TO `ChargeLocation`")
                     db.setTransactionSuccessful()
@@ -160,7 +160,7 @@ abstract class AppDatabase : RoomDatabase() {
                     // add profile column to existing filtervalue tables
                     db.execSQL("CREATE TABLE `BooleanFilterValueNew` (`key` TEXT NOT NULL, `value` INTEGER NOT NULL, `profile` INTEGER NOT NULL, PRIMARY KEY(`key`, `profile`), FOREIGN KEY(`profile`) REFERENCES `FilterProfile`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )")
                     db.execSQL("CREATE TABLE `MultipleChoiceFilterValueNew` (`key` TEXT NOT NULL, `values` TEXT NOT NULL, `all` INTEGER NOT NULL, `profile` INTEGER NOT NULL, PRIMARY KEY(`key`, `profile`), FOREIGN KEY(`profile`) REFERENCES `FilterProfile`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )")
-                    db.execSQL("CREATE TABLE IF NOT EXISTS `SliderFilterValueNew` (`key` TEXT NOT NULL, `value` INTEGER NOT NULL, `profile` INTEGER NOT NULL, PRIMARY KEY(`key`, `profile`), FOREIGN KEY(`profile`) REFERENCES `FilterProfile`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )");
+                    db.execSQL("CREATE TABLE IF NOT EXISTS `SliderFilterValueNew` (`key` TEXT NOT NULL, `value` INTEGER NOT NULL, `profile` INTEGER NOT NULL, PRIMARY KEY(`key`, `profile`), FOREIGN KEY(`profile`) REFERENCES `FilterProfile`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )")
 
                     for (table in listOf(
                         "BooleanFilterValue",
@@ -202,7 +202,7 @@ abstract class AppDatabase : RoomDatabase() {
                     //////////////////////////////////////////
                     db.execSQL("CREATE TABLE `OCMConnectionType` (`id` INTEGER NOT NULL, `title` TEXT NOT NULL, `formalName` TEXT, `discontinued` INTEGER, `obsolete` INTEGER, PRIMARY KEY(`id`))")
                     db.execSQL("CREATE TABLE `OCMCountry` (`id` INTEGER NOT NULL, `isoCode` TEXT NOT NULL, `continentCode` TEXT, `title` TEXT NOT NULL, PRIMARY KEY(`id`))")
-                    db.execSQL("CREATE TABLE `OCMOperator` (`id` INTEGER NOT NULL, `websiteUrl` TEXT, `title` TEXT NOT NULL, `contactEmail` TEXT, `contactTelephone1` TEXT, `contactTelephone2` TEXT, PRIMARY KEY(`id`))");
+                    db.execSQL("CREATE TABLE `OCMOperator` (`id` INTEGER NOT NULL, `websiteUrl` TEXT, `title` TEXT NOT NULL, `contactEmail` TEXT, `contactTelephone1` TEXT, `contactTelephone2` TEXT, PRIMARY KEY(`id`))")
 
                     //////////////////////////////////////////
                     // rename GoingElectric-specific tables //
@@ -295,7 +295,7 @@ abstract class AppDatabase : RoomDatabase() {
                     // update ChargeLocation table to change primary key
                     db.execSQL(
                         "CREATE TABLE `ChargeLocationNew` (`id` INTEGER NOT NULL, `dataSource` TEXT NOT NULL, `name` TEXT NOT NULL, `chargepoints` TEXT NOT NULL, `network` TEXT, `url` TEXT NOT NULL, `editUrl` TEXT, `verified` INTEGER NOT NULL, `barrierFree` INTEGER, `operator` TEXT, `generalInformation` TEXT, `amenities` TEXT, `locationDescription` TEXT, `photos` TEXT, `chargecards` TEXT, `license` TEXT, `lat` REAL NOT NULL, `lng` REAL NOT NULL, `city` TEXT, `country` TEXT, `postcode` TEXT, `street` TEXT, `fault_report_created` INTEGER, `fault_report_description` TEXT, `twentyfourSeven` INTEGER, `description` TEXT, `mostart` TEXT, `moend` TEXT, `tustart` TEXT, `tuend` TEXT, `westart` TEXT, `weend` TEXT, `thstart` TEXT, `thend` TEXT, `frstart` TEXT, `frend` TEXT, `sastart` TEXT, `saend` TEXT, `sustart` TEXT, `suend` TEXT, `hostart` TEXT, `hoend` TEXT, `freecharging` INTEGER, `freeparking` INTEGER, `descriptionShort` TEXT, `descriptionLong` TEXT, `chargepricecountry` TEXT, `chargepricenetwork` TEXT, `chargepriceplugTypes` TEXT, PRIMARY KEY(`id`, `dataSource`))"
-                    );
+                    )
                     val columnList =
                         "`id`,`dataSource`,`name`,`chargepoints`,`network`,`url`,`editUrl`,`verified`,`barrierFree`,`operator`,`generalInformation`,`amenities`,`locationDescription`,`photos`,`chargecards`,`license`,`lat`,`lng`,`city`,`country`,`postcode`,`street`,`fault_report_created`,`fault_report_description`,`twentyfourSeven`,`description`,`mostart`,`moend`,`tustart`,`tuend`,`westart`,`weend`,`thstart`,`thend`,`frstart`,`frend`,`sastart`,`saend`,`sustart`,`suend`,`hostart`,`hoend`,`freecharging`,`freeparking`,`descriptionShort`,`descriptionLong`,`chargepricecountry`,`chargepricenetwork`,`chargepriceplugTypes`"
                     db.execSQL("INSERT INTO `ChargeLocationNew`($columnList) SELECT $columnList FROM `ChargeLocation`")
@@ -311,7 +311,7 @@ abstract class AppDatabase : RoomDatabase() {
 
         private val MIGRATION_14 = object : Migration(13, 14) {
             override fun migrate(db: SupportSQLiteDatabase) {
-                db.execSQL("CREATE TABLE IF NOT EXISTS `RecentAutocompletePlace` (`id` TEXT NOT NULL, `dataSource` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, `primaryText` TEXT NOT NULL, `secondaryText` TEXT NOT NULL, `latLng` TEXT NOT NULL, `viewport` TEXT, `types` TEXT NOT NULL, PRIMARY KEY(`id`, `dataSource`))");
+                db.execSQL("CREATE TABLE IF NOT EXISTS `RecentAutocompletePlace` (`id` TEXT NOT NULL, `dataSource` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, `primaryText` TEXT NOT NULL, `secondaryText` TEXT NOT NULL, `latLng` TEXT NOT NULL, `viewport` TEXT, `types` TEXT NOT NULL, PRIMARY KEY(`id`, `dataSource`))")
             }
 
         }
@@ -321,7 +321,7 @@ abstract class AppDatabase : RoomDatabase() {
             override fun migrate(db: SupportSQLiteDatabase) {
                 try {
                     db.beginTransaction()
-                    db.execSQL("CREATE TABLE IF NOT EXISTS `Favorite` (`favoriteId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `chargerId` INTEGER NOT NULL, `chargerDataSource` TEXT NOT NULL, FOREIGN KEY(`chargerId`, `chargerDataSource`) REFERENCES `ChargeLocation`(`id`, `dataSource`) ON UPDATE NO ACTION ON DELETE RESTRICT )");
+                    db.execSQL("CREATE TABLE IF NOT EXISTS `Favorite` (`favoriteId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `chargerId` INTEGER NOT NULL, `chargerDataSource` TEXT NOT NULL, FOREIGN KEY(`chargerId`, `chargerDataSource`) REFERENCES `ChargeLocation`(`id`, `dataSource`) ON UPDATE NO ACTION ON DELETE RESTRICT )")
 
                     val cursor = db.query("SELECT * FROM `ChargeLocation`")
                     while (cursor.moveToNext()) {
@@ -361,7 +361,7 @@ abstract class AppDatabase : RoomDatabase() {
             override fun migrate(db: SupportSQLiteDatabase) {
                 try {
                     db.beginTransaction()
-                    db.execSQL("CREATE TABLE IF NOT EXISTS `FavoriteNew` (`favoriteId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `chargerId` INTEGER NOT NULL, `chargerDataSource` TEXT NOT NULL, FOREIGN KEY(`chargerId`, `chargerDataSource`) REFERENCES `ChargeLocation`(`id`, `dataSource`) ON UPDATE NO ACTION ON DELETE NO ACTION )");
+                    db.execSQL("CREATE TABLE IF NOT EXISTS `FavoriteNew` (`favoriteId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `chargerId` INTEGER NOT NULL, `chargerDataSource` TEXT NOT NULL, FOREIGN KEY(`chargerId`, `chargerDataSource`) REFERENCES `ChargeLocation`(`id`, `dataSource`) ON UPDATE NO ACTION ON DELETE NO ACTION )")
                     val columnList =
                         "`favoriteId`,`chargerId`,`chargerDataSource`"
                     db.execSQL("INSERT INTO `FavoriteNew`($columnList) SELECT $columnList FROM `Favorite`")

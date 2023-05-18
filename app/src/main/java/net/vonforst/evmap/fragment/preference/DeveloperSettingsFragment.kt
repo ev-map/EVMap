@@ -14,11 +14,6 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import net.vonforst.evmap.R
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 
 class DeveloperSettingsFragment : BaseSettingsFragment() {
     override val isTopLevel = false

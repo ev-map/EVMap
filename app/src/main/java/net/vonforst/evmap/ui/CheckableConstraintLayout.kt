@@ -15,9 +15,9 @@ class CheckableConstraintLayout(ctx: Context, attrs: AttributeSet) : ConstraintL
 
     override fun setChecked(b: Boolean) {
         if (b != checked) {
-            checked = b;
-            refreshDrawableState();
-            onCheckedChangeListener?.invoke(this, checked);
+            checked = b
+            refreshDrawableState()
+            onCheckedChangeListener?.invoke(this, checked)
         }
     }
 

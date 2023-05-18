@@ -101,12 +101,12 @@ class HideOnExpandFabBehavior(context: Context, attrs: AttributeSet) :
             type,
             consumed
         )
-        if (dyConsumed > 0 && child.getVisibility() == View.VISIBLE) {
+        if (dyConsumed > 0 && child.visibility == View.VISIBLE) {
             // User scrolled down and the FAB is currently visible -> hide the FAB
-            child.hide();
-        } else if (dyConsumed < 0 && child.getVisibility() != View.VISIBLE) {
+            child.hide()
+        } else if (dyConsumed < 0 && child.visibility != View.VISIBLE) {
             // User scrolled up and the FAB is currently not visible -> show the FAB
-            child.show();
+            child.show()
         }
     }
 }

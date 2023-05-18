@@ -40,8 +40,6 @@ import androidx.transition.TransitionInflater
 import androidx.transition.TransitionManager
 import coil.load
 import coil.memory.MemoryCache
-import coil.size.OriginalSize
-import coil.size.SizeResolver
 import com.car2go.maps.AnyMap
 import com.car2go.maps.MapFragment
 import com.car2go.maps.OnMapReadyCallback
@@ -130,16 +128,14 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             }
 
             val state = bottomSheetBehavior.state
-            if (state != STATE_COLLAPSED && state != STATE_HIDDEN) {
-                if (bottomSheetCollapsible) {
+            when (state) {
+                STATE_COLLAPSED -> vm.chargerSparse.value = null
+                STATE_HIDDEN -> vm.searchResult.value = null
+                else -> if (bottomSheetCollapsible) {
                     bottomSheetBehavior.state = STATE_COLLAPSED
                 } else {
                     vm.chargerSparse.value = null
                 }
-            } else if (state == STATE_COLLAPSED) {
-                vm.chargerSparse.value = null
-            } else if (state == STATE_HIDDEN) {
-                vm.searchResult.value = null
             }
         }
     }
@@ -248,7 +244,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         requireActivity().addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
         mapFragment!!.getMapAsync(this)
-        bottomSheetBehavior = BottomSheetBehaviorGoogleMapsLike.from(binding.bottomSheet)
+        bottomSheetBehavior = from(binding.bottomSheet)
         detailAppBarBehavior = MergedAppBarLayoutBehavior.from(binding.detailAppBar)
 
         binding.detailAppBar.toolbar.inflateMenu(R.menu.detail)
@@ -394,7 +390,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 .show()
         }
         binding.detailView.topPart.setOnClickListener {
-            bottomSheetBehavior.state = BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT
+            bottomSheetBehavior.state = STATE_ANCHOR_POINT
         }
         setupSearchAutocomplete()
         binding.detailAppBar.toolbar.setNavigationOnClickListener {
@@ -559,7 +555,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
     private fun setupObservers() {
         bottomSheetBehavior.addBottomSheetCallback(object :
-            BottomSheetBehaviorGoogleMapsLike.BottomSheetCallback() {
+            BottomSheetCallback() {
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
                 if (bottomSheetBehavior.state == STATE_HIDDEN) {
                     map?.setPadding(0, mapTopPadding, 0, 0)
@@ -588,9 +584,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 }
             }
         })
-        vm.chargerSparse.observe(viewLifecycleOwner, Observer {
+        vm.chargerSparse.observe(viewLifecycleOwner) {
             if (it != null) {
-                if (vm.bottomSheetState.value != BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT) {
+                if (vm.bottomSheetState.value != STATE_ANCHOR_POINT) {
                     bottomSheetBehavior.state =
                         if (bottomSheetCollapsible) STATE_COLLAPSED else STATE_ANCHOR_POINT
                 }
@@ -603,7 +599,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 bottomSheetBehavior.state = STATE_HIDDEN
                 unhighlightAllMarkers()
             }
-        })
+        }
         vm.chargepoints.observe(viewLifecycleOwner, Observer { res ->
             when (res.status) {
                 Status.ERROR -> {
@@ -633,23 +629,23 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         vm.useMiniMarkers.observe(viewLifecycleOwner) {
             vm.chargepoints.value?.data?.let { updateMap(it) }
         }
-        vm.favorites.observe(viewLifecycleOwner, Observer {
+        vm.favorites.observe(viewLifecycleOwner) {
             updateFavoriteToggle()
-        })
-        vm.searchResult.observe(viewLifecycleOwner, Observer { place ->
+        }
+        vm.searchResult.observe(viewLifecycleOwner) { place ->
             displaySearchResult(place, moveCamera = true)
-        })
-        vm.layersMenuOpen.observe(viewLifecycleOwner, Observer { open ->
+        }
+        vm.layersMenuOpen.observe(viewLifecycleOwner) { open ->
             binding.fabLayers.visibility = if (open) View.INVISIBLE else View.VISIBLE
             binding.layersSheet.visibility = if (open) View.VISIBLE else View.INVISIBLE
             updateBackPressedCallback()
-        })
-        vm.mapType.observe(viewLifecycleOwner, Observer {
+        }
+        vm.mapType.observe(viewLifecycleOwner) {
             map?.setMapType(it)
-        })
-        vm.mapTrafficEnabled.observe(viewLifecycleOwner, Observer {
+        }
+        vm.mapTrafficEnabled.observe(viewLifecycleOwner) {
             map?.setTrafficEnabled(it)
-        })
+        }
 
         updateBackPressedCallback()
     }
@@ -704,7 +700,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                     highlight = false,
                     fault = c.faultReport != null,
                     multi = c.isMulti(vm.filteredConnectors.value),
-                    fav = c.id in vm.favorites.value?.map { it.charger.id } ?: emptyList(),
+                    fav = c.id in (vm.favorites.value?.map { it.charger.id } ?: emptyList()),
                     mini = vm.useMiniMarkers.value == true
                 )
             )
@@ -720,7 +716,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 highlight = true,
                 fault = charger.faultReport != null,
                 multi = charger.isMulti(vm.filteredConnectors.value),
-                fav = charger.id in vm.favorites.value?.map { it.charger.id } ?: emptyList(),
+                fav = charger.id in (vm.favorites.value?.map { it.charger.id } ?: emptyList()),
                 mini = vm.useMiniMarkers.value == true
             )
         )
@@ -735,7 +731,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                         highlight = false,
                         fault = c.faultReport != null,
                         multi = c.isMulti(vm.filteredConnectors.value),
-                        fav = c.id in vm.favorites.value?.map { it.charger.id } ?: emptyList(),
+                        fav = c.id in (vm.favorites.value?.map { it.charger.id } ?: emptyList()),
                         mini = vm.useMiniMarkers.value == true
                     )
                 )
@@ -967,10 +963,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             vm.chargerSparse.observe(
                 viewLifecycleOwner,
                 object : Observer<ChargeLocation> {
-                    override fun onChanged(item: ChargeLocation?) {
-                        if (item?.id == chargerId) {
+                    override fun onChanged(value: ChargeLocation) {
+                        if (value.id == chargerId) {
                             val cameraUpdate = map.cameraUpdateFactory.newLatLngZoom(
-                                LatLng(item.coordinates.lat, item.coordinates.lng), 16f
+                                LatLng(value.coordinates.lat, value.coordinates.lng), 16f
                             )
                             map.moveCamera(cameraUpdate)
                             vm.chargerSparse.removeObserver(this)
@@ -989,9 +985,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 vm.chargepoints.observe(
                     viewLifecycleOwner,
                     object : Observer<Resource<List<ChargepointListItem>>> {
-                        override fun onChanged(res: Resource<List<ChargepointListItem>>) {
-                            if (res.data == null) return
-                            for (item in res.data) {
+                        override fun onChanged(value: Resource<List<ChargepointListItem>>) {
+                            if (value.data == null) return
+                            for (item in value.data) {
                                 if (item is ChargeLocation && item.id == chargerId) {
                                     vm.chargerSparse.value = item
                                     vm.chargepoints.removeObserver(this)
@@ -1099,7 +1095,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                     highlight = highlight,
                     fault = charger.faultReport != null,
                     multi = charger.isMulti(vm.filteredConnectors.value),
-                    fav = charger.id in vm.favorites.value?.map { it.charger.id } ?: emptyList(),
+                    fav = charger.id in (vm.favorites.value?.map { it.charger.id } ?: emptyList()),
                     mini = vm.useMiniMarkers.value == true
                 )
             )
@@ -1120,7 +1116,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                         val fault = charger.faultReport != null
                         val multi = charger.isMulti(vm.filteredConnectors.value)
                         val fav =
-                            charger.id in vm.favorites.value?.map { it.charger.id } ?: emptyList()
+                            charger.id in (vm.favorites.value?.map { it.charger.id } ?: emptyList())
                         animator.animateMarkerDisappear(
                             marker, tint, highlight, fault, multi, fav,
                             vm.useMiniMarkers.value == true
@@ -1139,7 +1135,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                     val highlight = charger.id == vm.chargerSparse.value?.id
                     val fault = charger.faultReport != null
                     val multi = charger.isMulti(vm.filteredConnectors.value)
-                    val fav = charger.id in vm.favorites.value?.map { it.charger.id } ?: emptyList()
+                    val fav =
+                        charger.id in (vm.favorites.value?.map { it.charger.id } ?: emptyList())
                     val marker = map.addMarker(
                         MarkerOptions()
                             .position(LatLng(charger.coordinates.lat, charger.coordinates.lng))
@@ -1193,13 +1190,13 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         val filterBadge = filterView?.findViewById<TextView>(R.id.filter_badge)
         if (filterBadge != null) {
             // set up badge showing number of active filters
-            vm.filtersCount.observe(viewLifecycleOwner, Observer {
+            vm.filtersCount.observe(viewLifecycleOwner) {
                 filterBadge.visibility = if (it > 0) View.VISIBLE else View.GONE
                 filterBadge.text = it.toString()
-            })
+            }
         }
         filterView?.setOnClickListener {
-            var profilesMap: MutableBiMap<Long, MenuItem> = HashBiMap()
+            val profilesMap: MutableBiMap<Long, MenuItem> = HashBiMap()
 
             val popup = PopupMenu(
                 ContextThemeWrapper(requireContext(), R.style.RoundedPopup),
@@ -1240,7 +1237,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 }
             }
 
-            vm.filterProfiles.observe(viewLifecycleOwner, { profiles ->
+            vm.filterProfiles.observe(viewLifecycleOwner) { profiles ->
                 popup.menu.removeGroup(R.id.menu_group_filter_profiles)
 
                 val noFiltersItem = popup.menu.add(
@@ -1270,25 +1267,28 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 profilesMap[FILTERS_CUSTOM] = customItem
                 profilesMap[FILTERS_FAVORITES] = favoritesItem
 
-                popup.menu.setGroupCheckable(R.id.menu_group_filter_profiles, true, true);
+                popup.menu.setGroupCheckable(R.id.menu_group_filter_profiles, true, true)
 
                 val manageFiltersItem = popup.menu.findItem(R.id.menu_manage_filter_profiles)
                 manageFiltersItem.isVisible = profiles.isNotEmpty()
 
-                vm.filterStatus.observe(viewLifecycleOwner, Observer { id ->
+                vm.filterStatus.observe(viewLifecycleOwner) { id ->
                     when (id) {
                         FILTERS_DISABLED -> {
                             customItem.isVisible = false
                             noFiltersItem.isChecked = true
                         }
+
                         FILTERS_CUSTOM -> {
                             customItem.isVisible = true
                             customItem.isChecked = true
                         }
+
                         FILTERS_FAVORITES -> {
                             customItem.isVisible = false
                             favoritesItem.isChecked = true
                         }
+
                         else -> {
                             customItem.isVisible = false
                             val item = profilesMap[id]
@@ -1298,8 +1298,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                             // else unknown ID -> wait for filterProfiles to update
                         }
                     }
-                })
-            })
+                }
+            }
             popup.setTouchModal(false)
             popup.show()
         }

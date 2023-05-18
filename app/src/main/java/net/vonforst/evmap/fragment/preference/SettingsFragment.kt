@@ -2,7 +2,6 @@ package net.vonforst.evmap.fragment.preference
 
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.view.View
 import androidx.preference.Preference
 import net.vonforst.evmap.R
 

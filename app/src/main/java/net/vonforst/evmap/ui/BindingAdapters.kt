@@ -301,10 +301,10 @@ fun currency(currency: String): String {
 }
 
 fun time(value: Int): String {
-    val h = floor(value.toDouble() / 60).toInt();
-    val min = ceil(value.toDouble() % 60).toInt();
-    return if (h == 0 && min > 0) "$min min";
-    else "%d:%02d h".format(h, min);
+    val h = floor(value.toDouble() / 60).toInt()
+    val min = ceil(value.toDouble() % 60).toInt()
+    return if (h == 0 && min > 0) "$min min"
+    else "%d:%02d h".format(h, min)
 }
 
 fun distance(meters: Number?): String? {

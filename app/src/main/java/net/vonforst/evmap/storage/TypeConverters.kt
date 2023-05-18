@@ -68,7 +68,7 @@ class Converters {
 
     @TypeConverter
     fun toChargerPhotoList(value: String): List<ChargerPhoto>? {
-        return chargerPhotoListAdapter.fromJson(value)?.filterNotNull()
+        return chargerPhotoListAdapter.fromJson(value)
     }
 
     @TypeConverter

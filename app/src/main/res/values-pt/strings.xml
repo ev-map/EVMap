@@ -300,4 +300,22 @@
     <string name="pref_chargeprice_allow_unbalanced_load">Permitir carga não balanceada</string>
     <string name="pref_chargeprice_allow_unbalanced_load_summary">Permitir carregamento CA/AC monofásico (1 fase) com mais de 4.5 kW</string>
     <string name="charger_website">Website</string>
+    <string name="realtime_data_login_needed">Conta Tesla necessária para informação em tempo real</string>
+    <string name="charge_price_minute_format">%2$s%1$.2f/min</string>
+    <string name="pref_tesla_account_disabled">Faça o login para ver os dados em tempo real dos Superchargers da Tesla. Não é necessário possuir um veículo da Tesla</string>
+    <string name="login">Login</string>
+    <string name="login_error">Falha no login</string>
+    <string name="pricing_up_to">até %s</string>
+    <string name="tesla_pricing_other_times">Outros horários:</string>
+    <string name="location_status">Estado do provedor de localização</string>
+    <string name="logged_out">Desconectado</string>
+    <string name="tesla_pricing_members">Veículos e membros da Tesla:</string>
+    <string name="logging_in">Fazendo o login…</string>
+    <string name="log_out">Sair</string>
+    <string name="pref_tesla_account">Conta Tesla</string>
+    <string name="pref_tesla_account_enabled">Conectado como %s</string>
+    <string name="tesla_pricing_others">Outros clientes:</string>
+    <string name="tesla_pricing_blocking_fee">Taxa de bloqueio: %s</string>
+    <string name="average_utilization">Utilização média</string>
+    <string name="tesla_pricing_owners">Apenas veículos Tesla:</string>
 </resources>

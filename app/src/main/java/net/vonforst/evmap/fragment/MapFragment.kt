@@ -160,6 +160,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         savedInstanceState: Bundle?
     ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_map, container, false)
+        println(binding.detailView.sourceButton)
         binding.lifecycleOwner = this
         binding.vm = vm
 

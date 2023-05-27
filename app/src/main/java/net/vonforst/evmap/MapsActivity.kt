@@ -55,8 +55,8 @@ class MapsActivity : AppCompatActivity(),
     private lateinit var prefs: PreferenceDataSource
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
         val splashScreen = installSplashScreen()
+        super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_maps)
 

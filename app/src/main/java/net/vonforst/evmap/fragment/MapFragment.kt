@@ -73,6 +73,7 @@ import net.vonforst.evmap.autocomplete.ApiUnavailableException
 import net.vonforst.evmap.autocomplete.PlaceWithBounds
 import net.vonforst.evmap.bold
 import net.vonforst.evmap.databinding.FragmentMapBinding
+import net.vonforst.evmap.fragment.preference.DataSettingsFragmentArgs
 import net.vonforst.evmap.location.FusionEngine
 import net.vonforst.evmap.location.LocationEngine
 import net.vonforst.evmap.location.Priority
@@ -379,7 +380,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             charger.chargerUrl?.let { (activity as? MapsActivity)?.openUrl(it) }
         }
         binding.detailView.btnLogin.setOnClickListener {
-            findNavController().navigate(R.id.settings_data)
+            findNavController().navigate(
+                R.id.settings_data,
+                DataSettingsFragmentArgs(true).toBundle()
+            )
         }
         binding.detailView.imgPredictionSource.setOnClickListener {
             (activity as? MapsActivity)?.openUrl(getString(R.string.fronyx_url))

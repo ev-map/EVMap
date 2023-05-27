@@ -2,8 +2,10 @@ package net.vonforst.evmap.fragment.oauth
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,11 +18,19 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.progressindicator.LinearProgressIndicator
+import com.google.android.material.transition.MaterialSharedAxis
 import net.vonforst.evmap.MapsActivity
 import net.vonforst.evmap.R
 
 class OAuthLoginFragment : Fragment() {
     private lateinit var webView: WebView
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enterTransition = MaterialSharedAxis(MaterialSharedAxis.X, true)
+        returnTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,6 +52,10 @@ class OAuthLoginFragment : Fragment() {
         val uri = Uri.parse(args.url)
 
         webView = view.findViewById(R.id.webView)
+
+        args.color?.let { webView.setBackgroundColor(Color.parseColor(it)) }
+        val progress = view.findViewById<LinearProgressIndicator>(R.id.progress_indicator)
+
         CookieManager.getInstance().removeAllCookies(null)
         webView.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(
@@ -62,6 +76,13 @@ class OAuthLoginFragment : Fragment() {
 
             override fun onPageStarted(view: WebView, url: String, favicon: Bitmap?) {
                 super.onPageStarted(view, url, favicon)
+                progress.show()
+            }
+
+            override fun onPageFinished(view: WebView?, url: String?) {
+                super.onPageFinished(view, url)
+                progress.hide()
+                webView.background = null
             }
         }
         webView.settings.javaScriptEnabled = true

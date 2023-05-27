@@ -78,7 +78,12 @@
         android:id="@+id/settings_data"
         android:name="net.vonforst.evmap.fragment.preference.DataSettingsFragment"
         android:label="@string/settings_data_sources"
-        tools:layout="@layout/fragment_preference" />
+        tools:layout="@layout/fragment_preference">
+        <argument
+            android:name="startTeslaLogin"
+            app:argType="boolean"
+            android:defaultValue="false" />
+    </fragment>
     <fragment
         android:id="@+id/settings_chargeprice"
         android:name="net.vonforst.evmap.fragment.preference.ChargepriceSettingsFragment"
@@ -179,5 +184,9 @@
         <argument
             android:name="resultUrlPrefix"
             app:argType="string" />
+        <argument
+            android:name="color"
+            app:argType="string"
+            app:nullable="true" />
     </fragment>
 </navigation>

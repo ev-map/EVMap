@@ -31,6 +31,7 @@ import net.vonforst.evmap.autocomplete.PlaceWithBounds
 import net.vonforst.evmap.model.*
 import net.vonforst.evmap.storage.AppDatabase
 import net.vonforst.evmap.storage.ChargeLocationsRepository
+import net.vonforst.evmap.storage.EncryptedPreferenceDataStore
 import net.vonforst.evmap.storage.FilterProfile
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.ui.cluster
@@ -57,6 +58,7 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
     AndroidViewModel(application) {
     private val db = AppDatabase.getInstance(application)
     private val prefs = PreferenceDataSource(application)
+    private val encryptedPrefs = EncryptedPreferenceDataStore(application)
     private val repo = ChargeLocationsRepository(
         createApi(prefs.dataSource, application),
         viewModelScope,
@@ -426,10 +428,16 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
         }
     }
 
+    private var hasTeslaLogin: MutableLiveData<Boolean> = state.getLiveData("hasTeslaLogin")
+
     fun reloadPrefs() {
         filterStatus.value = prefs.filterStatus
         if (prefs.dataSource != apiId.value) {
             repo.api.value = createApi(prefs.dataSource, getApplication())
+        }
+        if (hasTeslaLogin.value != (encryptedPrefs.teslaAccessToken != null)) {
+            hasTeslaLogin.value = encryptedPrefs.teslaAccessToken != null
+            reloadAvailability()
         }
     }
 

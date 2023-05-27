@@ -17,6 +17,16 @@
             android:layout_width="match_parent"
             android:layout_height="?android:actionBarSize" />
 
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/progress_indicator"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:indeterminate="true"
+            app:hideAnimationBehavior="inward"
+            app:indicatorColor="@color/colorSecondary"
+            app:showAnimationBehavior="outward" />
+
     </com.google.android.material.appbar.AppBarLayout>
 
     <WebView

@@ -3,6 +3,7 @@ package net.vonforst.evmap.fragment.preference
 import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
 import android.widget.TextView
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
@@ -42,6 +43,18 @@ class DataSettingsFragment : BaseSettingsFragment() {
         setPreferencesFromResource(R.xml.settings_data, rootKey)
         teslaAccountPreference = findPreference<Preference>("tesla_account")!!
         refreshTeslaAccountStatus()
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        arguments?.let {
+            val args = DataSettingsFragmentArgs.fromBundle(it)
+            if (args.startTeslaLogin) {
+                teslaLogin()
+                arguments = null
+            }
+        }
     }
 
     override fun onResume() {
@@ -119,7 +132,8 @@ class DataSettingsFragment : BaseSettingsFragment() {
 
         val args = OAuthLoginFragmentArgs(
             uri.toString(),
-            "https://auth.tesla.com/void/callback"
+            "https://auth.tesla.com/void/callback",
+            "#000000"
         ).toBundle()
 
         setFragmentResultListener(uri.toString()) { _, result ->

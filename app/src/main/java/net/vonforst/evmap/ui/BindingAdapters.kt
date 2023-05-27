@@ -295,7 +295,7 @@ fun currency(currency: String): String {
         "GBP" -> "£"
         "HRK" -> "kn"
         "HUF" -> "Ft"
-        "ISK" -> "Kr"
+        "ISK" -> "kr"
         else -> currency
     }
 }

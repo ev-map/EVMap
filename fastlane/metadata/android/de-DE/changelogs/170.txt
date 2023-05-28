@@ -1,0 +1,10 @@
+Neue Funktionen:
+- Echtzeitdaten zu Verfügbarkeit und Preisen für Tesla Supercharger (Login mit Tesla-Account erforderlich)
+
+Verbesserungen:
+- Übersetzungen aktualisiert
+
+Fehler behoben:
+- Datenquelle NewMotion für Echtzeitdaten funktionierte nicht mehr
+- Verschieben der Karte zur eigenen Position funktionierte auf manchen Geräten nicht
+- Abstürze auf älteren Geräten behoben

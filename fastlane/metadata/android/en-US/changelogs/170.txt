@@ -1,0 +1,10 @@
+New features:
+- Real-time availability and prices for Tesla Superchargers (requires login with Tesla account)
+
+Improvements:
+- Updated translations
+
+Bugfixes:
+- Realtime data from NewMotion was not working anymore
+- Moving the map to own location did not work on some devices
+- Fixed crashes on some older devices

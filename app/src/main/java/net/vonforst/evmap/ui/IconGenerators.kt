@@ -35,7 +35,10 @@ class ClusterIconGenerator(context: Context) : IconGenerator(context) {
             )
             id = R.id.amu_text
             setPadding(twelveDpi, twelveDpi, twelveDpi, twelveDpi)
-            TextViewCompat.setTextAppearance(this, R.style.TextAppearance_AppCompat)
+            TextViewCompat.setTextAppearance(
+                this,
+                androidx.appcompat.R.style.TextAppearance_AppCompat
+            )
             setTextColor(ContextCompat.getColor(context, android.R.color.white))
         }
     }

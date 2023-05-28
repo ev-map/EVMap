@@ -114,7 +114,7 @@ class MapboxAutocompleteProvider(val context: Context) : AutocompleteProvider {
     override fun getAttributionString(): Int = R.string.powered_by_mapbox
 
     override fun getAttributionImage(dark: Boolean): Int =
-        if (dark) R.drawable.mapbox_logo_icon else R.drawable.mapbox_logo
+        if (dark) com.mapbox.mapboxsdk.R.drawable.mapbox_logo_icon else R.drawable.mapbox_logo
 }
 
 private fun BoundingBox.toLatLngBounds(): LatLngBounds {

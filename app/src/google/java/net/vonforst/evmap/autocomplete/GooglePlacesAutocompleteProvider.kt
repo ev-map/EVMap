@@ -92,10 +92,11 @@ class GooglePlacesAutocompleteProvider(val context: Context) : AutocompleteProvi
         }
     }
 
-    override fun getAttributionString(): Int = R.string.places_powered_by_google
+    override fun getAttributionString(): Int =
+        com.google.android.libraries.places.R.string.places_powered_by_google
 
     override fun getAttributionImage(dark: Boolean): Int =
-        if (dark) R.drawable.places_powered_by_google_dark else R.drawable.places_powered_by_google_light
+        if (dark) com.google.android.libraries.places.R.drawable.places_powered_by_google_dark else com.google.android.libraries.places.R.drawable.places_powered_by_google_light
 
     private fun calcLocationBias(location: com.car2go.maps.model.LatLng): RectangularBounds {
         val radius = 100e3 // meters

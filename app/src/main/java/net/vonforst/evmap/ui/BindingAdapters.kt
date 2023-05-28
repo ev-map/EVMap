@@ -110,9 +110,9 @@ private fun activeTint(
     val color = context.theme.obtainStyledAttributes(
         intArrayOf(
             if (isColored) {
-                R.attr.colorPrimary
+                androidx.appcompat.R.attr.colorPrimary
             } else {
-                R.attr.colorControlNormal
+                androidx.appcompat.R.attr.colorControlNormal
             }
         )
     )
@@ -169,9 +169,10 @@ fun setBackgroundTintAvailability(view: View, available: List<ChargepointStatus>
 @BindingAdapter("selectableItemBackground")
 fun applySelectableItemBackground(view: View, apply: Boolean) {
     if (apply) {
-        view.context.obtainStyledAttributes(intArrayOf(R.attr.selectableItemBackground)).use {
-            view.background = it.getDrawable(0)
-        }
+        view.context.obtainStyledAttributes(intArrayOf(androidx.appcompat.R.attr.selectableItemBackground))
+            .use {
+                view.background = it.getDrawable(0)
+            }
     } else {
         view.background = null
     }
@@ -263,7 +264,8 @@ private fun availabilityColor(
         ContextCompat.getColor(context, R.color.charging)
     }
 } else {
-    val ta = context.theme.obtainStyledAttributes(intArrayOf(R.attr.colorControlNormal))
+    val ta =
+        context.theme.obtainStyledAttributes(intArrayOf(androidx.appcompat.R.attr.colorControlNormal))
     ta.getColor(0, 0)
 }
 
@@ -371,9 +373,10 @@ fun tariffBackground(context: Context, myTariff: Boolean, brandingColor: String?
             return drawable
         }
         else -> {
-            context.obtainStyledAttributes(intArrayOf(R.attr.selectableItemBackground)).use {
-                return it.getDrawable(0)
-            }
+            context.obtainStyledAttributes(intArrayOf(androidx.appcompat.R.attr.selectableItemBackground))
+                .use {
+                    return it.getDrawable(0)
+                }
         }
     }
 }

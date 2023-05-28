@@ -62,7 +62,8 @@ class BarGraphView(context: Context, attrs: AttributeSet) : View(context, attrs)
     var inactiveAlpha = 0.60f
 
     private val legendPaint = Paint().apply {
-        val ta = context.theme.obtainStyledAttributes(intArrayOf(R.attr.colorControlNormal))
+        val ta =
+            context.theme.obtainStyledAttributes(intArrayOf(androidx.appcompat.R.attr.colorControlNormal))
         color = ta.getColor(0, 0)
         strokeWidth = legendLineWidth
         textSize = legendWidth - legendLineLength

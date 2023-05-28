@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<full-backup-content>
+    <include
+        domain="sharedpref"
+        path="." />
+    <exclude
+        domain="sharedpref"
+        path="encrypted_prefs.xml" />
+    <include
+        domain="database"
+        path="evmap.db" />
+</full-backup-content>

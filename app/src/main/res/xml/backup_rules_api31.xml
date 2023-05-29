@@ -9,7 +9,7 @@
             path="encrypted_prefs.xml" />
         <include
             domain="database"
-            path="evmap.db" />
+            path="evmap-backup.db" />
     </cloud-backup>
     <device-transfer>
         <include
@@ -20,6 +20,6 @@
             path="encrypted_prefs.xml" />
         <include
             domain="database"
-            path="evmap.db" />
+            path="evmap-backup.db" />
     </device-transfer>
 </data-extraction-rules>

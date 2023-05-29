@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
+import androidx.lifecycle.map
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
@@ -18,6 +19,7 @@ import net.vonforst.evmap.api.openchargemap.OCMConnectionType
 import net.vonforst.evmap.api.openchargemap.OCMCountry
 import net.vonforst.evmap.api.openchargemap.OCMOperator
 import net.vonforst.evmap.model.*
+import net.vonforst.evmap.viewmodel.await
 
 @Database(
     entities = [
@@ -445,5 +447,31 @@ abstract class AppDatabase : RoomDatabase() {
                 }
             }
         }
+    }
+
+    /**
+     * Creates a backup of the database to evmap-backup.db.
+     *
+     * The backup excludes cached data which can easily be retrieved from the network on restore.
+     */
+    suspend fun createBackup(context: Context, fileName: String) {
+        val db = getInstance(context.applicationContext)
+        val backupDb = initDb(
+            SpatiaRoom.databaseBuilder(
+                context.applicationContext,
+                AppDatabase::class.java,
+                fileName
+            )
+        )
+        backupDb.clearAllTables()
+
+        val favorites = db.favoritesDao().getAllFavoritesAsync()
+        backupDb.chargeLocationsDao().insert(*favorites.map { it.charger }.toTypedArray())
+        backupDb.favoritesDao().insert(*favorites.map { it.favorite }.toTypedArray())
+        backupDb.filterProfileDao().insert(*db.filterProfileDao().getAllProfiles().toTypedArray())
+        backupDb.filterValueDao().insert(*db.filterValueDao().getAllFilterValues().toTypedArray())
+        backupDb.recentAutocompletePlaceDao()
+            .insert(*db.recentAutocompletePlaceDao().getAllAsync().toTypedArray())
+        backupDb.close()
     }
 }

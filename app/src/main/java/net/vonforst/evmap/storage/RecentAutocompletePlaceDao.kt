@@ -80,4 +80,7 @@ abstract class RecentAutocompletePlaceDao {
         dataSource: String,
         limit: Int? = null
     ): List<RecentAutocompletePlace>
+
+    @Query("SELECT * FROM recentautocompleteplace")
+    abstract suspend fun getAllAsync(): List<RecentAutocompletePlace>
 }

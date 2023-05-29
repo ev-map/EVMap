@@ -26,6 +26,15 @@ abstract class FilterValueDao {
         dataSource: String
     ): List<SliderFilterValue>
 
+    @Query("SELECT * FROM booleanfiltervalue")
+    protected abstract suspend fun getAllBooleanFilterValuesAsync(): List<BooleanFilterValue>
+
+    @Query("SELECT * FROM multiplechoicefiltervalue")
+    protected abstract suspend fun getAllMultipleChoiceFilterValuesAsync(): List<MultipleChoiceFilterValue>
+
+    @Query("SELECT * FROM sliderfiltervalue")
+    protected abstract suspend fun getAllSliderFilterValuesAsync(): List<SliderFilterValue>
+
     @Query("SELECT * FROM booleanfiltervalue WHERE profile = :profile AND dataSource = :dataSource")
     protected abstract fun getBooleanFilterValues(
         profile: Long,
@@ -104,6 +113,11 @@ abstract class FilterValueDao {
                 }
             }
         }
+
+    open suspend fun getAllFilterValues(): List<FilterValue> =
+        getAllBooleanFilterValuesAsync() +
+                getAllMultipleChoiceFilterValuesAsync() +
+                getAllSliderFilterValuesAsync()
 
     @Transaction
     open suspend fun insert(vararg values: FilterValue) {

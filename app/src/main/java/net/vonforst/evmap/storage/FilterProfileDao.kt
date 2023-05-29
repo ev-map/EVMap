@@ -19,7 +19,7 @@ data class FilterProfile(
 @Dao
 interface FilterProfileDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(profile: FilterProfile): Long
+    suspend fun insert(vararg profile: FilterProfile)
 
     @Update
     suspend fun update(vararg profiles: FilterProfile)
@@ -29,6 +29,9 @@ interface FilterProfileDao {
 
     @Query("SELECT * FROM filterProfile WHERE dataSource = :dataSource AND id != $FILTERS_CUSTOM ORDER BY `order` ASC, `name` ASC")
     fun getProfiles(dataSource: String): LiveData<List<FilterProfile>>
+
+    @Query("SELECT * FROM filterProfile")
+    suspend fun getAllProfiles(): List<FilterProfile>
 
     @Query("SELECT * FROM filterProfile WHERE dataSource = :dataSource AND name = :name")
     suspend fun getProfileByName(name: String, dataSource: String): FilterProfile?

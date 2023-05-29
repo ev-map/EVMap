@@ -8,5 +8,5 @@
         path="encrypted_prefs.xml" />
     <include
         domain="database"
-        path="evmap.db" />
+        path="evmap-backup.db" />
 </full-backup-content>

@@ -128,7 +128,7 @@ class ChargepriceFragment : Fragment() {
 
         val vehicleAdapter = CheckableChargepriceCarAdapter()
         headerBinding.vehicleSelection.adapter = vehicleAdapter
-        val vehicleObserver: Observer<ChargepriceCar> = Observer {
+        val vehicleObserver: Observer<ChargepriceCar?> = Observer {
             vehicleAdapter.setCheckedItem(it)
         }
         vm.vehicle.observe(viewLifecycleOwner, vehicleObserver)

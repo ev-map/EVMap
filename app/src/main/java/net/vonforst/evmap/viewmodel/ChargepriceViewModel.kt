@@ -116,19 +116,17 @@ class ChargepriceViewModel(
         MediatorLiveData<Resource<List<ChargePrice>>>().apply {
             value = state["chargePrices"] ?: Resource.loading(null)
             listOf(
-                charger,
                 batteryRange,
                 batteryRangeSliderDragging,
                 vehicleCompatibleConnectors,
-                myTariffs, myTariffsAll
+                myTariffs, myTariffsAll, charger
             ).forEach {
                 addSource(it.distinctUntilChanged()) {
-                    if (!batteryRangeSliderDragging.value!!) loadPrices()
+                    if (!batteryRangeSliderDragging.value!!) {
+                        loadPrices()
+                        state["chargePrices"] = this.value
+                    }
                 }
-            }
-            observeForever {
-                // persist data in case fragment gets recreated
-                state["chargePrices"] = it
             }
         }
     }

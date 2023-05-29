@@ -118,7 +118,7 @@ interface TeslaOwnerApi {
     data class UserInfo(
         val email: String,
         @Json(name = "full_name") val fullName: String,
-        @Json(name = "profile_image_url") val profileImageUrl: String
+        @Json(name = "profile_image_url") val profileImageUrl: String?
     )
 
     companion object {

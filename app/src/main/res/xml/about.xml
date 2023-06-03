@@ -19,6 +19,11 @@
             android:title="@string/about_contributors" />
 
         <Preference
+            android:key="website"
+            android:title="@string/website"
+            android:summary="@string/website_url" />
+
+        <Preference
             android:key="faq"
             android:title="@string/faq" />
 

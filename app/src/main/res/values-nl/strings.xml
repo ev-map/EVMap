@@ -209,9 +209,9 @@
     <string name="github_sponsors_desc">Ondersteun EVMap op GitHub Spinsors</string>
     <string name="github_sponsors">GitHub Sponsors</string>
     <string name="unnamed_filter_profile">Naamloos filterprofiel</string>
-    <string name="privacy_link">https://evmap.vonforst.net/en/privacy.html</string>
-    <string name="faq_link">https://evmap.vonforst.net/en/faq.html</string>
-    <string name="chargeprice_faq_link">https://evmap.vonforst.net/en/chargeprice_faq.html</string>
+    <string name="privacy_link">https://ev-map.app/privacypolicy/</string>
+    <string name="faq_link">https://ev-map.app/faq/</string>
+    <string name="chargeprice_faq_link">https://ev-map.app/faq/#price-comparison-feature</string>
     <string name="required">verplicht</string>
     <string name="pref_search_delete_recent">Verwijder recente zoekresultaten</string>
     <string name="deleted_recent_search_results">Recente zoekresultaten zijn verwijderd</string>

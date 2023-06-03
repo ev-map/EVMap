@@ -9,6 +9,7 @@
     <string name="github_sponsors_link">https://github.com/sponsors/johan12345/</string>
     <string name="chargeprice_api_url">https://api.chargeprice.app/v1/</string>
     <string name="fronyx_url">https://fronyx.io/</string>
+    <string name="website_url">https://ev-map.app</string>
     <string name="pref_language_en">English</string>
     <string name="pref_language_de">Deutsch</string>
     <string name="pref_language_fr">Français</string>

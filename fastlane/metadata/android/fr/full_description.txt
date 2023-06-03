@@ -15,4 +15,4 @@ EVMap est un projet open source et peut être trouvé sur https://github.com/ev-
 
 Cette application n'est pas un produit officiel de GoingElectric.de ou Open Charge Map, elle utilise uniquement leurs API publiques.
 
-Une liste des permissions nécessaires avec des explications est disponible ici : https://evmap.vonforst.net/en/permissions.html
+Une liste des permissions nécessaires avec des explications est disponible ici : https://ev-map.app/faq/#permissions

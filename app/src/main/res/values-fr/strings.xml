@@ -115,7 +115,7 @@
     <string name="donate_desc">Soutenir le développement d\'EVMap par un don unique</string>
     <string name="github_sponsors_desc">Soutenir EVMap sur GitHub Sponsors</string>
     <string name="unnamed_filter_profile">Profil de filtrage sans nom</string>
-    <string name="privacy_link">https://evmap.vonforst.net/en/privacy.html</string>
+    <string name="privacy_link">https://ev-map.app/privacypolicy/</string>
     <string name="required">requis</string>
     <string name="edit_filter_profile">Modifier \"%s\"</string>
     <string name="pref_search_delete_recent">Supprimer les résultats de recherche récents</string>
@@ -241,8 +241,8 @@
     <string name="unknown_operator">Opérateur inconnu</string>
     <string name="data_source_goingelectric_desc">Idéal dans les pays germanophones. Descriptions en allemand. Maintenu par la communauté.</string>
     <string name="data_source_openchargemap_desc">Couverture mondiale avec une qualité variable. Descriptions en anglais ou dans la langue locale. Données ouvertes maintenues par la communauté et provenant de sources gouvernementales dans certains pays (par exemple, Amérique du Nord, Royaume-Uni, France, Norvège).</string>
-    <string name="faq_link">https://evmap.vonforst.net/en/faq.html</string>
-    <string name="chargeprice_faq_link">https://evmap.vonforst.net/en/chargeprice_faq.html</string>
+    <string name="faq_link">https://ev-map.app/faq/</string>
+    <string name="chargeprice_faq_link">https://ev-map.app/faq/#price-comparison-feature</string>
     <string name="settings_data_sources">Sources de données</string>
     <string name="data_sources_description">Veuillez choisir une source de données pour les stations de recharge. Vous pourrez la modifier ultérieurement dans les paramètres de l\'application.</string>
     <string name="pref_search_provider_info">Les données pour la recherche de lieux, en particulier celles de Google Maps, sont relativement coûteuses à récupérer. Veuillez envisager de faire un don via \"À propos\" -&gt; \"Faire un don\".</string>

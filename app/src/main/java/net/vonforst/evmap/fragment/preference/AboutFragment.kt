@@ -76,14 +76,21 @@ class AboutFragment : PreferenceFragmentCompat() {
                 true
             }
 
+            "website" -> {
+                (activity as? MapsActivity)?.openUrl(getString(R.string.website_url))
+                true
+            }
+
             "github_link" -> {
                 (activity as? MapsActivity)?.openUrl(getString(R.string.github_link))
                 true
             }
+
             "privacy" -> {
                 (activity as? MapsActivity)?.openUrl(getString(R.string.privacy_link))
                 true
             }
+
             "faq" -> {
                 (activity as? MapsActivity)?.openUrl(getString(R.string.faq_link))
                 true

@@ -265,9 +265,9 @@
     <string name="parking_free">Gratis</string>
     <string name="charging_paid">Betalt</string>
     <string name="parking_paid">Betalt</string>
-    <string name="privacy_link">https://evmap.vonforst.net/en/privacy.html</string>
-    <string name="faq_link">https://evmap.vonforst.net/en/faq.html</string>
-    <string name="chargeprice_faq_link">https://evmap.vonforst.net/en/chargeprice_faq.html</string>
+    <string name="privacy_link">https://ev-map.app/privacypolicy/</string>
+    <string name="faq_link">https://ev-map.app/faq/</string>
+    <string name="chargeprice_faq_link">https://ev-map.app/faq/#price-comparison-feature</string>
     <string name="about_contributors">Bidragsytere</string>
     <string name="about_contributors_text">Takk til alle som har kodet og oversatt EVMap:</string>
     <plurals name="prediction_number_available">

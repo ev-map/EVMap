@@ -1,7 +1,8 @@
 EVMap [![Build Status](https://github.com/ev-map/EVMap/actions/workflows/tests.yml/badge.svg)](https://github.com/ev-map/EVMap/actions)
 =====
 
-<img src="https://raw.githubusercontent.com/ev-map/EVMap/master/_img/feature_graphic.svg" width=700 alt="Logo"/>
+<a href="https://ev-map.app" target="_blank">
+<img src="https://raw.githubusercontent.com/ev-map/EVMap/master/_img/feature_graphic.svg" width=700 alt="Logo"/></a>
 
 Android app to find electric vehicle charging stations.
 

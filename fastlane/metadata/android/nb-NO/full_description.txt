@@ -16,4 +16,4 @@ Du finner kildekoden på https://github.com/ev-map/EVMap.
 Dette kartet er ikke et offisielt program fra hverken GoingElectric.de eller Open Charge Map.
 Kun de offentlige API-ene derfra benyttes.
 
-Nødvendige tilganger er forklart på https://evmap.vonforst.net/en/permissions.html
+Nødvendige tilganger er forklart på https://ev-map.app/faq/#permissions

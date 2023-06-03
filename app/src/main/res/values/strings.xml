@@ -237,9 +237,9 @@
     <string name="donate_desc">Support EVMap\'s development with a one-time donation</string>
     <string name="github_sponsors_desc">Support EVMap on GitHub Sponsors</string>
     <string name="unnamed_filter_profile">Unnamed filter profile</string>
-    <string name="privacy_link">https://evmap.vonforst.net/en/privacy.html</string>
-    <string name="faq_link">https://evmap.vonforst.net/en/faq.html</string>
-    <string name="chargeprice_faq_link">https://evmap.vonforst.net/en/chargeprice_faq.html</string>
+    <string name="privacy_link">https://ev-map.app/privacypolicy/</string>
+    <string name="faq_link">https://ev-map.app/faq/</string>
+    <string name="chargeprice_faq_link">https://ev-map.app/faq/#price-comparison-feature</string>
     <string name="required">required</string>
     <string name="edit_filter_profile">Edit “%s”</string>
     <string name="pref_search_delete_recent">Delete recent search results</string>
@@ -313,4 +313,5 @@
     <string name="tesla_pricing_other_times">Other times:</string>
     <string name="tesla_pricing_blocking_fee">Blocking fee: %s</string>
     <string name="average_utilization">Average Utilization</string>
+    <string name="website">Website</string>
 </resources>

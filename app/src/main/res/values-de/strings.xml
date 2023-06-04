@@ -320,4 +320,9 @@
     <string name="pref_map_scale_miles">Meilen</string>
     <string name="pref_map_scale_off">aus</string>
     <string name="data_retrieved_at">Daten abgerufen %s</string>
+    <string name="settings_caching">Cache</string>
+    <string name="settings_cache_count">Cache-Größe</string>
+    <string name="settings_cache_clear">Cache leeren</string>
+    <string name="settings_cache_clear_summary">Löscht alle gespeicherten Ladestationen außer Favoriten</string>
+    <string name="settings_cache_count_summary">%d Ladestationen gespeichert, %.1f MB</string>
 </resources>

@@ -43,4 +43,13 @@
             android:title="@string/pref_search_delete_recent" />
 
     </PreferenceCategory>
+    <PreferenceCategory android:title="@string/settings_caching">
+        <Preference
+            android:key="cache_size"
+            android:title="@string/settings_cache_count" />
+        <Preference
+            android:key="cache_clear"
+            android:title="@string/settings_cache_clear"
+            android:summary="@string/settings_cache_clear_summary" />
+    </PreferenceCategory>
 </PreferenceScreen>

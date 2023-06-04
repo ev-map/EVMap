@@ -41,8 +41,23 @@ class DataSettingsFragment : BaseSettingsFragment() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.settings_data, rootKey)
-        teslaAccountPreference = findPreference<Preference>("tesla_account")!!
+        teslaAccountPreference = findPreference("tesla_account")!!
         refreshTeslaAccountStatus()
+
+        vm.chargerCacheCount.observe(this) {
+            updateCacheSizeSummary()
+        }
+        vm.chargerCacheSize.observe(this) {
+            updateCacheSizeSummary()
+        }
+    }
+
+    private fun updateCacheSizeSummary() {
+        val count = vm.chargerCacheCount.value ?: return
+        val size = vm.chargerCacheSize.value ?: return
+        val sizeMb = size.toFloat() / 1024 / 1024
+        findPreference<Preference>("cache_size")!!.summary =
+            getString(R.string.settings_cache_count_summary, count, sizeMb)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -111,6 +126,11 @@ class DataSettingsFragment : BaseSettingsFragment() {
                 } else {
                     teslaLogin()
                 }
+                true
+            }
+
+            "cache_clear" -> {
+                vm.clearChargerCache()
                 true
             }
 

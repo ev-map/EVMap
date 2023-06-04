@@ -2,6 +2,7 @@ package net.vonforst.evmap.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
@@ -9,6 +10,7 @@ import net.vonforst.evmap.api.chargeprice.ChargepriceApi
 import net.vonforst.evmap.api.chargeprice.ChargepriceCar
 import net.vonforst.evmap.api.chargeprice.ChargepriceTariff
 import net.vonforst.evmap.storage.AppDatabase
+import net.vonforst.evmap.storage.PreferenceDataSource
 import java.io.IOException
 
 class SettingsViewModel(
@@ -17,8 +19,9 @@ class SettingsViewModel(
     chargepriceApiUrl: String
 ) :
     AndroidViewModel(application) {
-    private var api = ChargepriceApi.create(chargepriceApiKey, chargepriceApiUrl)
-    private var db = AppDatabase.getInstance(application)
+    private val api = ChargepriceApi.create(chargepriceApiKey, chargepriceApiUrl)
+    private val db = AppDatabase.getInstance(application)
+    private val prefs = PreferenceDataSource(application)
 
     val vehicles: MutableLiveData<Resource<List<ChargepriceCar>>> by lazy {
         MutableLiveData<Resource<List<ChargepriceCar>>>().apply {
@@ -31,6 +34,20 @@ class SettingsViewModel(
         MutableLiveData<Resource<List<ChargepriceTariff>>>().apply {
             value = Resource.loading(null)
             loadTariffs()
+        }
+    }
+
+    val chargerCacheCount: LiveData<Long> by lazy {
+        db.chargeLocationsDao().getCount()
+    }
+
+    val chargerCacheSize: LiveData<Long> by lazy {
+        MutableLiveData<Long>().apply {
+            chargerCacheCount.observeForever {
+                viewModelScope.launch {
+                    value = db.chargeLocationsDao().getSize()
+                }
+            }
         }
     }
 
@@ -59,6 +76,13 @@ class SettingsViewModel(
     fun deleteRecentSearchResults() {
         viewModelScope.launch {
             db.recentAutocompletePlaceDao().deleteAll()
+        }
+    }
+
+    fun clearChargerCache() {
+        viewModelScope.launch {
+            db.savedRegionDao().deleteAll()
+            db.chargeLocationsDao().deleteAllIfNotFavorite()
         }
     }
 }

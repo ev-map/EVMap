@@ -97,6 +97,9 @@ abstract class SavedRegionDao {
     @Query("DELETE FROM savedregion WHERE dataSource == :dataSource AND timeRetrieved <= :before")
     abstract suspend fun deleteOutdated(dataSource: String, before: Long)
 
+    @Query("DELETE FROM savedregion")
+    abstract suspend fun deleteAll()
+
     @SkipQueryVerification
     @Query("SELECT MakeEllipse(:lng, :lat, :radiusLng, :radiusLat, 4326)")
     protected abstract suspend fun makeEllipse(

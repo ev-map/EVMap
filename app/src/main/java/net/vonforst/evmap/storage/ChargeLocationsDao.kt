@@ -53,6 +53,9 @@ abstract class ChargeLocationsDao {
     @Query("DELETE FROM chargelocation WHERE dataSource == :dataSource AND timeRetrieved <= :before AND NOT EXISTS (SELECT 1 FROM favorite WHERE favorite.chargerId = chargelocation.id)")
     abstract suspend fun deleteOutdatedIfNotFavorite(dataSource: String, before: Long)
 
+    @Query("DELETE FROM chargelocation WHERE NOT EXISTS (SELECT 1 FROM favorite WHERE favorite.chargerId = chargelocation.id)")
+    abstract suspend fun deleteAllIfNotFavorite()
+
     @Query("SELECT * FROM chargelocation WHERE dataSource == :dataSource AND id == :id AND isDetailed == 1 AND timeRetrieved > :after")
     abstract fun getChargeLocationById(
         id: Long,
@@ -83,6 +86,13 @@ abstract class ChargeLocationsDao {
 
     @RawQuery(observedEntities = [ChargeLocation::class])
     abstract fun getChargeLocationsCustom(query: SupportSQLiteQuery): LiveData<List<ChargeLocation>>
+
+    @Query("SELECT COUNT(*) FROM chargelocation")
+    abstract fun getCount(): LiveData<Long>
+
+    @SkipQueryVerification
+    @Query("SELECT SUM(pgsize) FROM dbstat WHERE name == \"ChargeLocation\"")
+    abstract suspend fun getSize(): Long
 }
 
 /**

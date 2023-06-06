@@ -8,6 +8,7 @@ apply plugin: 'kotlin-parcelize'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
 apply plugin: 'com.mikepenz.aboutlibraries.plugin'
+apply plugin: 'pt.jcosta.resourceplaceholders'
 
 def supportedLocales = "en,de,fr,nb-rNO,nl,pt,ro"
 
@@ -109,6 +110,9 @@ android {
         unitTests.includeAndroidResources true
     }
 
+    resourcePlaceholders {
+        files = ['xml/shortcuts.xml']
+    }
     namespace 'net.vonforst.evmap'
 
     // add API keys from environment variable if not set in apikeys.xml

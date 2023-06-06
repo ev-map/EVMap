@@ -31,7 +31,11 @@ import java.io.IOException
 import java.time.Instant
 
 @ExperimentalCarApi
-class PlaceSearchScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx),
+class PlaceSearchScreen(
+    ctx: CarContext,
+    val session: EVMapSession,
+    val initialSearch: String = ""
+) : Screen(ctx),
     SearchTemplate.SearchCallback, LocationAwareScreen,
     DefaultLifecycleObserver {
     private val hardwareMan: CarHardwareManager by lazy {
@@ -64,13 +68,15 @@ class PlaceSearchScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx
 
     init {
         lifecycle.addObserver(this)
-        update("")
+        update(initialSearch)
     }
 
     override fun onGetTemplate(): Template {
         return SearchTemplate.Builder(this).apply {
             setHeaderAction(Action.BACK)
             setSearchHint(carContext.getString(R.string.search))
+            setInitialSearchText(initialSearch)
+            setShowKeyboardByDefault(initialSearch == "")
             resultList?.let {
                 setItemList(buildItemList(it))
             } ?: setLoading(true)

@@ -27,6 +27,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.location.LocationListenerCompat
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
+import com.car2go.maps.model.LatLng
 import net.vonforst.evmap.R
 import net.vonforst.evmap.location.FusionEngine
 import net.vonforst.evmap.location.LocationEngine
@@ -121,6 +122,8 @@ class EVMapSession(val cas: CarAppService) : Session(), DefaultLifecycleObserver
     }
 
     override fun onCreateScreen(intent: Intent): Screen {
+        handleActionsIntent(intent)
+
         val mapScreen = MapScreen(carContext, this)
         val screens = mutableListOf<Screen>(mapScreen)
 
@@ -155,6 +158,30 @@ class EVMapSession(val cas: CarAppService) : Session(), DefaultLifecycleObserver
         }
 
         return screens.last()
+    }
+
+    private fun handleActionsIntent(intent: Intent): Boolean {
+        intent.data?.let {
+            if (it.host == "find_charger") {
+                val lat = it.getQueryParameter("latitude")?.toDouble()
+                val lon = it.getQueryParameter("longitude")?.toDouble()
+                val name = it.getQueryParameter("name")
+                if (lat != null && lon != null) {
+                    prefs.placeSearchResultAndroidAuto = LatLng(lat, lon)
+                    prefs.placeSearchResultAndroidAutoName = name ?: "%.4f,%.4f".format(lat, lon)
+                    return true
+                } else if (name != null) {
+                    val screenManager = carContext.getCarService(ScreenManager::class.java)
+                    screenManager.push(PlaceSearchScreen(carContext, this, name))
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        handleActionsIntent(intent)
     }
 
     private fun locationPermissionGranted() = carContext.checkFineLocationPermission()

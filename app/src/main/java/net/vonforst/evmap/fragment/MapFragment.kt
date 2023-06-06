@@ -1024,35 +1024,14 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             } else {
                 // mark location as search result
                 vm.searchResult.value = PlaceWithBounds(latLng, boundingBox(latLng, 750.0))
+                locationName?.let { binding.search.setText(it) }
             }
 
             positionSet = true
         } else if (locationName != null) {
-            lifecycleScope.launch {
-                val address = withContext(Dispatchers.IO) {
-                    try {
-                        Geocoder(requireContext()).getFromLocationName(locationName, 1)
-                            ?.getOrNull(0)
-                    } catch (e: IOException) {
-                        null
-                    }
-                }
-                address?.let {
-                    val latLng = LatLng(it.latitude, it.longitude)
-                    val cameraUpdate = map.cameraUpdateFactory.newLatLngZoom(latLng, 16f)
-                    map.moveCamera(cameraUpdate)
-                    val bboxSize = if (it.subAdminArea != null) {
-                        750.0 // this is a place within a city
-                    } else if (it.adminArea != null && it.adminArea != it.featureName) {
-                        4000.0 // this is a city
-                    } else if (it.adminArea != null) {
-                        100000.0 // this is a top-level administrative area (i.e. state)
-                    } else {
-                        500000.0 // this is a country
-                    }
-                    vm.searchResult.value = PlaceWithBounds(latLng, boundingBox(latLng, bboxSize))
-                }
-            }
+            binding.search.setText(locationName)
+            binding.search.requestFocus()
+            binding.search.setSelection(locationName.length)
         }
         if (context.checkAnyLocationPermission()) {
             enableLocation(!positionSet, false)

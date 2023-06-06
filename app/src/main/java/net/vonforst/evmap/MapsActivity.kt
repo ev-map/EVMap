@@ -124,7 +124,7 @@ class MapsActivity : AppCompatActivity(),
                         .setDestination(R.id.map)
                         .setArguments(MapFragmentArgs(latLng = LatLng(lat, lon)).toBundle())
                         .createPendingIntent()
-                } else if (query != null && query.isNotEmpty()) {
+                } else if (!query.isNullOrEmpty()) {
                     deepLink = navController.createDeepLink()
                         .setGraph(R.navigation.nav_graph)
                         .setDestination(R.id.map)
@@ -170,6 +170,32 @@ class MapsActivity : AppCompatActivity(),
                         .setDestination(R.id.map)
                         .setArguments(MapFragmentArgs(chargerId = id).toBundle())
                         .createPendingIntent()
+                }
+            } else if (intent.scheme == "net.vonforst.evmap") {
+                intent.data?.let {
+                    if (it.host == "find_charger") {
+                        val lat = it.getQueryParameter("latitude")?.toDouble()
+                        val lon = it.getQueryParameter("longitude")?.toDouble()
+                        val name = it.getQueryParameter("name")
+                        if (lat != null && lon != null) {
+                            deepLink = navController.createDeepLink()
+                                .setGraph(R.navigation.nav_graph)
+                                .setDestination(R.id.map)
+                                .setArguments(
+                                    MapFragmentArgs(
+                                        latLng = LatLng(lat, lon),
+                                        locationName = name
+                                    ).toBundle()
+                                )
+                                .createPendingIntent()
+                        } else if (name != null) {
+                            deepLink = navController.createDeepLink()
+                                .setGraph(R.navigation.nav_graph)
+                                .setDestination(R.id.map)
+                                .setArguments(MapFragmentArgs(locationName = name).toBundle())
+                                .createPendingIntent()
+                        }
+                    }
                 }
             } else if (intent.hasExtra(EXTRA_CHARGER_ID)) {
                 deepLink = navController.createDeepLink()

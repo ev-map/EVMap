@@ -21,4 +21,25 @@
                 android:key="feature" />
         </capability-binding>
     </shortcut>
+    <capability android:name="actions.intent.GET_CHARGING_STATION">
+        <intent>
+            <url-template android:value="net.vonforst.evmap://find_charger{?name,address,latitude,longitude}" />
+            <!-- Eg. name = "Googleplex" -->
+            <parameter
+                android:name="chargingStation.name"
+                android:key="name" />
+            <!-- Eg. address = "1600 Amphitheatre Pkwy, Mountain View, CA 94043" -->
+            <parameter
+                android:name="chargingStation.address"
+                android:key="address" />
+            <!-- Eg. latitude = "37.3861" -->
+            <parameter
+                android:name="chargingStation.geo.latitude"
+                android:key="latitude" />
+            <!-- Eg. longitude = "-122.084" -->
+            <parameter
+                android:name="chargingStation.geo.longitude"
+                android:key="longitude" />
+        </intent>
+    </capability>
 </shortcuts>

@@ -41,6 +41,13 @@
                     android:name="androidx.car.app.CarAppService"
                     android:category="androidx.car.app.category.POI" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <data android:scheme="net.vonforst.evmap" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+            </intent-filter>
         </service>
     </application>
 </manifest>

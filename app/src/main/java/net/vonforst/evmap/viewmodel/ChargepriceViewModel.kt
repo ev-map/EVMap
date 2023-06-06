@@ -30,7 +30,7 @@ class ChargepriceViewModel(
         state.getLiveData("charger")
     }
 
-    val chargepoint: MutableLiveData<Chargepoint> by lazy {
+    val chargepoint: MutableLiveData<Chargepoint?> by lazy {
         state.getLiveData("chargepoint")
     }
 

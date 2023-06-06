@@ -172,7 +172,7 @@ class ChargepriceFragment : Fragment() {
 
         val connectorsAdapter = CheckableConnectorAdapter()
 
-        val observer: Observer<Chargepoint> = Observer {
+        val observer: Observer<Chargepoint?> = Observer {
             connectorsAdapter.setCheckedItem(it)
         }
         vm.chargepoint.observe(viewLifecycleOwner, observer)

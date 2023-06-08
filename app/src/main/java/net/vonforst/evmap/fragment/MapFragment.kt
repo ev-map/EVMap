@@ -895,6 +895,27 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 map.projection.visibleRegion.latLngBounds, map.cameraPosition.zoom
             )
         }
+
+        binding.scaleView.apply {
+            when (prefs.mapScale) {
+                "both" -> {
+                    visibility = View.VISIBLE
+                    metersAndMiles()
+                }
+
+                "meters" -> {
+                    visibility = View.VISIBLE
+                    metersOnly()
+                }
+
+                "miles" -> {
+                    visibility = View.VISIBLE
+                    milesOnly()
+                }
+
+                "off" -> visibility = View.GONE
+            }
+        }
         vm.mapPosition.observe(viewLifecycleOwner) {
             binding.scaleView.update(map.cameraPosition.zoom, map.cameraPosition.target.latitude)
         }

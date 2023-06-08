@@ -261,4 +261,7 @@ class PreferenceDataSource(val context: Context) {
         set(value) {
             sp.edit().putBoolean("dev_mode_enabled", value).apply()
         }
+
+    val mapScale: String
+        get() = sp.getString("map_scale", null) ?: "both"
 }

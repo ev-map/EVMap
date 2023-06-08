@@ -22,6 +22,13 @@
         android:summaryOn="@string/pref_map_rotate_gestures_on"
         android:summaryOff="@string/pref_map_rotate_gestures_off"
         android:defaultValue="true" />
+    <ListPreference
+        android:key="map_scale"
+        android:title="@string/pref_map_scale"
+        android:entries="@array/pref_map_scale_names"
+        android:entryValues="@array/pref_map_scale_values"
+        android:defaultValue="both"
+        android:summary="%s" />
     <CheckBoxPreference
         android:key="navigate_use_maps"
         android:title="@string/pref_navigate_use_maps"

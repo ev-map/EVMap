@@ -1038,9 +1038,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             positionSet = true
         }
         if (!positionSet) {
-            // center the camera on Europe
+            // use position saved in preferences, fall back to default (Europe)
             val cameraUpdate =
-                map.cameraUpdateFactory.newLatLngZoom(LatLng(50.113388, 9.252536), 3.5f)
+                map.cameraUpdateFactory.newLatLngZoom(
+                    prefs.currentMapLocation,
+                    prefs.currentMapZoom
+                )
             map.moveCamera(cameraUpdate)
         }
 
@@ -1378,6 +1381,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
     override fun onPause() {
         super.onPause()
         removeLocationUpdates()
+        vm.mapPosition.value?.let {
+            prefs.currentMapLocation = it.bounds.center
+            prefs.currentMapZoom = it.zoom
+        }
     }
 
     override fun onDestroy() {

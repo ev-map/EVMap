@@ -1,6 +1,8 @@
 package net.vonforst.evmap.storage
 
 import android.content.Context
+import android.content.SharedPreferences
+import android.content.SharedPreferences.Editor
 import androidx.preference.PreferenceManager
 import com.car2go.maps.AnyMap
 import com.car2go.maps.model.LatLng
@@ -224,21 +226,9 @@ class PreferenceDataSource(val context: Context) {
         }
 
     var placeSearchResultAndroidAuto: LatLng?
-        get() = if (sp.contains("place_search_result_android_auto_lat")) {
-            LatLng(
-                Double.fromBits(sp.getLong("place_search_result_android_auto_lat", 0L)),
-                Double.fromBits(sp.getLong("place_search_result_android_auto_lng", 0L))
-            )
-        } else null
+        get() = sp.getLatLng("place_search_result_android_auto")
         set(value) {
-            if (value == null) {
-                sp.edit().remove("place_search_result_android_auto_lat")
-                    .remove("place_search_result_android_auto_lng").apply()
-            } else {
-                sp.edit().putLong("place_search_result_android_auto_lat", value.latitude.toBits())
-                    .putLong("place_search_result_android_auto_lng", value.longitude.toBits())
-                    .apply()
-            }
+            sp.edit().putLatLng("place_search_result_android_auto", value).apply()
         }
 
     var placeSearchResultAndroidAutoName: String?
@@ -264,4 +254,35 @@ class PreferenceDataSource(val context: Context) {
 
     val mapScale: String
         get() = sp.getString("map_scale", null) ?: "both"
+
+    var currentMapLocation: LatLng
+        get() = sp.getLatLng("current_map_location") ?: LatLng(50.113388, 9.252536)
+        set(value) {
+            sp.edit().putLatLng("current_map_location", value).apply()
+        }
+
+    var currentMapZoom: Float
+        get() = sp.getFloat("current_map_zoom", 3.5f)
+        set(value) {
+            sp.edit().putFloat("current_map_zoom", value).apply()
+        }
+}
+
+fun SharedPreferences.getLatLng(key: String): LatLng? =
+    if (contains("${key}_lat") && contains("${key}_lng")) {
+        LatLng(
+            Double.fromBits(getLong("${key}_lat", 0L)),
+            Double.fromBits(getLong("${key}_lng", 0L))
+        )
+    } else null
+
+fun Editor.putLatLng(key: String, value: LatLng?): Editor {
+    if (value == null) {
+        remove("${key}_lat")
+        remove("${key}_lng")
+    } else {
+        putLong("${key}_lat", value.latitude.toBits())
+        putLong("${key}_lng", value.longitude.toBits())
+    }
+    return this
 }

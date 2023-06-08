@@ -147,7 +147,7 @@ class DataSettingsFragment : BaseSettingsFragment() {
         teslaAccountPreference.summary = getString(R.string.logging_in)
 
         val url = Uri.parse(result.getString("url"))
-        val code = url.getQueryParameter("code")!!
+        val code = url.getQueryParameter("code") ?: return
         val okhttp = OkHttpClient.Builder().addDebugInterceptors().build()
         val request = TeslaAuthenticationApi.AuthCodeRequest(code, codeVerifier)
         lifecycleScope.launch {

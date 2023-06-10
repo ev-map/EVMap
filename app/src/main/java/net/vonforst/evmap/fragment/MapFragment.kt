@@ -988,9 +988,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             vm.loadChargerById(chargerId)
             vm.chargerSparse.observe(
                 viewLifecycleOwner,
-                object : Observer<ChargeLocation> {
-                    override fun onChanged(value: ChargeLocation) {
-                        if (value.id == chargerId) {
+                object : Observer<ChargeLocation?> {
+                    override fun onChanged(value: ChargeLocation?) {
+                        if (value?.id == chargerId) {
                             val cameraUpdate = map.cameraUpdateFactory.newLatLngZoom(
                                 LatLng(value.coordinates.lat, value.coordinates.lng), 16f
                             )

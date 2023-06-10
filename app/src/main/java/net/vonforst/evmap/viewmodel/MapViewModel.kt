@@ -155,7 +155,7 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
         MutableLiveData<Set<Long>>()
     }
 
-    val chargerSparse: MutableLiveData<ChargeLocation> by lazy {
+    val chargerSparse: MutableLiveData<ChargeLocation?> by lazy {
         state.getLiveData("chargerSparse")
     }
     val chargerDetails: LiveData<Resource<ChargeLocation>> = chargerSparse.switchMap { charger ->

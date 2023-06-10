@@ -1,0 +1,10 @@
+Neue Funktionen:
+- Ladestationen werden im Cache gespeichert und sind auch offline verfügbar (bei GoingElectric.de: gemäß Nutzungsbedingungen nur für max. 24h)
+- EVMap mit Google Assistant starten - derzeit nur mit Spracheinstellung US English ("Hey Google, find charging stations near Berlin on EVMap")
+- Einstellung zur Anpassung des Kartenmaßstabs
+
+Verbesserungen:
+- Wenn Standortzugriff deaktiviert: Kartenposition wird bei Neustart der App beibehalten
+
+Fehler behoben:
+- Abstürze behoben

@@ -1,0 +1,10 @@
+New features:
+- Chargers are saved in cache and available offline (for GoingElectric.de: limited to 24 hours according to their terms of use)
+- Launch EVMap through Google Assistant ("Hey Google, find charging stations near Berlin on EVMap") - currently only available in US English locale
+- Setting to configure map scale bar
+
+Improvements:
+- If location access disabled: Map position will be kept after restarting app
+
+Bugfixes:
+- Fixed crashes

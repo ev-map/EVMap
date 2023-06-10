@@ -184,7 +184,7 @@ dependencies {
     implementation 'androidx.browser:browser:1.5.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation 'androidx.security:security-crypto:1.1.0-alpha06'
-    implementation "androidx.work:work-runtime-ktx:2.7.1"
+    implementation "androidx.work:work-runtime-ktx:2.8.1"
     implementation 'com.github.ev-map:CustomBottomSheetBehavior:e48f73ea7b'
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-moshi:2.9.0'
@@ -272,7 +272,7 @@ dependencies {
     testImplementation "com.squareup.okhttp3:mockwebserver:4.11.0"
     //noinspection GradleDependency
     testImplementation 'org.json:json:20080701'
-    testImplementation 'org.robolectric:robolectric:4.9'
+    testImplementation 'org.robolectric:robolectric:4.9.2'
     testImplementation 'androidx.test:core:1.5.0'
     testImplementation 'androidx.arch.core:core-testing:2.2.0'
 

@@ -319,4 +319,9 @@
     <string name="average_utilization">Utilização média</string>
     <string name="tesla_pricing_owners">Apenas veículos Tesla:</string>
     <string name="website">Website</string>
+    <string name="pref_map_scale_off">desativar</string>
+    <string name="pref_map_scale_both">metros e milhas</string>
+    <string name="pref_map_scale_meters">metros</string>
+    <string name="pref_map_scale_miles">milhas</string>
+    <string name="pref_map_scale">Barra de escala do mapa</string>
 </resources>

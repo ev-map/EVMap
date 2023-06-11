@@ -101,7 +101,7 @@ data class OCMChargepoint(
                     connections.first { it.statusType != null && it.statusTypeId in faultStatuses }.statusType!!.title
                 )
             }
-            return FaultReport(null, null)
+            return FaultReport(null, "")
         } else {
             return null
         }

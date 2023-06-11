@@ -96,7 +96,7 @@ internal class JsonObjectOrFalseAdapter<T> private constructor(
             false -> null // Response was false
             else -> {
                 if (this.clazz == GEFaultReport::class.java) {
-                    GEFaultReport(null, null) as T
+                    GEFaultReport(null, "") as T
                 } else {
                     throw IllegalStateException("Non-false boolean for @JsonObjectOrFalse field")
                 }

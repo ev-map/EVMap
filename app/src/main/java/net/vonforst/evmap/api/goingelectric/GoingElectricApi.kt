@@ -546,5 +546,14 @@ class GoingElectricApiWrapper(
 
         return FiltersSQLQuery(result.toString(), requiresChargepointQuery, requiresChargeCardQuery)
     }
+
+    override fun filteringInSQLRequiresDetails(filters: FilterValues): Boolean {
+        val chargecards = filters.getMultipleChoiceValue("chargecards")
+        return filters.getBooleanValue("freecharging") == true
+                || filters.getBooleanValue("freeparking") == true
+                || filters.getBooleanValue("open_247") == true
+                || filters.getBooleanValue("barrierfree") == true
+                || (chargecards != null && !chargecards.all)
+    }
 }
 

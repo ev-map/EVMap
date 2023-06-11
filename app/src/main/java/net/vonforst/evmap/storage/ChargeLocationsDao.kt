@@ -161,6 +161,7 @@ class ChargeLocationsRepository(
         val filtersSerialized =
             filters?.filter { it.value != it.filter.defaultValue() }?.takeIf { it.isNotEmpty() }
                 ?.serialize()
+        val requiresDetail = filters?.let { api.filteringInSQLRequiresDetails(it) } ?: false
         val savedRegionResult = savedRegionDao.savedRegionCovers(
             bounds.southwest.latitude,
             bounds.northeast.latitude,
@@ -168,7 +169,8 @@ class ChargeLocationsRepository(
             bounds.northeast.longitude,
             api.id,
             cacheSoftLimitDate(api),
-            filtersSerialized
+            filtersSerialized,
+            requiresDetail
         )
         val useClustering = shouldUseServerSideClustering(zoom)
         val apiResult = liveData {
@@ -224,13 +226,15 @@ class ChargeLocationsRepository(
         val filtersSerialized =
             filters?.filter { it.value != it.filter.defaultValue() }?.takeIf { it.isNotEmpty() }
                 ?.serialize()
+        val requiresDetail = filters?.let { api.filteringInSQLRequiresDetails(it) } ?: false
         val savedRegionResult = savedRegionDao.savedRegionCoversRadius(
             location.latitude,
             location.longitude,
             radiusMeters * 0.999,  // to account for float rounding errors
             api.id,
             cacheSoftLimitDate(api),
-            filtersSerialized
+            filtersSerialized,
+            requiresDetail
         )
         val useClustering = shouldUseServerSideClustering(zoom)
         val apiResult = liveData {

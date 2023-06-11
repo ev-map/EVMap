@@ -49,6 +49,8 @@ interface ChargepointApi<out T : ReferenceData> {
 
     fun convertFiltersToSQL(filters: FilterValues, referenceData: ReferenceData): FiltersSQLQuery
 
+    fun filteringInSQLRequiresDetails(filters: FilterValues): Boolean
+
     val name: String
     val id: String
 

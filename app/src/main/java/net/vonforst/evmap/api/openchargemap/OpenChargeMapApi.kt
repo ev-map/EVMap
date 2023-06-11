@@ -379,4 +379,10 @@ class OpenChargeMapApiWrapper(
         return FiltersSQLQuery(result.toString(), requiresChargepointQuery, false)
     }
 
+    override fun filteringInSQLRequiresDetails(filters: FilterValues): Boolean {
+        val operators = filters.getMultipleChoiceValue("operators")
+        return (operators != null && !operators.all)
+        // TODO: it would be possible to implement this without requiring details if we extended the data structure to also save the operator ID in the DB
+    }
+
 }

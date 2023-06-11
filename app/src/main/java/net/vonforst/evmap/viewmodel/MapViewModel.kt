@@ -548,7 +548,8 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
                 val apiId = apiId.value
                 when (apiId) {
                     "goingelectric" -> {
-                        val chargeCardsVal = filters.getMultipleChoiceValue("chargecards")!!
+                        val chargeCardsVal =
+                            filters.getMultipleChoiceValue("chargecards") ?: return@addSource
                         filteredChargeCards.value =
                             if (chargeCardsVal.all) null else chargeCardsVal.values.map { it.toLong() }
                                 .toSet()

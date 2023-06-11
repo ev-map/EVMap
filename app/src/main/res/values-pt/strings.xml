@@ -58,7 +58,7 @@
     <string name="fault_report_date">Com problemas (atualizado: %s)</string>
     <string name="filter_chargecards">Formas de pagamento</string>
     <string name="pref_language">Língua da app</string>
-    <string name="all_selected">Todos selecionados</string>
+    <string name="all_selected">Todas selecionadas</string>
     <string name="edit">editar</string>
     <string name="pref_darkmode">Modo escuro</string>
     <string name="connection_error">Não foi possível carregar a lista de carregadores</string>
@@ -302,7 +302,7 @@
     <string name="charger_website">Website</string>
     <string name="realtime_data_login_needed">Conta Tesla necessária para informação em tempo real</string>
     <string name="charge_price_minute_format">%2$s%1$.2f/min</string>
-    <string name="pref_tesla_account_disabled">Faça o login para ver os dados em tempo real dos Superchargers da Tesla. Não é necessário possuir um veículo da Tesla</string>
+    <string name="pref_tesla_account_disabled">Faça o login para ver informação em tempo real sobre os Tesla Superchargers. Não é necessário possuir um veículo Tesla</string>
     <string name="login">Login</string>
     <string name="login_error">Falha no login</string>
     <string name="pricing_up_to">até %s</string>
@@ -324,4 +324,10 @@
     <string name="pref_map_scale_meters">metros</string>
     <string name="pref_map_scale_miles">milhas</string>
     <string name="pref_map_scale">Barra de escala do mapa</string>
+    <string name="data_retrieved_at">Informação atualizada %s</string>
+    <string name="settings_cache_count">Tamanho da cache</string>
+    <string name="settings_cache_clear">Limpar cache</string>
+    <string name="settings_cache_count_summary">%d carregadores na base de dados, %.1f MB</string>
+    <string name="settings_caching">Caching (base de dados local)</string>
+    <string name="settings_cache_clear_summary">Elimina todos os carregadores guardados na base de dados local, com a exceção dos seus favoritos</string>
 </resources>

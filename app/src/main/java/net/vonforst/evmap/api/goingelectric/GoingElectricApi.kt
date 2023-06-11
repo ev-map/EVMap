@@ -217,7 +217,7 @@ class GoingElectricApiWrapper(
             }
         } while (startkey != null && startkey < 10000)
 
-        val result = postprocessResult(data, minPower, connectorsVal, minConnectors)
+        val result = postprocessResult(data, filters)
 
         return Resource.success(ChargepointList(result, startkey == null))
     }
@@ -308,18 +308,24 @@ class GoingElectricApiWrapper(
             }
         } while (startkey != null && startkey < 10000)
 
-        val result = postprocessResult(data, minPower, connectorsVal, minConnectors)
+        val result = postprocessResult(data, filters)
         return Resource.success(ChargepointList(result, startkey == null))
     }
 
     private fun postprocessResult(
         chargers: List<GEChargepointListItem>,
-        minPower: Int?,
-        connectorsVal: MultipleChoiceFilterValue?,
-        minConnectors: Int?
+        filters: FilterValues?
     ): List<ChargepointListItem> {
-        // apply filters which GoingElectric does not support natively
+        val minPower = filters?.getSliderValue("min_power")
+        val minConnectors = filters?.getSliderValue("min_connectors")
+        val connectorsVal = filters?.getMultipleChoiceValue("connectors")
+        val freecharging = filters?.getBooleanValue("freecharging")
+        val freeparking = filters?.getBooleanValue("freeparking")
+        val open247 = filters?.getBooleanValue("open_247")
+        val barrierfree = filters?.getBooleanValue("barrierfree")
+
         return chargers.filter { it ->
+            // apply filters which GoingElectric does not support natively
             if (it is GEChargeLocation) {
                 it.chargepoints
                     .filter { it.power >= (minPower ?: 0) }
@@ -327,6 +333,34 @@ class GoingElectricApiWrapper(
                     .sumOf { it.count } >= (minConnectors ?: 0)
             } else {
                 true
+            }
+        }.map {
+            // infer some properties based on applied filters
+            if (it is GEChargeLocation) {
+                var inferred = it
+                if (freecharging == true) {
+                    inferred = inferred.copy(
+                        cost = inferred.cost?.copy(freecharging = true)
+                            ?: GECost(freecharging = true)
+                    )
+                }
+                if (freeparking == true) {
+                    inferred = inferred.copy(
+                        cost = inferred.cost?.copy(freeparking = true) ?: GECost(freeparking = true)
+                    )
+                }
+                if (open247 == true) {
+                    inferred = inferred.copy(
+                        openinghours = inferred.openinghours?.copy(twentyfourSeven = true)
+                            ?: GEOpeningHours(twentyfourSeven = true)
+                    )
+                }
+                if (barrierfree == true) {
+                    inferred = inferred.copy(barrierFree = true)
+                }
+                inferred
+            } else {
+                it
             }
         }.map { it.convert(apikey, false) }
     }

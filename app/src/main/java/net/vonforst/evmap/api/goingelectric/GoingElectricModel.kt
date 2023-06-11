@@ -86,10 +86,10 @@ data class GEChargeLocation(
 
 @JsonClass(generateAdapter = true)
 data class GECost(
-    val freecharging: Boolean,
-    val freeparking: Boolean,
-    @JsonObjectOrFalse @Json(name = "description_short") val descriptionShort: String?,
-    @JsonObjectOrFalse @Json(name = "description_long") val descriptionLong: String?
+    val freecharging: Boolean = false,
+    val freeparking: Boolean = false,
+    @JsonObjectOrFalse @Json(name = "description_short") val descriptionShort: String? = null,
+    @JsonObjectOrFalse @Json(name = "description_long") val descriptionLong: String? = null
 ) {
     fun convert() = Cost(
         // In GE, freecharging = false can either mean "paid charging" or "no information
@@ -104,8 +104,8 @@ data class GECost(
 @JsonClass(generateAdapter = true)
 data class GEOpeningHours(
     @Json(name = "24/7") val twentyfourSeven: Boolean,
-    @JsonObjectOrFalse val description: String?,
-    val days: GEOpeningHoursDays?
+    @JsonObjectOrFalse val description: String? = null,
+    val days: GEOpeningHoursDays? = null
 ) {
     fun convert() = OpeningHours(twentyfourSeven, description, days?.convert())
 }

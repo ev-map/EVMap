@@ -1,6 +1,7 @@
 package net.vonforst.evmap.api.openchargemap
 
 import android.content.Context
+import android.database.DatabaseUtils
 import com.car2go.maps.model.LatLng
 import com.car2go.maps.model.LatLngBounds
 import com.squareup.moshi.Moshi
@@ -347,12 +348,14 @@ class OpenChargeMapApiWrapper(
             val connectorsList = if (connectors.values.size == 0) {
                 ""
             } else {
-                "'" + connectors.values.joinToString("', '") {
-                    OCMConnection.convertConnectionTypeFromOCM(
-                        it.toLong(),
-                        refData
+                connectors.values.joinToString(",") {
+                    DatabaseUtils.sqlEscapeString(
+                        OCMConnection.convertConnectionTypeFromOCM(
+                            it.toLong(),
+                            refData
+                        )
                     )
-                } + "'"
+                }
             }
             result.append(" AND json_extract(cp.value, '$.type') IN (${connectorsList})")
             requiresChargepointQuery = true
@@ -363,9 +366,9 @@ class OpenChargeMapApiWrapper(
             val networksList = if (operators.values.size == 0) {
                 ""
             } else {
-                "'" + operators.values.joinToString("', '") { opId ->
-                    refData.operators.find { it.id == opId.toLong() }?.title.orEmpty()
-                } + "'"
+                operators.values.joinToString(",") { opId ->
+                    DatabaseUtils.sqlEscapeString(refData.operators.find { it.id == opId.toLong() }?.title.orEmpty())
+                }
             }
             result.append(" AND network IN (${networksList})")
         }

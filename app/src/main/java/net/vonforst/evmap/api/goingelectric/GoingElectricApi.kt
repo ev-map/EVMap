@@ -1,6 +1,7 @@
 package net.vonforst.evmap.api.goingelectric
 
 import android.content.Context
+import android.database.DatabaseUtils
 import com.car2go.maps.model.LatLng
 import com.car2go.maps.model.LatLngBounds
 import com.squareup.moshi.Moshi
@@ -539,7 +540,13 @@ class GoingElectricApiWrapper(
             val connectorsList = if (connectors.values.size == 0) {
                 ""
             } else {
-                "'" + connectors.values.joinToString("', '") { GEChargepoint.convertTypeFromGE(it) } + "'"
+                connectors.values.joinToString(",") {
+                    DatabaseUtils.sqlEscapeString(
+                        GEChargepoint.convertTypeFromGE(
+                            it
+                        )
+                    )
+                }
             }
             result.append(" AND json_extract(cp.value, '$.type') IN (${connectorsList})")
             requiresChargepointQuery = true
@@ -550,7 +557,7 @@ class GoingElectricApiWrapper(
             val networksList = if (networks.values.size == 0) {
                 ""
             } else {
-                "'" + networks.values.joinToString("', '") + "'"
+                networks.values.joinToString(",") { DatabaseUtils.sqlEscapeString(it) }
             }
             result.append(" AND network IN (${networksList})")
         }

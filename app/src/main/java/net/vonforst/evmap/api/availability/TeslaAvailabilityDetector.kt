@@ -281,7 +281,7 @@ interface TeslaGraphQlApi {
         val siteDynamic: SiteDynamic,
         val siteStatic: SiteStatic,
         val pricing: Pricing,
-        val congestionPriceHistogram: CongestionPriceHistogram,
+        val congestionPriceHistogram: CongestionPriceHistogram?,
     )
 
     @JsonClass(generateAdapter = true)
@@ -574,12 +574,13 @@ class TeslaAvailabilityDetector(
             i += connector.count
         }
 
-        val indexOfMidnight =
-            details.congestionPriceHistogram.dataAttributes.indexOfFirst { it.label == "12AM" }
-        val congestionHistogram = indexOfMidnight.takeIf { it >= 0 }?.let { index ->
-            val data = details.congestionPriceHistogram.data.toMutableList()
-            Collections.rotate(data, -index)
-            data
+        val congestionHistogram = details.congestionPriceHistogram?.let { cph ->
+            val indexOfMidnight = cph.dataAttributes.indexOfFirst { it.label == "12AM" }
+            indexOfMidnight.takeIf { it >= 0 }?.let { index ->
+                val data = cph.data.toMutableList()
+                Collections.rotate(data, -index)
+                data
+            }
         }
 
         return ChargeLocationStatus(

@@ -324,6 +324,8 @@ class GoingElectricApiWrapper(
         val freeparking = filters?.getBooleanValue("freeparking")
         val open247 = filters?.getBooleanValue("open_247")
         val barrierfree = filters?.getBooleanValue("barrierfree")
+        val networks = filters?.getMultipleChoiceValue("networks")
+        val chargecards = filters?.getMultipleChoiceValue("chargecards")
 
         return chargers.filter { it ->
             // apply filters which GoingElectric does not support natively
@@ -356,7 +358,13 @@ class GoingElectricApiWrapper(
                             ?: GEOpeningHours(twentyfourSeven = true)
                     )
                 }
-                if (barrierfree == true) {
+                if (barrierfree == true
+                    && (networks == null || networks.all || it.network !in networks.values)
+                    && (chargecards == null || chargecards.all)
+                ) {
+                    /* barrierfree, networks and chargecards are combined with OR - so we can only
+                    * be sure that the charger is barrierFree if the other filters are not active
+                    * or the charger does not match the other filters */
                     inferred = inferred.copy(barrierFree = true)
                 }
                 inferred
@@ -522,9 +530,6 @@ class GoingElectricApiWrapper(
         if (filters.getBooleanValue("open_247") == true) {
             result.append(" AND twentyfourSeven IS 1")
         }
-        if (filters.getBooleanValue("barrierfree") == true) {
-            result.append(" AND barrierFree IS 1")
-        }
         if (filters.getBooleanValue("exclude_faults") == true) {
             result.append(" AND fault_report_description IS NULL AND fault_report_created IS NULL")
         }
@@ -552,25 +557,34 @@ class GoingElectricApiWrapper(
             requiresChargepointQuery = true
         }
 
+        // networks, chargecards and barrierFree filters are combined with OR in the GE API
         val networks = filters.getMultipleChoiceValue("networks")
-        if (networks != null && !networks.all) {
-            val networksList = if (networks.values.size == 0) {
-                ""
-            } else {
-                networks.values.joinToString(",") { DatabaseUtils.sqlEscapeString(it) }
-            }
-            result.append(" AND network IN (${networksList})")
-        }
-
         val chargecards = filters.getMultipleChoiceValue("chargecards")
-        if (chargecards != null && !chargecards.all) {
-            val chargecardsList = if (chargecards.values.size == 0) {
-                ""
-            } else {
-                chargecards.values.joinToString(",")
+        val barrierFree = filters.getBooleanValue("barrierfree")
+
+        if ((networks != null && !networks.all) || barrierFree == true || (chargecards != null && !chargecards.all)) {
+            val queries = mutableListOf<String>()
+            if (networks != null && !networks.all) {
+                val networksList = if (networks.values.size == 0) {
+                    ""
+                } else {
+                    networks.values.joinToString(",") { DatabaseUtils.sqlEscapeString(it) }
+                }
+                queries.add("network IN (${networksList})")
             }
-            result.append(" AND json_extract(cc.value, '$.id') IN (${chargecardsList})")
-            requiresChargeCardQuery = true
+            if (barrierFree == true) {
+                queries.add("barrierFree IS 1")
+            }
+            if (chargecards != null && !chargecards.all) {
+                val chargecardsList = if (chargecards.values.size == 0) {
+                    ""
+                } else {
+                    chargecards.values.joinToString(",")
+                }
+                queries.add("json_extract(cc.value, '$.id') IN (${chargecardsList})")
+                requiresChargeCardQuery = true
+            }
+            result.append(" AND (${queries.joinToString(" OR ")})")
         }
 
         val categories = filters.getMultipleChoiceValue("categories")

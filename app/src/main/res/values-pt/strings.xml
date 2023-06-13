@@ -97,7 +97,7 @@
     <string name="save_as_profile">Guardar como perfil</string>
     <string name="filterprofiles_empty_state">Não existem filtros guardados</string>
     <string name="welcome_2">Cada cor corresponde a potência máxima do carregador</string>
-    <string name="welcome_to_evmap">Bem-vindo ao EVMap</string>
+    <string name="welcome_to_evmap">Bem-vindo(a) ao EVMap</string>
     <string name="pref_darkmode_always_off">Sempre desligado</string>
     <string name="welcome_2_title">Escolha a potência</string>
     <string name="navigate">Navegar</string>

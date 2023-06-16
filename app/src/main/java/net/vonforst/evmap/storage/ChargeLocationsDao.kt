@@ -290,9 +290,13 @@ class ChargeLocationsRepository(
         chargers: List<ChargeLocation>,
         zoom: Float
     ): List<ChargepointListItem> {
+        /* in very crowded places (good example: central London on OpenChargeMap without filters)
+           we have to cluster even at pretty high zoom levels to make sure the map does not get
+           laggy. Otherwise, only cluster at zoom levels <= 11. */
+        val useClustering = chargers.size > 500 || zoom <= 11f
         val clusterDistance = getClusterDistance(zoom)
 
-        val chargersClustered = if (clusterDistance != null) {
+        val chargersClustered = if (useClustering && clusterDistance != null) {
             Dispatchers.IO.run {
                 cluster(chargers, zoom, clusterDistance)
             }

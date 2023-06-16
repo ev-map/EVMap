@@ -53,6 +53,7 @@ internal fun getClusterDistance(zoom: Float): Int? {
     return when (zoom) {
         in 0.0..7.0 -> 100
         in 7.0..11.0 -> 75
+        in 11.0..15.0 -> 75
         else -> null
     }
 }

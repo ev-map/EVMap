@@ -297,7 +297,7 @@ class ChargeLocationsRepository(
         val clusterDistance = getClusterDistance(zoom)
 
         val chargersClustered = if (useClustering && clusterDistance != null) {
-            Dispatchers.IO.run {
+            Dispatchers.Default.run {
                 cluster(chargers, zoom, clusterDistance)
             }
         } else chargers

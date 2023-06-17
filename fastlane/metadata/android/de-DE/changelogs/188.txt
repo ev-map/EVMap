@@ -1,0 +1,5 @@
+Verbesserungen:
+- Clustering an Orten mit extrem hoher Ladestationsdichte verstärkt
+
+Fehler behoben:
+- Abstürze behoben

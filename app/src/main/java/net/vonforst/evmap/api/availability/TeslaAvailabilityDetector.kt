@@ -540,6 +540,9 @@ class TeslaAvailabilityDetector(
                 Chargepoint.CCS_UNKNOWN
             ) && it.power != null && it.power <= 150
         }
+        if (scV2CCSConnectors.sumOf { it.count } != 0 && scV2CCSConnectors.sumOf { it.count } != scV2Connectors.sumOf { it.count }) {
+            throw AvailabilityDetectorException("number of V2 connectors does not match number of V2 CCS connectors")
+        }
         val scV3Connectors = location.chargepoints.filter {
             it.type in listOf(
                 Chargepoint.CCS_TYPE_2,
@@ -550,27 +553,39 @@ class TeslaAvailabilityDetector(
             "charger has unknown connectors"
         )
 
-        val statusSorted = details.siteDynamic.chargerDetails.sortedBy { it.charger.labelLetter }
-            .sortedBy { it.charger.labelNumber }
+        var statusSorted = details.siteDynamic.chargerDetails.sortedBy { it.charger.labelLetter }
+            .sortedBy { it.charger.labelNumber }.map { it.availability }
+        if (statusSorted.size != scV2Connectors.sumOf { it.count } + scV3Connectors.sumOf { it.count }) {
+            // apparently some connectors are missing in Tesla data
+            // If we have just one type of charger, we can still match
+            val numMissing =
+                scV2Connectors.sumOf { it.count } + scV3Connectors.sumOf { it.count } - statusSorted.size
+            if (scV2Connectors.isEmpty() || scV3Connectors.isEmpty() && numMissing > 0) {
+                statusSorted =
+                    statusSorted + List(numMissing) { TeslaGraphQlApi.ChargerAvailability.UNKNOWN }
+            } else {
+                throw AvailabilityDetectorException("Tesla API chargepoints do not match data source")
+            }
+        }
 
         val statusMap = emptyMap<Chargepoint, List<ChargepointStatus>>().toMutableMap()
         var i = 0
         for (connector in scV2Connectors) {
             statusMap[connector] =
-                statusSorted.subList(i, i + connector.count).map { it.availability.toStatus() }
+                statusSorted.subList(i, i + connector.count).map { it.toStatus() }
             i += connector.count
         }
         if (scV2CCSConnectors.isNotEmpty()) {
             i = 0
             for (connector in scV2CCSConnectors) {
                 statusMap[connector] =
-                    statusSorted.subList(i, i + connector.count).map { it.availability.toStatus() }
+                    statusSorted.subList(i, i + connector.count).map { it.toStatus() }
                 i += connector.count
             }
         }
         for (connector in scV3Connectors) {
             statusMap[connector] =
-                statusSorted.subList(i, i + connector.count).map { it.availability.toStatus() }
+                statusSorted.subList(i, i + connector.count).map { it.toStatus() }
             i += connector.count
         }
 

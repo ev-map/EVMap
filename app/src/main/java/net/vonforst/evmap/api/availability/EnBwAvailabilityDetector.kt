@@ -12,7 +12,7 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 private const val coordRange = 0.005  // range of latitude and longitude for loading the map
-private const val maxDistance = 40  // max distance between reported positions in meters
+private const val maxDistance = 60  // max distance between reported positions in meters
 
 interface EnBwApi {
     @GET("chargestations?grouping=false")
@@ -132,20 +132,24 @@ class EnBwAvailabilityDetector(client: OkHttpClient, baseUrl: String? = null) :
             throw AvailabilityDetectorException("no candidates found")
         }
 
-        // combine related stations
-        markers = markers.filter { marker ->
-            distanceBetween(
-                marker.lat,
-                marker.lon,
-                nearest.lat,
-                nearest.lon
-            ) < maxDistance
+        if (nearest.numberOfChargePoints < location.totalChargepoints) {
+            // combine related stations
+            markers = markers.filter { marker ->
+                distanceBetween(
+                    marker.lat,
+                    marker.lon,
+                    nearest.lat,
+                    nearest.lon
+                ) < maxDistance
+            }.filter {
+                // only include stations from same operator
+                it.operator == nearest.operator && it.stationId != null
+            }
+        } else {
+            markers = listOf(nearest)
         }
 
-        val details = markers.filter {
-            // only include stations from same operator
-            it.operator == nearest.operator && it.stationId != null
-        }.map {
+        val details = markers.map {
             // load details
             api.getLocation(it.stationId!!)
         }

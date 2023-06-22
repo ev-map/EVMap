@@ -12,7 +12,7 @@ import retrofit2.http.Path
 import java.util.*
 
 private const val coordRange = 0.005  // range of latitude and longitude for loading the map
-private const val maxDistance = 40  // max distance between reported positions in meters
+private const val maxDistance = 60  // max distance between reported positions in meters
 
 interface NewMotionApi {
     @GET("markers/{lngMin}/{lngMax}/{latMin}/{latMax}/{zoom}")
@@ -28,7 +28,7 @@ interface NewMotionApi {
     suspend fun getLocation(@Path("id") id: Long): NMLocation
 
     @JsonClass(generateAdapter = true)
-    data class NMMarker(val coordinates: NMCoordinates, val locationUid: Long)
+    data class NMMarker(val coordinates: NMCoordinates, val locationUid: Long, val evseCount: Int)
 
     @JsonClass(generateAdapter = true)
     data class NMCoordinates(val latitude: Double, val longitude: Double)
@@ -111,14 +111,18 @@ class NewMotionAvailabilityDetector(client: OkHttpClient, baseUrl: String? = nul
             throw AvailabilityDetectorException("no candidates found")
         }
 
-        // combine related stations
-        markers = markers.filter { marker ->
-            distanceBetween(
-                marker.coordinates.latitude,
-                marker.coordinates.longitude,
-                nearest.coordinates.latitude,
-                nearest.coordinates.longitude
-            ) < maxDistance
+        if (nearest.evseCount < location.totalChargepoints) {
+            // combine related stations
+            markers = markers.filter { marker ->
+                distanceBetween(
+                    marker.coordinates.latitude,
+                    marker.coordinates.longitude,
+                    nearest.coordinates.latitude,
+                    nearest.coordinates.longitude
+                ) < maxDistance
+            }
+        } else {
+            markers = listOf(nearest)
         }
 
         // load details

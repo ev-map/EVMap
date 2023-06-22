@@ -6,11 +6,14 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.os.Bundle
+import android.text.Html
+import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
 import android.widget.ImageView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -23,12 +26,14 @@ import net.vonforst.evmap.storage.PreferenceDataSource
 class OnboardingFragment : Fragment() {
     private lateinit var binding: FragmentOnboardingBinding
     private lateinit var adapter: OnboardingViewPagerAdapter
+    private lateinit var prefs: PreferenceDataSource
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        prefs = PreferenceDataSource(requireContext())
         binding = FragmentOnboardingBinding.inflate(inflater)
 
         adapter = OnboardingViewPagerAdapter(this)
@@ -66,6 +71,13 @@ class OnboardingFragment : Fragment() {
         }
 
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        if (prefs.welcomeDialogShown) {
+            // skip to last page for selecting data source or accepting the privacy policy
+            binding.viewPager.currentItem = adapter.itemCount - 1
+        }
     }
 
     fun goToNext() {
@@ -196,7 +208,9 @@ class DataSourceSelectFragment : OnboardingPageFragment() {
             binding.rgDataSource.rbGoingElectric,
             binding.rgDataSource.textView27,
             binding.rgDataSource.rbOpenChargeMap,
-            binding.rgDataSource.textView28
+            binding.rgDataSource.textView28,
+            binding.dataSourceHint,
+            binding.cbAcceptPrivacy
         )
 
     override fun onCreateView(
@@ -210,6 +224,10 @@ class DataSourceSelectFragment : OnboardingPageFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        binding.cbAcceptPrivacy.text =
+            Html.fromHtml(getString(R.string.accept_privacy, getString(R.string.privacy_link)))
+        binding.cbAcceptPrivacy.linksClickable = true
+        binding.cbAcceptPrivacy.movementMethod = LinkMovementMethod.getInstance()
         binding.btnGetStarted.visibility = View.INVISIBLE
 
         for (rb in listOf(
@@ -225,8 +243,22 @@ class DataSourceSelectFragment : OnboardingPageFragment() {
                 }
             }
         }
+        when (prefs.dataSource) {
+            "goingelectric" -> binding.rgDataSource.rbGoingElectric.isChecked = true
+            "openchargemap" -> binding.rgDataSource.rbOpenChargeMap.isChecked = true
+        }
 
         binding.btnGetStarted.setOnClickListener {
+            if (!binding.cbAcceptPrivacy.isChecked) {
+                binding.cbAcceptPrivacy.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.delete_red
+                    )
+                )
+                return@setOnClickListener
+            }
+
             val result = if (binding.rgDataSource.rbGoingElectric.isChecked) {
                 "goingelectric"
             } else if (binding.rgDataSource.rbOpenChargeMap.isChecked) {
@@ -235,6 +267,7 @@ class DataSourceSelectFragment : OnboardingPageFragment() {
                 return@setOnClickListener
             }
             prefs.dataSource = result
+            prefs.privacyAccepted = true
             prefs.filterStatus = FILTERS_DISABLED
             prefs.dataSourceSet = true
             prefs.welcomeDialogShown = true

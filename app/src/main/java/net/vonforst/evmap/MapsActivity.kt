@@ -107,6 +107,10 @@ class MapsActivity : AppCompatActivity(),
             navGraph.setStartDestination(R.id.onboarding)
             navController.graph = navGraph
             return
+        } else if (!prefs.privacyAccepted) {
+            navGraph.setStartDestination(R.id.onboarding)
+            navController.graph = navGraph
+            return
         } else {
             navGraph.setStartDestination(R.id.map)
             navController.setGraph(navGraph, MapFragmentArgs(appStart = true).toBundle())

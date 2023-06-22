@@ -360,4 +360,5 @@
     <string name="auto_multipage_goto">Page %d</string>
     <string name="auto_multipage">(%d/%d)</string>
     <string name="reload">Reload</string>
+    <string name="accept_privacy"><![CDATA[I have read and accepted EVMap\'s <a href=\"%s\">privacy policy</a>.]]></string>
 </resources>

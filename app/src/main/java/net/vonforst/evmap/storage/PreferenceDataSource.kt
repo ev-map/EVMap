@@ -266,6 +266,12 @@ class PreferenceDataSource(val context: Context) {
         set(value) {
             sp.edit().putFloat("current_map_zoom", value).apply()
         }
+
+    var privacyAccepted: Boolean
+        get() = sp.getBoolean("privacy_accepted", false)
+        set(value) {
+            sp.edit().putBoolean("privacy_accepted", value).apply()
+        }
 }
 
 fun SharedPreferences.getLatLng(key: String): LatLng? =

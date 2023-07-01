@@ -7,8 +7,6 @@
     <uses-permission android:name="com.google.android.gms.permission.CAR_FUEL" />
     <uses-permission android:name="com.google.android.gms.permission.CAR_SPEED" />
 
-    <uses-sdk tools:overrideLibrary="androidx.car.app,androidx.car.app.projected" />
-
     <queries>
         <package android:name="com.google.android.projection.gearhead" />
         <package android:name="com.google.android.apps.automotive.templates.host" />

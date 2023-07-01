@@ -207,7 +207,7 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
 
     private fun loadPrices(model: Model?) {
         val dataAdapter = ChargepriceApi.getDataAdapter(charger)
-        val manufacturer = model?.manufacturer?.value
+        val manufacturer = getVehicleBrand(model?.manufacturer?.value)
         val modelName = getVehicleModel(model?.manufacturer?.value, model?.name?.value)
         lifecycleScope.launch {
             try {
@@ -345,7 +345,7 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
         } else if (vehicles.size > 1) {
             if (manufacturer != null) {
                 vehicles = vehicles.filter {
-                    it.brand == manufacturer
+                    it.brand.lowercase() == getVehicleBrand(manufacturer)?.lowercase()
                 }
                 if (vehicles.isEmpty()) {
                     throw VehicleUnknownException()

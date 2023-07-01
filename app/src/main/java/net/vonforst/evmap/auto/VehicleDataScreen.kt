@@ -84,7 +84,7 @@ class VehicleDataScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx
         return GridTemplate.Builder().apply {
             setTitle(
                 if (model != null && model.manufacturer.value != null && model.name.value != null) {
-                    "${model.manufacturer.value} ${
+                    "${getVehicleBrand(model.manufacturer.value)} ${
                         getVehicleModel(
                             model.manufacturer.value,
                             model.name.value

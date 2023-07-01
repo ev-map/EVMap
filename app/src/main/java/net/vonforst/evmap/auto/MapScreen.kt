@@ -4,6 +4,7 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Handler
 import android.os.Looper
+import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import androidx.car.app.CarContext
@@ -35,6 +36,7 @@ import net.vonforst.evmap.model.FilterWithValue
 import net.vonforst.evmap.storage.AppDatabase
 import net.vonforst.evmap.storage.ChargeLocationsRepository
 import net.vonforst.evmap.storage.PreferenceDataSource
+import net.vonforst.evmap.ui.ChargerIconGenerator
 import net.vonforst.evmap.ui.availabilityText
 import net.vonforst.evmap.ui.getMarkerTint
 import net.vonforst.evmap.utils.bearingBetween
@@ -73,6 +75,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
     private var lastDistanceUpdateTime: Instant? = null
     private var lastChargersUpdateTime: Instant? = null
     private var chargers: List<ChargeLocation>? = null
+    private var isFavorite: List<Boolean>? = null
     private var loadingError = false
     private var locationError = false
     private var prefs = PreferenceDataSource(ctx)
@@ -114,6 +117,9 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
 
     private var searchLocation: LatLng? = null
 
+    private val iconGen =
+        ChargerIconGenerator(carContext, null, height = 96)
+
     init {
         lifecycle.addObserver(this)
         marker = MARKER
@@ -154,8 +160,8 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                 val builder = ItemList.Builder()
                 // only show the city if not all chargers are in the same city
                 val showCity = chargerList.map { it.address?.city }.distinct().size > 1
-                chargerList.forEach { charger ->
-                    builder.addItem(formatCharger(charger, showCity))
+                chargerList.forEachIndexed { i, charger ->
+                    builder.addItem(formatCharger(charger, showCity, isFavorite?.get(i) ?: false))
                 }
                 builder.setNoItemsMessage(
                     carContext.getString(
@@ -231,10 +237,12 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                                 if (!supportsRefresh) {
                                     screenManager.pushForResult(DummyReturnScreen(carContext)) {
                                         chargers = null
+                                        isFavorite = null
                                         loadChargers()
                                     }
                                 } else {
                                     chargers = null
+                                    isFavorite = null
                                     loadChargers()
                                 }
                             } else {
@@ -245,6 +253,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                                     )
                                 ) {
                                     chargers = null
+                                    isFavorite = null
                                     loadChargers()
                                 }
                                 session.mapScreen = null
@@ -277,13 +286,18 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
         }.build()
     }
 
-    private fun formatCharger(charger: ChargeLocation, showCity: Boolean): Row {
-        val markerTint = if ((charger.maxPower ?: 0.0) > 100) {
+    private fun formatCharger(
+        charger: ChargeLocation,
+        showCity: Boolean,
+        isFavorite: Boolean
+    ): Row {
+        val markerTint = getMarkerTint(charger)
+        val backgroundTint = if ((charger.maxPower ?: 0.0) > 100) {
             R.color.charger_100kw_dark  // slightly darker color for better contrast
         } else {
-            getMarkerTint(charger)
+            markerTint
         }
-        val color = ContextCompat.getColor(carContext, markerTint)
+        val color = ContextCompat.getColor(carContext, backgroundTint)
         val place =
             Place.Builder(CarLocation.create(charger.coordinates.lat, charger.coordinates.lng))
                 .setMarker(
@@ -293,16 +307,32 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                 )
                 .build()
 
+        val icon = iconGen.getBitmap(
+            markerTint,
+            fault = charger.faultReport != null,
+            multi = charger.isMulti(),
+            fav = isFavorite
+        )
+        val iconSpan =
+            CarIconSpan.create(CarIcon.Builder(IconCompat.createWithBitmap(icon)).build())
+
         return Row.Builder().apply {
             // only show the city if not all chargers are in the same city (-> showCity == true)
             // and the city is not already contained in the charger name
+            val title = SpannableStringBuilder().apply {
+                append(" ", iconSpan, SpannableString.SPAN_INCLUSIVE_EXCLUSIVE)
+                append(" ")
+                append(charger.name)
+            }
             if (showCity && charger.address?.city != null && charger.address.city !in charger.name) {
-                setTitle(
-                    CarText.Builder("${charger.name} · ${charger.address.city}")
-                    .addVariant(charger.name)
-                    .build())
+                val titleWithCity = SpannableStringBuilder().apply {
+                    append("", iconSpan, SpannableString.SPAN_INCLUSIVE_EXCLUSIVE)
+                    append(" ")
+                    append("${charger.name} · ${charger.address.city}")
+                }
+                setTitle(CarText.Builder(titleWithCity).addVariant(title).build())
             } else {
-                setTitle(charger.name)
+                setTitle(title)
             }
 
             val text = SpannableStringBuilder()
@@ -416,15 +446,19 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                 val filters = repo.getFiltersAsync(carContext.stringProvider())
                 filtersWithValue = filtersWithValue(filters, filterValues)
 
+                val apiId = repo.api.value!!.id
+
                 // load chargers
                 if (filterStatus == FILTERS_FAVORITES) {
-                    chargers =
+                    val chargers =
                         db.favoritesDao().getAllFavoritesAsync().map { it.charger }.sortedBy {
                             distanceBetween(
                                 location.latitude, location.longitude,
                                 it.coordinates.lat, it.coordinates.lng
                             )
                         }
+                    this@MapScreen.chargers = chargers
+                    isFavorite = List(chargers.size) { true }
                 } else {
                     // try multiple search radii until we have enough chargers
                     var chargers: List<ChargeLocation>? = null
@@ -453,7 +487,11 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                             break
                         }
                     }
+                    val isFavorite = chargers?.map {
+                        db.favoritesDao().findFavorite(it.id, apiId) != null
+                    }
                     this@MapScreen.chargers = chargers
+                    this@MapScreen.isFavorite = isFavorite
                 }
 
                 updateCoroutine = null

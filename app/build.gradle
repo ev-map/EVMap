@@ -73,13 +73,6 @@ android {
             minSdkVersion 29
         }
     }
-    variantFilter { variant ->
-        def names = variant.flavors*.name
-        // Android Automotive OS app is always based on Google variant
-        if (names.contains("automotive") && !names.contains("google")) {
-            setIgnore(true)
-        }
-    }
 
     compileOptions {
         coreLibraryDesugaringEnabled true

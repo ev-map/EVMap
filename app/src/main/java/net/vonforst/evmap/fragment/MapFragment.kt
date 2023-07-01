@@ -1332,6 +1332,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             ).show()
             true
         }
+
+        val reloadItem = menu.findItem(R.id.menu_reload)
+        reloadItem.setOnMenuItemClickListener {
+            vm.reloadChargepoints(true)
+            true
+        }
     }
 
 

@@ -480,10 +480,10 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
         }
     }
 
-    fun reloadChargepoints() {
+    fun reloadChargepoints(overrideCache: Boolean = false) {
         val pos = mapPosition.value ?: return
         val filters = filtersWithValue.value ?: return
-        chargepointLoader(pos to filters)
+        chargepointLoader(Triple(pos, filters, overrideCache))
     }
 
     private val miniMarkerThreshold = 13f
@@ -515,11 +515,10 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
         throttleLatest(
             500L,
             viewModelScope
-        ) { data: Pair<MapPosition, FilterValues> ->
+        ) { data: Triple<MapPosition, FilterValues, Boolean> ->
             chargepoints.value = Resource.loading(chargepoints.value?.data)
 
-            val mapPosition = data.first
-            val filters = data.second
+            val (mapPosition, filters, overrideCache) = data
 
             val bounds = extendBounds(mapPosition.bounds)
             if (filterStatus.value == FILTERS_FAVORITES) {
@@ -542,7 +541,7 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
                 return@throttleLatest
             }
 
-            val result = repo.getChargepoints(bounds, mapPosition.zoom, filters)
+            val result = repo.getChargepoints(bounds, mapPosition.zoom, filters, overrideCache)
             chargepointsInternal?.let { chargepoints.removeSource(it) }
             chargepointsInternal = result
             chargepoints.addSource(result) {

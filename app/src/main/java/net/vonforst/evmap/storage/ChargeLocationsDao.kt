@@ -142,7 +142,8 @@ class ChargeLocationsRepository(
     fun getChargepoints(
         bounds: LatLngBounds,
         zoom: Float,
-        filters: FilterValues?
+        filters: FilterValues?,
+        overrideCache: Boolean = false
     ): LiveData<Resource<List<ChargepointListItem>>> {
         val api = api.value!!
 
@@ -200,7 +201,11 @@ class ChargeLocationsRepository(
                 }
             }
         }
-        return CacheLiveData(dbResult, apiResult, savedRegionResult).distinctUntilChanged()
+        return if (overrideCache) {
+            apiResult
+        } else {
+            CacheLiveData(dbResult, apiResult, savedRegionResult).distinctUntilChanged()
+        }
     }
 
     fun getChargepointsRadius(

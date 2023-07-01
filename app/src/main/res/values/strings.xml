@@ -359,4 +359,5 @@
     <string name="loading">Loading…</string>
     <string name="auto_multipage_goto">Page %d</string>
     <string name="auto_multipage">(%d/%d)</string>
+    <string name="reload">Reload</string>
 </resources>

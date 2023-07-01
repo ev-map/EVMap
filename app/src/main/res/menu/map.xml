@@ -8,4 +8,8 @@
         android:icon="@drawable/ic_filter"
         app:showAsAction="ifRoom"
         app:actionLayout="@layout/action_filter" />
+
+    <item
+        android:id="@+id/menu_reload"
+        android:title="@string/reload" />
 </menu>

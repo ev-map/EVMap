@@ -1,41 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="auto_chargeprice_vehicle_ambiguous">Meerdere voertuigen geselecteerd in de app komen overeen met dit voertuig (%1$s %2$s).</string>
     <string name="donations_info" formatted="false">Vind je EVMap nuttig\? Je kan de ontwikkeling steunen via een donatie aan de ontwikkelaar.
 \n
 \nGoogle houdt 15% in van elke donatie.</string>
-    <string name="auto_location_service">EVMap draait op Android Auto en gebruikt jouw locatie.</string>
-    <string name="auto_no_chargers_found">Geen laadpunten gevonden in de omgeving</string>
-    <string name="auto_no_favorites_found">Geen favorieten gevonden</string>
-    <string name="open_in_app">Open in de app</string>
-    <string name="opened_on_phone">Geopend op de telefoon</string>
-    <string name="auto_location_permission_needed">Om EVMap op Android Auto te gebruiken, moet je toegang geven tot je locatie.</string>
-    <string name="auto_vehicle_data_permission_needed">Voor deze functie heeft EVMap toegang nodig tot de gegevens van je voertuig.</string>
-    <string name="grant_on_phone">Geef toestemming op telefoon</string>
-    <string name="auto_chargers_closeby">Oplaadpunten in de buurt</string>
-    <string name="auto_favorites">Favorieten</string>
-    <string name="auto_chargers_near_location">Nabij %s</string>
-    <string name="auto_fault_report_date">⚠️ Foutrapport (%s)</string>
-    <string name="auto_no_refresh_possible">Verdere updates zijn niet mogelijk. Ga terug en herbegin.</string>
-    <string name="auto_prices">Prijzen</string>
-    <string name="auto_vehicle_data">Voertuiggegevens</string>
-    <string name="auto_charging_level">Laadniveau (SoC)</string>
-    <string name="auto_no_data">Niet beschikbaar</string>
-    <string name="auto_range">Reikwijdte</string>
-    <string name="auto_speed">Snelheid</string>
-    <string name="auto_heading">Richting</string>
-    <string name="auto_settings">Instellingen</string>
-    <string name="welcome_android_auto">Android Auto support</string>
-    <string name="welcome_android_auto_detail">Je kan EVMap ook gebruiken in Android Auto op ondersteunde voertuigen. Selecteer gewoon de EVMap app in het Android Auto menu.</string>
-    <string name="sounds_cool">klinkt cool</string>
-    <string name="auto_chargeprice_vehicle_unavailable">EVMap kon je voertuigtype niet bepalen.</string>
-    <string name="auto_chargers_ahead">Alleen laadpunten in rijrichting</string>
-    <string name="settings_android_auto_chargeprice_range">Laadbereik voor prijsvergelijking</string>
     <string name="data_sources_hint">In de instellingen kan je ook wisselen tussen Google Maps en OpenStreetMap (Mapbox) voor de kaartgegevens.</string>
-    <string name="selecting_all">alle items geselecteerd</string>
-    <string name="selecting_none">alle items gedeselecteerd</string>
-    <string name="loading">Laden…</string>
-    <string name="auto_multipage_goto">Pagina %d</string>
-    <string name="auto_multipage">(%d/%d)</string>
-    <string name="auto_chargeprice_vehicle_unknown">Geen enkel voertuig geselecteerd in de app komt overeen met dit voertuig (%1$s %2$s).</string>
 </resources>

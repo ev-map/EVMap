@@ -1,51 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
-
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="androidx.car.app.MAP_TEMPLATES" />
-    <uses-permission android:name="com.google.android.gms.permission.CAR_FUEL" />
-    <uses-permission android:name="com.google.android.gms.permission.CAR_SPEED" />
-
-    <queries>
-        <package android:name="com.google.android.projection.gearhead" />
-        <package android:name="com.google.android.apps.automotive.templates.host" />
-    </queries>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <application>
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
-
-        <meta-data
-            android:name="com.google.android.gms.car.application"
-            android:resource="@xml/automotive_app_desc" />
-
-        <meta-data
-            android:name="androidx.car.app.theme"
-            android:resource="@style/CarAppTheme" />
-
-        <meta-data
-            android:name="androidx.car.app.minCarApiLevel"
-            android:value="1" />
-
-        <service
-            android:name=".auto.CarAppService"
-            android:label="@string/app_name"
-            android:icon="@mipmap/ic_launcher"
-            android:exported="true">
-            <intent-filter>
-                <action
-                    android:name="androidx.car.app.CarAppService"
-                    android:category="androidx.car.app.category.POI" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <data android:scheme="net.vonforst.evmap" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-            </intent-filter>
-        </service>
     </application>
 </manifest>

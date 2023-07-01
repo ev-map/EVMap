@@ -13,6 +13,7 @@ import android.view.animation.DecelerateInterpolator
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import net.vonforst.evmap.R
 import net.vonforst.evmap.databinding.*
@@ -73,6 +74,19 @@ class OnboardingFragment : Fragment() {
         } else {
             binding.viewPager.setCurrentItem(binding.viewPager.currentItem + 1, true)
         }
+    }
+}
+
+class OnboardingViewPagerAdapter(fragment: Fragment) :
+    FragmentStateAdapter(fragment) {
+    override fun getItemCount(): Int = 4
+
+    override fun createFragment(position: Int): Fragment = when (position) {
+        0 -> WelcomeFragment()
+        1 -> IconsFragment()
+        2 -> AndroidAutoFragment()
+        3 -> DataSourceSelectFragment()
+        else -> throw IllegalArgumentException()
     }
 }
 
@@ -253,5 +267,48 @@ class DataSourceSelectFragment : OnboardingPageFragment() {
     override fun onPause() {
         super.onPause()
         animatedItems.forEach { it.alpha = 0f }
+    }
+}
+
+class AndroidAutoFragment : OnboardingPageFragment() {
+    private lateinit var binding: FragmentOnboardingAndroidAutoBinding
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentOnboardingAndroidAutoBinding.inflate(inflater, container, false)
+
+        binding.btnGetStarted.setOnClickListener {
+            parent.goToNext()
+        }
+        binding.imgAndroidAuto.alpha = 0f
+
+        return binding.root
+    }
+
+    @SuppressLint("Recycle")
+    override fun onResume() {
+        super.onResume()
+
+        val animators =
+            listOf(
+                ObjectAnimator.ofFloat(binding.imgAndroidAuto, "translationY", -20f, 0f).apply {
+                    interpolator = DecelerateInterpolator()
+                },
+                ObjectAnimator.ofFloat(binding.imgAndroidAuto, "alpha", 0f, 1f).apply {
+                    interpolator = DecelerateInterpolator()
+                }
+            )
+        AnimatorSet().apply {
+            playTogether(animators)
+            start()
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        binding.imgAndroidAuto.alpha = 0f
     }
 }

@@ -1,39 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="donations_info" formatted="false">Findest du EVMap nützlich? Unterstütze die Weiterentwicklung der App mit einer Spende an den Entwickler.\n\nGoogle zieht von der Spende 15% Gebühren ab.</string>
-    <string name="auto_location_service">EVMap läuft unter Android Auto und nutzt dafür deinen Standort.</string>
-    <string name="auto_no_chargers_found">Keine Ladestationen in der Nähe gefunden</string>
-    <string name="auto_no_favorites_found">Keine Favoriten gefunden</string>
-    <string name="open_in_app">In App öffnen</string>
-    <string name="opened_on_phone">Auf dem Telefon geöffnet</string>
-    <string name="auto_location_permission_needed">Um EVMap auf Android Auto zu nutzen, braucht die App Zugriff auf deinen Standort.</string>
-    <string name="auto_vehicle_data_permission_needed">Für diese Funktion benötigt EVMap Zugriff auf Daten deines Fahrzeugs.</string>
-    <string name="grant_on_phone">Auf Telefon zulassen</string>
-    <string name="auto_chargers_closeby">In der Nähe</string>
-    <string name="auto_favorites">Favoriten</string>
-    <string name="auto_chargers_near_location">Nahe %s</string>
-    <string name="auto_fault_report_date">⚠️ Störungsmeldung (%s)</string>
-    <string name="auto_no_refresh_possible">Weitere Aktualisierung nicht möglich. Bitte zurück gehen und neu starten.</string>
-    <string name="auto_prices">Preise</string>
-    <string name="auto_vehicle_data">Fahrzeugdaten</string>
-    <string name="auto_charging_level">Ladezustand</string>
-    <string name="auto_no_data">Nicht verfügbar</string>
-    <string name="auto_range">Reichweite</string>
-    <string name="auto_speed">Geschwindigkeit</string>
-    <string name="auto_heading">Fahrtrichtung</string>
-    <string name="auto_settings">Einstellungen</string>
-    <string name="welcome_android_auto">Android Auto-Unterstützung</string>
-    <string name="welcome_android_auto_detail">Auf unterstützen Autos kannst du EVMap auch mit Android Auto nutzen. Öffne dazu einfach die EVMap-App aus dem Menü von Android Auto.</string>
-    <string name="sounds_cool">klingt cool</string>
-    <string name="auto_chargeprice_vehicle_unavailable">EVMap konnte das Fahrzeugmodell nicht erkennen.</string>
-    <string name="auto_chargeprice_vehicle_unknown">Keins der in der App ausgewählten Fahrzeuge passt zu diesem Fahrzeug (%1$s %2$s).</string>
-    <string name="auto_chargeprice_vehicle_ambiguous">Mehrere der in der App ausgewählten Fahrzeuge passen zu diesem Fahrzeug (%1$s %2$s).</string>
-    <string name="auto_chargers_ahead">Nur Ladestationen in Fahrtrichtung</string>
-    <string name="settings_android_auto_chargeprice_range">Ladebereich für Preisvergleich</string>
     <string name="data_sources_hint">In den Einstellungen kannst du auch zwischen Google Maps und OpenStreetMap (Mapbox) für die Kartendaten wechseln.</string>
-    <string name="selecting_all">alle Einträge ausgewählt</string>
-    <string name="selecting_none">alle Einträge abgewählt</string>
-    <string name="loading">Lade…</string>
-    <string name="auto_multipage_goto">Seite %d</string>
-    <string name="auto_multipage">(%d/%d)</string>
 </resources>

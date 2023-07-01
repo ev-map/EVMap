@@ -163,9 +163,13 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
     val chargerSparse: MutableLiveData<ChargeLocation?> by lazy {
         state.getLiveData("chargerSparse")
     }
+    private val triggerChargerDetailsRefresh = MutableLiveData(false)
     val chargerDetails: LiveData<Resource<ChargeLocation>> = chargerSparse.switchMap { charger ->
-        charger?.id?.let {
-            repo.getChargepointDetail(it)
+        triggerChargerDetailsRefresh.value = false
+        triggerChargerDetailsRefresh.switchMap { overrideCache ->
+            charger?.id?.let {
+                repo.getChargepointDetail(it, overrideCache)
+            }
         }
     }.apply {
         observeForever { chargerDetail ->
@@ -207,7 +211,7 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
     val location: MutableLiveData<LatLng> by lazy {
         MutableLiveData<LatLng>()
     }
-    private val triggerAvailabilityRefresh = MutableLiveData<Boolean>(true)
+    private val triggerAvailabilityRefresh = MutableLiveData(true)
     val availability: LiveData<Resource<ChargeLocationStatus>> by lazy {
         chargerSparse.switchMap { charger ->
             charger?.let {
@@ -600,6 +604,10 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
 
     fun reloadAvailability() {
         triggerAvailabilityRefresh.value = true
+    }
+
+    fun reloadChargerDetails() {
+        triggerChargerDetailsRefresh.value = true
     }
 
     fun loadChargerById(chargerId: Long) {

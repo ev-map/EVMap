@@ -251,8 +251,11 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
         binding.detailAppBar.toolbar.inflateMenu(R.menu.detail)
         favToggle = binding.detailAppBar.toolbar.menu.findItem(R.id.menu_fav)
-        binding.detailAppBar.toolbar.menu.findItem(R.id.menu_edit).title =
-            getString(R.string.edit_at_datasource, vm.apiName)
+
+        vm.apiName.observe(viewLifecycleOwner) {
+            binding.detailAppBar.toolbar.menu.findItem(R.id.menu_edit).title =
+                getString(R.string.edit_at_datasource, it)
+        }
 
         binding.detailView.topPart.doOnNextLayout {
             bottomSheetBehavior.peekHeight = binding.detailView.topPart.bottom
@@ -433,6 +436,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                     }
                     true
                 }
+
+                R.id.menu_reload -> {
+                    vm.reloadChargerDetails()
+                    true
+                }
+
                 else -> false
             }
         }
@@ -1332,17 +1341,16 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             ).show()
             true
         }
-
-        val reloadItem = menu.findItem(R.id.menu_reload)
-        reloadItem.setOnMenuItemClickListener {
-            vm.reloadChargepoints(true)
-            true
-        }
     }
 
 
-    override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-        return false
+    override fun onMenuItemSelected(menuItem: MenuItem) = when (menuItem.itemId) {
+        R.id.menu_reload -> {
+            vm.reloadChargepoints(true)
+            true
+        }
+
+        else -> false
     }
 
     override fun getRootView(): View {

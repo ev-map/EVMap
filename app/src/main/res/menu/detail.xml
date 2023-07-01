@@ -3,12 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/menu_edit"
-        android:icon="@drawable/ic_edit"
-        android:title="@string/edit_at_datasource"
-        app:showAsAction="ifRoom" />
-
-    <item
         android:id="@+id/menu_share"
         android:icon="@drawable/ic_share"
         android:title="@string/share"
@@ -19,4 +13,13 @@
         android:icon="@drawable/ic_fav_no"
         android:title="@string/fav_add"
         app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menu_edit"
+        android:icon="@drawable/ic_edit"
+        android:title="@string/edit_at_datasource" />
+
+    <item
+        android:id="@+id/menu_reload"
+        android:title="@string/reload" />
 </menu>

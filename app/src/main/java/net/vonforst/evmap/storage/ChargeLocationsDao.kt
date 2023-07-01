@@ -310,7 +310,8 @@ class ChargeLocationsRepository(
     }
 
     fun getChargepointDetail(
-        id: Long
+        id: Long,
+        overrideCache: Boolean = false
     ): LiveData<Resource<ChargeLocation>> {
         val dbResult = chargeLocationsDao.getChargeLocationById(
             id,
@@ -326,7 +327,11 @@ class ChargeLocationsRepository(
                 chargeLocationsDao.insert(result.data!!)
             }
         }
-        return PreferCacheLiveData(dbResult, apiResult, cacheSoftLimit)
+        return if (overrideCache) {
+            apiResult
+        } else {
+            PreferCacheLiveData(dbResult, apiResult, cacheSoftLimit)
+        }
     }
 
     fun getFilters(sp: StringProvider) = MediatorLiveData<List<Filter<FilterValue>>>().apply {

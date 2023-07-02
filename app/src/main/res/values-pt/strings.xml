@@ -364,4 +364,6 @@
     <string name="auto_chargeprice_vehicle_unknown">Nenhum dos veículos selecionados na app corresponde a este veículo (%1$s %2$s).</string>
     <string name="auto_chargers_ahead">Apenas carregadores na direção do destino</string>
     <string name="sounds_cool">Continuar</string>
+    <string name="reload">Recarregar</string>
+    <string name="accept_privacy">Li e aceito a <a href="%s">política de privacidade</a> do EVMap.</string>
 </resources>

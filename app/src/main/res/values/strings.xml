@@ -221,9 +221,11 @@
     <string name="unknown_operator">Unknown operator</string>
     <string name="data_sources_description">Please pick a data source for charging stations. It can later be changed in the app settings.</string>
     <string name="data_source_goingelectric">GoingElectric.de</string>
+    <string name="data_source_openstreetmap">OpenStreetMap</string>
     <string name="data_source_openchargemap">Open Charge Map</string>
     <string name="data_source_goingelectric_desc">Great in the German-speaking countries. Descriptions in German. Community-maintained.</string>
     <string name="data_source_openchargemap_desc"><![CDATA[Worldwide, with varying quality. Descriptions in English or the local language. Community-maintained and open government data in some countries (e.g. North America, UK, France, Norway).]]></string>
+    <string name="data_source_openstreetmap_desc">Experimental support in EVMap, not all features available</string>
     <string name="next">next</string>
     <string name="get_started">Get started</string>
     <string name="got_it">Got it</string>

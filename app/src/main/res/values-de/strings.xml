@@ -222,8 +222,10 @@
     <string name="data_sources_description">Bitte wähle eine Datenquelle für Ladestationen aus. Du kannst sie später in den Einstellungen der App ändern.</string>
     <string name="data_source_goingelectric">GoingElectric.de</string>
     <string name="data_source_openchargemap">Open Charge Map</string>
+    <string name="data_source_openstreetmap">OpenStreetMap</string>
     <string name="data_source_goingelectric_desc">Sehr gute Abdeckung in den deutschsprachigen Ländern. Beschreibungen in Deutsch. Von der Community gepflegt.</string>
     <string name="data_source_openchargemap_desc"><![CDATA[Weltweite Abdeckung mit variierender Qualität. Beschreibungen in Englisch oder Landessprache. Von der Community gepflegt und offizielle Verzeichnisse einiger Länder (z.B. Nordamerika, UK, Frankreich, Norwegen).]]></string>
+    <string name="data_source_openstreetmap_desc">Experimentelle Unterstützung in EVMap, nicht alle Funktionen nutzbar</string>
     <string name="next">weiter</string>
     <string name="get_started">Los geht\'s</string>
     <string name="got_it">Alles klar</string>

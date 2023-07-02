@@ -61,10 +61,12 @@
     <string-array name="pref_data_source_names">
         <item>@string/data_source_goingelectric</item>
         <item>@string/data_source_openchargemap</item>
+        <item>@string/data_source_openstreetmap</item>
     </string-array>
     <string-array name="pref_data_source_values" tranlatable="false">
         <item>goingelectric</item>
         <item>openchargemap</item>
+        <item>openstreetmap</item>
     </string-array>
     <string-array name="pref_units_names">
         <item>@string/pref_units_default</item>

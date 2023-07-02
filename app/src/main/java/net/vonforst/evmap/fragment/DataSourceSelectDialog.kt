@@ -54,6 +54,7 @@ class DataSourceSelectDialog : MaterialDialogFragment() {
             when (prefs.dataSource) {
                 "goingelectric" -> binding.rgDataSource.rbGoingElectric.isChecked = true
                 "openchargemap" -> binding.rgDataSource.rbOpenChargeMap.isChecked = true
+                "openstreetmap" -> binding.rgDataSource.rbOpenStreetMap.isChecked = true
             }
         }
 
@@ -65,6 +66,8 @@ class DataSourceSelectDialog : MaterialDialogFragment() {
                 "goingelectric"
             } else if (binding.rgDataSource.rbOpenChargeMap.isChecked) {
                 "openchargemap"
+            } else if (binding.rgDataSource.rbOpenStreetMap.isChecked) {
+                "openstreetmap"
             } else {
                 return@setOnClickListener
             }

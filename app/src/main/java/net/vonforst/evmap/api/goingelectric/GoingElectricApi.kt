@@ -133,6 +133,12 @@ class GoingElectricApiWrapper(
     override val name = "GoingElectric.de"
     override val id = "goingelectric"
     override val cacheLimit = Duration.ofDays(1)
+    override val supportsOnlineQueries = true
+    override val supportsFullDownload = false
+
+    override suspend fun fullDownload(referenceData: ReferenceData): List<ChargeLocation> {
+        throw NotImplementedError()
+    }
 
     override suspend fun getChargepoints(
         referenceData: ReferenceData,

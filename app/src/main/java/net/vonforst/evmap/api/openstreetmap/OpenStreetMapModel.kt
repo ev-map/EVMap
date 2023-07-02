@@ -59,6 +59,12 @@ private val SOCKET_TYPES = immutableListOf(
 )
 
 @JsonClass(generateAdapter = true)
+data class OSMDocument(
+    val timestamp: Instant,
+    val elements: List<OSMChargingStation>
+)
+
+@JsonClass(generateAdapter = true)
 data class OSMChargingStation(
     // Unique numeric ID
     val id: Long,

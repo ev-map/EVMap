@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        buildvariant: [ FossNormal, GoogleNormal, GoogleAutomotive ]
+        buildvariant: [ FossNormal, FossAutomotive, GoogleNormal, GoogleAutomotive ]
     steps:
       - name: Check out code
         uses: actions/checkout@v2

@@ -76,3 +76,12 @@ jobs:
           asset_path: app/build/outputs/apk/googleAutomotive/release/app-google-automotive-release.apk
           asset_name: app-google-automotive-release.apk
           asset_content_type: application/vnd.android.package-archive
+      - name: upload Foss Automotive artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: app/build/outputs/apk/fossAutomotive/release/app-google-automotive-release.apk
+          asset_name: app-foss-automotive-release.apk
+          asset_content_type: application/vnd.android.package-archive

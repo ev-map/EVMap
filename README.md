@@ -43,13 +43,27 @@ EVMap uses and put them into the app in the form of a resource file called `apik
 features and how they can be obtained in our [documentation page](doc/api_keys.md).
 
 There are three different build flavors, `googleNormal`, `fossNormal` and `googleAutomotive`.
-- The `foss` variant only uses Mapbox data and should run on most Android devices, even without
+- The `foss` variants only use Mapbox data and should run on most Android devices, even without
   Google Play Services.
+    - `fossNormal` is intended to run on smartphones and tablets, and also includes the Android
+      Auto app for use on the car display (however for that to work, the Android Auto app is
+      necessary, which in turn does require Google Play Services).
+    - `fossAutomotive` can be installed directly on
+      [Android Automotive OS (AAOS)](https://source.android.com/docs/automotive/start/what_automotive)
+      headunits without Google services.
+      It does not provide the usual smartphone UI, and requires an implementation of the
+      [AOSP template app host](https://source.android.com/docs/automotive/hmi/aosp_host)
+      to be installed. If you are an OEM and would like to distribute EVMap to your AAOS vehicles,
+      please [get in touch](mailto:evmap@vonforst.net).
 - The `google` variants also include access to Google Maps data.
     - `googleNormal` is intended to run on smartphones and tablets, and also includes the Android
       Auto app for use on the car display.
-    - `googleAutomotive` variant is intended to be installed directly on car infotainment systems
-      using the Google-flavored Android Automotive OS. It does not provide the usual smartphone UI.
+    - `googleAutomotive` can be installed directly on car infotainment systems running the
+      Google-flavored Android Automotive OS (Google Automotive Services /
+      ["Google built-in"](https://built-in.google/cars/)).
+      It does not provide the usual smartphone UI, and requires the
+      [Google Automotive App Host](https://play.google.com/store/apps/details?id=com.google.android.apps.automotive.templates.host)
+      to run, which should be preinstalled on those cars and can be updated through the Play Store.
 
 We also have a special [documentation page](doc/android_auto.md) on how to test the Android Auto
 app.

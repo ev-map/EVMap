@@ -6,6 +6,7 @@ import com.car2go.maps.model.LatLngBounds
 import net.vonforst.evmap.R
 import net.vonforst.evmap.api.goingelectric.GoingElectricApiWrapper
 import net.vonforst.evmap.api.openchargemap.OpenChargeMapApiWrapper
+import net.vonforst.evmap.api.openstreetmap.OpenStreetMapApiWrapper
 import net.vonforst.evmap.model.*
 import net.vonforst.evmap.viewmodel.Resource
 import java.time.Duration
@@ -58,6 +59,34 @@ interface ChargepointApi<out T : ReferenceData> {
      * Duration we are limited to if there is a required API local cache time limit.
      */
     val cacheLimit: Duration
+
+    /**
+     * Whether this API supports querying for chargers at the backend
+     *
+     * This determines whether the getChargepoints, getChargepointsRadius and getChargepointDetail functions are supported.
+     */
+    val supportsOnlineQueries: Boolean
+
+    /**
+     * Whether this API supports downloading the whole dataset into local storage
+     *
+     * This determines whether the getAllChargepoints function is supported.
+     */
+    val supportsFullDownload: Boolean
+
+    /**
+     * Fetches all available chargers from this API.
+     *
+     * This may take a long time and should only be used when the user explicitly wants to download all chargers.
+     *
+     * TODO: add an optional callback parameter to this function to be able to receive updates on the download progress?
+     * TODO: Should this also include getting the ReferenceData, instead of taking it as an argument?
+     *       ReferenceData typically includes information that is needed to create the filter options, e.g.
+     *       mappings between IDs and readable names (for operators etc.). So probably for OSM it makes sense
+     *       to generate that within this function (e.g. build the list of available operators using all the
+     *       operators found in the dataset).
+     */
+    suspend fun fullDownload(referenceData: ReferenceData): List<ChargeLocation>
 }
 
 interface StringProvider {
@@ -79,6 +108,7 @@ fun createApi(type: String, ctx: Context): ChargepointApi<ReferenceData> {
                 )
             )
         }
+
         "goingelectric" -> {
             GoingElectricApiWrapper(
                 ctx.getString(
@@ -86,6 +116,11 @@ fun createApi(type: String, ctx: Context): ChargepointApi<ReferenceData> {
                 )
             )
         }
+
+        "openstreetmap" -> {
+            OpenStreetMapApiWrapper()
+        }
+
         else -> throw IllegalArgumentException()
     }
 }

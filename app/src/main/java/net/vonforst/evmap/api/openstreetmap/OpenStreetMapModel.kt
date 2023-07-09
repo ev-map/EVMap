@@ -2,6 +2,7 @@ package net.vonforst.evmap.api.openstreetmap
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import kotlinx.parcelize.Parcelize
 import net.vonforst.evmap.model.*
 import okhttp3.internal.immutableListOf
 import java.time.Instant
@@ -105,7 +106,7 @@ data class OSMChargingStation(
         tags["description"],
         null,
         null,
-        null,
+        getPhotos(),
         null,
         getOpeningHours(),
         getCost(),
@@ -200,6 +201,25 @@ data class OSMChargingStation(
         return Cost(freecharging, freeparking, null, description)
     }
 
+    private fun getPhotos(): List<ChargerPhoto> {
+        val photos = mutableListOf<ChargerPhoto>()
+        for (i in -1..9) {
+            val url = tags["image" + if (i >= 0) ":$i" else ""]
+            if (url != null) {
+                if (url.startsWith("https://i.imgur.com")) {
+                    ImgurChargerPhoto.create(url)?.let { photos.add(it) }
+                }
+                /*
+                TODO: Imgur seems to be by far the most common image hoster (650 images),
+                followed by Mapillary (450, requires an API key to retrieve images)
+                Other than that, we have Google Photos, Wikimedia Commons (100-150 images each).
+                And there are some other links to various sites, but not all are valid links pointing directly to a JPEG file...
+                 */
+            }
+        }
+        return photos
+    }
+
     companion object {
         /**
          * Parse raw OSM output power.
@@ -220,6 +240,28 @@ data class OSMChargingStation(
             val matchResult = pattern.matchEntire(rawOutput) ?: return null
             val numberString = matchResult.groupValues[1].replace(',', '.')
             return numberString.toDoubleOrNull()
+        }
+    }
+}
+
+@Parcelize
+@JsonClass(generateAdapter = true)
+class ImgurChargerPhoto(override val id: String) : ChargerPhoto(id) {
+    override fun getUrl(height: Int?, width: Int?, size: Int?, allowOriginal: Boolean): String {
+        return if (allowOriginal) {
+            "https://i.imgur.com/$id.jpg"
+        } else {
+            val value = width ?: size ?: height
+            "https://i.imgur.com/${id}_d.jpg?maxwidth=$value"
+        }
+    }
+
+    companion object {
+        private val regex = Regex("https?://i.imgur.com/([\\w\\d]+)(?:_d)?.(?:webp|jpg)")
+
+        fun create(url: String): ImgurChargerPhoto? {
+            val id = regex.find(url)?.groups?.get(1)?.value
+            return id?.let { ImgurChargerPhoto(it) }
         }
     }
 }

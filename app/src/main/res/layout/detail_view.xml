@@ -21,6 +21,8 @@
 
         <import type="net.vonforst.evmap.adapter.DetailsAdapterKt" />
 
+        <import type="net.vonforst.evmap.utils.LocationUtilsKt" />
+
         <import type="net.vonforst.evmap.viewmodel.Resource" />
 
         <import type="net.vonforst.evmap.viewmodel.Status" />
@@ -120,9 +122,9 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="@{charger.data.address.toString()}"
+                android:text="@{charger.data != null ? (charger.data.address != null ? charger.data.address.toString() : LocationUtilsKt.formatDMS(charger.data.coordinates)) : null }"
                 android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-                app:invisibleUnless="@{charger.data.address != null}"
+                app:invisibleUnless="@{charger.data != null}"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/txtName"

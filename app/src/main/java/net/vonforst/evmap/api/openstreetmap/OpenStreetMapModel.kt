@@ -113,7 +113,7 @@ data class OSMChargingStation(
         "© OpenStreetMap contributors",
         null,
         null,
-        null,
+        tags["website"],
         dataFetchTimestamp,
         true,
     )

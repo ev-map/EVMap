@@ -171,7 +171,7 @@ data class OSMChargingStation(
         return null
     }
 
-    private fun getCost(): Cost? {
+    private fun getCost(): Cost {
         val freecharging = when (tags["fee"]?.lowercase()) {
             "yes", "y" -> false
             "no", "n" -> true
@@ -182,7 +182,9 @@ data class OSMChargingStation(
             "yes", "y", "interval" -> false
             else -> null
         }
-        return Cost(freecharging, freeparking)
+        val description = listOfNotNull(tags["charge"], tags["charge:conditional"]).ifEmpty { null }
+            ?.joinToString("\n")
+        return Cost(freecharging, freeparking, null, description)
     }
 
     companion object {

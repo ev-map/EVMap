@@ -65,7 +65,7 @@ abstract class ChargeLocationsDao {
         id: Long,
         dataSource: String,
         after: Long
-    ): LiveData<ChargeLocation>
+    ): LiveData<ChargeLocation?>
 
     @SkipQueryVerification
     @Query("SELECT * FROM chargelocation WHERE dataSource == :dataSource AND Within(coordinates, BuildMbr(:lng1, :lat1, :lng2, :lat2)) AND timeRetrieved > :after")

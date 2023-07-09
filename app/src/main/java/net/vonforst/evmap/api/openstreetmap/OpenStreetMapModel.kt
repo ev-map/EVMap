@@ -93,7 +93,7 @@ data class OSMChargingStation(
         "openstreetmap",
         getName(),
         Coordinate(lat, lon),
-        null, // TODO: Can we determine this with overpass?
+        getAddress(),
         getChargepoints(),
         tags["network"],
         "https://www.openstreetmap.org/node/$id",
@@ -116,6 +116,19 @@ data class OSMChargingStation(
         dataFetchTimestamp,
         true,
     )
+
+    private fun getAddress(): Address? {
+        val city = tags["addr:city"]
+        val country = tags["addr:country"]
+        val postcode = tags["addr:postcode"]
+        val street = tags["addr:street"]
+        val housenumber = tags["addr:housenumber"] ?: tags["addr:housename"]
+        return if (listOf(city, country, postcode, street, housenumber).any { it != null }) {
+            Address(city, country, postcode, "$street $housenumber")
+        } else {
+            null
+        }
+    }
 
     /**
      * Return the name for this charging station.

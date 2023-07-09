@@ -353,24 +353,29 @@ class ChargeLocationsRepository(
         id: Long,
         overrideCache: Boolean = false
     ): LiveData<Resource<ChargeLocation>> {
+        val api = api.value!!
         val dbResult = chargeLocationsDao.getChargeLocationById(
             id,
             prefs.dataSource,
-            cacheLimitDate(api.value!!)
+            cacheLimitDate(api)
         )
-        val apiResult = liveData {
-            emit(Resource.loading(null))
-            val refData = referenceData.await()
-            val result = api.value!!.getChargepointDetail(refData, id)
-            emit(result)
-            if (result.status == Status.SUCCESS) {
-                chargeLocationsDao.insert(result.data!!)
+        if (api.supportsOnlineQueries) {
+            val apiResult = liveData {
+                emit(Resource.loading(null))
+                val refData = referenceData.await()
+                val result = api.getChargepointDetail(refData, id)
+                emit(result)
+                if (result.status == Status.SUCCESS) {
+                    chargeLocationsDao.insert(result.data!!)
+                }
             }
-        }
-        return if (overrideCache) {
-            apiResult
+            return if (overrideCache) {
+                apiResult
+            } else {
+                PreferCacheLiveData(dbResult, apiResult, cacheSoftLimit)
+            }
         } else {
-            PreferCacheLiveData(dbResult, apiResult, cacheSoftLimit)
+            return dbResult.map { Resource.success(it) }
         }
     }
 

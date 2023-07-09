@@ -139,7 +139,9 @@ data class ChargeLocation(
 
     fun formatChargepoints(sp: StringProvider): String {
         return chargepointsMerged.joinToString(" · ") {
-            "${it.count} × ${nameForPlugType(sp, it.type)} ${it.formatPower()}"
+            "${it.count} × ${nameForPlugType(sp, it.type)}${
+                it.formatPower()?.let { power -> " $power" } ?: ""
+            }"
         }
     }
 }

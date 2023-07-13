@@ -595,7 +595,7 @@ class GoingElectricApiWrapper(
 
         val minConnectors = filters.getSliderValue("min_connectors")
         if (minConnectors != null && minConnectors > 1) {
-            result.append(" GROUP BY ChargeLocation.id HAVING COUNT(1) >= ${minConnectors}")
+            result.append(" GROUP BY ChargeLocation.id HAVING SUM(json_extract(cp.value, '$.count')) >= ${minConnectors}")
             requiresChargepointQuery = true
         }
 

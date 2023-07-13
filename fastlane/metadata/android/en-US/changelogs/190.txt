@@ -1,0 +1,7 @@
+Improvements:
+- Buttons to manually reload map contents / charger details
+- Android Auto app is now also available with the F-Droid version of EVMap
+- Android Auto: Show charger icons
+
+Bugfixes:
+- Additional corrections for caching function (chargers were not shown with certain filters and zoom levels)

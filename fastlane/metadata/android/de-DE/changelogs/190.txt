@@ -1,0 +1,7 @@
+Verbesserungen:
+- Buttons zum manuellen Neuladen der Karteninhalte bzw. Ladestationsdetails
+- Die App für Android Auto ist nun auch mit der F-Droid-Version von EVMap nutzbar (falls Android Auto installiert ist)
+- Android Auto: Ladestations-Icons werden mit angezeigt
+
+Fehler behoben:
+- Weitere Korrekturen beim Caching (Ladestationen wurden bei bestimmten Filtern und Zoomstufen nicht angezeigt)

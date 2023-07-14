@@ -149,9 +149,9 @@ class EnBwAvailabilityDetector(client: OkHttpClient, baseUrl: String? = null) :
             markers = listOf(nearest)
         }
 
-        val details = markers.map {
+        val details = markers.mapNotNull { it.stationId }.map {
             // load details
-            api.getLocation(it.stationId!!)
+            api.getLocation(it)
         }
 
         val connectorStatus = details.flatMap { it.chargePoints }.flatMap { cp ->

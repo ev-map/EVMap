@@ -151,8 +151,9 @@ class BarGraphView(context: Context, attrs: AttributeSet) : View(context, attrs)
             legendPaint.textAlign = Paint.Align.CENTER
 
             data.entries.forEachIndexed { i, (t, v) ->
+                val divisor = maxValue.toFloat().takeIf { it > 0f } ?: 1f
                 val height =
-                    zeroHeight + (graphBounds.height() - zeroHeight) * v.toFloat() / maxValue.toFloat()
+                    zeroHeight + (graphBounds.height() - zeroHeight) * v.toFloat() / divisor
                 val left = graphBounds.left + (barWidth + barMargin) * i
 
                 if (left + barWidth > graphBounds.right) return@forEachIndexed

@@ -105,16 +105,18 @@ class EnBwAvailabilityDetector(client: OkHttpClient, baseUrl: String? = null) :
         var markers =
             api.getMarkers(lng - coordRange, lng + coordRange, lat - coordRange, lat + coordRange)
 
-        markers = markers.flatMap {
-            if (it.grouped) {
-                api.getMarkers(
-                    it.viewPort.lowerLeftLon,
-                    it.viewPort.upperRightLon,
-                    it.viewPort.lowerLeftLat,
-                    it.viewPort.upperRightLat
-                )
-            } else {
-                listOf(it)
+        while (markers.any { it.grouped }) {
+            markers = markers.flatMap {
+                if (it.grouped) {
+                    api.getMarkers(
+                        it.viewPort.lowerLeftLon,
+                        it.viewPort.upperRightLon,
+                        it.viewPort.lowerLeftLat,
+                        it.viewPort.upperRightLat
+                    )
+                } else {
+                    listOf(it)
+                }
             }
         }
 

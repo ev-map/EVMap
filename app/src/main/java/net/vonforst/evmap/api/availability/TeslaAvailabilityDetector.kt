@@ -235,7 +235,7 @@ interface TeslaGraphQlApi {
     data class GetNearbyChargingSitesResponse(val data: GetNearbyChargingSitesResponseData)
 
     @JsonClass(generateAdapter = true)
-    data class GetNearbyChargingSitesResponseData(val charging: GetNearbyChargingSitesResponseDataCharging)
+    data class GetNearbyChargingSitesResponseData(val charging: GetNearbyChargingSitesResponseDataCharging?)
 
     @JsonClass(generateAdapter = true)
     data class GetNearbyChargingSitesResponseDataCharging(val nearbySites: GetNearbyChargingSitesResponseDataChargingNearbySites)
@@ -518,7 +518,8 @@ class TeslaAvailabilityDetector(
         val results = api.getNearbyChargingSites(
             req,
             req.operationName
-        ).data.charging.nearbySites.sitesAndDistances
+        ).data.charging?.nearbySites?.sitesAndDistances
+            ?: throw AvailabilityDetectorException("no candidates found.")
         val result =
             results.minByOrNull { it.haversineDistanceMiles.value }
                 ?: throw AvailabilityDetectorException("no candidates found.")

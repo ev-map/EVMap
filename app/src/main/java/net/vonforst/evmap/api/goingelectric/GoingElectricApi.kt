@@ -153,6 +153,10 @@ class GoingElectricApiWrapper(
             // no connectors chosen
             return Resource.success(ChargepointList.empty())
         }
+        if (connectorsVal != null && connectorsVal.values.contains("CCS")) {
+            // see note about Tesla Supercharger CCS filter in getFilters below
+            connectorsVal.values.add("Tesla Supercharger CCS")
+        }
         val connectors = formatMultipleChoice(connectorsVal)
 
         val chargeCardsVal = filters?.getMultipleChoiceValue("chargecards")
@@ -246,6 +250,10 @@ class GoingElectricApiWrapper(
         if (connectorsVal != null && connectorsVal.values.isEmpty() && !connectorsVal.all) {
             // no connectors chosen
             return Resource.success(ChargepointList.empty())
+        }
+        if (connectorsVal != null && connectorsVal.values.contains("CCS")) {
+            // see note about Tesla Supercharger CCS filter in getFilters below
+            connectorsVal.values.add("Tesla Supercharger CCS")
         }
         val connectors = formatMultipleChoice(connectorsVal)
 
@@ -434,9 +442,18 @@ class GoingElectricApiWrapper(
         val networks = refData.networks
         val chargeCards = refData.chargecards
 
-        val plugMap = plugs.associateWith { plug ->
-            nameForPlugType(sp, GEChargepoint.convertTypeFromGE(plug))
-        }
+        /*
+        "Tesla Supercharger CCS" is a bit peculiar - it is available as a filter, but the API
+        just returns "CCS" in the charging station details. So we cannot use it for filtering as
+        it won't work in the local database. So we join them into a single filter option.
+        If you want to find Tesla Superchargers with CCS, you can still do that using the network
+        filter.
+         */
+        val plugMap = plugs
+            .filter { it != "Tesla Supercharger CCS" }
+            .associateWith { plug ->
+                nameForPlugType(sp, GEChargepoint.convertTypeFromGE(plug))
+            }
         val networkMap = networks.associateWith { it }
         val chargecardMap = chargeCards.associate { it.id.toString() to it.name }
         val categoryMap = mapOf(

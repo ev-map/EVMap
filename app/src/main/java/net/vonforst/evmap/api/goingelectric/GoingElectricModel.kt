@@ -5,7 +5,22 @@ import androidx.room.PrimaryKey
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import kotlinx.parcelize.Parcelize
-import net.vonforst.evmap.model.*
+import net.vonforst.evmap.model.Address
+import net.vonforst.evmap.model.ChargeCard
+import net.vonforst.evmap.model.ChargeCardId
+import net.vonforst.evmap.model.ChargeLocation
+import net.vonforst.evmap.model.ChargeLocationCluster
+import net.vonforst.evmap.model.Chargepoint
+import net.vonforst.evmap.model.ChargepointListItem
+import net.vonforst.evmap.model.ChargepriceData
+import net.vonforst.evmap.model.ChargerPhoto
+import net.vonforst.evmap.model.Coordinate
+import net.vonforst.evmap.model.Cost
+import net.vonforst.evmap.model.FaultReport
+import net.vonforst.evmap.model.Hours
+import net.vonforst.evmap.model.OpeningHours
+import net.vonforst.evmap.model.OpeningHoursDays
+import net.vonforst.evmap.model.ReferenceData
 import java.time.Instant
 import java.time.LocalTime
 
@@ -35,7 +50,7 @@ sealed class GEChargepointListItem {
 @JsonClass(generateAdapter = true)
 data class GEChargeLocation(
     @Json(name = "ge_id") val id: Long,
-    val name: String,
+    val name: String?,
     val coordinates: GECoordinate,
     val address: GEAddress,
     val chargepoints: List<GEChargepoint>,
@@ -57,7 +72,7 @@ data class GEChargeLocation(
     override fun convert(apikey: String, isDetailed: Boolean) = ChargeLocation(
         id,
         "goingelectric",
-        name,
+        name ?: "Charging station",
         coordinates.convert(),
         address.convert(),
         chargepoints.map { it.convert() },

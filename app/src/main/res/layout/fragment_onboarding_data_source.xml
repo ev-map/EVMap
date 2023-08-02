@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    android:requiresFadingEdge="vertical">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -17,7 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:layout_marginEnd="24dp"
-            android:layout_marginBottom="32dp"
+            android:layout_marginBottom="16dp"
             app:layout_constraintBottom_toTopOf="@+id/dataSourceHint"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -28,6 +29,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="32dp"
             android:layout_marginBottom="16dp"
             android:gravity="center"
@@ -36,7 +38,9 @@
             app:layout_constraintBottom_toTopOf="@+id/welcomeText2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
 
         <TextView
             android:id="@+id/welcomeText2"
@@ -72,12 +76,12 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
             android:layout_marginEnd="32dp"
-            android:layout_marginBottom="32dp"
+            android:layout_marginBottom="24dp"
+            android:breakStrategy="balanced"
             android:gravity="center"
             android:text="@string/data_sources_hint"
             android:textAppearance="@style/TextAppearance.Material3.BodySmall"
             android:textColor="?android:textColorSecondary"
-            android:breakStrategy="balanced"
             app:layout_constraintBottom_toTopOf="@+id/cb_accept_privacy"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -89,14 +93,14 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:layout_marginEnd="24dp"
-            android:layout_marginBottom="32dp"
+            android:layout_marginBottom="24dp"
             android:paddingStart="16dp"
             android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-            tools:text="@string/accept_privacy"
             app:layout_constraintBottom_toTopOf="@+id/btnGetStarted"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="@string/accept_privacy" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

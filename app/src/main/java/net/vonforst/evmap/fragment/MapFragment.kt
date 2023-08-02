@@ -6,7 +6,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Color
-import android.location.Geocoder
 import android.os.Bundle
 import android.text.method.KeyListener
 import android.view.*
@@ -193,6 +192,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             searchResultMarker = null
             searchResultIcon = null
         }
+
+        binding.detailAppBar.toolbar.popupTheme =
+            com.google.android.material.R.style.ThemeOverlay_AppCompat_DayNight
 
         ViewCompat.setOnApplyWindowInsetsListener(
             binding.root

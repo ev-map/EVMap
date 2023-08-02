@@ -287,7 +287,7 @@
     <string name="show_less">minder…</string>
     <string name="map_type">Kaarttype</string>
     <string name="map_details">Kaartdetails</string>
-    <string name="edit_at_datasource">aanpassen op %s</string>
+    <string name="edit_at_datasource">Aanpassen op %s</string>
     <string name="charge_cards">Betaalmethoden</string>
     <string name="pref_map_provider">Kaartaanbieder</string>
     <string name="twitter">Twitter</string>
@@ -319,7 +319,7 @@
     <string name="auto_settings">Instellingen</string>
     <string name="welcome_android_auto">Android Auto support</string>
     <string name="welcome_android_auto_detail">Je kan EVMap ook gebruiken in Android Auto op ondersteunde voertuigen. Selecteer gewoon de EVMap app in het Android Auto menu.</string>
-    <string name="sounds_cool">klinkt cool</string>
+    <string name="sounds_cool">Klinkt cool</string>
     <string name="auto_chargeprice_vehicle_unavailable">EVMap kon je voertuigtype niet bepalen.</string>
     <string name="auto_chargers_ahead">Alleen laadpunten in rijrichting</string>
     <string name="settings_android_auto_chargeprice_range">Laadbereik voor prijsvergelijking</string>

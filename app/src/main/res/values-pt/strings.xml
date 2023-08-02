@@ -76,7 +76,7 @@
     <string name="category_public_authorities">Autoridades públicas</string>
     <string name="category_private_charger">Carregador privado</string>
     <string name="category_rest_area">Área de descanso</string>
-    <string name="edit_at_datasource">editado em %s</string>
+    <string name="edit_at_datasource">Editado em %s</string>
     <string name="categories">Categorias</string>
     <string name="category_service_on_motorway">Área de serviço (autoestrada)</string>
     <string name="category_service_off_motorway">Área de serviço (fora da autoestrada)</string>

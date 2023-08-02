@@ -127,7 +127,7 @@
     <string name="category_amusement_park">Fornøyelsespark</string>
     <string name="category_cinema">Kino</string>
     <string name="category_parking_multi">Parkeringshus</string>
-    <string name="edit_at_datasource">rediger på %s</string>
+    <string name="edit_at_datasource">Rediger på %s</string>
     <string name="category_camping">Campingplass</string>
     <string name="category_service_on_motorway">Rasteplass (på motorvei)</string>
     <string name="category_shopping_mall">Kjøpesenter</string>
@@ -326,7 +326,7 @@
     <string name="welcome_android_auto_detail">Du kan også bruke EVMap inne i Android Auto på bilder som støtter dette ved å velge det i Android Auto-menyen.</string>
     <string name="settings_android_auto_chargeprice_range">Prissammenligning for laderekkevidde fordelt på pris</string>
     <string name="selecting_all">valgte alle elementene</string>
-    <string name="sounds_cool">den er grei</string>
+    <string name="sounds_cool">Den er grei</string>
     <string name="auto_chargers_ahead">Kun ladere i kjøreretningen</string>
     <string name="loading">Laster inn …</string>
     <string name="auto_multipage_goto">Side %d</string>

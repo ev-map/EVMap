@@ -55,7 +55,7 @@
     <string name="filter_exclude_faults">Exclure les chargeurs avec des défauts signalés</string>
     <string name="charge_cards">Méthodes de paiement</string>
     <string name="goingelectric_forum">Fil de discussion du forum sur GoingElectric.de</string>
-    <string name="edit_at_datasource">modifier à %s</string>
+    <string name="edit_at_datasource">Modifier à %s</string>
     <string name="categories">Catégories</string>
     <string name="category_car_dealership">Concessionnaire automobile</string>
     <string name="category_public_authorities">Pouvoirs publics</string>
@@ -308,7 +308,7 @@
     <string name="auto_range">Autonomie</string>
     <string name="auto_speed">Vitesse</string>
     <string name="welcome_android_auto">Prise en charge d’Android Auto</string>
-    <string name="sounds_cool">ça a l\'air cool</string>
+    <string name="sounds_cool">Ça a l\'air cool</string>
     <string name="auto_chargeprice_vehicle_unknown">Aucun des véhicules sélectionnés dans l\'application ne correspond à ce véhicule (%1$s %2$s).</string>
     <string name="auto_chargeprice_vehicle_ambiguous">Plusieurs véhicules sélectionnés dans l\'application correspondent à ce véhicule (%1$s %2$s).</string>
     <string name="selecting_all">tous les éléments sélectionnés</string>

@@ -113,7 +113,7 @@
     <string name="goingelectric_forum">Forum thread at GoingElectric.de</string>
     <string name="contact">Contact</string>
     <string name="menu_report_new_charger">New charger</string>
-    <string name="edit_at_datasource">edit at %s</string>
+    <string name="edit_at_datasource">Edit at %s</string>
     <string name="categories">Categories</string>
     <string name="category_car_dealership">Car Dealership</string>
     <string name="category_service_on_motorway">Service area (on motorway)</string>

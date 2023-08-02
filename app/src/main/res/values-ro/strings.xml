@@ -112,7 +112,7 @@
     <string name="goingelectric_forum">Forum conversatii pe GoingElectric.de</string>
     <string name="contact">Contact</string>
     <string name="menu_report_new_charger">Statie noua</string>
-    <string name="edit_at_datasource">modificat la %s</string>
+    <string name="edit_at_datasource">Modificat la %s</string>
     <string name="categories">Categorii</string>
     <string name="category_car_dealership">Reprezentanta auto</string>
     <string name="category_service_on_motorway">Zona servicii (autostrada)</string>

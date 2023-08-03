@@ -6,7 +6,15 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import kotlinx.parcelize.Parcelize
 import net.vonforst.evmap.max
-import net.vonforst.evmap.model.*
+import net.vonforst.evmap.model.Address
+import net.vonforst.evmap.model.ChargeLocation
+import net.vonforst.evmap.model.Chargepoint
+import net.vonforst.evmap.model.ChargepriceData
+import net.vonforst.evmap.model.ChargerPhoto
+import net.vonforst.evmap.model.Coordinate
+import net.vonforst.evmap.model.Cost
+import net.vonforst.evmap.model.FaultReport
+import net.vonforst.evmap.model.ReferenceData
 import java.time.Instant
 import java.time.ZonedDateTime
 
@@ -165,7 +173,8 @@ data class OCMConnection(
                 17L -> Chargepoint.CEE_ROT
                 28L -> Chargepoint.SCHUKO
                 8L -> Chargepoint.TESLA_ROADSTER_HPC
-                27L -> Chargepoint.SUPERCHARGER
+                27L -> Chargepoint.SUPERCHARGER  // Tesla North American plug (NACS)
+                30L -> Chargepoint.SUPERCHARGER  // European Tesla Model S/X Supercharger plug (DC on Type 2)
                 25L -> Chargepoint.TYPE_2_SOCKET
                 1036L -> Chargepoint.TYPE_2_PLUG
                 1L -> Chargepoint.TYPE_1

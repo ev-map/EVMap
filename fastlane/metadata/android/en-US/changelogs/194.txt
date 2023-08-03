@@ -1,0 +1,5 @@
+Bugfixes:
+- GoingElectric: filter option "CCS" appeared twice
+- Improvements for small displays
+- Fixed color of a menu in dark mode
+- Fixed crashes

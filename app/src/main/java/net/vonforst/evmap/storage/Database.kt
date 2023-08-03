@@ -11,7 +11,6 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import co.anbora.labs.spatia.builder.SpatiaRoom
 import co.anbora.labs.spatia.geometry.GeometryConverters
-import kotlinx.coroutines.runBlocking
 import net.vonforst.evmap.api.goingelectric.GEChargeCard
 import net.vonforst.evmap.api.goingelectric.GEChargepoint
 import net.vonforst.evmap.api.openchargemap.OCMConnectionType
@@ -35,7 +34,7 @@ import net.vonforst.evmap.model.*
         OCMCountry::class,
         OCMOperator::class,
         SavedRegion::class
-    ], version = 21
+    ], version = 22
 )
 @TypeConverters(Converters::class, GeometryConverters::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -75,7 +74,8 @@ abstract class AppDatabase : RoomDatabase() {
                 MIGRATION_2, MIGRATION_3, MIGRATION_4, MIGRATION_5, MIGRATION_6,
                 MIGRATION_7, MIGRATION_8, MIGRATION_9, MIGRATION_10, MIGRATION_11,
                 MIGRATION_12, MIGRATION_13, MIGRATION_14, MIGRATION_15, MIGRATION_16,
-                MIGRATION_17, MIGRATION_18, MIGRATION_19, MIGRATION_20, MIGRATION_21
+                MIGRATION_17, MIGRATION_18, MIGRATION_19, MIGRATION_20, MIGRATION_21,
+                MIGRATION_22
             )
                 .addCallback(object : Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
@@ -447,6 +447,13 @@ abstract class AppDatabase : RoomDatabase() {
         }
 
         private val MIGRATION_21 = object : Migration(20, 21) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                // clear cache with this update
+                db.execSQL("DELETE FROM savedregion")
+            }
+        }
+
+        private val MIGRATION_22 = object : Migration(21, 22) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 // clear cache with this update
                 db.execSQL("DELETE FROM savedregion")

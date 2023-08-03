@@ -1,0 +1,5 @@
+Fehler behoben:
+- GoingElectric: Filteroption "CCS" erschien doppelt
+- Korrekturen für kleine Bildschirme
+- Farbe eines Menüs im dunklen Design korrigiert
+- Abstürze behoben

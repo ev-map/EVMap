@@ -243,9 +243,11 @@ class DataSourceSelectFragment : OnboardingPageFragment() {
                 }
             }
         }
-        when (prefs.dataSource) {
-            "goingelectric" -> binding.rgDataSource.rbGoingElectric.isChecked = true
-            "openchargemap" -> binding.rgDataSource.rbOpenChargeMap.isChecked = true
+        if (prefs.dataSourceSet) {
+            when (prefs.dataSource) {
+                "goingelectric" -> binding.rgDataSource.rbGoingElectric.isChecked = true
+                "openchargemap" -> binding.rgDataSource.rbOpenChargeMap.isChecked = true
+            }
         }
 
         binding.btnGetStarted.setOnClickListener {

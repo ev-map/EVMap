@@ -646,7 +646,7 @@ class AboutScreen(ctx: CarContext) : Screen(ctx) {
                         .setOnClickListener(ParkedOnlyOnClickListener.create {
                             if (BuildConfig.FLAVOR_automotive == "automotive") {
                                 // we can't open the donation page on the phone in this case
-                                openUrl(carContext, carContext.getString(R.string.paypal_link))
+                                openUrl(carContext, carContext.getString(R.string.donate_link))
                             } else {
                                 val intent = Intent(carContext, MapsActivity::class.java)
                                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

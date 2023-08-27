@@ -42,5 +42,9 @@ class DonateFragment : Fragment() {
         binding.btnDonate.setOnClickListener {
             (activity as? MapsActivity)?.openUrl(getString(R.string.paypal_link))
         }
+
+        binding.referrals.referralTesla.setOnClickListener {
+            (requireActivity() as MapsActivity).openUrl(getString(R.string.tesla_referral_link))
+        }
     }
 }

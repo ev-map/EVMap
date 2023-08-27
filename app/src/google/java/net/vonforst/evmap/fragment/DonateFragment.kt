@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
+import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.snackbar.Snackbar
@@ -18,12 +19,17 @@ import com.google.android.material.transition.MaterialSharedAxis
 import net.vonforst.evmap.MapsActivity
 import net.vonforst.evmap.R
 import net.vonforst.evmap.adapter.DonationAdapter
+import net.vonforst.evmap.adapter.SingleViewAdapter
 import net.vonforst.evmap.databinding.FragmentDonateBinding
+import net.vonforst.evmap.databinding.FragmentDonateHeaderBinding
+import net.vonforst.evmap.databinding.FragmentDonateReferralBinding
 import net.vonforst.evmap.viewmodel.DonateViewModel
 
 class DonateFragment : Fragment() {
     private lateinit var binding: FragmentDonateBinding
     private val vm: DonateViewModel by viewModels()
+    private lateinit var header: FragmentDonateHeaderBinding
+    private lateinit var referrals: FragmentDonateReferralBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +46,9 @@ class DonateFragment : Fragment() {
         binding.lifecycleOwner = this
         binding.vm = vm
 
+        header = FragmentDonateHeaderBinding.inflate(inflater, container, false)
+        referrals = FragmentDonateReferralBinding.inflate(inflater, container, false)
+
         return binding.root
     }
 
@@ -51,25 +60,35 @@ class DonateFragment : Fragment() {
             (requireActivity() as MapsActivity).appBarConfiguration
         )
 
-        binding.productsList.apply {
-            adapter = DonationAdapter().apply {
-                onClickListener = {
-                    vm.startPurchase(it, requireActivity())
-                }
+        val donationAdapter = DonationAdapter().apply {
+            onClickListener = {
+                vm.startPurchase(it, requireActivity())
             }
+        }
+        binding.productsList.apply {
+            val joinedAdapter = ConcatAdapter(
+                SingleViewAdapter(header.root),
+                donationAdapter,
+                SingleViewAdapter(referrals.root)
+            )
+            adapter = joinedAdapter
             layoutManager = LinearLayoutManager(context)
         }
 
         vm.products.observe(viewLifecycleOwner) {
-            print(it)
+            donationAdapter.submitList(it.data)
         }
 
-        vm.purchaseSuccessful.observe(viewLifecycleOwner, Observer {
+        vm.purchaseSuccessful.observe(viewLifecycleOwner) {
             Snackbar.make(view, R.string.donation_successful, Snackbar.LENGTH_LONG).show()
-        })
-        vm.purchaseFailed.observe(viewLifecycleOwner, Observer {
+        }
+        vm.purchaseFailed.observe(viewLifecycleOwner) {
             Snackbar.make(view, R.string.donation_failed, Snackbar.LENGTH_LONG).show()
-        })
+        }
+
+        referrals.referralTesla.setOnClickListener {
+            (requireActivity() as MapsActivity).openUrl(getString(R.string.tesla_referral_link))
+        }
 
         // Workaround for AndroidX bug: https://github.com/material-components/material-components-android/issues/1984
         view.setBackgroundColor(MaterialColors.getColor(view, android.R.attr.windowBackground))

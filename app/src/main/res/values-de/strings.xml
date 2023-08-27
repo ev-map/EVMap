@@ -361,4 +361,7 @@
     <string name="auto_multipage">(%d/%d)</string>
     <string name="reload">Neu laden</string>
     <string name="accept_privacy"><![CDATA[Ich habe die <a href=\"%s\">Datenschutzerklärung</a> von EVMap gelesen und bin damit einverstanden.]]></string>
+    <string name="referrals">Empfehlungslinks</string>
+    <string name="referrals_info">Du kannst auch einen der Empfehlungslinks unten benutzen, um den Entwickler mit deinem Kauf zu unterstützen.</string>
+    <string name="referral_tesla">Tesla</string>
 </resources>

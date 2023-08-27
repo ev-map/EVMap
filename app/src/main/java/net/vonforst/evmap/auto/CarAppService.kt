@@ -149,6 +149,11 @@ class EVMapSession(val cas: CarAppService) : Session(), DefaultLifecycleObserver
                 )
             )
         }
+        if (!prefs.privacyAccepted) {
+            screens.add(
+                AcceptPrivacyScreen(carContext)
+            )
+        }
 
         if (screens.size > 1) {
             val screenManager = carContext.getCarService(ScreenManager::class.java)

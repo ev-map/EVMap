@@ -23,6 +23,7 @@ class PermissionScreen(
                 Action.Builder()
                     .setTitle(carContext.getString(R.string.grant_on_phone))
                     .setBackgroundColor(CarColor.PRIMARY)
+                    .setFlags(Action.FLAG_PRIMARY)
                     .setOnClickListener(ParkedOnlyOnClickListener.create {
                         requestPermissions()
                     })

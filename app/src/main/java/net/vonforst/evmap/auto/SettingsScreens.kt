@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager.NameNotFoundException
 import android.hardware.Sensor
 import android.hardware.SensorManager
+import android.text.Html
 import androidx.annotation.StringRes
 import androidx.car.app.CarContext
 import androidx.car.app.CarToast
@@ -13,6 +14,7 @@ import androidx.car.app.annotations.ExperimentalCarApi
 import androidx.car.app.constraints.ConstraintManager
 import androidx.car.app.model.*
 import androidx.core.graphics.drawable.IconCompat
+import androidx.core.text.HtmlCompat
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import net.vonforst.evmap.*
@@ -699,6 +701,34 @@ class AboutScreen(ctx: CarContext) : Screen(ctx) {
                     }).build()
                 )
             }.build(), carContext.getString(R.string.other)))
+        }.build()
+    }
+}
+
+class AcceptPrivacyScreen(ctx: CarContext) : Screen(ctx) {
+    val prefs = PreferenceDataSource(ctx)
+    override fun onGetTemplate(): Template {
+        val textWithoutLink = HtmlCompat.fromHtml(
+            carContext.getString(R.string.accept_privacy),
+            HtmlCompat.FROM_HTML_MODE_LEGACY
+        ).toString()
+        return MessageTemplate.Builder(textWithoutLink).apply {
+            setTitle(carContext.getString(R.string.privacy))
+            addAction(Action.Builder()
+                .setTitle(carContext.getString(R.string.ok))
+                .setFlags(Action.FLAG_PRIMARY)
+                .setBackgroundColor(CarColor.PRIMARY)
+                .setOnClickListener {
+                    prefs.privacyAccepted = true
+                    screenManager.pop()
+                }.build()
+            )
+            addAction(Action.Builder()
+                .setTitle(carContext.getString(R.string.privacy))
+                .setOnClickListener(ParkedOnlyOnClickListener.create {
+                    openUrl(carContext, carContext.getString(R.string.privacy_link))
+                }).build()
+            )
         }.build()
     }
 }

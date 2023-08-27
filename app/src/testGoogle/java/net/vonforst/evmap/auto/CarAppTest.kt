@@ -43,7 +43,7 @@ class CarAppTest {
         val screenCreated =
             testCarContext.getCarService(TestScreenManager::class.java).screensPushed.last()
 
-        // location permission required
-        assert(screenCreated is PermissionScreen)
+        // accept privacy required
+        assert(screenCreated is AcceptPrivacyScreen)
     }
 }

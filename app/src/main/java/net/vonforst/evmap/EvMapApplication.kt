@@ -45,6 +45,9 @@ class EvMapApplication : Application(), Configuration.Provider {
                     commentPrompt = getString(R.string.crash_report_comment_prompt)
                     resIcon = R.drawable.ic_launcher_foreground
                     resTheme = R.style.AppTheme
+                    if (BuildConfig.FLAVOR_automotive == "automotive") {
+                        reportDialogClass = androidx.car.app.activity.CarAppActivity::class.java
+                    }
                 }
 
                 limiter {

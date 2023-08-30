@@ -247,7 +247,7 @@ dependencies {
     googleImplementation "com.android.billingclient:billing-ktx:$billing_version"
 
     // ACRA (crash reporting)
-    def acraVersion = "5.8.4"
+    def acraVersion = "5.11.1"
     implementation("ch.acra:acra-mail:$acraVersion")
     implementation("ch.acra:acra-dialog:$acraVersion")
     implementation("ch.acra:acra-limiter:$acraVersion")

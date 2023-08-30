@@ -1,5 +1,6 @@
 package net.vonforst.evmap
 
+import android.app.Activity
 import android.app.Application
 import android.os.Build
 import androidx.work.*
@@ -8,10 +9,12 @@ import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.ui.updateAppLocale
 import net.vonforst.evmap.ui.updateNightMode
 import org.acra.config.dialog
+import org.acra.config.httpSender
 import org.acra.config.limiter
 import org.acra.config.mailSender
 import org.acra.data.StringFormat
 import org.acra.ktx.initAcra
+import org.acra.sender.HttpSender
 import java.time.Duration
 
 class EvMapApplication : Application(), Configuration.Provider {
@@ -33,10 +36,22 @@ class EvMapApplication : Application(), Configuration.Provider {
         if (!BuildConfig.DEBUG) {
             initAcra {
                 buildConfigClass = BuildConfig::class.java
-                reportFormat = StringFormat.KEY_VALUE_LIST
 
-                mailSender {
-                    mailTo = "evmap+crashreport@vonforst.net"
+                reportFormat = StringFormat.JSON
+
+                if (BuildConfig.FLAVOR_automotive == "automotive") {
+                    // Vehicles often don't have an email app, so use HTTP to send instead
+                    httpSender {
+                        uri = getString(R.string.acra_backend_url)
+                        val creds = getString(R.string.acra_credentials).split(":")
+                        basicAuthLogin = creds[0]
+                        basicAuthPassword = creds[1]
+                        httpMethod = HttpSender.Method.POST
+                    }
+                } else {
+                    mailSender {
+                        mailTo = "evmap+crashreport@vonforst.net"
+                    }
                 }
 
                 dialog {
@@ -46,7 +61,8 @@ class EvMapApplication : Application(), Configuration.Provider {
                     resIcon = R.drawable.ic_launcher_foreground
                     resTheme = R.style.AppTheme
                     if (BuildConfig.FLAVOR_automotive == "automotive") {
-                        reportDialogClass = androidx.car.app.activity.CarAppActivity::class.java
+                        reportDialogClass =
+                            Class.forName("androidx.car.app.activity.CarAppActivity") as Class<out Activity>?
                     }
                 }
 

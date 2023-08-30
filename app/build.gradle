@@ -147,6 +147,13 @@ android {
         if (fronyxKey != null) {
             variant.resValue "string", "fronyx_key", fronyxKey
         }
+        def acraKey = env.ACRA_CRASHREPORT_CREDENTIALS ?: project.findProperty("ACRA_CRASHREPORT_CREDENTIALS")
+        if (acraKey == null && project.hasProperty("ACRA_CRASHREPORT_CREDENTIALS_ENCRYPTED")) {
+            acraKey = decode(project.findProperty("ACRA_CRASHREPORT_CREDENTIALS_ENCRYPTED"), "FmK.d,-f*p+rD+WK!eds")
+        }
+        if (acraKey != null) {
+            variant.resValue "string", "acra_credentials", acraKey
+        }
     }
 
     packagingOptions {
@@ -249,6 +256,7 @@ dependencies {
     // ACRA (crash reporting)
     def acraVersion = "5.11.1"
     implementation("ch.acra:acra-mail:$acraVersion")
+    implementation("ch.acra:acra-http:$acraVersion")
     implementation("ch.acra:acra-dialog:$acraVersion")
     implementation("ch.acra:acra-limiter:$acraVersion")
 

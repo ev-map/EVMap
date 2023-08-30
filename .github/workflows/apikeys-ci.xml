@@ -5,4 +5,5 @@
    <string name="chargeprice_key" translatable="false">ci</string>
    <string name="openchargemap_key" translatable="false">ci</string>
    <string name="fronyx_key" translatable="false">ci</string>
+   <string name="acra_credentials" translatable="false">ci:ci</string>
 </resources>

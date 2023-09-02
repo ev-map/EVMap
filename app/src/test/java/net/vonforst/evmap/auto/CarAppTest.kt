@@ -20,6 +20,7 @@ import org.robolectric.annotation.internal.DoNotInstrument
 
 @RunWith(RobolectricTestRunner::class)
 @DoNotInstrument
+@Ignore("Disabled because Robolectric does not yet support API 36")
 class CarAppTest {
     private val testCarContext =
         TestCarContext.createCarContext(ApplicationProvider.getApplicationContext()).apply {

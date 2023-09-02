@@ -290,6 +290,18 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
                 }.build())
             }
         }
+        if (rows.count() < maxRows && charger.generalInformation != null) {
+            rows.add(Row.Builder().apply {
+                setTitle(carContext.getString(R.string.general_info))
+                addText(charger.generalInformation)
+            }.build())
+        }
+        if (rows.count() < maxRows && charger.amenities != null) {
+            rows.add(Row.Builder().apply {
+                setTitle(carContext.getString(R.string.amenities))
+                addText(charger.amenities)
+            }.build())
+        }
         return rows
     }
 

@@ -29,6 +29,9 @@ be put into the app in the form of a resource file called `apikeys.xml` under
    <string name="fronyx_key" translatable="false">
       insert your Fronyx key here
    </string>
+   <string name="acra_credentials" translatable="false">
+      insert your ACRA crash reporting credentials here
+   </string>
 </resources>
 ```
 
@@ -187,3 +190,11 @@ key and documentation.
 
 If you don't want to test this functionality, simply leave the API key blank.
 </details>
+
+Crash reporting
+---------------
+
+Crash reporting for release builds is done using [ACRA](https://github.com/ACRA/acra).
+This should not be needed for debugging.
+If you still want to try it out, you can host any compatible backend such as
+[Acrarium](https://github.com/F43nd1r/Acrarium/) yourself.

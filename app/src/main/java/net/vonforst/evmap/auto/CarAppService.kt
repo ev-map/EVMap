@@ -34,6 +34,7 @@ import net.vonforst.evmap.location.LocationEngine
 import net.vonforst.evmap.location.Priority
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.utils.checkFineLocationPermission
+import org.acra.interaction.DialogInteraction
 
 
 interface LocationAwareScreen {
@@ -122,11 +123,13 @@ class EVMapSession(val cas: CarAppService) : Session(), DefaultLifecycleObserver
     }
 
     override fun onCreateScreen(intent: Intent): Screen {
-        handleActionsIntent(intent)
 
         val mapScreen = MapScreen(carContext, this)
         val screens = mutableListOf<Screen>(mapScreen)
 
+        handleActionsIntent(intent)?.let {
+            screens.add(it)
+        }
         if (!prefs.dataSourceSet) {
             screens.add(
                 ChooseDataSourceScreen(
@@ -154,6 +157,9 @@ class EVMapSession(val cas: CarAppService) : Session(), DefaultLifecycleObserver
                 AcceptPrivacyScreen(carContext)
             )
         }
+        handleACRAIntent(intent)?.let {
+            screens.add(it)
+        }
 
         if (screens.size > 1) {
             val screenManager = carContext.getCarService(ScreenManager::class.java)
@@ -165,7 +171,13 @@ class EVMapSession(val cas: CarAppService) : Session(), DefaultLifecycleObserver
         return screens.last()
     }
 
-    private fun handleActionsIntent(intent: Intent): Boolean {
+    private fun handleACRAIntent(intent: Intent): Screen? {
+        return if (intent.hasExtra(DialogInteraction.EXTRA_REPORT_CONFIG)) {
+            CrashReportScreen(carContext, intent)
+        } else null
+    }
+
+    private fun handleActionsIntent(intent: Intent): Screen? {
         intent.data?.let {
             if (it.host == "find_charger") {
                 val lat = it.getQueryParameter("latitude")?.toDouble()
@@ -174,15 +186,14 @@ class EVMapSession(val cas: CarAppService) : Session(), DefaultLifecycleObserver
                 if (lat != null && lon != null) {
                     prefs.placeSearchResultAndroidAuto = LatLng(lat, lon)
                     prefs.placeSearchResultAndroidAutoName = name ?: "%.4f,%.4f".format(lat, lon)
-                    return true
+                    return null
                 } else if (name != null) {
-                    val screenManager = carContext.getCarService(ScreenManager::class.java)
-                    screenManager.push(PlaceSearchScreen(carContext, this, name))
-                    return true
+                    val screen = PlaceSearchScreen(carContext, this, name)
+                    return screen
                 }
             }
         }
-        return false
+        return null
     }
 
     override fun onNewIntent(intent: Intent) {

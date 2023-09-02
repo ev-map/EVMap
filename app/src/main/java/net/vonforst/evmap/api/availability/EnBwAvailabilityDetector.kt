@@ -105,20 +105,19 @@ class EnBwAvailabilityDetector(client: OkHttpClient, baseUrl: String? = null) :
         var markers =
             api.getMarkers(lng - coordRange, lng + coordRange, lat - coordRange, lat + coordRange)
 
-        while (markers.any { it.grouped }) {
-            markers = markers.flatMap {
-                if (it.grouped) {
-                    api.getMarkers(
-                        it.viewPort.lowerLeftLon,
-                        it.viewPort.upperRightLon,
-                        it.viewPort.lowerLeftLat,
-                        it.viewPort.upperRightLat
-                    )
-                } else {
-                    listOf(it)
-                }
+        markers = markers.flatMap {
+            if (it.grouped) {
+                api.getMarkers(
+                    it.viewPort.lowerLeftLon,
+                    it.viewPort.upperRightLon,
+                    it.viewPort.lowerLeftLat,
+                    it.viewPort.upperRightLat
+                )
+            } else {
+                listOf(it)
             }
         }
+        if (markers.any { it.grouped }) throw AvailabilityDetectorException("markers still grouped")
 
         val nearest = markers.minByOrNull { marker ->
             distanceBetween(marker.lat, marker.lon, lat, lng)

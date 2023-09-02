@@ -24,6 +24,8 @@ import net.vonforst.evmap.api.equivalentPlugTypes
 import net.vonforst.evmap.api.fronyx.FronyxApi
 import net.vonforst.evmap.api.fronyx.FronyxEvseIdResponse
 import net.vonforst.evmap.api.fronyx.FronyxStatus
+import net.vonforst.evmap.api.fronyx.PredictionData
+import net.vonforst.evmap.api.fronyx.PredictionRepository
 import net.vonforst.evmap.api.goingelectric.GEChargepoint
 import net.vonforst.evmap.api.nameForPlugType
 import net.vonforst.evmap.api.openchargemap.OCMConnection
@@ -250,155 +252,12 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
         it.data?.extraData as? TeslaGraphQlApi.Pricing
     }
 
-    val predictionApi = FronyxApi(application.getString(R.string.fronyx_key))
+    private val predictionRepository = PredictionRepository(application)
 
-    val prediction: LiveData<Resource<List<FronyxEvseIdResponse>>> by lazy {
-        availability.switchMap { av ->
-            if (!prefs.predictionEnabled) return@switchMap null
-
-            av.data?.evseIds?.let { evseIds ->
-                liveData {
-                    emit(Resource.loading(null))
-
-                    val charger = charger.value?.data ?: return@liveData
-                    val allEvseIds =
-                        evseIds.filterKeys {
-                            FronyxApi.isChargepointSupported(charger, it) &&
-                                    filteredConnectors.value?.let { filtered ->
-                                        equivalentPlugTypes(
-                                            it.type
-                                        ).any { filtered.contains(it) }
-                                    } ?: true
-                        }.flatMap { it.value }
-                    if (allEvseIds.isEmpty()) {
-                        emit(Resource.success(emptyList()))
-                        return@liveData
-                    }
-                    try {
-                        val result = predictionApi.getPredictionsForEvseIds(allEvseIds)
-                        if (result.size == allEvseIds.size) {
-                            emit(Resource.success(result))
-                        } else {
-                            emit(Resource.error("not all EVSEIDs found", null))
-                        }
-                    } catch (e: IOException) {
-                        emit(Resource.error(e.message, null))
-                        e.printStackTrace()
-                    } catch (e: HttpException) {
-                        emit(Resource.error(e.message, null))
-                        e.printStackTrace()
-                    } catch (e: AvailabilityDetectorException) {
-                        emit(Resource.error(e.message, null))
-                        e.printStackTrace()
-                    } catch (e: JsonDataException) {
-                        // malformed JSON response from fronyx API
-                        emit(Resource.error(e.message, null))
-                        e.printStackTrace()
-                    }
-                }
-            } ?: liveData { emit(Resource.success(null)) }
-        }
-    }
-
-    val predictionGraph: LiveData<Map<ZonedDateTime, Double>?> =
-        MediatorLiveData<Map<ZonedDateTime, Double>?>().apply {
-            listOf(prediction, availability).forEach {
-                addSource(it) {
-                    val congestionHistogram = availability.value?.data?.congestionHistogram
-                    val prediction = prediction.value?.data
-                    value = if (congestionHistogram != null && prediction == null) {
-                        congestionHistogram.mapIndexed { i, value ->
-                            LocalTime.of(i, 0).atDate(LocalDate.now())
-                                .atZone(ZoneId.systemDefault()) to value
-                        }.toMap()
-                    } else {
-                        prediction?.let { responses ->
-                            if (responses.isEmpty()) {
-                                null
-                            } else {
-                                val evseIds = responses.map { it.evseId }
-                                val groupByTimestamp = responses.flatMap { response ->
-                                    response.predictions.map {
-                                        Triple(
-                                            it.timestamp,
-                                            response.evseId,
-                                            it.status
-                                        )
-                                    }
-                                }
-                                    .groupBy { it.first }  // group by timestamp
-                                    .mapValues { it.value.map { it.second to it.third } }  // only keep EVSEID and status
-                                    .filterValues { it.map { it.first } == evseIds }  // remove values where status is not given for all EVSEs
-                                    .filterKeys { it > ZonedDateTime.now() }  // only show predictions in the future
-
-                                groupByTimestamp.mapValues {
-                                    it.value.count {
-                                        it.second == FronyxStatus.UNAVAILABLE
-                                    }.toDouble()
-                                }.ifEmpty { null }
-                            }
-                        }
-                    }
-            }
-        }
-    }
-
-    private val predictedChargepoints = charger.map {
-        it.data?.let { charger ->
-            charger.chargepoints.filter {
-                FronyxApi.isChargepointSupported(charger, it) &&
-                        filteredConnectors.value?.let { filtered ->
-                            equivalentPlugTypes(it.type).any {
-                                filtered.contains(
-                                    it
-                                )
-                            }
-                        } ?: true
-            }
-        }
-    }
-
-    val predictionMaxValue: LiveData<Double> = MediatorLiveData<Double>().apply {
-        listOf(prediction, availability).forEach {
-            addSource(it) {
-                value =
-                    if (availability.value?.data?.congestionHistogram != null && prediction.value?.data == null) {
-                        1.0
-                    } else {
-                        (predictedChargepoints.value?.sumOf { it.count } ?: 0).toDouble()
-                    }
-            }
-        }
-    }
-
-    val predictionIsPercentage: LiveData<Boolean> = MediatorLiveData<Boolean>().apply {
-        listOf(prediction, availability).forEach {
-            addSource(it) {
-                value =
-                    availability.value?.data?.congestionHistogram != null && prediction.value?.data == null
-            }
-        }
-    }
-
-    val predictionDescription: LiveData<String?> by lazy {
-        predictedChargepoints.map { predictedChargepoints ->
-            if (predictedChargepoints == null) return@map null
-            val allChargepoints = charger.value?.data?.chargepoints ?: return@map null
-
-            val predictedChargepointTypes = predictedChargepoints.map { it.type }.distinct()
-            if (allChargepoints == predictedChargepoints) {
-                null
-            } else if (predictedChargepointTypes.size == 1) {
-                application.getString(
-                    R.string.prediction_only,
-                    nameForPlugType(application.stringProvider(), predictedChargepointTypes[0])
-                )
-            } else {
-                application.getString(
-                    R.string.prediction_only,
-                    application.getString(R.string.prediction_dc_plugs_only)
-                )
-            }
+    val predictionData: LiveData<PredictionData> = availability.switchMap { av ->
+        liveData {
+            val charger = charger.value?.data ?: return@liveData
+            emit(predictionRepository.getPredictionData(charger, av.data, filteredConnectors.value))
         }
     }
 

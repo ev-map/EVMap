@@ -275,6 +275,7 @@
     <string name="about_contributors">Contributors</string>
     <string name="about_contributors_text">Thanks to all contributors for their coding and translation contributions to EVMap:</string>
     <string name="utilization_prediction">Utilization prediction</string>
+    <string name="powered_by_fronyx">powered by fronyx</string>
     <string name="prediction_help">The prediction is based on factors like day of the week, time of day and past usage, so that you can avoid overcrowded chargers. No guarantee.</string>
     <string name="prediction_time_colon">%s:</string>
     <plurals name="prediction_number_available">

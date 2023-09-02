@@ -642,4 +642,6 @@ class TeslaAvailabilityDetector(
         }
     }
 
+    fun isSignedIn() = tokenStore.teslaRefreshToken != null
+
 }

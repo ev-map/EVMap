@@ -25,7 +25,7 @@ class DeveloperSettingsFragment : BaseSettingsFragment() {
         setPreferencesFromResource(R.xml.settings_developer, rootKey)
     }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String?) {
 
     }
 

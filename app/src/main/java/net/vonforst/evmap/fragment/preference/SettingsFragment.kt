@@ -20,7 +20,7 @@ class SettingsFragment : BaseSettingsFragment() {
         findPreference<Preference>("developer_options")?.isVisible = prefs.developerModeEnabled
     }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String?) {
 
     }
 }

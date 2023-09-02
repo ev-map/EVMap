@@ -86,7 +86,7 @@ class DataSettingsFragment : BaseSettingsFragment() {
             }
     }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String?) {
         when (key) {
             "search_provider" -> {
                 if (prefs.searchProvider == "google") {

@@ -327,7 +327,8 @@
             android:name=".auto.CarAppService"
             android:label="@string/app_name"
             android:icon="@mipmap/ic_launcher"
-            android:exported="true">
+            android:exported="true"
+            android:foregroundServiceType="location">
             <intent-filter>
                 <action
                     android:name="androidx.car.app.CarAppService"

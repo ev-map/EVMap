@@ -28,7 +28,7 @@ class AndroidAutoSettingsFragment : BaseSettingsFragment() {
         setPreferencesFromResource(R.xml.settings_android_auto, rootKey)
     }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String?) {
         when (key) {
             "chargeprice_battery_range_android_auto_min", "chargeprice_battery_range_android_auto_max" -> {
                 updateRangePreferenceSummary()

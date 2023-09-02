@@ -101,11 +101,12 @@ class ChargepriceSettingsFragment : BaseSettingsFragment() {
         setPreferencesFromResource(R.xml.settings_chargeprice, rootKey)
     }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String?) {
         when (key) {
             "chargeprice_my_vehicle" -> {
                 updateMyVehiclesSummary()
             }
+
             "chargeprice_my_tariffs" -> {
                 updateMyTariffsSummary()
             }

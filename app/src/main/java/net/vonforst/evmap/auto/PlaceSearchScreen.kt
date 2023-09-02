@@ -105,7 +105,8 @@ class PlaceSearchScreen(
                             DistanceSpan.create(
                                 roundValueToDistance(
                                     it,
-                                    energyLevel?.distanceDisplayUnit?.value
+                                    energyLevel?.distanceDisplayUnit?.value,
+                                    carContext
                                 )
                             ),
                             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE

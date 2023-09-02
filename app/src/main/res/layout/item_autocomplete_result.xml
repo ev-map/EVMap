@@ -62,7 +62,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="@{BindingAdaptersKt.distance(item.distanceMeters)}"
+            android:text="@{BindingAdaptersKt.distance(item.distanceMeters, context)}"
             android:textAppearance="@style/TextAppearance.Material3.BodySmall"
             app:goneUnless="@{item.distanceMeters != null}"
             app:layout_constraintEnd_toEndOf="@+id/icon"

@@ -139,7 +139,8 @@ class VehicleDataScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx
                                 setText(
                                     formatCarUnitDistance(
                                         energyLevel.rangeRemainingMeters.value,
-                                        energyLevel.distanceDisplayUnit.value
+                                        energyLevel.distanceDisplayUnit.value,
+                                        carContext
                                     )
                                 )
                                 setImage(
@@ -173,7 +174,8 @@ class VehicleDataScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx
                                     setText(
                                         formatCarUnitSpeed(
                                             rawSpeed,
-                                            speed.speedDisplayUnit.value
+                                            speed.speedDisplayUnit.value,
+                                            carContext
                                         )
                                     )
                                     setImage(
@@ -183,7 +185,8 @@ class VehicleDataScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx
                                     setText(
                                         formatCarUnitSpeed(
                                             speed.displaySpeedMetersPerSecond.value,
-                                            speed.speedDisplayUnit.value
+                                            speed.speedDisplayUnit.value,
+                                            carContext
                                         )
                                     )
                                     setImage(

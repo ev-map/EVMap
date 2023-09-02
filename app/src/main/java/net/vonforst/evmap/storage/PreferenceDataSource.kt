@@ -14,6 +14,24 @@ import java.time.Instant
 class PreferenceDataSource(val context: Context) {
     val sp = PreferenceManager.getDefaultSharedPreferences(context)
 
+    init {
+        if (sp.contains("map_scale")) {
+            // migration
+            val mapScale = sp.getString("map_scale", null)
+            sp.edit().putBoolean("map_scale_show", mapScale != "off")
+                .putBoolean("map_scale_meters_and_miles", mapScale == "both")
+                .putString(
+                    "units", when (mapScale) {
+                        "meters" -> "metric"
+                        "miles" -> "imperial"
+                        else -> "default"
+                    }
+                )
+                .remove("map_scale")
+                .apply()
+        }
+    }
+
     var dataSource: String
         get() = sp.getString("data_source", "goingelectric")!!
         set(value) {
@@ -252,8 +270,14 @@ class PreferenceDataSource(val context: Context) {
             sp.edit().putBoolean("dev_mode_enabled", value).apply()
         }
 
-    val mapScale: String
-        get() = sp.getString("map_scale", null) ?: "both"
+    val showMapScale: Boolean
+        get() = sp.getBoolean("map_scale_show", true)
+
+    val mapScaleMetersAndMiles: Boolean
+        get() = sp.getBoolean("map_scale_meters_and_miles", true)
+
+    val units: String
+        get() = sp.getString("units", null) ?: "default"
 
     var currentMapLocation: LatLng
         get() = sp.getLatLng("current_map_location") ?: LatLng(50.113388, 9.252536)

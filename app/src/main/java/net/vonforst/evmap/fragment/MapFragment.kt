@@ -77,6 +77,7 @@ import net.vonforst.evmap.location.FusionEngine
 import net.vonforst.evmap.location.LocationEngine
 import net.vonforst.evmap.location.Priority
 import net.vonforst.evmap.model.*
+import net.vonforst.evmap.shouldUseImperialUnits
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.ui.*
 import net.vonforst.evmap.utils.boundingBox
@@ -910,23 +911,19 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         }
 
         binding.scaleView.apply {
-            when (prefs.mapScale) {
-                "both" -> {
-                    visibility = View.VISIBLE
+            if (prefs.showMapScale) {
+                visibility = View.VISIBLE
+                if (prefs.mapScaleMetersAndMiles) {
                     metersAndMiles()
+                } else {
+                    if (shouldUseImperialUnits(requireContext())) {
+                        milesOnly()
+                    } else {
+                        metersOnly()
+                    }
                 }
-
-                "meters" -> {
-                    visibility = View.VISIBLE
-                    metersOnly()
-                }
-
-                "miles" -> {
-                    visibility = View.VISIBLE
-                    milesOnly()
-                }
-
-                "off" -> visibility = View.GONE
+            } else {
+                visibility = View.GONE
             }
         }
         vm.mapPosition.observe(viewLifecycleOwner) {

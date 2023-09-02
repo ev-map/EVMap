@@ -66,16 +66,14 @@
         <item>goingelectric</item>
         <item>openchargemap</item>
     </string-array>
-    <string-array name="pref_map_scale_names">
-        <item>@string/pref_map_scale_both</item>
-        <item>@string/pref_map_scale_meters</item>
-        <item>@string/pref_map_scale_miles</item>
-        <item>@string/pref_map_scale_off</item>
+    <string-array name="pref_units_names">
+        <item>@string/pref_units_default</item>
+        <item>@string/pref_units_metric</item>
+        <item>@string/pref_units_imperial</item>
     </string-array>
-    <string-array name="pref_map_scale_values" translatable="false">
-        <item>both</item>
-        <item>meters</item>
-        <item>miles</item>
-        <item>off</item>
+    <string-array name="pref_units_values" translatable="false">
+        <item>default</item>
+        <item>metric</item>
+        <item>imperial</item>
     </string-array>
 </resources>

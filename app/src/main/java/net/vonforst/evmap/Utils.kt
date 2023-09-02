@@ -5,10 +5,13 @@ import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Typeface
+import android.icu.util.LocaleData
+import android.icu.util.ULocale
 import android.os.Build
 import android.os.Bundle
 import android.text.*
 import android.text.style.StyleSpan
+import net.vonforst.evmap.storage.PreferenceDataSource
 import java.util.*
 
 fun Bundle.optDouble(name: String): Double? {
@@ -88,9 +91,25 @@ fun Context.isDarkMode() =
 
 const val kmPerMile = 1.609344
 const val meterPerFt = 0.3048
+const val ftPerMile = 5280
+const val ydPerMile = 1760
 
-fun shouldUseImperialUnits(): Boolean {
-    return Locale.getDefault().country in listOf("US", "GB", "MM", "LR")
+fun shouldUseImperialUnits(ctx: Context): Boolean {
+    val prefs = PreferenceDataSource(ctx)
+    return when (prefs.units) {
+        "metric" -> false
+        "imperial" -> true
+        else -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            when (LocaleData.getMeasurementSystem(ULocale.getDefault())) {
+                LocaleData.MeasurementSystem.US, LocaleData.MeasurementSystem.UK -> true
+                LocaleData.MeasurementSystem.SI -> false
+                else -> false
+            }
+        } else {
+            return Locale.getDefault().country in listOf("US", "GB", "MM", "LR")
+        }
+    }
+
 }
 
 fun PackageManager.getPackageInfoCompat(packageName: String, flags: Int = 0): PackageInfo =

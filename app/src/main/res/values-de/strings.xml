@@ -314,11 +314,12 @@
     <string name="tesla_pricing_blocking_fee">Blockiergebühr: %s</string>
     <string name="average_utilization">Durchschnittliche Auslastung</string>
     <string name="website">Website</string>
-    <string name="pref_map_scale">Kartenmaßstab</string>
-    <string name="pref_map_scale_both">Meter und Meilen</string>
-    <string name="pref_map_scale_meters">Meter</string>
-    <string name="pref_map_scale_miles">Meilen</string>
-    <string name="pref_map_scale_off">aus</string>
+    <string name="pref_map_scale">Kartenmaßstab zeigen</string>
+    <string name="pref_map_scale_meters_and_miles">Meilen und Meter am Kartenmaßstab</string>
+    <string name="pref_units">Einheiten</string>
+    <string name="pref_units_default">Geräteeinstellung verwenden</string>
+    <string name="pref_units_metric">Metrisch</string>
+    <string name="pref_units_imperial">Imperial</string>
     <string name="data_retrieved_at">Daten abgerufen %s</string>
     <string name="settings_caching">Cache</string>
     <string name="settings_cache_count">Cache-Größe</string>

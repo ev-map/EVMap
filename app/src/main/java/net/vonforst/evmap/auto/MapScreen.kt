@@ -348,7 +348,8 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                     DistanceSpan.create(
                         roundValueToDistance(
                             distanceMeters,
-                            energyLevel?.distanceDisplayUnit?.value
+                            energyLevel?.distanceDisplayUnit?.value,
+                            carContext
                         )
                     ),
                     Spanned.SPAN_EXCLUSIVE_EXCLUSIVE

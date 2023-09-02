@@ -8,6 +8,13 @@
         android:entryValues="@array/pref_language_values"
         android:defaultValue="default"
         android:summary="%s" />
+    <ListPreference
+        android:key="units"
+        android:title="@string/pref_units"
+        android:entries="@array/pref_units_names"
+        android:entryValues="@array/pref_units_values"
+        android:defaultValue="default"
+        android:summary="%s" />
 
     <ListPreference
         android:key="darkmode"
@@ -22,13 +29,15 @@
         android:summaryOn="@string/pref_map_rotate_gestures_on"
         android:summaryOff="@string/pref_map_rotate_gestures_off"
         android:defaultValue="true" />
-    <ListPreference
-        android:key="map_scale"
+    <CheckBoxPreference
+        android:key="map_scale_show"
         android:title="@string/pref_map_scale"
-        android:entries="@array/pref_map_scale_names"
-        android:entryValues="@array/pref_map_scale_values"
-        android:defaultValue="both"
-        android:summary="%s" />
+        android:defaultValue="true" />
+    <CheckBoxPreference
+        android:key="map_scale_meters_and_miles"
+        android:title="@string/pref_map_scale_meters_and_miles"
+        android:defaultValue="true" />
+
     <CheckBoxPreference
         android:key="navigate_use_maps"
         android:title="@string/pref_navigate_use_maps"

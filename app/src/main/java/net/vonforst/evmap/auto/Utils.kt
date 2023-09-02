@@ -19,7 +19,11 @@ import androidx.core.graphics.drawable.IconCompat
 import net.vonforst.evmap.BuildConfig
 import net.vonforst.evmap.R
 import net.vonforst.evmap.api.availability.ChargepointStatus
+import net.vonforst.evmap.ftPerMile
 import net.vonforst.evmap.getPackageInfoCompat
+import net.vonforst.evmap.kmPerMile
+import net.vonforst.evmap.shouldUseImperialUnits
+import net.vonforst.evmap.ydPerMile
 import java.util.*
 import kotlin.math.roundToInt
 
@@ -69,33 +73,26 @@ val emptyCarIcon: CarIcon by lazy {
     ).asCarIcon()
 }
 
-private const val kmPerMile = 1.609344
-private const val ftPerMile = 5280
-private const val ydPerMile = 1760
 
-fun getDefaultDistanceUnit(): Int {
-    return if (usesImperialUnits(Locale.getDefault())) {
+fun getDefaultDistanceUnit(ctx: Context): Int {
+    return if (shouldUseImperialUnits(ctx)) {
         CarUnit.MILE
     } else {
         CarUnit.KILOMETER
     }
 }
 
-fun usesImperialUnits(locale: Locale): Boolean {
-    return locale.country in listOf("US", "GB", "MM", "LR")
-            || locale.country == "" && locale.language == "en"
-}
-
-fun getDefaultSpeedUnit(): Int {
-    return when (Locale.getDefault().country) {
-        "US", "GB", "MM", "LR" -> CarUnit.MILES_PER_HOUR
-        else -> CarUnit.KILOMETERS_PER_HOUR
+fun getDefaultSpeedUnit(ctx: Context): Int {
+    return if (shouldUseImperialUnits(ctx)) {
+        CarUnit.MILES_PER_HOUR
+    } else {
+        CarUnit.KILOMETERS_PER_HOUR
     }
 }
 
-fun formatCarUnitDistance(value: Float?, unit: Int?): String {
+fun formatCarUnitDistance(value: Float?, unit: Int?, ctx: Context): String {
     if (value == null) return ""
-    return when (unit ?: getDefaultDistanceUnit()) {
+    return when (unit ?: getDefaultDistanceUnit(ctx)) {
         // distance units: base unit is meters
         CarUnit.METER -> "%.0f m".format(value)
         CarUnit.KILOMETER -> "%.1f km".format(value / 1000)
@@ -105,9 +102,9 @@ fun formatCarUnitDistance(value: Float?, unit: Int?): String {
     }
 }
 
-fun formatCarUnitSpeed(value: Float?, unit: Int?): String {
+fun formatCarUnitSpeed(value: Float?, unit: Int?, ctx: Context): String {
     if (value == null) return ""
-    return when (unit ?: getDefaultSpeedUnit()) {
+    return when (unit ?: getDefaultSpeedUnit(ctx)) {
         // speed units: base unit is meters per second
         CarUnit.METERS_PER_SEC -> "%.0f m/s".format(value)
         CarUnit.KILOMETERS_PER_HOUR -> "%.0f km/h".format(value * 3.6)
@@ -116,9 +113,9 @@ fun formatCarUnitSpeed(value: Float?, unit: Int?): String {
     }
 }
 
-fun roundValueToDistance(value: Double, unit: Int? = null): Distance {
+fun roundValueToDistance(value: Double, unit: Int? = null, ctx: Context): Distance {
     // value is in meters
-    when (unit ?: getDefaultDistanceUnit()) {
+    when (unit ?: getDefaultDistanceUnit(ctx)) {
         CarUnit.MILE -> {
             // imperial system
             val miles = value / 1000 / kmPerMile

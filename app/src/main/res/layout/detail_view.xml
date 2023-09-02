@@ -147,7 +147,7 @@
                 android:gravity="end"
                 android:maxLines="1"
                 android:minWidth="50dp"
-                android:text="@{BindingAdaptersKt.distance(distance)}"
+                android:text="@{BindingAdaptersKt.distance(distance, context)}"
                 android:textAppearance="@style/TextAppearance.Material3.BodySmall"
                 app:layout_constraintBottom_toBottomOf="@+id/txtConnectors"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"

@@ -309,9 +309,9 @@ fun time(value: Int): String {
     else "%d:%02d h".format(h, min)
 }
 
-fun distance(meters: Number?): String? {
+fun distance(meters: Number?, ctx: Context): String? {
     if (meters == null) return null
-    if (shouldUseImperialUnits()) {
+    if (shouldUseImperialUnits(ctx)) {
         val ft = meters.toDouble() / meterPerFt
         val mi = meters.toDouble() / 1e3 / kmPerMile
         return when {

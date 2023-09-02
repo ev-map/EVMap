@@ -170,9 +170,11 @@ class AvailabilityRepository(context: Context) {
         .connectTimeout(10, TimeUnit.SECONDS)
         .cookieJar(JavaNetCookieJar(cookieManager))
         .build()
+    private val teslaAvailabilityDetector =
+        TeslaAvailabilityDetector(okhttp, EncryptedPreferenceDataStore(context))
     private val availabilityDetectors = listOf(
         RheinenergieAvailabilityDetector(okhttp),
-        TeslaAvailabilityDetector(okhttp, EncryptedPreferenceDataStore(context)),
+        teslaAvailabilityDetector,
         EnBwAvailabilityDetector(okhttp),
         NewMotionAvailabilityDetector(okhttp)
     )
@@ -199,4 +201,10 @@ class AvailabilityRepository(context: Context) {
         }
         return value ?: Resource.error(null, null)
     }
+
+    fun isSupercharger(charger: ChargeLocation) =
+        teslaAvailabilityDetector.isChargerSupported(charger)
+
+    fun isTeslaSupported(charger: ChargeLocation) =
+        teslaAvailabilityDetector.isChargerSupported(charger) && teslaAvailabilityDetector.isSignedIn()
 }

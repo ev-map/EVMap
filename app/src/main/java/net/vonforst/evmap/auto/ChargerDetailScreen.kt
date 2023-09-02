@@ -12,6 +12,7 @@ import androidx.car.app.CarToast
 import androidx.car.app.Screen
 import androidx.car.app.constraints.ConstraintManager
 import androidx.car.app.model.*
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.IconCompat
 import androidx.core.graphics.scale
 import androidx.core.text.HtmlCompat
@@ -27,6 +28,9 @@ import net.vonforst.evmap.api.availability.AvailabilityRepository
 import net.vonforst.evmap.api.availability.ChargeLocationStatus
 import net.vonforst.evmap.api.chargeprice.ChargepriceApi
 import net.vonforst.evmap.api.createApi
+import net.vonforst.evmap.api.fronyx.FronyxApi
+import net.vonforst.evmap.api.fronyx.PredictionData
+import net.vonforst.evmap.api.fronyx.PredictionRepository
 import net.vonforst.evmap.api.iconForPlugType
 import net.vonforst.evmap.api.nameForPlugType
 import net.vonforst.evmap.api.stringProvider
@@ -52,12 +56,17 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
     var charger: ChargeLocation? = null
     var photo: Bitmap? = null
     private var availability: ChargeLocationStatus? = null
+    private var prediction: PredictionData? = null
+    private var fronyxSupported = false
+    private var teslaSupported = false
 
     val prefs = PreferenceDataSource(ctx)
     private val db = AppDatabase.getInstance(carContext)
     private val repo =
         ChargeLocationsRepository(createApi(prefs.dataSource, ctx), lifecycleScope, db, prefs)
     private val availabilityRepo = AvailabilityRepository(ctx)
+    private val predictionRepo = PredictionRepository(ctx)
+    private val timeFormat = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
 
     private val imageSize = 128  // images should be 128dp according to docs
     private val imageSizeLarge = 480  // images should be 480 x 480 dp according to docs
@@ -302,7 +311,68 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
                 addText(charger.amenities)
             }.build())
         }
+        if (rows.count() < maxRows && (fronyxSupported || teslaSupported)) {
+            rows.add(1, Row.Builder().apply {
+                setTitle(
+                    if (fronyxSupported) {
+                        carContext.getString(R.string.utilization_prediction) + " (" + carContext.getString(
+                            R.string.powered_by_fronyx
+                        ) + ")"
+                    } else carContext.getString(R.string.average_utilization)
+                )
+                generatePredictionGraph()?.let { addText(it) }
+                    ?: addText(carContext.getText(R.string.auto_no_data))
+            }.build())
+        }
         return rows
+    }
+
+    private fun generatePredictionGraph(): CharSequence? {
+        val predictionData = prediction ?: return null
+        val graphData = predictionData.predictionGraph?.toList() ?: return null
+        val maxValue = predictionData.maxValue
+
+        val sparklines = "▁▂▃▄▅▆▇█"
+
+        val n = graphData.size
+        val step = if (n > 25) 2 else 1
+
+        val graph = SpannableStringBuilder()
+        for (i in 0 until n step step) {
+            val v = graphData[i].second
+            val fraction = v / maxValue
+            val sparkline = sparklines[(fraction * 7).roundToInt()].toString()
+
+            val color = if (predictionData.isPercentage) {
+                when (v) {
+                    in 0.0..0.5 -> CarColor.GREEN
+                    in 0.5..0.8 -> CarColor.YELLOW
+                    else -> CarColor.RED
+                }
+            } else {
+                if (v < maxValue) CarColor.GREEN else CarColor.RED
+            }
+
+            graph.append(
+                sparkline,
+                ForegroundCarColorSpan.create(color),
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
+        graph.append("\n")
+        val startTime = timeFormat.format(graphData[0].first)
+        val endTime = timeFormat.format(graphData.last().first)
+        graph.append(startTime)
+        graph.append(
+            " ".repeat(
+                kotlin.math.max(
+                    n.floorDiv(step) + 1 - (((startTime.length + endTime.length)) * 0.55).roundToInt(),
+                    1
+                )
+            )
+        )
+        graph.append(endTime)
+        return graph
     }
 
     private fun generateCostStatusText(cost: Cost): CharSequence {
@@ -477,10 +547,21 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
                     )
                     this@ChargerDetailScreen.photo = outImg
                 }
+                fronyxSupported = charger.chargepoints.any {
+                    FronyxApi.isChargepointSupported(
+                        charger,
+                        it
+                    )
+                } && !availabilityRepo.isSupercharger(charger)
+                teslaSupported = availabilityRepo.isTeslaSupported(charger)
 
                 invalidate()
 
                 availability = availabilityRepo.getAvailability(charger).data
+
+                invalidate()
+
+                prediction = predictionRepo.getPredictionData(charger, availability)
 
                 invalidate()
             } else {

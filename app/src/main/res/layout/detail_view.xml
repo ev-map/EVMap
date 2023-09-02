@@ -37,6 +37,8 @@
 
         <import type="java.time.Duration" />
 
+        <import type="net.vonforst.evmap.api.fronyx.PredictionData" />
+
         <variable
             name="charger"
             type="Resource&lt;ChargeLocation&gt;" />
@@ -50,20 +52,8 @@
             type="Resource&lt;ChargeLocationStatus&gt;" />
 
         <variable
-            name="predictionGraph"
-            type="Map&lt;ZonedDateTime, Double&gt;" />
-
-        <variable
-            name="predictionMaxValue"
-            type="Double" />
-
-        <variable
-            name="predictionIsPercentage"
-            type="Boolean" />
-
-        <variable
-            name="predictionDescription"
-            type="String" />
+            name="predictionData"
+            type="PredictionData" />
 
         <variable
             name="filteredAvailability"
@@ -367,11 +357,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="@{predictionIsPercentage ? @string/average_utilization : @string/utilization_prediction}"
+                android:text="@{predictionData.isPercentage ? @string/average_utilization : @string/utilization_prediction}"
                 tools:text="@string/utilization_prediction"
                 android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
                 android:textColor="?colorPrimary"
-                app:goneUnless="@{predictionGraph != null}"
+                app:goneUnless="@{predictionData.predictionGraph != null}"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/divider2" />
 
@@ -381,9 +371,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
-                android:text="@{predictionDescription}"
+                android:text="@{predictionData.description}"
                 android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-                app:goneUnless="@{predictionGraph != null &amp;&amp; !predictionIsPercentage}"
+                app:goneUnless="@{predictionData.predictionGraph != null &amp;&amp; !predictionData.isPercentage}"
                 app:layout_constraintBaseline_toBaselineOf="@+id/textView8"
                 app:layout_constraintEnd_toStartOf="@+id/btnPredictionHelp"
                 app:layout_constraintStart_toEndOf="@+id/textView8"
@@ -395,7 +385,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/help"
-                app:goneUnless="@{predictionGraph != null &amp;&amp; !predictionIsPercentage}"
+                app:goneUnless="@{predictionData.predictionGraph != null &amp;&amp; !predictionData.isPercentage}"
                 app:icon="@drawable/ic_help"
                 app:iconTint="?android:textColorSecondary"
                 app:layout_constraintBottom_toBottomOf="@+id/textView8"
@@ -407,13 +397,13 @@
                 android:layout_width="0dp"
                 android:layout_height="100dp"
                 android:layout_marginTop="8dp"
-                app:data="@{predictionGraph}"
-                app:goneUnless="@{predictionGraph != null}"
+                app:data="@{predictionData.predictionGraph}"
+                app:goneUnless="@{predictionData.predictionGraph != null}"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/textView8"
-                app:maxValue="@{predictionMaxValue}"
-                app:isPercentage="@{predictionIsPercentage}"
+                app:maxValue="@{predictionData.maxValue}"
+                app:isPercentage="@{predictionData.isPercentage}"
                 tools:itemCount="3"
                 tools:layoutManager="LinearLayoutManager"
                 tools:listitem="@layout/item_connector"
@@ -427,7 +417,7 @@
                 android:adjustViewBounds="true"
                 android:background="?selectableItemBackgroundBorderless"
                 android:scaleType="fitCenter"
-                app:goneUnless="@{predictionGraph != null &amp;&amp; !predictionIsPercentage}"
+                app:goneUnless="@{predictionData.predictionGraph != null &amp;&amp; !predictionData.isPercentage}"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintTop_toBottomOf="@+id/prediction"
                 app:srcCompat="@drawable/ic_powered_by_fronyx"
@@ -439,7 +429,7 @@
                 android:layout_height="1dp"
                 android:layout_marginTop="8dp"
                 android:background="?android:attr/listDivider"
-                app:goneUnless="@{predictionGraph != null}"
+                app:goneUnless="@{predictionData.predictionGraph != null}"
                 app:layout_constraintTop_toBottomOf="@+id/imgPredictionSource" />
 
             <ImageView

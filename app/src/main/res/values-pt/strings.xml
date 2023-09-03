@@ -362,4 +362,12 @@
     <string name="sounds_cool">Continuar</string>
     <string name="reload">Recarregar</string>
     <string name="accept_privacy"><![CDATA[Li e aceito a <a href=\"%s\">política de privacidade</a> do EVMap.]]></string>
+    <string name="referrals">Links de afiliado</string>
+    <string name="referral_tesla">Tesla</string>
+    <string name="pref_units">Unidades</string>
+    <string name="pref_map_scale_meters_and_miles">Milhas e metros na barra de escala do mapa</string>
+    <string name="pref_units_default">Padrão do dispositivo</string>
+    <string name="pref_units_metric">Métrico</string>
+    <string name="pref_units_imperial">Imperial</string>
+    <string name="referrals_info">Também pode usar um dos seguintes links de afiliado para apoiar o desenvolvedor da app com a sua compra.</string>
 </resources>

@@ -37,10 +37,9 @@ class EvMapApplication : Application(), Configuration.Provider {
             initAcra {
                 buildConfigClass = BuildConfig::class.java
 
-                reportFormat = StringFormat.JSON
-
                 if (BuildConfig.FLAVOR_automotive == "automotive") {
                     // Vehicles often don't have an email app, so use HTTP to send instead
+                    reportFormat = StringFormat.JSON
                     httpSender {
                         uri = getString(R.string.acra_backend_url)
                         val creds = getString(R.string.acra_credentials).split(":")
@@ -49,6 +48,7 @@ class EvMapApplication : Application(), Configuration.Provider {
                         httpMethod = HttpSender.Method.POST
                     }
                 } else {
+                    reportFormat = StringFormat.KEY_VALUE_LIST
                     mailSender {
                         mailTo = "evmap+crashreport@vonforst.net"
                     }

@@ -1,0 +1,8 @@
+Improvements:
+- New setting for units of measurement
+- Adjustments for Android 14
+- Android Auto: More detailed descriptions of chargers
+- Android Auto: Delete button in filter list
+
+Bugfixes:
+- Errors loading realtime data from EnBW

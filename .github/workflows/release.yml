@@ -32,6 +32,7 @@ jobs:
           MAPBOX_API_KEY: ${{ secrets.MAPBOX_API_KEY }}
           GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
           FRONYX_API_KEY: ${{ secrets.FRONYX_API_KEY }}
+          ACRA_CRASHREPORT_CREDENTIALS: ${{ secrets.ACRA_CRASHREPORT_CREDENTIALS }}
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEYSTORE_ALIAS: ${{ secrets.KEYSTORE_ALIAS }}
           KEYSTORE_ALIAS_PASSWORD: ${{ secrets.KEYSTORE_ALIAS_PASSWORD }}

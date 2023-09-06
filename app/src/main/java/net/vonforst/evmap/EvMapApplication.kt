@@ -11,7 +11,6 @@ import net.vonforst.evmap.ui.updateNightMode
 import org.acra.config.dialog
 import org.acra.config.httpSender
 import org.acra.config.limiter
-import org.acra.config.mailSender
 import org.acra.data.StringFormat
 import org.acra.ktx.initAcra
 import org.acra.sender.HttpSender
@@ -37,21 +36,14 @@ class EvMapApplication : Application(), Configuration.Provider {
             initAcra {
                 buildConfigClass = BuildConfig::class.java
 
-                if (BuildConfig.FLAVOR_automotive == "automotive") {
-                    // Vehicles often don't have an email app, so use HTTP to send instead
-                    reportFormat = StringFormat.JSON
-                    httpSender {
-                        uri = getString(R.string.acra_backend_url)
-                        val creds = getString(R.string.acra_credentials).split(":")
-                        basicAuthLogin = creds[0]
-                        basicAuthPassword = creds[1]
-                        httpMethod = HttpSender.Method.POST
-                    }
-                } else {
-                    reportFormat = StringFormat.KEY_VALUE_LIST
-                    mailSender {
-                        mailTo = "evmap+crashreport@vonforst.net"
-                    }
+                // Vehicles often don't have an email app, so use HTTP to send instead
+                reportFormat = StringFormat.JSON
+                httpSender {
+                    uri = getString(R.string.acra_backend_url)
+                    val creds = getString(R.string.acra_credentials).split(":")
+                    basicAuthLogin = creds[0]
+                    basicAuthPassword = creds[1]
+                    httpMethod = HttpSender.Method.POST
                 }
 
                 dialog {

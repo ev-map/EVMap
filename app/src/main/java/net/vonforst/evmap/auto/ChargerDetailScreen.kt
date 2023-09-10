@@ -383,8 +383,10 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
                 } else {
                     append(nameForPlugType(carContext.stringProvider(), cp.type))
                 }
-                append(" ")
-                append(cp.formatPower())
+                cp.formatPower()?.let {
+                    append(" ")
+                    append(it)
+                }
             }
             availability?.status?.get(cp)?.let { status ->
                 chargepointsText.append(

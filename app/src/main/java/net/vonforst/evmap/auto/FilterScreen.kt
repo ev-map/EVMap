@@ -41,7 +41,9 @@ class FilterScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx) {
             if (filterStatus in listOf(FILTERS_DISABLED, FILTERS_FAVORITES, FILTERS_CUSTOM)) {
                 page = 0
             } else {
-                page = paginateProfiles(it).indexOfFirst { it.any { it.id == filterStatus } }
+                val index =
+                    paginateProfiles(it).indexOfFirst { it.any { it.id == filterStatus } }
+                page = index.takeUnless { it == -1 } ?: 0
             }
             invalidate()
         }

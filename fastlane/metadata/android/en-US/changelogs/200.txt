@@ -1,0 +1,5 @@
+Improvements:
+- When starting the app, the last viewed map area will be shown
+
+Bugfixes:
+- Fixed crashes

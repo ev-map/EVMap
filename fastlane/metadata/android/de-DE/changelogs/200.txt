@@ -1,0 +1,5 @@
+Verbesserungen:
+- Beim Start der App wird nun der zuletzt gesehene Kartenausschnitt gezeigt
+
+Fehler behoben:
+- Abstürze behoben

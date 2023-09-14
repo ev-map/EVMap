@@ -291,6 +291,12 @@ class PreferenceDataSource(val context: Context) {
             sp.edit().putFloat("current_map_zoom", value).apply()
         }
 
+    var currentMapMyLocationEnabled: Boolean
+        get() = sp.getBoolean("current_map_my_location_enabled", false)
+        set(value) {
+            sp.edit().putBoolean("current_map_my_location_enabled", value).apply()
+        }
+
     var privacyAccepted: Boolean
         get() = sp.getBoolean("privacy_accepted", false)
         set(value) {

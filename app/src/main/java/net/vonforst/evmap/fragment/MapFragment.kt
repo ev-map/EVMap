@@ -1043,7 +1043,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             binding.search.requestFocus()
             binding.search.setSelection(locationName.length)
         }
-        if (context.checkAnyLocationPermission()) {
+        if (context.checkAnyLocationPermission() && prefs.currentMapMyLocationEnabled) {
             enableLocation(!positionSet, false)
             positionSet = true
         }
@@ -1399,6 +1399,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         vm.mapPosition.value?.let {
             prefs.currentMapLocation = it.bounds.center
             prefs.currentMapZoom = it.zoom
+        }
+        vm.myLocationEnabled.value?.let {
+            prefs.currentMapMyLocationEnabled = it
         }
     }
 

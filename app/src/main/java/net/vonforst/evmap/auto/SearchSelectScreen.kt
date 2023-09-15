@@ -7,8 +7,11 @@ import androidx.car.app.constraints.ConstraintManager
 import androidx.car.app.model.*
 import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import net.vonforst.evmap.R
+import okio.IOException
 
 abstract class MultiSelectSearchScreen<T>(ctx: CarContext) : Screen(ctx),
     SearchTemplate.SearchCallback {
@@ -22,9 +25,20 @@ abstract class MultiSelectSearchScreen<T>(ctx: CarContext) : Screen(ctx),
     override fun onGetTemplate(): Template {
         if (fullList == null) {
             lifecycleScope.launch {
-                fullList = loadData()
-                filterList()
-                invalidate()
+                try {
+                    fullList = loadData()
+                    filterList()
+                    invalidate()
+                } catch (e: IOException) {
+                    withContext(Dispatchers.Main) {
+                        CarToast.makeText(
+                            carContext,
+                            R.string.generic_connection_error,
+                            CarToast.LENGTH_LONG
+                        ).show()
+                        screenManager.pop()
+                    }
+                }
             }
         }
 

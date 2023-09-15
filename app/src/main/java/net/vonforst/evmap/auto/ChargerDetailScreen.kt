@@ -321,7 +321,7 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
                     } else carContext.getString(R.string.average_utilization)
                 )
                 generatePredictionGraph()?.let { addText(it) }
-                    ?: addText(carContext.getText(R.string.auto_no_data))
+                    ?: addText(carContext.getString(if (prediction != null) R.string.auto_no_data else R.string.loading))
             }.build())
         }
         return rows
@@ -332,18 +332,43 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
         val graphData = predictionData.predictionGraph?.toList() ?: return null
         val maxValue = predictionData.maxValue
 
+        val step = if (graphData.size > 25) 2 else 1
+        val values = graphData.map { it.second }
+
+        val graph = buildGraph(values, step, maxValue, predictionData.isPercentage)
+
+        val measurer = TextMeasurer(carContext)
+        val width = measurer.measureText(graph)
+
+        val startTime = timeFormat.format(graphData[0].first)
+        val endTime = timeFormat.format(graphData.last().first)
+
+        var numSpaces = 0
+        var legend: String
+        var legendWidth: Float
+        do {
+            numSpaces += 1
+            legend = startTime + " ".repeat(numSpaces) + endTime
+            legendWidth = measurer.measureText(legend)
+        } while (legendWidth < width)
+
+        return graph + "\n" + legend
+    }
+
+    private fun buildGraph(
+        values: List<Double>,
+        step: Int,
+        maxValue: Double,
+        isPercentage: Boolean
+    ): CharSequence {
         val sparklines = "▁▂▃▄▅▆▇█"
-
-        val n = graphData.size
-        val step = if (n > 25) 2 else 1
-
         val graph = SpannableStringBuilder()
-        for (i in 0 until n step step) {
-            val v = graphData[i].second
+        for (i in values.indices step step) {
+            val v = values[i]
             val fraction = v / maxValue
-            val sparkline = sparklines[(fraction * 7).roundToInt()].toString()
+            val sparkline = sparklines[(fraction * (sparklines.length - 1)).roundToInt()].toString()
 
-            val color = if (predictionData.isPercentage) {
+            val color = if (isPercentage) {
                 when (v) {
                     in 0.0..0.5 -> CarColor.GREEN
                     in 0.5..0.8 -> CarColor.YELLOW
@@ -359,19 +384,6 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
             )
         }
-        graph.append("\n")
-        val startTime = timeFormat.format(graphData[0].first)
-        val endTime = timeFormat.format(graphData.last().first)
-        graph.append(startTime)
-        graph.append(
-            " ".repeat(
-                kotlin.math.max(
-                    n.floorDiv(step) + 1 - (((startTime.length + endTime.length)) * 0.55).roundToInt(),
-                    1
-                )
-            )
-        )
-        graph.append(endTime)
         return graph
     }
 

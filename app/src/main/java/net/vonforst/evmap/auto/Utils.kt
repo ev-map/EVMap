@@ -4,7 +4,9 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Typeface
 import android.net.Uri
+import android.text.TextPaint
 import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.car.app.CarContext
@@ -258,4 +260,17 @@ class DummyReturnScreen(ctx: CarContext) : Screen(ctx) {
             .build()
     }
 
+}
+
+class TextMeasurer(ctx: CarContext) {
+    val textPaint = TextPaint()
+
+    init {
+        textPaint.textSize = ctx.resources.displayMetrics.density * 24
+        textPaint.typeface = Typeface.DEFAULT
+    }
+
+    fun measureText(text: CharSequence): Float {
+        return textPaint.measureText(text, 0, text.length)
+    }
 }

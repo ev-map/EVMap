@@ -349,7 +349,7 @@
     <string name="auto_heading">Fahrtrichtung</string>
     <string name="auto_settings">Einstellungen</string>
     <string name="welcome_android_auto">Android Auto-Unterstützung</string>
-    <string name="welcome_android_auto_detail">Auf unterstützen Autos kannst du EVMap auch mit Android Auto nutzen. Öffne dazu einfach die EVMap-App aus dem Menü von Android Auto.</string>
+    <string name="welcome_android_auto_detail">Auf unterstützten Autos kannst du EVMap auch mit Android Auto nutzen. Öffne dazu einfach die EVMap-App aus dem Menü von Android Auto.</string>
     <string name="sounds_cool">Klingt cool</string>
     <string name="auto_chargeprice_vehicle_unavailable">EVMap konnte das Fahrzeugmodell nicht erkennen.</string>
     <string name="auto_chargeprice_vehicle_unknown">Keins der in der App ausgewählten Fahrzeuge passt zu diesem Fahrzeug (%1$s %2$s).</string>

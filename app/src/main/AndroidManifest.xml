@@ -289,6 +289,10 @@
                 android:resource="@xml/shortcuts" />
         </activity>
 
+        <activity android:name=".auto.OAuthLoginActivity">
+
+        </activity>
+
         <service
             android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
             android:enabled="false"

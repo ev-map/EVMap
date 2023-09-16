@@ -52,6 +52,8 @@ import net.vonforst.evmap.viewmodel.awaitFinished
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
+import kotlin.math.ceil
+import kotlin.math.floor
 import kotlin.math.roundToInt
 
 
@@ -348,7 +350,8 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
         val graphData = predictionData.predictionGraph?.toList() ?: return null
         val maxValue = predictionData.maxValue
 
-        val step = if (graphData.size > 25) 2 else 1
+        val maxWidth = if (BuildConfig.FLAVOR_automotive == "automotive") 25 else 18
+        val step = maxOf(graphData.size.toFloat() / maxWidth, 1f)
         val values = graphData.map { it.second }
 
         val graph = buildGraph(values, step, maxValue, predictionData.isPercentage)
@@ -359,28 +362,25 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
         val startTime = timeFormat.format(graphData[0].first)
         val endTime = timeFormat.format(graphData.last().first)
 
-        var numSpaces = 0
-        var legend: String
-        var legendWidth: Float
-        do {
-            numSpaces += 1
-            legend = startTime + " ".repeat(numSpaces) + endTime
-            legendWidth = measurer.measureText(legend)
-        } while (legendWidth < width)
+        val baseWidth = measurer.measureText(startTime + endTime)
+        val spaceWidth = measurer.measureText(" ")
+        val numSpaces = floor((width - baseWidth) / spaceWidth).toInt()
+        val legend = startTime + " ".repeat(numSpaces) + endTime
 
         return graph + "\n" + legend
     }
 
     private fun buildGraph(
         values: List<Double>,
-        step: Int,
+        step: Float,
         maxValue: Double,
         isPercentage: Boolean
     ): CharSequence {
         val sparklines = "▁▂▃▄▅▆▇█"
         val graph = SpannableStringBuilder()
-        for (i in values.indices step step) {
-            val v = values[i]
+        var i = 0f
+        while (i.roundToInt() < values.size) {
+            val v = values[i.roundToInt()]
             val fraction = v / maxValue
             val sparkline = sparklines[(fraction * (sparklines.length - 1)).roundToInt()].toString()
 
@@ -399,6 +399,7 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
                 ForegroundCarColorSpan.create(color),
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
             )
+            i += step
         }
         return graph
     }

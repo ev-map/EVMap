@@ -370,4 +370,5 @@
     <string name="pref_units_metric">Métrico</string>
     <string name="pref_units_imperial">Imperial</string>
     <string name="referrals_info">Também pode usar um dos seguintes links de afiliado para apoiar o desenvolvedor da app com a sua compra.</string>
+    <string name="generic_connection_error">Não foi possível carregar a informação</string>
 </resources>

@@ -331,4 +331,18 @@
     <string name="loading">Laster inn …</string>
     <string name="auto_multipage_goto">Side %d</string>
     <string name="auto_multipage">(%d/%d)</string>
+    <string name="charge_price_minute_format">%2$s%1$.2f/min</string>
+    <string name="website">Nettside</string>
+    <string name="pref_tesla_account_enabled">Innlogget som %s</string>
+    <string name="pref_units">Enheter</string>
+    <string name="log_out">Logg ut</string>
+    <string name="logging_in">Logger inn …</string>
+    <string name="realtime_data_login_needed">Tesla-konto kreves for sanntidsdata</string>
+    <string name="generic_connection_error">Kunne ikke laste inn data</string>
+    <string name="logged_out">Utlogget</string>
+    <string name="pref_tesla_account">Tesla-konto</string>
+    <string name="tesla_pricing_others">Andre kunder:</string>
+    <string name="referral_tesla">Tesla</string>
+    <string name="pref_units_default">Enhetsforvalg</string>
+    <string name="login">Logg inn</string>
 </resources>

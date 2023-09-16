@@ -305,7 +305,7 @@
     <string name="logging_in">Logging in…</string>
     <string name="log_out">Log out</string>
     <string name="logged_out">Logged out</string>
-    <string name="login">Login</string>
+    <string name="login">Log in</string>
     <string name="login_error">Login failed</string>
     <string name="tesla_pricing_owners">Tesla vehicles only:</string>
     <string name="tesla_pricing_members">Tesla vehicles &amp; members:</string>

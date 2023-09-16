@@ -32,6 +32,9 @@
             <action
                 android:id="@+id/action_map_to_opensource_donations"
                 app:destination="@id/opensource_donations" />
+            <action
+                android:id="@+id/action_map_to_data_settings"
+                app:destination="@id/settings_data" />
             <argument
                 android:name="locationName"
                 android:defaultValue="@null"

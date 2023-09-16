@@ -16,6 +16,7 @@ import com.mikepenz.aboutlibraries.LibsBuilder
 import net.vonforst.evmap.BuildConfig
 import net.vonforst.evmap.MapsActivity
 import net.vonforst.evmap.R
+import net.vonforst.evmap.navigation.safeNavigate
 import net.vonforst.evmap.storage.PreferenceDataSource
 
 
@@ -108,11 +109,11 @@ class AboutFragment : PreferenceFragmentCompat() {
             "donate" -> {
                 exitTransition = MaterialSharedAxis(MaterialSharedAxis.X, true)
                 reenterTransition = MaterialSharedAxis(MaterialSharedAxis.X, false)
-                findNavController().navigate(R.id.action_about_to_donateFragment)
+                findNavController().safeNavigate(AboutFragmentDirections.actionAboutToDonateFragment())
                 true
             }
             "github_sponsors" -> {
-                findNavController().navigate(R.id.action_about_to_github_sponsors)
+                findNavController().safeNavigate(AboutFragmentDirections.actionAboutToGithubSponsors())
                 true
             }
             "twitter" -> {

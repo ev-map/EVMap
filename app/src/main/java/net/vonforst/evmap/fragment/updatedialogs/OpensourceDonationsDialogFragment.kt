@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import net.vonforst.evmap.R
 import net.vonforst.evmap.databinding.DialogOpensourceDonationsBinding
+import net.vonforst.evmap.navigation.safeNavigate
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.ui.MaterialDialogFragment
 
@@ -30,11 +31,11 @@ class OpensourceDonationsDialogFragment : MaterialDialogFragment() {
         }
         binding.btnDonate.setOnClickListener {
             prefs.opensourceDonationsDialogShown = true
-            findNavController().navigate(R.id.action_opensource_donations_to_donate)
+            findNavController().safeNavigate(OpensourceDonationsDialogFragmentDirections.actionOpensourceDonationsToDonate())
         }
         binding.btnGithubSponsors.setOnClickListener {
             prefs.opensourceDonationsDialogShown = true
-            findNavController().navigate(R.id.action_opensource_donations_to_github_sponsors)
+            findNavController().safeNavigate(OpensourceDonationsDialogFragmentDirections.actionOpensourceDonationsToGithubSponsors())
         }
     }
 

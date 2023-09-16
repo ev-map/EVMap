@@ -77,6 +77,7 @@ import net.vonforst.evmap.location.FusionEngine
 import net.vonforst.evmap.location.LocationEngine
 import net.vonforst.evmap.location.Priority
 import net.vonforst.evmap.model.*
+import net.vonforst.evmap.navigation.safeNavigate
 import net.vonforst.evmap.shouldUseImperialUnits
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.ui.*
@@ -277,7 +278,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
         if (prefs.appStartCounter > 5 && !prefs.opensourceDonationsDialogShown) {
             try {
-                findNavController().navigate(R.id.action_map_to_opensource_donations)
+                findNavController().safeNavigate(MapFragmentDirections.actionMapToOpensourceDonations())
             } catch (ignored: IllegalArgumentException) {
                 // when there is already another navigation going on
             } catch (ignored: IllegalStateException) {
@@ -286,7 +287,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         }
         /*if (!prefs.update060AndroidAutoDialogShown) {
             try {
-                navController.navigate(R.id.action_map_to_update_060_androidauto)
+                navController.safeNavigate(MapFragmentDirections.actionMapToUpdate060AndroidAuto())
             } catch (ignored: IllegalArgumentException) {
                 // when there is already another navigation going on
             }
@@ -375,10 +376,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             val charger = vm.charger.value?.data ?: return@setOnClickListener
             val extras =
                 FragmentNavigatorExtras(binding.detailView.btnChargeprice to getString(R.string.shared_element_chargeprice))
-            findNavController().navigate(
-                R.id.action_map_to_chargepriceFragment,
-                ChargepriceFragmentArgs(charger).toBundle(),
-                null, extras
+            findNavController().safeNavigate(
+                MapFragmentDirections.actionMapToChargepriceFragment(charger),
+                extras
             )
         }
         binding.detailView.btnChargerWebsite.setOnClickListener {
@@ -386,9 +386,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             charger.chargerUrl?.let { (activity as? MapsActivity)?.openUrl(it) }
         }
         binding.detailView.btnLogin.setOnClickListener {
-            findNavController().navigate(
-                R.id.settings_data,
-                DataSettingsFragmentArgs(true).toBundle()
+            findNavController().safeNavigate(
+                MapFragmentDirections.actionMapToDataSettings(true)
             )
         }
         binding.detailView.imgPredictionSource.setOnClickListener {
@@ -1231,8 +1230,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                         reenterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false)
                         lifecycleScope.launch {
                             vm.copyFiltersToCustom()
-                            requireView().findNavController().navigate(
-                                R.id.action_map_to_filterFragment
+                            requireView().findNavController().safeNavigate(
+                                MapFragmentDirections.actionMapToFilterFragment()
                             )
                         }
                         true
@@ -1240,8 +1239,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                     R.id.menu_manage_filter_profiles -> {
                         exitTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true)
                         reenterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false)
-                        requireView().findNavController().navigate(
-                            R.id.action_map_to_filterProfilesFragment
+                        requireView().findNavController().safeNavigate(
+                            MapFragmentDirections.actionMapToFilterProfilesFragment()
                         )
                         true
                     }

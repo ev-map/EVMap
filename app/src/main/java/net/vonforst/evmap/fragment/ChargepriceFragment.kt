@@ -32,6 +32,7 @@ import net.vonforst.evmap.api.equivalentPlugTypes
 import net.vonforst.evmap.databinding.FragmentChargepriceBinding
 import net.vonforst.evmap.databinding.FragmentChargepriceHeaderBinding
 import net.vonforst.evmap.model.Chargepoint
+import net.vonforst.evmap.navigation.safeNavigate
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.viewmodel.ChargepriceViewModel
 import net.vonforst.evmap.viewmodel.Status
@@ -81,7 +82,7 @@ class ChargepriceFragment : Fragment() {
             }
             .setPositiveButton(R.string.donate) { di, _ ->
                 di.dismiss()
-                findNavController().navigate(R.id.action_chargeprice_to_donateFragment)
+                findNavController().safeNavigate(ChargepriceFragmentDirections.actionChargepriceToDonateFragment())
             }
             .show()
     }
@@ -197,7 +198,7 @@ class ChargepriceFragment : Fragment() {
         }
 
         binding.btnSettings.setOnClickListener {
-            findNavController().navigate(R.id.action_chargeprice_to_chargepriceSettingsFragment)
+            findNavController().safeNavigate(ChargepriceFragmentDirections.actionChargepriceToChargepriceSettingsFragment())
         }
 
         headerBinding.batteryRange.setLabelFormatter { value: Float ->

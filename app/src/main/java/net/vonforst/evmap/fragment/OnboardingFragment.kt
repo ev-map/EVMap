@@ -21,6 +21,7 @@ import androidx.viewpager2.widget.ViewPager2
 import net.vonforst.evmap.R
 import net.vonforst.evmap.databinding.*
 import net.vonforst.evmap.model.FILTERS_DISABLED
+import net.vonforst.evmap.navigation.safeNavigate
 import net.vonforst.evmap.storage.PreferenceDataSource
 
 class OnboardingFragment : Fragment() {
@@ -82,7 +83,7 @@ class OnboardingFragment : Fragment() {
 
     fun goToNext() {
         if (binding.viewPager.currentItem == adapter.itemCount - 1) {
-            findNavController().navigate(R.id.action_onboarding_to_map)
+            findNavController().safeNavigate(OnboardingFragmentDirections.actionOnboardingToMap())
         } else {
             binding.viewPager.setCurrentItem(binding.viewPager.currentItem + 1, true)
         }

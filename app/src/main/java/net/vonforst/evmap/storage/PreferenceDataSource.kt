@@ -261,8 +261,11 @@ class PreferenceDataSource(val context: Context) {
             sp.edit().putBoolean("show_chargers_ahead_android_auto", value).apply()
         }
 
-    val predictionEnabled: Boolean
+    var predictionEnabled: Boolean
         get() = sp.getBoolean("prediction_enabled", true)
+        set(value) {
+            sp.edit().putBoolean("prediction_enabled", value).apply()
+        }
 
     var developerModeEnabled: Boolean
         get() = sp.getBoolean("dev_mode_enabled", false)

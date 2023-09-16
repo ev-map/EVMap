@@ -1,5 +1,6 @@
 package net.vonforst.evmap.api.availability
 
+import android.net.Uri
 import android.util.Base64
 import com.squareup.moshi.FromJson
 import com.squareup.moshi.Json
@@ -102,6 +103,18 @@ interface TeslaAuthenticationApi {
                 Base64.URL_SAFE or Base64.NO_WRAP or Base64.NO_PADDING
             )
         }
+
+        fun buildSignInUri(codeChallenge: String): Uri =
+            Uri.parse("https://auth.tesla.com/oauth2/v3/authorize").buildUpon()
+                .appendQueryParameter("client_id", "ownerapi")
+                .appendQueryParameter("code_challenge", codeChallenge)
+                .appendQueryParameter("code_challenge_method", "S256")
+                .appendQueryParameter("redirect_uri", "https://auth.tesla.com/void/callback")
+                .appendQueryParameter("response_type", "code")
+                .appendQueryParameter("scope", "openid email offline_access")
+                .appendQueryParameter("state", "123").build()
+
+        val resultUrlPrefix = "https://auth.tesla.com/void/callback"
     }
 }
 

@@ -1,6 +1,7 @@
 package net.vonforst.evmap.fragment.oauth
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.net.Uri
@@ -13,17 +14,25 @@ import android.webkit.CookieManager
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.android.material.transition.MaterialSharedAxis
 import net.vonforst.evmap.MapsActivity
 import net.vonforst.evmap.R
+import java.lang.IllegalStateException
 
 class OAuthLoginFragment : Fragment() {
+    companion object {
+        val ACTION_OAUTH_RESULT = "oauth_result"
+        val EXTRA_URL = "url"
+    }
+
     private lateinit var webView: WebView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,10 +52,24 @@ class OAuthLoginFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val toolbar = view.findViewById<Toolbar>(R.id.toolbar)
-        toolbar.setupWithNavController(
-            findNavController(),
-            (requireActivity() as MapsActivity).appBarConfiguration
-        )
+        val navController = try {
+            findNavController()
+        } catch (e: IllegalStateException) {
+            null
+            // standalone in OAuthLoginActivity
+        }
+
+        if (navController != null) {
+            toolbar.setupWithNavController(
+                navController,
+                (requireActivity() as MapsActivity).appBarConfiguration
+            )
+        } else {
+            toolbar.title = getString(R.string.login)
+            toolbar.navigationIcon =
+                AppCompatResources.getDrawable(requireContext(), R.drawable.ic_arrow_back)
+            toolbar.setNavigationOnClickListener { requireActivity().onBackPressed() }
+        }
 
         val args = OAuthLoginFragmentArgs.fromBundle(requireArguments())
         val uri = Uri.parse(args.url)
@@ -68,7 +91,12 @@ class OAuthLoginFragment : Fragment() {
                     val result = Bundle()
                     result.putString("url", url.toString())
                     setFragmentResult(args.url, result)
-                    findNavController().popBackStack()
+                    context?.let {
+                        LocalBroadcastManager.getInstance(it).sendBroadcast(
+                            Intent(ACTION_OAUTH_RESULT).putExtra(EXTRA_URL, url)
+                        )
+                    }
+                    navController?.popBackStack()
                 }
 
                 return url.host != uri.host

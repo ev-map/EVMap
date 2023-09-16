@@ -1,10 +1,15 @@
 package net.vonforst.evmap.auto
 
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager.NameNotFoundException
 import android.hardware.Sensor
 import android.hardware.SensorManager
+import android.net.Uri
+import android.os.Bundle
+import android.os.IInterface
 import android.text.Html
 import androidx.annotation.StringRes
 import androidx.car.app.CarContext
@@ -13,16 +18,27 @@ import androidx.car.app.Screen
 import androidx.car.app.annotations.ExperimentalCarApi
 import androidx.car.app.constraints.ConstraintManager
 import androidx.car.app.model.*
+import androidx.core.content.IntentCompat
 import androidx.core.graphics.drawable.IconCompat
 import androidx.core.text.HtmlCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import net.vonforst.evmap.*
+import net.vonforst.evmap.api.availability.TeslaAuthenticationApi
+import net.vonforst.evmap.api.availability.TeslaOwnerApi
 import net.vonforst.evmap.api.chargeprice.ChargepriceApi
 import net.vonforst.evmap.api.chargeprice.ChargepriceCar
 import net.vonforst.evmap.api.chargeprice.ChargepriceTariff
+import net.vonforst.evmap.fragment.oauth.OAuthLoginFragment
+import net.vonforst.evmap.fragment.oauth.OAuthLoginFragmentArgs
 import net.vonforst.evmap.storage.AppDatabase
+import net.vonforst.evmap.storage.EncryptedPreferenceDataStore
 import net.vonforst.evmap.storage.PreferenceDataSource
+import okhttp3.OkHttpClient
+import java.io.IOException
+import java.time.Instant
 import kotlin.math.max
 import kotlin.math.min
 
@@ -125,6 +141,7 @@ class SettingsScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx) {
 
 class DataSettingsScreen(ctx: CarContext) : Screen(ctx) {
     val prefs = PreferenceDataSource(ctx)
+    val encryptedPrefs = EncryptedPreferenceDataStore(ctx)
     val db = AppDatabase.getInstance(ctx)
 
     val dataSourceNames = carContext.resources.getStringArray(R.array.pref_data_source_names)
@@ -133,6 +150,8 @@ class DataSettingsScreen(ctx: CarContext) : Screen(ctx) {
         carContext.resources.getStringArray(R.array.pref_search_provider_names)
     val searchProviderValues =
         carContext.resources.getStringArray(R.array.pref_search_provider_values)
+
+    var teslaLoggingIn = false
 
     override fun onGetTemplate(): Template {
         return ListTemplate.Builder().apply {
@@ -183,8 +202,121 @@ class DataSettingsScreen(ctx: CarContext) : Screen(ctx) {
                         }
                     }
                 }.build())
+                addItem(
+                    Row.Builder()
+                        .setTitle(carContext.getString(R.string.pref_prediction_enabled))
+                        .addText(carContext.getString(R.string.pref_prediction_enabled_summary))
+                        .setToggle(Toggle.Builder {
+                            prefs.predictionEnabled = it
+                        }.setChecked(prefs.predictionEnabled).build())
+                        .build()
+                )
+                addItem(Row.Builder().apply {
+                    setTitle(carContext.getString(R.string.pref_tesla_account))
+                    addText(
+                        if (encryptedPrefs.teslaRefreshToken != null) {
+                            carContext.getString(
+                                R.string.pref_tesla_account_enabled,
+                                encryptedPrefs.teslaEmail
+                            )
+                        } else if (teslaLoggingIn) {
+                            carContext.getString(R.string.logging_in)
+                        } else {
+                            carContext.getString(R.string.pref_tesla_account_disabled)
+                        }
+                    )
+                    if (encryptedPrefs.teslaRefreshToken != null) {
+                        setOnClickListener {
+                            teslaLogout()
+                        }
+                    } else {
+                        setOnClickListener(ParkedOnlyOnClickListener.create {
+                            teslaLogin()
+                        })
+                    }
+                }.build())
             }.build())
         }.build()
+    }
+
+    private fun teslaLogin() {
+        val codeVerifier = TeslaAuthenticationApi.generateCodeVerifier()
+        val codeChallenge = TeslaAuthenticationApi.generateCodeChallenge(codeVerifier)
+        val uri = TeslaAuthenticationApi.buildSignInUri(codeChallenge)
+
+        val args = OAuthLoginFragmentArgs(
+            uri.toString(),
+            TeslaAuthenticationApi.resultUrlPrefix,
+            "#000000"
+        ).toBundle()
+        val intent = Intent(carContext, OAuthLoginActivity::class.java)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            .putExtras(args)
+
+        LocalBroadcastManager.getInstance(carContext)
+            .registerReceiver(object : BroadcastReceiver() {
+                override fun onReceive(ctx: Context, intent: Intent) {
+                    val url = IntentCompat.getParcelableExtra(
+                        intent,
+                        OAuthLoginFragment.EXTRA_URL,
+                        Uri::class.java
+                    )
+                    teslaGetAccessToken(url!!, codeVerifier)
+                }
+            }, IntentFilter(OAuthLoginFragment.ACTION_OAUTH_RESULT))
+
+        carContext.startActivity(intent)
+
+        if (BuildConfig.FLAVOR_automotive != "automotive") {
+            CarToast.makeText(
+                carContext,
+                R.string.opened_on_phone,
+                CarToast.LENGTH_LONG
+            ).show()
+        }
+    }
+
+    private fun teslaGetAccessToken(url: Uri, codeVerifier: String) {
+        teslaLoggingIn = true
+        invalidate()
+
+        val code = url.getQueryParameter("code") ?: return
+        val okhttp = OkHttpClient.Builder().addDebugInterceptors().build()
+        val request = TeslaAuthenticationApi.AuthCodeRequest(code, codeVerifier)
+        lifecycleScope.launch {
+            try {
+                val time = Instant.now().epochSecond
+                val response =
+                    TeslaAuthenticationApi.create(okhttp).getToken(request)
+                val userResponse =
+                    TeslaOwnerApi.create(okhttp, response.accessToken).getUserInfo()
+
+                encryptedPrefs.teslaEmail = userResponse.response.email
+                encryptedPrefs.teslaAccessToken = response.accessToken
+                encryptedPrefs.teslaAccessTokenExpiry = time + response.expiresIn
+                encryptedPrefs.teslaRefreshToken = response.refreshToken
+            } catch (e: IOException) {
+                CarToast.makeText(
+                    carContext,
+                    R.string.generic_connection_error,
+                    CarToast.LENGTH_SHORT
+                ).show()
+            } finally {
+                teslaLoggingIn = false
+            }
+            invalidate()
+        }
+    }
+
+    private fun teslaLogout() {
+        // sign out
+        encryptedPrefs.teslaRefreshToken = null
+        encryptedPrefs.teslaAccessToken = null
+        encryptedPrefs.teslaAccessTokenExpiry = -1
+        encryptedPrefs.teslaEmail = null
+        CarToast.makeText(carContext, R.string.logged_out, CarToast.LENGTH_SHORT).show()
+
+        invalidate()
     }
 }
 

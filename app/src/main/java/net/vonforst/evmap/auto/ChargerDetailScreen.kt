@@ -311,7 +311,7 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
                 addText(charger.amenities)
             }.build())
         }
-        if (rows.count() < maxRows && (fronyxSupported || teslaSupported)) {
+        if (rows.count() < maxRows && ((fronyxSupported && prefs.predictionEnabled) || teslaSupported)) {
             rows.add(1, Row.Builder().apply {
                 setTitle(
                     if (fronyxSupported) {

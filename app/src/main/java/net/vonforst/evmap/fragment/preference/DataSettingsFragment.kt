@@ -141,18 +141,11 @@ class DataSettingsFragment : BaseSettingsFragment() {
     private fun teslaLogin() {
         val codeVerifier = TeslaAuthenticationApi.generateCodeVerifier()
         val codeChallenge = TeslaAuthenticationApi.generateCodeChallenge(codeVerifier)
-        val uri = Uri.parse("https://auth.tesla.com/oauth2/v3/authorize").buildUpon()
-            .appendQueryParameter("client_id", "ownerapi")
-            .appendQueryParameter("code_challenge", codeChallenge)
-            .appendQueryParameter("code_challenge_method", "S256")
-            .appendQueryParameter("redirect_uri", "https://auth.tesla.com/void/callback")
-            .appendQueryParameter("response_type", "code")
-            .appendQueryParameter("scope", "openid email offline_access")
-            .appendQueryParameter("state", "123").build()
+        val uri = TeslaAuthenticationApi.buildSignInUri(codeChallenge)
 
         val args = OAuthLoginFragmentArgs(
             uri.toString(),
-            "https://auth.tesla.com/void/callback",
+            TeslaAuthenticationApi.resultUrlPrefix,
             "#000000"
         ).toBundle()
 
@@ -184,7 +177,8 @@ class DataSettingsFragment : BaseSettingsFragment() {
                 encryptedPrefs.teslaRefreshToken = response.refreshToken
             } catch (e: IOException) {
                 view?.let {
-                    Snackbar.make(it, R.string.connection_error, Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(it, R.string.generic_connection_error, Snackbar.LENGTH_SHORT)
+                        .show()
                 }
             }
             refreshTeslaAccountStatus()

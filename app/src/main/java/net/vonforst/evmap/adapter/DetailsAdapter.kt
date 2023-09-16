@@ -139,7 +139,7 @@ fun buildDetails(
     )
 }
 
-private fun formatTeslaParkingFee(teslaPricing: TeslaGraphQlApi.Pricing, ctx: Context) =
+fun formatTeslaParkingFee(teslaPricing: TeslaGraphQlApi.Pricing, ctx: Context) =
     teslaPricing.memberRates?.activePricebook?.parking?.let { parkingFee ->
         ctx.getString(
             R.string.tesla_pricing_blocking_fee,
@@ -147,7 +147,7 @@ private fun formatTeslaParkingFee(teslaPricing: TeslaGraphQlApi.Pricing, ctx: Co
         )
     }
 
-private fun formatTeslaPricing(teslaPricing: TeslaGraphQlApi.Pricing, ctx: Context) =
+fun formatTeslaPricing(teslaPricing: TeslaGraphQlApi.Pricing, ctx: Context) =
     buildSpannedString {
         teslaPricing.memberRates?.let { memberRates ->
             append(

@@ -24,8 +24,11 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.vonforst.evmap.*
+import net.vonforst.evmap.adapter.formatTeslaParkingFee
+import net.vonforst.evmap.adapter.formatTeslaPricing
 import net.vonforst.evmap.api.availability.AvailabilityRepository
 import net.vonforst.evmap.api.availability.ChargeLocationStatus
+import net.vonforst.evmap.api.availability.TeslaGraphQlApi
 import net.vonforst.evmap.api.chargeprice.ChargepriceApi
 import net.vonforst.evmap.api.createApi
 import net.vonforst.evmap.api.fronyx.FronyxApi
@@ -322,6 +325,19 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
                 )
                 generatePredictionGraph()?.let { addText(it) }
                     ?: addText(carContext.getString(if (prediction != null) R.string.auto_no_data else R.string.loading))
+            }.build())
+        }
+        if (rows.count() < maxRows && teslaSupported) {
+            val teslaPricing = availability?.extraData as? TeslaGraphQlApi.Pricing
+            rows.add(3, Row.Builder().apply {
+                setTitle(carContext.getString(R.string.cost))
+                teslaPricing?.let {
+                    var text = formatTeslaPricing(teslaPricing, carContext) as CharSequence
+                    formatTeslaParkingFee(teslaPricing, carContext)?.let { text += "\n\n" + it }
+                    addText(text)
+                } ?: {
+                    addText(carContext.getString(if (prediction != null) R.string.auto_no_data else R.string.loading))
+                }
             }.build())
         }
         return rows

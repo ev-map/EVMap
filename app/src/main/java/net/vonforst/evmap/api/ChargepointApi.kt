@@ -86,7 +86,7 @@ interface ChargepointApi<out T : ReferenceData> {
      *       to generate that within this function (e.g. build the list of available operators using all the
      *       operators found in the dataset).
      */
-    suspend fun fullDownload(referenceData: ReferenceData): List<ChargeLocation>
+    suspend fun fullDownload(referenceData: ReferenceData): Sequence<ChargeLocation>
 }
 
 interface StringProvider {

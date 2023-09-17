@@ -3,6 +3,8 @@ package net.vonforst.evmap.api.openstreetmap
 import android.database.DatabaseUtils
 import com.car2go.maps.model.LatLng
 import com.car2go.maps.model.LatLngBounds
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.JsonReader
 import com.squareup.moshi.Moshi
 import net.vonforst.evmap.BuildConfig
 import net.vonforst.evmap.R
@@ -11,7 +13,6 @@ import net.vonforst.evmap.api.ChargepointApi
 import net.vonforst.evmap.api.ChargepointList
 import net.vonforst.evmap.api.FiltersSQLQuery
 import net.vonforst.evmap.api.StringProvider
-import net.vonforst.evmap.api.goingelectric.GEChargepoint
 import net.vonforst.evmap.api.mapPower
 import net.vonforst.evmap.api.mapPowerInverse
 import net.vonforst.evmap.api.nameForPlugType
@@ -31,6 +32,7 @@ import net.vonforst.evmap.model.getMultipleChoiceValue
 import net.vonforst.evmap.model.getSliderValue
 import net.vonforst.evmap.viewmodel.Resource
 import okhttp3.OkHttpClient
+import okhttp3.Request
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -58,7 +60,7 @@ interface OpenStreetMapApi {
 
             val retrofit = Retrofit.Builder()
                 .baseUrl(baseurl)
-                .addConverterFactory(MoshiConverterFactory.create(moshi))
+                .addConverterFactory(OSMConverterFactory(moshi))
                 .client(client)
                 .build()
             return retrofit.create(OpenStreetMapApi::class.java)
@@ -213,14 +215,18 @@ class OpenStreetMapApiWrapper(baseurl: String = "https://evmap-dev.vonforst.net"
         return true
     }
 
-    override suspend fun fullDownload(referenceData: ReferenceData): List<ChargeLocation> {
+    override suspend fun fullDownload(referenceData: ReferenceData): Sequence<ChargeLocation> {
         val response = api.getAllChargingStations()
         if (!response.isSuccessful) {
             throw IOException(response.message())
         } else {
             val body = response.body()!!
             val time = body.timestamp
-            return body.elements.map { it.convert(time) }
+            return sequence {
+                body.elements.forEach {
+                    yield(it.convert(time))
+                }
+            }
         }
     }
 }

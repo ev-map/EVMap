@@ -1,9 +1,7 @@
 package net.vonforst.evmap.api.openstreetmap
 
 import com.squareup.moshi.FromJson
-import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
-import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.ToJson
 import com.squareup.moshi.rawType
@@ -38,15 +36,18 @@ internal class OSMConverterFactory(val moshi: Moshi) : Converter.Factory() {
 
         val instantAdapter = moshi.adapter(Instant::class.java)
         val osmChargingStationAdapter = moshi.adapter(OSMChargingStation::class.java)
+        val longAdapter = moshi.adapter(Long::class.java)
         return Converter<ResponseBody, OSMDocument> { body ->
             val reader = JsonReader.of(body.source())
             reader.beginObject()
 
             var timestamp: Instant? = null
             var doc: Sequence<OSMChargingStation>? = null
+            var count: Long? = null
             while (reader.hasNext()) {
                 when (reader.nextName()) {
                     "timestamp" -> timestamp = instantAdapter.fromJson(reader)!!
+                    "count" -> count = longAdapter.fromJson(reader)!!
                     "elements" -> {
                         doc = sequence {
                             reader.beginArray()
@@ -60,7 +61,7 @@ internal class OSMConverterFactory(val moshi: Moshi) : Converter.Factory() {
                     }
                 }
             }
-            OSMDocument(timestamp!!, doc!!)
+            OSMDocument(timestamp!!, count!!, doc!!)
         }
     }
 }

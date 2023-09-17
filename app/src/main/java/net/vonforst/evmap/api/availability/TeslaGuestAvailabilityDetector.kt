@@ -163,6 +163,7 @@ class TeslaGuestAvailabilityDetector(
         return when (charger.dataSource) {
             "goingelectric" -> charger.network == "Tesla Supercharger"
             "openchargemap" -> charger.chargepriceData?.network in listOf("23", "3534")
+            "openstreetmap" -> charger.operator in listOf("Tesla, Inc.", "Tesla")
             else -> false
         }
     }

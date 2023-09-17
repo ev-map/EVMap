@@ -133,7 +133,7 @@ class OpenChargeMapApiWrapper(
     override val supportsOnlineQueries = true
     override val supportsFullDownload = false
 
-    override suspend fun fullDownload(referenceData: ReferenceData): List<ChargeLocation> {
+    override suspend fun fullDownload(referenceData: ReferenceData): Sequence<ChargeLocation> {
         throw NotImplementedError()
     }
 

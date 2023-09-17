@@ -41,6 +41,7 @@ private val SOCKET_TYPES = immutableListOf(
     // Tesla
     OsmSocket("tesla_standard", null),
     OsmSocket("tesla_supercharger", Chargepoint.SUPERCHARGER),
+    OsmSocket("tesla_supercharger_ccs", Chargepoint.CCS_UNKNOWN),
 
     // CEE
     OsmSocket("cee_blue", Chargepoint.CEE_BLAU), // Also known as "caravan socket"

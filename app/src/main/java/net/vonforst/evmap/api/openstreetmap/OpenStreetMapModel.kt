@@ -62,6 +62,7 @@ private val SOCKET_TYPES = immutableListOf(
 
 data class OSMDocument(
     val timestamp: Instant,
+    val count: Long,
     val elements: Sequence<OSMChargingStation>
 )
 

@@ -473,7 +473,9 @@ class ChargeLocationsRepository(
         val refData = referenceData.await()
         val time = Instant.now()
         val result = api.fullDownload(refData)
-        chargeLocationsDao.insert(*result.toTypedArray())
+        result.chunked(100).forEach {
+            chargeLocationsDao.insert(*it.toTypedArray())
+        }
         val region = Mbr(
             -180.0,
             -90.0,

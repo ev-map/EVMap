@@ -59,10 +59,9 @@ private val SOCKET_TYPES = immutableListOf(
     OsmSocket("sev1011_t25", null),
 )
 
-@JsonClass(generateAdapter = true)
 data class OSMDocument(
     val timestamp: Instant,
-    val elements: List<OSMChargingStation>
+    val elements: Sequence<OSMChargingStation>
 )
 
 @JsonClass(generateAdapter = true)

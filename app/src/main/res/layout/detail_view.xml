@@ -191,6 +191,7 @@
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/textView7"
+                app:goneUnless="@{charger.data.chargepointsMerged.size() > 0}"
                 tools:itemCount="3"
                 tools:layoutManager="LinearLayoutManager"
                 tools:listitem="@layout/item_connector"
@@ -206,6 +207,7 @@
                 android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
                 android:textColor="?colorPrimary"
                 android:textAlignment="viewStart"
+                app:goneUnless="@{charger.data.chargepointsMerged.size() > 0}"
                 app:layout_constraintEnd_toStartOf="@+id/btnRefreshLiveData"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/txtConnectors" />
@@ -325,6 +327,7 @@
                 android:gravity="end"
                 android:text="@{availability.status == Status.SUCCESS ? @string/realtime_data_source(availability.data.source) : availability.status == Status.LOADING ? @string/realtime_data_loading : availability.message == &quot;not signed in&quot; ? @string/realtime_data_login_needed : @string/realtime_data_unavailable}"
                 android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+                app:goneUnless="@{charger.data.chargepointsMerged.size() > 0}"
                 app:layout_constraintEnd_toStartOf="@+id/btnLogin"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/connectors"
@@ -355,7 +358,7 @@
                 android:layout_height="1dp"
                 android:layout_marginTop="8dp"
                 android:background="?android:attr/listDivider"
-                app:goneUnless="@{charger.data != null &amp;&amp; ChargepriceApi.isChargerSupported(charger.data)}"
+                app:goneUnless="@{charger.data != null &amp;&amp; (ChargepriceApi.isChargerSupported(charger.data) || charger.data.chargerUrl != null)}"
                 app:layout_constraintTop_toBottomOf="@+id/buttonsScroller" />
 
             <TextView
@@ -510,6 +513,7 @@
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/refresh_live_data"
                 android:enabled="@{availability.status != Status.LOADING}"
+                app:goneUnless="@{charger.data.chargepointsMerged.size() > 0}"
                 app:icon="@drawable/ic_refresh"
                 app:iconTint="?android:textColorSecondary"
                 app:layout_constraintBottom_toBottomOf="@+id/textView7"

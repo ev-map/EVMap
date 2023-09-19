@@ -22,7 +22,7 @@ jobs:
       - name: Decrypt keystore
         run: openssl aes-256-cbc -K  ${{ secrets.encrypted_53968681344a_key }} -iv  ${{ secrets.encrypted_53968681344a_iv }} -in _ci/keystore.jks.enc -out _ci/keystore.jks -d
       - name: Extract version code
-        run: echo "VERSION_CODE=$(grep -o "^\s*versionCode\s\+[0-9]*" app/build.gradle | awk '{ print $2 }' | tr -d \''"\\')" >> $GITHUB_ENV
+        run: echo "VERSION_CODE=$(grep -o "^\s*versionCode\s\+[0-9]*" app/build.gradle.kts | awk '{ print $2 }' | tr -d \''"\\')" >> $GITHUB_ENV
 
       - name: Build app release
         env:

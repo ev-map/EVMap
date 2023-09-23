@@ -45,13 +45,15 @@ interface LocationAwareScreen {
 class CarAppService : androidx.car.app.CarAppService() {
     private val CHANNEL_ID = "car_location"
     private val NOTIFICATION_ID = 1000
+    private var foregroundStarted = false
 
-    override fun onCreate() {
-        super.onCreate()
-
+    fun ensureForegroundService() {
         // we want to run as a foreground service to make sure we can use location
-        createNotificationChannel()
-        startForeground(NOTIFICATION_ID, getNotification())
+        if (!foregroundStarted) {
+            createNotificationChannel()
+            startForeground(NOTIFICATION_ID, getNotification())
+            foregroundStarted = true
+        }
     }
 
     private fun createNotificationChannel() {
@@ -222,6 +224,7 @@ class EVMapSession(val cas: CarAppService) : Session(), DefaultLifecycleObserver
     @SuppressLint("MissingPermission")
     fun requestLocationUpdates() {
         if (!locationPermissionGranted()) return
+        cas.ensureForegroundService()
         Log.i(TAG, "Requesting location updates")
         requestCarHardwareLocationUpdates()
         requestPhoneLocationUpdates()

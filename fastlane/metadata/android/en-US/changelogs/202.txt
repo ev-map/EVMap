@@ -1,0 +1,5 @@
+New features:
+- Availability prediction also available on Android Auto
+
+Bugfixes:
+- Fixed crashes

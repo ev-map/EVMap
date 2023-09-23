@@ -1,0 +1,5 @@
+Neue Funktionen:
+- Auslastungsprognose auch unter Android Auto verfügbar
+
+Fehler behoben:
+- Abstürze behoben

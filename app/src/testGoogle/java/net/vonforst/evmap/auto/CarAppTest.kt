@@ -15,11 +15,12 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 import org.robolectric.annotation.internal.DoNotInstrument
 
 @RunWith(RobolectricTestRunner::class)
 @DoNotInstrument
-@Ignore("Disabled because Robolectric does not yet support API 34")
+@Config(sdk = [33])  // Robolectric does not yet support SDK 34
 class CarAppTest {
     private val testCarContext =
         TestCarContext.createCarContext(ApplicationProvider.getApplicationContext()).apply {

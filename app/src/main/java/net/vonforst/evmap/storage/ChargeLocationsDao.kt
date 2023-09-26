@@ -11,6 +11,13 @@ import com.car2go.maps.model.LatLngBounds
 import com.car2go.maps.util.SphericalUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.flow.FlowCollector
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.cancel
+import kotlinx.coroutines.launch
 import net.vonforst.evmap.api.ChargepointApi
 import net.vonforst.evmap.api.ChargepointList
 import net.vonforst.evmap.api.StringProvider
@@ -154,6 +161,8 @@ class ChargeLocationsRepository(
 
     private val chargeLocationsDao = db.chargeLocationsDao()
     private val savedRegionDao = db.savedRegionDao()
+    private var fullDownloadJob: Job? = null
+    private var fullDownloadProgress: MutableStateFlow<Float?> = MutableStateFlow(null)
 
     fun getChargepoints(
         bounds: LatLngBounds,
@@ -225,7 +234,16 @@ class ChargeLocationsRepository(
         } else {
             return liveData {
                 if (!savedRegionResult.await()) {
-                    fullDownload()
+                    val job = fullDownloadJob ?: scope.launch {
+                        fullDownload()
+                    }.also { fullDownloadJob = it }
+                    val progressJob = scope.launch {
+                        fullDownloadProgress.collect {
+                            emit(Resource.loading(null, it))
+                        }
+                    }
+                    job.join()
+                    progressJob.cancelAndJoin()
                 }
                 emit(Resource.success(dbResult.await()))
             }
@@ -307,7 +325,16 @@ class ChargeLocationsRepository(
         } else {
             return liveData {
                 if (!savedRegionResult.await()) {
-                    fullDownload()
+                    val job = fullDownloadJob ?: scope.launch {
+                        fullDownload()
+                    }.also { fullDownloadJob = it }
+                    val progressJob = scope.launch {
+                        fullDownloadProgress.collect {
+                            emit(Resource.loading(null, it))
+                        }
+                    }
+                    job.join()
+                    progressJob.cancelAndJoin()
                 }
                 emit(Resource.success(dbResult.await()))
             }
@@ -470,25 +497,29 @@ class ChargeLocationsRepository(
         val api = api.value!!
         if (!api.supportsFullDownload) return
 
-        val refData = referenceData.await()
         val time = Instant.now()
-        val result = api.fullDownload(refData)
-        result.chunked(100).forEach {
-            chargeLocationsDao.insert(*it.toTypedArray())
-        }
-        val region = Mbr(
-            -180.0,
-            -90.0,
-            180.0,
-            90.0, 4326
-        ).asPolygon()
-        savedRegionDao.insert(
-            SavedRegion(
-                region, api.id, time,
-                null,
-                true
+        val result = api.fullDownload()
+        try {
+            result.chargers.chunked(100).forEach {
+                chargeLocationsDao.insert(*it.toTypedArray())
+                fullDownloadProgress.value = result.progress
+            }
+            val region = Mbr(
+                -180.0,
+                -90.0,
+                180.0,
+                90.0, 4326
+            ).asPolygon()
+            savedRegionDao.insert(
+                SavedRegion(
+                    region, api.id, time,
+                    null,
+                    true
+                )
             )
-        )
+        } finally {
+            fullDownloadProgress.value = null
+        }
     }
 
 

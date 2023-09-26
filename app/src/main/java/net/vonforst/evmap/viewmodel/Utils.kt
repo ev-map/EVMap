@@ -39,19 +39,24 @@ enum class Status {
  * trying to write it to a Parcel if the type parameter does not implement Parcelable.
  */
 @Parcelize
-data class Resource<out T>(val status: Status, val data: @RawValue T?, val message: String?) :
+data class Resource<out T>(
+    val status: Status,
+    val data: @RawValue T?,
+    val message: String?,
+    val progress: Float? = null
+) :
     Parcelable {
     companion object {
         fun <T> success(data: T?): Resource<T> {
-            return Resource(Status.SUCCESS, data, null)
+            return Resource(Status.SUCCESS, data, null, null)
         }
 
         fun <T> error(msg: String?, data: T?): Resource<T> {
-            return Resource(Status.ERROR, data, msg)
+            return Resource(Status.ERROR, data, msg, null)
         }
 
-        fun <T> loading(data: T?): Resource<T> {
-            return Resource(Status.LOADING, data, null)
+        fun <T> loading(data: T?, progress: Float? = null): Resource<T> {
+            return Resource(Status.LOADING, data, null, progress)
         }
     }
 }

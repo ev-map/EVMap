@@ -3,8 +3,6 @@ package net.vonforst.evmap.api.openstreetmap
 import android.database.DatabaseUtils
 import com.car2go.maps.model.LatLng
 import com.car2go.maps.model.LatLngBounds
-import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.JsonReader
 import com.squareup.moshi.Moshi
 import net.vonforst.evmap.BuildConfig
 import net.vonforst.evmap.R
@@ -12,6 +10,7 @@ import net.vonforst.evmap.addDebugInterceptors
 import net.vonforst.evmap.api.ChargepointApi
 import net.vonforst.evmap.api.ChargepointList
 import net.vonforst.evmap.api.FiltersSQLQuery
+import net.vonforst.evmap.api.FullDownloadResult
 import net.vonforst.evmap.api.StringProvider
 import net.vonforst.evmap.api.mapPower
 import net.vonforst.evmap.api.mapPowerInverse
@@ -32,14 +31,11 @@ import net.vonforst.evmap.model.getMultipleChoiceValue
 import net.vonforst.evmap.model.getSliderValue
 import net.vonforst.evmap.viewmodel.Resource
 import okhttp3.OkHttpClient
-import okhttp3.Request
 import retrofit2.Response
 import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 import java.io.IOException
 import java.time.Duration
-import java.time.Instant
 
 interface OpenStreetMapApi {
     @GET("charging-stations-osm.json")
@@ -108,7 +104,7 @@ class OpenStreetMapApiWrapper(baseurl: String = "https://evmap-dev.vonforst.net"
     }
 
     override suspend fun getReferenceData(): Resource<OSMReferenceData> {
-        TODO("Not yet implemented")
+        throw NotImplementedError()
     }
 
     override fun getFilters(
@@ -215,20 +211,34 @@ class OpenStreetMapApiWrapper(baseurl: String = "https://evmap-dev.vonforst.net"
         return true
     }
 
-    override suspend fun fullDownload(referenceData: ReferenceData): Sequence<ChargeLocation> {
+    override suspend fun fullDownload(): FullDownloadResult<OSMReferenceData> {
         val response = api.getAllChargingStations()
         if (!response.isSuccessful) {
             throw IOException(response.message())
         } else {
             val body = response.body()!!
-            val time = body.timestamp
-            return sequence {
-                body.elements.forEach {
-                    yield(it.convert(time))
-                }
-            }
+            return OSMFullDownloadResult(body)
         }
     }
 }
 
 data class OSMReferenceData(val test: String) : ReferenceData()
+
+class OSMFullDownloadResult(private val body: OSMDocument) : FullDownloadResult<OSMReferenceData> {
+    private var downloadProgress = 0f
+    override val chargers: Sequence<ChargeLocation>
+        get() {
+            val time = body.timestamp
+            return sequence {
+                body.elements.forEachIndexed { i, it ->
+                    yield(it.convert(time))
+                    downloadProgress = i.toFloat() / body.count
+                }
+            }
+        }
+    override val progress: Float
+        get() = downloadProgress
+    override val referenceData: OSMReferenceData
+        get() = TODO("Not yet implemented")
+
+}

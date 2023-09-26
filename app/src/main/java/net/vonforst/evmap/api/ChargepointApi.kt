@@ -78,15 +78,8 @@ interface ChargepointApi<out T : ReferenceData> {
      * Fetches all available chargers from this API.
      *
      * This may take a long time and should only be used when the user explicitly wants to download all chargers.
-     *
-     * TODO: add an optional callback parameter to this function to be able to receive updates on the download progress?
-     * TODO: Should this also include getting the ReferenceData, instead of taking it as an argument?
-     *       ReferenceData typically includes information that is needed to create the filter options, e.g.
-     *       mappings between IDs and readable names (for operators etc.). So probably for OSM it makes sense
-     *       to generate that within this function (e.g. build the list of available operators using all the
-     *       operators found in the dataset).
      */
-    suspend fun fullDownload(referenceData: ReferenceData): Sequence<ChargeLocation>
+    suspend fun fullDownload(): FullDownloadResult<T>
 }
 
 interface StringProvider {
@@ -135,4 +128,10 @@ data class ChargepointList(val items: List<ChargepointListItem>, val isComplete:
     companion object {
         fun empty() = ChargepointList(emptyList(), true)
     }
+}
+
+interface FullDownloadResult<out T : ReferenceData> {
+    val chargers: Sequence<ChargeLocation>
+    val progress: Float
+    val referenceData: T
 }

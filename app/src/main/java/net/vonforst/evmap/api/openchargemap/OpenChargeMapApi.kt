@@ -115,7 +115,7 @@ class OpenChargeMapApiWrapper(
     override val supportsOnlineQueries = true
     override val supportsFullDownload = false
 
-    override suspend fun fullDownload(referenceData: ReferenceData): Sequence<ChargeLocation> {
+    override suspend fun fullDownload(): FullDownloadResult<OCMReferenceData> {
         throw NotImplementedError()
     }
 

@@ -520,7 +520,7 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
         val intent =
             Intent(
                 CarContext.ACTION_NAVIGATE,
-                Uri.parse("geo:0,0?q=${coord.lat},${coord.lng}(${charger.name})")
+                Uri.parse("geo:${coord.lat},${coord.lng}")
             )
         carContext.startCarApp(intent)
     }

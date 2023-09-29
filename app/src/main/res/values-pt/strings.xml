@@ -13,7 +13,7 @@
     <string name="rename">Renomear</string>
     <string name="chargeprice_donation_dialog_detail">Você faz grande uso da comparação de preços. Ajude a cobrir os custos de acesso à informação apoiando o EVMap com uma doação.</string>
     <string name="verified">verificado</string>
-    <string name="chargeprice_select_connector">Escolhe o conector</string>
+    <string name="chargeprice_select_connector">Escolha o conector</string>
     <string name="verified_desc">O carregador foi marcado como funcional por um membro da comunidade %s</string>
     <string name="charge_price_format">%2$s%1$.2f</string>
     <string name="charge_price_average_format">⌀ %2$s%1$.2f/kWh</string>
@@ -58,7 +58,7 @@
     <string name="fault_report_date">Com problemas (atualizado: %s)</string>
     <string name="filter_chargecards">Formas de pagamento</string>
     <string name="pref_language">Língua da app</string>
-    <string name="all_selected">Todas selecionadas</string>
+    <string name="all_selected">Todos selecionados</string>
     <string name="edit">editar</string>
     <string name="pref_darkmode">Modo escuro</string>
     <string name="connection_error">Não foi possível carregar a lista de carregadores</string>
@@ -76,7 +76,7 @@
     <string name="category_public_authorities">Autoridades públicas</string>
     <string name="category_private_charger">Carregador privado</string>
     <string name="category_rest_area">Área de descanso</string>
-    <string name="edit_at_datasource">Editado em %s</string>
+    <string name="edit_at_datasource">Editar em %s</string>
     <string name="categories">Categorias</string>
     <string name="category_service_on_motorway">Área de serviço (autoestrada)</string>
     <string name="category_service_off_motorway">Área de serviço (fora da autoestrada)</string>
@@ -96,7 +96,7 @@
     <string name="save_profile_enter_name">Insira o nome do perfil com este filtro:</string>
     <string name="save_as_profile">Guardar como perfil</string>
     <string name="filterprofiles_empty_state">Não existem filtros guardados</string>
-    <string name="welcome_2">Cada cor corresponde a potência máxima do carregador</string>
+    <string name="welcome_2">Cada cor corresponde à potência máxima do carregador</string>
     <string name="welcome_to_evmap">Bem-vindo(a) ao EVMap</string>
     <string name="pref_darkmode_always_off">Sempre desligado</string>
     <string name="welcome_2_title">Escolha a potência</string>
@@ -153,14 +153,14 @@
     <string name="lets_go">Vamos lá</string>
     <string name="crash_report_text">O EVMap encontrou um problema. Por favor envie um relatório do erro para o criador da app.</string>
     <string name="crash_report_comment_prompt">Pode adicionar um comentário abaixo:</string>
-    <string name="pref_search_provider">Fornecedor da pesquisa</string>
+    <string name="pref_search_provider">Provedor da pesquisa</string>
     <string name="powered_by_mapbox">via Mapbox</string>
     <string name="github_sponsors">GitHub Sponsors</string>
     <string name="donate_desc">Apoie o desenvolvimento do EVMap com uma única doação</string>
     <string name="pref_map_rotate_gestures_on">Use dois dedos para girar o mapa</string>
     <string name="pref_map_rotate_gestures_off">Rotação desligada (norte sempre para cima)</string>
     <string name="refresh_live_data">atualizar estado em tempo real</string>
-    <string name="pref_search_provider_info">As pesquisas são caras, especialmente quando o Google Maps é usado. Por favor considere doar através de \"Sobre\" → \"Doar\".</string>
+    <string name="pref_search_provider_info">As pesquisas são caras, especialmente se o Google Maps for utilizado. Por favor considere doar através de \"Sobre\" → \"Doar\".</string>
     <string name="github_sponsors_desc">Apoie o EVMap através do GitHub</string>
     <string name="unnamed_filter_profile">Filtro sem nome</string>
     <string name="deleted_recent_search_results">As pesquisas recentes foram eliminadas</string>
@@ -325,7 +325,7 @@
     <string name="settings_cache_clear">Limpar cache</string>
     <string name="settings_cache_count_summary">%d carregadores na base de dados, %.1f MB</string>
     <string name="settings_caching">Caching (base de dados local)</string>
-    <string name="settings_cache_clear_summary">Elimina todos os carregadores guardados na base de dados local, com a exceção dos seus favoritos</string>
+    <string name="settings_cache_clear_summary">Elimina todos os carregadores guardados localmente, com a exceção dos seus favoritos</string>
     <string name="auto_no_chargers_found">Não foram encontrados carregadores próximo de si</string>
     <string name="auto_no_favorites_found">Nenhum favorito encontrado</string>
     <string name="opened_on_phone">Aberto no telefone</string>
@@ -371,5 +371,5 @@
     <string name="pref_units_imperial">Imperial</string>
     <string name="referrals_info">Também pode usar um dos seguintes links de afiliado para apoiar o desenvolvedor da app com a sua compra.</string>
     <string name="generic_connection_error">Não foi possível carregar a informação</string>
-    <string name="powered_by_fronyx">previsão feita pelo fronyx</string>
+    <string name="powered_by_fronyx">previsão feita por fronyx</string>
 </resources>

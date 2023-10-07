@@ -209,8 +209,8 @@ class CheckableChargepriceCarAdapter : DataBindingAdapter<ChargepriceCar>() {
                 checkedItem = item
                 root.post {
                     notifyDataSetChanged()
+                    onCheckedItemChangedListener?.invoke(getCheckedItem()!!)
                 }
-                onCheckedItemChangedListener?.invoke(getCheckedItem()!!)
             }
         }
     }

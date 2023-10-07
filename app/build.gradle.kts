@@ -192,10 +192,10 @@ configurations {
 }
 
 dependencies {
-    val kotlinVersion: String by rootProject.extra
+    val kotlin_version: String by rootProject.extra
     val about_libs_version: String by rootProject.extra
     val nav_version: String by rootProject.extra
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.core:core-splashscreen:1.0.1")

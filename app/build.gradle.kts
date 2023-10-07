@@ -66,7 +66,7 @@ android {
         create("automotive") {
             dimension = "automotive"
             versionNameSuffix = "-automotive"
-            versionCode = defaultConfig.versionCode++
+            versionCode = defaultConfig.versionCode!! + 1
             minSdk = 29
         }
     }

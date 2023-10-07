@@ -24,8 +24,8 @@ android {
         versionName = "1.6.9"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        val resConfigs = supportedLocales.split(",")
-        buildConfigField("String", "supportedLocales", """ + supportedLocales + """)
+        resourceConfigurations += supportedLocales.split(",")
+        buildConfigField("String", "supportedLocales", "\"$supportedLocales\"")
     }
 
     signingConfigs {

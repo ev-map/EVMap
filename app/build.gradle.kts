@@ -1,3 +1,5 @@
+import java.util.Base64
+
 plugins {
     id("com.adarshr.test-logger") version "3.1.0"
     id("com.android.application")
@@ -108,46 +110,68 @@ android {
     namespace = "net.vonforst.evmap"
 
     // add API keys from environment variable if not set in apikeys.xml
-    applicationVariants.all { variant ->
-        val goingelectricKey = System.getenv(GOINGELECTRIC_API_KEY) ?: project.findProperty("GOINGELECTRIC_API_KEY").toString()
+    applicationVariants.forEach { variant ->
+        val goingelectricKey =
+            System.getenv("GOINGELECTRIC_API_KEY") ?: project.findProperty("GOINGELECTRIC_API_KEY")
+                .toString()
         if (goingelectricKey != null) {
             variant.resValue("string", "goingelectric_key", goingelectricKey)
         }
-        var openchargemapKey = System.getenv(OPENCHARGEMAP_API_KEY) ?: project.findProperty("OPENCHARGEMAP_API_KEY")
+        var openchargemapKey =
+            System.getenv("OPENCHARGEMAP_API_KEY") ?: project.findProperty("OPENCHARGEMAP_API_KEY")
         if (openchargemapKey == null && project.hasProperty("OPENCHARGEMAP_API_KEY_ENCRYPTED")) {
-            openchargemapKey = decode(project.findProperty("OPENCHARGEMAP_API_KEY_ENCRYPTED").toString(), "FmK.d,-f*p+rD+WK!eds")
+            openchargemapKey = decode(
+                project.findProperty("OPENCHARGEMAP_API_KEY_ENCRYPTED").toString(),
+                "FmK.d,-f*p+rD+WK!eds"
+            )
         }
         if (openchargemapKey != null) {
             variant.resValue("string", "openchargemap_key", "openchargemapKey")
         }
-        val googleMapsKey = System.getenv(GOOGLE_MAPS_API_KEY) ?: project.findProperty("GOOGLE_MAPS_API_KEY").toString()
+        val googleMapsKey =
+            System.getenv("GOOGLE_MAPS_API_KEY") ?: project.findProperty("GOOGLE_MAPS_API_KEY")
+                .toString()
         if (googleMapsKey != null && variant.flavorName.startsWith("google")) {
             variant.resValue("string", "google_maps_key", googleMapsKey)
         }
-        var mapboxKey = System.getenv(MAPBOX_API_KEY) ?: project.findProperty("MAPBOX_API_KEY")
+        var mapboxKey = System.getenv("MAPBOX_API_KEY") ?: project.findProperty("MAPBOX_API_KEY")
         if (mapboxKey == null && project.hasProperty("MAPBOX_API_KEY_ENCRYPTED")) {
-            mapboxKey = decode(project.findProperty("MAPBOX_API_KEY_ENCRYPTED").toString(), "FmK.d,-f*p+rD+WK!eds")
+            mapboxKey = decode(
+                project.findProperty("MAPBOX_API_KEY_ENCRYPTED").toString(),
+                "FmK.d,-f*p+rD+WK!eds"
+            )
         }
         if (mapboxKey != null) {
             variant.resValue("string", "mapbox_key", "mapboxKey")
         }
-        var chargepriceKey = System.getenv(CHARGEPRICE_API_KEY) ?: project.findProperty("CHARGEPRICE_API_KEY")
+        var chargepriceKey =
+            System.getenv("CHARGEPRICE_API_KEY") ?: project.findProperty("CHARGEPRICE_API_KEY")
         if (chargepriceKey == null && project.hasProperty("CHARGEPRICE_API_KEY_ENCRYPTED")) {
-            chargepriceKey = decode(project.findProperty("CHARGEPRICE_API_KEY_ENCRYPTED").toString(), "FmK.d,-f*p+rD+WK!eds")
+            chargepriceKey = decode(
+                project.findProperty("CHARGEPRICE_API_KEY_ENCRYPTED").toString(),
+                "FmK.d,-f*p+rD+WK!eds"
+            )
         }
         if (chargepriceKey != null) {
             variant.resValue("string", "chargeprice_key", "chargepriceKey")
         }
-        var fronyxKey = System.getenv(FRONYX_API_KEY) ?: project.findProperty("FRONYX_API_KEY")
+        var fronyxKey = System.getenv("FRONYX_API_KEY") ?: project.findProperty("FRONYX_API_KEY")
         if (fronyxKey == null && project.hasProperty("FRONYX_API_KEY_ENCRYPTED")) {
-            fronyxKey = decode(project.findProperty("FRONYX_API_KEY_ENCRYPTED").toString(), "FmK.d,-f*p+rD+WK!eds")
+            fronyxKey = decode(
+                project.findProperty("FRONYX_API_KEY_ENCRYPTED").toString(),
+                "FmK.d,-f*p+rD+WK!eds"
+            )
         }
         if (fronyxKey != null) {
             variant.resValue("string", "fronyx_key", "fronyxKey")
         }
-        var acraKey = System.getenv(ACRA_CRASHREPORT_CREDENTIALS) ?: project.findProperty("ACRA_CRASHREPORT_CREDENTIALS")
+        var acraKey = System.getenv("ACRA_CRASHREPORT_CREDENTIALS")
+            ?: project.findProperty("ACRA_CRASHREPORT_CREDENTIALS")
         if (acraKey == null && project.hasProperty("ACRA_CRASHREPORT_CREDENTIALS_ENCRYPTED")) {
-            acraKey = decode(project.findProperty("ACRA_CRASHREPORT_CREDENTIALS_ENCRYPTED").toString(), "FmK.d,-f*p+rD+WK!eds")
+            acraKey = decode(
+                project.findProperty("ACRA_CRASHREPORT_CREDENTIALS_ENCRYPTED").toString(),
+                "FmK.d,-f*p+rD+WK!eds"
+            )
         }
         if (acraKey != null) {
             variant.resValue("string", "acra_credentials", "acraKey")
@@ -287,11 +311,11 @@ dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.3")
 }
 
-fun decode(s: String, key: String): String? {
-    return String(xorWithKey(s.decodeBase64(), key.toByteArray()), "UTF-8")
+fun decode(s: String, key: String): String {
+    return String(xorWithKey(Base64.getDecoder().decode(s), key.toByteArray()), Charsets.UTF_8)
 }
 
-fun xorWithKey(a: ByteArray, key: ByteArray): ByteArray? {
+fun xorWithKey(a: ByteArray, key: ByteArray): ByteArray {
     val out = ByteArray(a.size)
     for (i in a.indices) {
         out[i] = (a[i].toInt() xor key[i % key.size].toInt()).toByte()

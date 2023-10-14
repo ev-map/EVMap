@@ -116,6 +116,7 @@ class ChargepriceViewModel(
         MediatorLiveData<Resource<List<ChargePrice>>>().apply {
             value = state["chargePrices"] ?: Resource.loading(null)
             listOf(
+                vehicle,
                 batteryRange,
                 batteryRangeSliderDragging,
                 vehicleCompatibleConnectors,

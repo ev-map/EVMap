@@ -168,7 +168,7 @@ class ChargepriceFragment : Fragment() {
             chargepriceAdapter.myTariffsAll = it
         }
         vm.chargePricesForChargepoint.observe(viewLifecycleOwner) {
-            it?.data?.let { chargepriceAdapter.submitList(it) }
+            chargepriceAdapter.submitList(it?.data ?: emptyList())
         }
 
         val connectorsAdapter = CheckableConnectorAdapter()

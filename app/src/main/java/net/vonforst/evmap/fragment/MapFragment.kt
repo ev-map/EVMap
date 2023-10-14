@@ -1224,26 +1224,29 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             MenuCompat.setGroupDividerEnabled(popup.menu, true)
             popup.setForceShowIcon(true)
             popup.setOnMenuItemClickListener {
+                val navController = requireView().findNavController()
                 when (it.itemId) {
                     R.id.menu_edit_filters -> {
                         exitTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true)
                         reenterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false)
                         lifecycleScope.launch {
                             vm.copyFiltersToCustom()
-                            requireView().findNavController().safeNavigate(
+                            navController.safeNavigate(
                                 MapFragmentDirections.actionMapToFilterFragment()
                             )
                         }
                         true
                     }
+
                     R.id.menu_manage_filter_profiles -> {
                         exitTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true)
                         reenterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false)
-                        requireView().findNavController().safeNavigate(
+                        navController.safeNavigate(
                             MapFragmentDirections.actionMapToFilterProfilesFragment()
                         )
                         true
                     }
+
                     else -> {
                         val profileId = profilesMap.inverse[it]
                         if (profileId != null) {

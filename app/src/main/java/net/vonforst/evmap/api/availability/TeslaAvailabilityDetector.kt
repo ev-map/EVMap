@@ -287,7 +287,7 @@ interface TeslaGraphQlApi {
     data class GetChargingSiteInformationResponseData(val charging: GetChargingSiteInformationResponseDataCharging)
 
     @JsonClass(generateAdapter = true)
-    data class GetChargingSiteInformationResponseDataCharging(val site: ChargingSiteInformation)
+    data class GetChargingSiteInformationResponseDataCharging(val site: ChargingSiteInformation?)
 
     @JsonClass(generateAdapter = true)
     data class ChargingSiteInformation(
@@ -547,7 +547,7 @@ class TeslaAvailabilityDetector(
                     TeslaGraphQlApi.VehicleMakeType.NON_TESLA
                 )
             )
-        ).data.charging.site
+        ).data.charging.site ?: throw AvailabilityDetectorException("no candidates found.")
 
 
         val scV2Connectors = location.chargepoints.filter { it.type == Chargepoint.SUPERCHARGER }

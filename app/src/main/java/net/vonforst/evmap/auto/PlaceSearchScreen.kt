@@ -116,7 +116,7 @@ class PlaceSearchScreen(
 
                     setOnClickListener {
                         lifecycleScope.launch {
-                            val placeDetails = getDetails(place.id)
+                            val placeDetails = getDetails(place.id) ?: return@launch
                             prefs.placeSearchResultAndroidAuto = placeDetails.latLng
                             prefs.placeSearchResultAndroidAutoName =
                                 place.primaryText.toString()
@@ -226,9 +226,9 @@ class PlaceSearchScreen(
         }
     }
 
-    suspend fun getDetails(id: String): PlaceWithBounds {
+    suspend fun getDetails(id: String): PlaceWithBounds? {
         val provider = currentProvider!!
-        val result = resultList!!.find { it.id == id }!!
+        val result = resultList?.find { it.id == id } ?: return null
 
         val recentPlace = recentResults.find { it.id == id }
         if (recentPlace != null) return recentPlace.asPlaceWithBounds()

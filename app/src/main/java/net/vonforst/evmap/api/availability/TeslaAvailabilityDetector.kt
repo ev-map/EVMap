@@ -445,6 +445,9 @@ interface TeslaGraphQlApi {
         @Json(name = "WAIT_ESTIMATE_BUCKET_APPROXIMATELY_20_MINUTES")
         APPROXIMATELY_20_MINUTES,
 
+        @Json(name = "WAIT_ESTIMATE_BUCKET_GREATER_THAN_25_MINUTES")
+        GREATER_THAN_25_MINUTES,
+
         @Json(name = "WAIT_ESTIMATE_BUCKET_UNKNOWN")
         UNKNOWN
     }

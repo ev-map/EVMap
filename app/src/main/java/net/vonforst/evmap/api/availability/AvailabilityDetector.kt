@@ -3,6 +3,7 @@ package net.vonforst.evmap.api.availability
 import android.content.Context
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import net.vonforst.evmap.R
 import net.vonforst.evmap.addDebugInterceptors
 import net.vonforst.evmap.api.RateLimitInterceptor
 import net.vonforst.evmap.api.await
@@ -170,8 +171,15 @@ class AvailabilityRepository(context: Context) {
         .connectTimeout(10, TimeUnit.SECONDS)
         .cookieJar(JavaNetCookieJar(cookieManager))
         .build()
-    private val teslaAvailabilityDetector =
-        TeslaAvailabilityDetector(okhttp, EncryptedPreferenceDataStore(context))
+    private val teslaAvailabilityDetector = run {
+        val (clientId, clientSecret) = context.getString(R.string.tesla_credentials).split(":")
+        TeslaAvailabilityDetector(
+            okhttp,
+            EncryptedPreferenceDataStore(context),
+            clientId,
+            clientSecret
+        )
+    }
     private val availabilityDetectors = listOf(
         RheinenergieAvailabilityDetector(okhttp),
         teslaAvailabilityDetector,

@@ -139,10 +139,8 @@ class DataSettingsFragment : BaseSettingsFragment() {
     }
 
     private fun teslaLogin() {
-        val codeVerifier = TeslaAuthenticationApi.generateCodeVerifier()
-        val codeChallenge = TeslaAuthenticationApi.generateCodeChallenge(codeVerifier)
-        val uri = TeslaAuthenticationApi.buildSignInUri(codeChallenge)
-
+        val (clientId, _) = getString(R.string.tesla_credentials).split(":")
+        val uri = TeslaAuthenticationApi.buildSignInUri(clientId = clientId)
         val args = OAuthLoginFragmentArgs(
             uri.toString(),
             TeslaAuthenticationApi.resultUrlPrefix,
@@ -150,28 +148,33 @@ class DataSettingsFragment : BaseSettingsFragment() {
         ).toBundle()
 
         setFragmentResultListener(uri.toString()) { _, result ->
-            teslaGetAccessToken(result, codeVerifier)
+            teslaGetAccessToken(result)
         }
 
         findNavController().navigate(R.id.oauth_login, args)
     }
 
-    private fun teslaGetAccessToken(result: Bundle, codeVerifier: String) {
+    private fun teslaGetAccessToken(result: Bundle) {
         teslaAccountPreference.summary = getString(R.string.logging_in)
 
         val url = Uri.parse(result.getString("url"))
         val code = url.getQueryParameter("code") ?: return
         val okhttp = OkHttpClient.Builder().addDebugInterceptors().build()
-        val request = TeslaAuthenticationApi.AuthCodeRequest(code, codeVerifier)
+        val (clientId, clientSecret) = getString(R.string.tesla_credentials).split(":")
+        val request = TeslaAuthenticationApi.AuthCodeRequest(
+            code,
+            clientId = clientId,
+            clientSecret = clientSecret
+        )
         lifecycleScope.launch {
             try {
                 val time = Instant.now().epochSecond
                 val response =
                     TeslaAuthenticationApi.create(okhttp).getToken(request)
-                val userResponse =
-                    TeslaOwnerApi.create(okhttp, response.accessToken).getUserInfo()
+//                val userResponse =
+//                    TeslaOwnerApi.create(okhttp, response.accessToken).getUserInfo()
 
-                encryptedPrefs.teslaEmail = userResponse.response.email
+                encryptedPrefs.teslaEmail = "user@example.com"
                 encryptedPrefs.teslaAccessToken = response.accessToken
                 encryptedPrefs.teslaAccessTokenExpiry = time + response.expiresIn
                 encryptedPrefs.teslaRefreshToken = response.refreshToken

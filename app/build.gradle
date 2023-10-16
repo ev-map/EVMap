@@ -152,6 +152,13 @@ android {
         if (acraKey != null) {
             variant.resValue "string", "acra_credentials", acraKey
         }
+        def teslaKey = env.TESLA_CREDENTIALS ?: project.findProperty("TESLA_CREDENTIALS")
+        if (teslaKey == null && project.hasProperty("TESLA_CREDENTIALS_ENCRYPTED")) {
+            teslaKey = decode(project.findProperty("TESLA_CREDENTIALS_ENCRYPTED"), "FmK.d,-f*p+rD+WK!eds")
+        }
+        if (teslaKey != null) {
+            variant.resValue "string", "tesla_credentials", teslaKey
+        }
     }
 
     packagingOptions {

@@ -149,6 +149,21 @@ in German.
 
 </details>
 
+### **Tesla**
+
+[API documentation](https://developer.tesla.com/docs/fleet-api)
+
+<details>
+<summary>How to obtain an API key</summary>
+
+1. [Sign up](https://www.tesla.com/teslaaccount) for a Tesla account
+2. In the [Tesla Developer Portal](https://developer.tesla.com/), click on "Request app access"
+3. Enter the details of your app
+4. You will receive a *Client ID* and *Client Secret*. Enter them both into `tesla_credentials`,
+   separated by a colon (`:`).
+
+</details>
+
 Pricing providers
 -----------------
 

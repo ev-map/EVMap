@@ -8,9 +8,6 @@ import android.content.pm.PackageManager.NameNotFoundException
 import android.hardware.Sensor
 import android.hardware.SensorManager
 import android.net.Uri
-import android.os.Bundle
-import android.os.IInterface
-import android.text.Html
 import androidx.annotation.StringRes
 import androidx.car.app.CarContext
 import androidx.car.app.CarToast
@@ -23,7 +20,6 @@ import androidx.core.graphics.drawable.IconCompat
 import androidx.core.text.HtmlCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import net.vonforst.evmap.*
 import net.vonforst.evmap.api.availability.TeslaAuthenticationApi
@@ -240,12 +236,9 @@ class DataSettingsScreen(ctx: CarContext) : Screen(ctx) {
     }
 
     private fun teslaLogin() {
-        val codeVerifier = TeslaAuthenticationApi.generateCodeVerifier()
-        val codeChallenge = TeslaAuthenticationApi.generateCodeChallenge(codeVerifier)
-        val uri = TeslaAuthenticationApi.buildSignInUri(codeChallenge)
-
+        val (clientId, _) = carContext.getString(R.string.tesla_credentials).split(":")
         val args = OAuthLoginFragmentArgs(
-            uri.toString(),
+            TeslaAuthenticationApi.buildSignInUri(clientId = clientId).toString(),
             TeslaAuthenticationApi.resultUrlPrefix,
             "#000000"
         ).toBundle()
@@ -261,7 +254,7 @@ class DataSettingsScreen(ctx: CarContext) : Screen(ctx) {
                         OAuthLoginFragment.EXTRA_URL,
                         Uri::class.java
                     )
-                    teslaGetAccessToken(url!!, codeVerifier)
+                    teslaGetAccessToken(url!!)
                 }
             }, IntentFilter(OAuthLoginFragment.ACTION_OAUTH_RESULT))
 
@@ -276,22 +269,27 @@ class DataSettingsScreen(ctx: CarContext) : Screen(ctx) {
         }
     }
 
-    private fun teslaGetAccessToken(url: Uri, codeVerifier: String) {
+    private fun teslaGetAccessToken(url: Uri) {
         teslaLoggingIn = true
         invalidate()
 
         val code = url.getQueryParameter("code") ?: return
         val okhttp = OkHttpClient.Builder().addDebugInterceptors().build()
-        val request = TeslaAuthenticationApi.AuthCodeRequest(code, codeVerifier)
+        val (clientId, clientSecret) = carContext.getString(R.string.tesla_credentials).split(":")
+        val request = TeslaAuthenticationApi.AuthCodeRequest(
+            code,
+            clientId = clientId,
+            clientSecret = clientSecret
+        )
         lifecycleScope.launch {
             try {
                 val time = Instant.now().epochSecond
                 val response =
                     TeslaAuthenticationApi.create(okhttp).getToken(request)
-                val userResponse =
-                    TeslaOwnerApi.create(okhttp, response.accessToken).getUserInfo()
+//                val userResponse =
+//                    TeslaOwnerApi.create(okhttp, response.accessToken).getUserInfo()
 
-                encryptedPrefs.teslaEmail = userResponse.response.email
+                encryptedPrefs.teslaEmail = "user@example.com"
                 encryptedPrefs.teslaAccessToken = response.accessToken
                 encryptedPrefs.teslaAccessTokenExpiry = time + response.expiresIn
                 encryptedPrefs.teslaRefreshToken = response.refreshToken

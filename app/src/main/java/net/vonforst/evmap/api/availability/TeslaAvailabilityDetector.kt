@@ -35,22 +35,24 @@ interface TeslaAuthenticationApi {
     @JsonClass(generateAdapter = true)
     class AuthCodeRequest(
         val code: String,
-        @Json(name = "code_verifier") val codeVerifier: String,
-        @Json(name = "redirect_uri") val redirectUri: String = "https://auth.tesla.com/void/callback",
-        scope: String = "openid email offline_access",
-        @Json(name = "client_id") clientId: String = "ownerapi"
-    ) : OAuth2Request(scope, clientId)
+        @Json(name = "redirect_uri") val redirectUri: String = "https://ev-map.app/void/callback",
+        scope: String = "openid offline_access vehicle_device_data",
+        @Json(name = "client_id") clientId: String,
+        @Json(name = "client_secret") clientSecret: String
+    ) : OAuth2Request(scope, clientId, clientSecret)
 
     @JsonClass(generateAdapter = true)
     class RefreshTokenRequest(
         @Json(name = "refresh_token") val refreshToken: String,
-        scope: String = "openid email offline_access",
-        @Json(name = "client_id") clientId: String = "ownerapi"
-    ) : OAuth2Request(scope, clientId)
+        scope: String = "openid offline_access vehicle_device_data",
+        @Json(name = "client_id") clientId: String,
+        @Json(name = "client_secret") clientSecret: String,
+    ) : OAuth2Request(scope, clientId, clientSecret)
 
     sealed class OAuth2Request(
         val scope: String,
-        val clientId: String
+        val clientId: String,
+        val clientSecret: String
     )
 
     @JsonClass(generateAdapter = true)
@@ -85,36 +87,15 @@ interface TeslaAuthenticationApi {
             return retrofit.create(TeslaAuthenticationApi::class.java)
         }
 
-        fun generateCodeVerifier(): String {
-            val code = ByteArray(64)
-            SecureRandom().nextBytes(code)
-            return Base64.encodeToString(
-                code,
-                Base64.URL_SAFE or Base64.NO_WRAP or Base64.NO_PADDING
-            )
-        }
-
-        fun generateCodeChallenge(codeVerifier: String): String {
-            val bytes = codeVerifier.toByteArray()
-            val messageDigest = MessageDigest.getInstance("SHA-256")
-            messageDigest.update(bytes, 0, bytes.size)
-            return Base64.encodeToString(
-                messageDigest.digest(),
-                Base64.URL_SAFE or Base64.NO_WRAP or Base64.NO_PADDING
-            )
-        }
-
-        fun buildSignInUri(codeChallenge: String): Uri =
+        fun buildSignInUri(clientId: String): Uri =
             Uri.parse("https://auth.tesla.com/oauth2/v3/authorize").buildUpon()
-                .appendQueryParameter("client_id", "ownerapi")
-                .appendQueryParameter("code_challenge", codeChallenge)
-                .appendQueryParameter("code_challenge_method", "S256")
-                .appendQueryParameter("redirect_uri", "https://auth.tesla.com/void/callback")
+                .appendQueryParameter("client_id", clientId)
+                .appendQueryParameter("redirect_uri", "https://ev-map.app/void/callback")
                 .appendQueryParameter("response_type", "code")
-                .appendQueryParameter("scope", "openid email offline_access")
+                .appendQueryParameter("scope", "openid offline_access vehicle_device_data")
                 .appendQueryParameter("state", "123").build()
 
-        val resultUrlPrefix = "https://auth.tesla.com/void/callback"
+        val resultUrlPrefix = "https://ev-map.app/void/callback"
     }
 }
 
@@ -500,6 +481,8 @@ fun Coordinate.asTeslaCoord() =
 class TeslaAvailabilityDetector(
     private val client: OkHttpClient,
     private val tokenStore: TokenStore,
+    private val clientId: String,
+    private val clientSecret: String,
     private val baseUrl: String? = null
 ) :
     BaseAvailabilityDetector(client) {
@@ -644,7 +627,9 @@ class TeslaAvailabilityDetector(
                             val response =
                                 authApi.getToken(
                                     TeslaAuthenticationApi.RefreshTokenRequest(
-                                        refreshToken
+                                        refreshToken,
+                                        clientId = clientId,
+                                        clientSecret = clientSecret
                                     )
                                 )
                             tokenStore.teslaAccessToken = response.accessToken

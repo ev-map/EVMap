@@ -326,7 +326,7 @@
     <string name="settings_cache_count">Cache-Größe</string>
     <string name="settings_cache_clear">Cache leeren</string>
     <string name="settings_cache_clear_summary">Löscht alle gespeicherten Ladestationen außer Favoriten</string>
-    <string name="settings_cache_count_summary">%d Ladestationen gespeichert, %.1f MB</string>
+    <string name="settings_cache_count_summary">%1$d Ladestationen gespeichert, %2$.1f MB</string>
     <string name="auto_location_service">EVMap läuft unter Android Auto und nutzt dafür deinen Standort.</string>
     <string name="auto_no_chargers_found">Keine Ladestationen in der Nähe gefunden</string>
     <string name="auto_no_favorites_found">Keine Favoriten gefunden</string>
@@ -360,7 +360,7 @@
     <string name="selecting_none">alle Einträge abgewählt</string>
     <string name="loading">Lade…</string>
     <string name="auto_multipage_goto">Seite %d</string>
-    <string name="auto_multipage">(%d/%d)</string>
+    <string name="auto_multipage">(%1$d/%2$d)</string>
     <string name="reload">Neu laden</string>
     <string name="accept_privacy"><![CDATA[Ich habe die <a href=\"%s\">Datenschutzerklärung</a> von EVMap gelesen und bin damit einverstanden.]]></string>
     <string name="referrals">Empfehlungslinks</string>

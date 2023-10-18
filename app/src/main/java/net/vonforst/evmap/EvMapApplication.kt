@@ -72,7 +72,7 @@ class EvMapApplication : Application(), Configuration.Provider {
                 }
             }.build()).build()
         WorkManager.getInstance(this).enqueueUniquePeriodicWork(
-            "CleanupCacheWorker", ExistingPeriodicWorkPolicy.REPLACE, cleanupCacheRequest
+            "CleanupCacheWorker", ExistingPeriodicWorkPolicy.UPDATE, cleanupCacheRequest
         )
     }
 

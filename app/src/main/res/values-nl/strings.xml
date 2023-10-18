@@ -327,6 +327,6 @@
     <string name="selecting_none">alle items gedeselecteerd</string>
     <string name="loading">Laden…</string>
     <string name="auto_multipage_goto">Pagina %d</string>
-    <string name="auto_multipage">(%d/%d)</string>
+    <string name="auto_multipage">(%1$d/%2$d)</string>
     <string name="auto_chargeprice_vehicle_unknown">Geen enkel voertuig geselecteerd in de app komt overeen met dit voertuig (%1$s %2$s).</string>
 </resources>

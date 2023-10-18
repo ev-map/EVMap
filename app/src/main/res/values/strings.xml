@@ -326,7 +326,7 @@
     <string name="settings_cache_count">Cache size</string>
     <string name="settings_cache_clear">Clear cache</string>
     <string name="settings_cache_clear_summary">Deletes all cached chargers except favorites</string>
-    <string name="settings_cache_count_summary">%d chargers cached, %.1f MB</string>
+    <string name="settings_cache_count_summary">%1$d chargers cached, %2$.1f MB</string>
     <string name="auto_location_service">EVMap is running on Android Auto and using your location.</string>
     <string name="auto_no_chargers_found">No nearby chargers found</string>
     <string name="auto_no_favorites_found">No favorites found</string>
@@ -360,7 +360,7 @@
     <string name="selecting_none">deselected all items</string>
     <string name="loading">Loading…</string>
     <string name="auto_multipage_goto">Page %d</string>
-    <string name="auto_multipage">(%d/%d)</string>
+    <string name="auto_multipage">(%1$d/%2$d)</string>
     <string name="reload">Reload</string>
     <string name="accept_privacy"><![CDATA[I have read and accepted EVMap\'s <a href=\"%s\">privacy policy</a>.]]></string>
     <string name="referrals">Referral links</string>

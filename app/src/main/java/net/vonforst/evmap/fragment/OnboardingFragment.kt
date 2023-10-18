@@ -14,6 +14,7 @@ import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
+import androidx.core.text.HtmlCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -226,7 +227,12 @@ class DataSourceSelectFragment : OnboardingPageFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.cbAcceptPrivacy.text =
-            Html.fromHtml(getString(R.string.accept_privacy, getString(R.string.privacy_link)))
+            HtmlCompat.fromHtml(
+                getString(
+                    R.string.accept_privacy,
+                    getString(R.string.privacy_link)
+                ), HtmlCompat.FROM_HTML_MODE_LEGACY
+            )
         binding.cbAcceptPrivacy.linksClickable = true
         binding.cbAcceptPrivacy.movementMethod = LinkMovementMethod.getInstance()
         binding.btnGetStarted.visibility = View.INVISIBLE

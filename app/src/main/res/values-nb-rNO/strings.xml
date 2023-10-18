@@ -330,7 +330,7 @@
     <string name="auto_chargers_ahead">Kun ladere i kjøreretningen</string>
     <string name="loading">Laster inn …</string>
     <string name="auto_multipage_goto">Side %d</string>
-    <string name="auto_multipage">(%d/%d)</string>
+    <string name="auto_multipage">(%1$d/%2$d)</string>
     <string name="charge_price_minute_format">%2$s%1$.2f/min</string>
     <string name="website">Nettside</string>
     <string name="pref_tesla_account_enabled">Innlogget som %s</string>

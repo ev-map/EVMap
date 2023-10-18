@@ -323,7 +323,7 @@
     <string name="data_retrieved_at">Informação atualizada %s</string>
     <string name="settings_cache_count">Tamanho da cache</string>
     <string name="settings_cache_clear">Limpar cache</string>
-    <string name="settings_cache_count_summary">%d carregadores na base de dados, %.1f MB</string>
+    <string name="settings_cache_count_summary">%1$d carregadores na base de dados, %2$.1f MB</string>
     <string name="settings_caching">Caching (base de dados local)</string>
     <string name="settings_cache_clear_summary">Elimina todos os carregadores guardados localmente, com a exceção dos seus favoritos</string>
     <string name="auto_no_chargers_found">Não foram encontrados carregadores próximo de si</string>
@@ -341,7 +341,7 @@
     <string name="selecting_all">todos os items selecionados</string>
     <string name="loading">Carregando…</string>
     <string name="auto_multipage_goto">Página %d</string>
-    <string name="auto_multipage">(%d/%d)</string>
+    <string name="auto_multipage">(%1$d/%2$d)</string>
     <string name="settings_android_auto_chargeprice_range">Escala de carregamento para comparação de preços</string>
     <string name="auto_location_service">O EVMap está a funcionar no Android Auto e usando a sua localização.</string>
     <string name="auto_fault_report_date">⚠️ Problemas (%s)</string>

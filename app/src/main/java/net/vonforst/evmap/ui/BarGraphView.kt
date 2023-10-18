@@ -9,6 +9,7 @@ import android.text.TextPaint
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.util.AttributeSet
+import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.content.res.AppCompatResources
@@ -35,7 +36,9 @@ class BarGraphView(context: Context, attrs: AttributeSet) : View(context, attrs)
     var legendLineLength = 4 * dp
     var legendLineWidth = 1 * dp
     var dashLength = 4 * dp
-    var bubbleTextSize = (12 * sp).roundToInt()
+    var bubbleTextSize =
+        TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12f, context.resources.displayMetrics)
+            .roundToInt()
     var bubblePadding = (6 * dp).roundToInt()
     var selectedBar: Int = 0
     var bubbleStrokeWidth = 1 * dp

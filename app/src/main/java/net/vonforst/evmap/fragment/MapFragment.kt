@@ -6,6 +6,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.text.method.KeyListener
 import android.view.*
@@ -1328,9 +1329,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             // enable/disable filters
             vm.toggleFilters()
             // haptic feedback
+            @Suppress("DEPRECATION")
+            val flags =
+                if (Build.VERSION.SDK_INT < 33) HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING else 0
             filterView.performHapticFeedback(
                 HapticFeedbackConstants.LONG_PRESS,
-                HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
+                flags
             )
             // show snackbar
             Snackbar.make(

@@ -28,7 +28,6 @@ import kotlin.math.roundToInt
 
 class BarGraphView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     private val dp = context.resources.displayMetrics.density
-    private val sp = context.resources.displayMetrics.scaledDensity
     var zeroHeight = 4 * dp
     var barWidth = 16 * dp
     var barMargin = 2 * dp

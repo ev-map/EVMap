@@ -116,7 +116,7 @@ android {
     applicationVariants.forEach { variant ->
         val goingelectricKey =
             System.getenv("GOINGELECTRIC_API_KEY") ?: project.findProperty("GOINGELECTRIC_API_KEY")
-                .toString()
+                ?.toString()
         if (goingelectricKey != null) {
             variant.resValue("string", "goingelectric_key", goingelectricKey)
         }
@@ -133,7 +133,7 @@ android {
         }
         val googleMapsKey =
             System.getenv("GOOGLE_MAPS_API_KEY") ?: project.findProperty("GOOGLE_MAPS_API_KEY")
-                .toString()
+                ?.toString()
         if (googleMapsKey != null && variant.flavorName.startsWith("google")) {
             variant.resValue("string", "google_maps_key", googleMapsKey)
         }

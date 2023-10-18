@@ -201,16 +201,16 @@ configurations {
 }
 
 dependencies {
-    val kotlin_version: String by rootProject.extra
-    val about_libs_version: String by rootProject.extra
-    val nav_version: String by rootProject.extra
+    val kotlinVersion: String by rootProject.extra
+    val aboutLibsVersion: String by rootProject.extra
+    val navVersion: String by rootProject.extra
     val normalImplementation by configurations
     val googleImplementation by configurations
     val automotiveImplementation by configurations
     val fossImplementation by configurations
     val testGoogleImplementation by configurations
 
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.core:core-splashscreen:1.0.1")
@@ -235,8 +235,8 @@ dependencies {
     implementation("com.markomilos.jsonapi:jsonapi-retrofit:1.1.0")
     implementation("io.coil-kt:coil:2.4.0")
     implementation("com.github.ev-map:StfalconImageViewer:5082ebd392")
-    implementation("com.mikepenz:aboutlibraries-core:$about_libs_version")
-    implementation("com.mikepenz:aboutlibraries:$about_libs_version")
+    implementation("com.mikepenz:aboutlibraries-core:$aboutLibsVersion")
+    implementation("com.mikepenz:aboutlibraries:$aboutLibsVersion")
     implementation("com.airbnb.android:lottie:4.1.0")
     implementation("io.michaelrocks.bimap:bimap:1.1.0")
     implementation("com.google.guava:guava:29.0-android")
@@ -273,8 +273,8 @@ dependencies {
     implementation("com.mapbox.mapboxsdk:mapbox-sdk-services:5.5.0")
 
     // navigation library
-    implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
-    implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
+    implementation("androidx.navigation:navigation-fragment-ktx:$navVersion")
+    implementation("androidx.navigation:navigation-ui-ktx:$navVersion")
 
     // viewmodel library
     val lifecycle_version = "2.6.2"

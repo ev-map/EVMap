@@ -20,8 +20,8 @@ android {
         minSdk = 21
         targetSdk = 34
         // NOTE: always increase versionCode by 2 since automotive flavor uses versionCode + 1
-        versionCode = 200
-        versionName = "1.6.9"
+        versionCode = 204
+        versionName = "1.7.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         resourceConfigurations += supportedLocales.split(",")
@@ -42,12 +42,15 @@ android {
     }
 
     buildTypes {
-        getByName("release") {
+        release {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
             signingConfig = signingConfigs.getByName("release")
         }
-        getByName("debug") {
+        debug {
             applicationIdSuffix = ".debug"
             isDebuggable = true
         }
@@ -93,9 +96,9 @@ android {
         dataBinding = true
         viewBinding = true
     }
-    lintOptions {
-        disable("NullSafeMutableLiveData")
-        warning("MissingTranslation")
+    lint {
+        disable += listOf("NullSafeMutableLiveData")
+        warning += listOf("MissingTranslation")
     }
 
     testOptions {
@@ -178,11 +181,17 @@ android {
         }
     }
 
-    packagingOptions {
-        pickFirst("lib/x86/libc++_shared.so")
-        pickFirst("lib/arm64-v8a/libc++_shared.so")
-        pickFirst("lib/x86_64/libc++_shared.so")
-        pickFirst("lib/armeabi-v7a/libc++_shared.so")
+    packaging {
+        resources {
+            pickFirsts.addAll(
+                listOf(
+                    "lib/x86/libc++_shared.so",
+                    "lib/arm64-v8a/libc++_shared.so",
+                    "lib/x86_64/libc++_shared.so",
+                    "lib/armeabi-v7a/libc++_shared.so"
+                )
+            )
+        }
     }
 }
 
@@ -195,6 +204,12 @@ dependencies {
     val kotlin_version: String by rootProject.extra
     val about_libs_version: String by rootProject.extra
     val nav_version: String by rootProject.extra
+    val normalImplementation by configurations
+    val googleImplementation by configurations
+    val automotiveImplementation by configurations
+    val fossImplementation by configurations
+    val testGoogleImplementation by configurations
+
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("androidx.core:core-ktx:1.12.0")
@@ -231,14 +246,14 @@ dependencies {
     // Android Auto
     val carAppVersion = "1.4.0-beta02"
     implementation("androidx.car.app:app:$carAppVersion")
-    "normalImplementation"("androidx.car.app:app-projected:$carAppVersion")
-    "automotiveImplementation"("androidx.car.app:app-automotive:$carAppVersion")
+    normalImplementation("androidx.car.app:app-projected:$carAppVersion")
+    automotiveImplementation("androidx.car.app:app-automotive:$carAppVersion")
 
     // AnyMaps
     val anyMapsVersion = "8f1226e1c5"
     implementation("com.github.ev-map.AnyMaps:anymaps-base:$anyMapsVersion")
-    "googleImplementation"("com.github.ev-map.AnyMaps:anymaps-google:$anyMapsVersion")
-    "googleImplementation"("com.google.android.gms:play-services-maps:18.1.0")
+    googleImplementation("com.github.ev-map.AnyMaps:anymaps-google:$anyMapsVersion")
+    googleImplementation("com.google.android.gms:play-services-maps:18.1.0")
     implementation("com.github.ev-map.AnyMaps:anymaps-mapbox:$anyMapsVersion") {
         exclude(group = "com.mapbox.mapboxsdk", module = "mapbox-android-accounts")
         exclude(group = "com.mapbox.mapboxsdk", module = "mapbox-android-telemetry")
@@ -246,13 +261,13 @@ dependencies {
         exclude(group = "com.mapbox.mapboxsdk", module = "mapbox-android-core")
     }
     // original version of mapbox-android-core
-    "googleImplementation"("com.mapbox.mapboxsdk:mapbox-android-core:2.0.1")
+    googleImplementation("com.mapbox.mapboxsdk:mapbox-android-core:2.0.1")
     // patched version that removes build-time dependency on GMS (-> no Google location services)
-    "fossImplementation"("com.github.ev-map:mapbox-events-android:a21c324501")
+    fossImplementation("com.github.ev-map:mapbox-events-android:a21c324501")
 
     // Google Places
-    "googleImplementation"("com.google.android.libraries.places:places:3.2.0")
-    "googleImplementation"("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.1")
+    googleImplementation("com.google.android.libraries.places:places:3.2.0")
+    googleImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.1")
 
     // Mapbox Geocoding
     implementation("com.mapbox.mapboxsdk:mapbox-sdk-services:5.5.0")
@@ -275,8 +290,8 @@ dependencies {
 
     // billing library
     val billing_version = "6.0.1"
-    "googleImplementation"("com.android.billingclient:billing:$billing_version")
-    "googleImplementation"("com.android.billingclient:billing-ktx:$billing_version")
+    googleImplementation("com.android.billingclient:billing:$billing_version")
+    googleImplementation("com.android.billingclient:billing-ktx:$billing_version")
 
     // ACRA (crash reporting)
     val acraVersion = "5.11.1"
@@ -299,8 +314,8 @@ dependencies {
     testImplementation("androidx.arch.core:core-testing:2.2.0")
 
     // testing for car app
-    "testGoogleImplementation"("androidx.car.app:app-testing:$carAppVersion")
-    "testGoogleImplementation"("androidx.test:core:1.5.0")
+    testGoogleImplementation("androidx.car.app:app-testing:$carAppVersion")
+    testGoogleImplementation("androidx.test:core:1.5.0")
 
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")

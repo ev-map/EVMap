@@ -182,7 +182,7 @@ android {
     }
 
     packaging {
-        resources {
+        jniLibs {
             pickFirsts.addAll(
                 listOf(
                     "lib/x86/libc++_shared.so",

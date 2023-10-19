@@ -2,7 +2,7 @@
 
 buildscript {
     val kotlinVersion by extra("1.9.0")
-    val aboutLibsVersion by extra("8.9.4")
+    val aboutLibsVersion by extra("10.9.1")
     val navVersion by extra("2.7.2")
     repositories {
         google()

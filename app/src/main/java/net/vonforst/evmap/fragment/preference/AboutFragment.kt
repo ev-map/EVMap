@@ -102,7 +102,6 @@ class AboutFragment : PreferenceFragmentCompat() {
                     .withAboutVersionShown(false)
                     .withAboutIconShown(false)
                     .withActivityTitle(getString(R.string.oss_licenses))
-                    .withExcludedLibraries()
                     .start(requireActivity())
                 true
             }

@@ -23,9 +23,7 @@ Install Android Auto
 
 If you haven't already, install the
 [Android Auto](https://play.google.com/store/apps/details?id=com.google.android.projection.gearhead)
-and
-[Android Auto for phone screens](https://play.google.com/store/apps/details?id=com.google.android.projection.gearhead.phonescreen)
-apps on your test device from the Google Play Store.
+app on your test device from the Google Play Store.
 
 If you are using the Android Emulator, the Play Store may show the Android Auto app as incompatible.
 In that case, download the APK for the newest version from a site like
@@ -33,12 +31,12 @@ In that case, download the APK for the newest version from a site like
 (choosing the correct architecture for your emulator - x86_64, x86 or ARM)
 and drag it onto the running emulator window to install.
 
-Starting the DHU
-----------------
+Starting and connecting to the DHU
+----------------------------------
 (see also the corresponding section on
 the [Android Developers site](https://developer.android.com/training/cars/testing#running-dhu))
 
-1. Start the Android Auto for phone screens app, tap the menu icon on the top left to go to settings
+1. Go to Android Auto settings (Settings app -> Connected devices -> Connection preferences -> Android Auto)
 2. Scroll all the way down to the app version, tap it 10 times
 3. Click *OK* in the dialog that appears to enable developer mode
 4. In the menu on the top left, tap *Start head unit server*

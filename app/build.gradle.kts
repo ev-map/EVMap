@@ -200,6 +200,16 @@ configurations {
     create("googleAutomotiveImplementation") {}
 }
 
+aboutLibraries {
+    allowedLicenses = arrayOf(
+        "Apache-2.0", "mit", "BSD-2-Clause",
+        "asdkl",  // Android SDK
+        "Dual OpenSSL and SSLeay License",  // Android NDK OpenSSL
+        "Google Maps Platform Terms of Service"  // Google Maps SDK
+    )
+    strictMode = com.mikepenz.aboutlibraries.plugin.StrictMode.FAIL
+}
+
 dependencies {
     val kotlinVersion: String by rootProject.extra
     val aboutLibsVersion: String by rootProject.extra

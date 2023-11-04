@@ -570,8 +570,16 @@ class TeslaAvailabilityDetector(
             "charger has unknown connectors"
         )
 
-        var statusSorted = details.siteDynamic.chargerDetails.sortedBy { it.charger.labelLetter }
-            .sortedBy { it.charger.labelNumber }.map { it.availability }
+        var statusSorted = details.siteDynamic.chargerDetails
+            .sortedBy { c ->
+                c.charger.labelLetter
+                    ?: details.siteStatic.chargers.find { it.id == c.charger.id }?.labelLetter
+            }
+            .sortedBy { c ->
+                c.charger.labelNumber
+                    ?: details.siteStatic.chargers.find { it.id == c.charger.id }?.labelNumber
+            }
+            .map { it.availability }
         if (statusSorted.size != scV2Connectors.sumOf { it.count } + scV3Connectors.sumOf { it.count }) {
             // apparently some connectors are missing in Tesla data
             // If we have just one type of charger, we can still match

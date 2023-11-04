@@ -305,8 +305,8 @@
     <string name="logging_in">Anmelden…</string>
     <string name="log_out">Abmelden</string>
     <string name="logged_out">Abgemeldet</string>
-    <string name="login">Login</string>
-    <string name="login_error">Login fehlgeschlagen</string>
+    <string name="login">Anmelden</string>
+    <string name="login_error">Anmeldung fehlgeschlagen</string>
     <string name="tesla_pricing_owners">Nur Tesla-Fahrzeuge:</string>
     <string name="tesla_pricing_members">Tesla-Fahrzeuge &amp; Mitglieder:</string>
     <string name="tesla_pricing_others">Andere Kunden:</string>

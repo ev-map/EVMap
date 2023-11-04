@@ -316,13 +316,13 @@ interface TeslaGraphQlApi {
     @JsonClass(generateAdapter = true)
     data class ChargerId(
         val id: Text,
-        val label: Value<String>,
+        val label: Value<String>?,
         val name: String?
     ) {
         val labelNumber
-            get() = label.value.replace(Regex("""\D"""), "").toInt()
+            get() = label?.value?.replace(Regex("""\D"""), "")?.toInt()
         val labelLetter
-            get() = label.value.replace(Regex("""\d"""), "")
+            get() = label?.value?.replace(Regex("""\d"""), "")
     }
 
     @JsonClass(generateAdapter = true)

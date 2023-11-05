@@ -1,0 +1,11 @@
+New features:
+- Copy address or coordinates using long press
+
+Improvements:
+- OpenChargeMap: links now refer to mobile website
+
+Bugfixes:
+- Deleting favorites did not work when rotating the screen
+- Price comparison: error when switching between different vehicles
+- Android Auto: Address was not correctly passed to TomTom GO navigation
+- Fixed crashes

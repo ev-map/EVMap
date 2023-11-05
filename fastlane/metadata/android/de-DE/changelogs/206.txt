@@ -1,0 +1,11 @@
+Neue Funktionen:
+- Adresse oder Koordinaten gedrückt halten um sie in die Zwischenablage zu kopieren
+
+Verbesserungen:
+- OpenChargeMap: Links verweisen nun auf die mobile Website
+
+Fehler behoben:
+- Favoriten löschen funktionierte nicht bei Rotieren des Bildschirms
+- Fehler beim Wechsel zwischen mehreren Fahrzeugen im Preisvergleich
+- Android Auto: Adresse wurde nicht korrekt an TomTom GO-Navigation übergeben
+- Abstürze behoben

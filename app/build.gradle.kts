@@ -122,6 +122,7 @@ android {
         }
         var openchargemapKey =
             System.getenv("OPENCHARGEMAP_API_KEY") ?: project.findProperty("OPENCHARGEMAP_API_KEY")
+                ?.toString()
         if (openchargemapKey == null && project.hasProperty("OPENCHARGEMAP_API_KEY_ENCRYPTED")) {
             openchargemapKey = decode(
                 project.findProperty("OPENCHARGEMAP_API_KEY_ENCRYPTED").toString(),
@@ -129,15 +130,17 @@ android {
             )
         }
         if (openchargemapKey != null) {
-            variant.resValue("string", "openchargemap_key", "openchargemapKey")
+            variant.resValue("string", "openchargemap_key", openchargemapKey)
         }
         val googleMapsKey =
             System.getenv("GOOGLE_MAPS_API_KEY") ?: project.findProperty("GOOGLE_MAPS_API_KEY")
                 ?.toString()
+                ?.toString()
         if (googleMapsKey != null && variant.flavorName.startsWith("google")) {
             variant.resValue("string", "google_maps_key", googleMapsKey)
         }
-        var mapboxKey = System.getenv("MAPBOX_API_KEY") ?: project.findProperty("MAPBOX_API_KEY")
+        var mapboxKey =
+            System.getenv("MAPBOX_API_KEY") ?: project.findProperty("MAPBOX_API_KEY")?.toString()
         if (mapboxKey == null && project.hasProperty("MAPBOX_API_KEY_ENCRYPTED")) {
             mapboxKey = decode(
                 project.findProperty("MAPBOX_API_KEY_ENCRYPTED").toString(),
@@ -145,10 +148,11 @@ android {
             )
         }
         if (mapboxKey != null) {
-            variant.resValue("string", "mapbox_key", "mapboxKey")
+            variant.resValue("string", "mapbox_key", mapboxKey)
         }
         var chargepriceKey =
             System.getenv("CHARGEPRICE_API_KEY") ?: project.findProperty("CHARGEPRICE_API_KEY")
+                ?.toString()
         if (chargepriceKey == null && project.hasProperty("CHARGEPRICE_API_KEY_ENCRYPTED")) {
             chargepriceKey = decode(
                 project.findProperty("CHARGEPRICE_API_KEY_ENCRYPTED").toString(),
@@ -156,9 +160,10 @@ android {
             )
         }
         if (chargepriceKey != null) {
-            variant.resValue("string", "chargeprice_key", "chargepriceKey")
+            variant.resValue("string", "chargeprice_key", chargepriceKey)
         }
-        var fronyxKey = System.getenv("FRONYX_API_KEY") ?: project.findProperty("FRONYX_API_KEY")
+        var fronyxKey =
+            System.getenv("FRONYX_API_KEY") ?: project.findProperty("FRONYX_API_KEY")?.toString()
         if (fronyxKey == null && project.hasProperty("FRONYX_API_KEY_ENCRYPTED")) {
             fronyxKey = decode(
                 project.findProperty("FRONYX_API_KEY_ENCRYPTED").toString(),
@@ -166,10 +171,10 @@ android {
             )
         }
         if (fronyxKey != null) {
-            variant.resValue("string", "fronyx_key", "fronyxKey")
+            variant.resValue("string", "fronyx_key", fronyxKey)
         }
         var acraKey = System.getenv("ACRA_CRASHREPORT_CREDENTIALS")
-            ?: project.findProperty("ACRA_CRASHREPORT_CREDENTIALS")
+            ?: project.findProperty("ACRA_CRASHREPORT_CREDENTIALS")?.toString()
         if (acraKey == null && project.hasProperty("ACRA_CRASHREPORT_CREDENTIALS_ENCRYPTED")) {
             acraKey = decode(
                 project.findProperty("ACRA_CRASHREPORT_CREDENTIALS_ENCRYPTED").toString(),
@@ -177,7 +182,7 @@ android {
             )
         }
         if (acraKey != null) {
-            variant.resValue("string", "acra_credentials", "acraKey")
+            variant.resValue("string", "acra_credentials", acraKey)
         }
     }
 

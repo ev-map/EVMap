@@ -113,7 +113,7 @@ android {
     namespace = "net.vonforst.evmap"
 
     // add API keys from environment variable if not set in apikeys.xml
-    applicationVariants.forEach { variant ->
+    applicationVariants.all { variant ->
         val goingelectricKey =
             System.getenv("GOINGELECTRIC_API_KEY") ?: project.findProperty("GOINGELECTRIC_API_KEY")
                 ?.toString()

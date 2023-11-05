@@ -113,12 +113,12 @@ android {
     namespace = "net.vonforst.evmap"
 
     // add API keys from environment variable if not set in apikeys.xml
-    applicationVariants.all { variant ->
+    applicationVariants.all {
         val goingelectricKey =
             System.getenv("GOINGELECTRIC_API_KEY") ?: project.findProperty("GOINGELECTRIC_API_KEY")
                 ?.toString()
         if (goingelectricKey != null) {
-            variant.resValue("string", "goingelectric_key", goingelectricKey)
+            resValue("string", "goingelectric_key", goingelectricKey)
         }
         var openchargemapKey =
             System.getenv("OPENCHARGEMAP_API_KEY") ?: project.findProperty("OPENCHARGEMAP_API_KEY")
@@ -130,14 +130,13 @@ android {
             )
         }
         if (openchargemapKey != null) {
-            variant.resValue("string", "openchargemap_key", openchargemapKey)
+            resValue("string", "openchargemap_key", openchargemapKey)
         }
         val googleMapsKey =
             System.getenv("GOOGLE_MAPS_API_KEY") ?: project.findProperty("GOOGLE_MAPS_API_KEY")
                 ?.toString()
-                ?.toString()
-        if (googleMapsKey != null && variant.flavorName.startsWith("google")) {
-            variant.resValue("string", "google_maps_key", googleMapsKey)
+        if (googleMapsKey != null && flavorName.startsWith("google")) {
+            resValue("string", "google_maps_key", googleMapsKey)
         }
         var mapboxKey =
             System.getenv("MAPBOX_API_KEY") ?: project.findProperty("MAPBOX_API_KEY")?.toString()
@@ -148,7 +147,7 @@ android {
             )
         }
         if (mapboxKey != null) {
-            variant.resValue("string", "mapbox_key", mapboxKey)
+            resValue("string", "mapbox_key", mapboxKey)
         }
         var chargepriceKey =
             System.getenv("CHARGEPRICE_API_KEY") ?: project.findProperty("CHARGEPRICE_API_KEY")
@@ -160,7 +159,7 @@ android {
             )
         }
         if (chargepriceKey != null) {
-            variant.resValue("string", "chargeprice_key", chargepriceKey)
+            resValue("string", "chargeprice_key", chargepriceKey)
         }
         var fronyxKey =
             System.getenv("FRONYX_API_KEY") ?: project.findProperty("FRONYX_API_KEY")?.toString()
@@ -171,7 +170,7 @@ android {
             )
         }
         if (fronyxKey != null) {
-            variant.resValue("string", "fronyx_key", fronyxKey)
+            resValue("string", "fronyx_key", fronyxKey)
         }
         var acraKey = System.getenv("ACRA_CRASHREPORT_CREDENTIALS")
             ?: project.findProperty("ACRA_CRASHREPORT_CREDENTIALS")?.toString()
@@ -182,7 +181,7 @@ android {
             )
         }
         if (acraKey != null) {
-            variant.resValue("string", "acra_credentials", acraKey)
+            resValue("string", "acra_credentials", acraKey)
         }
     }
 

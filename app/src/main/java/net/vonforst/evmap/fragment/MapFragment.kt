@@ -3,6 +3,8 @@ package net.vonforst.evmap.fragment
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.annotation.SuppressLint
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Color
@@ -73,7 +75,6 @@ import net.vonforst.evmap.autocomplete.ApiUnavailableException
 import net.vonforst.evmap.autocomplete.PlaceWithBounds
 import net.vonforst.evmap.bold
 import net.vonforst.evmap.databinding.FragmentMapBinding
-import net.vonforst.evmap.fragment.preference.DataSettingsFragmentArgs
 import net.vonforst.evmap.location.FusionEngine
 import net.vonforst.evmap.location.LocationEngine
 import net.vonforst.evmap.location.Priority
@@ -86,6 +87,7 @@ import net.vonforst.evmap.utils.boundingBox
 import net.vonforst.evmap.utils.checkAnyLocationPermission
 import net.vonforst.evmap.utils.checkFineLocationPermission
 import net.vonforst.evmap.utils.distanceBetween
+import net.vonforst.evmap.utils.formatDecimal
 import net.vonforst.evmap.viewmodel.*
 import java.io.IOException
 import kotlin.collections.component1
@@ -824,13 +826,67 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                             R.drawable.ic_fault_report -> {
                                 (activity as? MapsActivity)?.openUrl(charger.url)
                             }
+
                             R.drawable.ic_payment -> {
                                 showPaymentMethodsDialog(charger)
                             }
+
                             R.drawable.ic_network -> {
                                 charger.networkUrl?.let { (activity as? MapsActivity)?.openUrl(it) }
                             }
                         }
+                    }
+                }
+                onLongClickListener = {
+                    val charger = vm.chargerDetails.value?.data
+                    val clipboardManager =
+                        requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                    if (charger != null) {
+                        when (it.icon) {
+                            R.drawable.ic_address -> {
+                                if (charger.address != null) {
+                                    val clip = ClipData.newPlainText(
+                                        getString(R.string.address),
+                                        charger.address.toString()
+                                    )
+                                    clipboardManager.setPrimaryClip(clip)
+
+                                    if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
+                                        Snackbar.make(
+                                            requireView(),
+                                            R.string.copied,
+                                            Toast.LENGTH_SHORT
+                                        )
+                                            .show()
+                                    }
+                                    true
+                                } else {
+                                    false
+                                }
+                            }
+
+                            R.drawable.ic_location -> {
+                                val clip = ClipData.newPlainText(
+                                    getString(R.string.coordinates),
+                                    charger.coordinates.formatDecimal()
+                                )
+                                clipboardManager.setPrimaryClip(clip)
+
+                                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
+                                    Snackbar.make(
+                                        requireView(),
+                                        R.string.copied,
+                                        Toast.LENGTH_SHORT
+                                    )
+                                        .show()
+                                }
+                                true
+                            }
+
+                            else -> false
+                        }
+                    } else {
+                        false
                     }
                 }
             }
@@ -1328,14 +1384,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         filterView?.setOnLongClickListener {
             // enable/disable filters
             vm.toggleFilters()
-            // haptic feedback
-            @Suppress("DEPRECATION")
-            val flags =
-                if (Build.VERSION.SDK_INT < 33) HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING else 0
-            filterView.performHapticFeedback(
-                HapticFeedbackConstants.LONG_PRESS,
-                flags
-            )
             // show snackbar
             Snackbar.make(
                 requireView(), if (vm.filterStatus.value != FILTERS_DISABLED) {

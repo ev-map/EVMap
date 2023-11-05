@@ -30,6 +30,7 @@ abstract class DataBindingAdapter<T : Equatable>(getKey: ((T) -> Any)? = null) :
     ListAdapter<T, DataBindingAdapter.ViewHolder<T>>(DiffCallback(getKey)) {
 
     var onClickListener: ((T) -> Unit)? = null
+    var onLongClickListener: ((T) -> Boolean)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder<T> {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -52,6 +53,12 @@ abstract class DataBindingAdapter<T : Equatable>(getKey: ((T) -> Any)? = null) :
             holder.binding.root.setOnClickListener {
                 val listener = onClickListener ?: return@setOnClickListener
                 listener(item)
+            }
+        }
+        if (onLongClickListener != null) {
+            holder.binding.root.setOnLongClickListener {
+                val listener = onLongClickListener ?: return@setOnLongClickListener false
+                return@setOnLongClickListener listener(item)
             }
         }
     }

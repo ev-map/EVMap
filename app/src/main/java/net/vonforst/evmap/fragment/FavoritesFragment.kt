@@ -28,7 +28,6 @@ import net.vonforst.evmap.databinding.FragmentFavoritesBinding
 import net.vonforst.evmap.databinding.ItemFavoriteBinding
 import net.vonforst.evmap.location.FusionEngine
 import net.vonforst.evmap.location.LocationEngine
-import net.vonforst.evmap.model.Favorite
 import net.vonforst.evmap.model.FavoriteWithDetail
 import net.vonforst.evmap.utils.checkAnyLocationPermission
 import net.vonforst.evmap.viewmodel.FavoritesViewModel
@@ -37,7 +36,6 @@ import net.vonforst.evmap.viewmodel.viewModelFactory
 class FavoritesFragment : Fragment() {
     private lateinit var binding: FragmentFavoritesBinding
     private lateinit var locationEngine: LocationEngine
-    private var toDelete: Favorite? = null
     private var deleteSnackbar: Snackbar? = null
     private lateinit var adapter: FavoritesAdapter
 
@@ -113,6 +111,32 @@ class FavoritesFragment : Fragment() {
                 binding.swipeRefresh.isRefreshing = false
             }
         }
+
+        vm.deletedFavorite.observe(viewLifecycleOwner) { fav ->
+            if (fav == null) {
+                deleteSnackbar?.dismiss()
+                return@observe
+            }
+            val snackbar = Snackbar.make(
+                requireView(),
+                getString(
+                    R.string.deleted_item,
+                    fav.charger.name
+                ),
+                Snackbar.LENGTH_LONG
+            ).setAction(R.string.undo) {
+                vm.undoDeletion()
+            }.addCallback(object : Snackbar.Callback() {
+                override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                    // if undo was not clicked, actually delete
+                    if (event == DISMISS_EVENT_TIMEOUT || event == DISMISS_EVENT_SWIPE) {
+                        vm.deletedFavorite.value = null
+                    }
+                }
+            })
+            deleteSnackbar = snackbar
+            snackbar.show()
+        }
     }
 
     override fun onStart() {
@@ -127,41 +151,7 @@ class FavoritesFragment : Fragment() {
     }
 
     fun delete(fav: FavoriteWithDetail) {
-        val position =
-            vm.listData.value?.indexOfFirst { it.fav.favorite.favoriteId == fav.favorite.favoriteId }
-                ?: return
-        // if there is already a profile to delete, delete it now
-        actuallyDelete()
-        deleteSnackbar?.dismiss()
-
-        toDelete = fav.favorite
-
-        view?.let {
-            val snackbar = Snackbar.make(
-                it,
-                getString(R.string.deleted_filterprofile, fav.charger.name),
-                Snackbar.LENGTH_LONG
-            ).setAction(R.string.undo) {
-                toDelete = null
-                adapter.notifyItemChanged(position)
-            }.addCallback(object : Snackbar.Callback() {
-                override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
-                    // if undo was not clicked, actually delete
-                    if (event == DISMISS_EVENT_TIMEOUT || event == DISMISS_EVENT_SWIPE) {
-                        actuallyDelete()
-                    }
-                }
-            })
-            deleteSnackbar = snackbar
-            snackbar.show()
-        } ?: run {
-            actuallyDelete()
-        }
-    }
-
-    private fun actuallyDelete() {
-        toDelete?.let { vm.deleteFavorite(it) }
-        toDelete = null
+        vm.deleteFavoriteWithUndo(fav)
     }
 
     private fun createTouchHelper(): ItemTouchHelper {

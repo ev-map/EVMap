@@ -8,7 +8,7 @@
     <string name="welcome_2_detail">Também pode encontrar esta informação em \"Sobre\" → \"Perguntas frequentes\"</string>
     <string name="chargeprice_donation_dialog_title">Você é um verdadeiro caçador de pechinchas!</string>
     <string name="donation_dialog_title">Obrigado por usar o EVMap</string>
-    <string name="deleted_filterprofile">“%s” removido</string>
+    <string name="deleted_item">“%s” removido</string>
     <string name="undo">Refazer</string>
     <string name="rename">Renomear</string>
     <string name="chargeprice_donation_dialog_detail">Você faz grande uso da comparação de preços. Ajude a cobrir os custos de acesso à informação apoiando o EVMap com uma doação.</string>

@@ -227,7 +227,7 @@ class FilterScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx) {
                                     CarToast.makeText(
                                         carContext,
                                         carContext.getString(
-                                            R.string.deleted_filterprofile,
+                                            R.string.deleted_item,
                                             it.name
                                         ),
                                         CarToast.LENGTH_SHORT
@@ -344,7 +344,7 @@ class EditFiltersScreen(ctx: CarContext) : Screen(ctx) {
                                 CarToast.makeText(
                                     carContext,
                                     carContext.getString(
-                                        R.string.deleted_filterprofile,
+                                        R.string.deleted_item,
                                         currentProfile.name
                                     ),
                                     CarToast.LENGTH_SHORT

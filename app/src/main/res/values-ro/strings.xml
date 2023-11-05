@@ -160,7 +160,7 @@
     <string name="donation_dialog_detail">EVMap este libera si gratuita. Contributiile pe GitHub sunt apreciate. Pentru a acoperi costurile pentru acces la date, va rugam sa donati orice suma pentru dezvoltator.</string>
     <string name="chargeprice_donation_dialog_title">Stii sa cauti ofertele cele mai bune!</string>
     <string name="chargeprice_donation_dialog_detail">Stii sa folosesti optiunea de comparare preturi. Puteti ajuta pentru a acoperi costurile pentru accesul la aceste date donand pentru EVMap.</string>
-    <string name="deleted_filterprofile">“%s” a fost sters</string>
+    <string name="deleted_item">“%s” a fost sters</string>
     <string name="undo">Anuleaza</string>
     <string name="rename">Redenumeste</string>
     <string name="charging_barrierfree">Utilizabile fara inregistrare</string>

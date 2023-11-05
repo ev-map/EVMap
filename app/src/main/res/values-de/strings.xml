@@ -161,7 +161,7 @@
     <string name="donation_dialog_detail">EVMap ist kostenlos und Open Source. Über GitHub kann jeder zur Weiterentwicklung der App beitragen. Um die laufenden Kosten für die Datenquellen zu decken, freut sich der Entwickler über Spenden mit einem Betrag deiner Wahl.</string>
     <string name="chargeprice_donation_dialog_title">Du bist ein richtiger Sparfuchs!</string>
     <string name="chargeprice_donation_dialog_detail">Anscheinend nutzt du den Preisvergleich sehr gern. Mit einer Spende für EVMap kannst du helfen, die Kosten für den Datenzugriff zu decken.</string>
-    <string name="deleted_filterprofile">„%s” gelöscht</string>
+    <string name="deleted_item">„%s” gelöscht</string>
     <string name="undo">Rückgängig</string>
     <string name="rename">Umbenennen</string>
     <string name="charging_barrierfree">Ohne Vertrag / Registrierung nutzbar</string>

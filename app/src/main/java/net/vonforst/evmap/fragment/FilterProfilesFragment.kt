@@ -230,7 +230,7 @@ class FilterProfilesFragment : Fragment() {
         view?.let {
             val snackbar = Snackbar.make(
                 it,
-                getString(R.string.deleted_filterprofile, fp.name),
+                getString(R.string.deleted_item, fp.name),
                 Snackbar.LENGTH_LONG
             ).setAction(R.string.undo) {
                 toDelete = null

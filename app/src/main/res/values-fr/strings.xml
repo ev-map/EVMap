@@ -75,7 +75,7 @@
     <string name="welcome_2_detail">Cela peut également être vu dans \"À propos\" → \"Foire aux questions\"</string>
     <string name="donation_dialog_title">Merci d\'utiliser EVMap</string>
     <string name="chargeprice_donation_dialog_title">Vous êtes un vrai chasseur de bonnes affaires !</string>
-    <string name="deleted_filterprofile">\"%s\" supprimé</string>
+    <string name="deleted_item">\"%s\" supprimé</string>
     <string name="undo">Annuler</string>
     <string name="rename">Renommer</string>
     <string name="verified">vérifié</string>

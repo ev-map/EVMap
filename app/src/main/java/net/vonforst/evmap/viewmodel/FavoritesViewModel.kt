@@ -33,7 +33,7 @@ class FavoritesViewModel(application: Application) :
         MediatorLiveData<Map<Long, Resource<ChargeLocationStatus>>>().apply {
             addSource(favorites) { favorites ->
                 if (favorites != null) {
-                    reloadAvailability()
+                    reloadAvailability(forceReload = false)
                 } else {
                     value = null
                 }
@@ -41,9 +41,10 @@ class FavoritesViewModel(application: Application) :
         }
     }
 
-    fun reloadAvailability(callback: (() -> Unit)? = null) {
+    fun reloadAvailability(forceReload: Boolean = true, callback: (() -> Unit)? = null) {
         val favorites = favorites.value ?: return
         val chargers = favorites.map { it.charger }
+        val previous = availability.value
 
         viewModelScope.launch {
             val data = hashMapOf<Long, Resource<ChargeLocationStatus>>()
@@ -54,8 +55,13 @@ class FavoritesViewModel(application: Application) :
 
             chargers.map { charger ->
                 async {
-                    data[charger.id] = availabilityRepo.getAvailability(charger)
-                    availability.value = data
+                    if (!forceReload && previous?.get(charger.id)?.status == Status.SUCCESS) {
+                        data[charger.id] = previous[charger.id]!!
+                        availability.value = data
+                    } else {
+                        data[charger.id] = availabilityRepo.getAvailability(charger)
+                        availability.value = data
+                    }
                 }
             }.awaitAll()
             callback?.invoke()
@@ -114,6 +120,24 @@ class FavoritesViewModel(application: Application) :
             db.chargeLocationsDao().insert(charger)
             db.favoritesDao()
                 .insert(Favorite(chargerId = charger.id, chargerDataSource = charger.dataSource))
+        }
+    }
+
+    val deletedFavorite: MutableLiveData<FavoriteWithDetail?> by lazy {
+        MutableLiveData<FavoriteWithDetail?>()
+    }
+
+    fun deleteFavoriteWithUndo(fav: FavoriteWithDetail) {
+        deletedFavorite.value = fav
+        deleteFavorite(fav.favorite)
+    }
+
+    fun undoDeletion() {
+        deletedFavorite.value?.let {
+            viewModelScope.launch {
+                insertFavorite(it.charger)
+            }
+            deletedFavorite.value = null
         }
     }
 

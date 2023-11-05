@@ -144,7 +144,7 @@
     <string name="save_profile_enter_name">Skriv inn navnet på filterprofilen:</string>
     <string name="filterprofiles_empty_state">Du har ikke noen lagrede filterprofiler</string>
     <string name="chargeprice_donation_dialog_title">Du er en sann gjerrigknark.</string>
-    <string name="deleted_filterprofile">Slettet «%s»</string>
+    <string name="deleted_item">Slettet «%s»</string>
     <string name="charging_barrierfree">Kan brukes uten registrering</string>
     <string name="welcome_1">Finn kjøretøyladere der du er</string>
     <string name="welcome_2">Hver laders farge samsvarer med dens høyeste ladeeffekt</string>

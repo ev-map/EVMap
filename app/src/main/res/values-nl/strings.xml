@@ -145,7 +145,7 @@
     <string name="donation_dialog_title">Bedankt om EVMap te gebruiken</string>
     <string name="chargeprice_donation_dialog_title">Jij bent een echte koopjeszoeker!</string>
     <string name="chargeprice_donation_dialog_detail">Blijkbaar maak je dankbaar gebruik van de prijsvergelijkingen. Met een donatie kan je de kosten voor deze data helpen dragen.</string>
-    <string name="deleted_filterprofile">“%s” verwijderd</string>
+    <string name="deleted_item">“%s” verwijderd</string>
     <string name="undo">Ongedaan maken</string>
     <string name="rename">Hernoem</string>
     <plurals name="charge_cards_compatible_num">

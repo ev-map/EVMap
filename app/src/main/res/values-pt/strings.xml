@@ -372,4 +372,5 @@
     <string name="referrals_info">Também pode usar um dos seguintes links de afiliado para apoiar o desenvolvedor da app com a sua compra.</string>
     <string name="generic_connection_error">Não foi possível carregar a informação</string>
     <string name="powered_by_fronyx">previsão feita por fronyx</string>
+    <string name="copied">Informação copiada</string>
 </resources>

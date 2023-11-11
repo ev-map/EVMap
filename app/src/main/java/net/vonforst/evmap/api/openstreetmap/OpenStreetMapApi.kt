@@ -12,6 +12,7 @@ import net.vonforst.evmap.api.ChargepointList
 import net.vonforst.evmap.api.FiltersSQLQuery
 import net.vonforst.evmap.api.FullDownloadResult
 import net.vonforst.evmap.api.StringProvider
+import net.vonforst.evmap.api.goingelectric.GEReferenceData
 import net.vonforst.evmap.api.mapPower
 import net.vonforst.evmap.api.mapPowerInverse
 import net.vonforst.evmap.api.nameForPlugType
@@ -128,6 +129,9 @@ class OpenStreetMapApiWrapper(baseurl: String = "https://evmap-dev.vonforst.net"
             nameForPlugType(sp, plug)
         }
 
+        val refData = referenceData as OSMReferenceData
+        val networkMap = refData.networks.associateWith { it }
+
         return listOf(
             BooleanFilter(sp.getString(R.string.filter_free), "freecharging"),
             BooleanFilter(sp.getString(R.string.filter_free_parking), "freeparking"),
@@ -151,6 +155,10 @@ class OpenStreetMapApiWrapper(baseurl: String = "https://evmap-dev.vonforst.net"
                     Chargepoint.CHADEMO
                 ),
                 manyChoices = true
+            ),
+            MultipleChoiceFilter(
+                sp.getString(R.string.filter_networks), "networks",
+                networkMap, manyChoices = true
             ),
             SliderFilter(
                 sp.getString(R.string.filter_min_connectors),
@@ -204,6 +212,16 @@ class OpenStreetMapApiWrapper(baseurl: String = "https://evmap-dev.vonforst.net"
             requiresChargepointQuery = true
         }
 
+        val networks = filters.getMultipleChoiceValue("networks")
+        if (networks != null && !networks.all) {
+            val networksList = if (networks.values.size == 0) {
+                ""
+            } else {
+                networks.values.joinToString(",") { DatabaseUtils.sqlEscapeString(it) }
+            }
+            result.append(" AND network IN (${networksList})")
+        }
+
         return FiltersSQLQuery(result.toString(), requiresChargepointQuery, false)
     }
 
@@ -222,23 +240,31 @@ class OpenStreetMapApiWrapper(baseurl: String = "https://evmap-dev.vonforst.net"
     }
 }
 
-data class OSMReferenceData(val test: String) : ReferenceData()
+data class OSMReferenceData(val networks: List<String>) : ReferenceData()
 
 class OSMFullDownloadResult(private val body: OSMDocument) : FullDownloadResult<OSMReferenceData> {
     private var downloadProgress = 0f
+    private var refData: OSMReferenceData? = null
+
     override val chargers: Sequence<ChargeLocation>
         get() {
             val time = body.timestamp
+            val networks = mutableListOf<String>()
+
             return sequence {
                 body.elements.forEachIndexed { i, it ->
-                    yield(it.convert(time))
+                    val charger = it.convert(time)
+                    yield(charger)
                     downloadProgress = i.toFloat() / body.count
+                    charger.network?.let { networks.add(it) }
                 }
+                refData = OSMReferenceData(networks)
             }
         }
     override val progress: Float
         get() = downloadProgress
     override val referenceData: OSMReferenceData
-        get() = TODO("Not yet implemented")
+        get() = refData
+            ?: throw UnsupportedOperationException("referenceData is only available once download is complete")
 
 }

@@ -130,6 +130,16 @@ data class ChargepointList(val items: List<ChargepointListItem>, val isComplete:
     }
 }
 
+/**
+ * Result returned from fullDownload() function.
+ *
+ * Note that [chargers] is implemented as a [Sequence] so that downloaded chargers can be saved
+ * while they are being parsed instead of having to keep all of them in RAM at once.
+ *
+ * [progress] is updated regularly to indicate the current download progress.
+ * [referenceData] will typically only be available once the download is completed, i.e. you have
+ * iterated over the whole sequence of [chargers].
+ */
 interface FullDownloadResult<out T : ReferenceData> {
     val chargers: Sequence<ChargeLocation>
     val progress: Float

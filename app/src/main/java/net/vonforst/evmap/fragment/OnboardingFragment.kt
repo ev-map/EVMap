@@ -218,6 +218,8 @@ class DataSourceSelectFragment : OnboardingPageFragment() {
             binding.rgDataSource.textView27,
             binding.rgDataSource.rbOpenChargeMap,
             binding.rgDataSource.textView28,
+            binding.rgDataSource.rbOpenStreetMap,
+            binding.rgDataSource.textView29,
             binding.dataSourceHint,
             binding.cbAcceptPrivacy
         )
@@ -246,7 +248,8 @@ class DataSourceSelectFragment : OnboardingPageFragment() {
 
         for (rb in listOf(
             binding.rgDataSource.rbGoingElectric,
-            binding.rgDataSource.rbOpenChargeMap
+            binding.rgDataSource.rbOpenChargeMap,
+            binding.rgDataSource.rbOpenStreetMap
         )) {
             rb.setOnCheckedChangeListener { _, _ ->
                 if (binding.btnGetStarted.visibility == View.INVISIBLE) {

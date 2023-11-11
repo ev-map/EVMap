@@ -20,7 +20,6 @@ import org.robolectric.annotation.internal.DoNotInstrument
 
 @RunWith(RobolectricTestRunner::class)
 @DoNotInstrument
-@Config(sdk = [33])  // Robolectric does not yet support SDK 34
 class CarAppTest {
     private val testCarContext =
         TestCarContext.createCarContext(ApplicationProvider.getApplicationContext()).apply {

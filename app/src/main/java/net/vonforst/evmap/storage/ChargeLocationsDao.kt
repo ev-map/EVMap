@@ -25,6 +25,7 @@ import net.vonforst.evmap.api.goingelectric.GEReferenceData
 import net.vonforst.evmap.api.goingelectric.GoingElectricApiWrapper
 import net.vonforst.evmap.api.openchargemap.OCMReferenceData
 import net.vonforst.evmap.api.openchargemap.OpenChargeMapApiWrapper
+import net.vonforst.evmap.api.openstreetmap.OSMReferenceData
 import net.vonforst.evmap.api.openstreetmap.OpenStreetMapApiWrapper
 import net.vonforst.evmap.model.*
 import net.vonforst.evmap.ui.cluster
@@ -142,15 +143,7 @@ class ChargeLocationsRepository(
             }
 
             is OpenStreetMapApiWrapper -> {
-                liveData<OCMReferenceData> {
-                    emit(
-                        OCMReferenceData(
-                            emptyList(),
-                            emptyList(),
-                            emptyList()
-                        )
-                    )
-                }  // TODO: add OSM reference data
+                OSMReferenceDataRepository(db.osmReferenceDataDao()).getReferenceData()
             }
 
             else -> {
@@ -517,6 +510,14 @@ class ChargeLocationsRepository(
                     true
                 )
             )
+
+            when (api) {
+                is OpenStreetMapApiWrapper -> {
+                    val refData = result.referenceData
+                    OSMReferenceDataRepository(db.osmReferenceDataDao()).updateReferenceData(refData as OSMReferenceData)
+                }
+            }
+
         } finally {
             fullDownloadProgress.value = null
         }

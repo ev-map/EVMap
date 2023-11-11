@@ -11,6 +11,7 @@ import net.vonforst.evmap.api.chargeprice.ChargepriceCar
 import net.vonforst.evmap.api.chargeprice.ChargepriceTariff
 import net.vonforst.evmap.storage.AppDatabase
 import net.vonforst.evmap.storage.PreferenceDataSource
+import retrofit2.HttpException
 import java.io.IOException
 
 class SettingsViewModel(
@@ -58,6 +59,8 @@ class SettingsViewModel(
                 vehicles.value = Resource.success(result)
             } catch (e: IOException) {
                 vehicles.value = Resource.error(e.message, null)
+            } catch (e: HttpException) {
+                vehicles.value = Resource.error(e.message, null)
             }
         }
     }
@@ -68,6 +71,8 @@ class SettingsViewModel(
                 val result = api.getTariffs()
                 tariffs.value = Resource.success(result)
             } catch (e: IOException) {
+                tariffs.value = Resource.error(e.message, null)
+            } catch (e: HttpException) {
                 tariffs.value = Resource.error(e.message, null)
             }
         }

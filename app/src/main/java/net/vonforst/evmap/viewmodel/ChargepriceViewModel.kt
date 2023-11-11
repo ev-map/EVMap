@@ -55,6 +55,8 @@ class ChargepriceViewModel(
                             })
                         } catch (e: IOException) {
                             Resource.error(e.message, null)
+                        } catch (e: HttpException) {
+                            Resource.error(e.message, null)
                         }
                     }
                 }

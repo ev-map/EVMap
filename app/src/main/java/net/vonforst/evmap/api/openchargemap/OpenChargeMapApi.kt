@@ -13,6 +13,7 @@ import net.vonforst.evmap.model.*
 import net.vonforst.evmap.viewmodel.Resource
 import okhttp3.Cache
 import okhttp3.OkHttpClient
+import retrofit2.HttpException
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -168,6 +169,8 @@ class OpenChargeMapApiWrapper(
             return Resource.success(ChargepointList(result, data.size < maxResults))
         } catch (e: IOException) {
             return Resource.error(e.message, null)
+        } catch (e: HttpException) {
+            return Resource.error(e.message, null)
         }
     }
 
@@ -259,6 +262,8 @@ class OpenChargeMapApiWrapper(
             }
         } catch (e: IOException) {
             return Resource.error(e.message, null)
+        } catch (e: HttpException) {
+            return Resource.error(e.message, null)
         }
     }
 
@@ -271,6 +276,8 @@ class OpenChargeMapApiWrapper(
                 return Resource.error(response.message(), null)
             }
         } catch (e: IOException) {
+            return Resource.error(e.message, null)
+        } catch (e: HttpException) {
             return Resource.error(e.message, null)
         }
     }

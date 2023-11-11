@@ -45,6 +45,7 @@ import net.vonforst.evmap.utils.headingDiff
 import net.vonforst.evmap.viewmodel.Status
 import net.vonforst.evmap.viewmodel.awaitFinished
 import net.vonforst.evmap.viewmodel.filtersWithValue
+import retrofit2.HttpException
 import java.io.IOException
 import java.time.Duration
 import java.time.Instant
@@ -500,6 +501,9 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                 lastDistanceUpdateTime = Instant.now()
                 invalidate()
             } catch (e: IOException) {
+                loadingError = true
+                invalidate()
+            } catch (e: HttpException) {
                 loadingError = true
                 invalidate()
             }

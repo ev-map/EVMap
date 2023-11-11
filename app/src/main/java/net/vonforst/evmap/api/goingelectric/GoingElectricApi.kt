@@ -18,6 +18,7 @@ import net.vonforst.evmap.viewmodel.Resource
 import net.vonforst.evmap.viewmodel.getClusterDistance
 import okhttp3.Cache
 import okhttp3.OkHttpClient
+import retrofit2.HttpException
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -219,6 +220,8 @@ class GoingElectricApiWrapper(
                 }
             } catch (e: IOException) {
                 return Resource.error(e.message, null)
+            } catch (e: HttpException) {
+                return Resource.error(e.message, null)
             }
         } while (startkey != null && startkey < 10000)
 
@@ -314,6 +317,8 @@ class GoingElectricApiWrapper(
                 }
             } catch (e: IOException) {
                 return Resource.error(e.message, null)
+            } catch (e: HttpException) {
+                return Resource.error(e.message, null)
             }
         } while (startkey != null && startkey < 10000)
 
@@ -399,6 +404,8 @@ class GoingElectricApiWrapper(
             }
         } catch (e: IOException) {
             return Resource.error(e.message, null)
+        } catch (e: HttpException) {
+            return Resource.error(e.message, null)
         }
     }
 
@@ -428,6 +435,8 @@ class GoingElectricApiWrapper(
                         Resource.error(responses.find { !it.isSuccessful }!!.message(), null)
                     }
                 } catch (e: IOException) {
+                    Resource.error(e.message, null)
+                } catch (e: HttpException) {
                     Resource.error(e.message, null)
                 }
             }

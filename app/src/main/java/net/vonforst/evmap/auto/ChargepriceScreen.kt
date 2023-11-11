@@ -28,6 +28,7 @@ import net.vonforst.evmap.storage.AppDatabase
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.ui.currency
 import net.vonforst.evmap.ui.time
+import retrofit2.HttpException
 import java.io.IOException
 import kotlin.math.roundToInt
 
@@ -295,6 +296,15 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
                     }
                 invalidate()
             } catch (e: IOException) {
+                withContext(Dispatchers.Main) {
+                    CarToast.makeText(
+                        carContext,
+                        R.string.chargeprice_connection_error,
+                        CarToast.LENGTH_LONG
+                    )
+                        .show()
+                }
+            } catch (e: HttpException) {
                 withContext(Dispatchers.Main) {
                     CarToast.makeText(
                         carContext,

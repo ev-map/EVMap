@@ -33,6 +33,7 @@ import net.vonforst.evmap.model.*
         OCMConnectionType::class,
         OCMCountry::class,
         OCMOperator::class,
+        OSMNetwork::class,
         SavedRegion::class
     ], version = 23
 )
@@ -50,6 +51,9 @@ abstract class AppDatabase : RoomDatabase() {
 
     // OpenChargeMap API specific
     abstract fun ocmReferenceDataDao(): OCMReferenceDataDao
+
+    // OpenStreetMap API specific
+    abstract fun osmReferenceDataDao(): OSMReferenceDataDao
 
     companion object {
         private lateinit var context: Context
@@ -465,6 +469,7 @@ abstract class AppDatabase : RoomDatabase() {
             override fun migrate(db: SupportSQLiteDatabase) {
                 // API openstreetmap added
                 db.execSQL("INSERT INTO `FilterProfile` (`dataSource`, `name`, `id`, `order`) VALUES ('openstreetmap', 'FILTERS_CUSTOM', $FILTERS_CUSTOM, 0)")
+                db.execSQL("CREATE TABLE IF NOT EXISTS `OSMNetwork` (`name` TEXT NOT NULL, PRIMARY KEY(`name`))")
             }
         }
     }

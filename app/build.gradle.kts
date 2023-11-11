@@ -326,10 +326,8 @@ dependencies {
     testImplementation("org.robolectric:robolectric:4.11.1")
     testImplementation("androidx.test:core:1.5.0")
     testImplementation("androidx.arch.core:core-testing:2.2.0")
-
-    // testing for car app
-    testGoogleImplementation("androidx.car.app:app-testing:$carAppVersion")
-    testGoogleImplementation("androidx.test:core:1.5.0")
+    testImplementation("androidx.car.app:app-testing:$carAppVersion")
+    testImplementation("androidx.test:core:1.5.0")
 
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")

@@ -49,7 +49,7 @@ interface OpenStreetMapApi {
             .build()
 
         fun create(
-            baseurl: String = "https://evmap-dev.vonforst.net"
+            baseurl: String = "https://osm.ev-map.app/"
         ): OpenStreetMapApi {
             val client = OkHttpClient.Builder().apply {
                 if (BuildConfig.DEBUG) addDebugInterceptors()
@@ -66,7 +66,7 @@ interface OpenStreetMapApi {
 
 }
 
-class OpenStreetMapApiWrapper(baseurl: String = "https://evmap-dev.vonforst.net") :
+class OpenStreetMapApiWrapper(baseurl: String = "https://osm.ev-map.app/") :
     ChargepointApi<OSMReferenceData> {
     override val name = "OpenStreetMap"
     override val id = "openstreetmap"

@@ -62,6 +62,7 @@ import net.vonforst.evmap.storage.ChargeLocationsRepository
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.ui.ChargerIconGenerator
 import net.vonforst.evmap.ui.getMarkerTint
+import net.vonforst.evmap.utils.formatDMS
 import net.vonforst.evmap.viewmodel.Status
 import net.vonforst.evmap.viewmodel.awaitFinished
 import java.time.ZoneId
@@ -258,7 +259,7 @@ class ChargerDetailScreen(
 
         // Row 1: address + chargepoints
         rows.add(Row.Builder().apply {
-            setTitle(charger.address.toString())
+            setTitle(charger.address?.toString() ?: charger.coordinates.formatDMS())
 
             if (photo == null) {
                 // show just the icon

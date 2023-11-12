@@ -30,6 +30,8 @@ import androidx.car.app.model.Toggle
 import androidx.core.content.IntentCompat
 import androidx.core.graphics.drawable.IconCompat
 import androidx.core.text.HtmlCompat
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import kotlinx.coroutines.launch
@@ -157,7 +159,7 @@ class SettingsScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx) {
 }
 
 @ExperimentalCarApi
-class DataSettingsScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx) {
+class DataSettingsScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx), DefaultLifecycleObserver {
     val prefs = PreferenceDataSource(ctx)
     val encryptedPrefs = EncryptedPreferenceDataStore(ctx)
     val db = AppDatabase.getInstance(ctx)
@@ -175,11 +177,15 @@ class DataSettingsScreen(ctx: CarContext, val session: EVMapSession) : Screen(ct
 
     var teslaLoggingIn = false
 
+    init {
+        lifecycle.addObserver(this)
+    }
+
     override fun onGetTemplate(): Template {
         return ListTemplate.Builder().apply {
             setTitle(carContext.getString(R.string.settings_data_sources))
             setHeaderAction(Action.BACK)
-            setSingleList(ItemList.Builder().apply {
+            addSectionedList(SectionedItemList.create(ItemList.Builder().apply {
                 addItem(Row.Builder().apply {
                     setTitle(carContext.getString(R.string.pref_data_source))
                     setBrowsable(true)
@@ -195,6 +201,41 @@ class DataSettingsScreen(ctx: CarContext, val session: EVMapSession) : Screen(ct
                         )
                     }
                 }.build())
+                /*addItem(
+                    Row.Builder()
+                        .setTitle(carContext.getString(R.string.pref_prediction_enabled))
+                        .addText(carContext.getString(R.string.pref_prediction_enabled_summary))
+                        .setToggle(Toggle.Builder {
+                            prefs.predictionEnabled = it
+                        }.setChecked(prefs.predictionEnabled).build())
+                        .build()
+                )*/
+                addItem(Row.Builder().apply {
+                    setTitle(carContext.getString(R.string.pref_tesla_account))
+                    addText(
+                        if (encryptedPrefs.teslaRefreshToken != null) {
+                            carContext.getString(
+                                R.string.pref_tesla_account_enabled,
+                                encryptedPrefs.teslaEmail
+                            )
+                        } else if (teslaLoggingIn) {
+                            carContext.getString(R.string.logging_in)
+                        } else {
+                            carContext.getString(R.string.pref_tesla_account_disabled)
+                        }
+                    )
+                    if (encryptedPrefs.teslaRefreshToken != null) {
+                        setOnClickListener {
+                            teslaLogout()
+                        }
+                    } else {
+                        setOnClickListener(ParkedOnlyOnClickListener.create {
+                            teslaLogin()
+                        })
+                    }
+                }.build())
+            }.build(), carContext.getString(R.string.settings_charger_data)))
+            addSectionedList(SectionedItemList.create(ItemList.Builder().apply {
                 addItem(Row.Builder().apply {
                     setTitle(carContext.getString(R.string.pref_search_provider))
                     setBrowsable(true)
@@ -243,41 +284,52 @@ class DataSettingsScreen(ctx: CarContext, val session: EVMapSession) : Screen(ct
                         }
                     }
                 }.build())
-                /*addItem(
-                    Row.Builder()
-                        .setTitle(carContext.getString(R.string.pref_prediction_enabled))
-                        .addText(carContext.getString(R.string.pref_prediction_enabled_summary))
-                        .setToggle(Toggle.Builder {
-                            prefs.predictionEnabled = it
-                        }.setChecked(prefs.predictionEnabled).build())
-                        .build()
-                )*/
+            }.build(), carContext.getString(R.string.settings_map)))
+            addSectionedList(SectionedItemList.create(ItemList.Builder().apply {
                 addItem(Row.Builder().apply {
-                    setTitle(carContext.getString(R.string.pref_tesla_account))
-                    addText(
-                        if (encryptedPrefs.teslaRefreshToken != null) {
-                            carContext.getString(
-                                R.string.pref_tesla_account_enabled,
-                                encryptedPrefs.teslaEmail
+                    setTitle(carContext.getString(R.string.settings_cache_count))
+                    cacheCount?.let { count ->
+                        cacheSize?.let { size ->
+                            val sizeMb = size.toFloat() / 1024 / 1024
+                            addText(
+                                carContext.getString(
+                                    R.string.settings_cache_count_summary,
+                                    count,
+                                    sizeMb
+                                )
                             )
-                        } else if (teslaLoggingIn) {
-                            carContext.getString(R.string.logging_in)
-                        } else {
-                            carContext.getString(R.string.pref_tesla_account_disabled)
                         }
-                    )
-                    if (encryptedPrefs.teslaRefreshToken != null) {
-                        setOnClickListener {
-                            teslaLogout()
-                        }
-                    } else {
-                        setOnClickListener(ParkedOnlyOnClickListener.create {
-                            teslaLogin()
-                        })
                     }
                 }.build())
-            }.build())
+                addItem(Row.Builder().apply {
+                    setTitle(carContext.getString(R.string.settings_cache_clear))
+                    addText(carContext.getString(R.string.settings_cache_clear_summary))
+                    setOnClickListener {
+                        lifecycleScope.launch {
+                            db.savedRegionDao().deleteAll()
+                            db.chargeLocationsDao().deleteAllIfNotFavorite()
+                            loadCacheSize()
+                        }
+                    }
+                }.build())
+            }.build(), carContext.getString(R.string.settings_caching)))
         }.build()
+    }
+
+    var cacheCount: Long? = null
+    var cacheSize: Long? = null
+
+    private suspend fun loadCacheSize() {
+        cacheCount = db.chargeLocationsDao().getCountAsync()
+        cacheSize = db.chargeLocationsDao().getSize()
+        invalidate()
+    }
+
+    override fun onStart(owner: LifecycleOwner) {
+        super.onStart(owner)
+        lifecycleScope.launch {
+            loadCacheSize()
+        }
     }
 
     private fun teslaLogin() {
@@ -399,7 +451,8 @@ class ChooseDataSourceScreen(
     val descriptions = when (type) {
         Type.CHARGER_DATA_SOURCE -> listOf(
             carContext.getString(R.string.data_source_goingelectric_desc),
-            carContext.getString(R.string.data_source_openchargemap_desc)
+            carContext.getString(R.string.data_source_openchargemap_desc),
+            carContext.getString(R.string.data_source_openstreetmap_desc)
         )
         Type.SEARCH_PROVIDER -> null
         Type.MAP_PROVIDER -> null

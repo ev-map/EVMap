@@ -92,7 +92,7 @@
                                     android:ellipsize="end"
                                     android:background="@null"
                                     android:gravity="center_vertical"
-                                    android:hint="@string/search"
+                                    android:hint="@{vm.chargepoints.progress != null ? @string/downloading_chargers_percent(vm.chargepoints.progress * 100) : @string/search}"
                                     android:textSize="18sp"
                                     android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
                                     android:textColorHint="@color/hint_text_color"

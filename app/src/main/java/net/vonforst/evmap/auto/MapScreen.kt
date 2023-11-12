@@ -8,6 +8,7 @@ import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import androidx.car.app.CarContext
+import androidx.car.app.CarToast
 import androidx.car.app.Screen
 import androidx.car.app.constraints.ConstraintManager
 import androidx.car.app.hardware.CarHardwareManager
@@ -20,6 +21,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.car2go.maps.model.LatLng
 import kotlinx.coroutines.*
@@ -30,6 +33,7 @@ import net.vonforst.evmap.api.availability.ChargeLocationStatus
 import net.vonforst.evmap.api.createApi
 import net.vonforst.evmap.api.stringProvider
 import net.vonforst.evmap.model.ChargeLocation
+import net.vonforst.evmap.model.ChargepointListItem
 import net.vonforst.evmap.model.FILTERS_FAVORITES
 import net.vonforst.evmap.model.FilterValue
 import net.vonforst.evmap.model.FilterWithValue
@@ -42,6 +46,7 @@ import net.vonforst.evmap.ui.getMarkerTint
 import net.vonforst.evmap.utils.bearingBetween
 import net.vonforst.evmap.utils.distanceBetween
 import net.vonforst.evmap.utils.headingDiff
+import net.vonforst.evmap.viewmodel.Resource
 import net.vonforst.evmap.viewmodel.Status
 import net.vonforst.evmap.viewmodel.awaitFinished
 import net.vonforst.evmap.viewmodel.filtersWithValue
@@ -54,6 +59,8 @@ import kotlin.collections.set
 import kotlin.math.abs
 import kotlin.math.min
 import kotlin.math.roundToInt
+import kotlin.time.DurationUnit
+import kotlin.time.TimeSource
 
 /**
  * Main map screen showing either nearby chargers or favorites
@@ -466,12 +473,15 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                     var chargers: List<ChargeLocation>? = null
                     val radiusValues = listOf(searchRadius, searchRadius * 10, searchRadius * 50)
                     for (radius in radiusValues) {
-                        val response = repo.getChargepointsRadius(
+                        val responseLiveData = repo.getChargepointsRadius(
                             searchLocation,
                             radius,
                             zoom = 16f,
                             filtersWithValue
-                        ).awaitFinished()
+                        )
+                        val observer = setupProgressToasts(responseLiveData)
+                        val response = responseLiveData.awaitFinished()
+                        responseLiveData.removeObserver(observer)
                         if (response.status == Status.ERROR && if (radius == radiusValues.last()) response.data.isNullOrEmpty() else response.data == null) {
                             loadingError = true
                             this@MapScreen.chargers = null
@@ -508,6 +518,31 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                 invalidate()
             }
         }
+    }
+
+    private fun setupProgressToasts(
+        responseLiveData: LiveData<Resource<List<ChargepointListItem>>>
+    ): Observer<Resource<List<ChargepointListItem>>> {
+        var lastTime = TimeSource.Monotonic.markNow()
+        val observer =
+            Observer<Resource<List<ChargepointListItem>>> { value ->
+                if (value.progress != null && lastTime.elapsedNow().toDouble(
+                        DurationUnit.SECONDS
+                    ) > 2
+                ) {
+                    CarToast.makeText(
+                        carContext,
+                        carContext.getString(
+                            R.string.downloading_chargers_percent,
+                            value.progress * 100
+                        ),
+                        CarToast.LENGTH_SHORT
+                    ).show()
+                    lastTime = TimeSource.Monotonic.markNow()
+                }
+            }
+        responseLiveData.observe(this@MapScreen, observer)
+        return observer
     }
 
     /**

@@ -100,6 +100,9 @@ abstract class ChargeLocationsDao {
     @Query("SELECT COUNT(*) FROM chargelocation")
     abstract fun getCount(): LiveData<Long>
 
+    @Query("SELECT COUNT(*) FROM chargelocation")
+    abstract suspend fun getCountAsync(): Long
+
     @SkipQueryVerification
     @Query("SELECT SUM(pgsize) FROM dbstat WHERE name == \"ChargeLocation\"")
     abstract suspend fun getSize(): Long

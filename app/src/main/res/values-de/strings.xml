@@ -364,7 +364,7 @@
     <string name="referral_tesla">Tesla</string>
     <string name="generic_connection_error">Daten konnten nicht geladen werden</string>
     <string name="copied">In Zwischenablage kopiert</string>
-    <string name="downloading_chargers_percent">Lade Ladestations-Datenbank herunter… %.0f%%</string>
+    <string name="downloading_chargers_percent">Lade herunter… %.0f%%</string>
     <string name="status_available">Verfügbar</string>
     <string name="status_occupied">Besetzt</string>
     <string name="status_charging">Lädt</string>

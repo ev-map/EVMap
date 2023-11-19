@@ -29,6 +29,10 @@ class TeslaOwnerAvailabilityDetector(
     }
 
     override suspend fun getAvailability(location: ChargeLocation): ChargeLocationStatus {
+        if (location.chargepoints.isEmpty() || location.chargepoints.any { !it.hasKnownPower() }) {
+            throw AvailabilityDetectorException("no candidates found.")
+        }
+
         val api = initApi()
         val req = TeslaChargingOwnershipGraphQlApi.GetNearbyChargingSitesRequest(
             TeslaChargingOwnershipGraphQlApi.GetNearbyChargingSitesVariables(

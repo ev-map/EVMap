@@ -7,7 +7,9 @@ import android.text.style.StyleSpan
 import androidx.core.text.HtmlCompat
 import androidx.core.text.buildSpannedString
 import net.vonforst.evmap.R
-import net.vonforst.evmap.api.availability.TeslaGraphQlApi
+import net.vonforst.evmap.api.availability.tesla.Pricing
+import net.vonforst.evmap.api.availability.tesla.Rates
+import net.vonforst.evmap.api.availability.tesla.TeslaChargingOwnershipGraphQlApi
 import net.vonforst.evmap.bold
 import net.vonforst.evmap.joinToSpannedString
 import net.vonforst.evmap.model.ChargeCard
@@ -47,7 +49,7 @@ fun buildDetails(
     loc: ChargeLocation?,
     chargeCards: Map<Long, ChargeCard>?,
     filteredChargeCards: Set<Long>?,
-    teslaPricing: TeslaGraphQlApi.Pricing?,
+    teslaPricing: Pricing?,
     ctx: Context
 ): List<DetailsAdapter.Detail> {
     if (loc == null) return emptyList()
@@ -139,7 +141,7 @@ fun buildDetails(
     )
 }
 
-fun formatTeslaParkingFee(teslaPricing: TeslaGraphQlApi.Pricing, ctx: Context) =
+fun formatTeslaParkingFee(teslaPricing: Pricing, ctx: Context) =
     teslaPricing.memberRates?.activePricebook?.parking?.let { parkingFee ->
         ctx.getString(
             R.string.tesla_pricing_blocking_fee,
@@ -147,7 +149,7 @@ fun formatTeslaParkingFee(teslaPricing: TeslaGraphQlApi.Pricing, ctx: Context) =
         )
     }
 
-fun formatTeslaPricing(teslaPricing: TeslaGraphQlApi.Pricing, ctx: Context) =
+fun formatTeslaPricing(teslaPricing: Pricing, ctx: Context) =
     buildSpannedString {
         teslaPricing.memberRates?.let { memberRates ->
             append(
@@ -168,7 +170,7 @@ fun formatTeslaPricing(teslaPricing: TeslaGraphQlApi.Pricing, ctx: Context) =
         }
     }
 
-private fun formatTeslaPricingRates(rates: TeslaGraphQlApi.Rates, ctx: Context) =
+private fun formatTeslaPricingRates(rates: Rates, ctx: Context) =
     buildSpannedString {
         val timeFmt = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
         if (rates.activePricebook.charging.touRates.enabled) {

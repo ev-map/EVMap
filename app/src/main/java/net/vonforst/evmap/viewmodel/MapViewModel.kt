@@ -9,25 +9,18 @@ import com.car2go.maps.Projection
 import com.car2go.maps.model.LatLng
 import com.car2go.maps.model.LatLngBounds
 import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike
-import com.squareup.moshi.JsonDataException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
-import net.vonforst.evmap.R
-import net.vonforst.evmap.api.availability.AvailabilityDetectorException
 import net.vonforst.evmap.api.availability.AvailabilityRepository
 import net.vonforst.evmap.api.availability.ChargeLocationStatus
-import net.vonforst.evmap.api.availability.TeslaGraphQlApi
+import net.vonforst.evmap.api.availability.tesla.Pricing
+import net.vonforst.evmap.api.availability.tesla.TeslaChargingOwnershipGraphQlApi
 import net.vonforst.evmap.api.createApi
-import net.vonforst.evmap.api.equivalentPlugTypes
-import net.vonforst.evmap.api.fronyx.FronyxApi
-import net.vonforst.evmap.api.fronyx.FronyxEvseIdResponse
-import net.vonforst.evmap.api.fronyx.FronyxStatus
 import net.vonforst.evmap.api.fronyx.PredictionData
 import net.vonforst.evmap.api.fronyx.PredictionRepository
 import net.vonforst.evmap.api.goingelectric.GEChargepoint
-import net.vonforst.evmap.api.nameForPlugType
 import net.vonforst.evmap.api.openchargemap.OCMConnection
 import net.vonforst.evmap.api.openchargemap.OCMReferenceData
 import net.vonforst.evmap.api.stringProvider
@@ -40,12 +33,6 @@ import net.vonforst.evmap.storage.FilterProfile
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.ui.cluster
 import net.vonforst.evmap.utils.distanceBetween
-import retrofit2.HttpException
-import java.io.IOException
-import java.time.LocalDate
-import java.time.LocalTime
-import java.time.ZoneId
-import java.time.ZonedDateTime
 import kotlin.math.roundToInt
 
 @Parcelize
@@ -249,7 +236,7 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
     }
 
     val teslaPricing = availability.map {
-        it.data?.extraData as? TeslaGraphQlApi.Pricing
+        it.data?.extraData as? Pricing
     }
 
     private val predictionRepository = PredictionRepository(application)

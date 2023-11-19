@@ -12,7 +12,6 @@ import androidx.car.app.CarToast
 import androidx.car.app.Screen
 import androidx.car.app.constraints.ConstraintManager
 import androidx.car.app.model.*
-import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.IconCompat
 import androidx.core.graphics.scale
 import androidx.core.text.HtmlCompat
@@ -28,7 +27,8 @@ import net.vonforst.evmap.adapter.formatTeslaParkingFee
 import net.vonforst.evmap.adapter.formatTeslaPricing
 import net.vonforst.evmap.api.availability.AvailabilityRepository
 import net.vonforst.evmap.api.availability.ChargeLocationStatus
-import net.vonforst.evmap.api.availability.TeslaGraphQlApi
+import net.vonforst.evmap.api.availability.tesla.Pricing
+import net.vonforst.evmap.api.availability.tesla.TeslaChargingOwnershipGraphQlApi
 import net.vonforst.evmap.api.chargeprice.ChargepriceApi
 import net.vonforst.evmap.api.createApi
 import net.vonforst.evmap.api.fronyx.FronyxApi
@@ -52,7 +52,6 @@ import net.vonforst.evmap.viewmodel.awaitFinished
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
-import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.roundToInt
 
@@ -330,7 +329,7 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
             }.build())
         }
         if (rows.count() < maxRows && teslaSupported) {
-            val teslaPricing = availability?.extraData as? TeslaGraphQlApi.Pricing
+            val teslaPricing = availability?.extraData as? Pricing
             rows.add(3, Row.Builder().apply {
                 setTitle(carContext.getString(R.string.cost))
                 teslaPricing?.let {

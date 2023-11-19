@@ -6,12 +6,14 @@ import kotlinx.coroutines.withContext
 import net.vonforst.evmap.addDebugInterceptors
 import net.vonforst.evmap.api.RateLimitInterceptor
 import net.vonforst.evmap.api.await
+import net.vonforst.evmap.api.chargeprice.ChargepriceApi
 import net.vonforst.evmap.api.equivalentPlugTypes
 import net.vonforst.evmap.cartesianProduct
 import net.vonforst.evmap.model.ChargeLocation
 import net.vonforst.evmap.model.Chargepoint
 import net.vonforst.evmap.storage.EncryptedPreferenceDataStore
 import net.vonforst.evmap.viewmodel.Resource
+import okhttp3.Cache
 import okhttp3.JavaNetCookieJar
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -158,53 +160,68 @@ enum class ChargepointStatus {
 
 class AvailabilityDetectorException(message: String) : Exception(message)
 
+class NotSignedInException : IOException("not signed in")
+
 private val cookieManager = CookieManager().apply {
     setCookiePolicy(CookiePolicy.ACCEPT_ALL)
 }
 
 class AvailabilityRepository(context: Context) {
+    private val cacheSize = 5L * 1024 * 1024 // 5MB
     private val okhttp = OkHttpClient.Builder()
         .addInterceptor(RateLimitInterceptor())
         .addDebugInterceptors()
         .readTimeout(10, TimeUnit.SECONDS)
         .connectTimeout(10, TimeUnit.SECONDS)
         .cookieJar(JavaNetCookieJar(cookieManager))
+        .cache(Cache(context.cacheDir, cacheSize))
         .build()
-    private val teslaAvailabilityDetector =
-        TeslaAvailabilityDetector(okhttp, EncryptedPreferenceDataStore(context))
+    private val teslaOwnerAvailabilityDetector =
+        TeslaOwnerAvailabilityDetector(okhttp, EncryptedPreferenceDataStore(context))
     private val availabilityDetectors = listOf(
         RheinenergieAvailabilityDetector(okhttp),
-        teslaAvailabilityDetector,
+        teslaOwnerAvailabilityDetector,
+        TeslaGuestAvailabilityDetector(okhttp),
         EnBwAvailabilityDetector(okhttp),
         NewMotionAvailabilityDetector(okhttp)
     )
 
     suspend fun getAvailability(charger: ChargeLocation): Resource<ChargeLocationStatus> {
         var value: Resource<ChargeLocationStatus>? = null
+
+        var result: ChargeLocationStatus? = null
+        var exception: Throwable? = null
+
         withContext(Dispatchers.IO) {
             for (ad in availabilityDetectors) {
                 if (!ad.isChargerSupported(charger)) continue
                 try {
-                    value = Resource.success(ad.getAvailability(charger))
+                    result = ad.getAvailability(charger)
                     break
                 } catch (e: IOException) {
-                    value = Resource.error(e.message, null)
+                    exception = exception.takeIf { it is NotSignedInException } ?: e
                     e.printStackTrace()
                 } catch (e: HttpException) {
-                    value = Resource.error(e.message, null)
+                    exception = exception.takeIf { it is NotSignedInException } ?: e
                     e.printStackTrace()
                 } catch (e: AvailabilityDetectorException) {
-                    value = Resource.error(e.message, null)
+                    exception = exception.takeIf { it is NotSignedInException } ?: e
+                    e.printStackTrace()
+                } catch (e: NotSignedInException) {
+                    exception = e
                     e.printStackTrace()
                 }
             }
         }
-        return value ?: Resource.error(null, null)
+        result?.let {
+            return Resource.success(it)
+        }
+        return Resource.error(exception?.message, null)
     }
 
     fun isSupercharger(charger: ChargeLocation) =
-        teslaAvailabilityDetector.isChargerSupported(charger)
+        teslaOwnerAvailabilityDetector.isChargerSupported(charger)
 
     fun isTeslaSupported(charger: ChargeLocation) =
-        teslaAvailabilityDetector.isChargerSupported(charger) && teslaAvailabilityDetector.isSignedIn()
+        teslaOwnerAvailabilityDetector.isChargerSupported(charger) && teslaOwnerAvailabilityDetector.isSignedIn()
 }

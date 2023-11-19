@@ -1,17 +1,12 @@
-package net.vonforst.evmap.api.availability
+package net.vonforst.evmap.api.availability.tesla
 
 import android.net.Uri
 import android.util.Base64
-import com.squareup.moshi.FromJson
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
-import com.squareup.moshi.ToJson
 import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
 import kotlinx.coroutines.runBlocking
-import net.vonforst.evmap.model.ChargeLocation
-import net.vonforst.evmap.model.Chargepoint
-import net.vonforst.evmap.model.Coordinate
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -19,14 +14,9 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
-import java.io.IOException
 import java.security.MessageDigest
 import java.security.SecureRandom
-import java.time.Instant
 import java.time.LocalTime
-import java.util.Collections
-
-private const val coordRange = 0.005  // range of latitude and longitude for loading the map
 
 interface TeslaAuthenticationApi {
     @POST("oauth2/v3/token")
@@ -157,7 +147,7 @@ interface TeslaOwnerApi {
     }
 }
 
-interface TeslaGraphQlApi {
+interface TeslaChargingOwnershipGraphQlApi {
     @POST("/graphql")
     suspend fun getNearbyChargingSites(
         @Body request: GetNearbyChargingSitesRequest,
@@ -238,12 +228,6 @@ interface TeslaGraphQlApi {
         TESLA, NON_TESLA
     }
 
-    sealed class GraphQlRequest {
-        abstract val operationName: String
-        abstract val query: String
-        abstract val variables: Any?
-    }
-
     @JsonClass(generateAdapter = true)
     data class GetNearbyChargingSitesResponse(val data: GetNearbyChargingSitesResponseData)
 
@@ -270,15 +254,6 @@ interface TeslaGraphQlApi {
         val totalStalls: Value<Int>
         // TODO: siteType, accessType
     )
-
-    @JsonClass(generateAdapter = true)
-    data class Outage(val message: String /* TODO: */)
-
-    @JsonClass(generateAdapter = true)
-    data class Value<T : Any>(val value: T)
-
-    @JsonClass(generateAdapter = true)
-    data class Text(val text: String)
 
     @JsonClass(generateAdapter = true)
     data class GetChargingSiteInformationResponse(val data: GetChargingSiteInformationResponseData)
@@ -308,12 +283,6 @@ interface TeslaGraphQlApi {
     )
 
     @JsonClass(generateAdapter = true)
-    data class ChargerDetail(
-        val availability: ChargerAvailability,
-        val charger: ChargerId
-    )
-
-    @JsonClass(generateAdapter = true)
     data class ChargerId(
         val id: Text,
         val label: Value<String>?,
@@ -324,6 +293,12 @@ interface TeslaGraphQlApi {
         val labelLetter
             get() = label?.value?.replace(Regex("""\d"""), "")
     }
+
+    @JsonClass(generateAdapter = true)
+    data class ChargerDetail(
+        val availability: ChargerAvailability,
+        val charger: ChargerId
+    )
 
     @JsonClass(generateAdapter = true)
     data class SiteStatic(
@@ -343,58 +318,6 @@ interface TeslaGraphQlApi {
     )
 
     @JsonClass(generateAdapter = true)
-    data class Pricing(
-        val canDisplayCombinedComparison: Boolean,
-        val hasMSPPricing: Boolean,
-        val hasMembershipPricing: Boolean,
-        val memberRates: Rates?, // rates for Tesla drivers & non-Tesla drivers with subscription
-        val userRates: Rates?    // rates without subscription
-    )
-
-    @JsonClass(generateAdapter = true)
-    data class Rates(
-        val activePricebook: Pricebook
-    )
-
-    @JsonClass(generateAdapter = true)
-    data class Pricebook(
-        val charging: PricebookDetails,
-        val parking: PricebookDetails,
-        val priceBookID: Long
-    )
-
-    @JsonClass(generateAdapter = true)
-    data class PricebookDetails(
-        val bucketUom: String,  // unit of measurement for buckets (typically "kw")
-        val buckets: List<Bucket>,  // buckets of charging power (used for minute-based pricing)
-        val currencyCode: String,
-        val programType: String,
-        val rates: List<Double>,
-        val touRates: TouRates,
-        val uom: String,  // unit of measurement ("kwh" or "min")
-        val vehicleMakeType: String
-    )
-
-    @JsonClass(generateAdapter = true)
-    data class Bucket(
-        val start: Int,
-        val end: Int
-    )
-
-    @JsonClass(generateAdapter = true)
-    data class TouRates(
-        val activeRatesByTime: List<ActiveRatesByTime>,
-        val enabled: Boolean
-    )
-
-    @JsonClass(generateAdapter = true)
-    data class ActiveRatesByTime(
-        val startTime: LocalTime,
-        val endTime: LocalTime,
-        val rates: List<Double>
-    )
-
-    @JsonClass(generateAdapter = true)
     data class CongestionPriceHistogram(
         val data: List<Double>,
         val dataAttributes: List<CongestionHistogramDataAttributes>
@@ -406,25 +329,11 @@ interface TeslaGraphQlApi {
         val label: String  // "1AM", "2AM", etc.
     )
 
-    enum class ChargerAvailability {
-        @Json(name = "CHARGER_AVAILABILITY_AVAILABLE")
-        AVAILABLE,
+    @JsonClass(generateAdapter = true)
+    data class Value<T : Any>(val value: T)
 
-        @Json(name = "CHARGER_AVAILABILITY_OCCUPIED")
-        OCCUPIED,
-
-        @Json(name = "CHARGER_AVAILABILITY_DOWN")
-        DOWN,
-        @Json(name = "CHARGER_AVAILABILITY_UNKNOWN")
-        UNKNOWN;
-
-        fun toStatus() = when (this) {
-            AVAILABLE -> ChargepointStatus.AVAILABLE
-            OCCUPIED -> ChargepointStatus.OCCUPIED
-            DOWN -> ChargepointStatus.FAULTED
-            UNKNOWN -> ChargepointStatus.UNKNOWN
-        }
-    }
+    @JsonClass(generateAdapter = true)
+    data class Text(val text: String)
 
     enum class WaitEstimateBucket {
         @Json(name = "WAIT_ESTIMATE_BUCKET_NO_WAIT")
@@ -457,7 +366,7 @@ interface TeslaGraphQlApi {
             client: OkHttpClient,
             baseUrl: String? = null,
             token: suspend () -> String
-        ): TeslaGraphQlApi {
+        ): TeslaChargingOwnershipGraphQlApi {
             val clientWithInterceptor = client.newBuilder()
                 .addInterceptor { chain ->
                     val t = runBlocking { token() }
@@ -479,193 +388,7 @@ interface TeslaGraphQlApi {
                 )
                 .client(clientWithInterceptor)
                 .build()
-            return retrofit.create(TeslaGraphQlApi::class.java)
+            return retrofit.create(TeslaChargingOwnershipGraphQlApi::class.java)
         }
     }
-}
-
-internal class LocalTimeAdapter {
-    @FromJson
-    fun fromJson(value: String?): LocalTime? = value?.let {
-        if (it == "24:00") LocalTime.MAX else LocalTime.parse(it)
-    }
-
-    @ToJson
-    fun toJson(value: LocalTime?): String? = value?.toString()
-}
-
-fun Coordinate.asTeslaCoord() =
-    TeslaGraphQlApi.Coordinate(this.lat, this.lng)
-
-class TeslaAvailabilityDetector(
-    private val client: OkHttpClient,
-    private val tokenStore: TokenStore,
-    private val baseUrl: String? = null
-) :
-    BaseAvailabilityDetector(client) {
-
-    private val authApi = TeslaAuthenticationApi.create(client, null)
-    private var api: TeslaGraphQlApi? = null
-
-    interface TokenStore {
-        var teslaRefreshToken: String?
-        var teslaAccessToken: String?
-        var teslaAccessTokenExpiry: Long
-    }
-
-    override suspend fun getAvailability(location: ChargeLocation): ChargeLocationStatus {
-        val api = initApi()
-        val req = TeslaGraphQlApi.GetNearbyChargingSitesRequest(
-            TeslaGraphQlApi.GetNearbyChargingSitesVariables(
-                TeslaGraphQlApi.GetNearbyChargingSitesArgs(
-                    location.coordinates.asTeslaCoord(),
-                    TeslaGraphQlApi.Coordinate(
-                        location.coordinates.lat + coordRange,
-                        location.coordinates.lng - coordRange
-                    ),
-                    TeslaGraphQlApi.Coordinate(
-                        location.coordinates.lat - coordRange,
-                        location.coordinates.lng + coordRange
-                    ),
-                    TeslaGraphQlApi.OpenToNonTeslasFilterValue(false)
-                )
-            )
-        )
-        val results = api.getNearbyChargingSites(
-            req,
-            req.operationName
-        ).data.charging?.nearbySites?.sitesAndDistances
-            ?: throw AvailabilityDetectorException("no candidates found.")
-        val result =
-            results.minByOrNull { it.haversineDistanceMiles.value }
-                ?: throw AvailabilityDetectorException("no candidates found.")
-
-        val details = api.getChargingSiteInformation(
-            TeslaGraphQlApi.GetChargingSiteInformationRequest(
-                TeslaGraphQlApi.GetChargingSiteInformationVariables(
-                    TeslaGraphQlApi.ChargingSiteIdentifier(result.id.text),
-                    TeslaGraphQlApi.VehicleMakeType.NON_TESLA
-                )
-            )
-        ).data.charging.site ?: throw AvailabilityDetectorException("no candidates found.")
-
-
-        val scV2Connectors = location.chargepoints.filter { it.type == Chargepoint.SUPERCHARGER }
-        val scV2CCSConnectors = location.chargepoints.filter {
-            it.type in listOf(
-                Chargepoint.CCS_TYPE_2,
-                Chargepoint.CCS_UNKNOWN
-            ) && it.power != null && it.power <= 150
-        }
-        if (scV2CCSConnectors.sumOf { it.count } != 0 && scV2CCSConnectors.sumOf { it.count } != scV2Connectors.sumOf { it.count }) {
-            throw AvailabilityDetectorException("number of V2 connectors does not match number of V2 CCS connectors")
-        }
-        val scV3Connectors = location.chargepoints.filter {
-            it.type in listOf(
-                Chargepoint.CCS_TYPE_2,
-                Chargepoint.CCS_UNKNOWN
-            ) && it.power != null && it.power > 150
-        }
-        if (location.totalChargepoints != scV2Connectors.sumOf { it.count } + scV3Connectors.sumOf { it.count } + scV2CCSConnectors.sumOf { it.count }) throw AvailabilityDetectorException(
-            "charger has unknown connectors"
-        )
-
-        var statusSorted = details.siteDynamic.chargerDetails
-            .sortedBy { c ->
-                c.charger.labelLetter
-                    ?: details.siteStatic.chargers.find { it.id == c.charger.id }?.labelLetter
-            }
-            .sortedBy { c ->
-                c.charger.labelNumber
-                    ?: details.siteStatic.chargers.find { it.id == c.charger.id }?.labelNumber
-            }
-            .map { it.availability }
-        if (statusSorted.size != scV2Connectors.sumOf { it.count } + scV3Connectors.sumOf { it.count }) {
-            // apparently some connectors are missing in Tesla data
-            // If we have just one type of charger, we can still match
-            val numMissing =
-                scV2Connectors.sumOf { it.count } + scV3Connectors.sumOf { it.count } - statusSorted.size
-            if (scV2Connectors.isEmpty() || scV3Connectors.isEmpty() && numMissing > 0) {
-                statusSorted =
-                    statusSorted + List(numMissing) { TeslaGraphQlApi.ChargerAvailability.UNKNOWN }
-            } else {
-                throw AvailabilityDetectorException("Tesla API chargepoints do not match data source")
-            }
-        }
-
-        val statusMap = emptyMap<Chargepoint, List<ChargepointStatus>>().toMutableMap()
-        var i = 0
-        for (connector in scV2Connectors) {
-            statusMap[connector] =
-                statusSorted.subList(i, i + connector.count).map { it.toStatus() }
-            i += connector.count
-        }
-        if (scV2CCSConnectors.isNotEmpty()) {
-            i = 0
-            for (connector in scV2CCSConnectors) {
-                statusMap[connector] =
-                    statusSorted.subList(i, i + connector.count).map { it.toStatus() }
-                i += connector.count
-            }
-        }
-        for (connector in scV3Connectors) {
-            statusMap[connector] =
-                statusSorted.subList(i, i + connector.count).map { it.toStatus() }
-            i += connector.count
-        }
-
-        val congestionHistogram = details.congestionPriceHistogram?.let { cph ->
-            val indexOfMidnight = cph.dataAttributes.indexOfFirst { it.label == "12AM" }
-            indexOfMidnight.takeIf { it >= 0 }?.let { index ->
-                val data = cph.data.toMutableList()
-                Collections.rotate(data, -index)
-                data
-            }
-        }
-
-        return ChargeLocationStatus(
-            statusMap,
-            "Tesla",
-            congestionHistogram = congestionHistogram,
-            extraData = details.pricing
-        )
-    }
-
-    override fun isChargerSupported(charger: ChargeLocation): Boolean {
-        return when (charger.dataSource) {
-            "goingelectric" -> charger.network == "Tesla Supercharger"
-            "openchargemap" -> charger.chargepriceData?.network in listOf("23", "3534")
-            else -> false
-        }
-    }
-
-    private suspend fun initApi(): TeslaGraphQlApi {
-
-        return api ?: run {
-            val newApi = TeslaGraphQlApi.create(client, baseUrl) {
-                val now = Instant.now().epochSecond
-                val token =
-                    tokenStore.teslaAccessToken.takeIf { tokenStore.teslaAccessTokenExpiry > now }
-                        ?: run {
-                            val refreshToken = tokenStore.teslaRefreshToken
-                                ?: throw IOException("not signed in")
-                            val response =
-                                authApi.getToken(
-                                    TeslaAuthenticationApi.RefreshTokenRequest(
-                                        refreshToken
-                                    )
-                                )
-                            tokenStore.teslaAccessToken = response.accessToken
-                            tokenStore.teslaAccessTokenExpiry = now + response.expiresIn
-                            response.accessToken
-                        }
-                token
-            }
-            api = newApi
-            newApi
-        }
-    }
-
-    fun isSignedIn() = tokenStore.teslaRefreshToken != null
-
 }

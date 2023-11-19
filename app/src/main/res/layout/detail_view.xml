@@ -61,7 +61,7 @@
 
         <variable
             name="teslaPricing"
-            type="net.vonforst.evmap.api.availability.TeslaGraphQlApi.Pricing" />
+            type="net.vonforst.evmap.api.availability.tesla.Pricing" />
 
         <variable
             name="chargeCards"

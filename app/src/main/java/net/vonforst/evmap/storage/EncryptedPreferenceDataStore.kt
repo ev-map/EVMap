@@ -3,13 +3,13 @@ package net.vonforst.evmap.storage
 import android.content.Context
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
-import net.vonforst.evmap.api.availability.TeslaAvailabilityDetector
+import net.vonforst.evmap.api.availability.TeslaOwnerAvailabilityDetector
 
 /**
  * Encrypted data storage for sensitive data such as API access tokens.
  * This will not be included in backups.
  */
-class EncryptedPreferenceDataStore(context: Context) : TeslaAvailabilityDetector.TokenStore {
+class EncryptedPreferenceDataStore(context: Context) : TeslaOwnerAvailabilityDetector.TokenStore {
     val sp = EncryptedSharedPreferences.create(
         context,
         "encrypted_prefs",

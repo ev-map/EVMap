@@ -15,8 +15,8 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import net.vonforst.evmap.R
 import net.vonforst.evmap.addDebugInterceptors
-import net.vonforst.evmap.api.availability.TeslaAuthenticationApi
-import net.vonforst.evmap.api.availability.TeslaOwnerApi
+import net.vonforst.evmap.api.availability.tesla.TeslaAuthenticationApi
+import net.vonforst.evmap.api.availability.tesla.TeslaOwnerApi
 import net.vonforst.evmap.fragment.oauth.OAuthLoginFragmentArgs
 import net.vonforst.evmap.viewmodel.SettingsViewModel
 import net.vonforst.evmap.viewmodel.viewModelFactory

@@ -8,9 +8,6 @@ import android.content.pm.PackageManager.NameNotFoundException
 import android.hardware.Sensor
 import android.hardware.SensorManager
 import android.net.Uri
-import android.os.Bundle
-import android.os.IInterface
-import android.text.Html
 import androidx.annotation.StringRes
 import androidx.car.app.CarContext
 import androidx.car.app.CarToast
@@ -23,11 +20,10 @@ import androidx.core.graphics.drawable.IconCompat
 import androidx.core.text.HtmlCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import net.vonforst.evmap.*
-import net.vonforst.evmap.api.availability.TeslaAuthenticationApi
-import net.vonforst.evmap.api.availability.TeslaOwnerApi
+import net.vonforst.evmap.api.availability.tesla.TeslaAuthenticationApi
+import net.vonforst.evmap.api.availability.tesla.TeslaOwnerApi
 import net.vonforst.evmap.api.chargeprice.ChargepriceApi
 import net.vonforst.evmap.api.chargeprice.ChargepriceCar
 import net.vonforst.evmap.api.chargeprice.ChargepriceTariff

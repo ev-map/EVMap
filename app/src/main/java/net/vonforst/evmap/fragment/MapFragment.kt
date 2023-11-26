@@ -266,6 +266,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
         binding.detailView.topPart.doOnNextLayout {
             bottomSheetBehavior.peekHeight = binding.detailView.topPart.bottom
+            vm.bottomSheetState.value?.let { bottomSheetBehavior.state = it }
         }
         bottomSheetBehavior.isCollapsible = bottomSheetCollapsible
 

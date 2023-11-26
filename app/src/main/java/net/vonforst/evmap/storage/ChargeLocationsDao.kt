@@ -229,6 +229,9 @@ class ChargeLocationsRepository(
             }
         } else {
             return liveData {
+                if (fullDownloadJob != null) {
+                    fullDownloadProgress.value?.let { emit(Resource.loading(null, it)) }
+                }
                 if (!savedRegionResult.await()) {
                     val job = fullDownloadJob ?: scope.launch {
                         fullDownload()

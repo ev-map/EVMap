@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.cancel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import net.vonforst.evmap.api.ChargepointApi
 import net.vonforst.evmap.api.ChargepointList
 import net.vonforst.evmap.api.StringProvider
@@ -499,8 +500,14 @@ class ChargeLocationsRepository(
         val time = Instant.now()
         val result = api.fullDownload()
         try {
-            result.chargers.chunked(100).forEach {
-                chargeLocationsDao.insert(*it.toTypedArray())
+            var insertJob: Job? = null
+            result.chargers.chunked(1024).forEach {
+                insertJob?.join()
+                insertJob = withContext(Dispatchers.IO) {
+                    scope.launch {
+                        chargeLocationsDao.insert(*it.toTypedArray())
+                    }
+                }
                 fullDownloadProgress.value = result.progress
             }
             val region = Mbr(

@@ -98,6 +98,18 @@ abstract class ChargeLocationsDao {
     @RawQuery(observedEntities = [ChargeLocation::class])
     abstract fun getChargeLocationsCustom(query: SupportSQLiteQuery): LiveData<List<ChargeLocation>>
 
+    @SkipQueryVerification
+    @Query("SELECT SUM(1) AS clusterCount, MakePoint(AVG(X(coordinates)), AVG(Y(coordinates)), 4326) as center, SnapToGrid(coordinates, :precision) AS snapped FROM chargelocation WHERE dataSource == :dataSource AND Within(coordinates, BuildMbr(:lng1, :lat1, :lng2, :lat2)) AND timeRetrieved > :after GROUP BY snapped")
+    abstract fun getChargeLocationClusters(
+        lat1: Double,
+        lat2: Double,
+        lng1: Double,
+        lng2: Double,
+        dataSource: String,
+        after: Long,
+        precision: Double
+    ): LiveData<List<ChargeLocationClusterSimple>>
+
     @Query("SELECT COUNT(*) FROM chargelocation")
     abstract fun getCount(): LiveData<Long>
 
@@ -108,6 +120,12 @@ abstract class ChargeLocationsDao {
     @Query("SELECT SUM(pgsize) FROM dbstat WHERE name == \"ChargeLocation\"")
     abstract suspend fun getSize(): Long
 }
+
+data class ChargeLocationClusterSimple(
+    @ColumnInfo("clusterCount") val clusterCount: Int,
+    @ColumnInfo("center") val center: Coordinate,
+    @ColumnInfo("snapped") val snapped: Coordinate,
+)
 
 /**
  * The ChargeLocationsRepository wraps the ChargepointApi and the DB to provide caching

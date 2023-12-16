@@ -1,5 +1,6 @@
 package net.vonforst.evmap
 
+import android.app.ActivityOptions
 import android.app.PendingIntent
 import android.content.ActivityNotFoundException
 import android.content.Intent
@@ -206,18 +207,15 @@ class MapsActivity : AppCompatActivity(),
                     }
                 }
             } else if (intent.hasExtra(EXTRA_CHARGER_ID)) {
-                deepLink = navController.createDeepLink()
-                    .setDestination(R.id.map)
-                    .setArguments(
-                        MapFragmentArgs(
-                            chargerId = intent.getLongExtra(EXTRA_CHARGER_ID, 0),
-                            latLng = LatLng(
-                                intent.getDoubleExtra(EXTRA_LAT, 0.0),
-                                intent.getDoubleExtra(EXTRA_LON, 0.0)
-                            )
-                        ).toBundle()
-                    )
-                    .createPendingIntent()
+                navController.navigate(
+                    R.id.map, MapFragmentArgs(
+                        chargerId = intent.getLongExtra(EXTRA_CHARGER_ID, 0),
+                        latLng = LatLng(
+                            intent.getDoubleExtra(EXTRA_LAT, 0.0),
+                            intent.getDoubleExtra(EXTRA_LON, 0.0)
+                        )
+                    ).toBundle()
+                )
             } else if (intent.hasExtra(EXTRA_FAVORITES)) {
                 deepLink = navController.createDeepLink()
                     .setGraph(navGraph)

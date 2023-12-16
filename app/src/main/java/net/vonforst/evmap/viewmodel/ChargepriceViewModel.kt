@@ -8,6 +8,7 @@ import jsonapi.Relationships
 import jsonapi.ResourceIdentifier
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import net.vonforst.evmap.EspressoIdlingResource
 import net.vonforst.evmap.api.chargeprice.*
 import net.vonforst.evmap.api.equivalentPlugTypes
 import net.vonforst.evmap.model.ChargeLocation
@@ -48,6 +49,7 @@ class ChargepriceViewModel(
                 } else {
                     value = Resource.loading(null)
                     viewModelScope.launch {
+                        EspressoIdlingResource.increment()
                         value = try {
                             val result = api.getVehicles()
                             Resource.success(result.filter {
@@ -57,6 +59,8 @@ class ChargepriceViewModel(
                             Resource.error(e.message, null)
                         } catch (e: HttpException) {
                             Resource.error(e.message, null)
+                        } finally {
+                            EspressoIdlingResource.decrement()
                         }
                     }
                 }
@@ -253,6 +257,7 @@ class ChargepriceViewModel(
 
         loadPricesJob?.cancel()
         loadPricesJob = viewModelScope.launch {
+            EspressoIdlingResource.increment()
             try {
                 val result = api.getChargePrices(
                     ChargepriceRequest(
@@ -295,6 +300,8 @@ class ChargepriceViewModel(
             } catch (e: HttpException) {
                 chargePrices.value = Resource.error(e.message, null)
                 chargePriceMeta.value = Resource.error(e.message, null)
+            } finally {
+                EspressoIdlingResource.decrement()
             }
         }
     }

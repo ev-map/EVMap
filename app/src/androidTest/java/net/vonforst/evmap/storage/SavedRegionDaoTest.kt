@@ -1,4 +1,4 @@
-package com.johan.evmap.storage
+package net.vonforst.evmap.storage
 
 import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule

@@ -2,6 +2,8 @@ package net.vonforst.evmap
 
 import android.content.Context
 import android.os.Build
+import androidx.test.espresso.IdlingRegistry
+import androidx.test.espresso.idling.CountingIdlingResource
 import com.facebook.flipper.android.AndroidFlipperClient
 import com.facebook.flipper.plugins.databases.DatabasesFlipperPlugin
 import com.facebook.flipper.plugins.inspector.DescriptorMapping
@@ -34,9 +36,29 @@ fun OkHttpClient.Builder.addDebugInterceptors(): OkHttpClient.Builder {
     } catch (e: ClassNotFoundException) {
         isRunningTest = false
     }
-    
+
     if (!isRunningTest) {
         this.addNetworkInterceptor(FlipperOkhttpInterceptor(networkFlipperPlugin))
     }
     return this
+}
+
+/**
+ * Contains a static reference to [IdlingResource], only available in the 'debug' build type.
+ */
+object EspressoIdlingResource {
+    private const val RESOURCE = "GLOBAL"
+
+    @JvmField
+    val countingIdlingResource = CountingIdlingResource(RESOURCE)
+
+    fun increment() {
+        countingIdlingResource.increment()
+    }
+
+    fun decrement() {
+        if (!countingIdlingResource.isIdleNow) {
+            countingIdlingResource.decrement()
+        }
+    }
 }

@@ -1,10 +1,12 @@
 package net.vonforst.evmap.navigation
 
 import android.app.Activity
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.util.AttributeSet
+import android.widget.Toast
 import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
@@ -52,7 +54,15 @@ class CustomNavigator(
                     .build()
             )
             .build()
-        intent.launchUrl(context, Uri.parse(url))
+        try {
+            intent.launchUrl(context, Uri.parse(url))
+        } catch (e: ActivityNotFoundException) {
+            Toast.makeText(
+                context,
+                R.string.no_browser_app_found,
+                Toast.LENGTH_SHORT
+            ).show()
+        }
     }
 
     override fun popBackStack() = true // Managed by Chrome Custom Tabs

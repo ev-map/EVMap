@@ -76,7 +76,5 @@ class EvMapApplication : Application(), Configuration.Provider {
         )
     }
 
-    override fun getWorkManagerConfiguration(): Configuration {
-        return Configuration.Builder().build()
-    }
+    override val workManagerConfiguration = Configuration.Builder().build()
 }

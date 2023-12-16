@@ -1,0 +1,102 @@
+on:
+  push:
+    branches:
+      - '*'
+
+name: Generate Screenshots
+
+jobs:
+
+  screenshot:
+    name: Generate screenshots
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        api-level: [ 34 ]
+        device:
+          - pixel_6
+          - pixel_c
+    steps:
+      - name: Enable KVM group perms
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Retrieve debug keystore
+        env:
+          DEBUG_KEYSTORE_BASE64: ${{ secrets.DEBUG_KEYSTORE_BASE64 }}
+        run: |
+          mkdir ~/.config/.android
+          echo $DEBUG_KEYSTORE_BASE64 | base64 --decode >  ~/.config/.android/debug.keystore
+
+      - name: AVD cache
+        uses: actions/cache@v3
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: ${{ runner.os }}-avd-api${{ matrix.api-level }}-${{ matrix.device }}
+
+      - name: create AVD and generate snapshot for caching
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          target: google_apis
+          arch: x86_64
+          profile: ${{ matrix.device }}
+          force-avd-creation: false
+          ram-size: 2048M
+          disk-size: 8192M
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: echo "Generated AVD snapshot for caching."
+
+      - name: Set up Java environment
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: 'zulu'
+          cache: 'gradle'
+
+      - name: Build app
+        run: ./gradlew assembleGoogleNormalDebug assembleGoogleNormalAndroidTest
+        env:
+          GOINGELECTRIC_API_KEY: ${{ secrets.GOINGELECTRIC_API_KEY }}
+          OPENCHARGEMAP_API_KEY: ${{ secrets.OPENCHARGEMAP_API_KEY }}
+          MAPBOX_API_KEY: ${{ secrets.MAPBOX_API_KEY }}
+          GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+          FRONYX_API_KEY: ${{ secrets.FRONYX_API_KEY }}
+          ACRA_CRASHREPORT_CREDENTIALS: ${{ secrets.ACRA_CRASHREPORT_CREDENTIALS }}
+
+      - name: Run emulator and generate screenshots
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          target: google_apis
+          arch: x86_64
+          profile: ${{ matrix.device }}
+          force-avd-creation: false
+          ram-size: 2048M
+          disk-size: 4096M
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: |
+            adb shell pm clear net.vonforst.evmap.debug || true
+            adb shell input keyevent 82
+            adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS
+            adb logcat -c
+            
+            adb logcat *:E &            
+            fastlane screengrab --app_apk_path app/build/outputs/apk/googleNormal/debug/app-google-normal-debug.apk  --test_apk_path app/build/outputs/apk/androidTest/googleNormal/debug/app-google-normal-debug-androidTest.apk --tests_package_name=net.vonforst.evmap.debug.test --app_package_name net.vonforst.evmap.debug -p net.vonforst.evmap.screenshot --use_timestamp_suffix false --clear_previous_screenshots true -q en-US,de-DE,fr-FR,nb-rNO,nl-NL,pt-PT,ro-RO
+
+      - name: Upload screenshots as artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: screenshots
+          path: fastlane/metadata/android

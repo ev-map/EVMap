@@ -108,11 +108,14 @@ class PreferenceDataSource(val context: Context) {
     val darkmode: String
         get() = sp.getString("darkmode", "default")!!
 
-    val mapProvider: String
+    var mapProvider: String
         get() = sp.getString(
             "map_provider",
             context.getString(R.string.pref_map_provider_default)
         )!!
+        set(value) {
+            sp.edit().putString("map_provider", value).apply()
+        }
 
     var searchProvider: String
         get() = sp.getString(

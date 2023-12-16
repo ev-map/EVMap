@@ -8,3 +8,9 @@ fun addDebugInterceptors(context: Context) {
 }
 
 fun OkHttpClient.Builder.addDebugInterceptors(): OkHttpClient.Builder = this
+
+object EspressoIdlingResource {
+    fun increment() {}
+
+    fun decrement() {}
+}

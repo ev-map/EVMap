@@ -228,17 +228,17 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.core:core-splashscreen:1.0.1")
-    implementation("androidx.activity:activity-ktx:1.8.0")
+    implementation("androidx.activity:activity-ktx:1.8.2")
     implementation("androidx.fragment:fragment-ktx:1.6.2")
     implementation("androidx.cardview:cardview:1.0.0")
     implementation("androidx.preference:preference-ktx:1.2.1")
-    implementation("com.google.android.material:material:1.10.0")
+    implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.recyclerview:recyclerview:1.3.2")
-    implementation("androidx.browser:browser:1.6.0")
+    implementation("androidx.browser:browser:1.7.0")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
-    implementation("androidx.work:work-runtime-ktx:2.8.1")
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
     implementation("com.github.ev-map:CustomBottomSheetBehavior:e48f73ea7b")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
@@ -280,7 +280,7 @@ dependencies {
     fossImplementation("com.github.ev-map:mapbox-events-android:a21c324501")
 
     // Google Places
-    googleImplementation("com.google.android.libraries.places:places:3.2.0")
+    googleImplementation("com.google.android.libraries.places:places:3.3.0")
     googleImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
 
     // Mapbox Geocoding
@@ -296,14 +296,14 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
 
     // room library
-    val room_version = "2.6.0"
+    val room_version = "2.6.1"
     implementation("androidx.room:room-runtime:$room_version")
     kapt("androidx.room:room-compiler:$room_version")
     implementation("androidx.room:room-ktx:$room_version")
     implementation("com.github.anboralabs:spatia-room:0.2.7")
 
     // billing library
-    val billing_version = "6.0.1"
+    val billing_version = "6.1.0"
     googleImplementation("com.android.billingclient:billing:$billing_version")
     googleImplementation("com.android.billingclient:billing-ktx:$billing_version")
 

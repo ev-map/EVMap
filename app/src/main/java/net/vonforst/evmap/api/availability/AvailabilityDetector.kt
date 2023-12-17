@@ -1,8 +1,10 @@
 package net.vonforst.evmap.api.availability
 
 import android.content.Context
+import android.os.Parcelable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.parcelize.Parcelize
 import net.vonforst.evmap.addDebugInterceptors
 import net.vonforst.evmap.api.RateLimitInterceptor
 import net.vonforst.evmap.api.await
@@ -154,7 +156,8 @@ data class ChargeLocationStatus(
     val totalChargepoints = status.map { it.key.count }.sum()
 }
 
-enum class ChargepointStatus {
+@Parcelize
+enum class ChargepointStatus : Parcelable {
     AVAILABLE, UNKNOWN, CHARGING, OCCUPIED, FAULTED
 }
 

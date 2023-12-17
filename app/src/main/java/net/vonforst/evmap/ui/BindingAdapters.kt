@@ -156,8 +156,18 @@ fun setImageTintAvailability(view: ImageView, available: List<ChargepointStatus>
     view.imageTintList = ColorStateList.valueOf(availabilityColor(available, view.context))
 }
 
+@BindingAdapter("tintAvailability")
+fun setImageTintAvailability(view: ImageView, available: ChargepointStatus?) {
+    view.imageTintList = ColorStateList.valueOf(availabilityColor(available, view.context))
+}
+
 @BindingAdapter("textColorAvailability")
 fun setTextColorAvailability(view: TextView, available: List<ChargepointStatus>?) {
+    view.setTextColor(availabilityColor(available, view.context))
+}
+
+@BindingAdapter("textColorAvailability")
+fun setTextColorAvailability(view: TextView, available: ChargepointStatus?) {
     view.setTextColor(availabilityColor(available, view.context))
 }
 
@@ -269,6 +279,25 @@ private fun availabilityColor(
     ta.getColor(0, 0)
 }
 
+private fun availabilityColor(
+    status: ChargepointStatus?,
+    context: Context
+): Int = when (status) {
+    ChargepointStatus.UNKNOWN -> ContextCompat.getColor(context, R.color.unknown)
+    ChargepointStatus.AVAILABLE -> ContextCompat.getColor(context, R.color.available)
+    ChargepointStatus.FAULTED -> ContextCompat.getColor(context, R.color.unavailable)
+    ChargepointStatus.OCCUPIED, ChargepointStatus.CHARGING -> ContextCompat.getColor(
+        context,
+        R.color.charging
+    )
+
+    null -> {
+        val ta =
+            context.theme.obtainStyledAttributes(intArrayOf(androidx.appcompat.R.attr.colorControlNormal))
+        ta.getColor(0, 0)
+    }
+}
+
 fun availabilityText(status: List<ChargepointStatus>?): String? {
     if (status == null) return null
 
@@ -279,6 +308,18 @@ fun availabilityText(status: List<ChargepointStatus>?): String? {
     return if (unknown > 0) {
         if (unknown == total) "?" else "$available?"
     } else available.toString()
+}
+
+fun availabilityText(status: ChargepointStatus?, context: Context): String? {
+    if (status == null) return null
+
+    return when (status) {
+        ChargepointStatus.UNKNOWN -> context.getString(R.string.status_unknown)
+        ChargepointStatus.AVAILABLE -> context.getString(R.string.status_available)
+        ChargepointStatus.CHARGING -> context.getString(R.string.status_charging)
+        ChargepointStatus.OCCUPIED -> context.getString(R.string.status_occupied)
+        ChargepointStatus.FAULTED -> context.getString(R.string.status_faulted)
+    }
 }
 
 fun flatten(it: Iterable<Iterable<ChargepointStatus>>?): List<ChargepointStatus>? {

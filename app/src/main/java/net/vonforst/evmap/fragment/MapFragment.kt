@@ -814,7 +814,20 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         }
 
         binding.detailView.connectors.apply {
-            adapter = ConnectorAdapter()
+            adapter = ConnectorAdapter().apply {
+                onClickListener = { item ->
+                    vm.availability.value?.data?.let {
+                        item.status?.let { status ->
+                            val dialog = ConnectorDetailsDialog.getInstance(
+                                item.chargepoint,
+                                status,
+                                it.evseIds?.get(item.chargepoint)
+                            )
+                            dialog.show(parentFragmentManager, null)
+                        }
+                    }
+                }
+            }
             itemAnimator = null
             layoutManager =
                 LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)

@@ -368,5 +368,10 @@
     <string name="referral_tesla">Tesla</string>
     <string name="generic_connection_error">Could not load data</string>
     <string name="copied">Copied to clipboard</string>
+    <string name="status_available">Available</string>
+    <string name="status_occupied">Occupied</string>
+    <string name="status_charging">Charging</string>
+    <string name="status_faulted">Out of order</string>
+    <string name="status_unknown">Status Unknown</string>
     <string name="charger_name">Charger name</string>
 </resources>

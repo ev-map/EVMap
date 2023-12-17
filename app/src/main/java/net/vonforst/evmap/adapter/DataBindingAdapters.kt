@@ -94,6 +94,17 @@ class ConnectorAdapter : DataBindingAdapter<ConnectorAdapter.ChargepointWithAvai
     override fun getItemViewType(position: Int): Int = R.layout.item_connector
 }
 
+class ConnectorDetailsAdapter : DataBindingAdapter<ConnectorDetailsAdapter.ConnectorDetails>() {
+    data class ConnectorDetails(
+        val chargepoint: Chargepoint,
+        val status: ChargepointStatus?,
+        val evseId: String?
+    ) :
+        Equatable
+
+    override fun getItemViewType(position: Int): Int = R.layout.dialog_connector_details_item
+}
+
 class ChargepriceAdapter() :
     DataBindingAdapter<ChargePrice>() {
 

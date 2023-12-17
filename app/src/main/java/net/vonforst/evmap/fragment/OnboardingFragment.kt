@@ -211,6 +211,8 @@ class DataSourceSelectFragment : OnboardingPageFragment() {
             binding.rgDataSource.textView27,
             binding.rgDataSource.rbOpenChargeMap,
             binding.rgDataSource.textView28,
+            binding.rgDataSource.rbOpenStreetMap,
+            binding.rgDataSource.textView29,
             binding.dataSourceHint,
             binding.cbAcceptPrivacy
         )
@@ -239,7 +241,8 @@ class DataSourceSelectFragment : OnboardingPageFragment() {
 
         for (rb in listOf(
             binding.rgDataSource.rbGoingElectric,
-            binding.rgDataSource.rbOpenChargeMap
+            binding.rgDataSource.rbOpenChargeMap,
+            binding.rgDataSource.rbOpenStreetMap
         )) {
             rb.setOnCheckedChangeListener { _, _ ->
                 if (binding.btnGetStarted.visibility == View.INVISIBLE) {
@@ -254,6 +257,7 @@ class DataSourceSelectFragment : OnboardingPageFragment() {
             when (prefs.dataSource) {
                 "goingelectric" -> binding.rgDataSource.rbGoingElectric.isChecked = true
                 "openchargemap" -> binding.rgDataSource.rbOpenChargeMap.isChecked = true
+                "openstreetmap" -> binding.rgDataSource.rbOpenStreetMap.isChecked = true
             }
         }
 
@@ -272,6 +276,8 @@ class DataSourceSelectFragment : OnboardingPageFragment() {
                 "goingelectric"
             } else if (binding.rgDataSource.rbOpenChargeMap.isChecked) {
                 "openchargemap"
+            } else if (binding.rgDataSource.rbOpenStreetMap.isChecked) {
+                "openstreetmap"
             } else {
                 return@setOnClickListener
             }

@@ -205,8 +205,8 @@ class EnBwAvailabilityDetector(client: OkHttpClient, baseUrl: String? = null) :
     }
 
     override fun isChargerSupported(charger: ChargeLocation): Boolean {
-        val country = charger.chargepriceData?.country
-            ?: charger.address?.country ?: return false
+        val country = charger.chargepriceData?.country ?: charger.address?.country
+
         return when (charger.dataSource) {
             // list of countries as of 2023/04/14, according to
             // https://www.enbw.com/elektromobilitaet/produkte/ladetarife
@@ -248,6 +248,12 @@ class EnBwAvailabilityDetector(client: OkHttpClient, baseUrl: String? = null) :
                 "ES",
                 "CZ"
             ) && charger.chargepriceData?.network !in listOf("23", "3534")
+            /* TODO: OSM usually does not have the country tagged. Therefore we currently just use
+               a bounding box to determine whether the charger is roughly in Europe */
+            "openstreetmap" -> charger.coordinates.lat in 35.0..72.0
+                    && charger.coordinates.lng in 25.0..65.0
+                    && charger.operator !in listOf("Tesla, Inc.", "Tesla")
+
             else -> false
         }
     }

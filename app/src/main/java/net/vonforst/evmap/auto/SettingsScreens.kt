@@ -18,6 +18,8 @@ import androidx.car.app.model.*
 import androidx.core.content.IntentCompat
 import androidx.core.graphics.drawable.IconCompat
 import androidx.core.text.HtmlCompat
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import kotlinx.coroutines.launch
@@ -135,7 +137,7 @@ class SettingsScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx) {
     }
 }
 
-class DataSettingsScreen(ctx: CarContext) : Screen(ctx) {
+class DataSettingsScreen(ctx: CarContext) : Screen(ctx), DefaultLifecycleObserver {
     val prefs = PreferenceDataSource(ctx)
     val encryptedPrefs = EncryptedPreferenceDataStore(ctx)
     val db = AppDatabase.getInstance(ctx)
@@ -149,11 +151,15 @@ class DataSettingsScreen(ctx: CarContext) : Screen(ctx) {
 
     var teslaLoggingIn = false
 
+    init {
+        lifecycle.addObserver(this)
+    }
+
     override fun onGetTemplate(): Template {
         return ListTemplate.Builder().apply {
             setTitle(carContext.getString(R.string.settings_data_sources))
             setHeaderAction(Action.BACK)
-            setSingleList(ItemList.Builder().apply {
+            addSectionedList(SectionedItemList.create(ItemList.Builder().apply {
                 addItem(Row.Builder().apply {
                     setTitle(carContext.getString(R.string.pref_data_source))
                     setBrowsable(true)
@@ -167,35 +173,6 @@ class DataSettingsScreen(ctx: CarContext) : Screen(ctx) {
                                 ChooseDataSourceScreen.Type.CHARGER_DATA_SOURCE
                             )
                         )
-                    }
-                }.build())
-                addItem(Row.Builder().apply {
-                    setTitle(carContext.getString(R.string.pref_search_provider))
-                    setBrowsable(true)
-                    val searchProviderId = prefs.searchProvider
-                    val searchProviderDesc =
-                        searchProviderNames[searchProviderValues.indexOf(searchProviderId)]
-                    addText(searchProviderDesc)
-                    setOnClickListener {
-                        screenManager.push(
-                            ChooseDataSourceScreen(
-                                carContext,
-                                ChooseDataSourceScreen.Type.SEARCH_PROVIDER
-                            )
-                        )
-                    }
-                }.build())
-                addItem(Row.Builder().apply {
-                    setTitle(carContext.getString(R.string.pref_search_delete_recent))
-                    setOnClickListener {
-                        lifecycleScope.launch {
-                            db.recentAutocompletePlaceDao().deleteAll()
-                            CarToast.makeText(
-                                carContext,
-                                R.string.deleted_recent_search_results,
-                                CarToast.LENGTH_SHORT
-                            ).show()
-                        }
                     }
                 }.build())
                 addItem(
@@ -231,8 +208,83 @@ class DataSettingsScreen(ctx: CarContext) : Screen(ctx) {
                         })
                     }
                 }.build())
-            }.build())
+            }.build(), carContext.getString(R.string.settings_charger_data)))
+            addSectionedList(SectionedItemList.create(ItemList.Builder().apply {
+                addItem(Row.Builder().apply {
+                    setTitle(carContext.getString(R.string.pref_search_provider))
+                    setBrowsable(true)
+                    val searchProviderId = prefs.searchProvider
+                    val searchProviderDesc =
+                        searchProviderNames[searchProviderValues.indexOf(searchProviderId)]
+                    addText(searchProviderDesc)
+                    setOnClickListener {
+                        screenManager.push(
+                            ChooseDataSourceScreen(
+                                carContext,
+                                ChooseDataSourceScreen.Type.SEARCH_PROVIDER
+                            )
+                        )
+                    }
+                }.build())
+                addItem(Row.Builder().apply {
+                    setTitle(carContext.getString(R.string.pref_search_delete_recent))
+                    setOnClickListener {
+                        lifecycleScope.launch {
+                            db.recentAutocompletePlaceDao().deleteAll()
+                            CarToast.makeText(
+                                carContext,
+                                R.string.deleted_recent_search_results,
+                                CarToast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+                }.build())
+            }.build(), carContext.getString(R.string.settings_map)))
+            addSectionedList(SectionedItemList.create(ItemList.Builder().apply {
+                addItem(Row.Builder().apply {
+                    setTitle(carContext.getString(R.string.settings_cache_count))
+                    cacheCount?.let { count ->
+                        cacheSize?.let { size ->
+                            val sizeMb = size.toFloat() / 1024 / 1024
+                            addText(
+                                carContext.getString(
+                                    R.string.settings_cache_count_summary,
+                                    count,
+                                    sizeMb
+                                )
+                            )
+                        }
+                    }
+                }.build())
+                addItem(Row.Builder().apply {
+                    setTitle(carContext.getString(R.string.settings_cache_clear))
+                    addText(carContext.getString(R.string.settings_cache_clear_summary))
+                    setOnClickListener {
+                        lifecycleScope.launch {
+                            db.savedRegionDao().deleteAll()
+                            db.chargeLocationsDao().deleteAllIfNotFavorite()
+                            loadCacheSize()
+                        }
+                    }
+                }.build())
+            }.build(), carContext.getString(R.string.settings_caching)))
         }.build()
+    }
+
+    var cacheCount: Long? = null
+    var cacheSize: Long? = null
+
+    private suspend fun loadCacheSize() {
+        cacheCount = db.chargeLocationsDao().getCountAsync()
+        cacheSize = db.chargeLocationsDao().getSize()
+        invalidate()
+    }
+
+    override fun onStart(owner: LifecycleOwner) {
+        super.onStart(owner)
+        lifecycleScope.launch {
+            loadCacheSize()
+        }
     }
 
     private fun teslaLogin() {
@@ -346,7 +398,8 @@ class ChooseDataSourceScreen(
     val descriptions = when (type) {
         Type.CHARGER_DATA_SOURCE -> listOf(
             carContext.getString(R.string.data_source_goingelectric_desc),
-            carContext.getString(R.string.data_source_openchargemap_desc)
+            carContext.getString(R.string.data_source_openchargemap_desc),
+            carContext.getString(R.string.data_source_openstreetmap_desc)
         )
         Type.SEARCH_PROVIDER -> null
     }

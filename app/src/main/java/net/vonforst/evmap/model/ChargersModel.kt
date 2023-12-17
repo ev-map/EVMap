@@ -3,6 +3,7 @@ package net.vonforst.evmap.model
 import android.content.Context
 import android.os.Parcelable
 import androidx.core.text.HtmlCompat
+import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -139,7 +140,9 @@ data class ChargeLocation(
 
     fun formatChargepoints(sp: StringProvider): String {
         return chargepointsMerged.joinToString(" · ") {
-            "${it.count} × ${nameForPlugType(sp, it.type)} ${it.formatPower()}"
+            "${it.count} × ${nameForPlugType(sp, it.type)}${
+                it.formatPower()?.let { power -> " $power" } ?: ""
+            }"
         }
     }
 }
@@ -350,8 +353,8 @@ abstract class ChargerPhoto(open val id: String) : Parcelable {
 }
 
 data class ChargeLocationCluster(
-    val clusterCount: Int,
-    val coordinates: Coordinate,
+    @ColumnInfo("clusterCount") val clusterCount: Int,
+    @ColumnInfo("coordinates") val coordinates: Coordinate,
     val items: List<ChargeLocation>? = null
 ) : ChargepointListItem()
 

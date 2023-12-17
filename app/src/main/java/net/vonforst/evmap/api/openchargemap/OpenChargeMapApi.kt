@@ -112,6 +112,12 @@ class OpenChargeMapApiWrapper(
 
     override val name = "OpenChargeMap.org"
     override val id = "openchargemap"
+    override val supportsOnlineQueries = true
+    override val supportsFullDownload = false
+
+    override suspend fun fullDownload(): FullDownloadResult<OCMReferenceData> {
+        throw NotImplementedError()
+    }
 
     private fun formatMultipleChoice(value: MultipleChoiceFilterValue?) =
         if (value == null || value.all) null else value.values.joinToString(",")

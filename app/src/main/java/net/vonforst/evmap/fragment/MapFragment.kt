@@ -816,18 +816,14 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         binding.detailView.connectors.apply {
             adapter = ConnectorAdapter().apply {
                 onClickListener = { item ->
-                    vm.availability.value?.data?.let {
-                        item.status?.let { status ->
-                            val dialog = ConnectorDetailsDialog.getInstance(
-                                item.chargepoint,
-                                status,
-                                it.evseIds?.get(item.chargepoint),
-                                it.labels?.get(item.chargepoint),
-                                it.lastChange?.get(item.chargepoint),
-                            )
-                            dialog.show(parentFragmentManager, null)
-                        }
-                    }
+                    val dialog = ConnectorDetailsDialog.getInstance(
+                        item.chargepoint,
+                        item.status,
+                        vm.availability.value?.data?.evseIds?.get(item.chargepoint),
+                        vm.availability.value?.data?.labels?.get(item.chargepoint),
+                        vm.availability.value?.data?.lastChange?.get(item.chargepoint),
+                    )
+                    dialog.show(parentFragmentManager, null)
                 }
             }
             itemAnimator = null

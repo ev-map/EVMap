@@ -5,12 +5,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.BundleCompat
+import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
+import net.vonforst.evmap.R
+import net.vonforst.evmap.adapter.ConnectorAdapter
 import net.vonforst.evmap.adapter.ConnectorDetailsAdapter
+import net.vonforst.evmap.adapter.SingleViewAdapter
 import net.vonforst.evmap.api.availability.ChargeLocationStatus
 import net.vonforst.evmap.api.availability.ChargepointStatus
 import net.vonforst.evmap.databinding.DialogConnectorDetailsBinding
+import net.vonforst.evmap.databinding.DialogConnectorDetailsHeaderBinding
 import net.vonforst.evmap.databinding.DialogDataSourceSelectBinding
+import net.vonforst.evmap.databinding.FragmentChargepriceHeaderBinding
 import net.vonforst.evmap.model.Chargepoint
 import net.vonforst.evmap.model.FILTERS_DISABLED
 import net.vonforst.evmap.storage.PreferenceDataSource
@@ -23,7 +30,7 @@ class ConnectorDetailsDialog : MaterialDialogFragment() {
     companion object {
         fun getInstance(
             chargepoint: Chargepoint,
-            status: List<ChargepointStatus>,
+            status: List<ChargepointStatus>?,
             evseIds: List<String>? = null,
             labels: List<String?>? = null,
             lastChange: List<Instant?>? = null
@@ -31,7 +38,7 @@ class ConnectorDetailsDialog : MaterialDialogFragment() {
             val dialog = ConnectorDetailsDialog()
             dialog.arguments = Bundle().apply {
                 putParcelable("chargepoint", chargepoint)
-                putParcelableArrayList("status", ArrayList(status))
+                putParcelableArrayList("status", status?.let { ArrayList(status) })
                 putStringArrayList("evseIds", evseIds?.let { ArrayList(it) })
                 putStringArrayList("labels", labels?.let { ArrayList(it) })
                 putSerializable("lastChange", lastChange?.let { ArrayList(it) })
@@ -62,24 +69,38 @@ class ConnectorDetailsDialog : MaterialDialogFragment() {
         val labels = args.getStringArrayList("labels")
         val lastChange = args.getSerializable("lastChange") as ArrayList<Instant>?
 
-        val items = List(chargepoint.count) { i ->
-            ConnectorDetailsAdapter.ConnectorDetails(
-                chargepoint,
-                status?.get(i),
-                evseIds?.get(i),
-                labels?.get(i),
-                lastChange?.get(i)
-            )
-        }.sortedBy { it.evseId ?: it.label }
+        val items = if (status != null) {
+            List(chargepoint.count) { i ->
+                ConnectorDetailsAdapter.ConnectorDetails(
+                    status.get(i),
+                    evseIds?.get(i),
+                    labels?.get(i),
+                    lastChange?.get(i)
+                )
+            }.sortedBy { it.evseId ?: it.label }
+        } else emptyList()
 
         binding.list.apply {
-            adapter = ConnectorDetailsAdapter().apply {
-                submitList(items)
-            }
             itemAnimator = null
             layoutManager =
                 LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         }
+
+        val headerBinding = DataBindingUtil.inflate<DialogConnectorDetailsHeaderBinding>(
+            LayoutInflater.from(context),
+            R.layout.dialog_connector_details_header, binding.list, false
+        )
+        if (items.isEmpty()) headerBinding.divider.visibility = View.GONE
+
+        val joinedAdapter = ConcatAdapter(
+            SingleViewAdapter(headerBinding.root),
+            ConnectorDetailsAdapter().apply {
+                submitList(items)
+            }
+        )
+
+        binding.list.adapter = joinedAdapter
+        headerBinding.item = ConnectorAdapter.ChargepointWithAvailability(chargepoint, status)
 
         binding.btnClose.setOnClickListener {
             dismiss()

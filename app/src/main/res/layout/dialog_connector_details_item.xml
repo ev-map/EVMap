@@ -8,6 +8,7 @@
         <import type="net.vonforst.evmap.adapter.ConnectorDetailsAdapter.ConnectorDetails" />
 
         <import type="net.vonforst.evmap.ui.BindingAdaptersKt" />
+        <import type="java.time.Instant" />
 
         <variable
             name="item"
@@ -23,47 +24,27 @@
 
         <ImageView
             android:id="@+id/imageView"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:contentDescription="@{BindingAdaptersKt.availabilityText(item.status, (Instant) null, context)}"
+            android:scaleType="center"
             android:tintMode="src_in"
-            android:contentDescription="@{item.chargepoint.type}"
-            app:connectorIcon="@{item.chargepoint.type}"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:tintAvailability="@{item.status}"
-            tools:tint="@color/available"
-            tools:srcCompat="@drawable/ic_connector_typ2" />
-
-        <TextView
-            android:id="@+id/textView6"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="8dp"
-            android:text="@{item.chargepoint.formatPower()}"
-            android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-            app:goneUnless="@{item.chargepoint.hasKnownPower()}"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/imageView"
-            app:layout_constraintStart_toStartOf="@+id/imageView"
-            app:layout_constraintTop_toBottomOf="@+id/imageView"
-            app:textColorAvailability="@{item.status}"
-            tools:text="350 kW"
-            tools:textColor="@color/available" />
+            app:srcCompat="@drawable/circle"
+            tools:tint="@color/available" />
 
         <TextView
             android:id="@+id/txtEvseid"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
-            android:layout_marginTop="18dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="14dp"
             android:text="@{(item.label != null &amp;&amp; item.evseId != null) ? item.label + &quot; · &quot; + item.evseId : (item.label ?? item.evseId)}"
-            app:layout_constraintBottom_toBottomOf="@+id/imageView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/imageView"
             app:layout_constraintTop_toTopOf="parent"
@@ -75,7 +56,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginBottom="14dp"
+            android:layout_marginBottom="8dp"
             android:text="@{BindingAdaptersKt.availabilityText(item.status, item.lastChange, context)}"
             android:textAppearance="@style/TextAppearance.Material3.BodySmall"
             app:goneUnless="@{item.status != null}"

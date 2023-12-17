@@ -97,7 +97,6 @@ class ConnectorAdapter : DataBindingAdapter<ConnectorAdapter.ChargepointWithAvai
 
 class ConnectorDetailsAdapter : DataBindingAdapter<ConnectorDetailsAdapter.ConnectorDetails>() {
     data class ConnectorDetails(
-        val chargepoint: Chargepoint,
         val status: ChargepointStatus?,
         val evseId: String?,
         val label: String?,
@@ -108,7 +107,7 @@ class ConnectorDetailsAdapter : DataBindingAdapter<ConnectorDetailsAdapter.Conne
     override fun getItemViewType(position: Int): Int = R.layout.dialog_connector_details_item
 }
 
-class ChargepriceAdapter() :
+class ChargepriceAdapter :
     DataBindingAdapter<ChargePrice>() {
 
     val viewPool = RecyclerView.RecycledViewPool()

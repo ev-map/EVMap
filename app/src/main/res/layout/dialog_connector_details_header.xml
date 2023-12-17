@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="net.vonforst.evmap.adapter.ConnectorAdapter.ChargepointWithAvailability" />
+
+        <import type="net.vonforst.evmap.ui.BindingAdaptersKt" />
+
+        <import type="net.vonforst.evmap.api.UtilsKt" />
+
+        <import type="net.vonforst.evmap.api.ChargepointApiKt" />
+
+        <variable
+            name="item"
+            type="ChargepointWithAvailability" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="?attr/listPreferredItemHeightSmall"
+        android:layout_marginStart="?attr/dialogPreferredPadding"
+        android:layout_marginEnd="?attr/dialogPreferredPadding">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp"
+            android:contentDescription="@{item.chargepoint.type}"
+            android:tintMode="src_in"
+            app:connectorIcon="@{item.chargepoint.type}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/divider"
+            app:tintAvailability="@{item.status}"
+            tools:srcCompat="@drawable/ic_connector_typ2"
+            tools:tint="@color/available" />
+
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="38dp"
+            android:layout_marginTop="38dp"
+            android:text="@{String.format(&quot;\u00D7 %d&quot;, item.chargepoint.count)}"
+            android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+            app:goneUnless="@{item.status == null}"
+            app:layout_constraintStart_toStartOf="@+id/imageView"
+            app:layout_constraintTop_toTopOf="@+id/imageView"
+            tools:text="×99"
+            tools:visibility="gone" />
+
+        <TextView
+            android:id="@+id/textView7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/rounded_rect"
+            android:padding="2dp"
+            android:text="@{String.format(&quot;%s/%d&quot;, BindingAdaptersKt.availabilityText(item.status), item.chargepoint.count)}"
+            android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+            android:textColor="@android:color/white"
+            app:backgroundTintAvailability="@{item.status}"
+            app:goneUnless="@{item.status != null}"
+            app:layout_constraintStart_toStartOf="@+id/imageView"
+            app:layout_constraintTop_toTopOf="@+id/imageView"
+            tools:backgroundTint="@color/available"
+            tools:text="80/99" />
+
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="36dp"
+            android:layout_marginTop="4dp"
+            android:text="@{UtilsKt.nameForPlugType(ChargepointApiKt.stringProvider(context), item.chargepoint.type) + &quot; · &quot; + item.chargepoint.formatPower()}"
+            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+            app:goneUnless="@{item.chargepoint.hasKnownPower()}"
+            app:layout_constraintBottom_toTopOf="@id/textView8"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/imageView"
+            app:layout_constraintTop_toTopOf="@id/imageView"
+            tools:text="CCS · 350 kW" />
+
+        <TextView
+            android:id="@+id/textView8"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="@{item.chargepoint.formatVoltageAndCurrent()}"
+            android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+            app:goneUnless="@{item.chargepoint.hasKnownVoltageAndCurrent()}"
+            app:layout_constraintBottom_toBottomOf="@+id/imageView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/textView6"
+            app:layout_constraintTop_toBottomOf="@id/textView6"
+            tools:text="1000 V · 500 A" />
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="4dp"
+            android:background="?android:attr/listDivider"
+            app:layout_constraintTop_toBottomOf="@+id/imageView"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -18,7 +18,7 @@ import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
-import java.util.*
+import kotlin.math.abs
 
 sealed class ChargepointListItem
 
@@ -127,10 +127,13 @@ data class ChargeLocation(
         get() {
             val variants = chargepoints.distinctBy { it.power to it.type }
             return variants.map { variant ->
-                val count = chargepoints
+                val filtered = chargepoints
                     .filter { it.type == variant.type && it.power == variant.power }
-                    .sumOf { it.count }
-                Chargepoint(variant.type, variant.power, count)
+                val count = filtered.sumOf { it.count }
+                Chargepoint(variant.type, variant.power, count,
+                    filtered.map { it.voltage }.distinct().singleOrNull(),
+                    filtered.map { it.current }.distinct().singleOrNull()
+                )
             }
         }
 
@@ -390,29 +393,40 @@ data class Address(
 @Parcelize
 @JsonClass(generateAdapter = true)
 data class Chargepoint(
-    // The chargepoint type (use one of the constants in the companion object)
+    // The connector type (use one of the constants in the companion object if applicable)
     val type: String,
     // Power in kW (or null if unknown)
     val power: Double?,
     // How many instances of this plug/socket are available?
     val count: Int,
+    // Max current in A (or null if unknown)
+    val current: Double? = null,
+    // Max voltage in V (or null if unknown).
+    // note that for DC chargers: current * voltage may be larger than power
+    // (each of the three can be separately limited)
+    val voltage: Double? = null
 ) : Equatable, Parcelable {
     fun hasKnownPower(): Boolean = power != null
+    fun hasKnownVoltageAndCurrent(): Boolean = voltage != null && current != null
 
     /**
      * If chargepoint power is defined, format it into a string.
      * Otherwise, return null.
      */
     fun formatPower(): String? {
-        if (power == null) {
-            return null
-        }
-        val powerFmt = if (power - power.toInt() == 0.0) {
+        if (power == null) return null
+        val powerFmt = if (abs(power - power.toInt()) < 0.1) {
             "%.0f".format(power)
         } else {
             "%.1f".format(power)
         }
         return "$powerFmt kW"
+    }
+
+    fun formatVoltageAndCurrent(): String? {
+        if (current == null || voltage == null) return null
+
+        return "%.0f V · %.0f A".format(voltage, current)
     }
 
     companion object {

@@ -373,5 +373,6 @@
     <string name="status_charging">Charging</string>
     <string name="status_faulted">Out of order</string>
     <string name="status_unknown">Status Unknown</string>
+    <string name="status_since">%1$s since %2$s</string>
     <string name="charger_name">Charger name</string>
 </resources>

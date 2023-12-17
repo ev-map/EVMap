@@ -15,6 +15,7 @@ import net.vonforst.evmap.model.Chargepoint
 import net.vonforst.evmap.model.FILTERS_DISABLED
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.ui.MaterialDialogFragment
+import java.time.Instant
 
 class ConnectorDetailsDialog : MaterialDialogFragment() {
     private lateinit var binding: DialogConnectorDetailsBinding
@@ -23,13 +24,17 @@ class ConnectorDetailsDialog : MaterialDialogFragment() {
         fun getInstance(
             chargepoint: Chargepoint,
             status: List<ChargepointStatus>,
-            evseIds: List<String>? = null
+            evseIds: List<String>? = null,
+            labels: List<String?>? = null,
+            lastChange: List<Instant?>? = null
         ): ConnectorDetailsDialog {
             val dialog = ConnectorDetailsDialog()
             dialog.arguments = Bundle().apply {
                 putParcelable("chargepoint", chargepoint)
                 putParcelableArrayList("status", ArrayList(status))
                 putStringArrayList("evseIds", evseIds?.let { ArrayList(it) })
+                putStringArrayList("labels", labels?.let { ArrayList(it) })
+                putSerializable("lastChange", lastChange?.let { ArrayList(it) })
             }
             return dialog
         }
@@ -54,10 +59,18 @@ class ConnectorDetailsDialog : MaterialDialogFragment() {
         val status =
             BundleCompat.getParcelableArrayList(args, "status", ChargepointStatus::class.java)
         val evseIds = args.getStringArrayList("evseIds")
+        val labels = args.getStringArrayList("labels")
+        val lastChange = args.getSerializable("lastChange") as ArrayList<Instant>?
 
         val items = List(chargepoint.count) { i ->
-            ConnectorDetailsAdapter.ConnectorDetails(chargepoint, status?.get(i), evseIds?.get(i))
-        }.sortedBy { it.evseId }
+            ConnectorDetailsAdapter.ConnectorDetails(
+                chargepoint,
+                status?.get(i),
+                evseIds?.get(i),
+                labels?.get(i),
+                lastChange?.get(i)
+            )
+        }.sortedBy { it.evseId ?: it.label }
 
         binding.list.apply {
             adapter = ConnectorDetailsAdapter().apply {

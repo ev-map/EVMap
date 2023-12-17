@@ -21,6 +21,7 @@ import net.vonforst.evmap.databinding.ItemChargepriceVehicleChipBinding
 import net.vonforst.evmap.databinding.ItemConnectorButtonBinding
 import net.vonforst.evmap.model.Chargepoint
 import net.vonforst.evmap.ui.CheckableConstraintLayout
+import java.time.Instant
 
 interface Equatable {
     override fun equals(other: Any?): Boolean
@@ -98,7 +99,9 @@ class ConnectorDetailsAdapter : DataBindingAdapter<ConnectorDetailsAdapter.Conne
     data class ConnectorDetails(
         val chargepoint: Chargepoint,
         val status: ChargepointStatus?,
-        val evseId: String?
+        val evseId: String?,
+        val label: String?,
+        val lastChange: Instant?
     ) :
         Equatable
 

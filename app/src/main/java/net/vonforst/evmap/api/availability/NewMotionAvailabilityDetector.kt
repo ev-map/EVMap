@@ -1,6 +1,10 @@
 package net.vonforst.evmap.api.availability
 
+import androidx.car.app.model.DateTimeWithZone
+import com.squareup.moshi.FromJson
 import com.squareup.moshi.JsonClass
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.ToJson
 import net.vonforst.evmap.model.ChargeLocation
 import net.vonforst.evmap.model.Chargepoint
 import net.vonforst.evmap.utils.distanceBetween
@@ -9,6 +13,11 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Path
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
+import java.time.format.DateTimeParseException
 import java.util.*
 
 private const val coordRange = 0.005  // range of latitude and longitude for loading the map
@@ -42,7 +51,12 @@ interface NewMotionApi {
     )
 
     @JsonClass(generateAdapter = true)
-    data class NMEvse(val evseId: String?, val status: String, val connectors: List<NMConnector>)
+    data class NMEvse(
+        val evseId: String?,
+        val status: String,
+        val connectors: List<NMConnector>,
+        val updated: ZonedDateTime?
+    )
 
     @JsonClass(generateAdapter = true)
     data class NMConnector(
@@ -78,13 +92,32 @@ interface NewMotionApi {
         fun create(client: OkHttpClient, baseUrl: String? = null): NewMotionApi {
             val retrofit = Retrofit.Builder()
                 .baseUrl(baseUrl ?: "https://ui-map.shellrecharge.com/api/map/v2/")
-                .addConverterFactory(MoshiConverterFactory.create())
+                .addConverterFactory(
+                    MoshiConverterFactory.create(
+                        Moshi.Builder().add(ZonedDateTimeAdapter()).build()
+                    )
+                )
                 .client(client)
                 .build()
             return retrofit.create(NewMotionApi::class.java)
         }
     }
 }
+
+internal class ZonedDateTimeAdapter {
+    @FromJson
+    fun fromJson(value: String): ZonedDateTime? = ZonedDateTime.parse(value)
+
+    @ToJson
+    fun toJson(value: ZonedDateTime): String = value.toString()
+}
+
+data class NmStatus(
+    val conn: NewMotionApi.NMConnector,
+    val status: String,
+    val evseId: String?,
+    val updated: ZonedDateTime?
+)
 
 class NewMotionAvailabilityDetector(client: OkHttpClient, baseUrl: String? = null) :
     BaseAvailabilityDetector(client) {
@@ -111,9 +144,9 @@ class NewMotionAvailabilityDetector(client: OkHttpClient, baseUrl: String? = nul
             throw AvailabilityDetectorException("no candidates found")
         }
 
-        if (nearest.evseCount < location.totalChargepoints) {
+        markers = if (nearest.evseCount < location.totalChargepoints) {
             // combine related stations
-            markers = markers.filter { marker ->
+            markers.filter { marker ->
                 distanceBetween(
                     marker.coordinates.latitude,
                     marker.coordinates.longitude,
@@ -122,7 +155,7 @@ class NewMotionAvailabilityDetector(client: OkHttpClient, baseUrl: String? = nul
                 ) < maxDistance
             }
         } else {
-            markers = listOf(nearest)
+            listOf(nearest)
         }
 
         // load details
@@ -135,14 +168,15 @@ class NewMotionAvailabilityDetector(client: OkHttpClient, baseUrl: String? = nul
         }
         val connectorStatus = details.flatMap { it.evses }.flatMap { evse ->
             evse.connectors.map { connector ->
-                Triple(connector, evse.status, evse.evseId)
+                NmStatus(connector, evse.status, evse.evseId, evse.updated)
             }
         }
 
         val nmConnectors = mutableMapOf<Long, Pair<Double, String>>()
         val nmStatus = mutableMapOf<Long, ChargepointStatus>()
         val nmEvseId = mutableMapOf<Long, String>()
-        connectorStatus.forEach { (connector, statusStr, evseId) ->
+        val nmUpdated = mutableMapOf<Long, ZonedDateTime>()
+        connectorStatus.forEach { (connector, statusStr, evseId, updated) ->
             val id = connector.uid
             val power = connector.electricalProperties.getPower()
             val type = when (connector.connectorType.lowercase(Locale.ROOT)) {
@@ -168,6 +202,7 @@ class NewMotionAvailabilityDetector(client: OkHttpClient, baseUrl: String? = nul
             nmConnectors.put(id, power to type)
             nmStatus.put(id, status)
             evseId?.let { nmEvseId[id] = it }
+            updated?.let { nmUpdated[id] = it }
         }
 
         val match = matchChargepoints(nmConnectors, location.chargepointsMerged)
@@ -177,10 +212,12 @@ class NewMotionAvailabilityDetector(client: OkHttpClient, baseUrl: String? = nul
         val evseIds = if (nmEvseId.size == nmStatus.size) match.mapValues { entry ->
             entry.value.map { nmEvseId[it]!! }
         } else null
+        val updated = match.mapValues { entry -> entry.value.map { nmUpdated[it]?.toInstant() } }
         return ChargeLocationStatus(
             chargepointStatus,
             "NewMotion",
-            evseIds
+            evseIds,
+            lastChange = updated
         )
     }
 

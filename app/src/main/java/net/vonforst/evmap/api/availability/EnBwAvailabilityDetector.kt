@@ -1,6 +1,10 @@
 package net.vonforst.evmap.api.availability
 
+import com.squareup.moshi.FromJson
 import com.squareup.moshi.JsonClass
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.ToJson
+import net.vonforst.evmap.api.availability.tesla.LocalTimeAdapter
 import net.vonforst.evmap.model.ChargeLocation
 import net.vonforst.evmap.model.Chargepoint
 import net.vonforst.evmap.utils.distanceBetween
@@ -10,6 +14,8 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
+import java.time.Instant
+import java.time.LocalTime
 
 private const val coordRange = 0.005  // range of latitude and longitude for loading the map
 private const val maxDistance = 60  // max distance between reported positions in meters
@@ -53,7 +59,8 @@ interface EnBwApi {
     data class EnBwChargePoint(
         val evseId: String?,
         val status: String,
-        val connectors: List<EnBwConnector>
+        val connectors: List<EnBwConnector>,
+        val state: EnBwState?
     )
 
     @JsonClass(generateAdapter = true)
@@ -68,6 +75,11 @@ interface EnBwApi {
         val lowerLeftLon: Double,
         val upperRightLat: Double,
         val upperRightLon: Double
+    )
+
+    @JsonClass(generateAdapter = true)
+    data class EnBwState(
+        val updatedAt: Instant?
     )
 
     companion object {
@@ -85,13 +97,34 @@ interface EnBwApi {
                 }.build()
             val retrofit = Retrofit.Builder()
                 .baseUrl(baseUrl ?: "https://enbw-emp.azure-api.net/emobility-public-api/api/v1/")
-                .addConverterFactory(MoshiConverterFactory.create())
+                .addConverterFactory(
+                    MoshiConverterFactory.create(
+                        Moshi.Builder().add(InstantAdapter()).build()
+                    )
+                )
                 .client(clientWithInterceptor)
                 .build()
             return retrofit.create(EnBwApi::class.java)
         }
     }
 }
+
+internal class InstantAdapter {
+    @FromJson
+    fun fromJson(value: Long?): Instant? = value?.let {
+        Instant.ofEpochMilli(it)
+    }
+
+    @ToJson
+    fun toJson(value: Instant?): Long? = value?.toEpochMilli()
+}
+
+data class EnBwStatus(
+    val conn: EnBwApi.EnBwConnector,
+    val status: String,
+    val evseId: String?,
+    val lastChange: Instant?
+)
 
 class EnBwAvailabilityDetector(client: OkHttpClient, baseUrl: String? = null) :
     BaseAvailabilityDetector(client) {
@@ -157,14 +190,15 @@ class EnBwAvailabilityDetector(client: OkHttpClient, baseUrl: String? = null) :
 
         val connectorStatus = details.flatMap { it.chargePoints }.flatMap { cp ->
             cp.connectors.map { connector ->
-                Triple(connector, cp.status, cp.evseId)
+                EnBwStatus(connector, cp.status, cp.evseId, cp.state?.updatedAt)
             }
         }
 
         val enbwConnectors = mutableMapOf<Long, Pair<Double, String>>()
         val enbwStatus = mutableMapOf<Long, ChargepointStatus>()
         val enbwEvseId = mutableMapOf<Long, String>()
-        connectorStatus.forEachIndexed { index, (connector, statusStr, evseId) ->
+        val enbwLastChange = mutableMapOf<Long, Instant?>()
+        connectorStatus.forEachIndexed { index, (connector, statusStr, evseId, updatedAt) ->
             val id = index.toLong()
             val power = connector.maxPowerInKw ?: 0.0
             val type = when (connector.plugTypeName) {
@@ -187,6 +221,7 @@ class EnBwAvailabilityDetector(client: OkHttpClient, baseUrl: String? = null) :
             }
             enbwConnectors[id] = power to type
             enbwStatus[id] = status
+            enbwLastChange[id] = updatedAt
             evseId?.let { enbwEvseId[id] = it }
         }
 
@@ -197,10 +232,13 @@ class EnBwAvailabilityDetector(client: OkHttpClient, baseUrl: String? = null) :
         val evseIds = if (enbwEvseId.size == enbwStatus.size) match.mapValues { entry ->
             entry.value.map { enbwEvseId[it]!! }
         } else null
+        val lastChange =
+            if (enbwLastChange.size == enbwStatus.size) match.mapValues { entry -> entry.value.map { enbwLastChange[it] } } else null
         return ChargeLocationStatus(
             chargepointStatus,
             "EnBW",
-            evseIds
+            evseIds,
+            lastChange = lastChange
         )
     }
 

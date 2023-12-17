@@ -23,6 +23,7 @@ import retrofit2.HttpException
 import java.io.IOException
 import java.net.CookieManager
 import java.net.CookiePolicy
+import java.time.Instant
 import java.util.concurrent.TimeUnit
 
 interface AvailabilityDetector {
@@ -140,7 +141,9 @@ data class ChargeLocationStatus(
     val status: Map<Chargepoint, List<ChargepointStatus>>,
     val source: String,
     val evseIds: Map<Chargepoint, List<String>>? = null,
+    val labels: Map<Chargepoint, List<String?>>? = null,
     val congestionHistogram: List<Double>? = null,
+    val lastChange: Map<Chargepoint, List<Instant?>>? = null,
     val extraData: Any? = null  // API-specific data
 ) {
     fun applyFilters(connectors: Set<String>?, minPower: Int?): ChargeLocationStatus {

@@ -2,6 +2,7 @@ package net.vonforst.evmap.api.availability
 
 import net.vonforst.evmap.api.availability.tesla.ChargerAvailability
 import net.vonforst.evmap.api.availability.tesla.TeslaAuthenticationApi
+import net.vonforst.evmap.api.availability.tesla.TeslaChargingGuestGraphQlApi
 import net.vonforst.evmap.api.availability.tesla.TeslaChargingOwnershipGraphQlApi
 import net.vonforst.evmap.api.availability.tesla.asTeslaCoord
 import net.vonforst.evmap.model.ChargeLocation
@@ -85,47 +86,52 @@ class TeslaOwnerAvailabilityDetector(
             "charger has unknown connectors"
         )
 
-        var statusSorted = details.siteDynamic.chargerDetails
-            .sortedBy { c ->
-                c.charger.labelLetter
-                    ?: details.siteStatic.chargers.find { it.id == c.charger.id }?.labelLetter
-            }
-            .sortedBy { c ->
-                c.charger.labelNumber
-                    ?: details.siteStatic.chargers.find { it.id == c.charger.id }?.labelNumber
-            }
-            .map { it.availability }
-        if (statusSorted.size != scV2Connectors.sumOf { it.count } + scV3Connectors.sumOf { it.count }) {
+        val chargerDetails = details.siteDynamic.chargerDetails
+        val chargers = details.siteStatic.chargers.associateBy { it.id }
+        var detailsSorted = chargerDetails
+            .sortedBy { c -> c.charger.labelLetter ?: chargers[c.charger.id]?.labelLetter }
+            .sortedBy { c -> c.charger.labelNumber ?: chargers[c.charger.id]?.labelNumber }
+        if (detailsSorted.size != scV2Connectors.sumOf { it.count } + scV3Connectors.sumOf { it.count }) {
             // apparently some connectors are missing in Tesla data
             // If we have just one type of charger, we can still match
             val numMissing =
-                scV2Connectors.sumOf { it.count } + scV3Connectors.sumOf { it.count } - statusSorted.size
+                scV2Connectors.sumOf { it.count } + scV3Connectors.sumOf { it.count } - detailsSorted.size
             if ((scV2Connectors.isEmpty() || scV3Connectors.isEmpty()) && numMissing > 0) {
-                statusSorted =
-                    statusSorted + List(numMissing) { ChargerAvailability.UNKNOWN }
+                detailsSorted =
+                    detailsSorted + List(numMissing) {
+                        TeslaChargingOwnershipGraphQlApi.ChargerDetail(
+                            ChargerAvailability.UNKNOWN,
+                            TeslaChargingOwnershipGraphQlApi.ChargerId(
+                                TeslaChargingOwnershipGraphQlApi.Text(""),
+                                null,
+                                null
+                            )
+                        )
+                    }
             } else {
                 throw AvailabilityDetectorException("Tesla API chargepoints do not match data source")
             }
         }
 
-        val statusMap = emptyMap<Chargepoint, List<ChargepointStatus>>().toMutableMap()
+        val detailsMap =
+            emptyMap<Chargepoint, List<TeslaChargingOwnershipGraphQlApi.ChargerDetail>>().toMutableMap()
         var i = 0
         for (connector in scV2Connectors) {
-            statusMap[connector] =
-                statusSorted.subList(i, i + connector.count).map { it.toStatus() }
+            detailsMap[connector] =
+                detailsSorted.subList(i, i + connector.count)
             i += connector.count
         }
         if (scV2CCSConnectors.isNotEmpty()) {
             i = 0
             for (connector in scV2CCSConnectors) {
-                statusMap[connector] =
-                    statusSorted.subList(i, i + connector.count).map { it.toStatus() }
+                detailsMap[connector] =
+                    detailsSorted.subList(i, i + connector.count)
                 i += connector.count
             }
         }
         for (connector in scV3Connectors) {
-            statusMap[connector] =
-                statusSorted.subList(i, i + connector.count).map { it.toStatus() }
+            detailsMap[connector] =
+                detailsSorted.subList(i, i + connector.count)
             i += connector.count
         }
 
@@ -138,9 +144,17 @@ class TeslaOwnerAvailabilityDetector(
             }
         }
 
+        val statusMap = detailsMap.mapValues { it.value.map { it.availability.toStatus() } }
+        val labelsMap = detailsMap.mapValues {
+            it.value.map {
+                it.charger.label?.value ?: chargers[it.charger.id]?.label?.value
+            }
+        }
+
         return ChargeLocationStatus(
             statusMap,
             "Tesla",
+            labels = labelsMap,
             congestionHistogram = congestionHistogram,
             extraData = details.pricing
         )

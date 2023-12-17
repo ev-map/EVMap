@@ -103,53 +103,62 @@ class TeslaGuestAvailabilityDetector(
             "charger has unknown connectors"
         )
 
-        var statusSorted = details.chargersAvailable.chargerDetails
-            .sortedBy { c ->
-                details.chargers.find { it.id == c.id }?.labelLetter
-            }
-            .sortedBy { c ->
-                details.chargers.find { it.id == c.id }?.labelNumber
-            }
-            .map { it.availability }
-        if (statusSorted.size != scV2Connectors.sumOf { it.count } + scV3Connectors.sumOf { it.count }) {
+        val chargerDetails = details.chargersAvailable.chargerDetails
+        val chargers = details.chargers.associateBy { it.id }
+        var detailsSorted = chargerDetails
+            .sortedBy { chargers[it.id]?.labelLetter }
+            .sortedBy { chargers[it.id]?.labelNumber }
+
+
+        if (detailsSorted.size != scV2Connectors.sumOf { it.count } + scV3Connectors.sumOf { it.count }) {
             // apparently some connectors are missing in Tesla data
             // If we have just one type of charger, we can still match
             val numMissing =
-                scV2Connectors.sumOf { it.count } + scV3Connectors.sumOf { it.count } - statusSorted.size
+                scV2Connectors.sumOf { it.count } + scV3Connectors.sumOf { it.count } - detailsSorted.size
             if ((scV2Connectors.isEmpty() || scV3Connectors.isEmpty()) && numMissing > 0) {
-                statusSorted =
-                    statusSorted + List(numMissing) { ChargerAvailability.UNKNOWN }
+                detailsSorted =
+                    detailsSorted + List(numMissing) {
+                        TeslaChargingGuestGraphQlApi.ChargerDetail(
+                            ChargerAvailability.UNKNOWN,
+                            ""
+                        )
+                    }
             } else {
                 throw AvailabilityDetectorException("Tesla API chargepoints do not match data source")
             }
         }
 
-        val statusMap = emptyMap<Chargepoint, List<ChargepointStatus>>().toMutableMap()
+        val detailsMap =
+            mutableMapOf<Chargepoint, List<TeslaChargingGuestGraphQlApi.ChargerDetail>>()
         var i = 0
         for (connector in scV2Connectors) {
-            statusMap[connector] =
-                statusSorted.subList(i, i + connector.count).map { it.toStatus() }
+            detailsMap[connector] =
+                detailsSorted.subList(i, i + connector.count)
             i += connector.count
         }
         if (scV2CCSConnectors.isNotEmpty()) {
             i = 0
             for (connector in scV2CCSConnectors) {
-                statusMap[connector] =
-                    statusSorted.subList(i, i + connector.count).map { it.toStatus() }
+                detailsMap[connector] =
+                    detailsSorted.subList(i, i + connector.count)
                 i += connector.count
             }
         }
         for (connector in scV3Connectors) {
-            statusMap[connector] =
-                statusSorted.subList(i, i + connector.count).map { it.toStatus() }
+            detailsMap[connector] =
+                detailsSorted.subList(i, i + connector.count)
             i += connector.count
         }
+
+        val statusMap = detailsMap.mapValues { it.value.map { it.availability.toStatus() } }
+        val labelsMap = detailsMap.mapValues { it.value.map { chargers[it.id]?.label } }
 
         val pricing = details.pricing.copy(memberRates = guestPricing.await()?.userRates)
 
         return ChargeLocationStatus(
             statusMap,
             "Tesla",
+            labels = labelsMap,
             extraData = pricing
         )
     }

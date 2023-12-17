@@ -7,6 +7,7 @@ import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.LayerDrawable
 import android.text.SpannableString
+import android.text.format.DateUtils
 import android.view.View
 import android.view.ViewGroup.MarginLayoutParams
 import android.widget.ImageView
@@ -28,6 +29,7 @@ import com.google.android.material.slider.RangeSlider
 import net.vonforst.evmap.*
 import net.vonforst.evmap.api.availability.ChargepointStatus
 import net.vonforst.evmap.api.iconForPlugType
+import java.time.Instant
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.roundToInt
@@ -310,15 +312,26 @@ fun availabilityText(status: List<ChargepointStatus>?): String? {
     } else available.toString()
 }
 
-fun availabilityText(status: ChargepointStatus?, context: Context): String? {
+fun availabilityText(status: ChargepointStatus?, lastChange: Instant?, context: Context): String? {
     if (status == null) return null
 
-    return when (status) {
+    val statusText = when (status) {
         ChargepointStatus.UNKNOWN -> context.getString(R.string.status_unknown)
         ChargepointStatus.AVAILABLE -> context.getString(R.string.status_available)
         ChargepointStatus.CHARGING -> context.getString(R.string.status_charging)
         ChargepointStatus.OCCUPIED -> context.getString(R.string.status_occupied)
         ChargepointStatus.FAULTED -> context.getString(R.string.status_faulted)
+    }
+
+    return if (lastChange != null) {
+        val relativeTime = DateUtils.getRelativeTimeSpanString(
+            lastChange.toEpochMilli(),
+            Instant.now().toEpochMilli(),
+            0
+        ).toString()
+        return context.getString(R.string.status_since, statusText, relativeTime)
+    } else {
+        statusText
     }
 }
 

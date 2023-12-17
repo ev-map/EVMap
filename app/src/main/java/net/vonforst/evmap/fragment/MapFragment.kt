@@ -821,7 +821,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                             val dialog = ConnectorDetailsDialog.getInstance(
                                 item.chargepoint,
                                 status,
-                                it.evseIds?.get(item.chargepoint)
+                                it.evseIds?.get(item.chargepoint),
+                                it.labels?.get(item.chargepoint),
+                                it.lastChange?.get(item.chargepoint),
                             )
                             dialog.show(parentFragmentManager, null)
                         }

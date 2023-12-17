@@ -373,5 +373,6 @@
     <string name="status_charging">Lädt</string>
     <string name="status_faulted">Defekt</string>
     <string name="status_unknown">Status unbekannt</string>
+    <string name="status_since">%1$s seit %2$s</string>
     <string name="charger_name">Ladestationsname</string>
 </resources>

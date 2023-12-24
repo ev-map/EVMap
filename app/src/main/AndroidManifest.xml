@@ -273,6 +273,10 @@
                     android:host="openchargemap.org"
                     android:pathPattern="/site/poi/details/..*"
                     android:scheme="https" />
+                <data
+                    android:host="map.openchargemap.io"
+                    android:path="/"
+                    android:scheme="https" />
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />

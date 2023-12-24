@@ -155,8 +155,12 @@ class MapsActivity : AppCompatActivity(),
                         .setArguments(MapFragmentArgs(chargerId = id).toBundle())
                         .createPendingIntent()
                 }
-            } else if (intent?.scheme == "https" && intent?.data?.host == "openchargemap.org") {
-                val id = intent.data?.pathSegments?.last()?.toLongOrNull()
+            } else if (intent?.scheme == "https" && intent?.data?.host in listOf("openchargemap.org", "map.openchargemap.io")) {
+                val id = when (intent.data?.host) {
+                    "openchargemap.org" -> intent.data?.pathSegments?.last()?.toLongOrNull()
+                    "map.openchargemap.io" -> intent.data?.getQueryParameter("id")?.toLongOrNull()
+                    else -> null
+                }
                 if (id != null) {
                     if (prefs.dataSource != "openchargemap") {
                         prefs.dataSource = "openchargemap"

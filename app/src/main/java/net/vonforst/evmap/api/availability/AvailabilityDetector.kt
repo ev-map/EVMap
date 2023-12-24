@@ -187,8 +187,6 @@ class AvailabilityRepository(context: Context) {
     )
 
     suspend fun getAvailability(charger: ChargeLocation): Resource<ChargeLocationStatus> {
-        var value: Resource<ChargeLocationStatus>? = null
-
         var result: ChargeLocationStatus? = null
         var exception: Throwable? = null
 

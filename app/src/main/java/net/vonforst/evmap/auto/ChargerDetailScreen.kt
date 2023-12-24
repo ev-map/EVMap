@@ -542,7 +542,7 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
                     val url = photo.getUrl(size = size)
                     val request = ImageRequest.Builder(carContext).data(url).build()
                     val img =
-                        (carContext.imageLoader.execute(request).drawable as BitmapDrawable).bitmap
+                        (carContext.imageLoader.execute(request).drawable as? BitmapDrawable)?.bitmap ?: return@let
 
                     // draw icon on top of image
                     val icon = iconGen.getBitmap(

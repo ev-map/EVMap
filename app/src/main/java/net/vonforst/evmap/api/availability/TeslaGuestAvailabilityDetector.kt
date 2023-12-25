@@ -116,7 +116,7 @@ class TeslaGuestAvailabilityDetector(
             // If we have just one type of charger, we can still match
             val numMissing =
                 scV2Connectors.sumOf { it.count } + scV3Connectors.sumOf { it.count } - statusSorted.size
-            if (scV2Connectors.isEmpty() || scV3Connectors.isEmpty() && numMissing > 0) {
+            if ((scV2Connectors.isEmpty() || scV3Connectors.isEmpty()) && numMissing > 0) {
                 statusSorted =
                     statusSorted + List(numMissing) { ChargerAvailability.UNKNOWN }
             } else {

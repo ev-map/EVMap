@@ -406,6 +406,11 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         binding.detailView.topPart.setOnClickListener {
             bottomSheetBehavior.state = STATE_ANCHOR_POINT
         }
+        binding.detailView.topPart.setOnLongClickListener {
+            val charger = vm.charger.value?.data ?: return@setOnLongClickListener false
+            copyToClipboard(ClipData.newPlainText(getString(R.string.charger_name), charger.name))
+            return@setOnLongClickListener true
+        }
         setupSearchAutocomplete()
         binding.detailAppBar.toolbar.setNavigationOnClickListener {
             if (bottomSheetCollapsible) {
@@ -840,50 +845,26 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 }
                 onLongClickListener = {
                     val charger = vm.chargerDetails.value?.data
-                    val clipboardManager =
-                        requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                     if (charger != null) {
                         when (it.icon) {
                             R.drawable.ic_address -> {
                                 if (charger.address != null) {
-                                    val clip = ClipData.newPlainText(
+                                    copyToClipboard(ClipData.newPlainText(
                                         getString(R.string.address),
                                         charger.address.toString()
-                                    )
-                                    clipboardManager.setPrimaryClip(clip)
-
-                                    if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
-                                        Snackbar.make(
-                                            requireView(),
-                                            R.string.copied,
-                                            Toast.LENGTH_SHORT
-                                        )
-                                            .show()
-                                    }
+                                    ))
                                     true
                                 } else {
                                     false
                                 }
                             }
-
                             R.drawable.ic_location -> {
-                                val clip = ClipData.newPlainText(
+                                copyToClipboard(ClipData.newPlainText(
                                     getString(R.string.coordinates),
                                     charger.coordinates.formatDecimal()
-                                )
-                                clipboardManager.setPrimaryClip(clip)
-
-                                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
-                                    Snackbar.make(
-                                        requireView(),
-                                        R.string.copied,
-                                        Toast.LENGTH_SHORT
-                                    )
-                                        .show()
-                                }
+                                ))
                                 true
                             }
-
                             else -> false
                         }
                     } else {
@@ -900,6 +881,21 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                     LinearLayoutManager.VERTICAL
                 )
             )
+        }
+    }
+
+    private fun copyToClipboard(clip: ClipData) {
+        val clipboardManager =
+            requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        clipboardManager.setPrimaryClip(clip)
+
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S_V2) {
+            Snackbar.make(
+                requireView(),
+                R.string.copied,
+                Toast.LENGTH_SHORT
+            )
+                .show()
         }
     }
 

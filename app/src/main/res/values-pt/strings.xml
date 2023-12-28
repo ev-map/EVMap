@@ -373,4 +373,5 @@
     <string name="generic_connection_error">Não foi possível carregar a informação</string>
     <string name="powered_by_fronyx">previsão feita por fronyx</string>
     <string name="copied">Informação copiada</string>
+    <string name="charger_name">Nome do carregador</string>
 </resources>

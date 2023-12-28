@@ -41,9 +41,9 @@ Not all API keys are strictly required if you only want to work on certain parts
 example, you can choose only one of the map providers and one of the charging station databases. The
 Chargeprice API key is also only required if you want to test the price comparison feature.
 
-All APIs can be used for free, at least for testing. Some APIs require payment above a certain usage
-limit or to get access to the full dataset, but the free tiers should be plenty for local testing
-and development.
+Most APIs can be used for free, at least for testing. Some APIs require payment above a certain
+usage limit or to get access to the full dataset, but the free tiers should be plenty for local
+testing and development.
 
 Below you find a list of all the services and how to obtain the API keys.
 
@@ -185,7 +185,7 @@ Availability data providers
 <details>
 <summary>How to obtain an API key</summary>
 
-The API is not publically available, contact [fronyx](https://fronyx.io/contact-us/) to get an API
+The API is not publicly available, contact [fronyx](https://fronyx.io/contact-us/) to get an API
 key and documentation.
 
 If you don't want to test this functionality, simply leave the API key blank.

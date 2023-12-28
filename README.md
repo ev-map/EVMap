@@ -37,7 +37,7 @@ Development setup
 The App is developed using Android Studio and should pretty much work out-of-the-box when you clone
 the Git repository and open the project with Android Studio.
 
-The only exception is that you need to obtain some free API keys for the different data sources that
+The only exception is that you need to obtain some API keys for the different data sources that
 EVMap uses and put them into the app in the form of a resource file called `apikeys.xml` under
 `app/src/main/res/values`. You can find more information on which API keys are necessary for which
 features and how they can be obtained in our [documentation page](doc/api_keys.md).

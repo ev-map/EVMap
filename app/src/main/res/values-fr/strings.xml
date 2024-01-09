@@ -372,5 +372,5 @@
     <string name="auto_chargers_ahead">Uniquement les stations de recharge dans le sens de la marche</string>
     <string name="referrals">Liens d\'affiliation</string>
     <string name="settings_cache_count">Taille du cache</string>
-    <string name="accept_privacy">J\'ai lu et accepté la politique de confidentialité <a href="%s"> d\'EVMap</a>.</string>
+    <string name="accept_privacy"><![CDATA[J\'ai lu et accepté la politique de confidentialité <a href=\"%s\"> d\'EVMap</a>.]]></string>
 </resources>

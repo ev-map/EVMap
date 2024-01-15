@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="grant_on_phone">Povolit</string>
+    <string name="auto_location_permission_needed">Pro spuštění aplikace EVMap ve vašem autě musíte povolit přístup k vaší poloze.</string>
+</resources>

@@ -1,0 +1,18 @@
+Pomocí aplikace EVMap můžete pohodlně najít nabíječky elektromobilů s vaším Android mobilem. Poskytuje mobilní přístup do komunitních databází GoingElectric.de a Open Charge Map, které obsahují informace o nabíjecích místech po celém světě. U mnoha nabíjecích míst v Evropě si můžete zobrazit informace o jejich stavu v reálném čase.
+
+Funkce:
+- Material Design
+- Zobrazuje všechny nabíjecí stanice z komunitou spravovaných databází GoingElectric.de a Open Charge Map.
+- Informace o dostupnosti v reálném čase (pouze v Evropě)
+- Integrované srovnání cen pomocí Chargeprice.app (pouze v Evropě)
+- Mapové podklady z OpenStreetMap (Mapbox)
+- Vyhledávání míst
+- Pokročilé možnosti filtrování, včetně uložených profilů filtrů
+- Seznam oblíbených, také s informacemi o dostupnosti
+- Žádné reklamy, plně otevřený zdrojový kód
+
+EVMap je projekt s otevřeným zdrojovým kódem a najdete jej na adrese https://github.com/ev-map/EVMap.
+
+Tato aplikace není oficiálním produktem GoingElectric.de ani Open Charge Map, využívá pouze jejich veřejná API.
+
+Seznam potřebných oprávnění s vysvětlivkami je k dispozici zde: https://ev-map.app/faq/#permissions

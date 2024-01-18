@@ -35,6 +35,8 @@
     <string name="paypal_link" translatable="false">https://paypal.me/johan98</string>
     <string name="donate_link" translatable="false">https://ev-map.app/donate/</string>
     <string name="tesla_referral_link" translatable="false">http://ts.la/johan94494</string>
+    <string name="juicify_referral_link" translatable="false">https://trck.juicify.green/trck/eclick/9dba357fbfed1e82fb05c7ec004ee2972ea174ce46d8ae0d</string>
+    <string name="referral_juicify">Juicify</string>
     <string name="copyright_summary">©2020–2023 Johan von Forstner and contributors</string>
     <string name="acra_backend_url" translatable="false">https://acra.muc.vonforst.net/report</string>
 </resources>

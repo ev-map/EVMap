@@ -89,6 +89,9 @@ class DonateFragment : Fragment() {
         referrals.referralTesla.setOnClickListener {
             (requireActivity() as MapsActivity).openUrl(getString(R.string.tesla_referral_link))
         }
+        referrals.referralJuicify.setOnClickListener {
+            (requireActivity() as MapsActivity).openUrl(getString(R.string.juicify_referral_link))
+        }
 
         // Workaround for AndroidX bug: https://github.com/material-components/material-components-android/issues/1984
         view.setBackgroundColor(MaterialColors.getColor(view, android.R.attr.windowBackground))

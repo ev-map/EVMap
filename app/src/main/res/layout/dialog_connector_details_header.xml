@@ -79,7 +79,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="36dp"
             android:layout_marginTop="4dp"
-            android:text="@{UtilsKt.nameForPlugType(ChargepointApiKt.stringProvider(context), item.chargepoint.type) + &quot; · &quot; + item.chargepoint.formatPower()}"
+            android:text="@{item != null ? UtilsKt.nameForPlugType(ChargepointApiKt.stringProvider(context), item.chargepoint.type) + &quot; · &quot; + item.chargepoint.formatPower() : null}"
             android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
             app:goneUnless="@{item.chargepoint.hasKnownPower()}"
             app:layout_constraintBottom_toTopOf="@id/textView8"

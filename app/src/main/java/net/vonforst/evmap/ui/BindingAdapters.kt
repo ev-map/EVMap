@@ -139,8 +139,8 @@ fun <T> setRecyclerViewData(recyclerView: ViewPager2, items: List<T>?) {
 }
 
 @BindingAdapter("connectorIcon")
-fun getConnectorItem(view: ImageView, type: String) {
-    view.setImageResource(iconForPlugType(type))
+fun getConnectorItem(view: ImageView, type: String?) {
+    view.setImageResource(type?.let { iconForPlugType(it) } ?: 0)
 }
 
 @BindingAdapter("srcCompat")

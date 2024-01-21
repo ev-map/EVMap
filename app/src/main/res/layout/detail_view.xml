@@ -560,6 +560,24 @@
                 app:layout_constraintBottom_toBottomOf="@+id/textView13"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintTop_toTopOf="@+id/textView13" />
+            <com.google.android.material.card.MaterialCardView
+                style="?attr/materialCardViewElevatedStyle"
+                android:id="@+id/connector_details_card"
+                app:layout_constraintStart_toStartOf="@+id/guideline"
+                app:layout_constraintEnd_toStartOf="@+id/guideline2"
+                app:layout_constraintTop_toTopOf="@id/connectors"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="24dp"
+                android:layout_marginBottom="@dimen/detail_corner_radius_negative"
+                android:paddingBottom="@dimen/detail_corner_radius"
+                app:cardElevation="6dp"
+                android:visibility="gone">
+
+                <include
+                    layout="@layout/dialog_connector_details"
+                    android:id="@+id/connector_details" />
+            </com.google.android.material.card.MaterialCardView>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -16,7 +16,6 @@ import kotlinx.parcelize.Parcelize
 import net.vonforst.evmap.api.availability.AvailabilityRepository
 import net.vonforst.evmap.api.availability.ChargeLocationStatus
 import net.vonforst.evmap.api.availability.tesla.Pricing
-import net.vonforst.evmap.api.availability.tesla.TeslaChargingOwnershipGraphQlApi
 import net.vonforst.evmap.api.createApi
 import net.vonforst.evmap.api.fronyx.PredictionData
 import net.vonforst.evmap.api.fronyx.PredictionRepository
@@ -150,7 +149,11 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
     }
 
     val chargerSparse: MutableLiveData<ChargeLocation?> by lazy {
-        state.getLiveData("chargerSparse")
+        state.getLiveData<ChargeLocation?>("chargerSparse").apply {
+            observeForever {
+                selectedChargepoint.value = null
+            }
+        }
     }
     private val triggerChargerDetailsRefresh = MutableLiveData(false)
     val chargerDetails: LiveData<Resource<ChargeLocation>> = chargerSparse.switchMap { charger ->
@@ -165,6 +168,10 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
             // persist data in case fragment gets recreated
             state["chargerDetails"] = chargerDetail
         }
+    }
+
+    val selectedChargepoint: MutableLiveData<Chargepoint?> by lazy {
+        state.getLiveData("selectedChargepoint")
     }
 
     val charger: MediatorLiveData<Resource<ChargeLocation>> by lazy {

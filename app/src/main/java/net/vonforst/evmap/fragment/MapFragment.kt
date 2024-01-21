@@ -53,6 +53,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialArcMotion
 import com.google.android.material.transition.MaterialContainerTransform
+import com.google.android.material.transition.MaterialContainerTransform.FADE_MODE_CROSS
 import com.google.android.material.transition.MaterialFadeThrough
 import com.google.android.material.transition.MaterialSharedAxis
 import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike
@@ -107,6 +108,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
     private var requestingLocationUpdates = false
     private lateinit var bottomSheetBehavior: BottomSheetBehaviorGoogleMapsLike<View>
     private lateinit var detailAppBarBehavior: MergedAppBarLayoutBehavior
+    private lateinit var detailsDialog: ConnectorDetailsDialog
     private lateinit var prefs: PreferenceDataSource
     private var markers: MutableBiMap<Marker, ChargeLocation> = HashBiMap()
     private var clusterMarkers: List<Marker> = emptyList()
@@ -125,6 +127,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             val value = vm.layersMenuOpen.value
             if (value != null && value) {
                 closeLayersMenu()
+                return
+            }
+
+            if (vm.selectedChargepoint.value != null) {
+                closeConnectorDetailsDialog()
+                vm.selectedChargepoint.value = null
                 return
             }
 
@@ -269,6 +277,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             vm.bottomSheetState.value?.let { bottomSheetBehavior.state = it }
         }
         bottomSheetBehavior.isCollapsible = bottomSheetCollapsible
+        binding.detailView.connectorDetails
 
         setupObservers()
         setupClickListeners()
@@ -322,6 +331,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             binding.appLogo.root.visibility = View.GONE
             binding.search.visibility = View.VISIBLE
         }
+
+        detailsDialog =
+            ConnectorDetailsDialog(binding.detailView.connectorDetails, requireContext()) {
+                closeConnectorDetailsDialog()
+                vm.selectedChargepoint.value = null
+            }
     }
 
     override fun onResume() {
@@ -670,6 +685,14 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         vm.mapTrafficEnabled.observe(viewLifecycleOwner) {
             map?.setTrafficEnabled(it)
         }
+        vm.selectedChargepoint.observe(viewLifecycleOwner) {
+            binding.detailView.connectorDetailsCard.visibility =
+                if (it != null) View.VISIBLE else View.INVISIBLE
+            if (it != null) {
+                detailsDialog.setData(it, vm.availability.value?.data)
+            }
+            updateBackPressedCallback()
+        }
 
         updateBackPressedCallback()
     }
@@ -714,6 +737,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                     || vm.searchResult.value != null
                     || (vm.layersMenuOpen.value ?: false)
                     || binding.search.hasFocus()
+                    || vm.selectedChargepoint.value != null
     }
 
     private fun unhighlightAllMarkers() {
@@ -815,15 +839,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
         binding.detailView.connectors.apply {
             adapter = ConnectorAdapter().apply {
-                onClickListener = { item ->
-                    val dialog = ConnectorDetailsDialog.getInstance(
-                        item.chargepoint,
-                        item.status,
-                        vm.availability.value?.data?.evseIds?.get(item.chargepoint),
-                        vm.availability.value?.data?.labels?.get(item.chargepoint),
-                        vm.availability.value?.data?.lastChange?.get(item.chargepoint),
-                    )
-                    dialog.show(parentFragmentManager, null)
+                onClickListener = {
+                    vm.selectedChargepoint.value = it.chargepoint
+                    openConnectorDetailsDialog()
                 }
             }
             itemAnimator = null
@@ -908,6 +926,44 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             )
                 .show()
         }
+    }
+
+    private fun openConnectorDetailsDialog() {
+        val chargepoints = vm.chargerDetails.value?.data?.chargepointsMerged ?: return
+        val chargepoint = vm.selectedChargepoint.value ?: return
+        val index = chargepoints.indexOf(chargepoint).takeIf { it >= 0 } ?: return
+        val vh = binding.detailView.connectors.findViewHolderForAdapterPosition(index) ?: return
+
+        val materialTransform = MaterialContainerTransform().apply {
+            startView = vh.itemView
+            endView = binding.detailView.connectorDetailsCard
+            setPathMotion(MaterialArcMotion())
+            duration = 250
+            scrimColor = Color.TRANSPARENT
+            addTarget(binding.detailView.connectorDetailsCard)
+            isElevationShadowEnabled = false
+            fadeMode = FADE_MODE_CROSS
+        }
+        TransitionManager.beginDelayedTransition(binding.root, materialTransform)
+    }
+
+    private fun closeConnectorDetailsDialog() {
+        val chargepoints = vm.chargerDetails.value?.data?.chargepointsMerged ?: return
+        val chargepoint = vm.selectedChargepoint.value ?: return
+        val index = chargepoints.indexOf(chargepoint).takeIf { it >= 0 } ?: return
+        val vh = binding.detailView.connectors.findViewHolderForAdapterPosition(index) ?: return
+
+        val materialTransform = MaterialContainerTransform().apply {
+            startView = binding.detailView.connectorDetailsCard
+            endView = vh.itemView
+            setPathMotion(MaterialArcMotion())
+            duration = 200
+            scrimColor = Color.TRANSPARENT
+            addTarget(vh.itemView)
+            isElevationShadowEnabled = false
+            fadeMode = FADE_MODE_CROSS
+        }
+        TransitionManager.beginDelayedTransition(binding.root, materialTransform)
     }
 
     private fun showPaymentMethodsDialog(charger: ChargeLocation) {

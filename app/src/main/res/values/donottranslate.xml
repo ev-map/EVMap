@@ -17,6 +17,7 @@
     <string name="pref_language_nl">Nederlands</string>
     <string name="pref_language_pt">Português</string>
     <string name="pref_language_ro">Romana</string>
+    <string name="pref_language_cs">Czech</string>
     <string name="about_contributors_list">
         Danilo Bargen\n
         Altonss\n

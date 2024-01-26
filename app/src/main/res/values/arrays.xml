@@ -4,6 +4,7 @@
         <item>@string/pref_language_device_default</item>
         <item>@string/pref_language_en</item>
         <item>@string/pref_language_de</item>
+        <item>@string/pref_language_cs</item>
         <item>@string/pref_language_fr</item>
         <item>@string/pref_language_nb_rNO</item>
         <item>@string/pref_language_nl</item>
@@ -14,6 +15,7 @@
         <item>default</item>
         <item>en</item>
         <item>de</item>
+        <item>cs</item>
         <item>fr</item>
         <item>nb-NO</item>
         <item>nl</item>

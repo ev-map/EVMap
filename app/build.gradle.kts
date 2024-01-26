@@ -11,7 +11,7 @@ plugins {
     id("pt.jcosta.resourceplaceholders")
 }
 
-val supportedLocales = "en,de,fr,nb-rNO,nl,pt,ro"
+val supportedLocales = "en,de,fr,nb-rNO,nl,pt,ro,cs"
 
 android {
     defaultConfig {

@@ -10,6 +10,7 @@ import net.vonforst.evmap.databinding.DialogOpensourceDonationsBinding
 import net.vonforst.evmap.navigation.safeNavigate
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.ui.MaterialDialogFragment
+import java.time.Instant
 
 class OpensourceDonationsDialogFragment : MaterialDialogFragment() {
     private lateinit var binding: DialogOpensourceDonationsBinding
@@ -26,15 +27,15 @@ class OpensourceDonationsDialogFragment : MaterialDialogFragment() {
     override fun initView(view: View, savedInstanceState: Bundle?) {
         val prefs = PreferenceDataSource(requireContext())
         binding.btnOk.setOnClickListener {
-            prefs.opensourceDonationsDialogShown = true
+            prefs.opensourceDonationsDialogLastShown = Instant.now()
             dismiss()
         }
         binding.btnDonate.setOnClickListener {
-            prefs.opensourceDonationsDialogShown = true
+            prefs.opensourceDonationsDialogLastShown = Instant.now()
             findNavController().safeNavigate(OpensourceDonationsDialogFragmentDirections.actionOpensourceDonationsToDonate())
         }
         binding.btnGithubSponsors.setOnClickListener {
-            prefs.opensourceDonationsDialogShown = true
+            prefs.opensourceDonationsDialogLastShown = Instant.now()
             findNavController().safeNavigate(OpensourceDonationsDialogFragmentDirections.actionOpensourceDonationsToGithubSponsors())
         }
     }

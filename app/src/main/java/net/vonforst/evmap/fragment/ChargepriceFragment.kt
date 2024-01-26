@@ -62,7 +62,7 @@ class ChargepriceFragment : Fragment() {
         if (savedInstanceState == null) {
             val prefs = PreferenceDataSource(requireContext())
             prefs.chargepriceCounter += 1
-            if ((prefs.chargepriceCounter - 30).mod(50) == 0) {
+            if ((prefs.chargepriceCounter).mod(30) == 0) {
                 showDonationDialog()
             }
         }

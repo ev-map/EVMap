@@ -91,6 +91,8 @@ import net.vonforst.evmap.utils.distanceBetween
 import net.vonforst.evmap.utils.formatDecimal
 import net.vonforst.evmap.viewmodel.*
 import java.io.IOException
+import java.time.Duration
+import java.time.Instant
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.contains
@@ -289,7 +291,11 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             (requireActivity() as MapsActivity).appBarConfiguration
         )
 
-        if (prefs.appStartCounter > 5 && !prefs.opensourceDonationsDialogShown) {
+        if (prefs.appStartCounter > 5 && Duration.between(
+                prefs.opensourceDonationsDialogLastShown,
+                Instant.now()
+            ) > Duration.ofDays(30)
+        ) {
             try {
                 findNavController().safeNavigate(MapFragmentDirections.actionMapToOpensourceDonations())
             } catch (ignored: IllegalArgumentException) {

@@ -237,10 +237,11 @@ class PreferenceDataSource(val context: Context) {
             sp.edit().putLong("chargeprice_counter", value).apply()
         }
 
-    var opensourceDonationsDialogShown: Boolean
-        get() = sp.getBoolean("opensource_donations_dialog_shown", false)
+    var opensourceDonationsDialogLastShown: Instant
+        get() = Instant.ofEpochMilli(sp.getLong("opensource_donations_dialog_last_shown", 0L))
         set(value) {
-            sp.edit().putBoolean("opensource_donations_dialog_shown", value).apply()
+            sp.edit().putLong("opensource_donations_dialog_last_shown", value.toEpochMilli())
+                .apply()
         }
 
     var placeSearchResultAndroidAuto: LatLng?

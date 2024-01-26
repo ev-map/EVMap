@@ -1,0 +1,13 @@
+Neue Funktionen:
+- Tippe auf einen Anschluss um Details zur Belegung zu sehen
+- Name der Ladestation gedrückt halten um ihn zu kopieren
+- Neue Übersetzung: Tschechisch
+
+Verbesserungen:
+- Echtzeitdaten für Tesla Supercharger in einigen Ländern nun auch ohne Login verfügbar
+- Links zu map.openchargemap.io können in der App geöffnet werden
+- Mapbox: Verkehrsdaten für beliebige Kartenstile verfügbar
+
+Fehler behoben:
+- Anzeigefehler behoben
+- Abstürze behoben

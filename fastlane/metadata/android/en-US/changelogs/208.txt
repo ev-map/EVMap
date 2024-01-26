@@ -1,0 +1,13 @@
+New features:
+- Tap on a connector type to see more details about its status
+- Copy charger name using long press
+- New translation: Czech
+
+Improvements:
+- Realtime data for Tesla Superchargers also available without login in some countries
+- Links to map.openchargemap.io can be opened in the app
+- Mapbox: Traffic data available for all map styles
+
+Bugfixes:
+- Fixed display errors
+- Fixed crashes

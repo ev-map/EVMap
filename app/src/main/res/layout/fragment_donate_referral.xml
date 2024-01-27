@@ -38,7 +38,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:constraint_referenced_ids="referral_tesla,referral_juicify"
+        app:constraint_referenced_ids="referral_tesla,referral_juicify,referral_geldfuereauto,referral_maingau,referral_ewieeinfach"
         app:flow_horizontalGap="16dp"
         app:flow_horizontalStyle="packed"
         app:flow_verticalAlign="baseline"
@@ -61,4 +61,25 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/referral_juicify" />
+
+    <Button
+        android:id="@+id/referral_geldfuereauto"
+        style="@style/Widget.Material3.Button.TonalButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/referral_geldfuereauto" />
+
+    <Button
+        android:id="@+id/referral_maingau"
+        style="@style/Widget.Material3.Button.TonalButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/referral_maingau" />
+
+    <Button
+        android:id="@+id/referral_ewieeinfach"
+        style="@style/Widget.Material3.Button.TonalButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/referral_ewieeinfach" />
 </androidx.constraintlayout.widget.ConstraintLayout>

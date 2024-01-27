@@ -9,10 +9,14 @@ import android.icu.util.LocaleData
 import android.icu.util.ULocale
 import android.os.Build
 import android.os.Bundle
-import android.text.*
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.SpannableStringBuilder
+import android.text.SpannedString
+import android.text.TextUtils
 import android.text.style.StyleSpan
 import net.vonforst.evmap.storage.PreferenceDataSource
-import java.util.*
+import java.util.Locale
 
 fun Bundle.optDouble(name: String): Double? {
     if (!this.containsKey(name)) return null

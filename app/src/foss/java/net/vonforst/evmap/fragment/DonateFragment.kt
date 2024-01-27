@@ -12,9 +12,11 @@ import com.google.android.material.transition.MaterialSharedAxis
 import net.vonforst.evmap.MapsActivity
 import net.vonforst.evmap.R
 import net.vonforst.evmap.databinding.FragmentDonateBinding
+import net.vonforst.evmap.databinding.FragmentDonateReferralBinding
 
-class DonateFragment : Fragment() {
+class DonateFragment : DonateFragmentBase() {
     private lateinit var binding: FragmentDonateBinding
+    private lateinit var referrals: FragmentDonateReferralBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,6 +30,7 @@ class DonateFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentDonateBinding.inflate(inflater, container, false)
+        referrals = binding.referrals
         return binding.root
     }
 
@@ -43,8 +46,6 @@ class DonateFragment : Fragment() {
             (activity as? MapsActivity)?.openUrl(getString(R.string.paypal_link))
         }
 
-        binding.referrals.referralTesla.setOnClickListener {
-            (requireActivity() as MapsActivity).openUrl(getString(R.string.tesla_referral_link))
-        }
+        setupReferrals(referrals)
     }
 }

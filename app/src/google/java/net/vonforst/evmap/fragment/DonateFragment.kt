@@ -6,9 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.ConcatAdapter
@@ -25,7 +23,7 @@ import net.vonforst.evmap.databinding.FragmentDonateHeaderBinding
 import net.vonforst.evmap.databinding.FragmentDonateReferralBinding
 import net.vonforst.evmap.viewmodel.DonateViewModel
 
-class DonateFragment : Fragment() {
+class DonateFragment : DonateFragmentBase() {
     private lateinit var binding: FragmentDonateBinding
     private val vm: DonateViewModel by viewModels()
     private lateinit var header: FragmentDonateHeaderBinding
@@ -86,12 +84,7 @@ class DonateFragment : Fragment() {
             Snackbar.make(view, R.string.donation_failed, Snackbar.LENGTH_LONG).show()
         }
 
-        referrals.referralTesla.setOnClickListener {
-            (requireActivity() as MapsActivity).openUrl(getString(R.string.tesla_referral_link))
-        }
-        referrals.referralJuicify.setOnClickListener {
-            (requireActivity() as MapsActivity).openUrl(getString(R.string.juicify_referral_link))
-        }
+        setupReferrals(referrals)
 
         // Workaround for AndroidX bug: https://github.com/material-components/material-components-android/issues/1984
         view.setBackgroundColor(MaterialColors.getColor(view, android.R.attr.windowBackground))

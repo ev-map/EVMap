@@ -170,9 +170,8 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
         }
     }
 
-    val selectedChargepoint: MutableLiveData<Chargepoint?> by lazy {
+    val selectedChargepoint: MutableLiveData<Chargepoint?> =
         state.getLiveData("selectedChargepoint")
-    }
 
     val charger: MediatorLiveData<Resource<ChargeLocation>> by lazy {
         MediatorLiveData<Resource<ChargeLocation>>().apply {

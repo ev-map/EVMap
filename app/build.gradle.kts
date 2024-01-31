@@ -95,6 +95,7 @@ android {
     buildFeatures {
         dataBinding = true
         viewBinding = true
+        buildConfig = true
     }
     lint {
         disable += listOf("NullSafeMutableLiveData")

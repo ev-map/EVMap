@@ -628,6 +628,14 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 ) {
                     closeLayersMenu()
                 }
+
+                if (vm.selectedChargepoint.value != null && newState in listOf(
+                        STATE_ANCHOR_POINT, STATE_COLLAPSED
+                    )
+                ) {
+                    closeConnectorDetailsDialog()
+                    vm.selectedChargepoint.value = null
+                }
             }
         })
         vm.chargerSparse.observe(viewLifecycleOwner) {

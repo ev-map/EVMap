@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.vonforst.evmap.R
 import okio.IOException
+import retrofit2.HttpException
 
 abstract class MultiSelectSearchScreen<T>(ctx: CarContext) : Screen(ctx),
     SearchTemplate.SearchCallback {
@@ -30,14 +31,9 @@ abstract class MultiSelectSearchScreen<T>(ctx: CarContext) : Screen(ctx),
                     filterList()
                     invalidate()
                 } catch (e: IOException) {
-                    withContext(Dispatchers.Main) {
-                        CarToast.makeText(
-                            carContext,
-                            R.string.generic_connection_error,
-                            CarToast.LENGTH_LONG
-                        ).show()
-                        screenManager.pop()
-                    }
+                    showLoadingError()
+                } catch (e: HttpException) {
+                    showLoadingError()
                 }
             }
         }
@@ -74,6 +70,17 @@ abstract class MultiSelectSearchScreen<T>(ctx: CarContext) : Screen(ctx),
                 }.build())
             }
         }.build()
+    }
+
+    private suspend fun showLoadingError() {
+        withContext(Dispatchers.Main) {
+            CarToast.makeText(
+                carContext,
+                R.string.generic_connection_error,
+                CarToast.LENGTH_LONG
+            ).show()
+            screenManager.pop()
+        }
     }
 
     private fun filterList() {

@@ -244,7 +244,7 @@
     <string name="average_utilization">Průměrné využití</string>
     <string name="website">Webové stránky</string>
     <string name="pref_map_scale">Zobrazit ovládání přiblížení mapy</string>
-    <string name="pref_map_scale_meters_and_miles">Míle a metry na ovládání přiblížení mapy</string>
+    <string name="pref_map_scale_meters_and_miles">Míle a metry na ukazateli měřítka</string>
     <string name="pref_units">Jednotky</string>
     <string name="pref_units_metric">Metrické</string>
     <string name="pref_units_imperial">Imperiální</string>
@@ -283,7 +283,7 @@
     <string name="loading">Načítání…</string>
     <string name="auto_multipage_goto">Stránka %d</string>
     <string name="reload">Obnovit</string>
-    <string name="accept_privacy"><![CDATA[Přečetl/a jsem si a souhlasím se <a href="%s">zásadami ochrany osobních údajů</a> aplikace EVMap.]]></string>
+    <string name="accept_privacy">Přečetl/a jsem si a souhlasím se <a href="%s">zásadami ochrany osobních údajů</a> aplikace EVMap.</string>
     <string name="referrals">Referenční odkazy</string>
     <string name="referrals_info">Pro podpoření vývojáře svým nákupem můžete také použít jeden z referenčních odkazů níže.</string>
     <string name="generic_connection_error">Nepodařilo se načíst data</string>

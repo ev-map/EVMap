@@ -374,4 +374,10 @@
     <string name="powered_by_fronyx">previsão feita por fronyx</string>
     <string name="copied">Informação copiada</string>
     <string name="charger_name">Nome do carregador</string>
+    <string name="status_available">Disponível</string>
+    <string name="status_occupied">Ocupado</string>
+    <string name="status_charging">Carregando</string>
+    <string name="status_faulted">Fora de serviço</string>
+    <string name="status_since">%1$s desde %2$s</string>
+    <string name="status_unknown">Estado Desconhecido</string>
 </resources>

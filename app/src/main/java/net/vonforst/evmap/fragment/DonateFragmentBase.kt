@@ -22,5 +22,8 @@ abstract class DonateFragmentBase : Fragment() {
         referrals.referralEwieeinfach.setOnClickListener {
             (requireActivity() as MapsActivity).openUrl(getString(R.string.ewieeinfach_referral_link))
         }
+        referrals.referralEprimo.setOnClickListener {
+            (requireActivity() as MapsActivity).openUrl(getString(R.string.eprimo_referral_link))
+        }
     }
 }

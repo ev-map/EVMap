@@ -40,10 +40,12 @@
     <string name="geldfuereauto_referral_link" translatable="false">https://trck.geld-fuer-eauto.de/trck/eclick/c4713e9520bdb8842a3f1fbfa3a0669b3e58421043df78ad</string>
     <string name="maingau_referral_link" translatable="false">https://trck.maingau-energie.de/trck/eclick/799b39cda39575dab1dcd3351abeb77b62dc33e4f9558a57</string>
     <string name="ewieeinfach_referral_link" translatable="false">https://trck.e-wie-einfach.de/trck/eclick/fca74c186b54e7287a62102a13e073be4fc963825b85f7df</string>
+    <string name="eprimo_referral_link" translatable="false">https://netzwerk.uppr.de/trck/eclick/781768d2e779806b5e09229932662c14adddd69323594c52</string>
     <string name="referral_juicify" translatable="false">Juicify</string>
     <string name="referral_geldfuereauto" translatable="false">Geld für eAuto</string>
     <string name="referral_maingau" translatable="false">Maingau</string>
     <string name="referral_ewieeinfach" translatable="false">E wie einfach</string>
+    <string name="referral_eprimo" translatable="false">eprimo</string>
     <string name="copyright_summary">©2020–2023 Johan von Forstner and contributors</string>
     <string name="acra_backend_url" translatable="false">https://acra.muc.vonforst.net/report</string>
 </resources>

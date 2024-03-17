@@ -38,7 +38,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:constraint_referenced_ids="referral_tesla,referral_juicify,referral_geldfuereauto,referral_maingau,referral_ewieeinfach"
+        app:constraint_referenced_ids="referral_tesla,referral_juicify,referral_geldfuereauto,referral_maingau,referral_eprimo,referral_ewieeinfach"
         app:flow_horizontalGap="16dp"
         app:flow_horizontalStyle="packed"
         app:flow_verticalAlign="baseline"
@@ -75,6 +75,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/referral_maingau" />
+
+    <Button
+        android:id="@+id/referral_eprimo"
+        style="@style/Widget.Material3.Button.TonalButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/referral_eprimo" />
 
     <Button
         android:id="@+id/referral_ewieeinfach"

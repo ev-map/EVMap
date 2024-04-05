@@ -149,11 +149,7 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
     }
 
     val chargerSparse: MutableLiveData<ChargeLocation?> =
-        state.getLiveData<ChargeLocation?>("chargerSparse").apply {
-            observeForever {
-                selectedChargepoint.value = null
-            }
-        }
+        state.getLiveData<ChargeLocation?>("chargerSparse")
 
     private val triggerChargerDetailsRefresh = MutableLiveData(false)
     val chargerDetails: LiveData<Resource<ChargeLocation>> = chargerSparse.switchMap { charger ->
@@ -172,6 +168,12 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
 
     val selectedChargepoint: MutableLiveData<Chargepoint?> =
         state.getLiveData("selectedChargepoint")
+
+    init {
+        chargerSparse.observeForever {
+            selectedChargepoint.value = null
+        }
+    }
 
     val charger: MediatorLiveData<Resource<ChargeLocation>> by lazy {
         MediatorLiveData<Resource<ChargeLocation>>().apply {

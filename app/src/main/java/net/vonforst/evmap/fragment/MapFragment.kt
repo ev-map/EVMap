@@ -694,7 +694,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         }
         vm.favorites.observe(viewLifecycleOwner) {
             updateFavoriteToggle()
-            markerManager?.favorites = it.map { it.favorite.chargerId }
+            markerManager?.favorites = it.map { it.favorite.chargerId }.toSet()
         }
         vm.searchResult.observe(viewLifecycleOwner) { place ->
             displaySearchResult(place, moveCamera = true)
@@ -966,10 +966,19 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             onChargerClick = {
                 vm.chargerSparse.value = it
             }
+            onClusterClick = {
+                val newZoom = map.cameraPosition.zoom + 2
+                map.animateCamera(
+                    map.cameraUpdateFactory.newLatLngZoom(
+                        LatLng(it.coordinates.lat, it.coordinates.lng),
+                        newZoom
+                    )
+                )
+            }
             chargepoints = vm.chargepoints.value?.data ?: emptyList()
             highlighedCharger = vm.chargerSparse.value
             searchResult = vm.searchResult.value
-            favorites = vm.favorites.value?.map { it.favorite.chargerId } ?: emptyList()
+            favorites = vm.favorites.value?.map { it.favorite.chargerId }?.toSet() ?: emptySet()
         }
 
         map.uiSettings.setTiltGesturesEnabled(false)

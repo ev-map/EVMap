@@ -40,4 +40,5 @@
     <string name="referral_eprimo" translatable="false">eprimo</string>
     <string name="copyright_summary">©2020–2024 Johan von Forstner and contributors</string>
     <string name="acra_backend_url" translatable="false">https://acra.muc.vonforst.net/report</string>
+    <string name="maplibre_attributionsDialogTitle">MapLibre Maps SDK for Android</string>
 </resources>

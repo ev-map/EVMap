@@ -4,19 +4,25 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.Typeface
 import android.net.Uri
+import android.text.SpannableStringBuilder
+import android.text.Spanned
 import android.text.TextPaint
 import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.car.app.CarContext
 import androidx.car.app.CarToast
+import androidx.car.app.HostException
 import androidx.car.app.Screen
 import androidx.car.app.constraints.ConstraintManager
 import androidx.car.app.hardware.common.CarUnit
 import androidx.car.app.model.CarColor
 import androidx.car.app.model.CarIcon
+import androidx.car.app.model.CarIconSpan
 import androidx.car.app.model.Distance
+import androidx.car.app.model.ForegroundCarColorSpan
 import androidx.car.app.model.MessageTemplate
 import androidx.car.app.model.Template
 import androidx.car.app.versioning.CarAppApiLevels
@@ -24,11 +30,17 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.IconCompat
 import net.vonforst.evmap.BuildConfig
 import net.vonforst.evmap.R
+import net.vonforst.evmap.api.availability.ChargeLocationStatus
 import net.vonforst.evmap.api.availability.ChargepointStatus
+import net.vonforst.evmap.api.iconForPlugType
+import net.vonforst.evmap.api.nameForPlugType
+import net.vonforst.evmap.api.stringProvider
 import net.vonforst.evmap.ftPerMile
 import net.vonforst.evmap.getPackageInfoCompat
 import net.vonforst.evmap.kmPerMile
+import net.vonforst.evmap.model.ChargeLocation
 import net.vonforst.evmap.shouldUseImperialUnits
+import net.vonforst.evmap.ui.availabilityText
 import net.vonforst.evmap.ydPerMile
 import java.util.Locale
 import kotlin.math.roundToInt
@@ -255,6 +267,22 @@ fun openUrl(carContext: CarContext, url: String) {
     }
 }
 
+fun navigateToCharger(ctx: CarContext, charger: ChargeLocation) {
+    val coord = charger.coordinates
+    val intent =
+        Intent(
+            CarContext.ACTION_NAVIGATE,
+            Uri.parse("geo:${coord.lat},${coord.lng}")
+        )
+    try {
+        ctx.startCarApp(intent)
+    } catch (e: HostException) {
+        CarToast.makeText(ctx, R.string.no_maps_app_found, CarToast.LENGTH_SHORT).show()
+    } catch (ignored: SecurityException) {
+
+    }
+}
+
 class DummyReturnScreen(ctx: CarContext) : Screen(ctx) {
     /*
     Dummy screen to get around template refresh limitations.
@@ -279,4 +307,49 @@ class TextMeasurer(ctx: CarContext) {
     fun measureText(text: CharSequence): Float {
         return textPaint.measureText(text, 0, text.length)
     }
+}
+
+fun generateChargepointsText(
+    charger: ChargeLocation,
+    availability: ChargeLocationStatus?,
+    ctx: Context
+): SpannableStringBuilder {
+    val chargepointsText = SpannableStringBuilder()
+    charger.chargepointsMerged.forEachIndexed { i, cp ->
+        chargepointsText.apply {
+            if (i > 0) append(" · ")
+            append("${cp.count}× ")
+            val plugIcon = iconForPlugType(cp.type)
+            if (plugIcon != 0) {
+                append(
+                    nameForPlugType(ctx.stringProvider(), cp.type),
+                    CarIconSpan.create(
+                        CarIcon.Builder(
+                            IconCompat.createWithResource(
+                                ctx,
+                                plugIcon
+                            )
+                        ).setTint(
+                            CarColor.createCustom(Color.WHITE, Color.BLACK)
+                        ).build()
+                    ),
+                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE
+                )
+            } else {
+                append(nameForPlugType(ctx.stringProvider(), cp.type))
+            }
+            cp.formatPower()?.let {
+                append(" ")
+                append(it)
+            }
+        }
+        availability?.status?.get(cp)?.let { status ->
+            chargepointsText.append(
+                " (${availabilityText(status)}/${cp.count})",
+                ForegroundCarColorSpan.create(carAvailabilityColor(status)),
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
+    }
+    return chargepointsText
 }

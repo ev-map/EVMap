@@ -45,9 +45,15 @@ val chargerZ = 1
 val clusterZ = chargerZ + 1
 val placeSearchZ = clusterZ + 1
 
-class MarkerManager(val context: Context, val map: AnyMap, val lifecycle: LifecycleOwner) {
+class MarkerManager(
+    val context: Context,
+    val map: AnyMap,
+    val lifecycle: LifecycleOwner,
+    markerHeight: Int = 48
+) {
     private val clusterIconGenerator = ClusterIconGenerator(context)
-    private val chargerIconGenerator = ChargerIconGenerator(context, map.bitmapDescriptorFactory)
+    private val chargerIconGenerator =
+        ChargerIconGenerator(context, map.bitmapDescriptorFactory, height = markerHeight)
     private val prefs = PreferenceDataSource(context)
     private val animator = MarkerAnimator(chargerIconGenerator)
 
@@ -60,6 +66,7 @@ class MarkerManager(val context: Context, val map: AnyMap, val lifecycle: Lifecy
     var mini = false
     var filteredConnectors: Set<String>? = null
     var onChargerClick: ((ChargeLocation) -> Unit)? = null
+    var onClusterClick: ((ChargeLocationCluster) -> Unit)? = null
 
     var chargepoints: List<ChargepointListItem> = emptyList()
         @Synchronized set(value) {
@@ -79,7 +86,7 @@ class MarkerManager(val context: Context, val map: AnyMap, val lifecycle: Lifecy
             updateSearchResultMarker()
         }
 
-    var favorites: List<Long> = emptyList()
+    var favorites: Set<Long> = emptySet()
         set(value) {
             field = value
             updateChargerIcons()
@@ -90,18 +97,13 @@ class MarkerManager(val context: Context, val map: AnyMap, val lifecycle: Lifecy
             when (marker) {
                 in markers -> {
                     val charger = markers[marker] ?: return@setOnMarkerClickListener false
-                    onChargerClick?.let { it(charger) }
+                    onChargerClick?.invoke(charger)
                     true
                 }
 
                 in clusterMarkers -> {
-                    val newZoom = map.cameraPosition.zoom + 2
-                    map.animateCamera(
-                        map.cameraUpdateFactory.newLatLngZoom(
-                            marker.position,
-                            newZoom
-                        )
-                    )
+                    val cluster = clusterMarkers[marker] ?: return@setOnMarkerClickListener false
+                    onClusterClick?.invoke(cluster)
                     true
                 }
 

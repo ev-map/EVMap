@@ -27,6 +27,9 @@ allprojects {
         mavenCentral()
         //noinspection JcenterRepositoryObsolete
         maven { setUrl("https://jitpack.io") }
+        maven {
+            setUrl("https://raw.githubusercontent.com/ev-map/mapbox-gl-native-android/mvn")
+        }
     }
 }
 

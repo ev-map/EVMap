@@ -265,7 +265,7 @@ dependencies {
     automotiveImplementation("androidx.car.app:app-automotive:$carAppVersion")
 
     // AnyMaps
-    val anyMapsVersion = "60b6d4f821"
+    val anyMapsVersion = "4854581f72"
     implementation("com.github.ev-map.AnyMaps:anymaps-base:$anyMapsVersion")
     googleImplementation("com.github.ev-map.AnyMaps:anymaps-google:$anyMapsVersion")
     googleImplementation("com.google.android.gms:play-services-maps:18.2.0")
@@ -279,6 +279,14 @@ dependencies {
     googleImplementation("com.mapbox.mapboxsdk:mapbox-android-core:2.0.1")
     // patched version that removes build-time dependency on GMS (-> no Google location services)
     fossImplementation("com.github.ev-map:mapbox-events-android:a21c324501")
+
+    implementation("com.mapbox.mapboxsdk:mapbox-android-sdk") {
+        exclude(group = "com.mapbox.mapboxsdk", module = "mapbox-android-accounts")
+        exclude(group = "com.mapbox.mapboxsdk", module = "mapbox-android-telemetry")
+        version {
+            strictly("9.1.0-SNAPSHOT")
+        }
+    }
 
     // Google Places
     googleImplementation("com.google.android.libraries.places:places:3.3.0")
@@ -301,7 +309,10 @@ dependencies {
     implementation("androidx.room:room-runtime:$room_version")
     kapt("androidx.room:room-compiler:$room_version")
     implementation("androidx.room:room-ktx:$room_version")
-    implementation("com.github.anboralabs:spatia-room:0.2.7")
+    implementation("com.github.anboralabs:spatia-room:0.2.9") {
+        exclude(group = "com.github.dalgarins", module = "android-spatialite")
+    }
+    implementation("com.github.EV-map:android-spatialite:e5495c83ad")  // version with minSdk increased to 21 & FORTIFY_SOURCE enabled
 
     // billing library
     val billing_version = "6.1.0"

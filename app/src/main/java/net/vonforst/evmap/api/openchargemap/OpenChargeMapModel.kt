@@ -63,7 +63,7 @@ data class OCMChargepoint(
         Coordinate(addressInfo.latitude, addressInfo.longitude),
         addressInfo.toAddress(refData),
         connections.map { it.convert(refData) },
-        operatorInfo?.title,
+        operatorInfo?.title ?: refData.operators.find { it.id == operatorId }?.title,
         "https://map.openchargemap.io/?id=$id",
         "https://map.openchargemap.io/?id=$id",
         convertFaultReport(),

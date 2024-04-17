@@ -27,6 +27,7 @@
 
         <package android:name="com.google.android.projection.gearhead" />
         <package android:name="com.google.android.apps.automotive.templates.host" />
+        <package android:name="com.google.android.apps.maps" />
     </queries>
 
     <application

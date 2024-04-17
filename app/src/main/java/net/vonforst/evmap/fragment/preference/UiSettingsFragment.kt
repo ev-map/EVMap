@@ -6,9 +6,11 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import androidx.preference.CheckBoxPreference
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import net.vonforst.evmap.R
+import net.vonforst.evmap.isAppInstalled
 import net.vonforst.evmap.ui.getAppLocale
 import net.vonforst.evmap.ui.updateAppLocale
 import net.vonforst.evmap.ui.updateNightMode
@@ -16,6 +18,7 @@ import net.vonforst.evmap.ui.updateNightMode
 class UiSettingsFragment : BaseSettingsFragment() {
     override val isTopLevel = false
     lateinit var langPref: ListPreference
+    lateinit var immediateNavPref: CheckBoxPreference
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.settings_ui, rootKey)
@@ -28,11 +31,18 @@ class UiSettingsFragment : BaseSettingsFragment() {
 
         val appLinkPref = findPreference<Preference>("applink_associate")!!
         appLinkPref.isVisible = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+
+        immediateNavPref = findPreference("navigate_use_maps")!!
+        immediateNavPref.isVisible = isGoogleMapsInstalled()
     }
+
+    private fun isGoogleMapsInstalled() =
+        requireContext().packageManager.isAppInstalled("com.google.android.apps.maps")
 
     override fun onResume() {
         super.onResume()
         langPref.value = getAppLocale()
+        immediateNavPref.isVisible = isGoogleMapsInstalled()
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String?) {

@@ -1,6 +1,7 @@
 package net.vonforst.evmap
 
 import android.content.Context
+import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.content.res.Configuration
@@ -122,3 +123,20 @@ fun PackageManager.getPackageInfoCompat(packageName: String, flags: Int = 0): Pa
     } else {
         @Suppress("DEPRECATION") getPackageInfo(packageName, flags)
     }
+
+
+fun PackageManager.getApplicationInfoCompat(packageName: String, flags: Int = 0): ApplicationInfo =
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        getApplicationInfo(packageName, PackageManager.ApplicationInfoFlags.of(flags.toLong()))
+    } else {
+        @Suppress("DEPRECATION") getApplicationInfo(packageName, flags)
+    }
+
+
+fun PackageManager.isAppInstalled(packageName: String): Boolean {
+    return try {
+        getApplicationInfoCompat(packageName, 0).enabled
+    } catch (e: PackageManager.NameNotFoundException) {
+        false
+    }
+}

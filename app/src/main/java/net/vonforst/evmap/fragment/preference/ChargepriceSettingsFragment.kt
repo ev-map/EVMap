@@ -7,6 +7,7 @@ import android.text.Spanned
 import android.text.style.RelativeSizeSpan
 import android.view.View
 import androidx.fragment.app.viewModels
+import androidx.preference.CheckBoxPreference
 import net.vonforst.evmap.R
 import net.vonforst.evmap.ui.MultiSelectDialogPreference
 import net.vonforst.evmap.viewmodel.SettingsViewModel
@@ -28,9 +29,11 @@ class ChargepriceSettingsFragment : BaseSettingsFragment() {
 
     private lateinit var myVehiclePreference: MultiSelectDialogPreference
     private lateinit var myTariffsPreference: MultiSelectDialogPreference
+    private lateinit var nativeIntegrationPreference: CheckBoxPreference
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        nativeIntegrationPreference = findPreference("chargeprice_native_integration")!!
 
         myVehiclePreference = findPreference("chargeprice_my_vehicle")!!
         myVehiclePreference.isEnabled = false
@@ -48,7 +51,7 @@ class ChargepriceSettingsFragment : BaseSettingsFragment() {
                         )
                     }
                 }.toTypedArray()
-                myVehiclePreference.isEnabled = true
+                myVehiclePreference.isEnabled = nativeIntegrationPreference.isChecked
                 updateMyVehiclesSummary()
             }
         }
@@ -65,8 +68,26 @@ class ChargepriceSettingsFragment : BaseSettingsFragment() {
                         it.name
                     }
                 }.toTypedArray()
-                myTariffsPreference.isEnabled = true
+                myTariffsPreference.isEnabled = nativeIntegrationPreference.isChecked
                 updateMyTariffsSummary()
+            }
+        }
+        updateNativeIntegrationState()
+    }
+
+    private fun updateNativeIntegrationState() {
+        for (i in 0 until preferenceScreen.preferenceCount) {
+            val pref = preferenceScreen.getPreference(i)
+            if (pref == nativeIntegrationPreference) {
+                continue
+            } else if (pref == myTariffsPreference) {
+                pref.isEnabled =
+                    nativeIntegrationPreference.isChecked && vm.tariffs.value?.data != null
+            } else if (pref == myVehiclePreference) {
+                pref.isEnabled =
+                    nativeIntegrationPreference.isChecked && vm.tariffs.value?.data != null
+            } else {
+                pref.isEnabled = nativeIntegrationPreference.isChecked
             }
         }
     }
@@ -109,6 +130,10 @@ class ChargepriceSettingsFragment : BaseSettingsFragment() {
 
             "chargeprice_my_tariffs" -> {
                 updateMyTariffsSummary()
+            }
+
+            "chargeprice_native_integration" -> {
+                updateNativeIntegrationState()
             }
         }
     }

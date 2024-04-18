@@ -268,7 +268,7 @@ class MapsActivity : AppCompatActivity(),
         }
     }
 
-    fun openUrl(url: String) {
+    fun openUrl(url: String, preferBrowser: Boolean = true) {
         val pkg = CustomTabsClient.getPackageName(this, null)
         val intent = CustomTabsIntent.Builder()
             .setDefaultColorSchemeParams(
@@ -280,7 +280,7 @@ class MapsActivity : AppCompatActivity(),
         pkg?.let {
             // prefer to open URL in custom tab, even if native app
             // available (such as EVMap itself)
-            intent.intent.setPackage(pkg)
+            if (preferBrowser) intent.intent.setPackage(pkg)
         }
         try {
             intent.launchUrl(this, Uri.parse(url))

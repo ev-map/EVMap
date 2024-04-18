@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+    <CheckBoxPreference
+        android:key="chargeprice_native_integration"
+        android:title="@string/pref_chargeprice_native_integration"
+        android:summaryOn="@string/pref_chargeprice_native_integration_on"
+        android:summaryOff="@string/pref_chargeprice_native_integration_off"
+        app:defaultValue="true" />
     <net.vonforst.evmap.ui.MultiSelectDialogPreference
         android:key="chargeprice_my_vehicle"
         android:title="@string/pref_my_vehicle"

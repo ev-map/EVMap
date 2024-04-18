@@ -1,7 +1,11 @@
 package net.vonforst.evmap.auto
 
 import android.content.Intent
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Matrix
+import android.graphics.RectF
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.text.SpannableString
@@ -11,7 +15,17 @@ import androidx.car.app.CarContext
 import androidx.car.app.CarToast
 import androidx.car.app.Screen
 import androidx.car.app.constraints.ConstraintManager
-import androidx.car.app.model.*
+import androidx.car.app.model.Action
+import androidx.car.app.model.ActionStrip
+import androidx.car.app.model.CarColor
+import androidx.car.app.model.CarIcon
+import androidx.car.app.model.CarIconSpan
+import androidx.car.app.model.ForegroundCarColorSpan
+import androidx.car.app.model.Pane
+import androidx.car.app.model.PaneTemplate
+import androidx.car.app.model.ParkedOnlyOnClickListener
+import androidx.car.app.model.Row
+import androidx.car.app.model.Template
 import androidx.core.graphics.drawable.IconCompat
 import androidx.core.graphics.scale
 import androidx.core.text.HtmlCompat
@@ -22,13 +36,17 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import net.vonforst.evmap.*
+import net.vonforst.evmap.BuildConfig
+import net.vonforst.evmap.EXTRA_CHARGER_ID
+import net.vonforst.evmap.EXTRA_LAT
+import net.vonforst.evmap.EXTRA_LON
+import net.vonforst.evmap.MapsActivity
+import net.vonforst.evmap.R
 import net.vonforst.evmap.adapter.formatTeslaParkingFee
 import net.vonforst.evmap.adapter.formatTeslaPricing
 import net.vonforst.evmap.api.availability.AvailabilityRepository
 import net.vonforst.evmap.api.availability.ChargeLocationStatus
 import net.vonforst.evmap.api.availability.tesla.Pricing
-import net.vonforst.evmap.api.availability.tesla.TeslaChargingOwnershipGraphQlApi
 import net.vonforst.evmap.api.chargeprice.ChargepriceApi
 import net.vonforst.evmap.api.createApi
 import net.vonforst.evmap.api.fronyx.FronyxApi
@@ -41,6 +59,7 @@ import net.vonforst.evmap.model.ChargeLocation
 import net.vonforst.evmap.model.Cost
 import net.vonforst.evmap.model.FaultReport
 import net.vonforst.evmap.model.Favorite
+import net.vonforst.evmap.plus
 import net.vonforst.evmap.storage.AppDatabase
 import net.vonforst.evmap.storage.ChargeLocationsRepository
 import net.vonforst.evmap.storage.PreferenceDataSource
@@ -131,7 +150,16 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
                                     )
                                     .setTitle(carContext.getString(R.string.auto_prices))
                                 .setOnClickListener {
-                                    screenManager.push(ChargepriceScreen(carContext, charger))
+                                    if (prefs.chargepriceNativeIntegration) {
+                                        screenManager.push(ChargepriceScreen(carContext, charger))
+                                    } else {
+                                        val intent = Intent(
+                                            Intent.ACTION_VIEW,
+                                            Uri.parse(ChargepriceApi.getPoiUrl(charger))
+                                        )
+                                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                        carContext.startActivity(intent)
+                                    }
                                 }
                                 .build())
                         }

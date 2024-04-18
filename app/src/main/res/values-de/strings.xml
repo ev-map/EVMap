@@ -375,4 +375,7 @@
     <string name="status_unknown">Status unbekannt</string>
     <string name="status_since">%1$s seit %2$s</string>
     <string name="charger_name">Ladestationsname</string>
+    <string name="pref_chargeprice_native_integration">Preisvergleich in EVMap</string>
+    <string name="pref_chargeprice_native_integration_on">Preise werden direkt in EVMap angezeigt</string>
+    <string name="pref_chargeprice_native_integration_off">Preisvergleich verlinkt auf die App oder Website von Chargeprice</string>
 </resources>

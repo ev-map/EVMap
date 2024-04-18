@@ -11,7 +11,14 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.text.method.KeyListener
-import android.view.*
+import android.view.ContextThemeWrapper
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.ImageView
@@ -23,7 +30,13 @@ import androidx.annotation.RequiresPermission
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.core.location.LocationListenerCompat
-import androidx.core.view.*
+import androidx.core.view.MenuCompat
+import androidx.core.view.MenuProvider
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.doOnLayout
+import androidx.core.view.doOnNextLayout
+import androidx.core.view.updateLayoutParams
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -57,7 +70,12 @@ import com.google.android.material.transition.MaterialContainerTransform.FADE_MO
 import com.google.android.material.transition.MaterialFadeThrough
 import com.google.android.material.transition.MaterialSharedAxis
 import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike
-import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike.*
+import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike.BottomSheetCallback
+import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT
+import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED
+import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN
+import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike.STATE_SETTLING
+import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike.from
 import com.mahc.custombottomsheetbehavior.MergedAppBarLayoutBehavior
 import com.stfalcon.imageviewer.StfalconImageViewer
 import io.michaelrocks.bimap.HashBiMap
@@ -72,6 +90,7 @@ import net.vonforst.evmap.adapter.ConnectorAdapter
 import net.vonforst.evmap.adapter.DetailsAdapter
 import net.vonforst.evmap.adapter.GalleryAdapter
 import net.vonforst.evmap.adapter.PlaceAutocompleteAdapter
+import net.vonforst.evmap.api.chargeprice.ChargepriceApi
 import net.vonforst.evmap.autocomplete.ApiUnavailableException
 import net.vonforst.evmap.autocomplete.PlaceWithBounds
 import net.vonforst.evmap.bold
@@ -79,17 +98,34 @@ import net.vonforst.evmap.databinding.FragmentMapBinding
 import net.vonforst.evmap.location.FusionEngine
 import net.vonforst.evmap.location.LocationEngine
 import net.vonforst.evmap.location.Priority
-import net.vonforst.evmap.model.*
+import net.vonforst.evmap.model.ChargeLocation
+import net.vonforst.evmap.model.ChargeLocationCluster
+import net.vonforst.evmap.model.ChargepointListItem
+import net.vonforst.evmap.model.ChargerPhoto
+import net.vonforst.evmap.model.FILTERS_CUSTOM
+import net.vonforst.evmap.model.FILTERS_DISABLED
+import net.vonforst.evmap.model.FILTERS_FAVORITES
 import net.vonforst.evmap.navigation.safeNavigate
 import net.vonforst.evmap.shouldUseImperialUnits
 import net.vonforst.evmap.storage.PreferenceDataSource
-import net.vonforst.evmap.ui.*
+import net.vonforst.evmap.ui.ChargerIconGenerator
+import net.vonforst.evmap.ui.ClusterIconGenerator
+import net.vonforst.evmap.ui.MarkerAnimator
+import net.vonforst.evmap.ui.chargerZ
+import net.vonforst.evmap.ui.clusterZ
+import net.vonforst.evmap.ui.getMarkerTint
+import net.vonforst.evmap.ui.placeSearchZ
+import net.vonforst.evmap.ui.setTouchModal
 import net.vonforst.evmap.utils.boundingBox
 import net.vonforst.evmap.utils.checkAnyLocationPermission
 import net.vonforst.evmap.utils.checkFineLocationPermission
 import net.vonforst.evmap.utils.distanceBetween
 import net.vonforst.evmap.utils.formatDecimal
-import net.vonforst.evmap.viewmodel.*
+import net.vonforst.evmap.viewmodel.GalleryViewModel
+import net.vonforst.evmap.viewmodel.MapPosition
+import net.vonforst.evmap.viewmodel.MapViewModel
+import net.vonforst.evmap.viewmodel.Resource
+import net.vonforst.evmap.viewmodel.Status
 import java.io.IOException
 import java.time.Duration
 import java.time.Instant
@@ -399,12 +435,16 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         }
         binding.detailView.btnChargeprice.setOnClickListener {
             val charger = vm.charger.value?.data ?: return@setOnClickListener
-            val extras =
-                FragmentNavigatorExtras(binding.detailView.btnChargeprice to getString(R.string.shared_element_chargeprice))
-            findNavController().safeNavigate(
-                MapFragmentDirections.actionMapToChargepriceFragment(charger),
-                extras
-            )
+            if (prefs.chargepriceNativeIntegration) {
+                val extras =
+                    FragmentNavigatorExtras(binding.detailView.btnChargeprice to getString(R.string.shared_element_chargeprice))
+                findNavController().safeNavigate(
+                    MapFragmentDirections.actionMapToChargepriceFragment(charger),
+                    extras
+                )
+            } else {
+                (activity as? MapsActivity)?.openUrl(ChargepriceApi.getPoiUrl(charger), false)
+            }
         }
         binding.detailView.btnChargerWebsite.setOnClickListener {
             val charger = vm.charger.value?.data ?: return@setOnClickListener

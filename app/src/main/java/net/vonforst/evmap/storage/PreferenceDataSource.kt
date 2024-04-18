@@ -147,6 +147,12 @@ class PreferenceDataSource(val context: Context) {
             sp.edit().putBoolean("update_0.6.0_androidauto_dialog_shown", value).apply()
         }
 
+    var chargepriceNativeIntegration: Boolean
+        get() = sp.getBoolean("chargeprice_native_integration", true)
+        set(value) {
+            sp.edit().putBoolean("chargeprice_native_integration", value).apply()
+        }
+
     var chargepriceMyVehicles: Set<String>
         get() = try {
             sp.getStringSet("chargeprice_my_vehicle", emptySet())!!

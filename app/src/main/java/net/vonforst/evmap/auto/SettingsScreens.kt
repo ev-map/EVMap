@@ -14,14 +14,30 @@ import androidx.car.app.CarToast
 import androidx.car.app.Screen
 import androidx.car.app.annotations.ExperimentalCarApi
 import androidx.car.app.constraints.ConstraintManager
-import androidx.car.app.model.*
+import androidx.car.app.model.Action
+import androidx.car.app.model.CarColor
+import androidx.car.app.model.CarIcon
+import androidx.car.app.model.GridItem
+import androidx.car.app.model.GridTemplate
+import androidx.car.app.model.ItemList
+import androidx.car.app.model.ListTemplate
+import androidx.car.app.model.MessageTemplate
+import androidx.car.app.model.ParkedOnlyOnClickListener
+import androidx.car.app.model.Row
+import androidx.car.app.model.SectionedItemList
+import androidx.car.app.model.Template
+import androidx.car.app.model.Toggle
 import androidx.core.content.IntentCompat
 import androidx.core.graphics.drawable.IconCompat
 import androidx.core.text.HtmlCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import kotlinx.coroutines.launch
-import net.vonforst.evmap.*
+import net.vonforst.evmap.BuildConfig
+import net.vonforst.evmap.EXTRA_DONATE
+import net.vonforst.evmap.MapsActivity
+import net.vonforst.evmap.R
+import net.vonforst.evmap.addDebugInterceptors
 import net.vonforst.evmap.api.availability.tesla.TeslaAuthenticationApi
 import net.vonforst.evmap.api.availability.tesla.TeslaOwnerApi
 import net.vonforst.evmap.api.chargeprice.ChargepriceApi
@@ -29,6 +45,7 @@ import net.vonforst.evmap.api.chargeprice.ChargepriceCar
 import net.vonforst.evmap.api.chargeprice.ChargepriceTariff
 import net.vonforst.evmap.fragment.oauth.OAuthLoginFragment
 import net.vonforst.evmap.fragment.oauth.OAuthLoginFragmentArgs
+import net.vonforst.evmap.getPackageInfoCompat
 import net.vonforst.evmap.storage.AppDatabase
 import net.vonforst.evmap.storage.EncryptedPreferenceDataStore
 import net.vonforst.evmap.storage.PreferenceDataSource
@@ -409,11 +426,20 @@ class ChargepriceSettingsScreen(ctx: CarContext) : Screen(ctx) {
             setHeaderAction(Action.BACK)
             setSingleList(ItemList.Builder().apply {
                 addItem(Row.Builder().apply {
+                    setTitle(carContext.getString(R.string.pref_chargeprice_native_integration))
+                    addText(carContext.getString(if (prefs.chargepriceNativeIntegration) R.string.pref_chargeprice_native_integration_on else R.string.pref_chargeprice_native_integration_off))
+                    setToggle(Toggle.Builder {
+                        prefs.chargepriceNativeIntegration = it
+                        invalidate()
+                    }.setChecked(prefs.chargepriceNativeIntegration).build())
+                }.build())
+                addItem(Row.Builder().apply {
                     setTitle(carContext.getString(R.string.pref_my_vehicle))
                     setBrowsable(true)
                     setOnClickListener {
                         screenManager.push(SelectVehiclesScreen(carContext))
                     }
+                    setEnabled(prefs.chargepriceNativeIntegration)
                 }.build())
                 addItem(Row.Builder().apply {
                     setTitle(carContext.getString(R.string.pref_my_tariffs))
@@ -437,6 +463,7 @@ class ChargepriceSettingsScreen(ctx: CarContext) : Screen(ctx) {
                             )
                         }
                     )
+                    setEnabled(prefs.chargepriceNativeIntegration)
                 }.build())
                 addItem(Row.Builder().apply {
                     setTitle(carContext.getString(R.string.settings_android_auto_chargeprice_range))
@@ -454,6 +481,7 @@ class ChargepriceSettingsScreen(ctx: CarContext) : Screen(ctx) {
                     setOnClickListener {
                         screenManager.push(SelectChargingRangeScreen(carContext))
                     }
+                    setEnabled(prefs.chargepriceNativeIntegration)
                 }.build())
                 addItem(Row.Builder().apply {
                     setTitle(carContext.getString(R.string.pref_chargeprice_currency))
@@ -469,27 +497,31 @@ class ChargepriceSettingsScreen(ctx: CarContext) : Screen(ctx) {
                     setOnClickListener {
                         screenManager.push(SelectCurrencyScreen(carContext))
                     }
+                    setEnabled(prefs.chargepriceNativeIntegration)
                 }.build())
                 addItem(Row.Builder().apply {
                     setTitle(carContext.getString(R.string.pref_chargeprice_no_base_fee))
                     setToggle(Toggle.Builder {
                         prefs.chargepriceNoBaseFee = it
                     }.setChecked(prefs.chargepriceNoBaseFee).build())
-                }.build())
-                addItem(Row.Builder().apply {
-                    setTitle(carContext.getString(R.string.pref_chargeprice_show_provider_customer_tariffs))
-                    addText(carContext.getString(R.string.pref_chargeprice_show_provider_customer_tariffs_summary))
-                    setToggle(Toggle.Builder {
-                        prefs.chargepriceShowProviderCustomerTariffs = it
-                    }.setChecked(prefs.chargepriceShowProviderCustomerTariffs).build())
+                    setEnabled(prefs.chargepriceNativeIntegration)
                 }.build())
                 if (maxRows > 6) {
+                    addItem(Row.Builder().apply {
+                        setTitle(carContext.getString(R.string.pref_chargeprice_show_provider_customer_tariffs))
+                        addText(carContext.getString(R.string.pref_chargeprice_show_provider_customer_tariffs_summary))
+                        setToggle(Toggle.Builder {
+                            prefs.chargepriceShowProviderCustomerTariffs = it
+                        }.setChecked(prefs.chargepriceShowProviderCustomerTariffs).build())
+                        setEnabled(prefs.chargepriceNativeIntegration)
+                    }.build())
                     addItem(Row.Builder().apply {
                         setTitle(carContext.getString(R.string.pref_chargeprice_allow_unbalanced_load))
                         addText(carContext.getString(R.string.pref_chargeprice_allow_unbalanced_load_summary))
                         setToggle(Toggle.Builder {
                             prefs.chargepriceAllowUnbalancedLoad = it
                         }.setChecked(prefs.chargepriceAllowUnbalancedLoad).build())
+                        setEnabled(prefs.chargepriceNativeIntegration)
                     }.build())
                 }
             }.build())

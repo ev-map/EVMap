@@ -1,0 +1,6 @@
+Verbesserungen:
+- Option "Sofort navigieren" wird nur angezeigt, wenn kompatible Navigationsapp installiert ist
+
+Fehler behoben:
+- OpenChargeMap: Korrektur des Verhaltens der Kartenmarker bei Filter nach Betreiber
+- Abstürze behoben

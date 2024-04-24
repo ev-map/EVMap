@@ -1,0 +1,6 @@
+Improvements:
+- Option "Immediate navigation" will only be shown if compatible navigation app is installed
+
+Bugfixes:
+- OpenChargeMap: Fixed strange map marker behavior when filtering by operator
+- Fixed crashes

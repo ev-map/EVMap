@@ -12,8 +12,28 @@ import kotlinx.coroutines.withContext
 import net.vonforst.evmap.BuildConfig
 import net.vonforst.evmap.R
 import net.vonforst.evmap.addDebugInterceptors
-import net.vonforst.evmap.api.*
-import net.vonforst.evmap.model.*
+import net.vonforst.evmap.api.ChargepointApi
+import net.vonforst.evmap.api.ChargepointList
+import net.vonforst.evmap.api.FiltersSQLQuery
+import net.vonforst.evmap.api.StringProvider
+import net.vonforst.evmap.api.mapPower
+import net.vonforst.evmap.api.mapPowerInverse
+import net.vonforst.evmap.api.nameForPlugType
+import net.vonforst.evmap.api.powerSteps
+import net.vonforst.evmap.model.BooleanFilter
+import net.vonforst.evmap.model.ChargeLocation
+import net.vonforst.evmap.model.Chargepoint
+import net.vonforst.evmap.model.ChargepointListItem
+import net.vonforst.evmap.model.Filter
+import net.vonforst.evmap.model.FilterValue
+import net.vonforst.evmap.model.FilterValues
+import net.vonforst.evmap.model.MultipleChoiceFilter
+import net.vonforst.evmap.model.MultipleChoiceFilterValue
+import net.vonforst.evmap.model.ReferenceData
+import net.vonforst.evmap.model.SliderFilter
+import net.vonforst.evmap.model.getBooleanValue
+import net.vonforst.evmap.model.getMultipleChoiceValue
+import net.vonforst.evmap.model.getSliderValue
 import net.vonforst.evmap.viewmodel.Resource
 import net.vonforst.evmap.viewmodel.getClusterDistance
 import okhttp3.Cache
@@ -22,7 +42,11 @@ import retrofit2.HttpException
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
-import retrofit2.http.*
+import retrofit2.http.Field
+import retrofit2.http.FormUrlEncoded
+import retrofit2.http.GET
+import retrofit2.http.POST
+import retrofit2.http.Query
 import java.io.IOException
 import java.time.Duration
 
@@ -123,6 +147,8 @@ interface GoingElectricApi {
     }
 }
 
+private const val STATUS_OK = "ok"
+
 class GoingElectricApiWrapper(
     val apikey: String,
     baseurl: String = "https://api.goingelectric.de",
@@ -211,11 +237,11 @@ class GoingElectricApiWrapper(
                     categories = categories,
                     startkey = startkey
                 )
-                if (!response.isSuccessful || response.body()!!.status != "ok") {
+                if (!response.isSuccessful || response.body()!!.status != STATUS_OK) {
                     return Resource.error(response.message(), null)
                 } else {
                     val body = response.body()!!
-                    data.addAll(body.chargelocations)
+                    data.addAll(body.chargelocations!!)
                     startkey = body.startkey
                 }
             } catch (e: IOException) {
@@ -308,11 +334,11 @@ class GoingElectricApiWrapper(
                     categories = categories,
                     startkey = startkey
                 )
-                if (!response.isSuccessful || response.body()!!.status != "ok") {
+                if (!response.isSuccessful || response.body()!!.status != STATUS_OK) {
                     return Resource.error(response.message(), null)
                 } else {
                     val body = response.body()!!
-                    data.addAll(body.chargelocations)
+                    data.addAll(body.chargelocations!!)
                     startkey = body.startkey
                 }
             } catch (e: IOException) {
@@ -393,9 +419,9 @@ class GoingElectricApiWrapper(
     ): Resource<ChargeLocation> {
         try {
             val response = api.getChargepointDetail(id)
-            return if (response.isSuccessful && response.body()!!.status == "ok" && response.body()!!.chargelocations.size == 1) {
+            return if (response.isSuccessful && response.body()!!.status == STATUS_OK && response.body()!!.chargelocations!!.size == 1) {
                 Resource.success(
-                    (response.body()!!.chargelocations[0] as GEChargeLocation).convert(
+                    (response.body()!!.chargelocations!![0] as GEChargeLocation).convert(
                         apikey, true
                     )
                 )
@@ -423,16 +449,19 @@ class GoingElectricApiWrapper(
 
                     val responses = listOf(plugsResponse, chargeCardsResponse, networksResponse)
 
-                    if (responses.map { it.isSuccessful }.all { it }) {
+                    if (responses.map { it.isSuccessful }.all { it }
+                        && plugsResponse.body()!!.status == STATUS_OK
+                        && chargeCardsResponse.body()!!.status == STATUS_OK
+                        && networksResponse.body()!!.status == STATUS_OK) {
                         Resource.success(
                             GEReferenceData(
-                                plugsResponse.body()!!.result,
-                                networksResponse.body()!!.result,
-                                chargeCardsResponse.body()!!.result
+                                plugsResponse.body()!!.result!!,
+                                networksResponse.body()!!.result!!,
+                                chargeCardsResponse.body()!!.result!!
                             )
                         )
                     } else {
-                        Resource.error(responses.find { !it.isSuccessful }!!.message(), null)
+                        Resource.error(responses.find { !it.isSuccessful }?.message(), null)
                     }
                 } catch (e: IOException) {
                     Resource.error(e.message, null)

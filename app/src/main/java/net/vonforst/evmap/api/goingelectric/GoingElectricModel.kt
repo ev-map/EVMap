@@ -27,20 +27,20 @@ import java.time.LocalTime
 @JsonClass(generateAdapter = true)
 data class GEChargepointList(
     val status: String,
-    val chargelocations: List<GEChargepointListItem>,
+    val chargelocations: List<GEChargepointListItem>?,
     @JsonObjectOrFalse val startkey: Int?
 )
 
 @JsonClass(generateAdapter = true)
 data class GEStringList(
     val status: String,
-    val result: List<String>
+    val result: List<String>?
 )
 
 @JsonClass(generateAdapter = true)
 data class GEChargeCardList(
     val status: String,
-    val result: List<GEChargeCard>
+    val result: List<GEChargeCard>?
 )
 
 sealed class GEChargepointListItem {

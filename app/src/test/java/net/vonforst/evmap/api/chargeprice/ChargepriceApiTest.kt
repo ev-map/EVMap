@@ -60,7 +60,7 @@ class ChargepriceApiTest {
     fun apiTest() {
         for (chargepoint in listOf(2105L, 18284L)) {
             val charger = runBlocking { ge.getChargepointDetail(chargepoint).body()!! }
-                .chargelocations[0].convert("", true) as ChargeLocation
+                .chargelocations!![0].convert("", true) as ChargeLocation
             println(charger)
 
             runBlocking {

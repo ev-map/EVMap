@@ -63,8 +63,8 @@ class GoingElectricApiTest {
         val body = response.body()!!
         assertEquals("ok", body.status)
         assertEquals(null, body.startkey)
-        assertEquals(1, body.chargelocations.size)
-        val charger = body.chargelocations[0] as GEChargeLocation
+        assertEquals(1, body.chargelocations!!.size)
+        val charger = body.chargelocations!![0] as GEChargeLocation
         assertEquals(2105, charger.id)
     }
 
@@ -75,8 +75,8 @@ class GoingElectricApiTest {
         val body = response.body()!!
         assertEquals("ok", body.status)
         assertEquals(null, body.startkey)
-        assertEquals(1, body.chargelocations.size)
-        val charger = body.chargelocations[0] as GEChargeLocation
+        assertEquals(1, body.chargelocations!!.size)
+        val charger = body.chargelocations!![0] as GEChargeLocation
         assertEquals(34210, charger.id)
         assertEquals(LocalTime.MIN, charger.openinghours!!.days!!.monday.start)
         assertEquals(LocalTime.MAX, charger.openinghours!!.days!!.monday.end)
@@ -92,8 +92,8 @@ class GoingElectricApiTest {
         val body = response.body()!!
         assertEquals("ok", body.status)
         assertEquals(null, body.startkey)
-        assertEquals(2, body.chargelocations.size)
-        val charger = body.chargelocations[0] as GEChargeLocation
+        assertEquals(2, body.chargelocations!!.size)
+        val charger = body.chargelocations!![0] as GEChargeLocation
         assertEquals(41161, charger.id)
     }
 
@@ -106,7 +106,7 @@ class GoingElectricApiTest {
         val body = response.body()!!
         assertEquals("ok", body.status)
         assertEquals(null, body.startkey)
-        assertEquals(0, body.chargelocations.size)
+        assertEquals(0, body.chargelocations!!.size)
     }
 
     @Test
@@ -118,8 +118,8 @@ class GoingElectricApiTest {
         val body = response.body()!!
         assertEquals("ok", body.status)
         assertEquals(2, body.startkey)
-        assertEquals(2, body.chargelocations.size)
-        val charger = body.chargelocations[0] as GEChargeLocation
+        assertEquals(2, body.chargelocations!!.size)
+        val charger = body.chargelocations!![0] as GEChargeLocation
         assertEquals(41161, charger.id)
     }
 }

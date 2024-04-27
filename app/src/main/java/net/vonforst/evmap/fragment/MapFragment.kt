@@ -44,7 +44,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -156,6 +155,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
     private var connectionErrorSnackbar: Snackbar? = null
     private var previousChargepointIds: Set<Long>? = null
     private var mapTopPadding: Int = 0
+    private var popupMenu: PopupMenu? = null
 
     private lateinit var clusterIconGenerator: ClusterIconGenerator
     private lateinit var chargerIconGenerator: ChargerIconGenerator
@@ -1401,14 +1401,13 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             MenuCompat.setGroupDividerEnabled(popup.menu, true)
             popup.setForceShowIcon(true)
             popup.setOnMenuItemClickListener {
-                val navController = requireView().findNavController()
                 when (it.itemId) {
                     R.id.menu_edit_filters -> {
                         exitTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true)
                         reenterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false)
                         lifecycleScope.launch {
                             vm.copyFiltersToCustom()
-                            navController.safeNavigate(
+                            findNavController().safeNavigate(
                                 MapFragmentDirections.actionMapToFilterFragment()
                             )
                         }
@@ -1418,7 +1417,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                     R.id.menu_manage_filter_profiles -> {
                         exitTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true)
                         reenterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false)
-                        navController.safeNavigate(
+                        findNavController().safeNavigate(
                             MapFragmentDirections.actionMapToFilterProfilesFragment()
                         )
                         true
@@ -1498,6 +1497,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 }
             }
             popup.setTouchModal(false)
+            popupMenu = popup
             popup.show()
         }
 
@@ -1581,5 +1581,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
     override fun onDestroy() {
         super.onDestroy()
+        /* if we don't dismiss the popup menu, it will be recreated in some cases
+        (split-screen mode) and then have references to a destroyed fragment. */
+        popupMenu?.dismiss()
     }
 }

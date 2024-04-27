@@ -110,6 +110,7 @@ import net.vonforst.evmap.shouldUseImperialUnits
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.ui.ChargerIconGenerator
 import net.vonforst.evmap.ui.ClusterIconGenerator
+import net.vonforst.evmap.ui.HideOnScrollFabBehavior
 import net.vonforst.evmap.ui.MarkerAnimator
 import net.vonforst.evmap.ui.chargerZ
 import net.vonforst.evmap.ui.clusterZ
@@ -729,6 +730,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             displaySearchResult(place, moveCamera = true)
         }
         vm.layersMenuOpen.observe(viewLifecycleOwner) { open ->
+            HideOnScrollFabBehavior.from(binding.fabLayers).hidden = open
             binding.fabLayers.visibility = if (open) View.INVISIBLE else View.VISIBLE
             binding.layersSheet.visibility = if (open) View.VISIBLE else View.INVISIBLE
             updateBackPressedCallback()

@@ -12,6 +12,13 @@ import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike
 
 class HideOnScrollFabBehavior(context: Context, attrs: AttributeSet) :
     FloatingActionButton.Behavior(context, attrs) {
+    var hidden: Boolean = false
+
+    companion object {
+        fun from(view: View): HideOnScrollFabBehavior {
+            return ((view.layoutParams as CoordinatorLayout.LayoutParams).behavior as HideOnScrollFabBehavior)
+        }
+    }
 
     override fun onStartNestedScroll(
         coordinatorLayout: CoordinatorLayout,
@@ -61,13 +68,13 @@ class HideOnScrollFabBehavior(context: Context, attrs: AttributeSet) :
         child: FloatingActionButton,
         dependency: View
     ): Boolean {
-        val behavior = BottomSheetBehaviorGoogleMapsLike.from<View>(dependency)
+        val behavior = BottomSheetBehaviorGoogleMapsLike.from(dependency)
         when (behavior.state) {
             BottomSheetBehaviorGoogleMapsLike.STATE_SETTLING -> {
 
             }
             BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN -> {
-                child.show()
+                if (!hidden) child.show()
             }
             else -> {
                 child.hide()
@@ -103,7 +110,7 @@ class HideOnScrollFabBehavior(context: Context, attrs: AttributeSet) :
             child.hide()
         } else if (dyConsumed < 0 && child.visibility != View.VISIBLE) {
             // User scrolled up and the FAB is currently not visible -> show the FAB
-            child.show()
+            if (!hidden) child.show()
         }
     }
 }

@@ -10,23 +10,16 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
-import android.widget.FrameLayout
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textfield.TextInputLayout
 import net.vonforst.evmap.R
 import kotlin.math.roundToInt
 
-private fun dialogEditText(ctx: Context): Pair<View, EditText> {
-    val container = FrameLayout(ctx)
-    container.setPadding(
-        (16 * ctx.resources.displayMetrics.density).toInt(), 0,
-        (16 * ctx.resources.displayMetrics.density).toInt(), 0
-    )
-    val input = EditText(ctx)
-    input.isSingleLine = true
-    container.addView(input)
-    return container to input
+private fun dialogEditText(ctx: Context): Pair<TextInputLayout, EditText> {
+    val view = LayoutInflater.from(ctx).inflate(R.layout.dialog_textinput, null)
+    return view as TextInputLayout to view.findViewById(R.id.input)
 }
 
 fun showEditTextDialog(
@@ -62,8 +55,10 @@ fun showEditTextDialog(
 
     okButton?.setOnClickListener {
         if (input.text.isBlank()) {
-            input.error = ctx.getString(R.string.required)
+            container.isErrorEnabled = true
+            container.error = ctx.getString(R.string.required)
         } else {
+            container.isErrorEnabled = false
             okAction(input.text.toString())
             dialog.dismiss()
         }

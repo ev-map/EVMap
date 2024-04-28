@@ -1,8 +1,11 @@
 package net.vonforst.evmap.ui
 
+import android.app.LocaleManager
+import android.content.Context
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
-import net.vonforst.evmap.BuildConfig
 import net.vonforst.evmap.storage.PreferenceDataSource
 
 fun updateNightMode(prefs: PreferenceDataSource) {
@@ -25,13 +28,12 @@ fun updateAppLocale(language: String) {
     )
 }
 
-fun getAppLocale(): String? {
-    val locales = AppCompatDelegate.getApplicationLocales()
-    return if (locales.isEmpty) {
+fun getAppLocale(applicationContext: Context?): String? {
+    AppCompatDelegate.getApplicationLocales()
+    return if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
         "default"
     } else {
-        val arr = Array(locales.size()) { locales.get(it)!!.toLanguageTag() }
-        LocaleListCompat.forLanguageTags(BuildConfig.supportedLocales).getFirstMatch(arr)
-            ?.toLanguageTag()
+        return applicationContext?.getSystemService(LocaleManager::class.java).overrideLocaleConfig.supportedLocales.toString()
+
     }
 }

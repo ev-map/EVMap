@@ -8,7 +8,6 @@ plugins {
     id("kotlin-kapt")
     id("androidx.navigation.safeargs.kotlin")
     id("com.mikepenz.aboutlibraries.plugin")
-    id("pt.jcosta.resourceplaceholders")
 }
 
 val supportedLocales = "en,de,fr,nb-rNO,nl,pt,ro,cs"
@@ -108,9 +107,6 @@ android {
         }
     }
 
-    resourcePlaceholders {
-        files("xml/shortcuts.xml")
-    }
     namespace = "net.vonforst.evmap"
 
     // add API keys from environment variable if not set in apikeys.xml

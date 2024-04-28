@@ -9,7 +9,7 @@
              (e.g. in the debug version). -->
         <intent
             android:action="android.intent.action.VIEW"
-            android:targetPackage="${applicationId}"
+            android:targetPackage="net.vonforst.evmap"
             android:targetClass="net.vonforst.evmap.MapsActivity">
             <extra
                 android:name="favorites"

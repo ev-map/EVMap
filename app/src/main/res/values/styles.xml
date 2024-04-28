@@ -15,6 +15,7 @@
         <item name="preferenceTheme">@style/AppTheme.Preference</item>
         <item name="alertDialogTheme">@style/AppTheme.AlertDialog</item>
         <item name="materialAlertDialogTheme">@style/AppTheme.AlertDialog</item>
+        <item name="snackbarButtonStyle">@style/Button.TextButton.Snackbar.App</item>
     </style>
 
     <style name="AppTheme.Preference" parent="@style/PreferenceThemeOverlay">
@@ -80,6 +81,10 @@
         <!-- reduce insets from 80dp to 24dp -->
         <item name="backgroundInsetTop">24dp</item>
         <item name="backgroundInsetBottom">24dp</item>
+    </style>
+
+    <style name="Button.TextButton.Snackbar.App" parent="Widget.Material3.Button.TextButton.Snackbar">
+        <item name="android:textColor">@color/colorPrimary</item>
     </style>
 
     <style name="CarAppTheme">

@@ -26,9 +26,13 @@ import androidx.viewpager2.widget.ViewPager2
 import coil.load
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.slider.RangeSlider
-import net.vonforst.evmap.*
+import net.vonforst.evmap.R
 import net.vonforst.evmap.api.availability.ChargepointStatus
 import net.vonforst.evmap.api.iconForPlugType
+import net.vonforst.evmap.isDarkMode
+import net.vonforst.evmap.kmPerMile
+import net.vonforst.evmap.meterPerFt
+import net.vonforst.evmap.shouldUseImperialUnits
 import java.time.Instant
 import kotlin.math.ceil
 import kotlin.math.floor
@@ -69,7 +73,7 @@ fun invisibleUnlessAnimated(view: View, oldValue: Boolean, newValue: Boolean) {
     if (oldValue == newValue) {
         if (!newValue && view.visibility == View.VISIBLE && view.alpha == 1f) {
             // view is initially invisible
-            view.visibility = View.GONE
+            view.visibility = View.INVISIBLE
         } else {
             return
         }

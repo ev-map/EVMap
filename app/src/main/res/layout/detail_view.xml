@@ -158,7 +158,6 @@
                 android:textColor="@android:color/white"
                 app:backgroundTintAvailability="@{BindingAdaptersKt.flatten(filteredAvailability.data.status.values())}"
                 app:invisibleUnless="@{filteredAvailability.data != null &amp;&amp; !expanded}"
-                app:invisibleUnlessAnimated="@{filteredAvailability.data != null &amp;&amp; !expanded}"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintTop_toTopOf="@+id/txtName"
                 tools:backgroundTint="@color/available"

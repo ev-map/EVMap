@@ -14,6 +14,7 @@ import android.widget.FrameLayout
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import net.vonforst.evmap.R
 import kotlin.math.roundToInt
 
 private fun dialogEditText(ctx: Context): Pair<View, EditText> {
@@ -30,30 +31,44 @@ private fun dialogEditText(ctx: Context): Pair<View, EditText> {
 
 fun showEditTextDialog(
     ctx: Context,
-    customize: (MaterialAlertDialogBuilder, EditText) -> Unit
+    customize: (MaterialAlertDialogBuilder, EditText) -> Unit,
+    okAction: (String) -> Unit
 ): AlertDialog {
     val (container, input) = dialogEditText(ctx)
     val dialogBuilder = MaterialAlertDialogBuilder(ctx)
         .setView(container)
+        .setPositiveButton(R.string.ok) { _, _ -> }
+        .setNegativeButton(R.string.cancel) { _, _ -> }
 
     customize(dialogBuilder, input)
 
     val dialog = dialogBuilder.show()
     dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
 
+    val okButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE)
+
     // focus and show keyboard
     input.requestFocus()
     input.setOnEditorActionListener { _, actionId, _ ->
         if (actionId == EditorInfo.IME_ACTION_DONE) {
             val text = input.text
-            val button = dialog.getButton(DialogInterface.BUTTON_POSITIVE)
-            if (text != null && button != null) {
-                button.performClick()
+            if (text != null && okButton != null) {
+                okButton.performClick()
                 return@setOnEditorActionListener true
             }
         }
         false
     }
+
+    okButton?.setOnClickListener {
+        if (input.text.isBlank()) {
+            input.error = ctx.getString(R.string.required)
+        } else {
+            okAction(input.text.toString())
+            dialog.dismiss()
+        }
+    }
+
     return dialog
 }
 

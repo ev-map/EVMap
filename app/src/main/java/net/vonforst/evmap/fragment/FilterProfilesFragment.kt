@@ -183,20 +183,16 @@ class FilterProfilesFragment : Fragment() {
         adapter = FilterProfilesAdapter(touchHelper, onDelete = { fp ->
             delete(fp)
         }, onRename = { fp ->
-            showEditTextDialog(requireContext()) { dialog, input ->
+            showEditTextDialog(requireContext(), { dialog, input ->
                 input.setText(fp.name)
 
                 dialog.setTitle(R.string.rename)
                     .setMessage(R.string.save_profile_enter_name)
-                    .setPositiveButton(R.string.ok) { _, _ ->
-                        lifecycleScope.launch {
-                            vm.update(fp.copy(name = input.text.toString()))
-                        }
-                    }
-                    .setNegativeButton(R.string.cancel) { _, _ ->
-
-                    }
-            }
+            }, {
+                lifecycleScope.launch {
+                    vm.update(fp.copy(name = it))
+                }
+            })
         })
         binding.filterProfilesList.apply {
             this.adapter = this@FilterProfilesFragment.adapter

@@ -1,7 +1,12 @@
 package net.vonforst.evmap.fragment
 
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuProvider
 import androidx.databinding.DataBindingUtil
@@ -108,31 +113,19 @@ class FilterFragment : Fragment(), MenuProvider {
         }
     }
 
-    private fun saveProfile(error: Boolean = false) {
-        showEditTextDialog(requireContext()) { dialog, input ->
+    private fun saveProfile() {
+        showEditTextDialog(requireContext(), { dialog, input ->
             vm.filterProfile.value?.let { profile ->
                 input.setText(profile.name)
             }
 
-            if (error) {
-                input.error = getString(R.string.required)
-            }
-
             dialog.setTitle(R.string.save_as_profile)
                 .setMessage(R.string.save_profile_enter_name)
-                .setPositiveButton(R.string.ok) { _, _ ->
-                    if (input.text.isBlank()) {
-                        saveProfile(true)
-                    } else {
-                        lifecycleScope.launch {
-                            vm.saveAsProfile(input.text.toString())
-                            findNavController().popBackStack()
-                        }
-                    }
-                }
-                .setNegativeButton(R.string.cancel) { _, _ ->
-
-                }
-        }
+        }, {
+            lifecycleScope.launch {
+                vm.saveAsProfile(it)
+                findNavController().popBackStack()
+            }
+        })
     }
 }

@@ -285,7 +285,7 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
     }
 
     val favorites: LiveData<List<FavoriteWithDetail>> by lazy {
-        db.favoritesDao().getAllFavorites()
+        db.favoritesDao().getAllFavorites().distinctUntilChanged()
     }
 
     val searchResult: MutableLiveData<PlaceWithBounds> by lazy {

@@ -730,7 +730,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             displaySearchResult(place, moveCamera = true)
         }
         vm.layersMenuOpen.observe(viewLifecycleOwner) { open ->
-            HideOnScrollFabBehavior.from(binding.fabLayers).hidden = open
+            HideOnScrollFabBehavior.from(binding.fabLayers)?.hidden = open
             binding.fabLayers.visibility = if (open) View.INVISIBLE else View.VISIBLE
             binding.layersSheet.visibility = if (open) View.VISIBLE else View.INVISIBLE
             updateBackPressedCallback()

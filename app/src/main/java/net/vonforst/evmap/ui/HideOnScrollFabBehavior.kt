@@ -15,8 +15,8 @@ class HideOnScrollFabBehavior(context: Context, attrs: AttributeSet) :
     var hidden: Boolean = false
 
     companion object {
-        fun from(view: View): HideOnScrollFabBehavior {
-            return ((view.layoutParams as CoordinatorLayout.LayoutParams).behavior as HideOnScrollFabBehavior)
+        fun from(view: View): HideOnScrollFabBehavior? {
+            return ((view.layoutParams as? CoordinatorLayout.LayoutParams)?.behavior as? HideOnScrollFabBehavior)
         }
     }
 

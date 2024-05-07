@@ -77,5 +77,12 @@ You can use our [Weblate page](https://hosted.weblate.org/projects/evmap/) to he
 into new languages.
 
 <a href="https://hosted.weblate.org/engage/evmap/">
-<img src="https://hosted.weblate.org/widgets/evmap/-/open-graph.png" width="500" alt="Translation status" />
+<img src="https://hosted.weblate.org/widgets/evmap/-/open-graph.png" width="400" alt="Translation status" />
 </a>
+
+Sponsors
+--------
+
+<a href="https://www.jawg.io"><img src="https://www.jawg.io/static/Blue@10x-9cdc4596e4e59acbd9ead55e9c28613e.png" alt="JawgMaps" height="58"/></a><br>
+Since mid 2024, **JawgMaps** provides their OpenStreetMap vector map tiles service to EVMap for
+free, i.e. the background map displayed in the app if OpenStreetMap is selected as the data source.

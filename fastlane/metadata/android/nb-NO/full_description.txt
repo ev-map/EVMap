@@ -5,7 +5,7 @@ Du finner info om ladestasjoner i hele verden og sanntidsinfo for mange av dem s
 - Materiell design
 - Sanntidsinfo (kun i Europa)
 - Integrert sammenligningsinfo ved bruk av Chargeprice.app (kun i Europa)
-- Kartdata fra OpenStreetMap (Mapbox)
+- Kartdata fra OpenStreetMap
 - Søk etter steder
 - Avanserte filtreringsvalg, inkludert lagrede filterprofiler
 - Favorittliste, som også har tilgjengelighetsinfo

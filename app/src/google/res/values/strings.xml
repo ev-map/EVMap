@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="donations_info" formatted="false">Do you find EVMap useful? Support its development by sending a donation to the developer.\n\nGoogle takes 15% off every donation.</string>
-    <string name="data_sources_hint">In the settings you can also switch between Google Maps and OpenStreetMap (Mapbox) for the map data.</string>
+    <string name="data_sources_hint">In the settings you can also switch between Google Maps and OpenStreetMap for the map data.</string>
 </resources>

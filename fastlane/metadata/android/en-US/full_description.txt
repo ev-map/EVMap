@@ -5,7 +5,7 @@ Features:
 - Shows all charging stations from the community-maintained GoingElectric.de and Open Charge Map directories
 - Realtime availability information (only in Europe)
 - Integrated price comparison using Chargeprice.app (only in Europe)
-- Map data from OpenStreetMap (Mapbox)
+- Map data from OpenStreetMap
 - Search for places
 - Advanced filtering options, including saved filter profiles
 - Favorites list, also with availability information

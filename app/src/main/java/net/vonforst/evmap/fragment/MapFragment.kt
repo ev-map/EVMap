@@ -225,12 +225,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             mapFragment = MapFragment()
             mapFragment!!.priority = arrayOf(
                 when (provider) {
-                    "mapbox" -> MapFragment.MAPBOX
+                    "mapbox" -> MapFragment.MAPLIBRE
                     "google" -> MapFragment.GOOGLE
                     else -> null
                 },
                 MapFragment.GOOGLE,
-                MapFragment.MAPBOX
+                MapFragment.MAPLIBRE
             )
             childFragmentManager
                 .beginTransaction()
@@ -275,7 +275,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
             // set map padding so that compass is not obstructed by toolbar
             mapTopPadding = systemWindowInsetTop + (48 * density).toInt() + (16 * density).toInt()
-            // if we actually use map.setPadding here, Mapbox will re-trigger onApplyWindowInsets
+            // if we actually use map.setPadding here, MapLibre will re-trigger onApplyWindowInsets
             // and cause an infinite loop. So we rely on onMapReady being called later than
             // onApplyWindowInsets.
 
@@ -1052,6 +1052,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         val context = this.context ?: return
         chargerIconGenerator = ChargerIconGenerator(context, map.bitmapDescriptorFactory)
 
+        vm.mapTrafficSupported.value =
+            mapFragment?.let { AnyMap.Feature.TRAFFIC_LAYER in it.supportedFeatures } ?: false
+
         if (BuildConfig.FLAVOR.contains("google") && mapFragment!!.priority[0] == MapFragment.GOOGLE) {
             // Google Maps: icons can be generated in background thread
             lifecycleScope.launch {
@@ -1060,7 +1063,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 }
             }
         } else {
-            // Mapbox: needs to be run on main thread
+            // MapLibre: needs to be run on main thread
             chargerIconGenerator.preloadCache()
         }
 

@@ -5,7 +5,7 @@ Funktionen:
 - Anzeige der Stromtankstellen aus den Stromtankstellenverzeichnissen von GoingElectric.de und Open Charge Map
 - Echtzeit-Verfügbarkeitsanzeige für viele Ladesäulen (nur in Europa)
 - Integrierter Preisvergleich für die jeweilige Ladesäule mit Chargeprice.app (nur in Europa)
-- Kartendaten von OpenStreetMap (Mapbox)
+- Kartendaten von OpenStreetMap
 - Suche nach Orten
 - Erweiterte Filterfunktionen, Filterprofile speichern
 - Favoritenliste, auch mit Anzeige der Verfügbarkeit

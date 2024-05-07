@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="donations_info" formatted="false">Findest du EVMap nützlich? Unterstütze die Weiterentwicklung der App mit einer Spende an den Entwickler.\n\nGoogle zieht von der Spende 15% Gebühren ab.</string>
-    <string name="data_sources_hint">In den Einstellungen kannst du auch zwischen Google Maps und OpenStreetMap (Mapbox) für die Kartendaten wechseln.</string>
+    <string name="data_sources_hint">In den Einstellungen kannst du auch zwischen Google Maps und OpenStreetMap für die Kartendaten wechseln.</string>
 </resources>

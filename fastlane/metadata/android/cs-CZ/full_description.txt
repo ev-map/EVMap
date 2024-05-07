@@ -5,7 +5,7 @@ Funkce:
 - Zobrazuje všechny nabíjecí stanice z komunitou spravovaných databází GoingElectric.de a Open Charge Map.
 - Informace o dostupnosti v reálném čase (pouze v Evropě)
 - Integrované srovnání cen pomocí Chargeprice.app (pouze v Evropě)
-- Mapové podklady z OpenStreetMap (Mapbox)
+- Mapové podklady z OpenStreetMap
 - Vyhledávání míst
 - Pokročilé možnosti filtrování, včetně uložených profilů filtrů
 - Seznam oblíbených, také s informacemi o dostupnosti

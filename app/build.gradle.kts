@@ -146,6 +146,28 @@ android {
         if (mapboxKey != null) {
             resValue("string", "mapbox_key", mapboxKey)
         }
+        var jawgKey =
+            System.getenv("JAWG_API_KEY") ?: project.findProperty("JAWG_API_KEY")?.toString()
+        if (jawgKey == null && project.hasProperty("JAWG_API_KEY_ENCRYPTED")) {
+            jawgKey = decode(
+                project.findProperty("JAWG_API_KEY_ENCRYPTED").toString(),
+                "FmK.d,-f*p+rD+WK!eds"
+            )
+        }
+        if (jawgKey != null) {
+            resValue("string", "jawg_key", jawgKey)
+        }
+        var arcgisKey =
+            System.getenv("ARCGIS_API_KEY") ?: project.findProperty("ARCGIS_API_KEY")?.toString()
+        if (arcgisKey == null && project.hasProperty("ARCGIS_API_KEY_ENCRYPTED")) {
+            arcgisKey = decode(
+                project.findProperty("ARCGIS_API_KEY_ENCRYPTED").toString(),
+                "FmK.d,-f*p+rD+WK!eds"
+            )
+        }
+        if (arcgisKey != null) {
+            resValue("string", "arcgis_key", jawgKey)
+        }
         var chargepriceKey =
             System.getenv("CHARGEPRICE_API_KEY") ?: project.findProperty("CHARGEPRICE_API_KEY")
                 ?.toString()
@@ -261,28 +283,11 @@ dependencies {
     automotiveImplementation("androidx.car.app:app-automotive:$carAppVersion")
 
     // AnyMaps
-    val anyMapsVersion = "4854581f72"
+    val anyMapsVersion = "c087b3e7c2"
     implementation("com.github.ev-map.AnyMaps:anymaps-base:$anyMapsVersion")
     googleImplementation("com.github.ev-map.AnyMaps:anymaps-google:$anyMapsVersion")
     googleImplementation("com.google.android.gms:play-services-maps:18.2.0")
-    implementation("com.github.ev-map.AnyMaps:anymaps-mapbox:$anyMapsVersion") {
-        exclude(group = "com.mapbox.mapboxsdk", module = "mapbox-android-accounts")
-        exclude(group = "com.mapbox.mapboxsdk", module = "mapbox-android-telemetry")
-        exclude(group = "com.google.android.gms", module = "play-services-location")
-        exclude(group = "com.mapbox.mapboxsdk", module = "mapbox-android-core")
-    }
-    // original version of mapbox-android-core
-    googleImplementation("com.mapbox.mapboxsdk:mapbox-android-core:2.0.1")
-    // patched version that removes build-time dependency on GMS (-> no Google location services)
-    fossImplementation("com.github.ev-map:mapbox-events-android:a21c324501")
-
-    implementation("com.mapbox.mapboxsdk:mapbox-android-sdk") {
-        exclude(group = "com.mapbox.mapboxsdk", module = "mapbox-android-accounts")
-        exclude(group = "com.mapbox.mapboxsdk", module = "mapbox-android-telemetry")
-        version {
-            strictly("9.1.0-SNAPSHOT")
-        }
-    }
+    implementation("com.github.ev-map.AnyMaps:anymaps-maplibre:$anyMapsVersion")
 
     // Google Places
     googleImplementation("com.google.android.libraries.places:places:3.3.0")

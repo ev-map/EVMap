@@ -48,6 +48,14 @@
             android:name="com.mapbox.ACCESS_TOKEN"
             android:value="@string/mapbox_key" />
 
+        <meta-data
+            android:name="io.jawg.ACCESS_TOKEN"
+            android:value="@string/jawg_key" />
+
+        <meta-data
+            android:name="com.arcgis.ACCESS_TOKEN"
+            android:value="@string/arcgis_key" />
+
         <activity
             android:name=".MapsActivity"
             android:label="@string/app_name"

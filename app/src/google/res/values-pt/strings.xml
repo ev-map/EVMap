@@ -3,5 +3,5 @@
     <string name="donations_info" formatted="false">Acha que o EVMap é útil\? Apoie a manutenção e desenvolvimento com uma doação para o desenvolvedor da app.
 \n
 \nA Google cobra 15% de cada doação.</string>
-    <string name="data_sources_hint">Também pode mudar entre o Google Maps e OpenStreetMap (Mapbox) nas definições da app.</string>
+    <string name="data_sources_hint">Também pode mudar entre o Google Maps e OpenStreetMap nas definições da app.</string>
 </resources>

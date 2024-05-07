@@ -2,5 +2,5 @@
 <resources>
     <string name="donations_info" formatted="false">Crezi ca EVMap este util? Sprijina dezvoltarea printr-o donatie pentru dezvoltator.</string>
     <string name="donate_paypal">Doneaza cu PayPal</string>
-    <string name="data_sources_hint">Hartile din aplicatie sunt furnizate de OpenStreetMap (Mapbox).</string>
+    <string name="data_sources_hint">Hartile din aplicatie sunt furnizate de OpenStreetMap.</string>
 </resources>

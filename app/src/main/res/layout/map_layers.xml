@@ -80,6 +80,7 @@
             android:layout_marginEnd="16dp"
             android:text="@string/map_details"
             android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
+            app:goneUnless="@{vm.mapTrafficSupported}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
@@ -94,6 +95,7 @@
             android:layout_marginEnd="16dp"
             android:text="@string/map_traffic"
             android:checked="@={vm.mapTrafficEnabled}"
+            app:goneUnless="@{vm.mapTrafficSupported}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView23" />

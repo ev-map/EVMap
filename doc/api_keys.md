@@ -17,6 +17,12 @@ be put into the app in the form of a resource file called `apikeys.xml` under
    <string name="mapbox_key" translatable="false">
       insert your Mapbox key here
    </string>
+   <string name="jawg_key" translatable="false">
+      insert your Jawg Maps key here
+   </string>
+   <string name="arcgis_key" translatable="false">
+      insert your ArcGIS Maps key here
+   </string>
    <string name="goingelectric_key" translatable="false">
       insert your GoingElectric key here
    </string>
@@ -52,10 +58,12 @@ Map providers
 
 The different Map SDKs are wrapped by our [fork](https://github.com/ev-map/AnyMaps) of the
 [AnyMaps](https://github.com/sharenowTech/AnyMaps) library to provide a common API. The `google`
-build flavor of the app includes both Google Maps and Mapbox and allows the user to switch between
-the two, while the `foss` flavor only includes the Mapbox SDK.
+build flavor of the app includes both Google Maps and OpenStreetMap (vector tiles from
+[Jawg Maps](https://www.jawg.io/en/) through [MapLibre](https://maplibre.org/)) and allows the user
+to switch between the two, while the `foss` flavor only includes OSM.
 
-> ⚠️ When testing the app using the Android Emulator, we recommend using Google Maps and not Mapbox, as the latter has
+> ⚠️ When testing the app using the Android Emulator, we recommend using Google Maps and not
+> OSM/MapLibre, as the latter has
 [issues displaying the markers](https://github.com/mapbox/mapbox-gl-native/issues/10829). It works fine on real Android devices.
 
 ### Google Maps
@@ -77,9 +85,39 @@ the two, while the `foss` flavor only includes the Mapbox SDK.
 
 </details>
 
+### Jawg Maps
+
+[Dynamic Maps](https://www.jawg.io/docs/apidocs/maps/)
+
+<details>
+<summary>How to obtain an API key</summary>
+
+1. [Sign up](https://www.jawg.io/lab) for a Jawg account
+2. Under [Access Tokens](https://www.jawg.io/lab/access-tokens), copy your default access token or
+   create a new one. Do not restrict it to a specific origin (this setting is not compatible with
+   Android apps).
+
+</details>
+
+### ArcGIS
+
+[World Imagery basemap](https://www.arcgis.com/home/item.html?id=10df2279f9684e4a9f6a7f08febac2a9)
+*We use this for the satellite map, as [Jawg's](https://blog.jawg.io/satellite-imaging/) satellite
+style does not have global coverage.*
+
+<details>
+<summary>How to obtain an API key</summary>
+
+1. [Sign up](https://developers.arcgis.com/dashboard/) for an ArcGIS developer account
+2. In the dashboard, copy your default API key or create a new one. It has to have access to the
+   "Basemaps" service.
+
+</details>
+
 ### Mapbox
 
-[Maps SDK for Android](https://docs.mapbox.com/android/maps)
+[Geocoding API](https://docs.mapbox.com/api/search/geocoding/)
+*previously we also used Mapbox's Maps SDK, but this has now been switched to Jawg Maps.*
 
 <details>
 <summary>How to obtain an API key</summary>
@@ -90,7 +128,6 @@ the two, while the `foss` flavor only includes the Mapbox SDK.
    to a specific URL (this setting is not compatible with Android apps)
 
 </details>
-
 
 Charging station databases
 --------------------------

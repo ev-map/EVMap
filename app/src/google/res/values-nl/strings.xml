@@ -3,5 +3,5 @@
     <string name="donations_info" formatted="false">Vind je EVMap nuttig\? Je kan de ontwikkeling steunen via een donatie aan de ontwikkelaar.
 \n
 \nGoogle houdt 15% in van elke donatie.</string>
-    <string name="data_sources_hint">In de instellingen kan je ook wisselen tussen Google Maps en OpenStreetMap (Mapbox) voor de kaartgegevens.</string>
+    <string name="data_sources_hint">In de instellingen kan je ook wisselen tussen Google Maps en OpenStreetMap voor de kaartgegevens.</string>
 </resources>

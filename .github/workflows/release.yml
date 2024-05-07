@@ -30,6 +30,8 @@ jobs:
           OPENCHARGEMAP_API_KEY: ${{ secrets.OPENCHARGEMAP_API_KEY }}
           CHARGEPRICE_API_KEY: ${{ secrets.CHARGEPRICE_API_KEY }}
           MAPBOX_API_KEY: ${{ secrets.MAPBOX_API_KEY }}
+          JAWG_API_KEY: ${{ secrets.JAWG_API_KEY }}
+          ARCGIS_API_KEY: ${{ secrets.ARCGIS_API_KEY }}
           GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
           FRONYX_API_KEY: ${{ secrets.FRONYX_API_KEY }}
           ACRA_CRASHREPORT_CREDENTIALS: ${{ secrets.ACRA_CRASHREPORT_CREDENTIALS }}

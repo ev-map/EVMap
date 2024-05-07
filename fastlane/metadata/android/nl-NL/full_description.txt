@@ -5,7 +5,7 @@ Kenmerken:
 - Toont alle laadpunten van de GoingElectric.de en Open Charge Map databanken
 - Real-time status (enkel in Europa)
 - Geïntegreerde prijsvergelijking via Chargeprice.app (enkel in Europe)
-- Kaartgegevens van OpenStreetMap (Mapbox)
+- Kaartgegevens van OpenStreetMap
 - Zoek naar locaties
 - Geavanceerde filtermogelijkheden, inclusief bewaarde filterprofielen
 - Lijst van favorieten, met statusinformatie

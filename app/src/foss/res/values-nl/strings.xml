@@ -2,5 +2,5 @@
 <resources>
     <string name="donations_info" formatted="false">Vond je EVMap nuttig\? Je kan de ontwikkeling ondersteunen door een donatie te sturen naar de ontwikkelaar.</string>
     <string name="donate_paypal">Doneer via PayPal</string>
-    <string name="data_sources_hint">De kaartgegevens zijn afkomstig van OpenStreetMap (Mapbox).</string>
+    <string name="data_sources_hint">De kaartgegevens zijn afkomstig van OpenStreetMap.</string>
 </resources>

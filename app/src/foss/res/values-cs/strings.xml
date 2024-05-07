@@ -2,5 +2,5 @@
 <resources>
     <string name="donations_info" formatted="false">Pomohla vám EVMap? Podpořte její vývoj zasláním finančního daru vývojáři.</string>
     <string name="donate_paypal">Přispět pomocí PayPalu</string>
-    <string name="data_sources_hint">Mapová data v aplikaci poskytuje služba OpenStreetMap (Mapbox).</string>
+    <string name="data_sources_hint">Mapová data v aplikaci poskytuje služba OpenStreetMap.</string>
 </resources>

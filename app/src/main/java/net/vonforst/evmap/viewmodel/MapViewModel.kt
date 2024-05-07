@@ -3,7 +3,16 @@ package net.vonforst.evmap.viewmodel
 import android.app.Application
 import android.graphics.Point
 import android.os.Parcelable
-import androidx.lifecycle.*
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.distinctUntilChanged
+import androidx.lifecycle.liveData
+import androidx.lifecycle.map
+import androidx.lifecycle.switchMap
+import androidx.lifecycle.viewModelScope
 import com.car2go.maps.AnyMap
 import com.car2go.maps.Projection
 import com.car2go.maps.model.LatLng
@@ -24,7 +33,17 @@ import net.vonforst.evmap.api.openchargemap.OCMConnection
 import net.vonforst.evmap.api.openchargemap.OCMReferenceData
 import net.vonforst.evmap.api.stringProvider
 import net.vonforst.evmap.autocomplete.PlaceWithBounds
-import net.vonforst.evmap.model.*
+import net.vonforst.evmap.model.ChargeLocation
+import net.vonforst.evmap.model.Chargepoint
+import net.vonforst.evmap.model.ChargepointListItem
+import net.vonforst.evmap.model.FILTERS_DISABLED
+import net.vonforst.evmap.model.FILTERS_FAVORITES
+import net.vonforst.evmap.model.Favorite
+import net.vonforst.evmap.model.FavoriteWithDetail
+import net.vonforst.evmap.model.FilterValue
+import net.vonforst.evmap.model.FilterValues
+import net.vonforst.evmap.model.getMultipleChoiceValue
+import net.vonforst.evmap.model.getSliderValue
 import net.vonforst.evmap.storage.AppDatabase
 import net.vonforst.evmap.storage.ChargeLocationsRepository
 import net.vonforst.evmap.storage.EncryptedPreferenceDataStore
@@ -279,6 +298,12 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
             observeForever {
                 prefs.mapType = it
             }
+        }
+    }
+
+    val mapTrafficSupported: MutableLiveData<Boolean> by lazy {
+        MutableLiveData<Boolean>().apply {
+            value = false
         }
     }
 

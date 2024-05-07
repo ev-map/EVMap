@@ -5,7 +5,7 @@ Caractéristiques :
 - Affiche toutes les stations de recharge des répertoires GoingElectric.de et Open Charge Map gérés par la communauté.
 - Informations sur la disponibilité en temps réel (uniquement en Europe)
 - Comparaison des prix intégrée grâce à Chargeprice.app (uniquement en Europe)
-- Données cartographiques provenant d'OpenStreetMap (Mapbox)
+- Données cartographiques provenant d'OpenStreetMap
 - Recherche de lieux
 - Options de filtrage avancées, y compris les profils de filtrage enregistrés
 - Liste de favoris, avec également des informations sur la disponibilité

@@ -24,7 +24,8 @@ Features
 - Android Auto & Android Automotive OS integration
 - No ads, fully open source
 - Compatible with Android 5.0 and above
-- Can use Google Maps or Mapbox (OpenStreetMap) as map backends - the version available on F-Droid only uses Mapbox.
+- Can use Google Maps or OpenStreetMap as map backends - the version available on F-Droid only uses
+  OSM.
 
 Screenshots
 -----------
@@ -43,7 +44,8 @@ EVMap uses and put them into the app in the form of a resource file called `apik
 features and how they can be obtained in our [documentation page](doc/api_keys.md).
 
 There are three different build flavors, `googleNormal`, `fossNormal` and `googleAutomotive`.
-- The `foss` variants only use Mapbox data and should run on most Android devices, even without
+
+- The `foss` variants only use OSM data and should run on most Android devices, even without
   Google Play Services.
     - `fossNormal` is intended to run on smartphones and tablets, and also includes the Android
       Auto app for use on the car display (however for that to work, the Android Auto app is

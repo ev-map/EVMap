@@ -10,7 +10,6 @@ plugins {
     id("com.mikepenz.aboutlibraries.plugin")
 }
 
-val supportedLocales = "en,de,fr,nb-rNO,nl,pt,ro,cs"
 
 android {
     defaultConfig {
@@ -23,8 +22,6 @@ android {
         versionName = "1.8.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        resourceConfigurations += supportedLocales.split(",")
-        buildConfigField("String", "supportedLocales", "\"$supportedLocales\"")
     }
 
     signingConfigs {
@@ -99,6 +96,9 @@ android {
     lint {
         disable += listOf("NullSafeMutableLiveData")
         warning += listOf("MissingTranslation")
+    }
+    androidResources {
+        generateLocaleConfig = true
     }
 
     testOptions {

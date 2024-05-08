@@ -41,7 +41,7 @@ class UiSettingsFragment : BaseSettingsFragment() {
 
     override fun onResume() {
         super.onResume()
-        langPref.value = getAppLocale(context)
+        langPref.value = getAppLocale(requireContext())
         immediateNavPref.isVisible = isGoogleMapsInstalled()
     }
 

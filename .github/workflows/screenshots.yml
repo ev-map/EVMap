@@ -96,5 +96,5 @@ jobs:
       - name: Upload screenshots as artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: screenshots
+          name: screenshots-${{ matrix.device }}-${{ matrix.api-level }}
           path: fastlane/metadata/android

@@ -47,7 +47,7 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ matrix.api-level }}
-          target: google_apis
+          target: google_atd
           arch: x86_64
           profile: ${{ matrix.device }}
           force-avd-creation: false
@@ -78,7 +78,7 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ matrix.api-level }}
-          target: google_apis
+          target: google_atd
           arch: x86_64
           profile: ${{ matrix.device }}
           force-avd-creation: false
@@ -88,8 +88,6 @@ jobs:
           disable-animations: true
           script: |
             adb shell pm clear net.vonforst.evmap.debug || true
-            adb shell input keyevent 82
-            adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS
             adb logcat -c
             
             adb logcat *:E &            

@@ -53,7 +53,7 @@ jobs:
           force-avd-creation: false
           ram-size: 2048M
           disk-size: 8192M
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -no-metrics
           disable-animations: true
           script: echo "Generated AVD snapshot for caching."
 
@@ -84,7 +84,7 @@ jobs:
           force-avd-creation: false
           ram-size: 2048M
           disk-size: 4096M
-          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -no-metrics
           disable-animations: true
           script: |
             adb shell pm clear net.vonforst.evmap.debug || true

@@ -34,3 +34,13 @@ jobs:
         run: ./gradlew test${{ matrix.buildvariant }}DebugUnitTest --no-daemon
       - name: Run Android Lint
         run: ./gradlew lint${{ matrix.buildvariant }}Debug --no-daemon
+      - name: Upload GoogleNormal artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: GoogleNormal_debug
+          path: app/build/outputs/apk/googleNormal/debug/app-google-normal-debug.apk
+      - name: Upload GoogleAutomotive artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: GoogleAutomotive_debug
+          path: app/build/outputs/apk/googleAutomotive/debug/app-google-automotive-debug.apk

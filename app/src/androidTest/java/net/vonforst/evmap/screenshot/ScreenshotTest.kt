@@ -16,8 +16,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
 import androidx.test.rule.GrantPermissionRule.grant
-import androidx.test.uiautomator.UiDevice
-import androidx.test.uiautomator.UiSelector
 import kotlinx.coroutines.runBlocking
 import net.vonforst.evmap.EXTRA_CHARGER_ID
 import net.vonforst.evmap.EXTRA_LAT
@@ -30,20 +28,15 @@ import net.vonforst.evmap.api.goingelectric.GoingElectricApiWrapper
 import net.vonforst.evmap.model.Favorite
 import net.vonforst.evmap.storage.AppDatabase
 import net.vonforst.evmap.storage.PreferenceDataSource
-import org.junit.AfterClass
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import tools.fastlane.screengrab.FalconScreenshotStrategy
 import tools.fastlane.screengrab.Screengrab
-import tools.fastlane.screengrab.ScreenshotStrategy
-import tools.fastlane.screengrab.UiAutomatorScreenshotStrategy
 import tools.fastlane.screengrab.cleanstatusbar.CleanStatusBar
 import tools.fastlane.screengrab.cleanstatusbar.IconVisibility
 import tools.fastlane.screengrab.locale.LocaleTestRule
-import java.lang.RuntimeException
 import java.time.Instant
 
 
@@ -55,7 +48,12 @@ class ScreenshotTest {
         fun beforeAll() {
             IdlingRegistry.getInstance().register(EspressoIdlingResource.countingIdlingResource)
 
-            Screengrab.setDefaultScreenshotStrategy(UiAutomatorScreenshotStrategy())
+            Screengrab.setDefaultScreenshotStrategy { screenshotName, screenshotCallback ->
+                screenshotCallback.screenshotCaptured(
+                    screenshotName,
+                    androidx.test.core.app.takeScreenshot()
+                )
+            }
 
             CleanStatusBar()
                 .setWifiVisibility(IconVisibility.HIDE)

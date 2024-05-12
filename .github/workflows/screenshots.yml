@@ -17,10 +17,12 @@ jobs:
             api-level: 34
             display_size: 1080x2336  # subtracted the 64px bottom navigation bar
             type: phone
-          - profile: Pixel Tablet
+          - profile: pixel_tablet
             api-level: 34
             display_size: 2560x1488  # subtracted the 64px navigation bar and 48px status bar
             type: tenInch
+    env:
+      ANDROID_USER_HOME: /home/runner/.android
     steps:
       - name: Enable KVM group perms
         run: |
@@ -37,6 +39,20 @@ jobs:
         run: |
           mkdir ~/.config/.android
           echo $DEBUG_KEYSTORE_BASE64 | base64 --decode >  ~/.config/.android/debug.keystore
+
+      - name: Set up Java environment
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: 'zulu'
+          cache: 'gradle'
+
+      - name: Setup Android SDK
+        run: |
+          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "cmdline-tools;latest"
+          rm -r $ANDROID_HOME/cmdline-tools/latest
+          mv $ANDROID_HOME/cmdline-tools/latest-2 $ANDROID_HOME/cmdline-tools/latest
+          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --version
 
       - name: AVD cache
         uses: actions/cache@v3
@@ -61,13 +77,6 @@ jobs:
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -no-metrics
           disable-animations: true
           script: echo "Generated AVD snapshot for caching."
-
-      - name: Set up Java environment
-        uses: actions/setup-java@v3
-        with:
-          java-version: 17
-          distribution: 'zulu'
-          cache: 'gradle'
 
       - name: Build app
         run: ./gradlew assembleGoogleNormalDebug assembleGoogleNormalAndroidTest

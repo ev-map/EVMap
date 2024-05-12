@@ -34,8 +34,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import tools.fastlane.screengrab.Screengrab
-import tools.fastlane.screengrab.cleanstatusbar.CleanStatusBar
-import tools.fastlane.screengrab.cleanstatusbar.IconVisibility
 import tools.fastlane.screengrab.locale.LocaleTestRule
 import java.time.Instant
 
@@ -54,12 +52,6 @@ class ScreenshotTest {
                     androidx.test.core.app.takeScreenshot()
                 )
             }
-
-            CleanStatusBar()
-                .setWifiVisibility(IconVisibility.HIDE)
-                .setMobileNetworkVisibility(IconVisibility.HIDE)
-                .setClock("1200")
-                .enable()
 
             val context = InstrumentationRegistry.getInstrumentation().targetContext
             val prefs = PreferenceDataSource(context)

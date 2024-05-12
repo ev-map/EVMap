@@ -12,10 +12,15 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        api-level: [ 34 ]
         device:
-          - pixel_6
-          - pixel_c
+          - profile: pixel_6
+            api-level: 34
+            display_size: 1080x2336  # subtracted the 64px bottom navigation bar
+            type: phone
+          - profile: Pixel Tablet
+            api-level: 34
+            display_size: 2560x1488  # subtracted the 64px navigation bar and 48px status bar
+            type: tenInch
     steps:
       - name: Enable KVM group perms
         run: |
@@ -40,16 +45,16 @@ jobs:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-          key: ${{ runner.os }}-avd-api${{ matrix.api-level }}-${{ matrix.device }}
+          key: ${{ runner.os }}-avd-api${{ matrix.device.api-level }}-${{ matrix.device.profile }}
 
       - name: create AVD and generate snapshot for caching
         if: steps.avd-cache.outputs.cache-hit != 'true'
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: ${{ matrix.api-level }}
+          api-level: ${{ matrix.device.api-level }}
           target: google_atd
           arch: x86_64
-          profile: ${{ matrix.device }}
+          profile: ${{ matrix.device.profile }}
           force-avd-creation: false
           ram-size: 2048M
           disk-size: 8192M
@@ -77,10 +82,10 @@ jobs:
       - name: Run emulator and generate screenshots
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: ${{ matrix.api-level }}
+          api-level: ${{ matrix.device.api-level }}
           target: google_atd
           arch: x86_64
-          profile: ${{ matrix.device }}
+          profile: ${{ matrix.device.profile }}
           force-avd-creation: false
           ram-size: 2048M
           disk-size: 4096M
@@ -88,13 +93,14 @@ jobs:
           disable-animations: true
           script: |
             adb shell pm clear net.vonforst.evmap.debug || true
+            adb shell wm size ${{ matrix.device.display_size }}
             adb logcat -c
             
             adb logcat *:E &            
-            fastlane screengrab --app_apk_path app/build/outputs/apk/googleNormal/debug/app-google-normal-debug.apk  --test_apk_path app/build/outputs/apk/androidTest/googleNormal/debug/app-google-normal-debug-androidTest.apk --tests_package_name=net.vonforst.evmap.debug.test --app_package_name net.vonforst.evmap.debug -p net.vonforst.evmap.screenshot --use_timestamp_suffix false --clear_previous_screenshots true -q en-US,de-DE,fr-FR,nb-rNO,nl-NL,pt-PT,ro-RO
+            fastlane screengrab --app_apk_path app/build/outputs/apk/googleNormal/debug/app-google-normal-debug.apk  --test_apk_path app/build/outputs/apk/androidTest/googleNormal/debug/app-google-normal-debug-androidTest.apk --tests_package_name=net.vonforst.evmap.debug.test --app_package_name net.vonforst.evmap.debug -p net.vonforst.evmap.screenshot --use_timestamp_suffix false --clear_previous_screenshots true --device_type=${{ matrix.device.type }} -q en-US,de-DE,fr-FR,nb-rNO,nl-NL,pt-PT,ro-RO
 
       - name: Upload screenshots as artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: screenshots-${{ matrix.device }}-${{ matrix.api-level }}
+          name: screenshots-${{ matrix.device.profile }}-${{ matrix.device.api-level }}
           path: fastlane/metadata/android

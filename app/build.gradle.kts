@@ -46,6 +46,11 @@ android {
             )
             signingConfig = signingConfigs.getByName("release")
         }
+        create("releaseAutomotivePackageName") {
+            // Faurecia Aptoide requires the automotive variant to use a separate package name
+            initWith(getByName("release"))
+            applicationIdSuffix = ".automotive"
+        }
         debug {
             applicationIdSuffix = ".debug"
             isDebuggable = true
@@ -214,6 +219,22 @@ android {
                     "lib/armeabi-v7a/libc++_shared.so"
                 )
             )
+        }
+    }
+}
+
+androidComponents {
+    beforeVariants { variantBuilder ->
+        if (variantBuilder.buildType == "releaseAutomotivePackageName"
+            && !variantBuilder.productFlavors.containsAll(
+                listOf(
+                    "automotive" to "automotive",
+                    "dependencies" to "foss"
+                )
+            )
+        ) {
+            // releaseAutomotivePackageName type is only needed for fossAutomotive
+            variantBuilder.enable = false
         }
     }
 }

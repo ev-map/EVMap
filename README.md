@@ -43,13 +43,14 @@ EVMap uses and put them into the app in the form of a resource file called `apik
 `app/src/main/res/values`. You can find more information on which API keys are necessary for which
 features and how they can be obtained in our [documentation page](doc/api_keys.md).
 
-There are three different build flavors, `googleNormal`, `fossNormal` and `googleAutomotive`.
+There are four different build flavors, `googleNormal`, `fossNormal`, `googleAutomotive`, and
+`fossAutomotive`.
 
 - The `foss` variants only use OSM data and should run on most Android devices, even without
   Google Play Services.
     - `fossNormal` is intended to run on smartphones and tablets, and also includes the Android
-      Auto app for use on the car display (however for that to work, the Android Auto app is
-      necessary, which in turn does require Google Play Services).
+      Auto app for use on the car display (however Android Auto may not work if the app is not
+      installed from Google Play, see https://github.com/ev-map/EVMap/issues/319).
     - `fossAutomotive` can be installed directly on
       [Android Automotive OS (AAOS)](https://source.android.com/docs/automotive/start/what_automotive)
       headunits without Google services.

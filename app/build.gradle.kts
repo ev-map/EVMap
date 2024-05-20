@@ -250,10 +250,14 @@ configurations {
 
 aboutLibraries {
     allowedLicenses = arrayOf(
-        "Apache-2.0", "mit", "BSD-2-Clause",
+        "Apache-2.0", "mit", "BSD-2-Clause", "BSD-3-Clause", "EPL-1.0",
         "asdkl",  // Android SDK
         "Dual OpenSSL and SSLeay License",  // Android NDK OpenSSL
-        "Google Maps Platform Terms of Service"  // Google Maps SDK
+        "Google Maps Platform Terms of Service",  // Google Maps SDK
+        "provided without support or warranty",  // org.json
+        "Unicode/ICU License",  // icu4j
+        "Bouncy Castle Licence",  // bcprov
+        "CDDL + GPLv2 with classpath exception",  // javax.annotation-api
     )
     strictMode = com.mikepenz.aboutlibraries.plugin.StrictMode.FAIL
 }

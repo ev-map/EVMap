@@ -34,3 +34,5 @@ jobs:
         run: ./gradlew test${{ matrix.buildvariant }}DebugUnitTest --no-daemon
       - name: Run Android Lint
         run: ./gradlew lint${{ matrix.buildvariant }}Debug --no-daemon
+      - name: Check licenses
+        run: ./gradlew exportLibraryDefinitions --no-daemon

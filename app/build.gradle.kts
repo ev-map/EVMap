@@ -57,6 +57,10 @@ android {
         }
     }
 
+    sourceSets {
+        getByName("releaseAutomotivePackageName").setRoot("src/release")
+    }
+
     flavorDimensions += listOf("dependencies", "automotive")
     productFlavors {
         create("foss") {

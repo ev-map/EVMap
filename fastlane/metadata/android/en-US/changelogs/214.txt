@@ -1,0 +1,7 @@
+Changes:
+- OpenStreetMap maps: Change data source from Mapbox to Jawg Maps
+
+Bugfixes:
+- Fixed app shortcuts
+- Fixed display errors
+- Fixed crashes

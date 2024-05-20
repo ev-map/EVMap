@@ -1,0 +1,7 @@
+Änderungen:
+- OpenStreetMap-Karten: Wechsel der Datenquelle von Mapbox zu Jawg Maps
+
+Fehler behoben:
+- App-Shortcuts repariert
+- Anzeigefehler behoben
+- Abstürze behoben

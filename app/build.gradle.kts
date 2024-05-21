@@ -306,7 +306,7 @@ dependencies {
     implementation("com.github.romandanylyk:PageIndicatorView:b1bad589b5")
 
     // Android Auto
-    val carAppVersion = "1.7.0-alpha02"
+    val carAppVersion = "1.4.0-rc02"
     implementation("androidx.car.app:app:$carAppVersion")
     normalImplementation("androidx.car.app:app-projected:$carAppVersion")
     automotiveImplementation("androidx.car.app:app-automotive:$carAppVersion")

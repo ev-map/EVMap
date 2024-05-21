@@ -14,7 +14,11 @@ import androidx.car.app.CarToast
 import androidx.car.app.Screen
 import androidx.car.app.constraints.ConstraintManager
 import androidx.car.app.hardware.common.CarUnit
-import androidx.car.app.model.*
+import androidx.car.app.model.CarColor
+import androidx.car.app.model.CarIcon
+import androidx.car.app.model.Distance
+import androidx.car.app.model.MessageTemplate
+import androidx.car.app.model.Template
 import androidx.car.app.versioning.CarAppApiLevels
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.IconCompat
@@ -26,7 +30,7 @@ import net.vonforst.evmap.getPackageInfoCompat
 import net.vonforst.evmap.kmPerMile
 import net.vonforst.evmap.shouldUseImperialUnits
 import net.vonforst.evmap.ydPerMile
-import java.util.*
+import java.util.Locale
 import kotlin.math.roundToInt
 
 fun carAvailabilityColor(status: List<ChargepointStatus>): CarColor {
@@ -207,7 +211,9 @@ fun supportsCarApiLevel3(ctx: CarContext): Boolean {
             val version = getAndroidAutoVersion(ctx)
             // Android Auto 6.7 is required. 6.6 reports supporting API Level 3,
             // but crashes when using it. See: https://issuetracker.google.com/issues/199509584
-            if (version[0] < "6" || version[0] == "6" && version[1] < "7") {
+            val major = version[0].toIntOrNull() ?: return false
+            val minor = version[1].toIntOrNull() ?: return false
+            if (major < 6 || major < 6 && minor < 7) {
                 return false
             }
         }

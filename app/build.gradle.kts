@@ -12,6 +12,8 @@ plugins {
 
 
 android {
+    useLibrary("android.car")
+
     defaultConfig {
         applicationId = "net.vonforst.evmap"
         compileSdk = 34

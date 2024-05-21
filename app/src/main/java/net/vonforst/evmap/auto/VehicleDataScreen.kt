@@ -6,9 +6,18 @@ import android.os.Handler
 import android.os.Looper
 import androidx.car.app.CarContext
 import androidx.car.app.Screen
-import androidx.car.app.hardware.CarHardwareManager
-import androidx.car.app.hardware.info.*
-import androidx.car.app.model.*
+import androidx.car.app.hardware.info.CarSensors
+import androidx.car.app.hardware.info.Compass
+import androidx.car.app.hardware.info.EnergyLevel
+import androidx.car.app.hardware.info.Model
+import androidx.car.app.hardware.info.Speed
+import androidx.car.app.model.Action
+import androidx.car.app.model.CarColor
+import androidx.car.app.model.CarIcon
+import androidx.car.app.model.GridItem
+import androidx.car.app.model.GridTemplate
+import androidx.car.app.model.ItemList
+import androidx.car.app.model.Template
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.DefaultLifecycleObserver
@@ -18,14 +27,14 @@ import net.vonforst.evmap.R
 import net.vonforst.evmap.ui.CompassNeedle
 import net.vonforst.evmap.ui.Gauge
 import net.vonforst.evmap.utils.formatDecimal
+import patchedCarInfo
 import kotlin.math.min
 import kotlin.math.roundToInt
 
 @androidx.car.app.annotations.ExperimentalCarApi
 class VehicleDataScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx),
     LocationAwareScreen, DefaultLifecycleObserver {
-    private val carInfo =
-        (ctx.getCarService(CarContext.HARDWARE_SERVICE) as CarHardwareManager).carInfo
+    private val carInfo = carContext.patchedCarInfo
     private val carSensors = carContext.patchedCarSensors
     private var model: Model? = null
     private var energyLevel: EnergyLevel? = null

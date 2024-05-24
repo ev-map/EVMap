@@ -347,9 +347,8 @@
             android:exported="true"
             android:foregroundServiceType="location">
             <intent-filter>
-                <action
-                    android:name="androidx.car.app.CarAppService"
-                    android:category="androidx.car.app.category.POI" />
+                <action android:name="androidx.car.app.CarAppService" />
+                <category android:name="androidx.car.app.category.POI" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

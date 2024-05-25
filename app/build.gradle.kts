@@ -314,11 +314,14 @@ dependencies {
     automotiveImplementation("androidx.car.app:app-automotive:$carAppVersion")
 
     // AnyMaps
-    val anyMapsVersion = "c087b3e7c2"
+    val anyMapsVersion = "a5b9abca40"
     implementation("com.github.ev-map.AnyMaps:anymaps-base:$anyMapsVersion")
     googleImplementation("com.github.ev-map.AnyMaps:anymaps-google:$anyMapsVersion")
     googleImplementation("com.google.android.gms:play-services-maps:18.2.0")
-    implementation("com.github.ev-map.AnyMaps:anymaps-maplibre:$anyMapsVersion")
+    implementation("com.github.ev-map.AnyMaps:anymaps-maplibre:$anyMapsVersion") {
+        // duplicates classes from mapbox-sdk-services
+        exclude("org.maplibre.gl", "android-sdk-geojson")
+    }
 
     // Google Places
     googleImplementation("com.google.android.libraries.places:places:3.3.0")

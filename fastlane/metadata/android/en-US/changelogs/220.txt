@@ -1,0 +1,2 @@
+Bugfixes:
+- Restored support for devices with OpenGL ES 2.0

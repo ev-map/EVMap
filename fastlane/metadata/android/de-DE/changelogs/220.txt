@@ -1,0 +1,2 @@
+Fehler behoben:
+- Unterstützung für Geräte mit OpenGL ES 2.0 wiederhergestellt

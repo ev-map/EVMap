@@ -864,6 +864,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                         if (photo == photos[position] && imageCacheKey != null) {
                             placeholderMemoryCacheKey(imageCacheKey)
                         }
+                        allowHardware(false)
                     }
                 }
                     .withTransitionFrom(view as ImageView)

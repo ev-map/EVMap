@@ -297,7 +297,7 @@ dependencies {
     implementation("com.squareup.moshi:moshi-kotlin:1.15.0")
     implementation("com.squareup.moshi:moshi-adapters:1.15.0")
     implementation("com.markomilos.jsonapi:jsonapi-retrofit:1.1.0")
-    implementation("io.coil-kt:coil:2.4.0")
+    implementation("io.coil-kt:coil:2.6.0")
     implementation("com.github.ev-map:StfalconImageViewer:5082ebd392")
     implementation("com.mikepenz:aboutlibraries-core:$aboutLibsVersion")
     implementation("com.mikepenz:aboutlibraries:$aboutLibsVersion")

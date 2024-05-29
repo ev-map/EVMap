@@ -244,6 +244,8 @@ class OpenChargeMapApiWrapper(
             return Resource.success(ChargepointList(result, data.size < 499))
         } catch (e: IOException) {
             return Resource.error(e.message, null)
+        } catch (e: HttpException) {
+            return Resource.error(e.message, null)
         }
     }
 

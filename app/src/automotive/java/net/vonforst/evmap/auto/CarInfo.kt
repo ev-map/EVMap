@@ -147,7 +147,7 @@ class CarInfoWrapper(ctx: CarContext) : CarInfo {
     }
 
     override fun removeSpeedListener(listener: OnCarDataAvailableListener<Speed>) {
-        val callback = callbacks[listener]
+        val callback = callbacks[listener] ?: return
         carPropertyManager?.unregisterCallback(callback)
     }
 

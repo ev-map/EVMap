@@ -3,8 +3,9 @@ package net.vonforst.evmap.ui
 import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
-import net.vonforst.evmap.R
+import com.github.erfansn.localeconfigx.configuredLocales
 import net.vonforst.evmap.storage.PreferenceDataSource
+import java.util.Locale
 
 
 fun updateNightMode(prefs: PreferenceDataSource) {
@@ -33,8 +34,11 @@ fun getAppLocale(context: Context): String? {
         "default"
     } else {
         val arr = Array(locales.size()) { locales.get(it)!!.toLanguageTag() }
-        val choices =
-            context.resources.getStringArray(R.array.pref_language_values).joinToString(",")
-        LocaleListCompat.forLanguageTags(choices).getFirstMatch(arr)?.toLanguageTag()
+        val choices = context.configuredLocales
+        choices.getFirstMatch(arr)?.toLanguageTag()
     }
+}
+
+inline fun <R> LocaleListCompat.map(transform: (Locale) -> R): List<R> = List(size()) {
+    transform(get(it)!!)
 }

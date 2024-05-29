@@ -10,14 +10,6 @@
     <string name="chargeprice_api_url">https://api.chargeprice.app/v1/</string>
     <string name="fronyx_url">https://fronyx.io/</string>
     <string name="website_url">https://ev-map.app</string>
-    <string name="pref_language_en">English</string>
-    <string name="pref_language_de">Deutsch</string>
-    <string name="pref_language_fr">Français</string>
-    <string name="pref_language_nb_rNO">Norsk Bokmål</string>
-    <string name="pref_language_nl">Nederlands</string>
-    <string name="pref_language_pt">Português</string>
-    <string name="pref_language_ro">Romana</string>
-    <string name="pref_language_cs">Czech</string>
     <string name="about_contributors_list">
         Danilo Bargen\n
         Altonss\n

@@ -1,27 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="pref_language_names">
-        <item>@string/pref_language_device_default</item>
-        <item>@string/pref_language_en</item>
-        <item>@string/pref_language_de</item>
-        <item>@string/pref_language_cs</item>
-        <item>@string/pref_language_fr</item>
-        <item>@string/pref_language_nb_rNO</item>
-        <item>@string/pref_language_nl</item>
-        <item>@string/pref_language_pt</item>
-        <item>@string/pref_language_ro</item>
-    </string-array>
-    <string-array name="pref_language_values" translatable="false">
-        <item>default</item>
-        <item>en</item>
-        <item>de</item>
-        <item>cs</item>
-        <item>fr</item>
-        <item>nb-NO</item>
-        <item>nl</item>
-        <item>pt</item>
-        <item>ro</item>
-    </string-array>
     <string-array name="pref_darkmode_names">
         <item>@string/pref_darkmode_device_default</item>
         <item>@string/pref_darkmode_always_on</item>

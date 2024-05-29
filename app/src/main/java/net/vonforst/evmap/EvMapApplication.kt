@@ -3,7 +3,11 @@ package net.vonforst.evmap
 import android.app.Activity
 import android.app.Application
 import android.os.Build
-import androidx.work.*
+import androidx.work.Configuration
+import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import net.vonforst.evmap.storage.CleanupCacheWorker
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.ui.updateAppLocale
@@ -24,7 +28,7 @@ class EvMapApplication : Application(), Configuration.Provider {
 
         // Convert to new AppCompat storage for app language
         val lang = prefs.language
-        if (lang != null && lang !in listOf("", "default")) {
+        if (lang != null) {
             updateAppLocale(lang)
             prefs.language = null
         }

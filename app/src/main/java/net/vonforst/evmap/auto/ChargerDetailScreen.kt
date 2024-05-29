@@ -549,7 +549,11 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
                 CarContext.ACTION_NAVIGATE,
                 Uri.parse("geo:${coord.lat},${coord.lng}")
             )
-        carContext.startCarApp(intent)
+        try {
+            carContext.startCarApp(intent)
+        } catch (e: UnsupportedOperationException) {
+            CarToast.makeText(carContext, R.string.no_maps_app_found, CarToast.LENGTH_SHORT).show()
+        }
     }
 
     private fun loadCharger() {

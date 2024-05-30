@@ -6,6 +6,7 @@ import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Typeface
+import android.icu.util.Currency
 import android.icu.util.LocaleData
 import android.icu.util.ULocale
 import android.os.Build
@@ -140,3 +141,5 @@ fun PackageManager.isAppInstalled(packageName: String): Boolean {
         false
     }
 }
+
+fun currencyDisplayName(code: String) = "${Currency.getInstance(code).displayName} ($code)"

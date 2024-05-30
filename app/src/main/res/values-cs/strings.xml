@@ -199,8 +199,6 @@
     <string name="autocomplete_connection_error">Nepodařilo se načíst návrhy</string>
     <string name="pref_language_device_default">Podle zařízení</string>
     <string name="pref_darkmode_device_default">Podle zařízení</string>
-    <string name="pref_chargeprice_currency_sek">Švédská koruna (SEK)</string>
-    <string name="pref_chargeprice_currency_usd">Americký dolar (USD)</string>
     <string name="pref_provider_google_maps">Mapy Google</string>
     <string name="pref_provider_osm_mapbox">OpenStreetMap (Mapbox)</string>
     <string name="about_contributors">Přispěvatelé</string>
@@ -351,16 +349,6 @@
     <string name="chargeprice_faq_link">https://ev-map.app/faq/#price-comparison-feature</string>
     <string name="pref_darkmode_always_on">vždy zapnut</string>
     <string name="pref_darkmode_always_off">vždy vypnut</string>
-    <string name="pref_chargeprice_currency_chf">Švýcarský frank (CHF)</string>
-    <string name="pref_chargeprice_currency_czk">Česká koruna (CZK)</string>
-    <string name="pref_chargeprice_currency_dkk">Dánská koruna (DKK)</string>
-    <string name="pref_chargeprice_currency_eur">Euro (EUR)</string>
-    <string name="pref_chargeprice_currency_gbp">Britská libra (GBP)</string>
-    <string name="pref_chargeprice_currency_huf">Maďarský forint (HUF)</string>
-    <string name="pref_chargeprice_currency_hrk">Chorvatská kuna (HRK)</string>
-    <string name="pref_chargeprice_currency_isk">Islandská koruna (ISK)</string>
-    <string name="pref_chargeprice_currency_nok">Norská koruna (NOK)</string>
-    <string name="pref_chargeprice_currency_pln">Polský zlotý (PLN)</string>
     <string name="chargeprice_header_other_tariffs">Ostatní plány</string>
     <string name="charger_website">Webové stránky</string>
     <string name="compass">Kompas</string>

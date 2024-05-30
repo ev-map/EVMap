@@ -177,11 +177,6 @@
     <string name="pref_language_device_default">Língua do dispositivo</string>
     <string name="pref_darkmode_device_default">Padrão do dispositivo</string>
     <string name="pref_darkmode_always_on">Sempre ligado</string>
-    <string name="pref_chargeprice_currency_chf">Franco suíço (CHF)</string>
-    <string name="pref_chargeprice_currency_czk">Coroa checa (CZK)</string>
-    <string name="pref_chargeprice_currency_dkk">Coroa dinamarquesa (DKK)</string>
-    <string name="pref_chargeprice_currency_eur">Euro (EUR)</string>
-    <string name="pref_chargeprice_currency_gbp">Libra esterlina (GBP)</string>
     <string name="chargeprice_header_my_tariffs">Os meus planos</string>
     <string name="chargeprice_header_other_tariffs">Outros planos</string>
     <string name="developer_options">Opções de desenvolvedor</string>
@@ -287,13 +282,6 @@
     <string name="welcome_1">Encontre carregadores elétricos perto de si</string>
     <string name="close">Fechar</string>
     <string name="edit_filter_profile">Editar “%s”</string>
-    <string name="pref_chargeprice_currency_hrk">Cuna croata (HRK)</string>
-    <string name="pref_chargeprice_currency_huf">Florim húngaro (HUF)</string>
-    <string name="pref_chargeprice_currency_isk">Coroa islandesa (ISK)</string>
-    <string name="pref_chargeprice_currency_nok">Coroa norueguesa (NOK)</string>
-    <string name="pref_chargeprice_currency_pln">Złoty polaco (PLN)</string>
-    <string name="pref_chargeprice_currency_sek">Coroa sueca (SEK)</string>
-    <string name="pref_chargeprice_currency_usd">Dólar americano (USD)</string>
     <string name="pref_provider_google_maps">Google Maps</string>
     <string name="pref_provider_osm_mapbox">OpenStreetMap (Mapbox)</string>
     <string name="about_contributors">Contribuidores</string>

@@ -5,7 +5,6 @@
     <string name="pref_search_provider_info">Gegevens opzoeken is duur, vooral via Google Maps. Overweeg aub om een donatie te doen via “Over” -&gt; “Doneer”.</string>
     <string name="data_source_openchargemap_desc">Werelddekkend, met variabele kwaliteit. Beschrijving in Engels of lokale taal. Onderhouden door de gebruikers. Ook open overheidswege eens in sommige landen (bv. Noord-Amerika, UK, Frankrijk, Noorwegen).</string>
     <string name="pref_darkmode_always_off">altijd uit</string>
-    <string name="pref_chargeprice_currency_eur">Euro (EUR)</string>
     <string name="chargeprice_select_car_first">Kiest eerst je voertuig model in de instellingen</string>
     <string name="chargeprice_no_compatible_connectors">Geen compatibele connectoren aan dit laadstation</string>
     <string name="license">Licentie</string>
@@ -228,17 +227,6 @@
     <string name="pref_language_device_default">Standaardtaal van toestel</string>
     <string name="pref_darkmode_device_default">Standaardinstelling van toestel</string>
     <string name="pref_darkmode_always_on">altijd aan</string>
-    <string name="pref_chargeprice_currency_chf">Zwitserse Frank (CHF)</string>
-    <string name="pref_chargeprice_currency_czk">Tsjechische koruna (CZK)</string>
-    <string name="pref_chargeprice_currency_dkk">Deense kroon (DKK)</string>
-    <string name="pref_chargeprice_currency_gbp">Britse Pond (GBP)</string>
-    <string name="pref_chargeprice_currency_hrk">Kroatische Kuna (HRK)</string>
-    <string name="pref_chargeprice_currency_huf">Hongaarse Forint (HUF)</string>
-    <string name="pref_chargeprice_currency_isk">IJslandse Kroon (ISK)</string>
-    <string name="pref_chargeprice_currency_nok">Noorse Kroon (NOK)</string>
-    <string name="pref_chargeprice_currency_pln">Poolse Złoty (PLN)</string>
-    <string name="pref_chargeprice_currency_sek">Zweedse Kroon (SEK)</string>
-    <string name="pref_chargeprice_currency_usd">Amerikaanse Dollar (USD)</string>
     <string name="pref_provider_google_maps">Google Maps</string>
     <string name="edit_filter_profile">“%s” editeren</string>
     <string name="compass">Kompas</string>

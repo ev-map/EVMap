@@ -43,6 +43,7 @@ import net.vonforst.evmap.api.availability.tesla.TeslaOwnerApi
 import net.vonforst.evmap.api.chargeprice.ChargepriceApi
 import net.vonforst.evmap.api.chargeprice.ChargepriceCar
 import net.vonforst.evmap.api.chargeprice.ChargepriceTariff
+import net.vonforst.evmap.currencyDisplayName
 import net.vonforst.evmap.fragment.oauth.OAuthLoginFragment
 import net.vonforst.evmap.fragment.oauth.OAuthLoginFragmentArgs
 import net.vonforst.evmap.getPackageInfoCompat
@@ -486,10 +487,9 @@ class ChargepriceSettingsScreen(ctx: CarContext) : Screen(ctx) {
                 addItem(Row.Builder().apply {
                     setTitle(carContext.getString(R.string.pref_chargeprice_currency))
 
-                    val names =
-                        carContext.resources.getStringArray(R.array.pref_chargeprice_currency_names)
                     val values =
-                        carContext.resources.getStringArray(R.array.pref_chargeprice_currency_values)
+                        carContext.resources.getStringArray(R.array.pref_chargeprice_currencies)
+                    val names = values.map(::currencyDisplayName)
                     val index = values.indexOf(prefs.chargepriceCurrency)
                     addText(if (index >= 0) names[index] else "")
 
@@ -629,8 +629,8 @@ class SelectCurrencyScreen(ctx: CarContext) : MultiSelectSearchScreen<Pair<Strin
     override fun getLabel(it: Pair<String, String>): String = it.first
 
     override suspend fun loadData(): List<Pair<String, String>> {
-        val names = carContext.resources.getStringArray(R.array.pref_chargeprice_currency_names)
-        val values = carContext.resources.getStringArray(R.array.pref_chargeprice_currency_values)
+        val values = carContext.resources.getStringArray(R.array.pref_chargeprice_currencies)
+        val names = values.map(::currencyDisplayName)
         return names.zip(values)
     }
 }

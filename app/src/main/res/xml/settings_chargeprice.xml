@@ -18,8 +18,7 @@
     <ListPreference
         android:key="chargeprice_currency"
         android:title="@string/pref_chargeprice_currency"
-        android:entries="@array/pref_chargeprice_currency_names"
-        android:entryValues="@array/pref_chargeprice_currency_values"
+        android:entryValues="@array/pref_chargeprice_currencies"
         android:defaultValue="EUR"
         app:useSimpleSummaryProvider="true" />
     <CheckBoxPreference

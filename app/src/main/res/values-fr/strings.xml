@@ -128,9 +128,6 @@
     <string name="pref_darkmode_device_default">Utiliser le réglage de l\'appareil</string>
     <string name="pref_darkmode_always_on">toujours allumé</string>
     <string name="pref_darkmode_always_off">toujours éteint</string>
-    <string name="pref_chargeprice_currency_czk">Couronne tchèque (CZK)</string>
-    <string name="pref_chargeprice_currency_dkk">Couronne danoise (DKK)</string>
-    <string name="pref_chargeprice_currency_eur">Euro (EUR)</string>
     <string name="show_more">plus…</string>
     <string name="fav_remove">Retirer des favoris</string>
     <string name="amenities">Commodités</string>
@@ -230,9 +227,6 @@
         <item quantity="other">(seront mis en évidence dans la comparaison des prix)</item>
     </plurals>
     <string name="deleted_recent_search_results">Les résultats de recherche récents ont été supprimés</string>
-    <string name="pref_chargeprice_currency_gbp">Livre sterling (GBP)</string>
-    <string name="pref_chargeprice_currency_isk">Couronne islandaise (ISK)</string>
-    <string name="pref_chargeprice_currency_nok">Couronne norvégienne (NOK)</string>
     <string name="settings_charger_data">Stations de recharge</string>
     <string name="got_it">J\'ai compris</string>
     <string name="powered_by_mapbox">propulsé par Mapbox</string>
@@ -246,15 +240,9 @@
     <string name="settings_data_sources">Sources de données</string>
     <string name="data_sources_description">Veuillez choisir une source de données pour les stations de recharge. Vous pourrez la modifier ultérieurement dans les paramètres de l\'application.</string>
     <string name="pref_search_provider_info">Les données pour la recherche de lieux, en particulier celles de Google Maps, sont relativement coûteuses à récupérer. Veuillez envisager de faire un don via \"À propos\" -&gt; \"Faire un don\".</string>
-    <string name="pref_chargeprice_currency_hrk">Kuna croate (HRK)</string>
     <string name="help">Aide</string>
     <string name="pref_chargeprice_allow_unbalanced_load_summary">Autoriser la charge en courant alternatif monophasé de plus de 4,5 kW</string>
-    <string name="pref_chargeprice_currency_huf">Forint hongrois (HUF)</string>
-    <string name="pref_chargeprice_currency_pln">Złoty polonais (PLN)</string>
     <string name="pref_map_rotate_gestures_on">Utilisez deux doigts pour faire pivoter la carte</string>
-    <string name="pref_chargeprice_currency_chf">Franc suisse (CHF)</string>
-    <string name="pref_chargeprice_currency_usd">Dollar américain (USD)</string>
-    <string name="pref_chargeprice_currency_sek">Couronne suédoise (SEK)</string>
     <string name="cost_detail_charging"><b>Recharge %s</b></string>
     <string name="cost_detail_parking"><b>Stationnement %s</b></string>
     <string name="navigate">Naviguer vers</string>

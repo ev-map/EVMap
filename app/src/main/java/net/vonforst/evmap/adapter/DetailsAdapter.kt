@@ -9,7 +9,6 @@ import androidx.core.text.buildSpannedString
 import net.vonforst.evmap.R
 import net.vonforst.evmap.api.availability.tesla.Pricing
 import net.vonforst.evmap.api.availability.tesla.Rates
-import net.vonforst.evmap.api.availability.tesla.TeslaChargingOwnershipGraphQlApi
 import net.vonforst.evmap.bold
 import net.vonforst.evmap.joinToSpannedString
 import net.vonforst.evmap.model.ChargeCard

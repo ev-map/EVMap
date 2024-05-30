@@ -8,7 +8,9 @@ import android.text.style.RelativeSizeSpan
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.preference.CheckBoxPreference
+import androidx.preference.ListPreference
 import net.vonforst.evmap.R
+import net.vonforst.evmap.currencyDisplayName
 import net.vonforst.evmap.ui.MultiSelectDialogPreference
 import net.vonforst.evmap.viewmodel.SettingsViewModel
 import net.vonforst.evmap.viewmodel.viewModelFactory
@@ -73,6 +75,11 @@ class ChargepriceSettingsFragment : BaseSettingsFragment() {
             }
         }
         updateNativeIntegrationState()
+
+        val currencyPreference = findPreference<ListPreference>("chargeprice_currency")!!
+        currencyPreference.entries = currencyPreference.entryValues.map {
+            currencyDisplayName(it.toString()).replaceFirstChar { it.uppercase() }
+        }.toTypedArray()
     }
 
     private fun updateNativeIntegrationState() {

@@ -10,21 +10,7 @@
         <item>on</item>
         <item>off</item>
     </string-array>
-    <string-array name="pref_chargeprice_currency_names">
-        <item>@string/pref_chargeprice_currency_chf</item>
-        <item>@string/pref_chargeprice_currency_czk</item>
-        <item>@string/pref_chargeprice_currency_dkk</item>
-        <item>@string/pref_chargeprice_currency_eur</item>
-        <item>@string/pref_chargeprice_currency_gbp</item>
-        <item>@string/pref_chargeprice_currency_hrk</item>
-        <item>@string/pref_chargeprice_currency_huf</item>
-        <item>@string/pref_chargeprice_currency_isk</item>
-        <item>@string/pref_chargeprice_currency_nok</item>
-        <item>@string/pref_chargeprice_currency_pln</item>
-        <item>@string/pref_chargeprice_currency_sek</item>
-        <item>@string/pref_chargeprice_currency_usd</item>
-    </string-array>
-    <string-array name="pref_chargeprice_currency_values" translatable="false">
+    <string-array name="pref_chargeprice_currencies" translatable="false">
         <item>CHF</item>
         <item>CZK</item>
         <item>DKK</item>

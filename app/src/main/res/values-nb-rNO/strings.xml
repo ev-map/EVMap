@@ -84,10 +84,6 @@
     <string name="got_it">Skjønner</string>
     <string name="settings_data_sources">Datakilder</string>
     <string name="pref_search_delete_recent">Slett nylige søkeresultater</string>
-    <string name="pref_chargeprice_currency_eur">Euro (EUR)</string>
-    <string name="pref_chargeprice_currency_nok">Norske kroner (NOK)</string>
-    <string name="pref_chargeprice_currency_gbp">Britiske pund (GBP)</string>
-    <string name="pref_chargeprice_currency_sek">Svenske kroner (SEK)</string>
     <string name="realtime_data_loading">Sjekker sanntidsstatus …</string>
     <string name="realtime_data_source">Kilde for sanntidsstatus (beta): %s</string>
     <string name="realtime_data_unavailable">Sanntidsstatus utilgjengelig</string>
@@ -183,16 +179,9 @@
     <string name="deleted_recent_search_results">Nylige søkeresultater slettet</string>
     <string name="autocomplete_connection_error">Kunne ikke laste inn forslag</string>
     <string name="pref_language_device_default">Enhetsforvalg</string>
-    <string name="pref_chargeprice_currency_chf">Sveitserfranc (CHF)</string>
-    <string name="pref_chargeprice_currency_czk">Tsjekkiske kroner (CZK)</string>
-    <string name="pref_chargeprice_currency_dkk">Danske kroner (DKK)</string>
-    <string name="pref_chargeprice_currency_hrk">Kroatiske kroner (HRK)</string>
     <string name="pref_map_rotate_gestures_on">Bruk to fingre for å rotere kartet</string>
     <string name="pref_map_rotate_gestures_off">Rotasjon avslått (nord er alltid oppover)</string>
     <string name="refresh_live_data">oppdater sanntidsstatus</string>
-    <string name="pref_chargeprice_currency_isk">Islandske kroner (ISK)</string>
-    <string name="pref_chargeprice_currency_pln">Polske zloty (PLN)</string>
-    <string name="pref_chargeprice_currency_usd">Amerikanske dollar (USD)</string>
     <string name="filters_deactivated">Filtre deaktivert</string>
     <string name="pref_navigate_use_maps_off">Navigasjonsknapp åpner kartprogrammet med laderposisjon</string>
     <string name="show_more">flere …</string>
@@ -217,7 +206,6 @@
     <string name="filter_exclude_faults">Utelat ladere med rapporterte feil</string>
     <string name="plug_cee_blau">CEE blå</string>
     <string name="filter_open_247">Døgnåpent</string>
-    <string name="pref_chargeprice_currency_huf">Ungarske forint (HUF)</string>
     <string name="donation_dialog_detail">EVMap er fri programvare. Kodebidrag mottas med takk. Overvei å gi din støtte gjennom GitHub-sponsorer for å dekke løpende utgifter.</string>
     <string name="pref_chargeprice_allow_unbalanced_load_summary">Tillat enfaselading over 4.5 kW</string>
     <string name="connectors">Tilkobling</string>

@@ -6,7 +6,6 @@ import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Typeface
-import android.icu.util.Currency
 import android.icu.util.LocaleData
 import android.icu.util.ULocale
 import android.os.Build
@@ -18,6 +17,7 @@ import android.text.SpannedString
 import android.text.TextUtils
 import android.text.style.StyleSpan
 import net.vonforst.evmap.storage.PreferenceDataSource
+import java.util.Currency
 import java.util.Locale
 
 fun Bundle.optDouble(name: String): Double? {

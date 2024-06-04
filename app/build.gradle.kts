@@ -315,7 +315,7 @@ dependencies {
     automotiveImplementation("androidx.car.app:app-automotive:$carAppVersion")
 
     // AnyMaps
-    val anyMapsVersion = "a5b09b5fda"
+    val anyMapsVersion = "1e00650bc7"
     implementation("com.github.ev-map.AnyMaps:anymaps-base:$anyMapsVersion")
     googleImplementation("com.github.ev-map.AnyMaps:anymaps-google:$anyMapsVersion")
     googleImplementation("com.google.android.gms:play-services-maps:18.2.0")

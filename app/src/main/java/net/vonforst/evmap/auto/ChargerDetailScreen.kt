@@ -13,6 +13,7 @@ import android.text.SpannableStringBuilder
 import android.text.Spanned
 import androidx.car.app.CarContext
 import androidx.car.app.CarToast
+import androidx.car.app.HostException
 import androidx.car.app.Screen
 import androidx.car.app.constraints.ConstraintManager
 import androidx.car.app.model.Action
@@ -551,8 +552,10 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
             )
         try {
             carContext.startCarApp(intent)
-        } catch (e: UnsupportedOperationException) {
+        } catch (e: HostException) {
             CarToast.makeText(carContext, R.string.no_maps_app_found, CarToast.LENGTH_SHORT).show()
+        } catch (ignored: SecurityException) {
+
         }
     }
 

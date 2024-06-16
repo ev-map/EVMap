@@ -452,7 +452,10 @@ class GoingElectricApiWrapper(
                     if (responses.map { it.isSuccessful }.all { it }
                         && plugsResponse.body()!!.status == STATUS_OK
                         && chargeCardsResponse.body()!!.status == STATUS_OK
-                        && networksResponse.body()!!.status == STATUS_OK) {
+                        && networksResponse.body()!!.status == STATUS_OK
+                        && plugsResponse.body()!!.result != null
+                        && chargeCardsResponse.body()!!.result != null
+                        && networksResponse.body()!!.result != null) {
                         Resource.success(
                             GEReferenceData(
                                 plugsResponse.body()!!.result!!,

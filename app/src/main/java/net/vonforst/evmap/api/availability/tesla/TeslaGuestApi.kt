@@ -1,12 +1,8 @@
 package net.vonforst.evmap.api.availability.tesla
 
 import com.squareup.moshi.Json
-import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonClass
-import com.squareup.moshi.JsonReader
-import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
-import com.squareup.moshi.Types
 import okhttp3.CacheControl
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -15,7 +11,6 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
-import java.lang.reflect.Type
 import java.util.concurrent.TimeUnit
 
 interface TeslaCuaApi {
@@ -71,24 +66,22 @@ interface TeslaCuaApi {
 
 interface TeslaChargingGuestGraphQlApi {
     @POST("graphql")
-    suspend fun getChargingSiteDetails(
-        @Body request: GetChargingSiteDetailsRequest,
-        @Query("operationName") operationName: String = "getGuestChargingSiteDetails"
+    suspend fun getSiteDetails(
+        @Body request: GetSiteDetailsRequest,
+        @Query("operationName") operationName: String = "GetSiteDetails"
     ): GetChargingSiteDetailsResponse
 
     @JsonClass(generateAdapter = true)
-    data class GetChargingSiteDetailsRequest(
-        override val variables: GetChargingSiteInformationVariables,
-        override val operationName: String = "getGuestChargingSiteDetails",
+    data class GetSiteDetailsRequest(
+        override val variables: GetSiteDetailsVariables,
+        override val operationName: String = "GetSiteDetails",
         override val query: String =
-            "\n    query getGuestChargingSiteDetails(\$identifier: ChargingSiteIdentifierInput!, \$deviceLocale: String!, \$experience: ChargingExperienceEnum!) {\n  site(\n    identifier: \$identifier\n    deviceLocale: \$deviceLocale\n    experience: \$experience\n  ) {\n    activeOutages\n    address {\n      countryCode\n    }\n    chargers {\n      id\n      label\n    }\n    chargersAvailable {\n      chargerDetails {\n        id\n        availability\n      }\n    }\n    holdAmount {\n      holdAmount\n      currencyCode\n    }\n    maxPowerKw\n    name\n    programType\n    publicStallCount\n    id\n    pricing(experience: \$experience) {\n      userRates {\n        activePricebook {\n          charging {\n            uom\n            rates\n            buckets {\n              start\n              end\n            }\n            bucketUom\n            currencyCode\n            programType\n            vehicleMakeType\n            touRates {\n              enabled\n              activeRatesByTime {\n                startTime\n                endTime\n                rates\n              }\n            }\n          }\n          parking {\n            uom\n            rates\n            buckets {\n              start\n              end\n            }\n            bucketUom\n            currencyCode\n            programType\n            vehicleMakeType\n            touRates {\n              enabled\n              activeRatesByTime {\n                startTime\n                endTime\n                rates\n              }\n            }\n          }\n          congestion {\n            uom\n            rates\n            buckets {\n              start\n              end\n            }\n            bucketUom\n            currencyCode\n            programType\n            vehicleMakeType\n            touRates {\n              enabled\n              activeRatesByTime {\n                startTime\n                endTime\n                rates\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n}\n    "
+            "\n    query GetSiteDetails(\$siteId: SiteIdInput!) {\n  chargingNetwork {\n    site(siteId: \$siteId) {\n      address {\n        countryCode\n      }\n      chargerList {\n        id\n        label\n        availability\n      }\n      holdAmount {\n        amount\n        currencyCode\n      }\n      maxPowerKw\n      name\n      programType\n      publicStallCount\n      trtId\n      pricing {\n        userRates {\n          activePricebook {\n            charging {\n              ...ChargingRate\n            }\n            parking {\n              ...ChargingRate\n            }\n            congestion {\n              ...ChargingRate\n            }\n          }\n        }\n      }\n    }\n  }\n}\n    \n    fragment ChargingRate on ChargingUserRate {\n  uom\n  rates\n  buckets {\n    start\n    end\n  }\n  bucketUom\n  currencyCode\n  programType\n  vehicleMakeType\n  touRates {\n    enabled\n    activeRatesByTime {\n      startTime\n      endTime\n      rates\n    }\n  }\n}\n    "
     ) : GraphQlRequest()
 
     @JsonClass(generateAdapter = true)
-    data class GetChargingSiteInformationVariables(
-        val identifier: Identifier,
-        val experience: Experience,
-        val deviceLocale: String = "de-DE",
+    data class GetSiteDetailsVariables(
+        val siteId: Identifier,
     )
 
     enum class Experience {
@@ -97,22 +90,22 @@ interface TeslaChargingGuestGraphQlApi {
 
     @JsonClass(generateAdapter = true)
     data class Identifier(
-        val siteId: ChargingSiteIdentifier
+        val byTrtId: ChargingSiteIdentifier
     )
 
     @JsonClass(generateAdapter = true)
     data class ChargingSiteIdentifier(
-        val id: Long,
-        val siteType: SiteType = SiteType.SUPERCHARGER
+        val trtId: Long,
+        val chargingExperience: Experience,
+        val programType: String = "PTSCH",
+        val locale: String = "de-DE",
     )
 
-    enum class SiteType {
-        @Json(name = "SITE_TYPE_SUPERCHARGER")
-        SUPERCHARGER
-    }
+    @JsonClass(generateAdapter = true)
+    data class GetChargingSiteDetailsResponse(val data: GetChargingSiteDetailsResponseDataNetwork)
 
     @JsonClass(generateAdapter = true)
-    data class GetChargingSiteDetailsResponse(val data: GetChargingSiteDetailsResponseData)
+    data class GetChargingSiteDetailsResponseDataNetwork(val chargingNetwork: GetChargingSiteDetailsResponseData?)
 
     @JsonClass(generateAdapter = true)
     data class GetChargingSiteDetailsResponseData(val site: ChargingSiteInformation?)
@@ -120,9 +113,8 @@ interface TeslaChargingGuestGraphQlApi {
     @JsonClass(generateAdapter = true)
     data class ChargingSiteInformation(
         val activeOutages: List<Outage>?,
-        val chargers: List<ChargerId>,
-        val chargersAvailable: ChargersAvailable,
-        val id: Long,
+        val chargerList: List<ChargerDetail>,
+        val trtId: Long,
         val maxPowerKw: Int,
         val name: String,
         val pricing: Pricing,
@@ -130,24 +122,16 @@ interface TeslaChargingGuestGraphQlApi {
     )
 
     @JsonClass(generateAdapter = true)
-    data class ChargerId(
-        val id: String,
+    data class ChargerDetail(
+        val availability: ChargerAvailability,
         val label: String?,
+        val id: String
     ) {
         val labelNumber
             get() = label?.replace(Regex("""\D"""), "")?.toInt()
         val labelLetter
             get() = label?.replace(Regex("""\d"""), "")
     }
-
-    @JsonClass(generateAdapter = true)
-    data class ChargersAvailable(val chargerDetails: List<ChargerDetail>)
-
-    @JsonClass(generateAdapter = true)
-    data class ChargerDetail(
-        val availability: ChargerAvailability,
-        val id: String
-    )
 
     companion object {
         fun create(

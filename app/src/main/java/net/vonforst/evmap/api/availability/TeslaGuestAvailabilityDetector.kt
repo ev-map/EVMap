@@ -52,32 +52,31 @@ class TeslaGuestAvailabilityDetector(
 
         val (detailsA, guestPricing) = coroutineScope {
             val details = async {
-                api.getChargingSiteDetails(
-                    TeslaChargingGuestGraphQlApi.GetChargingSiteDetailsRequest(
-                        TeslaChargingGuestGraphQlApi.GetChargingSiteInformationVariables(
+                api.getSiteDetails(
+                    TeslaChargingGuestGraphQlApi.GetSiteDetailsRequest(
+                        TeslaChargingGuestGraphQlApi.GetSiteDetailsVariables(
                             TeslaChargingGuestGraphQlApi.Identifier(
                                 TeslaChargingGuestGraphQlApi.ChargingSiteIdentifier(
-                                    trtId
+                                    trtId, TeslaChargingGuestGraphQlApi.Experience.ADHOC
                                 )
                             ),
-                            TeslaChargingGuestGraphQlApi.Experience.ADHOC
                         )
                     )
-                ).data.site ?: throw AvailabilityDetectorException("no candidates found.")
+                ).data.chargingNetwork?.site
+                    ?: throw AvailabilityDetectorException("no candidates found.")
             }
             val guestPricing = async {
-                api.getChargingSiteDetails(
-                    TeslaChargingGuestGraphQlApi.GetChargingSiteDetailsRequest(
-                        TeslaChargingGuestGraphQlApi.GetChargingSiteInformationVariables(
+                api.getSiteDetails(
+                    TeslaChargingGuestGraphQlApi.GetSiteDetailsRequest(
+                        TeslaChargingGuestGraphQlApi.GetSiteDetailsVariables(
                             TeslaChargingGuestGraphQlApi.Identifier(
                                 TeslaChargingGuestGraphQlApi.ChargingSiteIdentifier(
-                                    trtId
+                                    trtId, TeslaChargingGuestGraphQlApi.Experience.GUEST
                                 )
                             ),
-                            TeslaChargingGuestGraphQlApi.Experience.GUEST
                         )
                     )
-                ).data.site?.pricing
+                ).data.chargingNetwork?.site?.pricing
             }
             details to guestPricing
         }
@@ -103,12 +102,9 @@ class TeslaGuestAvailabilityDetector(
             "charger has unknown connectors"
         )
 
-        val chargerDetails = details.chargersAvailable.chargerDetails
-        val chargers = details.chargers.associateBy { it.id }
-        var detailsSorted = chargerDetails
-            .sortedBy { chargers[it.id]?.labelLetter }
-            .sortedBy { chargers[it.id]?.labelNumber }
-
+        var detailsSorted = details.chargerList
+            .sortedBy { c -> c.labelLetter }
+            .sortedBy { c -> c.labelNumber }
 
         if (detailsSorted.size != scV2Connectors.sumOf { it.count } + scV3Connectors.sumOf { it.count }) {
             // apparently some connectors are missing in Tesla data
@@ -120,7 +116,7 @@ class TeslaGuestAvailabilityDetector(
                     detailsSorted + List(numMissing) {
                         TeslaChargingGuestGraphQlApi.ChargerDetail(
                             ChargerAvailability.UNKNOWN,
-                            ""
+                            "", ""
                         )
                     }
             } else {
@@ -151,7 +147,7 @@ class TeslaGuestAvailabilityDetector(
         }
 
         val statusMap = detailsMap.mapValues { it.value.map { it.availability.toStatus() } }
-        val labelsMap = detailsMap.mapValues { it.value.map { chargers[it.id]?.label } }
+        val labelsMap = detailsMap.mapValues { it.value.map { it.label } }
 
         val pricing = details.pricing.copy(memberRates = guestPricing.await()?.userRates)
 

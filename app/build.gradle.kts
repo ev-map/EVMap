@@ -365,6 +365,7 @@ dependencies {
     debugImplementation("com.facebook.flipper:flipper:0.238.0")
     debugImplementation("com.facebook.soloader:soloader:0.10.5")
     debugImplementation("com.facebook.flipper:flipper-network-plugin:0.238.0")
+    debugImplementation("androidx.test.espresso:espresso-idling-resource:3.5.1")
 
     // testing
     testImplementation("junit:junit:4.13.2")
@@ -375,11 +376,14 @@ dependencies {
     testImplementation("androidx.test:core:1.5.0")
     testImplementation("androidx.arch.core:core-testing:2.2.0")
     testImplementation("androidx.car.app:app-testing:$carAppVersion")
-    testImplementation("androidx.test:core:1.5.0")
 
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test.uiautomator:uiautomator:2.2.0")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    androidTestImplementation("androidx.test.espresso:espresso-contrib:3.5.1")
+    androidTestImplementation("androidx.test:rules:1.5.0")
     androidTestImplementation("androidx.arch.core:core-testing:2.2.0")
+    androidTestImplementation("tools.fastlane:screengrab:2.1.1")
 
     kapt("com.squareup.moshi:moshi-kotlin-codegen:1.15.0")
 

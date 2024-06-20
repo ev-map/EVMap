@@ -136,7 +136,7 @@ class MapsActivity : AppCompatActivity(),
                         .createPendingIntent()
                 }
             } else if (intent?.scheme == "https" && intent?.data?.host == "www.goingelectric.de") {
-                val id = intent.data?.pathSegments?.last()?.toLongOrNull()
+                val id = intent.data?.pathSegments?.lastOrNull()?.toLongOrNull()
                 if (id != null) {
                     if (prefs.dataSource != "goingelectric") {
                         prefs.dataSource = "goingelectric"
@@ -157,7 +157,7 @@ class MapsActivity : AppCompatActivity(),
                 }
             } else if (intent?.scheme == "https" && intent?.data?.host in listOf("openchargemap.org", "map.openchargemap.io")) {
                 val id = when (intent.data?.host) {
-                    "openchargemap.org" -> intent.data?.pathSegments?.last()?.toLongOrNull()
+                    "openchargemap.org" -> intent.data?.pathSegments?.lastOrNull()?.toLongOrNull()
                     "map.openchargemap.io" -> intent.data?.getQueryParameter("id")?.toLongOrNull()
                     else -> null
                 }

@@ -323,6 +323,9 @@ dependencies {
         // duplicates classes from mapbox-sdk-services
         exclude("org.maplibre.gl", "android-sdk-geojson")
     }
+    implementation("org.maplibre.gl:android-sdk:10.3.2-pre2") {
+        exclude("org.maplibre.gl", "android-sdk-geojson")
+    }
 
     // Google Places
     googleImplementation("com.google.android.libraries.places:places:3.5.0")

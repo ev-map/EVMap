@@ -306,7 +306,7 @@ dependencies {
     implementation("com.google.guava:guava:29.0-android")
     implementation("com.github.pengrad:mapscaleview:1.6.0")
     implementation("com.github.romandanylyk:PageIndicatorView:b1bad589b5")
-    implementation("com.github.ev-map:locale-config-x:e9e56b4111")
+    implementation("com.github.erfansn:locale-config-x:1.0.1")
 
     // Android Auto
     val carAppVersion = "1.4.0"

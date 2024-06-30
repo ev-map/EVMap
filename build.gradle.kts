@@ -24,7 +24,6 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        //noinspection JcenterRepositoryObsolete
         maven { setUrl("https://jitpack.io") }
     }
 }

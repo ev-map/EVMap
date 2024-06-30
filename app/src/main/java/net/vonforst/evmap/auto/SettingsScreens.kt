@@ -114,22 +114,25 @@ class SettingsScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx) {
                             }
                             .build()
                     )
-                    addItem(
-                        Row.Builder()
-                            .setTitle(carContext.getString(R.string.auto_chargers_ahead))
-                            .setToggle(Toggle.Builder {
-                                prefs.showChargersAheadAndroidAuto = it
-                            }.setChecked(prefs.showChargersAheadAndroidAuto).build())
-                            .setImage(
-                                CarIcon.Builder(
-                                    IconCompat.createWithResource(
-                                        carContext,
-                                        R.drawable.ic_navigation
-                                    )
-                                ).setTint(CarColor.DEFAULT).build()
-                            )
-                            .build()
-                    )
+                    if (carContext.carAppApiLevel < 7 || !carContext.isAppDrivenRefreshSupported) {
+                        // this option is only supported in LegacyMapScreen
+                        addItem(
+                            Row.Builder()
+                                .setTitle(carContext.getString(R.string.auto_chargers_ahead))
+                                .setToggle(Toggle.Builder {
+                                    prefs.showChargersAheadAndroidAuto = it
+                                }.setChecked(prefs.showChargersAheadAndroidAuto).build())
+                                .setImage(
+                                    CarIcon.Builder(
+                                        IconCompat.createWithResource(
+                                            carContext,
+                                            R.drawable.ic_navigation
+                                        )
+                                    ).setTint(CarColor.DEFAULT).build()
+                                )
+                                .build()
+                        )
+                    }
                 }
                 addItem(
                     Row.Builder()

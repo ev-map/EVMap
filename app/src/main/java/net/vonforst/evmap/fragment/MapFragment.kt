@@ -297,6 +297,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         get() = resources.getBoolean(R.bool.bottom_sheet_collapsible)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        if (!prefs.welcomeDialogShown || !prefs.dataSourceSet || !prefs.privacyAccepted) {
+            findNavController().navigate(R.id.onboarding)
+        }
+
         requireActivity().addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
         mapFragment!!.getMapAsync(this)
@@ -1051,6 +1055,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         this.map = map
         vm.mapProjection = map.projection
         val context = this.context ?: return
+        view ?: return
+
         chargerIconGenerator = ChargerIconGenerator(context, map.bitmapDescriptorFactory)
 
         vm.mapTrafficSupported.value =

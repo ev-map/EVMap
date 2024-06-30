@@ -60,6 +60,7 @@ class MapsActivity : AppCompatActivity(),
 
         setContentView(R.layout.activity_maps)
 
+        val drawerLayout = findViewById<DrawerLayout>(R.id.drawer_layout)
         appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.map,
@@ -67,7 +68,7 @@ class MapsActivity : AppCompatActivity(),
                 R.id.about,
                 R.id.settings
             ),
-            findViewById<DrawerLayout>(R.id.drawer_layout)
+            drawerLayout
         )
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
@@ -87,6 +88,17 @@ class MapsActivity : AppCompatActivity(),
 
         checkPlayServices(this)
 
+        navController.setGraph(navGraph, MapFragmentArgs(appStart = true).toBundle())
+        var deepLink: PendingIntent? = null
+
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            if (destination.id == R.id.onboarding) {
+                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+            } else {
+                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+            }
+        }
+
         if (!prefs.welcomeDialogShown || !prefs.dataSourceSet) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 // wait for splash screen animation to finish on first start
@@ -104,134 +116,125 @@ class MapsActivity : AppCompatActivity(),
                     }
                 })
             }
-            navGraph.setStartDestination(R.id.onboarding)
-            navController.graph = navGraph
-            return
-        } else if (!prefs.privacyAccepted) {
-            navGraph.setStartDestination(R.id.onboarding)
-            navController.graph = navGraph
-            return
-        } else {
-            navGraph.setStartDestination(R.id.map)
-            navController.setGraph(navGraph, MapFragmentArgs(appStart = true).toBundle())
-            var deepLink: PendingIntent? = null
+        } else if (intent?.scheme == "geo") {
+            val query = intent.data?.query?.split("=")?.get(1)
+            val coords = getLocationFromIntent(intent)
 
-            if (intent?.scheme == "geo") {
-                val query = intent.data?.query?.split("=")?.get(1)
-                val coords = getLocationFromIntent(intent)
-
-                if (coords != null) {
-                    val lat = coords[0]
-                    val lon = coords[1]
-                    deepLink = navController.createDeepLink()
-                        .setGraph(R.navigation.nav_graph)
-                        .setDestination(R.id.map)
-                        .setArguments(MapFragmentArgs(latLng = LatLng(lat, lon)).toBundle())
-                        .createPendingIntent()
-                } else if (!query.isNullOrEmpty()) {
-                    deepLink = navController.createDeepLink()
-                        .setGraph(R.navigation.nav_graph)
-                        .setDestination(R.id.map)
-                        .setArguments(MapFragmentArgs(locationName = query).toBundle())
-                        .createPendingIntent()
-                }
-            } else if (intent?.scheme == "https" && intent?.data?.host == "www.goingelectric.de") {
-                val id = intent.data?.pathSegments?.lastOrNull()?.toLongOrNull()
-                if (id != null) {
-                    if (prefs.dataSource != "goingelectric") {
-                        prefs.dataSource = "goingelectric"
-                        Toast.makeText(
-                            this,
-                            getString(
-                                R.string.data_source_switched_to,
-                                getString(R.string.data_source_goingelectric)
-                            ),
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
-                    deepLink = navController.createDeepLink()
-                        .setGraph(R.navigation.nav_graph)
-                        .setDestination(R.id.map)
-                        .setArguments(MapFragmentArgs(chargerId = id).toBundle())
-                        .createPendingIntent()
-                }
-            } else if (intent?.scheme == "https" && intent?.data?.host in listOf("openchargemap.org", "map.openchargemap.io")) {
-                val id = when (intent.data?.host) {
-                    "openchargemap.org" -> intent.data?.pathSegments?.lastOrNull()?.toLongOrNull()
-                    "map.openchargemap.io" -> intent.data?.getQueryParameter("id")?.toLongOrNull()
-                    else -> null
-                }
-                if (id != null) {
-                    if (prefs.dataSource != "openchargemap") {
-                        prefs.dataSource = "openchargemap"
-                        Toast.makeText(
-                            this,
-                            getString(
-                                R.string.data_source_switched_to,
-                                getString(R.string.data_source_openchargemap)
-                            ),
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
-                    deepLink = navController.createDeepLink()
-                        .setGraph(R.navigation.nav_graph)
-                        .setDestination(R.id.map)
-                        .setArguments(MapFragmentArgs(chargerId = id).toBundle())
-                        .createPendingIntent()
-                }
-            } else if (intent.scheme == "net.vonforst.evmap") {
-                intent.data?.let {
-                    if (it.host == "find_charger") {
-                        val lat = it.getQueryParameter("latitude")?.toDouble()
-                        val lon = it.getQueryParameter("longitude")?.toDouble()
-                        val name = it.getQueryParameter("name")
-                        if (lat != null && lon != null) {
-                            deepLink = navController.createDeepLink()
-                                .setGraph(R.navigation.nav_graph)
-                                .setDestination(R.id.map)
-                                .setArguments(
-                                    MapFragmentArgs(
-                                        latLng = LatLng(lat, lon),
-                                        locationName = name
-                                    ).toBundle()
-                                )
-                                .createPendingIntent()
-                        } else if (name != null) {
-                            deepLink = navController.createDeepLink()
-                                .setGraph(R.navigation.nav_graph)
-                                .setDestination(R.id.map)
-                                .setArguments(MapFragmentArgs(locationName = name).toBundle())
-                                .createPendingIntent()
-                        }
-                    }
-                }
-            } else if (intent.hasExtra(EXTRA_CHARGER_ID)) {
+            if (coords != null) {
+                val lat = coords[0]
+                val lon = coords[1]
                 deepLink = navController.createDeepLink()
+                    .setGraph(R.navigation.nav_graph)
                     .setDestination(R.id.map)
-                    .setArguments(
-                        MapFragmentArgs(
-                            chargerId = intent.getLongExtra(EXTRA_CHARGER_ID, 0),
-                            latLng = LatLng(
-                                intent.getDoubleExtra(EXTRA_LAT, 0.0),
-                                intent.getDoubleExtra(EXTRA_LON, 0.0)
-                            )
-                        ).toBundle()
-                    )
+                    .setArguments(MapFragmentArgs(latLng = LatLng(lat, lon)).toBundle())
                     .createPendingIntent()
-            } else if (intent.hasExtra(EXTRA_FAVORITES)) {
+            } else if (!query.isNullOrEmpty()) {
                 deepLink = navController.createDeepLink()
-                    .setGraph(navGraph)
-                    .setDestination(R.id.favs)
-                    .createPendingIntent()
-            } else if (intent.hasExtra(EXTRA_DONATE)) {
-                deepLink = navController.createDeepLink()
-                    .setGraph(navGraph)
-                    .setDestination(R.id.donate)
+                    .setGraph(R.navigation.nav_graph)
+                    .setDestination(R.id.map)
+                    .setArguments(MapFragmentArgs(locationName = query).toBundle())
                     .createPendingIntent()
             }
-
-            deepLink?.send()
+        } else if (intent?.scheme == "https" && intent?.data?.host == "www.goingelectric.de") {
+            val id = intent.data?.pathSegments?.lastOrNull()?.toLongOrNull()
+            if (id != null) {
+                if (prefs.dataSource != "goingelectric") {
+                    prefs.dataSource = "goingelectric"
+                    Toast.makeText(
+                        this,
+                        getString(
+                            R.string.data_source_switched_to,
+                            getString(R.string.data_source_goingelectric)
+                        ),
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+                deepLink = navController.createDeepLink()
+                    .setGraph(R.navigation.nav_graph)
+                    .setDestination(R.id.map)
+                    .setArguments(MapFragmentArgs(chargerId = id).toBundle())
+                    .createPendingIntent()
+            }
+        } else if (intent?.scheme == "https" && intent?.data?.host in listOf(
+                "openchargemap.org",
+                "map.openchargemap.io"
+            )
+        ) {
+            val id = when (intent.data?.host) {
+                "openchargemap.org" -> intent.data?.pathSegments?.lastOrNull()?.toLongOrNull()
+                "map.openchargemap.io" -> intent.data?.getQueryParameter("id")?.toLongOrNull()
+                else -> null
+            }
+            if (id != null) {
+                if (prefs.dataSource != "openchargemap") {
+                    prefs.dataSource = "openchargemap"
+                    Toast.makeText(
+                        this,
+                        getString(
+                            R.string.data_source_switched_to,
+                            getString(R.string.data_source_openchargemap)
+                        ),
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+                deepLink = navController.createDeepLink()
+                    .setGraph(R.navigation.nav_graph)
+                    .setDestination(R.id.map)
+                    .setArguments(MapFragmentArgs(chargerId = id).toBundle())
+                    .createPendingIntent()
+            }
+        } else if (intent.scheme == "net.vonforst.evmap") {
+            intent.data?.let {
+                if (it.host == "find_charger") {
+                    val lat = it.getQueryParameter("latitude")?.toDouble()
+                    val lon = it.getQueryParameter("longitude")?.toDouble()
+                    val name = it.getQueryParameter("name")
+                    if (lat != null && lon != null) {
+                        deepLink = navController.createDeepLink()
+                            .setGraph(R.navigation.nav_graph)
+                            .setDestination(R.id.map)
+                            .setArguments(
+                                MapFragmentArgs(
+                                    latLng = LatLng(lat, lon),
+                                    locationName = name
+                                ).toBundle()
+                            )
+                            .createPendingIntent()
+                    } else if (name != null) {
+                        deepLink = navController.createDeepLink()
+                            .setGraph(R.navigation.nav_graph)
+                            .setDestination(R.id.map)
+                            .setArguments(MapFragmentArgs(locationName = name).toBundle())
+                            .createPendingIntent()
+                    }
+                }
+            }
+        } else if (intent.hasExtra(EXTRA_CHARGER_ID)) {
+            deepLink = navController.createDeepLink()
+                .setDestination(R.id.map)
+                .setArguments(
+                    MapFragmentArgs(
+                        chargerId = intent.getLongExtra(EXTRA_CHARGER_ID, 0),
+                        latLng = LatLng(
+                            intent.getDoubleExtra(EXTRA_LAT, 0.0),
+                            intent.getDoubleExtra(EXTRA_LON, 0.0)
+                        )
+                    ).toBundle()
+                )
+                .createPendingIntent()
+        } else if (intent.hasExtra(EXTRA_FAVORITES)) {
+            deepLink = navController.createDeepLink()
+                .setGraph(navGraph)
+                .setDestination(R.id.favs)
+                .createPendingIntent()
+        } else if (intent.hasExtra(EXTRA_DONATE)) {
+            deepLink = navController.createDeepLink()
+                .setGraph(navGraph)
+                .setDestination(R.id.donate)
+                .createPendingIntent()
         }
+
+        deepLink?.send()
     }
 
     fun navigateTo(charger: ChargeLocation) {

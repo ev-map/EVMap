@@ -101,9 +101,9 @@ to switch between the two, while the `foss` flavor only includes OSM.
 
 ### ArcGIS
 
-[World Imagery basemap](https://www.arcgis.com/home/item.html?id=10df2279f9684e4a9f6a7f08febac2a9)
-*We use this for the satellite map, as [Jawg's](https://blog.jawg.io/satellite-imaging/) satellite
-style does not have global coverage.*
+[World Imagery basemap](https://www.arcgis.com/home/item.html?id=10df2279f9684e4a9f6a7f08febac2a9)\
+*We use this for the satellite map, as [Jawg's satellite
+style](https://blog.jawg.io/satellite-imaging/) does not have global coverage.*
 
 <details>
 <summary>How to obtain an API key</summary>
@@ -116,7 +116,7 @@ style does not have global coverage.*
 
 ### Mapbox
 
-[Geocoding API](https://docs.mapbox.com/api/search/geocoding/)
+[Geocoding API](https://docs.mapbox.com/api/search/geocoding/)\
 *previously we also used Mapbox's Maps SDK, but this has now been switched to Jawg Maps.*
 
 <details>

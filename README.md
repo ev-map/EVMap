@@ -46,8 +46,7 @@ features and how they can be obtained in our [documentation page](doc/api_keys.m
 There are four different build flavors, `googleNormal`, `fossNormal`, `googleAutomotive`, and
 `fossAutomotive`.
 
-- The `foss` variants only use OSM data and should run on most Android devices, even without
-  Google Play Services.
+- The `foss` variants only use OSM data for the base map and place search. They should run on most Android devices, even those without Google Play Services.
     - `fossNormal` is intended to run on smartphones and tablets, and also includes the Android
       Auto app for use on the car display (however Android Auto may not work if the app is not
       installed from Google Play, see https://github.com/ev-map/EVMap/issues/319).

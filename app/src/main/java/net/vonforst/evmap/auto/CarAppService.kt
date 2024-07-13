@@ -125,8 +125,12 @@ class EVMapSession(val cas: CarAppService) : Session(), DefaultLifecycleObserver
     }
 
     override fun onCreateScreen(intent: Intent): Screen {
-
-        val mapScreen = MapScreen(carContext, this)
+        val mapScreen =
+            if (carContext.carAppApiLevel >= 7 && carContext.isAppDrivenRefreshSupported) {
+            MapScreen(carContext, this)
+        } else {
+            LegacyMapScreen(carContext, this)
+        }
         val screens = mutableListOf<Screen>(mapScreen)
 
         handleActionsIntent(intent)?.let {

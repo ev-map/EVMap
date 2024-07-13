@@ -57,10 +57,7 @@ import coil.memory.MemoryCache
 import com.car2go.maps.AnyMap
 import com.car2go.maps.MapFragment
 import com.car2go.maps.OnMapReadyCallback
-import com.car2go.maps.model.BitmapDescriptor
 import com.car2go.maps.model.LatLng
-import com.car2go.maps.model.Marker
-import com.car2go.maps.model.MarkerOptions
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialArcMotion
@@ -79,10 +76,7 @@ import com.mahc.custombottomsheetbehavior.MergedAppBarLayoutBehavior
 import com.stfalcon.imageviewer.StfalconImageViewer
 import io.michaelrocks.bimap.HashBiMap
 import io.michaelrocks.bimap.MutableBiMap
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import net.vonforst.evmap.BuildConfig
 import net.vonforst.evmap.MapsActivity
 import net.vonforst.evmap.R
 import net.vonforst.evmap.adapter.ConnectorAdapter
@@ -98,7 +92,6 @@ import net.vonforst.evmap.location.FusionEngine
 import net.vonforst.evmap.location.LocationEngine
 import net.vonforst.evmap.location.Priority
 import net.vonforst.evmap.model.ChargeLocation
-import net.vonforst.evmap.model.ChargeLocationCluster
 import net.vonforst.evmap.model.ChargepointListItem
 import net.vonforst.evmap.model.ChargerPhoto
 import net.vonforst.evmap.model.FILTERS_CUSTOM
@@ -107,14 +100,8 @@ import net.vonforst.evmap.model.FILTERS_FAVORITES
 import net.vonforst.evmap.navigation.safeNavigate
 import net.vonforst.evmap.shouldUseImperialUnits
 import net.vonforst.evmap.storage.PreferenceDataSource
-import net.vonforst.evmap.ui.ChargerIconGenerator
-import net.vonforst.evmap.ui.ClusterIconGenerator
 import net.vonforst.evmap.ui.HideOnScrollFabBehavior
-import net.vonforst.evmap.ui.MarkerAnimator
-import net.vonforst.evmap.ui.chargerZ
-import net.vonforst.evmap.ui.clusterZ
-import net.vonforst.evmap.ui.getMarkerTint
-import net.vonforst.evmap.ui.placeSearchZ
+import net.vonforst.evmap.ui.MarkerManager
 import net.vonforst.evmap.ui.setTouchModal
 import net.vonforst.evmap.utils.boundingBox
 import net.vonforst.evmap.utils.checkAnyLocationPermission
@@ -129,9 +116,6 @@ import net.vonforst.evmap.viewmodel.Status
 import java.io.IOException
 import java.time.Duration
 import java.time.Instant
-import kotlin.collections.component1
-import kotlin.collections.component2
-import kotlin.collections.contains
 import kotlin.collections.set
 import kotlin.math.min
 
@@ -142,24 +126,16 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
     private val galleryVm: GalleryViewModel by activityViewModels()
     private var mapFragment: MapFragment? = null
     private var map: AnyMap? = null
+    private var markerManager: MarkerManager? = null
     private lateinit var locationEngine: LocationEngine
     private var requestingLocationUpdates = false
     private lateinit var bottomSheetBehavior: BottomSheetBehaviorGoogleMapsLike<View>
     private lateinit var detailAppBarBehavior: MergedAppBarLayoutBehavior
     private lateinit var detailsDialog: ConnectorDetailsDialog
     private lateinit var prefs: PreferenceDataSource
-    private var markers: MutableBiMap<Marker, ChargeLocation> = HashBiMap()
-    private var clusterMarkers: List<Marker> = emptyList()
-    private var searchResultMarker: Marker? = null
-    private var searchResultIcon: BitmapDescriptor? = null
     private var connectionErrorSnackbar: Snackbar? = null
-    private var previousChargepointIds: Set<Long>? = null
     private var mapTopPadding: Int = 0
     private var popupMenu: PopupMenu? = null
-
-    private lateinit var clusterIconGenerator: ClusterIconGenerator
-    private lateinit var chargerIconGenerator: ChargerIconGenerator
-    private lateinit var animator: MarkerAnimator
     private lateinit var favToggle: MenuItem
     private val backPressedCallback = object : OnBackPressedCallback(false) {
         override fun handleOnBackPressed() {
@@ -198,7 +174,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         prefs = PreferenceDataSource(requireContext())
 
         locationEngine = FusionEngine(requireContext())
-        clusterIconGenerator = ClusterIconGenerator(requireContext())
 
         enterTransition = MaterialFadeThrough()
         exitTransition = MaterialFadeThrough()
@@ -237,12 +212,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 .replace(R.id.map, mapFragment!!, mapFragmentTag)
                 .commit()
 
-            // reset map-related stuff (map provider may have changed)
             map = null
-            markers.clear()
-            clusterMarkers = emptyList()
-            searchResultMarker = null
-            searchResultIcon = null
+            markerManager = null
         }
 
         binding.detailAppBar.toolbar.popupTheme =
@@ -632,16 +603,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         } else {
             vm.insertFavorite(charger)
         }
-        markers.inverse[charger]?.setIcon(
-            chargerIconGenerator.getBitmapDescriptor(
-                getMarkerTint(charger, vm.filteredConnectors.value),
-                highlight = true,
-                fault = charger.faultReport != null,
-                multi = charger.isMulti(vm.filteredConnectors.value),
-                fav = fav == null,
-                mini = vm.useMiniMarkers.value == true
-            )
-        )
     }
 
     private fun setupObservers() {
@@ -693,16 +654,17 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 binding.fabDirections.show()
                 detailAppBarBehavior.setToolbarTitle(it.name)
                 updateFavoriteToggle()
-                highlightMarker(it)
+                markerManager?.highlighedCharger = it
+                markerManager?.animateBounce(it)
             } else {
                 bottomSheetBehavior.state = STATE_HIDDEN
-                unhighlightAllMarkers()
+                markerManager?.highlighedCharger = null
             }
         }
         vm.chargepoints.observe(viewLifecycleOwner, Observer { res ->
             val chargepoints = res.data
             if (chargepoints != null) {
-                updateMap(chargepoints)
+                markerManager?.chargepoints = chargepoints
             }
             when (res.status) {
                 Status.ERROR -> {
@@ -725,10 +687,14 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             }
         })
         vm.useMiniMarkers.observe(viewLifecycleOwner) {
-            vm.chargepoints.value?.data?.let { updateMap(it) }
+            markerManager?.mini = it
+        }
+        vm.filteredConnectors.observe(viewLifecycleOwner) {
+            markerManager?.filteredConnectors = it
         }
         vm.favorites.observe(viewLifecycleOwner) {
             updateFavoriteToggle()
+            markerManager?.favorites = it.map { it.favorite.chargerId }.toSet()
         }
         vm.searchResult.observe(viewLifecycleOwner) { place ->
             displaySearchResult(place, moveCamera = true)
@@ -759,8 +725,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
     private fun displaySearchResult(place: PlaceWithBounds?, moveCamera: Boolean) {
         val map = this.map ?: return
-        searchResultMarker?.remove()
-        searchResultMarker = null
+        markerManager?.searchResult = place
 
         if (place != null) {
             // disable location following when search result is shown
@@ -772,18 +737,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                     map.animateCamera(map.cameraUpdateFactory.newLatLngZoom(place.latLng, 12f))
                 }
             }
-
-            if (searchResultIcon == null) {
-                searchResultIcon =
-                    map.bitmapDescriptorFactory.fromResource(R.drawable.ic_map_marker)
-            }
-            searchResultMarker = map.addMarker(
-                MarkerOptions()
-                    .z(placeSearchZ)
-                    .position(place.latLng)
-                    .icon(searchResultIcon)
-                    .anchor(0.5f, 1f)
-            )
         } else {
             binding.search.setText("")
         }
@@ -798,53 +751,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                     || (vm.layersMenuOpen.value ?: false)
                     || binding.search.hasFocus()
                     || vm.selectedChargepoint.value != null
-    }
-
-    private fun unhighlightAllMarkers() {
-        markers.forEach { (m, c) ->
-            m.setIcon(
-                chargerIconGenerator.getBitmapDescriptor(
-                    getMarkerTint(c, vm.filteredConnectors.value),
-                    highlight = false,
-                    fault = c.faultReport != null,
-                    multi = c.isMulti(vm.filteredConnectors.value),
-                    fav = c.id in (vm.favorites.value?.map { it.charger.id } ?: emptyList()),
-                    mini = vm.useMiniMarkers.value == true
-                )
-            )
-        }
-    }
-
-    private fun highlightMarker(charger: ChargeLocation) {
-        val marker = markers.inverse[charger] ?: return
-        // highlight this marker
-        marker.setIcon(
-            chargerIconGenerator.getBitmapDescriptor(
-                getMarkerTint(charger, vm.filteredConnectors.value),
-                highlight = true,
-                fault = charger.faultReport != null,
-                multi = charger.isMulti(vm.filteredConnectors.value),
-                fav = charger.id in (vm.favorites.value?.map { it.charger.id } ?: emptyList()),
-                mini = vm.useMiniMarkers.value == true
-            )
-        )
-        animator.animateMarkerBounce(marker, vm.useMiniMarkers.value == true)
-
-        // un-highlight all other markers
-        markers.forEach { (m, c) ->
-            if (m != marker) {
-                m.setIcon(
-                    chargerIconGenerator.getBitmapDescriptor(
-                        getMarkerTint(c, vm.filteredConnectors.value),
-                        highlight = false,
-                        fault = c.faultReport != null,
-                        multi = c.isMulti(vm.filteredConnectors.value),
-                        fav = c.id in (vm.favorites.value?.map { it.charger.id } ?: emptyList()),
-                        mini = vm.useMiniMarkers.value == true
-                    )
-                )
-            }
-        }
     }
 
     private fun updateFavoriteToggle() {
@@ -1056,27 +962,25 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         vm.mapProjection = map.projection
         val context = this.context ?: return
         view ?: return
-
-        chargerIconGenerator = ChargerIconGenerator(context, map.bitmapDescriptorFactory)
-
-        vm.mapTrafficSupported.value =
-            mapFragment?.let { AnyMap.Feature.TRAFFIC_LAYER in it.supportedFeatures } ?: false
-
-        if (BuildConfig.FLAVOR.contains("google") && mapFragment!!.priority[0] == MapFragment.GOOGLE) {
-            // Google Maps: icons can be generated in background thread
-            lifecycleScope.launch {
-                withContext(Dispatchers.Default) {
-                    chargerIconGenerator.preloadCache()
-                }
+        markerManager = MarkerManager(context, map, this).apply {
+            onChargerClick = {
+                vm.chargerSparse.value = it
             }
-        } else {
-            // MapLibre: needs to be run on main thread
-            chargerIconGenerator.preloadCache()
+            onClusterClick = {
+                val newZoom = map.cameraPosition.zoom + 2
+                map.animateCamera(
+                    map.cameraUpdateFactory.newLatLngZoom(
+                        LatLng(it.coordinates.lat, it.coordinates.lng),
+                        newZoom
+                    )
+                )
+            }
+            chargepoints = vm.chargepoints.value?.data ?: emptyList()
+            highlighedCharger = vm.chargerSparse.value
+            searchResult = vm.searchResult.value
+            favorites = vm.favorites.value?.map { it.favorite.chargerId }?.toSet() ?: emptySet()
         }
 
-
-
-        animator = MarkerAnimator(chargerIconGenerator)
         map.uiSettings.setTiltGesturesEnabled(false)
         map.uiSettings.setRotateGesturesEnabled(prefs.mapRotateGesturesEnabled)
         map.setIndoorEnabled(false)
@@ -1128,26 +1032,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                     closeLayersMenu()
                 }
             }
-        }
-        map.setOnMarkerClickListener { marker ->
-            when (marker) {
-                in markers -> {
-                    vm.chargerSparse.value = markers[marker]
-                    true
-                }
-                in clusterMarkers -> {
-                    val newZoom = map.cameraPosition.zoom + 2
-                    map.animateCamera(
-                        map.cameraUpdateFactory.newLatLngZoom(
-                            marker.position,
-                            newZoom
-                        )
-                    )
-                    true
-                }
-                else -> false
-            }
-
         }
         map.setOnMapClickListener {
             if (backPressedCallback.isEnabled) {
@@ -1277,111 +1161,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             } else {
                 map.moveCamera(camUpdate)
             }
-        }
-    }
-
-    @Synchronized
-    private fun updateMap(chargepoints: List<ChargepointListItem>) {
-        val map = this.map ?: return
-        clusterMarkers.forEach { it.remove() }
-
-        val clusters = chargepoints.filterIsInstance<ChargeLocationCluster>()
-        val chargers = chargepoints.filterIsInstance<ChargeLocation>()
-
-        val chargepointIds = chargers.map { it.id }.toSet()
-
-        // update icons of existing markers (connector filter may have changed)
-        for ((marker, charger) in markers) {
-            val highlight = charger.id == vm.chargerSparse.value?.id
-            marker.setIcon(
-                chargerIconGenerator.getBitmapDescriptor(
-                    getMarkerTint(charger, vm.filteredConnectors.value),
-                    highlight = highlight,
-                    fault = charger.faultReport != null,
-                    multi = charger.isMulti(vm.filteredConnectors.value),
-                    fav = charger.id in (vm.favorites.value?.map { it.charger.id } ?: emptyList()),
-                    mini = vm.useMiniMarkers.value == true
-                )
-            )
-            marker.setAnchor(0.5f, if (vm.useMiniMarkers.value == true) 0.5f else 1f)
-        }
-
-        if (chargers.toSet() != markers.values) {
-            // remove markers that disappeared
-            val bounds = map.projection.visibleRegion.latLngBounds
-            markers.entries.toList().forEach {
-                val marker = it.key
-                val charger = it.value
-                if (!chargepointIds.contains(charger.id)) {
-                    // animate marker if it is visible, otherwise remove immediately
-                    if (bounds.contains(marker.position)) {
-                        val tint = getMarkerTint(charger, vm.filteredConnectors.value)
-                        val highlight = charger.id == vm.chargerSparse.value?.id
-                        val fault = charger.faultReport != null
-                        val multi = charger.isMulti(vm.filteredConnectors.value)
-                        val fav =
-                            charger.id in (vm.favorites.value?.map { it.charger.id } ?: emptyList())
-                        animator.animateMarkerDisappear(
-                            marker, tint, highlight, fault, multi, fav,
-                            vm.useMiniMarkers.value == true
-                        )
-                    } else {
-                        animator.deleteMarker(marker)
-                    }
-                    markers.remove(marker)
-                }
-            }
-            // add new markers
-            val map1 = markers.values.map { it.id }
-            for (charger in chargers) {
-                if (!map1.contains(charger.id)) {
-                    val tint = getMarkerTint(charger, vm.filteredConnectors.value)
-                    val highlight = charger.id == vm.chargerSparse.value?.id
-                    val fault = charger.faultReport != null
-                    val multi = charger.isMulti(vm.filteredConnectors.value)
-                    val fav =
-                        charger.id in (vm.favorites.value?.map { it.charger.id } ?: emptyList())
-                    val marker = map.addMarker(
-                        MarkerOptions()
-                            .position(LatLng(charger.coordinates.lat, charger.coordinates.lng))
-                            .z(chargerZ)
-                            .icon(
-                                chargerIconGenerator.getBitmapDescriptor(
-                                    tint,
-                                    0f,
-                                    255,
-                                    highlight,
-                                    fault,
-                                    multi,
-                                    fav,
-                                    vm.useMiniMarkers.value == true
-                                )
-                            )
-                            .anchor(0.5f, if (vm.useMiniMarkers.value == true) 0.5f else 1f)
-                    )
-                    animator.animateMarkerAppear(
-                        marker, tint, highlight, fault, multi, fav,
-                        vm.useMiniMarkers.value == true
-                    )
-                    markers[marker] = charger
-                }
-            }
-            previousChargepointIds = chargepointIds
-        }
-        clusterMarkers = clusters.map { cluster ->
-            map.addMarker(
-                MarkerOptions()
-                    .position(LatLng(cluster.coordinates.lat, cluster.coordinates.lng))
-                    .z(clusterZ)
-                    .icon(
-                        map.bitmapDescriptorFactory.fromBitmap(
-                            clusterIconGenerator.makeIcon(
-                                cluster.clusterCount.toString()
-                            )
-                        )
-                    )
-                    .anchor(0.5f, 0.5f)
-            )
         }
     }
 

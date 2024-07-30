@@ -11,6 +11,7 @@ import android.net.Uri
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.Spanned
+import android.util.Log
 import androidx.car.app.CarContext
 import androidx.car.app.CarToast
 import androidx.car.app.HostException
@@ -57,6 +58,7 @@ import net.vonforst.evmap.api.iconForPlugType
 import net.vonforst.evmap.api.nameForPlugType
 import net.vonforst.evmap.api.stringProvider
 import net.vonforst.evmap.model.ChargeLocation
+import net.vonforst.evmap.model.Coordinate
 import net.vonforst.evmap.model.Cost
 import net.vonforst.evmap.model.FaultReport
 import net.vonforst.evmap.model.Favorite
@@ -75,6 +77,7 @@ import java.time.format.FormatStyle
 import kotlin.math.floor
 import kotlin.math.roundToInt
 
+private const val TAG = "ChargerDetailScreen"
 
 class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : Screen(ctx) {
     var charger: ChargeLocation? = null
@@ -544,6 +547,14 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
         }
 
     private fun navigateToCharger(charger: ChargeLocation) {
+        val success = navigateCarApp(charger)
+        if (!success && BuildConfig.FLAVOR_automotive == "automotive") {
+            // on AAOS, some OEMs' navigation apps might not support
+            navigateRegularApp(charger)
+        }
+    }
+
+    private fun navigateCarApp(charger: ChargeLocation): Boolean {
         val coord = charger.coordinates
         val intent =
             Intent(
@@ -552,11 +563,35 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
             )
         try {
             carContext.startCarApp(intent)
+            return true
         } catch (e: HostException) {
-            CarToast.makeText(carContext, R.string.no_maps_app_found, CarToast.LENGTH_SHORT).show()
-        } catch (ignored: SecurityException) {
-
+            Log.w(TAG, "Could not start navigation using car app intent")
+            Log.w(TAG, intent.toString())
+            e.printStackTrace()
+        } catch (e: SecurityException) {
+            Log.w(TAG, "Could not start navigation using car app intent")
+            Log.w(TAG, intent.toString())
+            e.printStackTrace()
         }
+        return false
+    }
+
+    private fun navigateRegularApp(charger: ChargeLocation): Boolean {
+        val coord = charger.coordinates
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = Uri.parse(
+            "geo:${coord.lat},${coord.lng}?q=${coord.lat},${coord.lng}(${
+                Uri.encode(charger.name)
+            })"
+        )
+        if (intent.resolveActivity(carContext.packageManager) != null) {
+            carContext.startActivity(intent)
+            return true
+        } else {
+            Log.w(TAG, "Could not start navigation using regular intent")
+            Log.w(TAG, intent.toString())
+        }
+        return false
     }
 
     private fun loadCharger() {

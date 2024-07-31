@@ -7,8 +7,6 @@ import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
 import net.vonforst.evmap.addDebugInterceptors
 import net.vonforst.evmap.api.RateLimitInterceptor
-import net.vonforst.evmap.api.await
-import net.vonforst.evmap.api.chargeprice.ChargepriceApi
 import net.vonforst.evmap.api.equivalentPlugTypes
 import net.vonforst.evmap.cartesianProduct
 import net.vonforst.evmap.model.ChargeLocation
@@ -18,7 +16,6 @@ import net.vonforst.evmap.viewmodel.Resource
 import okhttp3.Cache
 import okhttp3.JavaNetCookieJar
 import okhttp3.OkHttpClient
-import okhttp3.Request
 import retrofit2.HttpException
 import java.io.IOException
 import java.net.CookieManager
@@ -40,16 +37,6 @@ interface AvailabilityDetector {
 
 abstract class BaseAvailabilityDetector(private val client: OkHttpClient) : AvailabilityDetector {
     protected val radius = 150  // max radius in meters
-
-    protected suspend fun httpGet(url: String): String {
-        val request = Request.Builder().url(url).build()
-        val response = client.newCall(request).await()
-
-        if (!response.isSuccessful) throw IOException(response.message)
-
-        val str = response.body!!.string()
-        return str
-    }
 
     protected fun getCorrespondingChargepoint(
         cps: Iterable<Chargepoint>, type: String, power: Double

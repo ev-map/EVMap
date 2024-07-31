@@ -254,7 +254,7 @@ data class OCMUserComment(
     @Json(name = "ID") val id: Long,
     @Json(name = "CommentTypeID") val commentTypeId: Long,
     @Json(name = "Comment") val comment: String?,
-    @Json(name = "UserName") val userName: String,
+    @Json(name = "UserName") val userName: String?,
     @Json(name = "DateCreated") val dateCreated: ZonedDateTime
 )
 

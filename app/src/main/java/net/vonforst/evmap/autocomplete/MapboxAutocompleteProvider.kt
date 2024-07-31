@@ -16,6 +16,7 @@ import com.mapbox.api.geocoding.v5.models.CarmenFeature
 import com.mapbox.geojson.BoundingBox
 import com.mapbox.geojson.Point
 import net.vonforst.evmap.R
+import retrofit2.HttpException
 import java.io.IOException
 
 class MapboxAutocompleteProvider(val context: Context) : AutocompleteProvider {
@@ -25,7 +26,7 @@ class MapboxAutocompleteProvider(val context: Context) : AutocompleteProvider {
     override val id = "mapbox"
 
     override fun autocomplete(query: String, location: LatLng?): List<AutocompletePlace> {
-        val result = MapboxGeocoding.builder().apply {
+        val request = MapboxGeocoding.builder().apply {
             location?.let {
                 proximity(Point.fromLngLat(location.longitude, location.latitude))
             }
@@ -33,7 +34,12 @@ class MapboxAutocompleteProvider(val context: Context) : AutocompleteProvider {
             accessToken(context.getString(R.string.mapbox_key))
             autocomplete(true)
             this.query(query)
-        }.build().executeCall()
+        }
+        val result = try {
+            request.build().executeCall()
+        } catch (e: HttpException) {
+            throw IOException(e)
+        }
         if (!result.isSuccessful) {
             throw IOException(result.message())
         }

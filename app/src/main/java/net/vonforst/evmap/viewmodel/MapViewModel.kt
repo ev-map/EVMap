@@ -27,7 +27,6 @@ import net.vonforst.evmap.api.availability.ChargeLocationStatus
 import net.vonforst.evmap.api.availability.tesla.Pricing
 import net.vonforst.evmap.api.createApi
 import net.vonforst.evmap.api.fronyx.PredictionData
-import net.vonforst.evmap.api.fronyx.PredictionRepository
 import net.vonforst.evmap.api.goingelectric.GEChargepoint
 import net.vonforst.evmap.api.openchargemap.OCMConnection
 import net.vonforst.evmap.api.openchargemap.OCMReferenceData
@@ -266,13 +265,14 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
         it.data?.extraData as? Pricing
     }
 
-    private val predictionRepository = PredictionRepository(application)
+    //private val predictionRepository = PredictionRepository(application)
 
     val predictionData: LiveData<PredictionData> = availability.switchMap { av ->
-        liveData {
+        /*liveData {
             val charger = charger.value?.data ?: return@liveData
             emit(predictionRepository.getPredictionData(charger, av.data, filteredConnectors.value))
-        }
+        }*/
+        MutableLiveData()
     }
 
     val myLocationEnabled: MutableLiveData<Boolean> by lazy {

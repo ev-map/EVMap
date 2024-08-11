@@ -10,11 +10,11 @@
             android:defaultValue="goingelectric"
             app:useSimpleSummaryProvider="true" />
 
-        <CheckBoxPreference
+        <!--<CheckBoxPreference
             android:key="prediction_enabled"
             android:title="@string/pref_prediction_enabled"
             android:defaultValue="true"
-            android:summary="@string/pref_prediction_enabled_summary" />
+            android:summary="@string/pref_prediction_enabled_summary" />-->
 
         <Preference
             android:key="tesla_account"

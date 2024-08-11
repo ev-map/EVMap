@@ -93,7 +93,3 @@ free, i.e. the background map displayed in the app if OpenStreetMap is selected 
 <a href="https://chargeprice.app"><img src="https://raw.githubusercontent.com/ev-map/EVMap/master/_img/powered_by_chargeprice.svg" alt="Powered by Chargeprice" height="58"/></a><br>
 Since April 2021, **Chargeprice.app** provide their price comparison API at a greatly reduced
 price for EVMap. This data is used in EVMap's price comparison feature.
-
-<a href="https://fronyx.io/"><img src="https://github.com/ev-map/EVMap/blob/master/_img/powered_by_fronyx.svg" alt="Powered by Fronyx" height="68"/></a><br>
-Since September 2022, for certain charging stations, **Fronyx** provide us free access to their API
-for availability predictions.

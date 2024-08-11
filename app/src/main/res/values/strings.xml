@@ -367,4 +367,5 @@
     <string name="pref_chargeprice_native_integration">Price comparison within EVMap</string>
     <string name="pref_chargeprice_native_integration_on">Pricing data will be shown directly in EVMap</string>
     <string name="pref_chargeprice_native_integration_off">Price comparison button will refer to the Chargeprice app or website</string>
+    <string name="auto_zoom_for_details">Zoom in to see details</string>
 </resources>

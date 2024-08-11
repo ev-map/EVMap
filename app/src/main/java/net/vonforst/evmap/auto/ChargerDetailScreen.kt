@@ -3,7 +3,6 @@ package net.vonforst.evmap.auto
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Matrix
 import android.graphics.RectF
 import android.graphics.drawable.BitmapDrawable
@@ -11,10 +10,8 @@ import android.net.Uri
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.Spanned
-import android.util.Log
 import androidx.car.app.CarContext
 import androidx.car.app.CarToast
-import androidx.car.app.HostException
 import androidx.car.app.Screen
 import androidx.car.app.constraints.ConstraintManager
 import androidx.car.app.model.Action
@@ -54,11 +51,7 @@ import net.vonforst.evmap.api.createApi
 import net.vonforst.evmap.api.fronyx.FronyxApi
 import net.vonforst.evmap.api.fronyx.PredictionData
 import net.vonforst.evmap.api.fronyx.PredictionRepository
-import net.vonforst.evmap.api.iconForPlugType
-import net.vonforst.evmap.api.nameForPlugType
-import net.vonforst.evmap.api.stringProvider
 import net.vonforst.evmap.model.ChargeLocation
-import net.vonforst.evmap.model.Coordinate
 import net.vonforst.evmap.model.Cost
 import net.vonforst.evmap.model.FaultReport
 import net.vonforst.evmap.model.Favorite
@@ -67,7 +60,6 @@ import net.vonforst.evmap.storage.AppDatabase
 import net.vonforst.evmap.storage.ChargeLocationsRepository
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.ui.ChargerIconGenerator
-import net.vonforst.evmap.ui.availabilityText
 import net.vonforst.evmap.ui.getMarkerTint
 import net.vonforst.evmap.viewmodel.Status
 import net.vonforst.evmap.viewmodel.awaitFinished
@@ -76,8 +68,6 @@ import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import kotlin.math.floor
 import kotlin.math.roundToInt
-
-private const val TAG = "ChargerDetailScreen"
 
 class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : Screen(ctx) {
     var charger: ChargeLocation? = null
@@ -138,7 +128,7 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
                             .setFlags(Action.FLAG_PRIMARY)
                         .setBackgroundColor(CarColor.PRIMARY)
                         .setOnClickListener {
-                            navigateToCharger(charger)
+                            navigateToCharger(carContext, charger)
                         }
                         .build())
                         if (ChargepriceApi.isChargerSupported(charger)) {
@@ -275,7 +265,7 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
                     Row.IMAGE_TYPE_LARGE
                 )
             }
-            addText(generateChargepointsText(charger))
+            addText(generateChargepointsText(charger, availability, carContext))
         }.build())
         if (maxRows <= 3) {
             // row 2: operator + cost + fault report
@@ -488,47 +478,6 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
         return string
     }
 
-    private fun generateChargepointsText(charger: ChargeLocation): SpannableStringBuilder {
-        val chargepointsText = SpannableStringBuilder()
-        charger.chargepointsMerged.forEachIndexed { i, cp ->
-            chargepointsText.apply {
-                if (i > 0) append(" · ")
-                append("${cp.count}× ")
-                val plugIcon = iconForPlugType(cp.type)
-                if (plugIcon != 0) {
-                    append(
-                        nameForPlugType(carContext.stringProvider(), cp.type),
-                        CarIconSpan.create(
-                            CarIcon.Builder(
-                                IconCompat.createWithResource(
-                                    carContext,
-                                    plugIcon
-                                )
-                            ).setTint(
-                                CarColor.createCustom(Color.WHITE, Color.BLACK)
-                            ).build()
-                        ),
-                        Spanned.SPAN_INCLUSIVE_EXCLUSIVE
-                    )
-                } else {
-                    append(nameForPlugType(carContext.stringProvider(), cp.type))
-                }
-                cp.formatPower()?.let {
-                    append(" ")
-                    append(it)
-                }
-            }
-            availability?.status?.get(cp)?.let { status ->
-                chargepointsText.append(
-                    " (${availabilityText(status)}/${cp.count})",
-                    ForegroundCarColorSpan.create(carAvailabilityColor(status)),
-                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-                )
-            }
-        }
-        return chargepointsText
-    }
-
     private fun generateOperatorText(charger: ChargeLocation) =
         if (charger.operator != null && charger.network != null) {
             if (charger.operator.contains(charger.network)) {
@@ -545,54 +494,6 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
         } else {
             carContext.getString(R.string.unknown_operator)
         }
-
-    private fun navigateToCharger(charger: ChargeLocation) {
-        val success = navigateCarApp(charger)
-        if (!success && BuildConfig.FLAVOR_automotive == "automotive") {
-            // on AAOS, some OEMs' navigation apps might not support
-            navigateRegularApp(charger)
-        }
-    }
-
-    private fun navigateCarApp(charger: ChargeLocation): Boolean {
-        val coord = charger.coordinates
-        val intent =
-            Intent(
-                CarContext.ACTION_NAVIGATE,
-                Uri.parse("geo:${coord.lat},${coord.lng}")
-            )
-        try {
-            carContext.startCarApp(intent)
-            return true
-        } catch (e: HostException) {
-            Log.w(TAG, "Could not start navigation using car app intent")
-            Log.w(TAG, intent.toString())
-            e.printStackTrace()
-        } catch (e: SecurityException) {
-            Log.w(TAG, "Could not start navigation using car app intent")
-            Log.w(TAG, intent.toString())
-            e.printStackTrace()
-        }
-        return false
-    }
-
-    private fun navigateRegularApp(charger: ChargeLocation): Boolean {
-        val coord = charger.coordinates
-        val intent = Intent(Intent.ACTION_VIEW)
-        intent.data = Uri.parse(
-            "geo:${coord.lat},${coord.lng}?q=${coord.lat},${coord.lng}(${
-                Uri.encode(charger.name)
-            })"
-        )
-        if (intent.resolveActivity(carContext.packageManager) != null) {
-            carContext.startActivity(intent)
-            return true
-        } else {
-            Log.w(TAG, "Could not start navigation using regular intent")
-            Log.w(TAG, intent.toString())
-        }
-        return false
-    }
 
     private fun loadCharger() {
         lifecycleScope.launch {

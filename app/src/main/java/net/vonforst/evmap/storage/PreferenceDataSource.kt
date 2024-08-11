@@ -6,7 +6,9 @@ import android.content.SharedPreferences.Editor
 import androidx.preference.PreferenceManager
 import com.car2go.maps.AnyMap
 import com.car2go.maps.model.LatLng
+import com.car2go.maps.model.LatLngBounds
 import net.vonforst.evmap.R
+import net.vonforst.evmap.autocomplete.PlaceWithBounds
 import net.vonforst.evmap.model.FILTERS_CUSTOM
 import net.vonforst.evmap.model.FILTERS_DISABLED
 import java.time.Instant
@@ -108,11 +110,14 @@ class PreferenceDataSource(val context: Context) {
     val darkmode: String
         get() = sp.getString("darkmode", "default")!!
 
-    val mapProvider: String
+    var mapProvider: String
         get() = sp.getString(
             "map_provider",
             context.getString(R.string.pref_map_provider_default)
         )!!
+        set(value) {
+            sp.edit().putString("map_provider", value).apply()
+        }
 
     var searchProvider: String
         get() = sp.getString(
@@ -250,10 +255,16 @@ class PreferenceDataSource(val context: Context) {
                 .apply()
         }
 
-    var placeSearchResultAndroidAuto: LatLng?
-        get() = sp.getLatLng("place_search_result_android_auto")
+    var placeSearchResultAndroidAuto: PlaceWithBounds?
+        get() {
+            val latLng = sp.getLatLng("place_search_result_android_auto")
+            val bounds = sp.getLatLngBounds("place_search_result_android_auto_viewport")
+            return latLng?.let { PlaceWithBounds(latLng, bounds) }
+        }
         set(value) {
-            sp.edit().putLatLng("place_search_result_android_auto", value).apply()
+            sp.edit().putLatLng("place_search_result_android_auto", value?.latLng).apply()
+            sp.edit().putLatLngBounds("place_search_result_android_auto_viewport", value?.viewport)
+                .apply()
         }
 
     var placeSearchResultAndroidAutoName: String?
@@ -315,7 +326,7 @@ class PreferenceDataSource(val context: Context) {
 }
 
 fun SharedPreferences.getLatLng(key: String): LatLng? =
-    if (contains("${key}_lat") && contains("${key}_lng")) {
+    if (containsLatLng(key)) {
         LatLng(
             Double.fromBits(getLong("${key}_lat", 0L)),
             Double.fromBits(getLong("${key}_lng", 0L))
@@ -329,6 +340,26 @@ fun Editor.putLatLng(key: String, value: LatLng?): Editor {
     } else {
         putLong("${key}_lat", value.latitude.toBits())
         putLong("${key}_lng", value.longitude.toBits())
+    }
+    return this
+}
+
+fun SharedPreferences.containsLatLng(key: String) = contains("${key}_lat") && contains("${key}_lng")
+
+fun SharedPreferences.getLatLngBounds(key: String): LatLngBounds? =
+    if (containsLatLng("${key}_sw") && containsLatLng("${key}_ne")) {
+        LatLngBounds(
+            getLatLng("${key}_sw"), getLatLng("${key}_ne")
+        )
+    } else null
+
+fun Editor.putLatLngBounds(key: String, value: LatLngBounds?): Editor {
+    if (value == null) {
+        putLatLng("${key}_sw", null)
+        putLatLng("${key}_ne", null)
+    } else {
+        putLatLng("${key}_sw", value.southwest)
+        putLatLng("${key}_ne", value.northeast)
     }
     return this
 }

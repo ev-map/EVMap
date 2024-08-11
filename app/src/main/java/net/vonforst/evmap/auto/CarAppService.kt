@@ -29,6 +29,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import com.car2go.maps.model.LatLng
 import net.vonforst.evmap.R
+import net.vonforst.evmap.autocomplete.PlaceWithBounds
 import net.vonforst.evmap.location.FusionEngine
 import net.vonforst.evmap.location.LocationEngine
 import net.vonforst.evmap.location.Priority
@@ -125,8 +126,11 @@ class EVMapSession(val cas: CarAppService) : Session(), DefaultLifecycleObserver
     }
 
     override fun onCreateScreen(intent: Intent): Screen {
-
-        val mapScreen = MapScreen(carContext, this)
+        val mapScreen = if (supportsNewMapScreen(carContext)) {
+            MapScreen(carContext, this)
+        } else {
+            LegacyMapScreen(carContext, this)
+        }
         val screens = mutableListOf<Screen>(mapScreen)
 
         handleActionsIntent(intent)?.let {
@@ -186,7 +190,7 @@ class EVMapSession(val cas: CarAppService) : Session(), DefaultLifecycleObserver
                 val lon = it.getQueryParameter("longitude")?.toDouble()
                 val name = it.getQueryParameter("name")
                 if (lat != null && lon != null) {
-                    prefs.placeSearchResultAndroidAuto = LatLng(lat, lon)
+                    prefs.placeSearchResultAndroidAuto = PlaceWithBounds(LatLng(lat, lon), null)
                     prefs.placeSearchResultAndroidAutoName = name ?: "%.4f,%.4f".format(lat, lon)
                     return null
                 } else if (name != null) {

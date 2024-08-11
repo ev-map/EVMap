@@ -55,6 +55,7 @@ import androidx.transition.TransitionManager
 import coil.load
 import coil.memory.MemoryCache
 import com.car2go.maps.AnyMap
+import com.car2go.maps.MapFactory
 import com.car2go.maps.MapFragment
 import com.car2go.maps.OnMapReadyCallback
 import com.car2go.maps.model.LatLng
@@ -200,12 +201,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             mapFragment = MapFragment()
             mapFragment!!.priority = arrayOf(
                 when (provider) {
-                    "mapbox" -> MapFragment.MAPLIBRE
-                    "google" -> MapFragment.GOOGLE
+                    "mapbox" -> MapFactory.MAPLIBRE
+                    "google" -> MapFactory.GOOGLE
                     else -> null
                 },
-                MapFragment.GOOGLE,
-                MapFragment.MAPLIBRE
+                MapFactory.GOOGLE,
+                MapFactory.MAPLIBRE
             )
             childFragmentManager
                 .beginTransaction()

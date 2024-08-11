@@ -114,22 +114,25 @@ class SettingsScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx) {
                             }
                             .build()
                     )
-                    addItem(
-                        Row.Builder()
-                            .setTitle(carContext.getString(R.string.auto_chargers_ahead))
-                            .setToggle(Toggle.Builder {
-                                prefs.showChargersAheadAndroidAuto = it
-                            }.setChecked(prefs.showChargersAheadAndroidAuto).build())
-                            .setImage(
-                                CarIcon.Builder(
-                                    IconCompat.createWithResource(
-                                        carContext,
-                                        R.drawable.ic_navigation
-                                    )
-                                ).setTint(CarColor.DEFAULT).build()
-                            )
-                            .build()
-                    )
+                    if (carContext.carAppApiLevel < 7 || !carContext.isAppDrivenRefreshSupported) {
+                        // this option is only supported in LegacyMapScreen
+                        addItem(
+                            Row.Builder()
+                                .setTitle(carContext.getString(R.string.auto_chargers_ahead))
+                                .setToggle(Toggle.Builder {
+                                    prefs.showChargersAheadAndroidAuto = it
+                                }.setChecked(prefs.showChargersAheadAndroidAuto).build())
+                                .setImage(
+                                    CarIcon.Builder(
+                                        IconCompat.createWithResource(
+                                            carContext,
+                                            R.drawable.ic_navigation
+                                        )
+                                    ).setTint(CarColor.DEFAULT).build()
+                                )
+                                .build()
+                        )
+                    }
                 }
                 addItem(
                     Row.Builder()
@@ -164,6 +167,10 @@ class DataSettingsScreen(ctx: CarContext) : Screen(ctx) {
         carContext.resources.getStringArray(R.array.pref_search_provider_names)
     val searchProviderValues =
         carContext.resources.getStringArray(R.array.pref_search_provider_values)
+    val mapProviderNames =
+        carContext.resources.getStringArray(R.array.pref_map_provider_names)
+    val mapProviderValues =
+        carContext.resources.getStringArray(R.array.pref_map_provider_values)
 
     var teslaLoggingIn = false
 
@@ -203,6 +210,25 @@ class DataSettingsScreen(ctx: CarContext) : Screen(ctx) {
                         )
                     }
                 }.build())
+                if (supportsNewMapScreen(carContext) && BuildConfig.FLAVOR_automotive != "automotive") {
+                    // Google Maps SDK is not available on AAOS (not even AAOS with GAS, so far)
+                    addItem(Row.Builder().apply {
+                        setTitle(carContext.getString(R.string.pref_map_provider))
+                        setBrowsable(true)
+                        val mapProviderId = prefs.mapProvider
+                        val mapProviderDesc =
+                            mapProviderNames[mapProviderValues.indexOf(mapProviderId)]
+                        addText(mapProviderDesc)
+                        setOnClickListener {
+                            screenManager.push(
+                                ChooseDataSourceScreen(
+                                    carContext,
+                                    ChooseDataSourceScreen.Type.MAP_PROVIDER
+                                )
+                            )
+                        }
+                    }.build())
+                }
                 addItem(Row.Builder().apply {
                     setTitle(carContext.getString(R.string.pref_search_delete_recent))
                     setOnClickListener {
@@ -341,25 +367,33 @@ class ChooseDataSourceScreen(
     @StringRes val extraDesc: Int? = null
 ) : Screen(ctx) {
     enum class Type {
-        CHARGER_DATA_SOURCE, SEARCH_PROVIDER
+        CHARGER_DATA_SOURCE, SEARCH_PROVIDER, MAP_PROVIDER
     }
 
     val prefs = PreferenceDataSource(carContext)
     val title = when (type) {
         Type.CHARGER_DATA_SOURCE -> R.string.pref_data_source
         Type.SEARCH_PROVIDER -> R.string.pref_search_provider
+        Type.MAP_PROVIDER -> R.string.pref_map_provider
     }
-    val names = when (type) {
-        Type.CHARGER_DATA_SOURCE -> carContext.resources.getStringArray(R.array.pref_data_source_names)
-        Type.SEARCH_PROVIDER -> carContext.resources.getStringArray(R.array.pref_search_provider_names)
-    }
-    val values = when (type) {
-        Type.CHARGER_DATA_SOURCE -> carContext.resources.getStringArray(R.array.pref_data_source_values)
-        Type.SEARCH_PROVIDER -> carContext.resources.getStringArray(R.array.pref_search_provider_values)
-    }
+    val names = carContext.resources.getStringArray(
+        when (type) {
+            Type.CHARGER_DATA_SOURCE -> R.array.pref_data_source_names
+            Type.SEARCH_PROVIDER -> R.array.pref_search_provider_names
+            Type.MAP_PROVIDER -> R.array.pref_map_provider_names
+        }
+    )
+    val values = carContext.resources.getStringArray(
+        when (type) {
+            Type.CHARGER_DATA_SOURCE -> R.array.pref_data_source_values
+            Type.SEARCH_PROVIDER -> R.array.pref_search_provider_values
+            Type.MAP_PROVIDER -> R.array.pref_map_provider_values
+        }
+    )
     val currentValue: String = when (type) {
         Type.CHARGER_DATA_SOURCE -> prefs.dataSource
         Type.SEARCH_PROVIDER -> prefs.searchProvider
+        Type.MAP_PROVIDER -> prefs.mapProvider
     }
     val descriptions = when (type) {
         Type.CHARGER_DATA_SOURCE -> listOf(
@@ -367,6 +401,7 @@ class ChooseDataSourceScreen(
             carContext.getString(R.string.data_source_openchargemap_desc)
         )
         Type.SEARCH_PROVIDER -> null
+        Type.MAP_PROVIDER -> null
     }
     val callback: (String) -> Unit = when (type) {
         Type.CHARGER_DATA_SOURCE -> { it ->
@@ -375,6 +410,9 @@ class ChooseDataSourceScreen(
         }
         Type.SEARCH_PROVIDER -> { it ->
             prefs.searchProvider = it
+        }
+        Type.MAP_PROVIDER -> { it ->
+            prefs.mapProvider = it
         }
     }
 

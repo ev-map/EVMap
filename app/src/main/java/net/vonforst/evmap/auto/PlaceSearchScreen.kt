@@ -11,19 +11,34 @@ import androidx.car.app.annotations.ExperimentalCarApi
 import androidx.car.app.constraints.ConstraintManager
 import androidx.car.app.hardware.CarHardwareManager
 import androidx.car.app.hardware.info.EnergyLevel
-import androidx.car.app.model.*
+import androidx.car.app.model.Action
+import androidx.car.app.model.CarColor
+import androidx.car.app.model.CarIcon
+import androidx.car.app.model.DistanceSpan
+import androidx.car.app.model.ItemList
+import androidx.car.app.model.Row
+import androidx.car.app.model.SearchTemplate
+import androidx.car.app.model.Template
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.car2go.maps.model.LatLng
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import net.vonforst.evmap.BuildConfig
 import net.vonforst.evmap.R
 import net.vonforst.evmap.adapter.iconForPlaceType
 import net.vonforst.evmap.adapter.isSpecialPlace
-import net.vonforst.evmap.autocomplete.*
+import net.vonforst.evmap.autocomplete.ApiUnavailableException
+import net.vonforst.evmap.autocomplete.AutocompletePlace
+import net.vonforst.evmap.autocomplete.AutocompleteProvider
+import net.vonforst.evmap.autocomplete.PlaceWithBounds
+import net.vonforst.evmap.autocomplete.getAutocompleteProviders
 import net.vonforst.evmap.storage.AppDatabase
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.storage.RecentAutocompletePlace
@@ -117,7 +132,7 @@ class PlaceSearchScreen(
                     setOnClickListener {
                         lifecycleScope.launch {
                             val placeDetails = getDetails(place.id) ?: return@launch
-                            prefs.placeSearchResultAndroidAuto = placeDetails.latLng
+                            prefs.placeSearchResultAndroidAuto = placeDetails
                             prefs.placeSearchResultAndroidAutoName =
                                 place.primaryText.toString()
                             screenManager.popTo(MapScreen.MARKER)

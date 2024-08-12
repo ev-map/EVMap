@@ -67,6 +67,7 @@ android {
     productFlavors {
         create("foss") {
             dimension = "dependencies"
+            isDefault = true
         }
         create("google") {
             dimension = "dependencies"
@@ -74,6 +75,7 @@ android {
         }
         create("normal") {
             dimension = "automotive"
+            isDefault = true
         }
         create("automotive") {
             dimension = "automotive"

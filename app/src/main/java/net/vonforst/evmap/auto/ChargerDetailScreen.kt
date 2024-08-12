@@ -49,6 +49,7 @@ import net.vonforst.evmap.api.availability.tesla.Pricing
 import net.vonforst.evmap.api.chargeprice.ChargepriceApi
 import net.vonforst.evmap.api.createApi
 import net.vonforst.evmap.api.fronyx.PredictionData
+import net.vonforst.evmap.api.fronyx.PredictionRepository
 import net.vonforst.evmap.model.ChargeLocation
 import net.vonforst.evmap.model.Cost
 import net.vonforst.evmap.model.FaultReport
@@ -81,7 +82,7 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
         ChargeLocationsRepository(createApi(prefs.dataSource, ctx), lifecycleScope, db, prefs)
     private val availabilityRepo = AvailabilityRepository(ctx)
 
-    //private val predictionRepo = PredictionRepository(ctx)
+    private val predictionRepo = PredictionRepository(ctx)
     private val timeFormat = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
 
     private val imageSize = 128  // images should be 128dp according to docs
@@ -559,7 +560,7 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
 
                 invalidate()
 
-                //prediction = predictionRepo.getPredictionData(charger, availability)
+                prediction = predictionRepo.getPredictionData(charger, availability)
 
                 invalidate()
             } else {

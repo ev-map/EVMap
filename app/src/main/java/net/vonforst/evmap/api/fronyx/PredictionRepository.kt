@@ -1,10 +1,7 @@
 package net.vonforst.evmap.api.fronyx
 
 import android.content.Context
-import com.squareup.moshi.JsonDataException
 import net.vonforst.evmap.R
-import net.vonforst.evmap.api.availability.AvailabilityDetectorException
-import net.vonforst.evmap.api.availability.AvailabilityRepository
 import net.vonforst.evmap.api.availability.ChargeLocationStatus
 import net.vonforst.evmap.api.equivalentPlugTypes
 import net.vonforst.evmap.api.nameForPlugType
@@ -13,8 +10,6 @@ import net.vonforst.evmap.model.ChargeLocation
 import net.vonforst.evmap.model.Chargepoint
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.viewmodel.Resource
-import retrofit2.HttpException
-import java.io.IOException
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId
@@ -55,9 +50,9 @@ class PredictionRepository(private val context: Context) {
         evseIds: Map<Chargepoint, List<String>>,
         filteredConnectors: Set<String>?
     ): Resource<List<FronyxEvseIdResponse>> {
-        if (!prefs.predictionEnabled) return Resource.success(null)
+        return Resource.success(null)
 
-        val allEvseIds =
+        /*val allEvseIds =
             evseIds.filterKeys {
                 FronyxApi.isChargepointSupported(charger, it) &&
                         filteredConnectors?.let { filtered ->
@@ -89,7 +84,7 @@ class PredictionRepository(private val context: Context) {
             // malformed JSON response from fronyx API
             e.printStackTrace()
             return Resource.error(e.message, null)
-        }
+        }*/
     }
 
     private fun buildPredictionGraph(

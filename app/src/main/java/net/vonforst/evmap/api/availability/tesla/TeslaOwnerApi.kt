@@ -16,7 +16,6 @@ import retrofit2.http.POST
 import retrofit2.http.Query
 import java.security.MessageDigest
 import java.security.SecureRandom
-import java.time.LocalTime
 
 interface TeslaAuthenticationApi {
     @POST("oauth2/v3/token")
@@ -173,7 +172,7 @@ interface TeslaChargingOwnershipGraphQlApi {
         override val variables: GetNearbyChargingSitesVariables,
         override val operationName: String = "GetNearbyChargingSites",
         override val query: String =
-            "\n    query GetNearbyChargingSites(\$args: GetNearbyChargingSitesRequestType!) {\n  charging {\n    nearbySites(args: \$args) {\n      sitesAndDistances {\n        ...ChargingNearbySitesFragment\n      }\n    }\n  }\n}\n    \n    fragment ChargingNearbySitesFragment on ChargerSiteAndDistanceType {\n  activeOutages {\n    message\n    nonTeslasAffectedOnly {\n      value\n    }\n  }\n  availableStalls {\n    value\n  }\n  centroid {\n    ...EnergySvcCoordinateTypeFields\n  }\n  drivingDistanceMiles {\n    value\n  }\n  entryPoint {\n    ...EnergySvcCoordinateTypeFields\n  }\n  haversineDistanceMiles {\n    value\n  }\n  id {\n    text\n  }\n  localizedSiteName {\n    value\n  }\n  maxPowerKw {\n    value\n  }\n  trtId {\n    value\n  }\n  totalStalls {\n    value\n  }\n  siteType\n  accessType\n  waitEstimateBucket\n  hasHighCongestion\n}\n    \n    fragment EnergySvcCoordinateTypeFields on EnergySvcCoordinateType {\n  latitude\n  longitude\n}\n    "
+            "\n    query GetNearbyChargingSites(\$args: GetNearbyChargingSitesRequestType!) {\n  charging {\n    nearbySites(args: \$args) {\n      sitesAndDistances {\n        ...ChargingNearbySitesFragment\n      }\n    }\n  }\n}\n    \n    fragment ChargingNearbySitesFragment on ChargerSiteAndDistanceType {\n  availableStalls {\n    value\n  }\n  centroid {\n    ...EnergySvcCoordinateTypeFields\n  }\n  drivingDistanceMiles {\n    value\n  }\n  entryPoint {\n    ...EnergySvcCoordinateTypeFields\n  }\n  haversineDistanceMiles {\n    value\n  }\n  id {\n    text\n  }\n  locationGUID\n  localizedSiteName {\n    value\n  }\n  maxPowerKw {\n    value\n  }\n  trtId {\n    value\n  }\n  totalStalls {\n    value\n  }\n  siteType\n  accessType\n  waitEstimateBucket\n  hasHighCongestion\n  teslaExclusive\n  amenities\n  chargingAccessibility\n  ownerType\n  usabilityArchetype\n  accessHours {\n    shouldDisplay\n    openNow\n    hour\n  }\n  isMagicDockSupportedSite\n}\n    \n    fragment EnergySvcCoordinateTypeFields on EnergySvcCoordinateType {\n  latitude\n  longitude\n}\n    "
     ) : GraphQlRequest()
 
     @JsonClass(generateAdapter = true)
@@ -184,7 +183,7 @@ interface TeslaChargingOwnershipGraphQlApi {
         val userLocation: Coordinate,
         val northwestCorner: Coordinate,
         val southeastCorner: Coordinate,
-        val openToNonTeslasFilter: OpenToNonTeslasFilterValue,
+        val filters: List<String> = emptyList(),
         val languageCode: String = "en",
         val countryCode: String = "US",
         //val vin: String = "",
@@ -202,7 +201,7 @@ interface TeslaChargingOwnershipGraphQlApi {
         override val variables: GetChargingSiteInformationVariables,
         override val operationName: String = "getChargingSiteInformation",
         override val query: String =
-            "\n    query getChargingSiteInformation(\$id: ChargingSiteIdentifierInputType!, \$vehicleMakeType: ChargingVehicleMakeTypeEnum, \$deviceCountry: String!, \$deviceLanguage: String!) {\n  charging {\n    site(\n      id: \$id\n      deviceCountry: \$deviceCountry\n      deviceLanguage: \$deviceLanguage\n      vehicleMakeType: \$vehicleMakeType\n    ) {\n      siteStatic {\n        ...SiteStaticFragmentNoHoldAmt\n      }\n      siteDynamic {\n        ...SiteDynamicFragment\n      }\n      pricing(vehicleMakeType: \$vehicleMakeType) {\n        userRates {\n          ...ChargingActiveRateFragment\n        }\n        memberRates {\n          ...ChargingActiveRateFragment\n        }\n        hasMembershipPricing\n        hasMSPPricing\n        canDisplayCombinedComparison\n      }\n      holdAmount(vehicleMakeType: \$vehicleMakeType) {\n        currencyCode\n        holdAmount\n      }\n      congestionPriceHistogram(vehicleMakeType: \$vehicleMakeType) {\n        ...CongestionPriceHistogramFragment\n      }\n    }\n  }\n}\n    \n    fragment SiteStaticFragmentNoHoldAmt on ChargingSiteStaticType {\n  address {\n    ...AddressFragment\n  }\n  amenities\n  centroid {\n    ...EnergySvcCoordinateTypeFields\n  }\n  entryPoint {\n    ...EnergySvcCoordinateTypeFields\n  }\n  id {\n    text\n  }\n  accessCode {\n    value\n  }\n  localizedSiteName {\n    value\n  }\n  maxPowerKw {\n    value\n  }\n  name\n  openToPublic\n  chargers {\n    id {\n      text\n    }\n    label {\n      value\n    }\n  }\n  publicStallCount\n  timeZone {\n    id\n    version\n  }\n  fastchargeSiteId {\n    value\n  }\n  siteType\n  accessType\n  isMagicDockSupportedSite\n  trtId {\n    value\n  }\n}\n    \n    fragment AddressFragment on EnergySvcAddressType {\n  streetNumber {\n    value\n  }\n  street {\n    value\n  }\n  district {\n    value\n  }\n  city {\n    value\n  }\n  state {\n    value\n  }\n  postalCode {\n    value\n  }\n  country\n}\n    \n\n    fragment EnergySvcCoordinateTypeFields on EnergySvcCoordinateType {\n  latitude\n  longitude\n}\n    \n\n    fragment SiteDynamicFragment on ChargingSiteDynamicType {\n  id {\n    text\n  }\n  activeOutages {\n    message\n    nonTeslasAffectedOnly {\n      value\n    }\n  }\n  chargersAvailable {\n    value\n  }\n  chargerDetails {\n    charger {\n      id {\n        text\n      }\n      label {\n        value\n      }\n      name\n    }\n    availability\n  }\n  waitEstimateBucket\n  currentCongestion\n}\n    \n\n    fragment ChargingActiveRateFragment on ChargingActiveRateType {\n  activePricebook {\n    charging {\n      ...ChargingUserRateFragment\n    }\n    parking {\n      ...ChargingUserRateFragment\n    }\n    priceBookID\n  }\n}\n    \n    fragment ChargingUserRateFragment on ChargingUserRateType {\n  currencyCode\n  programType\n  rates\n  buckets {\n    start\n    end\n  }\n  bucketUom\n  touRates {\n    enabled\n    activeRatesByTime {\n      startTime\n      endTime\n      rates\n    }\n  }\n  uom\n  vehicleMakeType\n}\n    \n\n    fragment CongestionPriceHistogramFragment on HistogramData {\n  axisLabels {\n    index\n    value\n  }\n  regionLabels {\n    index\n    value {\n      ...ChargingPriceFragment\n      ... on HistogramRegionLabelValueString {\n        value\n      }\n    }\n  }\n  chargingUom\n  parkingUom\n  parkingRate {\n    ...ChargingPriceFragment\n  }\n  data\n  activeBar\n  maxRateIndex\n  whenRateChanges\n  dataAttributes {\n    congestionThreshold\n    label\n  }\n}\n    \n    fragment ChargingPriceFragment on ChargingPrice {\n  currencyCode\n  price\n}\n"
+            "\n    query getChargingSiteInformation(\$id: ChargingSiteIdentifierInputType!, \$vehicleMakeType: ChargingVehicleMakeTypeEnum, \$deviceCountry: String!, \$deviceLanguage: String!) {\n  charging {\n    site(\n      id: \$id\n      deviceCountry: \$deviceCountry\n      deviceLanguage: \$deviceLanguage\n      vehicleMakeType: \$vehicleMakeType\n    ) {\n      siteStatic {\n        ...SiteStaticFragmentNoHoldAmt\n      }\n      siteDynamic {\n        ...SiteDynamicFragment\n      }\n      pricing(vehicleMakeType: \$vehicleMakeType) {\n        userRates {\n          ...ChargingActiveRateFragment\n        }\n        memberRates {\n          ...ChargingActiveRateFragment\n        }\n        hasMembershipPricing\n        hasMSPPricing\n        canDisplayCombinedComparison\n      }\n      holdAmount(vehicleMakeType: \$vehicleMakeType) {\n        currencyCode\n        holdAmount\n      }\n      congestionPriceHistogram(vehicleMakeType: \$vehicleMakeType) {\n        ...CongestionPriceHistogramFragment\n      }\n      upsellingBanner(vehicleMakeType: \$vehicleMakeType) {\n        header\n        caption\n        backgroundImageUrl\n        routeName\n      }\n      nacsOnlyBanner {\n        header\n        caption\n        link\n      }\n    }\n  }\n}\n    \n    fragment SiteStaticFragmentNoHoldAmt on ChargingSiteStaticType {\n  address {\n    ...AddressFragment\n  }\n  amenities\n  centroid {\n    ...EnergySvcCoordinateTypeFields\n  }\n  entryPoint {\n    ...EnergySvcCoordinateTypeFields\n  }\n  id {\n    text\n  }\n  locationGUID\n  accessCode {\n    value\n  }\n  localizedSiteName {\n    value\n  }\n  maxPowerKw {\n    value\n  }\n  name\n  openToPublic\n  chargers {\n    id {\n      text\n    }\n    label {\n      value\n    }\n  }\n  publicStallCount\n  timeZone {\n    id\n    version\n  }\n  fastchargeSiteId {\n    value\n  }\n  siteType\n  accessType\n  isMagicDockSupportedSite\n  trtId {\n    value\n  }\n  siteDisclaimer\n  chargingAccessibility\n  accessHours {\n    shouldDisplay\n    openNow\n    hour\n  }\n}\n    \n    fragment AddressFragment on EnergySvcAddressType {\n  streetNumber {\n    value\n  }\n  street {\n    value\n  }\n  district {\n    value\n  }\n  city {\n    value\n  }\n  state {\n    value\n  }\n  postalCode {\n    value\n  }\n  country\n}\n    \n\n    fragment EnergySvcCoordinateTypeFields on EnergySvcCoordinateType {\n  latitude\n  longitude\n}\n    \n\n    fragment SiteDynamicFragment on ChargingSiteDynamicType {\n  id {\n    text\n  }\n  chargersAvailable {\n    value\n  }\n  chargerDetails {\n    charger {\n      id {\n        text\n      }\n      label {\n        value\n      }\n      name\n    }\n    availability\n    stateOfCharge\n    chargerDisabled\n  }\n  waitEstimateBucket\n  currentCongestion\n  usabilityArchetype\n}\n    \n\n    fragment ChargingActiveRateFragment on ChargingActiveRateType {\n  activePricebook {\n    charging {\n      ...ChargingUserRateFragment\n    }\n    parking {\n      ...ChargingUserRateFragment\n    }\n    congestion {\n      ...ChargingUserRateFragment\n    }\n    service {\n      ...ChargingUserRateFragment\n    }\n    electricity {\n      ...ChargingUserRateFragment\n    }\n    priceBookID\n  }\n}\n    \n    fragment ChargingUserRateFragment on ChargingUserRateType {\n  currencyCode\n  programType\n  rates\n  buckets {\n    start\n    end\n  }\n  bucketUom\n  touRates {\n    enabled\n    activeRatesByTime {\n      startTime\n      endTime\n      rates\n    }\n  }\n  uom\n  vehicleMakeType\n  stateOfCharge\n  congestionGracePeriodSecs\n  congestionPercent\n}\n    \n\n    fragment CongestionPriceHistogramFragment on HistogramData {\n  axisLabels {\n    index\n    value\n  }\n  regionLabels {\n    index\n    value {\n      ...ChargingPriceFragment\n      ... on HistogramRegionLabelValueString {\n        value\n      }\n    }\n  }\n  chargingUom\n  parkingUom\n  parkingRate {\n    ...ChargingPriceFragment\n  }\n  data\n  activeBar\n  maxRateIndex\n  whenRateChanges\n  dataAttributes {\n    congestionThreshold\n    label\n  }\n}\n    \n    fragment ChargingPriceFragment on ChargingPrice {\n  currencyCode\n  price\n}\n    "
     ) : GraphQlRequest()
 
     @JsonClass(generateAdapter = true)
@@ -217,11 +216,12 @@ interface TeslaChargingOwnershipGraphQlApi {
     @JsonClass(generateAdapter = true)
     data class ChargingSiteIdentifier(
         val id: String,
-        val type: ChargingSiteIdentifierType = ChargingSiteIdentifierType.SITE_ID
+        val type: ChargingSiteIdentifierType = ChargingSiteIdentifierType.LOCATION_GUID,
+        val programType: String = "PTSCH"
     )
 
     enum class ChargingSiteIdentifierType {
-        SITE_ID
+        SITE_ID, LOCATION_GUID
     }
 
     enum class VehicleMakeType {
@@ -242,7 +242,6 @@ interface TeslaChargingOwnershipGraphQlApi {
 
     @JsonClass(generateAdapter = true)
     data class ChargingSite(
-        val activeOutages: List<Outage>,
         val availableStalls: Value<Int>?,
         val centroid: Coordinate,
         val drivingDistanceMiles: Value<Double>?,
@@ -251,7 +250,8 @@ interface TeslaChargingOwnershipGraphQlApi {
         val id: Text,
         val localizedSiteName: Value<String>,
         val maxPowerKw: Value<Int>,
-        val totalStalls: Value<Int>
+        val totalStalls: Value<Int>,
+        val locationGUID: String
         // TODO: siteType, accessType
     )
 
@@ -274,7 +274,6 @@ interface TeslaChargingOwnershipGraphQlApi {
 
     @JsonClass(generateAdapter = true)
     data class SiteDynamic(
-        val activeOutages: List<Outage>,
         val chargerDetails: List<ChargerDetail>,
         val chargersAvailable: Value<Int>?,
         val currentCongestion: Double,
@@ -374,7 +373,7 @@ interface TeslaChargingOwnershipGraphQlApi {
                     val request = chain.request().newBuilder()
                         .header("Authorization", "Bearer $t")
                         .header("User-Agent", "okhttp/4.9.2")
-                        .header("x-tesla-user-agent", "TeslaApp/4.19.5-1667/3a5d531cc3/android/27")
+                        .header("x-tesla-user-agent", "TeslaApp/4.35.5-2775/c0cdefb9aa/android/27")
                         .header("Accept", "*/*")
                         .build()
                     chain.proceed(request)

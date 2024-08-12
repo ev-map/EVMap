@@ -2,7 +2,6 @@ package net.vonforst.evmap.api.availability
 
 import net.vonforst.evmap.api.availability.tesla.ChargerAvailability
 import net.vonforst.evmap.api.availability.tesla.TeslaAuthenticationApi
-import net.vonforst.evmap.api.availability.tesla.TeslaChargingGuestGraphQlApi
 import net.vonforst.evmap.api.availability.tesla.TeslaChargingOwnershipGraphQlApi
 import net.vonforst.evmap.api.availability.tesla.asTeslaCoord
 import net.vonforst.evmap.model.ChargeLocation
@@ -42,8 +41,7 @@ class TeslaOwnerAvailabilityDetector(
                     TeslaChargingOwnershipGraphQlApi.Coordinate(
                         location.coordinates.lat - coordRange,
                         location.coordinates.lng + coordRange
-                    ),
-                    TeslaChargingOwnershipGraphQlApi.OpenToNonTeslasFilterValue(false)
+                    )
                 )
             )
         )
@@ -59,7 +57,7 @@ class TeslaOwnerAvailabilityDetector(
         val details = api.getChargingSiteInformation(
             TeslaChargingOwnershipGraphQlApi.GetChargingSiteInformationRequest(
                 TeslaChargingOwnershipGraphQlApi.GetChargingSiteInformationVariables(
-                    TeslaChargingOwnershipGraphQlApi.ChargingSiteIdentifier(result.id.text),
+                    TeslaChargingOwnershipGraphQlApi.ChargingSiteIdentifier(result.locationGUID),
                     TeslaChargingOwnershipGraphQlApi.VehicleMakeType.NON_TESLA
                 )
             )

@@ -162,7 +162,7 @@
     <string name="donation_dialog_detail">EVMap ist kostenlos und Open Source. Über GitHub kann jeder zur Weiterentwicklung der App beitragen. Um die laufenden Kosten für die Datenquellen zu decken, freut sich der Entwickler über Spenden mit einem Betrag deiner Wahl.</string>
     <string name="chargeprice_donation_dialog_title">Du bist ein richtiger Sparfuchs!</string>
     <string name="chargeprice_donation_dialog_detail">Anscheinend nutzt du den Preisvergleich sehr gern. Mit einer Spende für EVMap kannst du helfen, die Kosten für den Datenzugriff zu decken.</string>
-    <string name="deleted_item">„%s” gelöscht</string>
+    <string name="deleted_item">„%s“ gelöscht</string>
     <string name="undo">Rückgängig</string>
     <string name="rename">Umbenennen</string>
     <string name="charging_barrierfree">Ohne Vertrag / Registrierung nutzbar</string>
@@ -172,7 +172,7 @@
     </plurals>
     <string name="navigate">Navigieren</string>
     <string name="verified">Verifiziert</string>
-    <string name="verified_desc">Ladestation wurde mindestens einmal von einem Mitglied der %s Community getestet</string>
+    <string name="verified_desc">Ladestation wurde mindestens einmal von einem Mitglied der %s-Community getestet</string>
     <string name="charge_price_format">%1$.2f %2$s</string>
     <string name="charge_price_average_format">⌀ %1$.2f %2$s/kWh</string>
     <string name="charge_price_kwh_format">%1$.2f %2$s/kWh</string>
@@ -233,7 +233,7 @@
     <string name="crash_report_comment_prompt">Du kannst unten noch einen Kommentar hinzufügen:</string>
     <string name="powered_by_mapbox">powered by Mapbox</string>
     <string name="pref_search_provider">Anbieter für Ortssuche</string>
-    <string name="pref_search_provider_info">Die Daten für die Ortssuche, vor allem von Google Maps, sind relativ teuer. Über eine Spende unter \"Über EVMap -&gt; Spenden\" würde ich mich sehr freuen.</string>
+    <string name="pref_search_provider_info">Die Daten für die Ortssuche, vor allem von Google Maps, sind relativ teuer. Über eine Spende unter „Über EVMap → Spenden“ würde ich mich sehr freuen.</string>
     <string name="github_sponsors">GitHub Sponsors</string>
     <string name="donate_desc">Unterstütze die Weiterentwicklung von EVMap mit einer einmaligen Spende</string>
     <string name="github_sponsors_desc">Unterstütze EVMap über GitHub Sponsors</string>
@@ -329,7 +329,7 @@
     <string name="auto_favorites">Favoriten</string>
     <string name="auto_chargers_near_location">Nahe %s</string>
     <string name="auto_fault_report_date">⚠️ Störungsmeldung (%s)</string>
-    <string name="auto_no_refresh_possible">Weitere Aktualisierung nicht möglich. Bitte zurück gehen und neu starten.</string>
+    <string name="auto_no_refresh_possible">Weitere Aktualisierung nicht möglich. Bitte zurückgehen und neu starten.</string>
     <string name="auto_prices">Preise</string>
     <string name="auto_vehicle_data">Fahrzeugdaten</string>
     <string name="auto_charging_level">Ladezustand</string>
@@ -338,7 +338,7 @@
     <string name="auto_speed">Geschwindigkeit</string>
     <string name="auto_heading">Fahrtrichtung</string>
     <string name="auto_settings">Einstellungen</string>
-    <string name="welcome_android_auto">Android Auto-Unterstützung</string>
+    <string name="welcome_android_auto">Android-Auto-Unterstützung</string>
     <string name="welcome_android_auto_detail">Auf unterstützten Autos kannst du EVMap auch mit Android Auto nutzen. Öffne dazu einfach die EVMap-App aus dem Menü von Android Auto.</string>
     <string name="sounds_cool">Klingt cool</string>
     <string name="auto_chargeprice_vehicle_unavailable">EVMap konnte das Fahrzeugmodell nicht erkennen.</string>

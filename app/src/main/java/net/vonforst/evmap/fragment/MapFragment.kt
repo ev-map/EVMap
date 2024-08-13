@@ -407,7 +407,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         binding.detailView.sourceButton.setOnClickListener {
             val charger = vm.charger.value?.data
             if (charger != null) {
-                (activity as? MapsActivity)?.openUrl(charger.url)
+                (activity as? MapsActivity)?.openUrl(charger.url, true)
             }
         }
         binding.detailView.btnChargeprice.setOnClickListener {
@@ -420,7 +420,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                     extras
                 )
             } else {
-                (activity as? MapsActivity)?.openUrl(ChargepriceApi.getPoiUrl(charger), false)
+                (activity as? MapsActivity)?.openUrl(ChargepriceApi.getPoiUrl(charger))
             }
         }
         binding.detailView.btnChargerWebsite.setOnClickListener {
@@ -473,7 +473,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 R.id.menu_edit -> {
                     val charger = vm.charger.value?.data
                     if (charger?.editUrl != null) {
-                        (activity as? MapsActivity)?.openUrl(charger.editUrl)
+                        (activity as? MapsActivity)?.openUrl(charger.editUrl, true)
                         if (vm.apiId.value == "goingelectric") {
                             // instructions specific to GoingElectric
                             Toast.makeText(
@@ -827,7 +827,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                                 (activity as? MapsActivity)?.showLocation(charger)
                             }
                             R.drawable.ic_fault_report -> {
-                                (activity as? MapsActivity)?.openUrl(charger.url)
+                                (activity as? MapsActivity)?.openUrl(charger.url, true)
                             }
 
                             R.drawable.ic_payment -> {

@@ -601,6 +601,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
 
         map.setMyLocationEnabled(true)
         map.uiSettings.setMyLocationButtonEnabled(false)
+        map.uiSettings.setMapToolbarEnabled(false)
         map.setAttributionClickListener { attributions ->
             screenManager.push(MapAttributionScreen(carContext, attributions))
         }

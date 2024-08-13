@@ -986,6 +986,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         map.uiSettings.setRotateGesturesEnabled(prefs.mapRotateGesturesEnabled)
         map.setIndoorEnabled(false)
         map.uiSettings.setIndoorLevelPickerEnabled(false)
+        map.uiSettings.setMapToolbarEnabled(false)
 
         map.setOnCameraIdleListener {
             vm.mapProjection = map.projection

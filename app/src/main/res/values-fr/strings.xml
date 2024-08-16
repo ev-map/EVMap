@@ -145,7 +145,8 @@
     <string name="oss_licenses">Licences</string>
     <string name="realtime_data_source">Source du statut en temps réel (bêta) : %s</string>
     <string name="plug_type_2">Type 2</string>
-    <string name="plug_type_3">Type 3A</string>
+    <string name="plug_type_3c">Type 3C</string>
+    <string name="plug_type_3a">Type 3A</string>
     <string name="plug_cee_rot">CEE Rouge</string>
     <string name="all">tous</string>
     <string name="fault_report_date">Rapport d\'anomalie (dernière mise à jour : %s)</string>

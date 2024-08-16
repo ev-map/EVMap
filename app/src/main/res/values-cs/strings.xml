@@ -303,7 +303,8 @@
     <string name="network">Síť</string>
     <string name="not_implemented">zatím není implementováno</string>
     <string name="pref_navigate_use_maps_off">Navigační tlačítko otevře aplikaci map s umístěním nabíječky</string>
-    <string name="plug_type_3">Typ 3A</string>
+    <string name="plug_type_3c">Typ 3C</string>
+    <string name="plug_type_3a">Typ 3A</string>
     <string name="map_type_terrain">Terén</string>
     <string name="map_type">Typ mapy</string>
     <string name="location_error">Nepodařilo se zjistit polohu. Zkontrolujte prosím nastavení systému</string>

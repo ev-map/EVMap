@@ -180,8 +180,8 @@ data class OCMConnection(
                 25L -> Chargepoint.TYPE_2_SOCKET
                 1036L -> Chargepoint.TYPE_2_PLUG
                 1L -> Chargepoint.TYPE_1
-                36L -> Chargepoint.TYPE_3
-                26L -> Chargepoint.TYPE_3
+                36L -> Chargepoint.TYPE_3A
+                26L -> Chargepoint.TYPE_3C
                 else -> title ?: ""
             }
         }

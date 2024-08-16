@@ -4,7 +4,6 @@ import com.squareup.moshi.FromJson
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.ToJson
-import net.vonforst.evmap.api.availability.tesla.LocalTimeAdapter
 import net.vonforst.evmap.model.ChargeLocation
 import net.vonforst.evmap.model.Chargepoint
 import net.vonforst.evmap.utils.distanceBetween
@@ -15,7 +14,6 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 import java.time.Instant
-import java.time.LocalTime
 
 private const val coordRange = 0.005  // range of latitude and longitude for loading the map
 private const val maxDistance = 60  // max distance between reported positions in meters
@@ -202,7 +200,8 @@ class EnBwAvailabilityDetector(client: OkHttpClient, baseUrl: String? = null) :
             val id = index.toLong()
             val power = connector.maxPowerInKw ?: 0.0
             val type = when (connector.plugTypeName) {
-                "Typ 3A" -> Chargepoint.TYPE_3
+                "Typ 3A" -> Chargepoint.TYPE_3A
+                "Typ 3C \"Scame\"" -> Chargepoint.TYPE_3C
                 "Typ 2" -> Chargepoint.TYPE_2_UNKNOWN
                 "Typ 1" -> Chargepoint.TYPE_1
                 "Steckdose(D)" -> Chargepoint.SCHUKO

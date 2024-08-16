@@ -1,6 +1,5 @@
 package net.vonforst.evmap.api.availability
 
-import androidx.car.app.model.DateTimeWithZone
 import com.squareup.moshi.FromJson
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
@@ -13,12 +12,8 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Path
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneOffset
 import java.time.ZonedDateTime
-import java.time.format.DateTimeParseException
-import java.util.*
+import java.util.Locale
 
 private const val coordRange = 0.005  // range of latitude and longitude for loading the map
 private const val maxDistance = 60  // max distance between reported positions in meters
@@ -180,7 +175,7 @@ class NewMotionAvailabilityDetector(client: OkHttpClient, baseUrl: String? = nul
             val id = connector.uid
             val power = connector.electricalProperties.getPower()
             val type = when (connector.connectorType.lowercase(Locale.ROOT)) {
-                "type3" -> Chargepoint.TYPE_3
+                "type3" -> Chargepoint.TYPE_3C
                 "type2" -> Chargepoint.TYPE_2_UNKNOWN
                 "type1" -> Chargepoint.TYPE_1
                 "domestic" -> Chargepoint.SCHUKO

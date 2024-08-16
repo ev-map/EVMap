@@ -208,7 +208,7 @@ data class GEChargepoint(val type: String, val power: Double, val count: Int) {
             return when (type) {
                 Chargepoint.TYPE_1 -> "Typ1"
                 Chargepoint.TYPE_2_UNKNOWN -> "Typ2"
-                Chargepoint.TYPE_3 -> "Typ3"
+                Chargepoint.TYPE_3C -> "Typ3"
                 Chargepoint.CCS_UNKNOWN -> "CCS"
                 Chargepoint.CCS_TYPE_2 -> "Typ2"
                 Chargepoint.SCHUKO -> "Schuko"
@@ -225,7 +225,7 @@ data class GEChargepoint(val type: String, val power: Double, val count: Int) {
             return when (type) {
                 "Typ1" -> Chargepoint.TYPE_1
                 "Typ2" -> Chargepoint.TYPE_2_UNKNOWN
-                "Typ3" -> Chargepoint.TYPE_3
+                "Typ3" -> Chargepoint.TYPE_3C
                 "Tesla Supercharger CCS" -> Chargepoint.CCS_UNKNOWN
                 "CCS" -> Chargepoint.CCS_UNKNOWN
                 "Schuko" -> Chargepoint.SCHUKO

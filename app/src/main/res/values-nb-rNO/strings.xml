@@ -97,7 +97,8 @@
     <string name="plug_schuko">Schuko</string>
     <string name="plug_supercharger">Tesla Supercharger</string>
     <string name="plug_type_2">Type 2</string>
-    <string name="plug_type_3">Type 3A</string>
+    <string name="plug_type_3c">Type 3C</string>
+    <string name="plug_type_3a">Type 3A</string>
     <string name="all">alle</string>
     <string name="none">ingen</string>
     <string name="show_less">færre …</string>

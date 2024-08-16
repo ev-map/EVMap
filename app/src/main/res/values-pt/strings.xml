@@ -256,7 +256,8 @@
     <string name="filter_connectors">Conectores</string>
     <string name="plug_type_1">Tipo 1</string>
     <string name="plug_type_2">Tipo 2</string>
-    <string name="plug_type_3">Tipo 3A</string>
+    <string name="plug_type_3c">Tipo 3C</string>
+    <string name="plug_type_3a">Tipo 3A</string>
     <string name="plug_ccs">CCS</string>
     <string name="plug_schuko">Schuko</string>
     <string name="plug_chademo">CHAdeMO</string>

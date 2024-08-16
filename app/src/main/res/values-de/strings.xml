@@ -59,7 +59,8 @@
     <string name="filter_connectors">Anschlüsse</string>
     <string name="plug_type_1">Typ 1</string>
     <string name="plug_type_2">Typ 2</string>
-    <string name="plug_type_3">Typ 3A</string>
+    <string name="plug_type_3c">Typ 3C</string>
+    <string name="plug_type_3a">Typ 3A</string>
     <string name="plug_ccs">CCS</string>
     <string name="plug_schuko">Schuko</string>
     <string name="plug_chademo">CHAdeMO</string>

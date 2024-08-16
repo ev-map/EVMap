@@ -62,7 +62,8 @@
     <string name="filter_free_parking">Alleen laadpunten met gratis parking</string>
     <string name="filter_min_connectors">Minimaal aantal connecteren</string>
     <string name="filter_connectors">Connectoren</string>
-    <string name="plug_type_3">Type 3A</string>
+    <string name="plug_type_3c">Type 3C</string>
+    <string name="plug_type_3a">Type 3A</string>
     <string name="plug_schuko">Schuko</string>
     <string name="plug_chademo">CHAdeMO</string>
     <string name="plug_cee_rot">CEE Red</string>

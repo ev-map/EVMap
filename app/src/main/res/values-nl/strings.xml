@@ -2,7 +2,7 @@
 <resources>
     <string name="data_source_goingelectric_desc">Ideaal in Duitstalige landen. Beschrijvingen in het Duits. Onderhouden door de gebruikersgemeenschap.</string>
     <string name="crash_report_text">EVMap is afgebroken. Stuur een crash rapport naar de ontwikkelaar.</string>
-    <string name="pref_search_provider_info">Gegevens opzoeken is duur, vooral via Google Maps. Overweeg aub om een donatie te doen via “Over” -&gt; “Doneer”.</string>
+    <string name="pref_search_provider_info">Gegevens opzoeken is duur, vooral via Google Maps. Overweeg aub om een donatie te doen via “Over” → “Doneer”.</string>
     <string name="data_source_openchargemap_desc">Werelddekkend, met variabele kwaliteit. Beschrijving in Engels of lokale taal. Onderhouden door de gebruikers. Ook open overheidswege eens in sommige landen (bv. Noord-Amerika, UK, Frankrijk, Noorwegen).</string>
     <string name="pref_darkmode_always_off">altijd uit</string>
     <string name="chargeprice_select_car_first">Kiest eerst je voertuig model in de instellingen</string>

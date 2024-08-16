@@ -58,7 +58,6 @@ import net.vonforst.evmap.api.iconForPlugType
 import net.vonforst.evmap.api.nameForPlugType
 import net.vonforst.evmap.api.stringProvider
 import net.vonforst.evmap.model.ChargeLocation
-import net.vonforst.evmap.model.Coordinate
 import net.vonforst.evmap.model.Cost
 import net.vonforst.evmap.model.FaultReport
 import net.vonforst.evmap.model.Favorite
@@ -547,10 +546,13 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
         }
 
     private fun navigateToCharger(charger: ChargeLocation) {
-        val success = navigateCarApp(charger)
+        var success = navigateCarApp(charger)
         if (!success && BuildConfig.FLAVOR_automotive == "automotive") {
             // on AAOS, some OEMs' navigation apps might not support
-            navigateRegularApp(charger)
+            success = navigateRegularApp(charger)
+        }
+        if (!success) {
+            CarToast.makeText(carContext, R.string.no_maps_app_found, CarToast.LENGTH_SHORT).show()
         }
     }
 
@@ -584,6 +586,7 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
                 Uri.encode(charger.name)
             })"
         )
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         if (intent.resolveActivity(carContext.packageManager) != null) {
             carContext.startActivity(intent)
             return true

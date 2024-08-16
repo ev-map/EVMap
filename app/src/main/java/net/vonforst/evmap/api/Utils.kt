@@ -102,7 +102,7 @@ fun iconForPlugType(type: String): Int =
         Chargepoint.CEE_ROT -> R.drawable.ic_connector_cee_rot
         Chargepoint.TYPE_1 -> R.drawable.ic_connector_typ1
         // TODO: add other connectors
-        else -> 0
+        else -> R.drawable.ic_connector_unknown
     }
 
 val powerSteps = listOf(0, 2, 3, 7, 11, 22, 43, 50, 75, 100, 150, 200, 250, 300, 350)

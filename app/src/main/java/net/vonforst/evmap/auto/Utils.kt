@@ -272,10 +272,13 @@ fun openUrl(carContext: CarContext, url: String) {
 }
 
 fun navigateToCharger(ctx: CarContext, charger: ChargeLocation) {
-    val success = navigateCarApp(ctx, charger)
+    var success = navigateCarApp(ctx, charger)
     if (!success && BuildConfig.FLAVOR_automotive == "automotive") {
         // on AAOS, some OEMs' navigation apps might not support
-        navigateRegularApp(ctx, charger)
+        success = navigateRegularApp(ctx, charger)
+    }
+    if (!success) {
+        CarToast.makeText(ctx, R.string.no_maps_app_found, CarToast.LENGTH_SHORT).show()
     }
 }
 
@@ -309,6 +312,7 @@ private fun navigateRegularApp(ctx: CarContext, charger: ChargeLocation): Boolea
             Uri.encode(charger.name)
         })"
     )
+    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     if (intent.resolveActivity(ctx.packageManager) != null) {
         ctx.startActivity(intent)
         return true

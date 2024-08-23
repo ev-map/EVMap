@@ -149,7 +149,7 @@ class TeslaGuestAvailabilityDetector(
         val statusMap = detailsMap.mapValues { it.value.map { it.availability.toStatus() } }
         val labelsMap = detailsMap.mapValues { it.value.map { it.label } }
 
-        val pricing = details.pricing.copy(memberRates = guestPricing.await()?.userRates)
+        val pricing = details.pricing?.copy(memberRates = guestPricing.await()?.userRates)
 
         return ChargeLocationStatus(
             statusMap,

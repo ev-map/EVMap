@@ -117,7 +117,7 @@ interface TeslaChargingGuestGraphQlApi {
         val trtId: Long,
         val maxPowerKw: Int,
         val name: String,
-        val pricing: Pricing,
+        val pricing: Pricing?,
         val publicStallCount: Int
     )
 

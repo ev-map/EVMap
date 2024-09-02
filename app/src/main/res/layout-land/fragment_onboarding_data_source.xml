@@ -60,6 +60,7 @@
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="16dp"
+        android:paddingTop="16dp"
         android:breakStrategy="balanced"
         android:text="@string/data_sources_hint"
         android:textAppearance="@style/TextAppearance.Material3.BodySmall"

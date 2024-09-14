@@ -371,14 +371,15 @@ data class Address(
     override fun toString(): String {
         // TODO: the order here follows a German-style format (i.e. street, postcode city).
         // in principle this should be country-dependent (e.g. UK has postcode after city)
+        // maybe use https://github.com/bettermile/address-formatter-kotlin
         return buildString {
             street?.let {
                 append(it)
-                append(", ")
+                if (postcode != null || city != null) append(", ")
             }
             postcode?.let {
                 append(it)
-                append(" ")
+                if (city != null) append(" ")
             }
             city?.let {
                 append(it)

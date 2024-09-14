@@ -6,6 +6,7 @@ import com.car2go.maps.model.LatLngBounds
 import net.vonforst.evmap.R
 import net.vonforst.evmap.api.goingelectric.GoingElectricApiWrapper
 import net.vonforst.evmap.api.openchargemap.OpenChargeMapApiWrapper
+import net.vonforst.evmap.api.openstreetmap.OpenStreetMapApiWrapper
 import net.vonforst.evmap.model.*
 import net.vonforst.evmap.viewmodel.Resource
 import java.time.Duration
@@ -58,6 +59,27 @@ interface ChargepointApi<out T : ReferenceData> {
      * Duration we are limited to if there is a required API local cache time limit.
      */
     val cacheLimit: Duration
+
+    /**
+     * Whether this API supports querying for chargers at the backend
+     *
+     * This determines whether the getChargepoints, getChargepointsRadius and getChargepointDetail functions are supported.
+     */
+    val supportsOnlineQueries: Boolean
+
+    /**
+     * Whether this API supports downloading the whole dataset into local storage
+     *
+     * This determines whether the getAllChargepoints function is supported.
+     */
+    val supportsFullDownload: Boolean
+
+    /**
+     * Fetches all available chargers from this API.
+     *
+     * This may take a long time and should only be used when the user explicitly wants to download all chargers.
+     */
+    suspend fun fullDownload(): FullDownloadResult<T>
 }
 
 interface StringProvider {
@@ -79,6 +101,7 @@ fun createApi(type: String, ctx: Context): ChargepointApi<ReferenceData> {
                 )
             )
         }
+
         "goingelectric" -> {
             GoingElectricApiWrapper(
                 ctx.getString(
@@ -86,6 +109,11 @@ fun createApi(type: String, ctx: Context): ChargepointApi<ReferenceData> {
                 )
             )
         }
+
+        "openstreetmap" -> {
+            OpenStreetMapApiWrapper()
+        }
+
         else -> throw IllegalArgumentException()
     }
 }
@@ -100,4 +128,20 @@ data class ChargepointList(val items: List<ChargepointListItem>, val isComplete:
     companion object {
         fun empty() = ChargepointList(emptyList(), true)
     }
+}
+
+/**
+ * Result returned from fullDownload() function.
+ *
+ * Note that [chargers] is implemented as a [Sequence] so that downloaded chargers can be saved
+ * while they are being parsed instead of having to keep all of them in RAM at once.
+ *
+ * [progress] is updated regularly to indicate the current download progress.
+ * [referenceData] will typically only be available once the download is completed, i.e. you have
+ * iterated over the whole sequence of [chargers].
+ */
+interface FullDownloadResult<out T : ReferenceData> {
+    val chargers: Sequence<ChargeLocation>
+    val progress: Float
+    val referenceData: T
 }

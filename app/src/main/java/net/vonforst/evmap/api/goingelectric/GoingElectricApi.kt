@@ -15,6 +15,7 @@ import net.vonforst.evmap.addDebugInterceptors
 import net.vonforst.evmap.api.ChargepointApi
 import net.vonforst.evmap.api.ChargepointList
 import net.vonforst.evmap.api.FiltersSQLQuery
+import net.vonforst.evmap.api.FullDownloadResult
 import net.vonforst.evmap.api.StringProvider
 import net.vonforst.evmap.api.mapPower
 import net.vonforst.evmap.api.mapPowerInverse

@@ -76,7 +76,7 @@ data class OCMChargepoint(
         mediaItems?.mapNotNull { it.convert() },
         null,
         null,
-        cost?.let { Cost(descriptionShort = it) },
+        cost?.takeIf { it.isNotBlank() }.let { Cost(descriptionShort = it) },
         dataProvider?.let { "© ${it.title}" + if (it.license != null) ". ${it.license}" else "" },
         ChargepriceData(
             addressInfo.countryISOCode(refData),

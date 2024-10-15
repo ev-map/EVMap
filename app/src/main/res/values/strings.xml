@@ -152,6 +152,7 @@
     <string name="delete">Delete</string>
     <string name="save_as_profile">Save as profile</string>
     <string name="save_profile_enter_name">Enter the name of the filter profile:</string>
+    <string name="filterprofile_name_not_unique">There is already a filter profile with that name</string>
     <string name="filterprofiles_empty_state">You have no filter profiles saved</string>
     <string name="welcome_to_evmap">Welcome to EVMap</string>
     <string name="welcome_1">Find electric vehicle chargers around you</string>

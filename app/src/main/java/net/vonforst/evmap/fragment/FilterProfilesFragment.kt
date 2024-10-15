@@ -188,9 +188,17 @@ class FilterProfilesFragment : Fragment() {
 
                 dialog.setTitle(R.string.rename)
                     .setMessage(R.string.save_profile_enter_name)
-            }, {
+            }, { newName ->
                 lifecycleScope.launch {
-                    vm.update(fp.copy(name = it))
+                    if (vm.filterProfiles.value?.find { it.name == newName } != null) {
+                        Snackbar.make(
+                            view,
+                            R.string.filterprofile_name_not_unique,
+                            Snackbar.LENGTH_LONG
+                        ).show()
+                    } else {
+                        vm.update(fp.copy(name = newName))
+                    }
                 }
             })
         })

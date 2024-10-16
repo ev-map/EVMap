@@ -3,14 +3,14 @@
     <string name="no_browser_app_found">Nejprve si nainstalujte webový prohlížeč</string>
     <string name="address">Adresa</string>
     <string name="hours">Otevírací doba</string>
-    <string name="open_247"><b>Otevřeno 24/7</b></string>
-    <string name="closed"><b>Zavřeno</b></string>
-    <string name="open_closesat"><b>Otevřeno</b> · Zavírá v %s</string>
-    <string name="closed_opensat"><b>Zavřeno</b> · Otevírá v %s</string>
+    <string name="open_247"><![CDATA[<b>Otevřeno 24/7</b>]]></string>
+    <string name="closed"><![CDATA[<b>Zavřeno</b>]]></string>
+    <string name="open_closesat"><![CDATA[<b>Otevřeno</b> · Zavírá v %s]]></string>
+    <string name="closed_opensat"><![CDATA[<b>Zavřeno</b> · Otevírá v %s]]></string>
     <string name="cost">Cena</string>
-    <string name="cost_detail"><b>Nabíjení:</b> %1$s · <b>Parkování:</b> %2$s</string>
-    <string name="cost_detail_charging"><b>%s nabíjení</b></string>
-    <string name="cost_detail_parking"><b>%s parkování</b></string>
+    <string name="cost_detail"><![CDATA[<b>Nabíjení:</b> %1$s · <b>Parkování:</b> %2$s]]></string>
+    <string name="cost_detail_charging"><![CDATA[<b>%s nabíjení</b>]]></string>
+    <string name="cost_detail_parking"><![CDATA[<b>%s parkování</b>]]></string>
     <string name="charging_free">Bezplatné</string>
     <string name="charging_paid">Placené</string>
     <string name="parking_free">Bezplatné</string>
@@ -177,7 +177,7 @@
     <string name="crash_report_comment_prompt">Níže můžete přidat komentář:</string>
     <string name="powered_by_mapbox">používá službu Mapbox</string>
     <string name="pref_search_provider">Poskytovatel vyhledávání</string>
-    <string name="pref_search_provider_info">Načtení dat pro vyhledávání bývá drahé, obzvláště z Map Google. Zvažte prosím poslání finančního daru v nabídce „O aplikaci“ → „Přispět“.</string>
+    <string name="pref_search_provider_info"><![CDATA[Načtení dat pro vyhledávání bývá drahé, obzvláště z Map Google. Zvažte prosím poslání finančního daru v nabídce „O aplikaci“ → „Přispět“.]]></string>
     <string name="github_sponsors">GitHub Sponsors</string>
     <string name="donate_desc">Podpořte vývoj aplikace EVMap jednorázovým darem</string>
     <string name="github_sponsors_desc">Podpořte EVMap ve službě GitHub Sponsors</string>
@@ -281,7 +281,7 @@
     <string name="loading">Načítání…</string>
     <string name="auto_multipage_goto">Stránka %d</string>
     <string name="reload">Obnovit</string>
-    <string name="accept_privacy"><![CDATA[Přečetl/a jsem si a souhlasím se <a href="%s">zásadami ochrany osobních údajů</a> aplikace EVMap.]]></string>
+    <string name="accept_privacy"><![CDATA[Přečetl/a jsem si a souhlasím se <a href=\"%s\">zásadami ochrany osobních údajů</a> aplikace EVMap.]]></string>
     <string name="referrals">Referenční odkazy</string>
     <string name="referrals_info">Pro podpoření vývojáře svým nákupem můžete také použít jeden z referenčních odkazů níže.</string>
     <string name="generic_connection_error">Nepodařilo se načíst data</string>
@@ -344,7 +344,7 @@
     <string name="chargeprice_connection_error">Nepodařilo se načíst ceny</string>
     <string name="unknown_operator">Neznámý operátor</string>
     <string name="data_source_goingelectric">GoingElectric.de</string>
-    <string name="data_source_openchargemap_desc">Celosvětové, s různou kvalitou. Popisy jsou v angličtině nebo v místním jazyce. Spravováno komunitou, v některých zemích obsahuje vládní data (např. Severní Amerika, Spojené království, Francie, Norsko).</string>
+    <string name="data_source_openchargemap_desc"><![CDATA[Celosvětové, s různou kvalitou. Popisy jsou v angličtině nebo v místním jazyce. Spravováno komunitou, v některých zemích obsahuje vládní data (např. Severní Amerika, Spojené království, Francie, Norsko).]]></string>
     <string name="privacy_link">https://ev-map.app/privacypolicy/</string>
     <string name="chargeprice_faq_link">https://ev-map.app/faq/#price-comparison-feature</string>
     <string name="pref_darkmode_always_on">vždy zapnut</string>
@@ -372,4 +372,5 @@
     <string name="pref_chargeprice_native_integration_on">Data o cenách budou zobrazena přímo v EVMap</string>
     <string name="pref_chargeprice_native_integration_off">Tlačítko porovnání cen bude odkazovat na aplikaci nebo web Chargeprice</string>
     <string name="pref_provider_osm">OpenStreetMap</string>
+    <string name="filterprofile_name_not_unique">Již existuje profil filtru s tímto názvem</string>
 </resources>

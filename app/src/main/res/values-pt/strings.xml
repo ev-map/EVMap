@@ -148,7 +148,7 @@
     <string name="pref_data_source">Fonte da informação</string>
     <string name="data_source_openchargemap">Open Charge Map</string>
     <string name="next">próximo</string>
-    <string name="data_source_openchargemap_desc">Mundial, com vários níveis de qualidade. Descrições em inglês ou língua local. Mantido pela comunidade e usa informação governamental publica em alguns países (ex: América do Norte, Reino Unido, França, Noruega, etc).</string>
+    <string name="data_source_openchargemap_desc"><![CDATA[Mundial, com vários níveis de qualidade. Descrições em inglês ou língua local. Mantido pela comunidade e usa informação governamental publica em alguns países (ex: América do Norte, Reino Unido, França, Noruega, etc).]]></string>
     <string name="get_started">Começar</string>
     <string name="lets_go">Vamos lá</string>
     <string name="crash_report_text">O EVMap encontrou um problema. Por favor envie um relatório do erro para o criador da app.</string>
@@ -160,7 +160,7 @@
     <string name="pref_map_rotate_gestures_on">Use dois dedos para girar o mapa</string>
     <string name="pref_map_rotate_gestures_off">Rotação desligada (norte sempre para cima)</string>
     <string name="refresh_live_data">atualizar estado em tempo real</string>
-    <string name="pref_search_provider_info">As pesquisas são caras, especialmente se o Google Maps for utilizado. Por favor considere doar através de \"Sobre\" → \"Doar\".</string>
+    <string name="pref_search_provider_info"><![CDATA[As pesquisas são caras, especialmente quando o Google Maps é utilizado. Por favor considere doar através de "Sobre" → "Doar".]]></string>
     <string name="github_sponsors_desc">Apoie o EVMap através do GitHub</string>
     <string name="unnamed_filter_profile">Filtro sem nome</string>
     <string name="deleted_recent_search_results">As pesquisas recentes foram eliminadas</string>
@@ -205,18 +205,18 @@
     <string name="operator">Operador</string>
     <string name="network">Rede</string>
     <string name="hours">Horário de abertura</string>
-    <string name="open_247"><b>Aberto 24/7</b></string>
-    <string name="closed"><b>Fechado</b></string>
-    <string name="open_closesat"><b>Aberto</b> · Fecha às %s</string>
-    <string name="closed_opensat"><b>Fechado</b> · Abre às %s</string>
+    <string name="open_247"><![CDATA[<b>Aberto 24/7</b>]]></string>
+    <string name="closed"><![CDATA[<b>Fechado</b>]]></string>
+    <string name="open_closesat"><![CDATA[<b>Aberto</b> · Fecha às %s]]></string>
+    <string name="closed_opensat"><![CDATA[<b>Fechado</b> · Abre às %s]]></string>
     <string name="app_name">EVMap</string>
     <string name="title_activity_maps">EVMap</string>
     <string name="closed_unfmt">Fechado</string>
     <string name="holiday">Feriado</string>
     <string name="cost">Custo</string>
-    <string name="cost_detail"><b>Carregamento:</b> %1$s · <b>Parque:</b> %2$s</string>
-    <string name="cost_detail_charging"><b>Carregamento %s</b></string>
-    <string name="cost_detail_parking"><b>Parque %s</b></string>
+    <string name="cost_detail"><![CDATA[<b>Carregamento:</b> %1$s · <b>Parque:</b> %2$s]]></string>
+    <string name="cost_detail_charging"><![CDATA[<b>Carregamento %s</b>]]></string>
+    <string name="cost_detail_parking"><![CDATA[<b>Parque %s</b>]]></string>
     <string name="charging_free">Gratuito</string>
     <string name="charging_paid">Pago</string>
     <string name="parking_free">Gratuito</string>
@@ -374,4 +374,5 @@
     <string name="pref_chargeprice_native_integration_off">O botão de comparação de preços abrirá a app ou site do Chargeprice</string>
     <string name="pref_provider_osm">OpenStreetMap</string>
     <string name="auto_zoom_for_details">Amplie para ver mais detalhes</string>
+    <string name="filterprofile_name_not_unique">Já existe um filtro com este nome</string>
 </resources>

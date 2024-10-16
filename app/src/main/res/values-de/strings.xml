@@ -233,7 +233,7 @@
     <string name="crash_report_comment_prompt">Du kannst unten noch einen Kommentar hinzufügen:</string>
     <string name="powered_by_mapbox">powered by Mapbox</string>
     <string name="pref_search_provider">Anbieter für Ortssuche</string>
-    <string name="pref_search_provider_info">Die Daten für die Ortssuche, vor allem von Google Maps, sind relativ teuer. Über eine Spende unter \"Über EVMap -&gt; Spenden\" würde ich mich sehr freuen.</string>
+    <string name="pref_search_provider_info"><![CDATA[Die Daten für die Ortssuche, vor allem von Google Maps, sind relativ teuer. Über eine Spende unter „Über EVMap → Spenden“ würde ich mich sehr freuen.]]></string>
     <string name="github_sponsors">GitHub Sponsors</string>
     <string name="donate_desc">Unterstütze die Weiterentwicklung von EVMap mit einer einmaligen Spende</string>
     <string name="github_sponsors_desc">Unterstütze EVMap über GitHub Sponsors</string>

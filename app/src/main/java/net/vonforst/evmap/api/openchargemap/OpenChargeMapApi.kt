@@ -11,6 +11,7 @@ import net.vonforst.evmap.addDebugInterceptors
 import net.vonforst.evmap.api.ChargepointApi
 import net.vonforst.evmap.api.ChargepointList
 import net.vonforst.evmap.api.FiltersSQLQuery
+import net.vonforst.evmap.api.FullDownloadResult
 import net.vonforst.evmap.api.StringProvider
 import net.vonforst.evmap.api.mapPower
 import net.vonforst.evmap.api.mapPowerInverse
@@ -130,6 +131,12 @@ class OpenChargeMapApiWrapper(
 
     override val name = "OpenChargeMap.org"
     override val id = "openchargemap"
+    override val supportsOnlineQueries = true
+    override val supportsFullDownload = false
+
+    override suspend fun fullDownload(): FullDownloadResult<OCMReferenceData> {
+        throw NotImplementedError()
+    }
 
     private fun formatMultipleChoice(value: MultipleChoiceFilterValue?) =
         if (value == null || value.all) null else value.values.joinToString(",")

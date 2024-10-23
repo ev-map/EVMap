@@ -317,7 +317,7 @@ dependencies {
     automotiveImplementation("androidx.car.app:app-automotive:$carAppVersion")
 
     // AnyMaps
-    val anyMapsVersion = "aa1093c756"
+    val anyMapsVersion = "13c2395053"
     implementation("com.github.ev-map.AnyMaps:anymaps-base:$anyMapsVersion")
     googleImplementation("com.github.ev-map.AnyMaps:anymaps-google:$anyMapsVersion")
     googleImplementation("com.google.android.gms:play-services-maps:19.0.0")
@@ -367,6 +367,7 @@ dependencies {
     debugImplementation("com.facebook.flipper:flipper:0.238.0")
     debugImplementation("com.facebook.soloader:soloader:0.10.5")
     debugImplementation("com.facebook.flipper:flipper-network-plugin:0.238.0")
+    debugImplementation("com.jakewharton.timber:timber:5.0.1")
 
     // testing
     testImplementation("junit:junit:4.13.2")

@@ -197,14 +197,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             mapFragment =
                 childFragmentManager.findFragmentByTag(mapFragmentTag) as MapFragment?
         }
-        if (mapFragment == null || mapFragment!!.priority[0] != provider) {
+        if (mapFragment == null || mapFragment!!.priority[0] != getMapProvider(provider)) {
             mapFragment = MapFragment()
             mapFragment!!.priority = arrayOf(
-                when (provider) {
-                    "mapbox" -> MapFactory.MAPLIBRE
-                    "google" -> MapFactory.GOOGLE
-                    else -> null
-                },
+                getMapProvider(provider),
                 MapFactory.GOOGLE,
                 MapFactory.MAPLIBRE
             )
@@ -263,6 +259,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         )
 
         return binding.root
+    }
+
+    private fun getMapProvider(provider: String) = when (provider) {
+        "mapbox" -> MapFactory.MAPLIBRE
+        "google" -> MapFactory.GOOGLE
+        else -> null
     }
 
     val bottomSheetCollapsible

@@ -11,6 +11,7 @@ import com.facebook.flipper.plugins.network.NetworkFlipperPlugin
 import com.facebook.flipper.plugins.sharedpreferences.SharedPreferencesFlipperPlugin
 import com.facebook.soloader.SoLoader
 import okhttp3.OkHttpClient
+import timber.log.Timber
 
 private val networkFlipperPlugin = NetworkFlipperPlugin()
 
@@ -24,6 +25,8 @@ fun addDebugInterceptors(context: Context) {
     client.addPlugin(DatabasesFlipperPlugin(context))
     client.addPlugin(SharedPreferencesFlipperPlugin(context))
     client.start()
+
+    Timber.plant(Timber.DebugTree())
 }
 
 fun OkHttpClient.Builder.addDebugInterceptors(): OkHttpClient.Builder {

@@ -1,5 +1,6 @@
 package net.vonforst.evmap.storage
 
+import android.util.Log
 import androidx.lifecycle.*
 import androidx.room.*
 import androidx.sqlite.db.SimpleSQLiteQuery
@@ -8,15 +9,11 @@ import co.anbora.labs.spatia.geometry.Mbr
 import co.anbora.labs.spatia.geometry.Polygon
 import com.car2go.maps.model.LatLng
 import com.car2go.maps.model.LatLngBounds
-import com.car2go.maps.util.SphericalUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
-import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.vonforst.evmap.api.ChargepointApi
@@ -24,7 +21,6 @@ import net.vonforst.evmap.api.ChargepointList
 import net.vonforst.evmap.api.StringProvider
 import net.vonforst.evmap.api.goingelectric.GEReferenceData
 import net.vonforst.evmap.api.goingelectric.GoingElectricApiWrapper
-import net.vonforst.evmap.api.openchargemap.OCMReferenceData
 import net.vonforst.evmap.api.openchargemap.OpenChargeMapApiWrapper
 import net.vonforst.evmap.api.openstreetmap.OSMReferenceData
 import net.vonforst.evmap.api.openstreetmap.OpenStreetMapApiWrapper
@@ -39,7 +35,6 @@ import net.vonforst.evmap.viewmodel.getClusterDistance
 import net.vonforst.evmap.viewmodel.singleSwitchMap
 import java.time.Duration
 import java.time.Instant
-import kotlin.math.sqrt
 
 @Dao
 abstract class ChargeLocationsDao {
@@ -70,38 +65,38 @@ abstract class ChargeLocationsDao {
     abstract suspend fun deleteAllIfNotFavorite()
 
     @Query("SELECT * FROM chargelocation WHERE dataSource == :dataSource AND id == :id AND isDetailed == 1 AND timeRetrieved > :after")
-    abstract fun getChargeLocationById(
+    abstract suspend fun getChargeLocationById(
         id: Long,
         dataSource: String,
         after: Long
-    ): LiveData<ChargeLocation?>
+    ): ChargeLocation?
 
     @SkipQueryVerification
-    @Query("SELECT * FROM chargelocation WHERE dataSource == :dataSource AND Within(coordinates, BuildMbr(:lng1, :lat1, :lng2, :lat2)) AND timeRetrieved > :after")
-    abstract fun getChargeLocationsInBounds(
+    @Query("SELECT * FROM chargelocation WHERE dataSource == :dataSource AND timeRetrieved > :after AND ROWID IN (SELECT ROWID FROM SpatialIndex WHERE f_table_name = 'ChargeLocation' AND search_frame = BuildMbr(:lng1, :lat1, :lng2, :lat2))")
+    abstract suspend fun getChargeLocationsInBounds(
         lat1: Double,
         lat2: Double,
         lng1: Double,
         lng2: Double,
         dataSource: String,
         after: Long
-    ): LiveData<List<ChargeLocation>>
+    ): List<ChargeLocation>
 
     @SkipQueryVerification
-    @Query("SELECT * FROM chargelocation WHERE dataSource == :dataSource AND PtDistWithin(coordinates, MakePoint(:lng, :lat, 4326), :radius) AND timeRetrieved > :after ORDER BY Distance(coordinates, MakePoint(:lng, :lat, 4326))")
-    abstract fun getChargeLocationsRadius(
+    @Query("SELECT * FROM chargelocation WHERE dataSource == :dataSource AND PtDistWithin(coordinates, MakePoint(:lng, :lat, 4326), :radius) AND timeRetrieved > :after AND ROWID IN (SELECT ROWID FROM SpatialIndex WHERE f_table_name = 'ChargeLocation' AND search_frame = BuildCircleMbr(:lng, :lat, :radius)) ORDER BY Distance(coordinates, MakePoint(:lng, :lat, 4326))")
+    abstract suspend fun getChargeLocationsRadius(
         lat: Double,
         lng: Double,
         radius: Double,
         dataSource: String,
         after: Long
-    ): LiveData<List<ChargeLocation>>
+    ): List<ChargeLocation>
 
     @RawQuery(observedEntities = [ChargeLocation::class])
-    abstract fun getChargeLocationsCustom(query: SupportSQLiteQuery): LiveData<List<ChargeLocation>>
+    abstract suspend fun getChargeLocationsCustom(query: SupportSQLiteQuery): List<ChargeLocation>
 
     @SkipQueryVerification
-    @Query("SELECT SUM(1) AS clusterCount, MakePoint(AVG(X(coordinates)), AVG(Y(coordinates)), 4326) as center, SnapToGrid(coordinates, :precision) AS snapped FROM chargelocation WHERE dataSource == :dataSource AND Within(coordinates, BuildMbr(:lng1, :lat1, :lng2, :lat2)) AND timeRetrieved > :after GROUP BY snapped")
+    @Query("SELECT SUM(1) AS clusterCount, MakePoint(AVG(X(coordinates)), AVG(Y(coordinates)), 4326) as center, SnapToGrid(coordinates, :precision) AS snapped FROM chargelocation WHERE dataSource == :dataSource AND ROWID IN (SELECT ROWID FROM SpatialIndex WHERE f_table_name = 'ChargeLocation' AND search_frame = BuildMbr(:lng1, :lat1, :lng2, :lat2)) AND timeRetrieved > :after GROUP BY snapped")
     abstract fun getChargeLocationClusters(
         lat1: Double,
         lat2: Double,
@@ -128,6 +123,8 @@ data class ChargeLocationClusterSimple(
     @ColumnInfo("center") val center: Coordinate,
     @ColumnInfo("snapped") val snapped: Coordinate,
 )
+
+private const val TAG = "ChargeLocationsDao"
 
 /**
  * The ChargeLocationsRepository wraps the ChargepointApi and the DB to provide caching
@@ -195,18 +192,31 @@ class ChargeLocationsRepository(
         }
 
         val api = api.value!!
+        val t1 = System.currentTimeMillis()
         val dbResult = if (filters.isNullOrEmpty()) {
-            chargeLocationsDao.getChargeLocationsInBounds(
-                bounds.southwest.latitude,
-                bounds.northeast.latitude,
-                bounds.southwest.longitude,
-                bounds.northeast.longitude,
-                api.id,
-                cacheLimitDate(api)
-            )
+            liveData {
+                emit(
+                    chargeLocationsDao.getChargeLocationsInBounds(
+                        bounds.southwest.latitude,
+                        bounds.northeast.latitude,
+                        bounds.southwest.longitude,
+                        bounds.northeast.longitude,
+                        api.id,
+                        cacheLimitDate(api)
+                    )
+                )
+            }
         } else {
             queryWithFilters(api, filters, bounds)
-        }.map { applyLocalClustering(it, zoom) }
+        }.map {
+            val t2 = System.currentTimeMillis()
+            Log.d(TAG, "DB loading time: ${t2 - t1}")
+            Log.d(TAG, "number of chargers: ${it.size}")
+            val result = applyLocalClustering(it, zoom)
+            val t3 = System.currentTimeMillis()
+            Log.d(TAG, "Clustering time: ${t3 - t2}")
+            result
+        }
         val filtersSerialized =
             filters?.filter { it.value != it.filter.defaultValue() }?.takeIf { it.isNotEmpty() }
                 ?.serialize()
@@ -313,13 +323,17 @@ class ChargeLocationsRepository(
 
         val radiusMeters = radius.toDouble() * 1000
         val dbResult = if (filters.isNullOrEmpty()) {
-            chargeLocationsDao.getChargeLocationsRadius(
-                location.latitude,
-                location.longitude,
-                radiusMeters,
-                api.id,
-                cacheLimitDate(api)
-            )
+            liveData {
+                emit(
+                    chargeLocationsDao.getChargeLocationsRadius(
+                        location.latitude,
+                        location.longitude,
+                        radiusMeters,
+                        api.id,
+                        cacheLimitDate(api)
+                    )
+                )
+            }
         } else {
             queryWithFilters(api, filters, location, radiusMeters)
         }.map { applyLocalClustering(it, zoom) }
@@ -434,11 +448,15 @@ class ChargeLocationsRepository(
         overrideCache: Boolean = false
     ): LiveData<Resource<ChargeLocation>> {
         val api = api.value!!
-        val dbResult = chargeLocationsDao.getChargeLocationById(
-            id,
-            prefs.dataSource,
-            cacheLimitDate(api)
-        )
+        val dbResult = liveData {
+            emit(
+                chargeLocationsDao.getChargeLocationById(
+                    id,
+                    prefs.dataSource,
+                    cacheLimitDate(api)
+                )
+            )
+        }
         if (api.supportsOnlineQueries) {
             val apiResult = liveData {
                 emit(Resource.loading(null))
@@ -488,7 +506,7 @@ class ChargeLocationsRepository(
         bounds: LatLngBounds
     ): LiveData<List<ChargeLocation>> {
         val region =
-            "Within(coordinates, BuildMbr(${bounds.southwest.longitude}, ${bounds.southwest.latitude}, ${bounds.northeast.longitude}, ${bounds.northeast.latitude}))"
+            "ROWID IN (SELECT ROWID FROM SpatialIndex WHERE f_table_name = 'ChargeLocation' AND search_frame = BuildMbr(${bounds.southwest.longitude}, ${bounds.southwest.latitude}, ${bounds.northeast.longitude}, ${bounds.northeast.latitude}))"
         return queryWithFilters(api, filters, region)
     }
 
@@ -499,7 +517,7 @@ class ChargeLocationsRepository(
         radius: Double
     ): LiveData<List<ChargeLocation>> {
         val region =
-            "PtDistWithin(coordinates, MakePoint(${location.longitude}, ${location.latitude}, 4326), ${radius})"
+            "PtDistWithin(coordinates, MakePoint(${location.longitude}, ${location.latitude}, 4326), ${radius}) AND ROWID IN (SELECT ROWID FROM SpatialIndex WHERE f_table_name = 'ChargeLocation' AND search_frame = BuildCircleMbr(${location.longitude}, ${location.latitude}, $radius))"
         val order =
             "ORDER BY Distance(coordinates, MakePoint(${location.longitude}, ${location.latitude}, 4326))"
         return queryWithFilters(api, filters, region, order)
@@ -535,12 +553,16 @@ class ChargeLocationsRepository(
                 orderSql?.let { append(" " + orderSql) }
             }.toString()
 
-            chargeLocationsDao.getChargeLocationsCustom(
-                SimpleSQLiteQuery(
-                    sql,
-                    null
+            liveData {
+                emit(
+                    chargeLocationsDao.getChargeLocationsCustom(
+                        SimpleSQLiteQuery(
+                            sql,
+                            null
+                        )
+                    )
                 )
-            )
+            }
         } catch (e: NotImplementedError) {
             MutableLiveData()  // in this case we cannot get a DB result
         }

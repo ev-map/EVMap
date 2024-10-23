@@ -55,6 +55,7 @@ import androidx.transition.TransitionManager
 import coil.load
 import coil.memory.MemoryCache
 import com.car2go.maps.AnyMap
+import com.car2go.maps.MapFactory
 import com.car2go.maps.MapFragment
 import com.car2go.maps.OnMapReadyCallback
 import com.car2go.maps.model.BitmapDescriptor
@@ -225,12 +226,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             mapFragment = MapFragment()
             mapFragment!!.priority = arrayOf(
                 when (provider) {
-                    "mapbox" -> MapFragment.MAPLIBRE
-                    "google" -> MapFragment.GOOGLE
+                    "mapbox" -> MapFactory.MAPLIBRE
+                    "google" -> MapFactory.GOOGLE
                     else -> null
                 },
-                MapFragment.GOOGLE,
-                MapFragment.MAPLIBRE
+                MapFactory.GOOGLE,
+                MapFactory.MAPLIBRE
             )
             childFragmentManager
                 .beginTransaction()
@@ -1062,7 +1063,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         vm.mapTrafficSupported.value =
             mapFragment?.let { AnyMap.Feature.TRAFFIC_LAYER in it.supportedFeatures } ?: false
 
-        if (BuildConfig.FLAVOR.contains("google") && mapFragment!!.priority[0] == MapFragment.GOOGLE) {
+        if (BuildConfig.FLAVOR.contains("google") && mapFragment!!.priority[0] == MapFactory.GOOGLE) {
             // Google Maps: icons can be generated in background thread
             lifecycleScope.launch {
                 withContext(Dispatchers.Default) {

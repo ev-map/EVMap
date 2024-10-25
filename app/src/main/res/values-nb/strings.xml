@@ -334,4 +334,5 @@
     <string name="referral_tesla">Tesla</string>
     <string name="pref_units_default">Enhetsforvalg</string>
     <string name="login">Logg inn</string>
+    <string name="pref_provider_osm">OpenStreetMap</string>
 </resources>

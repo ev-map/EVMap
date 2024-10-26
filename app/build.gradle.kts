@@ -315,7 +315,7 @@ dependencies {
     automotiveImplementation("androidx.car.app:app-automotive:$carAppVersion")
 
     // AnyMaps
-    val anyMapsVersion = "13c2395053"
+    val anyMapsVersion = "c7ba6ea78d"
     implementation("com.github.ev-map.AnyMaps:anymaps-base:$anyMapsVersion")
     googleImplementation("com.github.ev-map.AnyMaps:anymaps-google:$anyMapsVersion")
     googleImplementation("com.google.android.gms:play-services-maps:19.0.0")
@@ -323,7 +323,7 @@ dependencies {
         // duplicates classes from mapbox-sdk-services
         exclude("org.maplibre.gl", "android-sdk-geojson")
     }
-    implementation("org.maplibre.gl:android-sdk:10.3.2-pre3") {
+    implementation("org.maplibre.gl:android-sdk:10.3.3") {
         exclude("org.maplibre.gl", "android-sdk-geojson")
     }
 
@@ -366,6 +366,7 @@ dependencies {
     debugImplementation("com.facebook.soloader:soloader:0.10.5")
     debugImplementation("com.facebook.flipper:flipper-network-plugin:0.238.0")
     debugImplementation("com.jakewharton.timber:timber:5.0.1")
+    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.14")
 
     // testing
     testImplementation("junit:junit:4.13.2")

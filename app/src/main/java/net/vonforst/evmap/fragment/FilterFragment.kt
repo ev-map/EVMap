@@ -45,7 +45,7 @@ class FilterFragment : Fragment(), MenuProvider {
         savedInstanceState: Bundle?
     ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_filter, container, false)
-        binding.lifecycleOwner = this
+        binding.lifecycleOwner = viewLifecycleOwner
         binding.vm = vm
         vm.filterProfile.observe(viewLifecycleOwner) {}
 

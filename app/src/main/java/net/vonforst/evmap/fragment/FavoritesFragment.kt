@@ -65,7 +65,7 @@ class FavoritesFragment : Fragment() {
             inflater,
             R.layout.fragment_favorites, container, false
         )
-        binding.lifecycleOwner = this
+        binding.lifecycleOwner = viewLifecycleOwner
         binding.vm = vm
 
         return binding.root

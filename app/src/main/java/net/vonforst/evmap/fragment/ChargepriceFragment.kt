@@ -100,9 +100,9 @@ class ChargepriceFragment : Fragment() {
             inflater,
             R.layout.fragment_chargeprice_header, container, false
         )
-        binding.lifecycleOwner = this
+        binding.lifecycleOwner = viewLifecycleOwner
         binding.vm = vm
-        headerBinding.lifecycleOwner = this
+        headerBinding.lifecycleOwner = viewLifecycleOwner
         headerBinding.vm = vm
 
         binding.toolbar.inflateMenu(R.menu.chargeprice)

@@ -214,7 +214,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
     ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_map, container, false)
         println(binding.detailView.sourceButton)
-        binding.lifecycleOwner = this
+        binding.lifecycleOwner = viewLifecycleOwner
         binding.vm = vm
 
         val provider = prefs.mapProvider
@@ -1116,7 +1116,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             }
         }
         vm.mapPosition.observe(viewLifecycleOwner) {
-            binding.scaleView.update(map.cameraPosition.zoom, map.cameraPosition.target.latitude)
+            val target = map.cameraPosition.target ?: return@observe
+            binding.scaleView.update(map.cameraPosition.zoom, target.latitude)
         }
 
         map.setOnCameraMoveStartedListener { reason ->
@@ -1592,8 +1593,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
+        map = null
+        vm.mapProjection = null
         /* if we don't dismiss the popup menu, it will be recreated in some cases
         (split-screen mode) and then have references to a destroyed fragment. */
         popupMenu?.dismiss()

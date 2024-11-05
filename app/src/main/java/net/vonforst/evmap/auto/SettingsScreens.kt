@@ -451,6 +451,7 @@ class ChooseDataSourceScreen(
     val descriptions = when (type) {
         Type.CHARGER_DATA_SOURCE -> listOf(
             carContext.getString(R.string.data_source_goingelectric_desc),
+            carContext.getString(R.string.data_source_nobil_desc),
             carContext.getString(R.string.data_source_openchargemap_desc),
             carContext.getString(R.string.data_source_openstreetmap_desc)
         )

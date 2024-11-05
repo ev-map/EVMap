@@ -5,6 +5,7 @@ import com.car2go.maps.model.LatLng
 import com.car2go.maps.model.LatLngBounds
 import net.vonforst.evmap.R
 import net.vonforst.evmap.api.goingelectric.GoingElectricApiWrapper
+import net.vonforst.evmap.api.nobil.NobilApiWrapper
 import net.vonforst.evmap.api.openchargemap.OpenChargeMapApiWrapper
 import net.vonforst.evmap.api.openstreetmap.OpenStreetMapApiWrapper
 import net.vonforst.evmap.model.*
@@ -94,6 +95,13 @@ fun Context.stringProvider() = object : StringProvider {
 
 fun createApi(type: String, ctx: Context): ChargepointApi<ReferenceData> {
     return when (type) {
+        "nobil" -> {
+            NobilApiWrapper(
+                ctx.getString(
+                    R.string.nobil_key
+                )
+            )
+        }
         "openchargemap" -> {
             OpenChargeMapApiWrapper(
                 ctx.getString(

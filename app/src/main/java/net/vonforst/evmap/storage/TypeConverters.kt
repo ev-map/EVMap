@@ -8,6 +8,7 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
 import net.vonforst.evmap.api.goingelectric.GEChargerPhotoAdapter
+import net.vonforst.evmap.api.nobil.NobilChargerPhotoAdapter
 import net.vonforst.evmap.api.openchargemap.OCMChargerPhotoAdapter
 import net.vonforst.evmap.api.openstreetmap.ImgurChargerPhoto
 import net.vonforst.evmap.autocomplete.AutocompletePlaceType
@@ -23,6 +24,7 @@ class Converters {
         .add(
             PolymorphicJsonAdapterFactory.of(ChargerPhoto::class.java, "type")
                 .withSubtype(GEChargerPhotoAdapter::class.java, "goingelectric")
+                .withSubtype(NobilChargerPhotoAdapter::class.java, "nobil")
                 .withSubtype(OCMChargerPhotoAdapter::class.java, "openchargemap")
                 .withSubtype(ImgurChargerPhoto::class.java, "imgur")
                 .withDefaultValue(null)

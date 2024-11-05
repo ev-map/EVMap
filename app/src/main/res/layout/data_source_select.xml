@@ -61,4 +61,22 @@
         android:layout_marginStart="32dp"
         android:text="@string/data_source_openstreetmap_desc" />
 
+    <RadioButton
+        android:id="@+id/rbNobil"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/data_source_nobil"
+        android:textColor="#69bf9c"
+        app:buttonTint="#69bf9c"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/textView30"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-8dp"
+        android:layout_marginStart="32dp"
+        android:text="@string/data_source_nobil_desc" />
+
 </RadioGroup>

@@ -38,6 +38,9 @@ be put into the app in the form of a resource file called `apikeys.xml` under
    <string name="acra_credentials" translatable="false">
       insert your ACRA crash reporting credentials here
    </string>
+   <string name="nobil_key" translatable="false">
+      insert your nobil key here
+   </string>
 </resources>
 ```
 
@@ -166,6 +169,14 @@ in German.
    [API console](https://www.goingelectric.de/stromtankstellen/api/ucp/) to retrieve your API key.
 
 </details>
+
+### **NOBIL**
+
+NOBIL lists charging stations in the Nordic countries (Denmark, Finland, Iceland, Norway, Sweden)
+and provides an open [API](https://info.nobil.no/api) to access the data.
+
+To get a NOBIL API key, fill in and submit the form on [this page](https://info.nobil.no/api).
+Then, wait for an an e-mail with your API key.
 
 ### **OpenChargeMap**
 

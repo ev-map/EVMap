@@ -8,22 +8,40 @@ import net.vonforst.evmap.databinding.FragmentDonateReferralBinding
 abstract class DonateFragmentBase : Fragment() {
     fun setupReferrals(referrals: FragmentDonateReferralBinding) {
         referrals.referralTesla.setOnClickListener {
-            (requireActivity() as MapsActivity).openUrl(getString(R.string.tesla_referral_link))
+            (requireActivity() as MapsActivity).openUrl(
+                getString(R.string.tesla_referral_link),
+                requireView()
+            )
         }
         referrals.referralJuicify.setOnClickListener {
-            (requireActivity() as MapsActivity).openUrl(getString(R.string.juicify_referral_link))
+            (requireActivity() as MapsActivity).openUrl(
+                getString(R.string.juicify_referral_link),
+                requireView()
+            )
         }
         referrals.referralGeldfuereauto.setOnClickListener {
-            (requireActivity() as MapsActivity).openUrl(getString(R.string.geldfuereauto_referral_link))
+            (requireActivity() as MapsActivity).openUrl(
+                getString(R.string.geldfuereauto_referral_link),
+                requireView()
+            )
         }
         referrals.referralMaingau.setOnClickListener {
-            (requireActivity() as MapsActivity).openUrl(getString(R.string.maingau_referral_link))
+            (requireActivity() as MapsActivity).openUrl(
+                getString(R.string.maingau_referral_link),
+                requireView()
+            )
         }
         referrals.referralEwieeinfach.setOnClickListener {
-            (requireActivity() as MapsActivity).openUrl(getString(R.string.ewieeinfach_referral_link))
+            (requireActivity() as MapsActivity).openUrl(
+                getString(R.string.ewieeinfach_referral_link),
+                requireView()
+            )
         }
         referrals.referralEprimo.setOnClickListener {
-            (requireActivity() as MapsActivity).openUrl(getString(R.string.eprimo_referral_link))
+            (requireActivity() as MapsActivity).openUrl(
+                getString(R.string.eprimo_referral_link),
+                requireView()
+            )
         }
     }
 }

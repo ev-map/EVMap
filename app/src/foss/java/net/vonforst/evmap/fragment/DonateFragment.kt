@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.transition.MaterialSharedAxis
@@ -43,7 +42,7 @@ class DonateFragment : DonateFragmentBase() {
         )
 
         binding.btnDonate.setOnClickListener {
-            (activity as? MapsActivity)?.openUrl(getString(R.string.paypal_link))
+            (activity as? MapsActivity)?.openUrl(getString(R.string.paypal_link), binding.root)
         }
 
         setupReferrals(referrals)

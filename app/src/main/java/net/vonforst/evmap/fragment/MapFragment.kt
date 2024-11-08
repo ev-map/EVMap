@@ -11,6 +11,7 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.text.method.KeyListener
+import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -137,8 +138,9 @@ import kotlin.collections.set
 import kotlin.math.min
 
 
-class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallback, MenuProvider {
-    private lateinit var binding: FragmentMapBinding
+class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
+    private var _binding: FragmentMapBinding? = null
+    private val binding get() = _binding!!
     private val vm: MapViewModel by viewModels()
     private val galleryVm: GalleryViewModel by activityViewModels()
     private var mapFragment: MapFragment? = null
@@ -212,7 +214,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_map, container, false)
+        _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_map, container, false)
         println(binding.detailView.sourceButton)
         binding.lifecycleOwner = viewLifecycleOwner
         binding.vm = vm
@@ -391,9 +393,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
 
     override fun onResume() {
         super.onResume()
-        val hostActivity = activity as? MapsActivity ?: return
-        hostActivity.fragmentCallback = this
-
         vm.reloadPrefs()
         if (requestingLocationUpdates && requireContext().checkAnyLocationPermission()
         ) {
@@ -425,7 +424,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             val charger = vm.charger.value?.data
             if (charger != null) {
                 if (lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
-                    (requireActivity() as MapsActivity).navigateTo(charger)
+                    (requireActivity() as MapsActivity).navigateTo(charger, binding.root)
                 }
             }
         }
@@ -438,7 +437,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         binding.detailView.sourceButton.setOnClickListener {
             val charger = vm.charger.value?.data
             if (charger != null) {
-                (activity as? MapsActivity)?.openUrl(charger.url)
+                (activity as? MapsActivity)?.openUrl(charger.url, binding.root)
             }
         }
         binding.detailView.btnChargeprice.setOnClickListener {
@@ -451,12 +450,16 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                     extras
                 )
             } else {
-                (activity as? MapsActivity)?.openUrl(ChargepriceApi.getPoiUrl(charger), false)
+                (activity as? MapsActivity)?.openUrl(
+                    ChargepriceApi.getPoiUrl(charger),
+                    binding.root,
+                    false
+                )
             }
         }
         binding.detailView.btnChargerWebsite.setOnClickListener {
             val charger = vm.charger.value?.data ?: return@setOnClickListener
-            charger.chargerUrl?.let { (activity as? MapsActivity)?.openUrl(it) }
+            charger.chargerUrl?.let { (activity as? MapsActivity)?.openUrl(it, binding.root) }
         }
         binding.detailView.btnLogin.setOnClickListener {
             findNavController().safeNavigate(
@@ -464,7 +467,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             )
         }
         binding.detailView.imgPredictionSource.setOnClickListener {
-            (activity as? MapsActivity)?.openUrl(getString(R.string.fronyx_url))
+            (activity as? MapsActivity)?.openUrl(getString(R.string.fronyx_url), binding.root)
         }
         binding.detailView.btnPredictionHelp.setOnClickListener {
             MaterialAlertDialogBuilder(requireContext())
@@ -504,7 +507,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                 R.id.menu_edit -> {
                     val charger = vm.charger.value?.data
                     if (charger?.editUrl != null) {
-                        (activity as? MapsActivity)?.openUrl(charger.editUrl)
+                        (activity as? MapsActivity)?.openUrl(charger.editUrl, binding.root)
                         if (vm.apiId.value == "goingelectric") {
                             // instructions specific to GoingElectric
                             Toast.makeText(
@@ -920,10 +923,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                     if (charger != null) {
                         when (it.icon) {
                             R.drawable.ic_location, R.drawable.ic_address -> {
-                                (activity as? MapsActivity)?.showLocation(charger)
+                                (activity as? MapsActivity)?.showLocation(charger, binding.root)
                             }
                             R.drawable.ic_fault_report -> {
-                                (activity as? MapsActivity)?.openUrl(charger.url)
+                                (activity as? MapsActivity)?.openUrl(charger.url, binding.root)
                             }
 
                             R.drawable.ic_payment -> {
@@ -931,7 +934,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
                             }
 
                             R.drawable.ic_network -> {
-                                charger.networkUrl?.let { (activity as? MapsActivity)?.openUrl(it) }
+                                charger.networkUrl?.let {
+                                    (activity as? MapsActivity)?.openUrl(
+                                        it,
+                                        binding.root
+                                    )
+                                }
                             }
                         }
                     }
@@ -1050,7 +1058,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
             .setTitle(R.string.charge_cards)
             .setItems(names.toTypedArray()) { _, i ->
                 val card = data[i]
-                (activity as? MapsActivity)?.openUrl("https:${card.url}")
+                (activity as? MapsActivity)?.openUrl("https:${card.url}", binding.root)
             }.show()
     }
 
@@ -1540,10 +1548,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
         else -> false
     }
 
-    override fun getRootView(): View {
-        return binding.root
-    }
-
     @RequiresPermission(anyOf = [ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION])
     private fun requestLocationUpdates() {
         locationEngine.requestLocationUpdates(
@@ -1596,6 +1600,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MapsActivity.FragmentCallbac
     override fun onDestroyView() {
         super.onDestroyView()
         map = null
+        mapFragment = null
+        _binding = null
         vm.mapProjection = null
         /* if we don't dismiss the popup menu, it will be recreated in some cases
         (split-screen mode) and then have references to a destroyed fragment. */

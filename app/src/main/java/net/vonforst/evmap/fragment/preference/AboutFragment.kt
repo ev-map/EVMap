@@ -78,22 +78,25 @@ class AboutFragment : PreferenceFragmentCompat() {
             }
 
             "website" -> {
-                (activity as? MapsActivity)?.openUrl(getString(R.string.website_url))
+                (activity as? MapsActivity)?.openUrl(getString(R.string.website_url), requireView())
                 true
             }
 
             "github_link" -> {
-                (activity as? MapsActivity)?.openUrl(getString(R.string.github_link))
+                (activity as? MapsActivity)?.openUrl(getString(R.string.github_link), requireView())
                 true
             }
 
             "privacy" -> {
-                (activity as? MapsActivity)?.openUrl(getString(R.string.privacy_link))
+                (activity as? MapsActivity)?.openUrl(
+                    getString(R.string.privacy_link),
+                    requireView()
+                )
                 true
             }
 
             "faq" -> {
-                (activity as? MapsActivity)?.openUrl(getString(R.string.faq_link))
+                (activity as? MapsActivity)?.openUrl(getString(R.string.faq_link), requireView())
                 true
             }
             "oss_licenses" -> {
@@ -116,11 +119,14 @@ class AboutFragment : PreferenceFragmentCompat() {
                 true
             }
             "twitter" -> {
-                (activity as? MapsActivity)?.openUrl(getString(R.string.twitter_url))
+                (activity as? MapsActivity)?.openUrl(getString(R.string.twitter_url), requireView())
                 true
             }
             "goingelectric" -> {
-                (activity as? MapsActivity)?.openUrl(getString(R.string.goingelectric_forum_url))
+                (activity as? MapsActivity)?.openUrl(
+                    getString(R.string.goingelectric_forum_url),
+                    requireView()
+                )
                 true
             }
             else -> super.onPreferenceTreeClick(preference)

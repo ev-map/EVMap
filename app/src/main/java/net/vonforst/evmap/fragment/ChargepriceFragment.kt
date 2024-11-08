@@ -141,7 +141,7 @@ class ChargepriceFragment : Fragment() {
 
         val chargepriceAdapter = ChargepriceAdapter().apply {
             onClickListener = {
-                (requireActivity() as MapsActivity).openUrl(it.url)
+                (requireActivity() as MapsActivity).openUrl(it.url, binding.root)
             }
         }
         val joinedAdapter = ConcatAdapter(
@@ -194,7 +194,10 @@ class ChargepriceFragment : Fragment() {
         }
 
         binding.imgChargepriceLogo.setOnClickListener {
-            (requireActivity() as MapsActivity).openUrl(ChargepriceApi.getPoiUrl(charger))
+            (requireActivity() as MapsActivity).openUrl(
+                ChargepriceApi.getPoiUrl(charger),
+                binding.root
+            )
         }
 
         binding.btnSettings.setOnClickListener {
@@ -217,7 +220,10 @@ class ChargepriceFragment : Fragment() {
         binding.toolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.menu_help -> {
-                    (activity as? MapsActivity)?.openUrl(getString(R.string.chargeprice_faq_link))
+                    (activity as? MapsActivity)?.openUrl(
+                        getString(R.string.chargeprice_faq_link),
+                        binding.root
+                    )
                     true
                 }
                 else -> false

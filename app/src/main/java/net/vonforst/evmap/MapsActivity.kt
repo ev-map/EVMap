@@ -45,14 +45,11 @@ const val EXTRA_DONATE = "donate"
 
 class MapsActivity : AppCompatActivity(),
     PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
-    interface FragmentCallback {
-        fun getRootView(): View
-    }
 
     private var reenterState: Bundle? = null
     private lateinit var navController: NavController
+    private lateinit var navHostFragment: NavHostFragment
     lateinit var appBarConfiguration: AppBarConfiguration
-    var fragmentCallback: FragmentCallback? = null
     private lateinit var prefs: PreferenceDataSource
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,7 +68,7 @@ class MapsActivity : AppCompatActivity(),
             ),
             drawerLayout
         )
-        val navHostFragment =
+        navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
         val navGraph = navController.navInflater.inflate(R.navigation.nav_graph)
@@ -238,7 +235,7 @@ class MapsActivity : AppCompatActivity(),
         deepLink?.send()
     }
 
-    fun navigateTo(charger: ChargeLocation) {
+    fun navigateTo(charger: ChargeLocation, rootView: View) {
         // google maps navigation
         val coord = charger.coordinates
         val intent = Intent(Intent.ACTION_VIEW)
@@ -248,11 +245,11 @@ class MapsActivity : AppCompatActivity(),
             startActivity(intent)
         } else {
             // fallback: generic geo intent
-            showLocation(charger)
+            showLocation(charger, rootView)
         }
     }
 
-    fun showLocation(charger: ChargeLocation) {
+    fun showLocation(charger: ChargeLocation, rootView: View) {
         val coord = charger.coordinates
         val intent = Intent(Intent.ACTION_VIEW)
         intent.data = Uri.parse(
@@ -263,16 +260,15 @@ class MapsActivity : AppCompatActivity(),
         if (intent.resolveActivity(packageManager) != null) {
             startActivity(intent)
         } else {
-            val cb = fragmentCallback ?: return
             Snackbar.make(
-                cb.getRootView(),
+                rootView,
                 R.string.no_maps_app_found,
                 Snackbar.LENGTH_SHORT
             ).show()
         }
     }
 
-    fun openUrl(url: String, preferBrowser: Boolean = false) {
+    fun openUrl(url: String, rootView: View, preferBrowser: Boolean = false) {
         val intent = CustomTabsIntent.Builder()
             .setDefaultColorSchemeParams(
                 CustomTabColorSchemeParams.Builder()
@@ -321,9 +317,8 @@ class MapsActivity : AppCompatActivity(),
         try {
             intent.launchUrl(this, uri)
         } catch (e: ActivityNotFoundException) {
-            val cb = fragmentCallback ?: return
             Snackbar.make(
-                cb.getRootView(),
+                rootView,
                 R.string.no_browser_app_found,
                 Snackbar.LENGTH_SHORT
             ).show()

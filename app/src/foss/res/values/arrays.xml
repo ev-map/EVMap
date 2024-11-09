@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="pref_map_provider_names">
-        <item>@string/pref_provider_osm_mapbox</item>
+        <item>@string/pref_provider_osm</item>
     </string-array>
     <string-array name="pref_map_provider_values" translatable="false">
         <item>mapbox</item>

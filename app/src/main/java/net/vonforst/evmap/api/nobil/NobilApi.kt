@@ -61,12 +61,6 @@ interface NobilApi {
             context: Context? = null
         ): NobilApi {
             val client = OkHttpClient.Builder().apply {
-                addInterceptor { chain ->
-                    val original = chain.request()
-                    val new = original.newBuilder()
-                        .build()
-                    chain.proceed(new)
-                }
                 if (BuildConfig.DEBUG) {
                     addDebugInterceptors()
                 }

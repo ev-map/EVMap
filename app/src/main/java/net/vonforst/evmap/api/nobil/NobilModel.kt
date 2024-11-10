@@ -100,7 +100,11 @@ data class NobilChargerStation(
         // 24: Open 24h
         if (chargerStationAttributes.st["24"]?.attrTrans == "Yes") OpeningHours(twentyfourSeven = true, null, null) else null,
         // 7: Parking fee
-        if (chargerStationAttributes.st["7"]?.attrTrans == "No") Cost(freeparking = true) else null,
+        when (chargerStationAttributes.st["7"]?.attrTrans) {
+            "Yes" -> Cost(freeparking = false)
+            "No" -> Cost(freeparking = true)
+            else -> null
+        },
         null,
         null,
         null,

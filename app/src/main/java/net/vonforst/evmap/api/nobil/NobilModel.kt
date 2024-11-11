@@ -16,6 +16,10 @@ import net.vonforst.evmap.model.ReferenceData
 import java.time.Instant
 import java.time.LocalDateTime
 
+data class NobilReferenceData(
+    val dummy: Int
+) : ReferenceData()
+
 @JsonClass(generateAdapter = true)
 data class NobilRectangleSearchRequest(
     val apikey: String,
@@ -67,12 +71,18 @@ data class NobilChargerStation(
     @Json(name = "csmd") val chargerStationData: NobilChargerStationData,
     @Json(name = "attr") val chargerStationAttributes: NobilChargerStationAttributes
 ) {
-    fun convert(dataLicense: String?) = ChargeLocation(
-        chargerStationData.id,
-        "nobil",
-        HtmlCompat.fromHtml(chargerStationData.name, HtmlCompat.FROM_HTML_MODE_COMPACT).toString(),
-        chargerStationData.position,
-        Address(chargerStationData.city,
+    fun convert(dataLicense: String) : ChargeLocation? {
+        val chargepoints = chargerStationAttributes.conn.mapNotNull { createChargepointFromNobilConnection(it.value) }
+        if (chargepoints.isEmpty()) return null
+
+        return ChargeLocation(
+            chargerStationData.id,
+            "nobil",
+            HtmlCompat.fromHtml(chargerStationData.name, HtmlCompat.FROM_HTML_MODE_COMPACT)
+                .toString(),
+            chargerStationData.position,
+            Address(
+                chargerStationData.city,
                 when (chargerStationData.landCode) {
                     "DAN" -> "Denmark"
                     "FIN" -> "Finland"
@@ -82,39 +92,59 @@ data class NobilChargerStation(
                     else -> ""
                 },
                 chargerStationData.zipCode,
-                listOfNotNull(chargerStationData.street, chargerStationData.houseNumber).joinToString(" ")),
-        chargerStationAttributes.conn.map { createChargepointFromNobilConnection(it.value) },
-        null,
-        "",
-        null,
-        null,
-        chargerStationData.ocpiId != null ||
-                chargerStationData.updated.isAfter(LocalDateTime.now().minusMonths(6)),
-        null,
-        if (chargerStationData.operator != null) HtmlCompat.fromHtml(chargerStationData.operator, HtmlCompat.FROM_HTML_MODE_COMPACT).toString() else null,
-        if (chargerStationData.userComment != null) HtmlCompat.fromHtml(chargerStationData.userComment, HtmlCompat.FROM_HTML_MODE_COMPACT).toString() else null,
-        null,
-        if (chargerStationData.description != null) HtmlCompat.fromHtml(chargerStationData.description, HtmlCompat.FROM_HTML_MODE_COMPACT).toString() else null,
-        if (chargerStationData.image == "no.image.svg") null else listOf(NobilChargerPhotoAdapter(chargerStationData.image)),
-        null,
-        // 24: Open 24h
-        if (chargerStationAttributes.st["24"]?.attrTrans == "Yes") OpeningHours(twentyfourSeven = true, null, null) else null,
-        // 7: Parking fee
-        when (chargerStationAttributes.st["7"]?.attrTrans) {
-            "Yes" -> Cost(freeparking = false)
-            "No" -> Cost(freeparking = true)
-            else -> null
-        },
-        dataLicense,
-        null,
-        null,
-        null,
-        Instant.now(),
-        true
-    )
+                listOfNotNull(
+                    chargerStationData.street,
+                    chargerStationData.houseNumber
+                ).joinToString(" ")
+            ),
+            chargepoints,
+            null,
+            "",
+            null,
+            null,
+            chargerStationData.ocpiId != null ||
+                    chargerStationData.updated.isAfter(LocalDateTime.now().minusMonths(6)),
+            null,
+            if (chargerStationData.operator != null) HtmlCompat.fromHtml(
+                chargerStationData.operator,
+                HtmlCompat.FROM_HTML_MODE_COMPACT
+            ).toString() else null,
+            if (chargerStationData.userComment != null) HtmlCompat.fromHtml(
+                chargerStationData.userComment,
+                HtmlCompat.FROM_HTML_MODE_COMPACT
+            ).toString() else null,
+            null,
+            if (chargerStationData.description != null) HtmlCompat.fromHtml(
+                chargerStationData.description,
+                HtmlCompat.FROM_HTML_MODE_COMPACT
+            ).toString() else null,
+            if (chargerStationData.image == "no.image.svg") null else listOf(
+                NobilChargerPhotoAdapter(chargerStationData.image)
+            ),
+            null,
+            // 24: Open 24h
+            if (chargerStationAttributes.st["24"]?.attrTrans == "Yes") OpeningHours(
+                twentyfourSeven = true,
+                null,
+                null
+            ) else null,
+            // 7: Parking fee
+            when (chargerStationAttributes.st["7"]?.attrTrans) {
+                "Yes" -> Cost(freeparking = false)
+                "No" -> Cost(freeparking = true)
+                else -> null
+            },
+            dataLicense,
+            null,
+            null,
+            null,
+            Instant.now(),
+            true
+        )
+    }
 
     companion object {
-        fun createChargepointFromNobilConnection(attribs: Map<String, NobilChargerStationGenericAttribute>): Chargepoint {
+        fun createChargepointFromNobilConnection(attribs: Map<String, NobilChargerStationGenericAttribute>): Chargepoint? {
             // https://nobil.no/admin/attributes.php
 
             val isFixedCable = attribs["25"]?.attrTrans == "Yes"
@@ -127,8 +157,8 @@ data class NobilChargerStation(
                 "40" -> Chargepoint.SUPERCHARGER // Tesla Connector Model
                 "50" -> Chargepoint.SCHUKO // Type 2 + Schuko
                 "60" -> Chargepoint.CCS_UNKNOWN // Type1/Type2
-                "70" -> "" // Hydrogen
-                "82" -> "" // Biogas
+                "70" -> return null // Hydrogen
+                "82" -> return null // Biogas
                 else -> ""
             }
 
@@ -215,16 +245,6 @@ data class NobilChargerStationGenericAttribute(
     @Json(name = "trans") val attrTrans: String,
     @Json(name = "attrval") val attrVal: Any
 )
-
-@JsonClass(generateAdapter = true)
-data class NobilChargerStationConnection(
-    @Json(name = "st") val st: Map<String, NobilChargerStationGenericAttribute>,
-    @Json(name = "conn") val conn: Map<String, Map<String, NobilChargerStationGenericAttribute>>
-)
-
-data class NobilReferenceData(
-    val dummy: Int
-) : ReferenceData()
 
 @Parcelize
 @JsonClass(generateAdapter = true)

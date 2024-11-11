@@ -67,7 +67,7 @@ data class NobilChargerStation(
     @Json(name = "csmd") val chargerStationData: NobilChargerStationData,
     @Json(name = "attr") val chargerStationAttributes: NobilChargerStationAttributes
 ) {
-    fun convert() = ChargeLocation(
+    fun convert(dataLicense: String?) = ChargeLocation(
         chargerStationData.id,
         "nobil",
         HtmlCompat.fromHtml(chargerStationData.name, HtmlCompat.FROM_HTML_MODE_COMPACT).toString(),
@@ -105,7 +105,7 @@ data class NobilChargerStation(
             "No" -> Cost(freeparking = true)
             else -> null
         },
-        null,
+        dataLicense,
         null,
         null,
         null,

@@ -111,7 +111,7 @@ class NobilApiWrapper(
                 return Resource.success(ChargepointList.empty())
             }
             val result = postprocessResult(
-                data.chargerStations,
+                data,
                 filters
             )
             return Resource.success(ChargepointList(result, data.chargerStations.size < maxResults))
@@ -142,7 +142,7 @@ class NobilApiWrapper(
                 return Resource.error(response.message(), null)
             }
             val result = postprocessResult(
-                data.chargerStations,
+                data,
                 filters
             )
             return Resource.success(ChargepointList(result, data.chargerStations.size < maxResults))
@@ -154,10 +154,10 @@ class NobilApiWrapper(
     }
 
     private fun postprocessResult(
-        chargerStations: List<NobilChargerStation>,
+        response: NobilResponseData,
         filters: FilterValues?
     ): List<ChargepointListItem> {
-        return chargerStations.map { it.convert() }.distinct()
+        return response.chargerStations!!.map { it.convert(response.rights) }.distinct()
     }
 
     override suspend fun getChargepointDetail(

@@ -3,6 +3,7 @@ package net.vonforst.evmap.api.nobil
 import android.content.Context
 import com.car2go.maps.model.LatLng
 import com.car2go.maps.model.LatLngBounds
+import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.Moshi
 import net.vonforst.evmap.BuildConfig
 import net.vonforst.evmap.addDebugInterceptors
@@ -154,10 +155,13 @@ class NobilApiWrapper(
     }
 
     private fun postprocessResult(
-        response: NobilResponseData,
+        data: NobilResponseData,
         filters: FilterValues?
     ): List<ChargepointListItem> {
-        return response.chargerStations!!.map { it.convert(response.rights) }.distinct()
+        if (data.provider == null ) throw JsonDataException("Provider field is missing in received data")
+        if (data.rights == null ) throw JsonDataException("Rights field is missing in received data")
+
+        return data.chargerStations!!.map { it.convert(data.provider, data.rights) }.distinct()
     }
 
     override suspend fun getChargepointDetail(

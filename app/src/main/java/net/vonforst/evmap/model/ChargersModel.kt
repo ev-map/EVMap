@@ -131,8 +131,8 @@ data class ChargeLocation(
                     .filter { it.type == variant.type && it.power == variant.power }
                 val count = filtered.sumOf { it.count }
                 Chargepoint(variant.type, variant.power, count,
-                    filtered.map { it.voltage }.distinct().singleOrNull(),
-                    filtered.map { it.current }.distinct().singleOrNull()
+                    filtered.map { it.current }.distinct().singleOrNull(),
+                    filtered.map { it.voltage }.distinct().singleOrNull()
                 )
             }
         }

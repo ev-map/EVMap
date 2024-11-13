@@ -11,7 +11,6 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.text.method.KeyListener
-import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -367,6 +366,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
 
             binding.appLogo.root.animate().alpha(1f)
                 .withEndAction {
+                    if (_binding == null) return@withEndAction
                     binding.appLogo.root.animate().alpha(0f).apply {
                         startDelay = 1000
                     }.withEndAction {

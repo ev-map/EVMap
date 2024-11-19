@@ -11,8 +11,11 @@ import net.vonforst.evmap.model.Chargepoint
 import net.vonforst.evmap.model.ChargerPhoto
 import net.vonforst.evmap.model.Coordinate
 import net.vonforst.evmap.model.Cost
+import net.vonforst.evmap.model.FilterValues
 import net.vonforst.evmap.model.OpeningHours
 import net.vonforst.evmap.model.ReferenceData
+import net.vonforst.evmap.model.getBooleanValue
+import net.vonforst.evmap.model.getSliderValue
 import java.time.Instant
 import java.time.LocalDateTime
 
@@ -71,11 +74,19 @@ data class NobilChargerStation(
     @Json(name = "csmd") val chargerStationData: NobilChargerStationData,
     @Json(name = "attr") val chargerStationAttributes: NobilChargerStationAttributes
 ) {
-    fun convert(dataLicense: String) : ChargeLocation? {
-        val chargepoints = chargerStationAttributes.conn.mapNotNull { createChargepointFromNobilConnection(it.value) }
+    fun convert(dataLicense: String,
+                filters: FilterValues?) : ChargeLocation? {
+        val chargepoints = chargerStationAttributes.conn
+            .mapNotNull { createChargepointFromNobilConnection(it.value) }
         if (chargepoints.isEmpty()) return null
 
-        return ChargeLocation(
+        val minPower = filters?.getSliderValue("min_power")
+        val minConnectors = filters?.getSliderValue("min_connectors")
+        if (chargepoints
+            .filter { it.power != null && it.power >= (minPower ?: 0) }
+            .size < (minConnectors ?: 0)) return null
+
+        val chargeLocation = ChargeLocation(
             chargerStationData.id,
             "nobil",
             HtmlCompat.fromHtml(chargerStationData.name, HtmlCompat.FROM_HTML_MODE_COMPACT)
@@ -144,6 +155,14 @@ data class NobilChargerStation(
             Instant.now(),
             true
         )
+
+        val freeparking = filters?.getBooleanValue("freeparking")
+        if (freeparking == true && chargeLocation.cost?.freeparking != true) return null
+
+        val open247 = filters?.getBooleanValue("open_247")
+        if (open247 == true && chargeLocation.openinghours?.twentyfourSeven != true) return null
+
+        return chargeLocation
     }
 
     companion object {

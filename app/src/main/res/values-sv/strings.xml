@@ -5,6 +5,7 @@
     <string name="connectors">Laddkontakter</string>
     <string name="no_maps_app_found">Installera en kartapp först</string>
     <string name="no_browser_app_found">Installera en webbläsare först</string>
+    <string name="no_email_app_found">Installera en e-postapp först</string>
     <string name="address">Adress</string>
     <string name="operator">Operatör</string>
     <string name="network">Nätverk</string>

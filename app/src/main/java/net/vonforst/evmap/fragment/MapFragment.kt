@@ -3,11 +3,14 @@ package net.vonforst.evmap.fragment
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.annotation.SuppressLint
+import android.content.ActivityNotFoundException
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Color
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.text.method.KeyListener
@@ -509,7 +512,23 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
                 R.id.menu_edit -> {
                     val charger = vm.charger.value?.data
                     if (charger?.editUrl != null) {
-                        (activity as? MapsActivity)?.openUrl(charger.editUrl, binding.root, true)
+                        val uri = Uri.parse(charger.editUrl)
+                        if (uri.getScheme() == "mailto") {
+                            val intent = Intent(Intent.ACTION_SENDTO, uri)
+                            try {
+                                startActivity(intent)
+                            } catch (e: ActivityNotFoundException) {
+                                Toast.makeText(
+                                    requireContext(),
+                                    R.string.no_email_app_found,
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+                        }
+                        else {
+                            (activity as? MapsActivity)?.openUrl(charger.editUrl, binding.root, true)
+                        }
+
                         if (vm.apiId.value == "goingelectric") {
                             // instructions specific to GoingElectric
                             Toast.makeText(

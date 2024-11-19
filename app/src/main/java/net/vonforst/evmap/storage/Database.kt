@@ -40,7 +40,7 @@ import net.vonforst.evmap.model.SliderFilterValue
         OCMOperator::class,
         OSMNetwork::class,
         SavedRegion::class
-    ], version = 24
+    ], version = 25
 )
 @TypeConverters(Converters::class, GeometryConverters::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -84,12 +84,13 @@ abstract class AppDatabase : RoomDatabase() {
                 MIGRATION_7, MIGRATION_8, MIGRATION_9, MIGRATION_10, MIGRATION_11,
                 MIGRATION_12, MIGRATION_13, MIGRATION_14, MIGRATION_15, MIGRATION_16,
                 MIGRATION_17, MIGRATION_18, MIGRATION_19, MIGRATION_20, MIGRATION_21,
-                MIGRATION_22, MIGRATION_23, MIGRATION_24
+                MIGRATION_22, MIGRATION_23, MIGRATION_24, MIGRATION_25
             )
                 .addCallback(object : Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
                         // create default filter profile for each data source
                         db.execSQL("INSERT INTO `FilterProfile` (`dataSource`, `name`, `id`, `order`) VALUES ('goingelectric', 'FILTERS_CUSTOM', $FILTERS_CUSTOM, 0)")
+                        db.execSQL("INSERT INTO `FilterProfile` (`dataSource`, `name`, `id`, `order`) VALUES ('nobil', 'FILTERS_CUSTOM', $FILTERS_CUSTOM, 0)")
                         db.execSQL("INSERT INTO `FilterProfile` (`dataSource`, `name`, `id`, `order`) VALUES ('openchargemap', 'FILTERS_CUSTOM', $FILTERS_CUSTOM, 0)")
                         db.execSQL("INSERT INTO `FilterProfile` (`dataSource`, `name`, `id`, `order`) VALUES ('openstreetmap', 'FILTERS_CUSTOM', $FILTERS_CUSTOM, 0)")
                         // initialize spatialite columns
@@ -499,6 +500,13 @@ abstract class AppDatabase : RoomDatabase() {
                 } finally {
                     db.endTransaction()
                 }
+            }
+        }
+
+        private val MIGRATION_25 = object : Migration(24, 25) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                // API nobil added
+                db.execSQL("INSERT INTO `FilterProfile` (`dataSource`, `name`, `id`, `order`) VALUES ('nobil', 'FILTERS_CUSTOM', $FILTERS_CUSTOM, 0)")
             }
         }
     }

@@ -111,7 +111,7 @@ data class NobilChargerStation(
             ),
             chargepoints,
             null,
-            "",
+            "https://nobil.no",
             when (chargerStationData.landCode) {
                 "SWE" -> "https://www.energimyndigheten.se/klimat/transporter/laddinfrastruktur/registrera-din-laddstation/elbilsagare/"
                 else -> "mailto:post@nobil.no?subject=" + URLEncoder.encode("Regarding charging station " + chargerStationData.internationalId, "UTF-8").replace("+", "%20")

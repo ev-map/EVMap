@@ -6,18 +6,24 @@ import com.car2go.maps.model.LatLngBounds
 import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.Moshi
 import net.vonforst.evmap.BuildConfig
+import net.vonforst.evmap.R
 import net.vonforst.evmap.addDebugInterceptors
 import net.vonforst.evmap.api.ChargepointApi
 import net.vonforst.evmap.api.ChargepointList
 import net.vonforst.evmap.api.FiltersSQLQuery
 import net.vonforst.evmap.api.FullDownloadResult
 import net.vonforst.evmap.api.StringProvider
+import net.vonforst.evmap.api.mapPower
+import net.vonforst.evmap.api.mapPowerInverse
+import net.vonforst.evmap.api.powerSteps
+import net.vonforst.evmap.model.BooleanFilter
 import net.vonforst.evmap.model.ChargeLocation
 import net.vonforst.evmap.model.ChargepointListItem
 import net.vonforst.evmap.model.Filter
 import net.vonforst.evmap.model.FilterValue
 import net.vonforst.evmap.model.FilterValues
 import net.vonforst.evmap.model.ReferenceData
+import net.vonforst.evmap.model.SliderFilter
 import net.vonforst.evmap.model.getBooleanValue
 import net.vonforst.evmap.model.getSliderValue
 import net.vonforst.evmap.viewmodel.Resource
@@ -166,7 +172,7 @@ class NobilApiWrapper(
     ): List<ChargepointListItem> {
         if (data.rights == null ) throw JsonDataException("Rights field is missing in received data")
 
-        return data.chargerStations!!.mapNotNull { it.convert(data.rights) }.distinct()
+        return data.chargerStations!!.mapNotNull { it.convert(data.rights, filters) }.distinct()
     }
 
     override suspend fun getChargepointDetail(
@@ -185,7 +191,24 @@ class NobilApiWrapper(
         referenceData: ReferenceData,
         sp: StringProvider
     ): List<Filter<FilterValue>> {
-        return listOf()
+        return listOf(
+            BooleanFilter(sp.getString(R.string.filter_free_parking), "freeparking"),
+            BooleanFilter(sp.getString(R.string.filter_open_247), "open_247"),
+            SliderFilter(
+                sp.getString(R.string.filter_min_power), "min_power",
+                powerSteps.size - 1,
+                mapping = ::mapPower,
+                inverseMapping = ::mapPowerInverse,
+                unit = "kW"
+            ),
+            SliderFilter(
+                sp.getString(R.string.filter_min_connectors),
+                "min_connectors",
+                10,
+                min = 1
+            ),
+
+        )
     }
 
     override fun convertFiltersToSQL(
@@ -197,21 +220,30 @@ class NobilApiWrapper(
             requiresChargeCardQuery = false
         )
 
+        var requiresChargepointQuery = false
         val result = StringBuilder()
 
         if (filters.getBooleanValue("freeparking") == true) {
             result.append(" AND freeparking IS 1")
         }
+
         if (filters.getBooleanValue("open_247") == true) {
             result.append(" AND twentyfourSeven IS 1")
         }
 
-        val minConnectors = filters.getSliderValue("min_connectors")
-        if (minConnectors != null && minConnectors > 1) {
-            result.append(" GROUP BY ChargeLocation.id HAVING SUM(json_extract(cp.value, '$.count')) >= ${minConnectors}")
+        val minPower = filters.getSliderValue("min_power")
+        if (minPower != null && minPower > 0) {
+            result.append(" AND json_extract(cp.value, '$.power') >= $minPower")
+            requiresChargepointQuery = true
         }
 
-        return FiltersSQLQuery(result.toString(), false, false)
+        val minConnectors = filters.getSliderValue("min_connectors")
+        if (minConnectors != null && minConnectors > 1) {
+            result.append(" GROUP BY ChargeLocation.id HAVING SUM(json_extract(cp.value, '$.count')) >= $minConnectors")
+            requiresChargepointQuery = true
+        }
+
+        return FiltersSQLQuery(result.toString(), requiresChargepointQuery, false)
     }
 
     override fun filteringInSQLRequiresDetails(filters: FilterValues): Boolean {

@@ -5,6 +5,7 @@
     <string name="connectors">Connectors</string>
     <string name="no_maps_app_found">Install a navigation app first</string>
     <string name="no_browser_app_found">Install a web browser first</string>
+    <string name="no_email_app_found">Install an email app first</string>
     <string name="address">Address</string>
     <string name="operator">Operator</string>
     <string name="network">Network</string>

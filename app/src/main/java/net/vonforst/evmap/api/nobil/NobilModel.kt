@@ -1,5 +1,6 @@
 package net.vonforst.evmap.api.nobil
 
+import android.net.Uri
 import androidx.core.text.HtmlCompat
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
@@ -114,7 +115,10 @@ data class NobilChargerStation(
                 HtmlCompat.FROM_HTML_MODE_COMPACT
             ).toString() else null,
             "https://nobil.no",
-            null,
+            when (chargerStationData.landCode) {
+                "SWE" -> "https://www.energimyndigheten.se/klimat/transporter/laddinfrastruktur/registrera-din-laddstation/elbilsagare/"
+                else -> "mailto:post@nobil.no?subject=" + Uri.encode("Regarding charging station " + chargerStationData.internationalId)
+            },
             null,
             chargerStationData.ocpiId != null ||
                     chargerStationData.updated.isAfter(LocalDateTime.now().minusMonths(6)),

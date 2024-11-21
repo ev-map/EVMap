@@ -135,9 +135,11 @@ data class ChargeLocation(
                 val filtered = chargepoints
                     .filter { it.type == variant.type && it.power == variant.power }
                 val count = filtered.sumOf { it.count }
+                val mergedEvseIds = filtered.map { if (it.evseIds == null) List(it.count) {null} else it.evseIds }.flatten()
                 Chargepoint(variant.type, variant.power, count,
                     filtered.map { it.current }.distinct().singleOrNull(),
-                    filtered.map { it.voltage }.distinct().singleOrNull()
+                    filtered.map { it.voltage }.distinct().singleOrNull(),
+                    if (mergedEvseIds.all { it == null }) null else mergedEvseIds
                 )
             }
         }
@@ -417,7 +419,9 @@ data class Chargepoint(
     // Max voltage in V (or null if unknown).
     // note that for DC chargers: current * voltage may be larger than power
     // (each of the three can be separately limited)
-    val voltage: Double? = null
+    val voltage: Double? = null,
+    // Electric Vehicle Supply Equipment Ids for this Chargepoint's plugs/sockets
+    val evseIds: List<String?>? = null
 ) : Equatable, Parcelable {
     fun hasKnownPower(): Boolean = power != null
     fun hasKnownVoltageAndCurrent(): Boolean = voltage != null && current != null

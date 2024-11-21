@@ -405,7 +405,9 @@ data class Chargepoint(
     // Max voltage in V (or null if unknown).
     // note that for DC chargers: current * voltage may be larger than power
     // (each of the three can be separately limited)
-    val voltage: Double? = null
+    val voltage: Double? = null,
+    // Electric Vehicle Supply Equipment Ids for this Chargepoint's plugs/sockets
+    val evseIds: List<String?> = emptyList()
 ) : Equatable, Parcelable {
     fun hasKnownPower(): Boolean = power != null
     fun hasKnownVoltageAndCurrent(): Boolean = voltage != null && current != null

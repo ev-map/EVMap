@@ -64,8 +64,8 @@ interface NobilApi {
             .build()
 
         fun create(
-            baseurl: String = "https://nobil.no/api/server/",
-            context: Context? = null
+            baseurl: String,
+            context: Context?
         ): NobilApi {
             val client = OkHttpClient.Builder().apply {
                 if (BuildConfig.DEBUG) {

@@ -370,6 +370,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
                     binding.appLogo.root.animate().alpha(0f).apply {
                         startDelay = 1000
                     }.withEndAction {
+                        if (_binding == null) return@withEndAction
                         binding.appLogo.root.visibility = View.GONE
                         binding.search.visibility = View.VISIBLE
                         binding.search.alpha = 0f

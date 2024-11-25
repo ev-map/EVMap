@@ -11,12 +11,23 @@ import com.car2go.maps.model.LatLngBounds
 import com.car2go.maps.util.SphericalUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.flow.FlowCollector
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.cancel
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import net.vonforst.evmap.api.ChargepointApi
 import net.vonforst.evmap.api.ChargepointList
 import net.vonforst.evmap.api.StringProvider
 import net.vonforst.evmap.api.goingelectric.GEReferenceData
 import net.vonforst.evmap.api.goingelectric.GoingElectricApiWrapper
+import net.vonforst.evmap.api.openchargemap.OCMReferenceData
 import net.vonforst.evmap.api.openchargemap.OpenChargeMapApiWrapper
+import net.vonforst.evmap.api.openstreetmap.OSMReferenceData
+import net.vonforst.evmap.api.openstreetmap.OpenStreetMapApiWrapper
 import net.vonforst.evmap.model.*
 import net.vonforst.evmap.ui.cluster
 import net.vonforst.evmap.viewmodel.Resource
@@ -61,7 +72,7 @@ abstract class ChargeLocationsDao {
         id: Long,
         dataSource: String,
         after: Long
-    ): LiveData<ChargeLocation>
+    ): LiveData<ChargeLocation?>
 
     @SkipQueryVerification
     @Query("SELECT * FROM chargelocation WHERE dataSource == :dataSource AND Within(coordinates, BuildMbr(:lng1, :lat1, :lng2, :lat2)) AND timeRetrieved > :after")
@@ -87,13 +98,34 @@ abstract class ChargeLocationsDao {
     @RawQuery(observedEntities = [ChargeLocation::class])
     abstract fun getChargeLocationsCustom(query: SupportSQLiteQuery): LiveData<List<ChargeLocation>>
 
+    @SkipQueryVerification
+    @Query("SELECT SUM(1) AS clusterCount, MakePoint(AVG(X(coordinates)), AVG(Y(coordinates)), 4326) as center, SnapToGrid(coordinates, :precision) AS snapped FROM chargelocation WHERE dataSource == :dataSource AND Within(coordinates, BuildMbr(:lng1, :lat1, :lng2, :lat2)) AND timeRetrieved > :after GROUP BY snapped")
+    abstract fun getChargeLocationClusters(
+        lat1: Double,
+        lat2: Double,
+        lng1: Double,
+        lng2: Double,
+        dataSource: String,
+        after: Long,
+        precision: Double
+    ): LiveData<List<ChargeLocationClusterSimple>>
+
     @Query("SELECT COUNT(*) FROM chargelocation")
     abstract fun getCount(): LiveData<Long>
+
+    @Query("SELECT COUNT(*) FROM chargelocation")
+    abstract suspend fun getCountAsync(): Long
 
     @SkipQueryVerification
     @Query("SELECT SUM(pgsize) FROM dbstat WHERE name == \"ChargeLocation\"")
     abstract suspend fun getSize(): Long
 }
+
+data class ChargeLocationClusterSimple(
+    @ColumnInfo("clusterCount") val clusterCount: Int,
+    @ColumnInfo("center") val center: Coordinate,
+    @ColumnInfo("snapped") val snapped: Coordinate,
+)
 
 /**
  * The ChargeLocationsRepository wraps the ChargepointApi and the DB to provide caching
@@ -122,6 +154,7 @@ class ChargeLocationsRepository(
                     prefs
                 ).getReferenceData()
             }
+
             is OpenChargeMapApiWrapper -> {
                 OCMReferenceDataRepository(
                     api,
@@ -130,6 +163,11 @@ class ChargeLocationsRepository(
                     prefs
                 ).getReferenceData()
             }
+
+            is OpenStreetMapApiWrapper -> {
+                OSMReferenceDataRepository(db.osmReferenceDataDao()).getReferenceData()
+            }
+
             else -> {
                 throw RuntimeException("no reference data implemented")
             }
@@ -138,6 +176,8 @@ class ChargeLocationsRepository(
 
     private val chargeLocationsDao = db.chargeLocationsDao()
     private val savedRegionDao = db.savedRegionDao()
+    private var fullDownloadJob: Job? = null
+    private var fullDownloadProgress: MutableStateFlow<Float?> = MutableStateFlow(null)
 
     fun getChargepoints(
         bounds: LatLngBounds,
@@ -146,8 +186,7 @@ class ChargeLocationsRepository(
         overrideCache: Boolean = false
     ): LiveData<Resource<List<ChargepointListItem>>> {
         val api = api.value!!
-
-        val dbResult = if (filters == null) {
+        val dbResult = if (filters.isNullOrEmpty()) {
             chargeLocationsDao.getChargeLocationsInBounds(
                 bounds.southwest.latitude,
                 bounds.northeast.latitude,
@@ -174,37 +213,58 @@ class ChargeLocationsRepository(
             requiresDetail
         )
         val useClustering = shouldUseServerSideClustering(zoom)
-        val apiResult = liveData {
-            val refData = referenceData.await()
-            val time = Instant.now()
-            val result = api.getChargepoints(refData, bounds, zoom, useClustering, filters)
-            emit(applyLocalClustering(result, zoom))
-            if (result.status == Status.SUCCESS) {
-                val chargers = result.data!!.items.filterIsInstance<ChargeLocation>()
-                chargeLocationsDao.insertOrReplaceIfNoDetailedExists(
-                    cacheLimitDate(api), *chargers.toTypedArray()
-                )
-                if (chargers.size == result.data.items.size && result.data.isComplete) {
-                    val region = Mbr(
-                        bounds.southwest.longitude,
-                        bounds.southwest.latitude,
-                        bounds.northeast.longitude,
-                        bounds.northeast.latitude, 4326
-                    ).asPolygon()
-                    savedRegionDao.insert(
-                        SavedRegion(
-                            region, api.id, time,
-                            filtersSerialized,
-                            false
-                        )
+        if (api.supportsOnlineQueries) {
+            val apiResult = liveData {
+                val refData = referenceData.await()
+                val time = Instant.now()
+                val result = api.getChargepoints(refData, bounds, zoom, useClustering, filters)
+                emit(applyLocalClustering(result, zoom))
+                if (result.status == Status.SUCCESS) {
+                    val chargers = result.data!!.items.filterIsInstance<ChargeLocation>()
+                    chargeLocationsDao.insertOrReplaceIfNoDetailedExists(
+                        cacheLimitDate(api), *chargers.toTypedArray()
                     )
+                    if (chargers.size == result.data.items.size && result.data.isComplete) {
+                        val region = Mbr(
+                            bounds.southwest.longitude,
+                            bounds.southwest.latitude,
+                            bounds.northeast.longitude,
+                            bounds.northeast.latitude, 4326
+                        ).asPolygon()
+                        savedRegionDao.insert(
+                            SavedRegion(
+                                region, api.id, time,
+                                filtersSerialized,
+                                false
+                            )
+                        )
+                    }
                 }
             }
-        }
-        return if (overrideCache) {
-            apiResult
+            return if (overrideCache) {
+                apiResult
+            } else {
+                CacheLiveData(dbResult, apiResult, savedRegionResult).distinctUntilChanged()
+            }
         } else {
-            CacheLiveData(dbResult, apiResult, savedRegionResult).distinctUntilChanged()
+            return liveData {
+                if (fullDownloadJob != null) {
+                    fullDownloadProgress.value?.let { emit(Resource.loading(null, it)) }
+                }
+                if (!savedRegionResult.await()) {
+                    val job = fullDownloadJob ?: scope.launch {
+                        fullDownload()
+                    }.also { fullDownloadJob = it }
+                    val progressJob = scope.launch {
+                        fullDownloadProgress.collect {
+                            emit(Resource.loading(null, it))
+                        }
+                    }
+                    job.join()
+                    progressJob.cancelAndJoin()
+                }
+                emit(Resource.success(dbResult.await()))
+            }
         }
     }
 
@@ -217,7 +277,7 @@ class ChargeLocationsRepository(
         val api = api.value!!
 
         val radiusMeters = radius.toDouble() * 1000
-        val dbResult = if (filters == null) {
+        val dbResult = if (filters.isNullOrEmpty()) {
             chargeLocationsDao.getChargeLocationsRadius(
                 location.latitude,
                 location.longitude,
@@ -242,36 +302,61 @@ class ChargeLocationsRepository(
             requiresDetail
         )
         val useClustering = shouldUseServerSideClustering(zoom)
-        val apiResult = liveData {
-            val refData = referenceData.await()
-            val time = Instant.now()
-            val result =
-                api.getChargepointsRadius(refData, location, radius, zoom, useClustering, filters)
-            emit(applyLocalClustering(result, zoom))
-            if (result.status == Status.SUCCESS) {
-                val chargers = result.data!!.items.filterIsInstance<ChargeLocation>()
-                chargeLocationsDao.insertOrReplaceIfNoDetailedExists(
-                    cacheLimitDate(api), *chargers.toTypedArray()
-                )
-                if (chargers.size == result.data.items.size && result.data.isComplete) {
-                    val region = Polygon(
-                        savedRegionDao.makeCircle(
-                            location.latitude,
-                            location.longitude,
-                            radiusMeters
-                        )
+        if (api.supportsOnlineQueries) {
+            val apiResult = liveData {
+                val refData = referenceData.await()
+                val time = Instant.now()
+                val result =
+                    api.getChargepointsRadius(
+                        refData,
+                        location,
+                        radius,
+                        zoom,
+                        useClustering,
+                        filters
                     )
-                    savedRegionDao.insert(
-                        SavedRegion(
-                            region, api.id, time,
-                            filtersSerialized,
-                            false
-                        )
+                emit(applyLocalClustering(result, zoom))
+                if (result.status == Status.SUCCESS) {
+                    val chargers = result.data!!.items.filterIsInstance<ChargeLocation>()
+                    chargeLocationsDao.insertOrReplaceIfNoDetailedExists(
+                        cacheLimitDate(api), *chargers.toTypedArray()
                     )
+                    if (chargers.size == result.data.items.size && result.data.isComplete) {
+                        val region = Polygon(
+                            savedRegionDao.makeCircle(
+                                location.latitude,
+                                location.longitude,
+                                radiusMeters
+                            )
+                        )
+                        savedRegionDao.insert(
+                            SavedRegion(
+                                region, api.id, time,
+                                filtersSerialized,
+                                false
+                            )
+                        )
+                    }
                 }
             }
+            return CacheLiveData(dbResult, apiResult, savedRegionResult).distinctUntilChanged()
+        } else {
+            return liveData {
+                if (!savedRegionResult.await()) {
+                    val job = fullDownloadJob ?: scope.launch {
+                        fullDownload()
+                    }.also { fullDownloadJob = it }
+                    val progressJob = scope.launch {
+                        fullDownloadProgress.collect {
+                            emit(Resource.loading(null, it))
+                        }
+                    }
+                    job.join()
+                    progressJob.cancelAndJoin()
+                }
+                emit(Resource.success(dbResult.await()))
+            }
         }
-        return CacheLiveData(dbResult, apiResult, savedRegionResult).distinctUntilChanged()
     }
 
     private fun applyLocalClustering(
@@ -313,24 +398,29 @@ class ChargeLocationsRepository(
         id: Long,
         overrideCache: Boolean = false
     ): LiveData<Resource<ChargeLocation>> {
+        val api = api.value!!
         val dbResult = chargeLocationsDao.getChargeLocationById(
             id,
             prefs.dataSource,
-            cacheLimitDate(api.value!!)
+            cacheLimitDate(api)
         )
-        val apiResult = liveData {
-            emit(Resource.loading(null))
-            val refData = referenceData.await()
-            val result = api.value!!.getChargepointDetail(refData, id)
-            emit(result)
-            if (result.status == Status.SUCCESS) {
-                chargeLocationsDao.insert(result.data!!)
+        if (api.supportsOnlineQueries) {
+            val apiResult = liveData {
+                emit(Resource.loading(null))
+                val refData = referenceData.await()
+                val result = api.getChargepointDetail(refData, id)
+                emit(result)
+                if (result.status == Status.SUCCESS) {
+                    chargeLocationsDao.insert(result.data!!)
+                }
             }
-        }
-        return if (overrideCache) {
-            apiResult
+            return if (overrideCache) {
+                apiResult
+            } else {
+                PreferCacheLiveData(dbResult, apiResult, cacheSoftLimit)
+            }
         } else {
-            PreferCacheLiveData(dbResult, apiResult, cacheSoftLimit)
+            return dbResult.map { Resource.success(it) }
         }
     }
 
@@ -418,6 +508,49 @@ class ChargeLocationsRepository(
             )
         } catch (e: NotImplementedError) {
             MutableLiveData()  // in this case we cannot get a DB result
+        }
+    }
+
+    private suspend fun fullDownload() {
+        val api = api.value!!
+        if (!api.supportsFullDownload) return
+
+        val time = Instant.now()
+        val result = api.fullDownload()
+        try {
+            var insertJob: Job? = null
+            result.chargers.chunked(1024).forEach {
+                insertJob?.join()
+                insertJob = withContext(Dispatchers.IO) {
+                    scope.launch {
+                        chargeLocationsDao.insert(*it.toTypedArray())
+                    }
+                }
+                fullDownloadProgress.value = result.progress
+            }
+            val region = Mbr(
+                -180.0,
+                -90.0,
+                180.0,
+                90.0, 4326
+            ).asPolygon()
+            savedRegionDao.insert(
+                SavedRegion(
+                    region, api.id, time,
+                    null,
+                    true
+                )
+            )
+
+            when (api) {
+                is OpenStreetMapApiWrapper -> {
+                    val refData = result.referenceData
+                    OSMReferenceDataRepository(db.osmReferenceDataDao()).updateReferenceData(refData as OSMReferenceData)
+                }
+            }
+
+        } finally {
+            fullDownloadProgress.value = null
         }
     }
 

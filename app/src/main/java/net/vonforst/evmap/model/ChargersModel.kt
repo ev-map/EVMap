@@ -37,6 +37,7 @@ sealed class ChargepointListItem
  * @param address The charge location address
  * @param chargepoints List of chargepoints at this location
  * @param network The charging network (Mobility Service Provider, MSP)
+ * @param dataSourceUrl A link to the data source website
  * @param url A link to this charging site
  * @param editUrl A link to a website where this charging site can be edited
  * @param faultReport Set this if the charging site is reported to be out of service
@@ -67,7 +68,8 @@ data class ChargeLocation(
     @Embedded val address: Address?,
     val chargepoints: List<Chargepoint>,
     val network: String?,
-    val url: String,  // URL of this charger at the data source
+    val dataSourceUrl: String,  // URL to the data source
+    val url: String?,  // URL of this charger at the data source
     val editUrl: String?,  // URL to edit this charger at the data source
     @Embedded(prefix = "fault_report_") val faultReport: FaultReport?,
     val verified: Boolean,

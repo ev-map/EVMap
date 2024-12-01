@@ -443,7 +443,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
         binding.detailView.sourceButton.setOnClickListener {
             val charger = vm.charger.value?.data
             if (charger != null) {
-                (activity as? MapsActivity)?.openUrl(charger.url, binding.root, true)
+                (activity as? MapsActivity)?.openUrl(charger.url ?: charger.dataSourceUrl, binding.root, true)
             }
         }
         binding.detailView.btnChargeprice.setOnClickListener {
@@ -504,7 +504,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
                 }
                 R.id.menu_share -> {
                     val charger = vm.charger.value?.data
-                    if (charger != null) {
+                    if (charger != null && charger.url != null) {
                         (activity as? MapsActivity)?.shareUrl(charger.url)
                     }
                     true
@@ -890,11 +890,13 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
                                 (activity as? MapsActivity)?.showLocation(charger, binding.root)
                             }
                             R.drawable.ic_fault_report -> {
-                                (activity as? MapsActivity)?.openUrl(
-                                    charger.url,
-                                    binding.root,
-                                    true
-                                )
+                                if (charger.url != null) {
+                                    (activity as? MapsActivity)?.openUrl(
+                                        charger.url,
+                                        binding.root,
+                                        true
+                                    )
+                                }
                             }
 
                             R.drawable.ic_payment -> {

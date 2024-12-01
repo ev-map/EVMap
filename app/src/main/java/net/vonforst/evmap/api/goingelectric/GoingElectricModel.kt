@@ -77,6 +77,7 @@ data class GEChargeLocation(
         address.convert(),
         chargepoints.map { it.convert() },
         network,
+        "https://www.goingelectric.de/",
         "https:${url}",
         "https:${url}edit/",
         faultReport?.convert(),

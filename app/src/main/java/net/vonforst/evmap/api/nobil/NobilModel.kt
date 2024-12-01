@@ -1,5 +1,6 @@
 package net.vonforst.evmap.api.nobil
 
+import android.net.Uri
 import androidx.core.text.HtmlCompat
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
@@ -16,7 +17,6 @@ import net.vonforst.evmap.model.OpeningHours
 import net.vonforst.evmap.model.ReferenceData
 import net.vonforst.evmap.model.getBooleanValue
 import net.vonforst.evmap.model.getSliderValue
-import java.net.URLEncoder
 import java.time.Instant
 import java.time.LocalDateTime
 
@@ -115,7 +115,7 @@ data class NobilChargerStation(
             null,
             when (chargerStationData.landCode) {
                 "SWE" -> "https://www.energimyndigheten.se/klimat/transporter/laddinfrastruktur/registrera-din-laddstation/elbilsagare/"
-                else -> "mailto:post@nobil.no?subject=" + URLEncoder.encode("Regarding charging station " + chargerStationData.internationalId, "UTF-8").replace("+", "%20")
+                else -> "mailto:post@nobil.no?subject=" + Uri.encode("Regarding charging station " + chargerStationData.internationalId)
             },
             null,
             chargerStationData.ocpiId != null ||

@@ -64,6 +64,7 @@ data class OCMChargepoint(
         addressInfo.toAddress(refData),
         connections.map { it.convert(refData) },
         operatorInfo?.title ?: refData.operators.find { it.id == operatorId }?.title,
+        "https://openchargemap.org/",
         "https://map.openchargemap.io/?id=$id",
         "https://map.openchargemap.io/?id=$id",
         convertFaultReport(),

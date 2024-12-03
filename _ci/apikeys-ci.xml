@@ -8,4 +8,5 @@
    <string name="nobil_key" translatable="false">ci</string>
    <string name="fronyx_key" translatable="false">ci</string>
    <string name="acra_credentials" translatable="false">ci:ci</string>
+   <string name="evmap_key" translatable="false">ci</string>
 </resources>

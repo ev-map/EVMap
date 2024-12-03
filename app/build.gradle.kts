@@ -129,6 +129,17 @@ android {
 
     // add API keys from environment variable if not set in apikeys.xml
     applicationVariants.all {
+        var evmapKey =
+            System.getenv("EVMAP_API_KEY") ?: project.findProperty("EVMAP_API_KEY")?.toString()
+        if (evmapKey == null && project.hasProperty("EVMAP_API_KEY_ENCRYPTED")) {
+            evmapKey = decode(
+                project.findProperty("EVMAP_API_KEY_ENCRYPTED").toString(),
+                "FmK.d,-f*p+rD+WK!eds"
+            )
+        }
+        if (evmapKey != null) {
+            resValue("string", "evmap_key", evmapKey)
+        }
         val goingelectricKey =
             System.getenv("GOINGELECTRIC_API_KEY") ?: project.findProperty("GOINGELECTRIC_API_KEY")
                 ?.toString()

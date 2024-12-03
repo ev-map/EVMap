@@ -38,6 +38,9 @@ be put into the app in the form of a resource file called `apikeys.xml` under
    <string name="nobil_key" translatable="false">
       insert your nobil key here
    </string>
+   <string name="evmap_key" translatable="false">
+      insert your EVMap key here
+   </string>
 </resources>
 ```
 
@@ -235,6 +238,13 @@ key and documentation.
 
 If you don't want to test this functionality, simply leave the API key blank.
 </details>
+
+### EVMap
+
+EVMap provides APIs to fetch Nobil real-time data.
+
+Contact [EVMap](mailto:evmap@vonforst.net) to get an API key.
+
 
 Crash reporting
 ---------------

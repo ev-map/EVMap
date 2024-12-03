@@ -140,10 +140,12 @@ data class ChargeLocation(
                     .filter { it.type == variant.type && it.power == variant.power }
                 val count = filtered.sumOf { it.count }
                 val mergedEvseIds = filtered.map { if (it.evseIds == null) List(it.count) {null} else it.evseIds }.flatten()
+                val mergedEvseUIds = filtered.map { if (it.evseUIds == null) List(it.count) {null} else it.evseUIds }.flatten()
                 Chargepoint(variant.type, variant.power, count,
                     filtered.map { it.current }.distinct().singleOrNull(),
                     filtered.map { it.voltage }.distinct().singleOrNull(),
-                    if (mergedEvseIds.all { it == null }) null else mergedEvseIds
+                    if (mergedEvseIds.all { it == null }) null else mergedEvseIds,
+                    if (mergedEvseUIds.all { it == null }) null else mergedEvseUIds
                 )
             }
         }
@@ -425,7 +427,9 @@ data class Chargepoint(
     // (each of the three can be separately limited)
     val voltage: Double? = null,
     // Electric Vehicle Supply Equipment Ids for this Chargepoint's plugs/sockets
-    val evseIds: List<String?>? = null
+    val evseIds: List<String?>? = null,
+    // Electric Vehicle Supply Equipment Unique Ids for this Chargepoint's plugs/sockets
+    val evseUIds: List<String?>? = null
 ) : Equatable, Parcelable {
     fun hasKnownPower(): Boolean = power != null
     fun hasKnownVoltageAndCurrent(): Boolean = voltage != null && current != null

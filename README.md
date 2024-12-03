@@ -86,10 +86,13 @@ Sponsors
 Many users currently support the development EVMap with their donations. You can find more
 information on the [Donate page](https://ev-map.app/donate/) on the EVMap website.
 
-<a href="https://www.jawg.io"><img src="https://www.jawg.io/static/Blue@10x-9cdc4596e4e59acbd9ead55e9c28613e.png" alt="JawgMaps" height="58"/></a><br>
+<a href="https://www.jawg.io"><img src="https://www.jawg.io/static/Blue@10x-9cdc4596e4e59acbd9ead55e9c28613e.png" alt="JawgMaps" height="38"/></a><br>
 Since May 2024, **JawgMaps** provides their OpenStreetMap vector map tiles service to EVMap for
 free, i.e. the background map displayed in the app if OpenStreetMap is selected as the data source.
 
-<a href="https://chargeprice.app"><img src="https://raw.githubusercontent.com/ev-map/EVMap/master/_img/powered_by_chargeprice.svg" alt="Powered by Chargeprice" height="58"/></a><br>
+<a href="https://chargeprice.app"><img src="https://raw.githubusercontent.com/ev-map/EVMap/master/_img/powered_by_chargeprice.svg" alt="Powered by Chargeprice" height="38"/></a><br>
 Since April 2021, **Chargeprice.app** provide their price comparison API at a greatly reduced
 price for EVMap. This data is used in EVMap's price comparison feature.
+
+<a href="https://www.jetbrains.com/community/opensource/"><img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jetbrains.svg" alt="JetBrains logo" height="38"/></a><br>
+As part of its support program for Open-source projects, **JetBrains** supports the development of EVMap since December 2023 with a license of their software suite.

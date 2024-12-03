@@ -279,9 +279,10 @@ data class NobilChargerStation(
 
             val connectionVoltage = if (attribs["12"]?.attrVal is String) attribs["12"]?.attrVal.toString().toDoubleOrNull() else null
             val connectionCurrent = if (attribs["31"]?.attrVal is String) attribs["31"]?.attrVal.toString().toDoubleOrNull() else null
+            val evseUId = if (attribs["27"]?.attrVal is String) listOf(attribs["27"]?.attrVal.toString()) else null
             val evseId = if (attribs["28"]?.attrVal is String) listOf(attribs["28"]?.attrVal.toString()) else null
 
-            return Chargepoint(connectionType, connectionPower, 1, connectionCurrent, connectionVoltage, evseId)
+            return Chargepoint(connectionType, connectionPower, 1, connectionCurrent, connectionVoltage, evseId, evseUId)
         }
     }
 }

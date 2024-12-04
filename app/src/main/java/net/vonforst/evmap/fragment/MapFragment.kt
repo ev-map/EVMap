@@ -678,6 +678,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
                 removeSearchFocus()
                 binding.fabDirections.show()
                 detailAppBarBehavior.setToolbarTitle(it.name)
+                updateShareItemVisibility()
                 updateFavoriteToggle()
                 markerManager?.highlighedCharger = it
                 markerManager?.animateBounce(it)
@@ -786,6 +787,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
         } else {
             favToggle.setIcon(R.drawable.ic_fav_no)
         }
+    }
+
+    private fun updateShareItemVisibility() {
+        val charger = vm.chargerSparse.value ?: return
+        val shareItem = binding.detailAppBar.toolbar.menu.findItem(R.id.menu_share)
+        shareItem.isVisible = charger.url != null
     }
 
     private fun setupAdapters() {
@@ -1001,8 +1008,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
         markerManager = MarkerManager(context, map, this).apply {
             onChargerClick = {
                 vm.chargerSparse.value = it
-                binding.detailAppBar.toolbar.menu.findItem(R.id.menu_share).isVisible =
-                    it.url != null
             }
             onClusterClick = {
                 val newZoom = map.cameraPosition.zoom + 2

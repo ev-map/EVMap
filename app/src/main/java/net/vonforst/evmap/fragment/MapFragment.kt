@@ -1001,6 +1001,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
         markerManager = MarkerManager(context, map, this).apply {
             onChargerClick = {
                 vm.chargerSparse.value = it
+                binding.detailAppBar.toolbar.menu.findItem(R.id.menu_share).isVisible =
+                    it.url != null
             }
             onClusterClick = {
                 val newZoom = map.cameraPosition.zoom + 2

@@ -32,6 +32,7 @@ sealed class ChargepointListItem
  * @param address The charge location address
  * @param chargepoints List of chargepoints at this location
  * @param network The charging network (Mobility Service Provider, MSP)
+ * @param dataSourceUrl A link to the data source website
  * @param url A link to this charging site
  * @param editUrl A link to a website where this charging site can be edited
  * @param faultReport Set this if the charging site is reported to be out of service
@@ -62,7 +63,8 @@ data class ChargeLocation(
     @Embedded val address: Address?,
     val chargepoints: List<Chargepoint>,
     val network: String?,
-    val url: String,  // URL of this charger at the data source
+    val dataSourceUrl: String,  // URL to the data source
+    val url: String?,  // URL of this charger at the data source
     val editUrl: String?,  // URL to edit this charger at the data source
     @Embedded(prefix = "fault_report_") val faultReport: FaultReport?,
     val verified: Boolean,
@@ -130,9 +132,11 @@ data class ChargeLocation(
                 val filtered = chargepoints
                     .filter { it.type == variant.type && it.power == variant.power }
                 val count = filtered.sumOf { it.count }
+                val mergedEvseIds = filtered.map { if (it.evseIds == null) List(it.count) {null} else it.evseIds }.flatten()
                 Chargepoint(variant.type, variant.power, count,
                     filtered.map { it.current }.distinct().singleOrNull(),
-                    filtered.map { it.voltage }.distinct().singleOrNull()
+                    filtered.map { it.voltage }.distinct().singleOrNull(),
+                    if (mergedEvseIds.all { it == null }) null else mergedEvseIds
                 )
             }
         }
@@ -405,7 +409,9 @@ data class Chargepoint(
     // Max voltage in V (or null if unknown).
     // note that for DC chargers: current * voltage may be larger than power
     // (each of the three can be separately limited)
-    val voltage: Double? = null
+    val voltage: Double? = null,
+    // Electric Vehicle Supply Equipment Ids for this Chargepoint's plugs/sockets
+    val evseIds: List<String?>? = null
 ) : Equatable, Parcelable {
     fun hasKnownPower(): Boolean = power != null
     fun hasKnownVoltageAndCurrent(): Boolean = voltage != null && current != null

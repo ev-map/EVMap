@@ -134,9 +134,9 @@ data class NobilChargerStation(
                 chargerStationData.description,
                 HtmlCompat.FROM_HTML_MODE_COMPACT
             ).toString() else null,
-            if (chargerStationData.image == "no.image.svg") null else listOf(
+            if (Regex("""\d+\.\w+""").matchEntire(chargerStationData.image) != null) listOf(
                 NobilChargerPhotoAdapter(chargerStationData.image)
-            ),
+            ) else null,
             null,
             // 24: Open 24h
             if (chargerStationAttributes.st["24"]?.attrTrans == "Yes") OpeningHours(

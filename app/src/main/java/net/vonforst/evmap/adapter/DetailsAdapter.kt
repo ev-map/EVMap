@@ -14,6 +14,7 @@ import net.vonforst.evmap.joinToSpannedString
 import net.vonforst.evmap.model.ChargeCard
 import net.vonforst.evmap.model.ChargeCardId
 import net.vonforst.evmap.model.ChargeLocation
+import net.vonforst.evmap.model.Coordinate
 import net.vonforst.evmap.model.OpeningHoursDays
 import net.vonforst.evmap.plus
 import net.vonforst.evmap.ui.currency

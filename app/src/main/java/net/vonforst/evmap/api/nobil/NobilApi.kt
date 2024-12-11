@@ -18,6 +18,7 @@ import net.vonforst.evmap.api.mapPowerInverse
 import net.vonforst.evmap.api.powerSteps
 import net.vonforst.evmap.model.BooleanFilter
 import net.vonforst.evmap.model.ChargeLocation
+import net.vonforst.evmap.model.Chargepoint
 import net.vonforst.evmap.model.ChargepointListItem
 import net.vonforst.evmap.model.Filter
 import net.vonforst.evmap.model.FilterValue
@@ -188,6 +189,15 @@ class NobilApiWrapper(
         referenceData: ReferenceData,
         sp: StringProvider
     ): List<Filter<FilterValue>> {
+        val connectorMap = mapOf(
+            Chargepoint.TYPE_1 to "Type 1",
+            Chargepoint.TYPE_2_SOCKET to "Type 2",
+            Chargepoint.TYPE_2_PLUG to "Type 2 Tethered",
+            Chargepoint.CCS_UNKNOWN to "CCS",
+            Chargepoint.CHADEMO to "CHAdeMO",
+            Chargepoint.SUPERCHARGER to "Tesla Connector",
+            Chargepoint.SCHUKO to "Type 2 + Schuko"
+        )
         val accessibilityMap = mapOf(
             "Public" to sp.getString(R.string.accessibility_public),
             "Visitors" to sp.getString(R.string.accessibility_visitors),
@@ -204,6 +214,10 @@ class NobilApiWrapper(
                 mapping = ::mapPower,
                 inverseMapping = ::mapPowerInverse,
                 unit = "kW"
+            ),
+            MultipleChoiceFilter(
+                sp.getString(R.string.filter_connectors), "connectors",
+                connectorMap, manyChoices = true
             ),
             SliderFilter(
                 sp.getString(R.string.filter_min_connectors),
@@ -238,6 +252,15 @@ class NobilApiWrapper(
         val minPower = filters.getSliderValue("min_power")
         if (minPower != null && minPower > 0) {
             result.append(" AND json_extract(cp.value, '$.power') >= $minPower")
+            requiresChargepointQuery = true
+        }
+
+        val connectors = filters.getMultipleChoiceValue("connectors")
+        if (connectors != null && !connectors.all) {
+            val connectorsList = connectors.values.joinToString(",") {
+                DatabaseUtils.sqlEscapeString(it)
+            }
+            result.append(" AND json_extract(cp.value, '$.type') IN (${connectorsList})")
             requiresChargepointQuery = true
         }
 

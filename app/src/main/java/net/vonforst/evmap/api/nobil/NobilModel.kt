@@ -83,9 +83,11 @@ data class NobilChargerStation(
         if (chargepoints.isEmpty()) return null
 
         val minPower = filters?.getSliderValue("min_power")
+        val connectors = filters?.getMultipleChoiceValue("connectors")
         val minConnectors = filters?.getSliderValue("min_connectors")
         if (chargepoints
             .filter { it.power != null && it.power >= (minPower ?: 0) }
+            .filter { if (connectors != null && !connectors.all) it.type in connectors.values else true }
             .size < (minConnectors ?: 0)) return null
 
         val chargeLocation = ChargeLocation(

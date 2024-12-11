@@ -16,9 +16,11 @@ import net.vonforst.evmap.api.FullDownloadResult
 import net.vonforst.evmap.api.StringProvider
 import net.vonforst.evmap.api.mapPower
 import net.vonforst.evmap.api.mapPowerInverse
+import net.vonforst.evmap.api.nameForPlugType
 import net.vonforst.evmap.api.powerSteps
 import net.vonforst.evmap.model.BooleanFilter
 import net.vonforst.evmap.model.ChargeLocation
+import net.vonforst.evmap.model.Chargepoint
 import net.vonforst.evmap.model.ChargepointListItem
 import net.vonforst.evmap.model.Filter
 import net.vonforst.evmap.model.FilterValue
@@ -194,6 +196,17 @@ class NobilApiWrapper(
         referenceData: ReferenceData,
         sp: StringProvider
     ): List<Filter<FilterValue>> {
+        val connectors = listOf(
+            Chargepoint.TYPE_1,
+            Chargepoint.TYPE_2_SOCKET,
+            Chargepoint.TYPE_2_PLUG,
+            Chargepoint.CCS_UNKNOWN,
+            Chargepoint.CHADEMO,
+            Chargepoint.SUPERCHARGER
+        )
+        val connectorsMap = connectors.associateWith { connector ->
+            nameForPlugType(sp, connector)
+        }
         val accessibilityMap = mapOf(
             "Public" to sp.getString(R.string.accessibility_public),
             "Visitors" to sp.getString(R.string.accessibility_visitors),
@@ -210,6 +223,10 @@ class NobilApiWrapper(
                 mapping = ::mapPower,
                 inverseMapping = ::mapPowerInverse,
                 unit = "kW"
+            ),
+            MultipleChoiceFilter(
+                sp.getString(R.string.filter_connectors), "connectors",
+                connectorsMap, manyChoices = true
             ),
             SliderFilter(
                 sp.getString(R.string.filter_min_connectors),
@@ -247,6 +264,15 @@ class NobilApiWrapper(
         val minPower = filters.getSliderValue("min_power")
         if (minPower != null && minPower > 0) {
             result.append(" AND json_extract(cp.value, '$.power') >= $minPower")
+            requiresChargepointQuery = true
+        }
+
+        val connectors = filters.getMultipleChoiceValue("connectors")
+        if (connectors != null && !connectors.all) {
+            val connectorsList = connectors.values.joinToString(",") {
+                DatabaseUtils.sqlEscapeString(it)
+            }
+            result.append(" AND json_extract(cp.value, '$.type') IN (${connectorsList})")
             requiresChargepointQuery = true
         }
 

@@ -152,12 +152,27 @@ data class NobilChargerStation(
                 null,
                 null
             ) else null,
-            // 7: Parking fee
-            when (chargerStationAttributes.st["7"]?.attrTrans) {
-                "Yes" -> Cost(freeparking = false)
-                "No" -> Cost(freeparking = true)
-                else -> null
-            },
+            Cost(
+                // 7: Parking fee
+                freeparking = when (chargerStationAttributes.st["7"]?.attrTrans) {
+                    "Yes" -> false
+                    "No" -> true
+                    else -> null
+                },
+                descriptionLong = chargerStationAttributes.conn.mapNotNull {
+                    // 19: Payment method
+                    when (it.value["19"]?.attrValId) {
+                        "1" -> listOf("Mobile phone") // TODO: Translate
+                        "2" -> listOf("Bank card")
+                        "10" -> listOf("Other")
+                        "20" -> listOf("Mobile phone", "Charging card")
+                        "21" -> listOf("Bank card", "Charging card")
+                        "25" -> listOf("Bank card", "Charging card", "Mobile phone")
+                        else -> null
+                    }
+                }.flatten().sorted().toSet().ifEmpty { null }
+                    ?.joinToString(prefix = "Accepted payment methods: ")
+            ),
             dataLicense,
             null,
             null,

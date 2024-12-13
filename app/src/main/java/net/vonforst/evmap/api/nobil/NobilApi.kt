@@ -195,8 +195,7 @@ class NobilApiWrapper(
             Chargepoint.TYPE_2_PLUG to "Type 2 Tethered",
             Chargepoint.CCS_UNKNOWN to "CCS",
             Chargepoint.CHADEMO to "CHAdeMO",
-            Chargepoint.SUPERCHARGER to "Tesla Connector",
-            Chargepoint.SCHUKO to "Type 2 + Schuko"
+            Chargepoint.SUPERCHARGER to "Tesla"
         )
         val accessibilityMap = mapOf(
             "Public" to sp.getString(R.string.accessibility_public),

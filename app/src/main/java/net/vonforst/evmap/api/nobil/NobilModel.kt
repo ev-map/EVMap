@@ -204,7 +204,7 @@ data class NobilChargerStation(
                 "32" -> if (isFixedCable) Chargepoint.TYPE_2_PLUG else Chargepoint.TYPE_2_SOCKET // Type 2
                 "39" -> Chargepoint.CCS_UNKNOWN // CCS/Combo
                 "40" -> Chargepoint.SUPERCHARGER // Tesla Connector Model
-                "50" -> Chargepoint.SCHUKO // Type 2 + Schuko
+                "50" -> if (isFixedCable) Chargepoint.TYPE_2_PLUG else Chargepoint.TYPE_2_SOCKET // Type 2 + Schuko
                 "60" -> Chargepoint.CCS_UNKNOWN // Type1/Type2
                 "70" -> return null // Hydrogen
                 "82" -> return null // Biogas

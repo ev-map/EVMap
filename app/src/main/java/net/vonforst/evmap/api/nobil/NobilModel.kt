@@ -113,7 +113,10 @@ data class NobilChargerStation(
                 ).joinToString(" ")
             ),
             chargepoints,
-            null,
+            if (chargerStationData.operator != null) HtmlCompat.fromHtml(
+                chargerStationData.operator,
+                HtmlCompat.FROM_HTML_MODE_COMPACT
+            ).toString() else null,
             "https://nobil.no/",
             null,
             when (chargerStationData.landCode) {
@@ -124,8 +127,8 @@ data class NobilChargerStation(
             chargerStationData.ocpiId != null ||
                     chargerStationData.updated.isAfter(LocalDateTime.now().minusMonths(6)),
             null,
-            if (chargerStationData.operator != null) HtmlCompat.fromHtml(
-                chargerStationData.operator,
+            if (chargerStationData.ownedBy != null) HtmlCompat.fromHtml(
+                chargerStationData.ownedBy,
                 HtmlCompat.FROM_HTML_MODE_COMPACT
             ).toString() else null,
             if (chargerStationData.userComment != null) HtmlCompat.fromHtml(
@@ -266,7 +269,7 @@ data class NobilChargerStationData(
     @Json(name = "County_ID") val countyId: String,
     @Json(name = "County") val county: String,
     @Json(name = "Description_of_location") val description: String?,
-    @Json(name = "Owned_by") val owner: String?,
+    @Json(name = "Owned_by") val ownedBy: String?,
     @Json(name = "Operator") val operator: String?,
     @Json(name = "Number_charging_points") val numChargePoints: Int,
     @Json(name = "Position") val position: Coordinate,

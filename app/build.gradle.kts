@@ -311,7 +311,7 @@ dependencies {
     implementation("com.github.erfansn:locale-config-x:1.0.1")
 
     // Android Auto
-    val carAppVersion = "1.7.0-beta01"
+    val carAppVersion = "1.7.0-beta03"
     implementation("androidx.car.app:app:$carAppVersion")
     normalImplementation("androidx.car.app:app-projected:$carAppVersion")
     automotiveImplementation("androidx.car.app:app-automotive:$carAppVersion")

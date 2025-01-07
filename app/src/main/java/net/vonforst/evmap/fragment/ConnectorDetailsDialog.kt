@@ -14,14 +14,14 @@ import net.vonforst.evmap.api.availability.ChargeLocationStatus
 import net.vonforst.evmap.databinding.DialogConnectorDetailsBinding
 import net.vonforst.evmap.databinding.DialogConnectorDetailsHeaderBinding
 import net.vonforst.evmap.model.Chargepoint
-import net.vonforst.evmap.storage.PreferenceDataSource
 
 class ConnectorDetailsDialog(
-    val binding: DialogConnectorDetailsBinding,
+    binding: DialogConnectorDetailsBinding,
     context: Context,
     onClose: () -> Unit
 ) {
-    private val headerBinding: DialogConnectorDetailsHeaderBinding
+    private var headerBinding_: DialogConnectorDetailsHeaderBinding? = null
+    private val headerBinding get() = headerBinding_!!
     private val detailsAdapter = ConnectorDetailsAdapter()
 
     init {
@@ -30,7 +30,7 @@ class ConnectorDetailsDialog(
             layoutManager =
                 LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         }
-        headerBinding = DataBindingUtil.inflate(
+        headerBinding_ = DataBindingUtil.inflate(
             LayoutInflater.from(context),
             R.layout.dialog_connector_details_header, binding.list, false
         )
@@ -59,5 +59,9 @@ class ConnectorDetailsDialog(
 
         headerBinding.divider.visibility = if (items.isEmpty()) View.GONE else View.VISIBLE
         headerBinding.item = ConnectorAdapter.ChargepointWithAvailability(cp, cpStatus)
+    }
+
+    fun onDestroy() {
+        headerBinding_ = null
     }
 }

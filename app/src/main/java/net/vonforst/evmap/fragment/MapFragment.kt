@@ -1383,6 +1383,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        detailsDialog.onDestroy()
+        vm.mapProjection = null
+
         map = null
         mapFragment = null
         _binding = null

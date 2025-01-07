@@ -1143,6 +1143,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
             }
         }
         map.setOnMarkerClickListener { marker ->
+            val map = this@MapFragment.map ?: return@setOnMarkerClickListener false
             when (marker) {
                 in markers -> {
                     vm.chargerSparse.value = markers[marker]
@@ -1600,6 +1601,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        detailsDialog.onDestroy()
+        vm.mapProjection = null
+
         map = null
         mapFragment = null
         _binding = null

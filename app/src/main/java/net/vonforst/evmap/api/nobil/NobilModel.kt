@@ -243,6 +243,7 @@ data class NobilChargerStation(
                 "38" -> 62.5 // 62,5 kW DC
                 "39" -> 500.0 // 500 kW DC
                 "41" -> 175.0 // 175 kW DC
+                "42" -> 180.0 // 180 kW DC
                 else -> null
             }
 

@@ -59,8 +59,6 @@
         app:layout_constraintBottom_toTopOf="@+id/welcomeTitle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.7"
         app:srcCompat="@drawable/android_auto" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

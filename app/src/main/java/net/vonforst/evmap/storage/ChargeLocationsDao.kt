@@ -71,6 +71,13 @@ abstract class ChargeLocationsDao {
         after: Long
     ): ChargeLocation?
 
+    @Query("SELECT * FROM chargelocation WHERE dataSource == :dataSource AND id IN (:ids) AND timeRetrieved > :after")
+    abstract suspend fun getChargeLocationsById(
+        ids: List<Long>,
+        dataSource: String,
+        after: Long
+    ): List<ChargeLocation>
+
     @SkipQueryVerification
     @Query("SELECT * FROM chargelocation WHERE dataSource == :dataSource AND timeRetrieved > :after AND ROWID IN (SELECT ROWID FROM SpatialIndex WHERE f_table_name = 'ChargeLocation' AND search_frame = BuildMbr(:lng1, :lat1, :lng2, :lat2))")
     abstract suspend fun getChargeLocationsInBounds(
@@ -96,8 +103,8 @@ abstract class ChargeLocationsDao {
     abstract suspend fun getChargeLocationsCustom(query: SupportSQLiteQuery): List<ChargeLocation>
 
     @SkipQueryVerification
-    @Query("SELECT SUM(1) AS clusterCount, MakePoint(AVG(X(coordinates)), AVG(Y(coordinates)), 4326) as center, SnapToGrid(coordinates, :precision) AS snapped FROM chargelocation WHERE dataSource == :dataSource AND ROWID IN (SELECT ROWID FROM SpatialIndex WHERE f_table_name = 'ChargeLocation' AND search_frame = BuildMbr(:lng1, :lat1, :lng2, :lat2)) AND timeRetrieved > :after GROUP BY snapped")
-    abstract fun getChargeLocationClusters(
+    @Query("SELECT SUM(1) AS clusterCount, MakePoint(AVG(X(coordinates)), AVG(Y(coordinates)), 4326) as center, SnapToGrid(coordinates, :precision) AS snapped, GROUP_CONCAT(id, ',') as ids FROM chargelocation WHERE dataSource == :dataSource AND timeRetrieved > :after AND ROWID IN (SELECT ROWID FROM SpatialIndex WHERE f_table_name = 'ChargeLocation' AND search_frame = BuildMbr(:lng1, :lat1, :lng2, :lat2)) GROUP BY snapped")
+    abstract suspend fun getChargeLocationClusters(
         lat1: Double,
         lat2: Double,
         lng1: Double,
@@ -105,7 +112,24 @@ abstract class ChargeLocationsDao {
         dataSource: String,
         after: Long,
         precision: Double
-    ): LiveData<List<ChargeLocationClusterSimple>>
+    ): List<DBChargeLocationCluster>
+
+    suspend fun getChargeLocationsClustered(
+        lat1: Double,
+        lat2: Double,
+        lng1: Double,
+        lng2: Double,
+        dataSource: String,
+        after: Long,
+        precision: Double
+    ): List<ChargepointListItem> {
+        val clusters =
+            getChargeLocationClusters(lat1, lat2, lng1, lng2, dataSource, after, precision)
+        val singleChargers =
+            getChargeLocationsById(clusters.filter { it.clusterCount == 1 }.map { it.ids }
+                .flatten(), dataSource, after)
+        return clusters.filter { it.clusterCount > 1 }.map { it.convert() } + singleChargers
+    }
 
     @Query("SELECT COUNT(*) FROM chargelocation")
     abstract fun getCount(): LiveData<Long>
@@ -118,11 +142,14 @@ abstract class ChargeLocationsDao {
     abstract suspend fun getSize(): Long
 }
 
-data class ChargeLocationClusterSimple(
+data class DBChargeLocationCluster(
     @ColumnInfo("clusterCount") val clusterCount: Int,
     @ColumnInfo("center") val center: Coordinate,
     @ColumnInfo("snapped") val snapped: Coordinate,
-)
+    @ColumnInfo("ids") val ids: List<Long>
+) {
+    fun convert() = ChargeLocationCluster(clusterCount, center, null)
+}
 
 private const val TAG = "ChargeLocationsDao"
 
@@ -193,29 +220,30 @@ class ChargeLocationsRepository(
 
         val api = api.value!!
         val t1 = System.currentTimeMillis()
+        val filters: FilterValues? = null
         val dbResult = if (filters.isNullOrEmpty()) {
             liveData {
                 emit(
-                    chargeLocationsDao.getChargeLocationsInBounds(
+                    chargeLocationsDao.getChargeLocationsClustered(
                         bounds.southwest.latitude,
                         bounds.northeast.latitude,
                         bounds.southwest.longitude,
                         bounds.northeast.longitude,
                         api.id,
-                        cacheLimitDate(api)
+                        cacheLimitDate(api),
+                        3.0  // TODO: calculate this based on zoom
                     )
                 )
             }
         } else {
-            queryWithFilters(api, filters, bounds)
+            queryWithFilters(api, filters, bounds).map {
+                applyLocalClustering(it, zoom) // TODO: use DB clustering
+            }
         }.map {
             val t2 = System.currentTimeMillis()
             Log.d(TAG, "DB loading time: ${t2 - t1}")
             Log.d(TAG, "number of chargers: ${it.size}")
-            val result = applyLocalClustering(it, zoom)
-            val t3 = System.currentTimeMillis()
-            Log.d(TAG, "Clustering time: ${t3 - t2}")
-            result
+            it
         }
         val filtersSerialized =
             filters?.filter { it.value != it.filter.defaultValue() }?.takeIf { it.isNotEmpty() }

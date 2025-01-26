@@ -179,4 +179,10 @@ class Converters {
     fun fromCoordinate(value: Coordinate): Point {
         return Point(value.lng, value.lat)
     }
+
+    @TypeConverter
+    fun fromLongList(value: List<Long>) = value.joinToString(",")
+
+    @TypeConverter
+    fun toLongList(value: String) = value.split(",").map { it.toLong() }
 }

@@ -4,7 +4,14 @@ import androidx.car.app.CarContext
 import androidx.car.app.CarToast
 import androidx.car.app.Screen
 import androidx.car.app.constraints.ConstraintManager
-import androidx.car.app.model.*
+import androidx.car.app.model.Action
+import androidx.car.app.model.ActionStrip
+import androidx.car.app.model.CarColor
+import androidx.car.app.model.CarIcon
+import androidx.car.app.model.ItemList
+import androidx.car.app.model.Row
+import androidx.car.app.model.SearchTemplate
+import androidx.car.app.model.Template
 import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
@@ -45,7 +52,7 @@ abstract class MultiSelectSearchScreen<T>(ctx: CarContext) : Screen(ctx),
             } ?: run {
                 setLoading(true)
             }
-            if (isMultiSelect) {
+            if (isMultiSelect && shouldShowSelectAll) {
                 setActionStrip(ActionStrip.Builder().apply {
                     addAction(
                         Action.Builder().setIcon(

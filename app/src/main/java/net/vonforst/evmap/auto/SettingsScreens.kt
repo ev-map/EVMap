@@ -242,7 +242,7 @@ class DataSettingsScreen(ctx: CarContext) : Screen(ctx) {
                         }
                     }
                 }.build())
-                addItem(
+                /*addItem(
                     Row.Builder()
                         .setTitle(carContext.getString(R.string.pref_prediction_enabled))
                         .addText(carContext.getString(R.string.pref_prediction_enabled_summary))
@@ -250,7 +250,7 @@ class DataSettingsScreen(ctx: CarContext) : Screen(ctx) {
                             prefs.predictionEnabled = it
                         }.setChecked(prefs.predictionEnabled).build())
                         .build()
-                )
+                )*/
                 addItem(Row.Builder().apply {
                     setTitle(carContext.getString(R.string.pref_tesla_account))
                     addText(

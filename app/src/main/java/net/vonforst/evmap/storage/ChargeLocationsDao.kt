@@ -6,6 +6,8 @@ import androidx.room.*
 import androidx.sqlite.db.SimpleSQLiteQuery
 import androidx.sqlite.db.SupportSQLiteQuery
 import co.anbora.labs.spatia.geometry.Mbr
+import co.anbora.labs.spatia.geometry.MultiPolygon
+import co.anbora.labs.spatia.geometry.Point
 import co.anbora.labs.spatia.geometry.Polygon
 import com.car2go.maps.model.LatLng
 import com.car2go.maps.model.LatLngBounds
@@ -35,6 +37,8 @@ import net.vonforst.evmap.viewmodel.getClusterDistance
 import net.vonforst.evmap.viewmodel.singleSwitchMap
 import java.time.Duration
 import java.time.Instant
+import kotlin.math.pow
+import kotlin.math.roundToInt
 
 @Dao
 abstract class ChargeLocationsDao {
@@ -103,7 +107,7 @@ abstract class ChargeLocationsDao {
     abstract suspend fun getChargeLocationsCustom(query: SupportSQLiteQuery): List<ChargeLocation>
 
     @SkipQueryVerification
-    @Query("SELECT SUM(1) AS clusterCount, MakePoint(AVG(X(coordinates)), AVG(Y(coordinates)), 4326) as center, SnapToGrid(coordinates, :precision) AS snapped, GROUP_CONCAT(id, ',') as ids FROM chargelocation WHERE dataSource == :dataSource AND timeRetrieved > :after AND ROWID IN (SELECT ROWID FROM SpatialIndex WHERE f_table_name = 'ChargeLocation' AND search_frame = BuildMbr((floor(:lng1 / :precision) + 0.5) * :precision, (floor(:lat1 / :precision) + 0.5) * :precision, (ceil(:lng2 / :precision) - 0.5) * :precision, (ceil(:lat2 / :precision) - 0.5) * :precision)) GROUP BY snapped")
+    @Query("SELECT SUM(1) AS clusterCount, MakePoint(AVG(X(coordinates)), AVG(Y(coordinates)), 4326) as center, SnapToGrid(coordinatesProjected, :precision) AS snapped, GROUP_CONCAT(id, ',') as ids FROM chargelocation WHERE dataSource == :dataSource AND timeRetrieved > :after AND ROWID IN (SELECT ROWID FROM SpatialIndex WHERE f_table_name = 'ChargeLocation' AND f_geometry_column = 'coordinates' AND search_frame = BuildMbr(:lng1, :lat1, :lng2, :lat2)) GROUP BY snapped")
     abstract suspend fun getChargeLocationClusters(
         lat1: Double,
         lat2: Double,
@@ -121,8 +125,9 @@ abstract class ChargeLocationsDao {
         lng2: Double,
         dataSource: String,
         after: Long,
-        precision: Double
+        zoom: Float
     ): List<ChargepointListItem> {
+        val precision = 30000000 / 2.0.pow(zoom.roundToInt() + 1)
         val clusters =
             getChargeLocationClusters(lat1, lat2, lng1, lng2, dataSource, after, precision)
         val singleChargers =
@@ -145,7 +150,7 @@ abstract class ChargeLocationsDao {
 data class DBChargeLocationCluster(
     @ColumnInfo("clusterCount") val clusterCount: Int,
     @ColumnInfo("center") val center: Coordinate,
-    @ColumnInfo("snapped") val snapped: Coordinate,
+    @ColumnInfo("snapped") val snapped: Point,
     @ColumnInfo("ids") val ids: List<Long>
 ) {
     fun convert() = ChargeLocationCluster(clusterCount, center, null)
@@ -231,7 +236,7 @@ class ChargeLocationsRepository(
                         bounds.northeast.longitude,
                         api.id,
                         cacheLimitDate(api),
-                        3.0  // TODO: calculate this based on zoom
+                        zoom
                     )
                 )
             }

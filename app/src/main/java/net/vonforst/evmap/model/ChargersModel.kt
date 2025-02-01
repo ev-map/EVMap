@@ -7,12 +7,15 @@ import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import co.anbora.labs.spatia.geometry.Point
 import com.squareup.moshi.JsonClass
+import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 import net.vonforst.evmap.R
 import net.vonforst.evmap.adapter.Equatable
 import net.vonforst.evmap.api.StringProvider
 import net.vonforst.evmap.api.nameForPlugType
+import net.vonforst.evmap.utils.SphericalMercatorProjection
 import java.time.DayOfWeek
 import java.time.Instant
 import java.time.LocalDate
@@ -149,6 +152,11 @@ data class ChargeLocation(
             }"
         }
     }
+
+    // used to store projected coordinates in DB
+    @IgnoredOnParcel
+    var coordinatesProjected: Point =
+        SphericalMercatorProjection.project(Point(coordinates.lng, coordinates.lat))
 }
 
 /**

@@ -242,6 +242,7 @@
     <string name="privacy_link">https://ev-map.app/de/privacypolicy/</string>
     <string name="faq_link">https://ev-map.app/de/faq/</string>
     <string name="chargeprice_faq_link">https://ev-map.app/de/faq/#preisvergleichsfunktion</string>
+    <string name="referral_link">https://ev-map.app/de/referrals/</string>
     <string name="required">erforderlich</string>
     <string name="edit_filter_profile">„%s“ bearbeiten</string>
     <string name="pref_search_delete_recent">Suchverlauf löschen</string>

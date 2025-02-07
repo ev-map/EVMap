@@ -8,7 +8,8 @@
     android:layout_marginStart="16dp"
     android:layout_marginTop="16dp"
     android:layout_marginEnd="16dp"
-    android:layout_marginBottom="16dp">
+    android:layout_marginBottom="16dp"
+    tools:ignore="WebViewLayout">
 
     <TextView
         android:id="@+id/textView20"
@@ -18,75 +19,27 @@
         android:text="@string/referrals"
         android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
         android:textColor="?colorPrimary"
-        app:layout_constraintBottom_toTopOf="@+id/textView21"
+        app:layout_constraintBottom_toTopOf="@+id/referralWebView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/textView21"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:text="@string/referrals_info"
-        app:layout_constraintBottom_toTopOf="@+id/referral_tesla"
-        app:layout_constraintStart_toStartOf="@+id/textView20"
-        app:layout_constraintTop_toBottomOf="@+id/textView20" />
-
-    <androidx.constraintlayout.helper.widget.Flow
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:constraint_referenced_ids="referral_tesla,referral_juicify,referral_geldfuereauto,referral_maingau,referral_eprimo,referral_ewieeinfach"
-        app:flow_horizontalGap="16dp"
-        app:flow_horizontalStyle="packed"
-        app:flow_verticalAlign="baseline"
-        app:flow_wrapMode="chain"
+        app:layout_constraintBottom_toTopOf="@+id/referralWebView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView21" />
+        app:layout_constraintTop_toBottomOf="@+id/textView20" />
 
-    <Button
-        android:id="@+id/referral_tesla"
-        style="@style/Widget.Material3.Button.TonalButton"
-        android:layout_width="wrap_content"
+    <WebView
+        android:id="@+id/referralWebView"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/referral_tesla"
-        app:icon="@drawable/ic_tesla" />
-
-    <Button
-        android:id="@+id/referral_juicify"
-        style="@style/Widget.Material3.Button.TonalButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/referral_juicify" />
-
-    <Button
-        android:id="@+id/referral_geldfuereauto"
-        style="@style/Widget.Material3.Button.TonalButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/referral_geldfuereauto" />
-
-    <Button
-        android:id="@+id/referral_maingau"
-        style="@style/Widget.Material3.Button.TonalButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/referral_maingau" />
-
-    <Button
-        android:id="@+id/referral_eprimo"
-        style="@style/Widget.Material3.Button.TonalButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/referral_eprimo" />
-
-    <Button
-        android:id="@+id/referral_ewieeinfach"
-        style="@style/Widget.Material3.Button.TonalButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/referral_ewieeinfach" />
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textView21" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -39,6 +39,10 @@
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/contact">
+        <Preference
+            android:key="mastodon"
+            android:title="@string/mastodon"
+            android:summary="@string/mastodon_handle" />
 
         <Preference
             android:key="twitter"
@@ -48,6 +52,10 @@
         <Preference
             android:key="goingelectric"
             android:title="@string/goingelectric_forum" />
+
+        <Preference
+            android:key="tffforum"
+            android:title="@string/tff_forum" />
 
     </PreferenceCategory>
 

@@ -5,7 +5,10 @@
     <string name="github_link">https://github.com/ev-map/EVMap</string>
     <string name="twitter_handle">\@ev_map</string>
     <string name="twitter_url">https://twitter.com/ev_map</string>
+    <string name="mastodon_handle">\@evmap\@electroverse.tech</string>
+    <string name="mastodon_url">https://electroverse.tech/@evmap</string>
     <string name="goingelectric_forum_url"><![CDATA[https://www.goingelectric.de/forum/viewtopic.php?f=5&t=56342]]></string>
+    <string name="tff_forum_url"><![CDATA[https://tff-forum.de/t/283834]]></string>
     <string name="github_sponsors_link">https://github.com/sponsors/johan12345/</string>
     <string name="chargeprice_api_url">https://api.chargeprice.app/v1/</string>
     <string name="fronyx_url">https://fronyx.io/</string>

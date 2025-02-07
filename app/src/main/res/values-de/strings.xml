@@ -110,7 +110,9 @@
     <string name="and_n_others">und %d weitere</string>
     <string name="pref_map_provider">Kartenanbieter</string>
     <string name="twitter">Twitter</string>
+    <string name="mastodon">Mastodon</string>
     <string name="goingelectric_forum">Forenthread bei GoingElectric.de</string>
+    <string name="tff_forum">Forenthread im TFF-Forum</string>
     <string name="contact">Kontakt</string>
     <string name="menu_report_new_charger">Ladesäule melden</string>
     <string name="edit_at_datasource">Bei %s bearbeiten</string>

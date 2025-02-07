@@ -118,6 +118,13 @@ class AboutFragment : PreferenceFragmentCompat() {
                 findNavController().safeNavigate(AboutFragmentDirections.actionAboutToGithubSponsors())
                 true
             }
+            "mastodon" -> {
+                (activity as? MapsActivity)?.openUrl(
+                    getString(R.string.mastodon_url),
+                    requireView()
+                )
+                true
+            }
             "twitter" -> {
                 (activity as? MapsActivity)?.openUrl(getString(R.string.twitter_url), requireView())
                 true
@@ -125,6 +132,13 @@ class AboutFragment : PreferenceFragmentCompat() {
             "goingelectric" -> {
                 (activity as? MapsActivity)?.openUrl(
                     getString(R.string.goingelectric_forum_url),
+                    requireView()
+                )
+                true
+            }
+            "tffforum" -> {
+                (activity as? MapsActivity)?.openUrl(
+                    getString(R.string.tff_forum_url),
                     requireView()
                 )
                 true

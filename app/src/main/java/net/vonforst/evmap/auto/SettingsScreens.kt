@@ -863,13 +863,24 @@ class AboutScreen(ctx: CarContext) : Screen(ctx) {
             }.build(), carContext.getString(R.string.about)))
             addSectionedList(SectionedItemList.create(ItemList.Builder().apply {
                 addItem(Row.Builder()
-                    .setTitle(carContext.getString(R.string.twitter))
-                    .addText(carContext.getString(R.string.twitter_handle))
+                    .setTitle(carContext.getString(R.string.mastodon))
+                    .addText(carContext.getString(R.string.mastodon_handle))
                     .setBrowsable(true)
                     .setOnClickListener(ParkedOnlyOnClickListener.create {
-                        openUrl(carContext, carContext.getString(R.string.twitter_url))
+                        openUrl(carContext, carContext.getString(R.string.mastodon_url))
                     }).build()
                 )
+                if (maxRows > 8) {
+                    addItem(
+                        Row.Builder()
+                            .setTitle(carContext.getString(R.string.twitter))
+                            .addText(carContext.getString(R.string.twitter_handle))
+                            .setBrowsable(true)
+                            .setOnClickListener(ParkedOnlyOnClickListener.create {
+                                openUrl(carContext, carContext.getString(R.string.twitter_url))
+                            }).build()
+                    )
+                }
                 if (maxRows > 6) {
                     addItem(Row.Builder()
                         .setTitle(carContext.getString(R.string.goingelectric_forum))
@@ -880,6 +891,19 @@ class AboutScreen(ctx: CarContext) : Screen(ctx) {
                                 carContext.getString(R.string.goingelectric_forum_url)
                             )
                         }).build()
+                    )
+                }
+                if (maxRows > 7) {
+                    addItem(
+                        Row.Builder()
+                            .setTitle(carContext.getString(R.string.tff_forum))
+                            .setBrowsable(true)
+                            .setOnClickListener(ParkedOnlyOnClickListener.create {
+                                openUrl(
+                                    carContext,
+                                    carContext.getString(R.string.tff_forum_url)
+                                )
+                            }).build()
                     )
                 }
             }.build(), carContext.getString(R.string.contact)))

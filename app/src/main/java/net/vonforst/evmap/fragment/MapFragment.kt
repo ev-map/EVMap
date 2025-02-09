@@ -3,11 +3,14 @@ package net.vonforst.evmap.fragment
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.annotation.SuppressLint
+import android.content.ActivityNotFoundException
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Color
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.text.method.KeyListener
@@ -409,7 +412,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
         binding.detailView.sourceButton.setOnClickListener {
             val charger = vm.charger.value?.data
             if (charger != null) {
-                (activity as? MapsActivity)?.openUrl(charger.url, binding.root, true)
+                (activity as? MapsActivity)?.openUrl(charger.url ?: charger.dataSourceUrl, binding.root, true)
             }
         }
         binding.detailView.btnChargeprice.setOnClickListener {
@@ -470,7 +473,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
                 }
                 R.id.menu_share -> {
                     val charger = vm.charger.value?.data
-                    if (charger != null) {
+                    if (charger != null && charger.url != null) {
                         (activity as? MapsActivity)?.shareUrl(charger.url)
                     }
                     true
@@ -478,7 +481,23 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
                 R.id.menu_edit -> {
                     val charger = vm.charger.value?.data
                     if (charger?.editUrl != null) {
-                        (activity as? MapsActivity)?.openUrl(charger.editUrl, binding.root, true)
+                        val uri = Uri.parse(charger.editUrl)
+                        if (uri.getScheme() == "mailto") {
+                            val intent = Intent(Intent.ACTION_SENDTO, uri)
+                            try {
+                                startActivity(intent)
+                            } catch (e: ActivityNotFoundException) {
+                                Toast.makeText(
+                                    requireContext(),
+                                    R.string.no_email_app_found,
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+                        }
+                        else {
+                            (activity as? MapsActivity)?.openUrl(charger.editUrl, binding.root, true)
+                        }
+
                         if (vm.apiId.value == "goingelectric") {
                             // instructions specific to GoingElectric
                             Toast.makeText(
@@ -659,6 +678,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
                 removeSearchFocus()
                 binding.fabDirections.show()
                 detailAppBarBehavior.setToolbarTitle(it.name)
+                updateShareItemVisibility()
                 updateFavoriteToggle()
                 markerManager?.highlighedCharger = it
                 markerManager?.animateBounce(it)
@@ -769,6 +789,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
         }
     }
 
+    private fun updateShareItemVisibility() {
+        val charger = vm.chargerSparse.value ?: return
+        val shareItem = binding.detailAppBar.toolbar.menu.findItem(R.id.menu_share)
+        shareItem.isVisible = charger.url != null
+    }
+
     private fun setupAdapters() {
         var viewer: StfalconImageViewer<ChargerPhoto>? = null
         val galleryClickListener = object : GalleryAdapter.ItemClickListener {
@@ -832,11 +858,13 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
                                 (activity as? MapsActivity)?.showLocation(charger, binding.root)
                             }
                             R.drawable.ic_fault_report -> {
-                                (activity as? MapsActivity)?.openUrl(
-                                    charger.url,
-                                    binding.root,
-                                    true
-                                )
+                                if (charger.url != null) {
+                                    (activity as? MapsActivity)?.openUrl(
+                                        charger.url,
+                                        binding.root,
+                                        true
+                                    )
+                                }
                             }
 
                             R.drawable.ic_payment -> {

@@ -23,6 +23,10 @@ class TeslaGuestAvailabilityDetector(
     private var api = TeslaChargingGuestGraphQlApi.create(client, baseUrl)
 
     override suspend fun getAvailability(location: ChargeLocation): ChargeLocationStatus {
+        if (location.chargepoints.isEmpty() || location.chargepoints.any { !it.hasKnownPower() }) {
+            throw AvailabilityDetectorException("no candidates found.")
+        }
+
         val results = cuaApi.getTeslaLocations()
 
         val result =
@@ -163,6 +167,7 @@ class TeslaGuestAvailabilityDetector(
         return when (charger.dataSource) {
             "goingelectric" -> charger.network == "Tesla Supercharger"
             "openchargemap" -> charger.chargepriceData?.network in listOf("23", "3534")
+            "openstreetmap" -> charger.operator in listOf("Tesla, Inc.", "Tesla")
             else -> false
         }
     }

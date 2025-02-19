@@ -67,7 +67,54 @@ class TeslaOwnerAvailabilityDetector(
             )
         ).data.charging.site ?: throw AvailabilityDetectorException("no candidates found.")
 
+        if (location.dataSource == "nobil") {
+            // TODO: Lots of copy & paste here. The main difference for nobil data
+            //       is that V2 chargers don't have duplicated connectors.s
+            val chargerDetails = details.siteDynamic.chargerDetails
+            val chargers = details.siteStatic.chargers.associateBy { it.id }
+            var detailsSorted = chargerDetails
+                .sortedBy { c -> c.charger.labelLetter ?: chargers[c.charger.id]?.labelLetter }
+                .sortedBy { c -> c.charger.labelNumber ?: chargers[c.charger.id]?.labelNumber }
+            if (detailsSorted.size != location.chargepoints.size) {
+                // TODO: Code below suggests tesla data could also be missing for
+                //       connectors
+                throw AvailabilityDetectorException("Tesla API chargepoints do not match data source")
+            }
 
+            val congestionHistogram = details.congestionPriceHistogram?.let { cph ->
+                val indexOfMidnight = cph.dataAttributes.indexOfFirst { it.label == "12AM" }
+                indexOfMidnight.takeIf { it >= 0 }?.let { index ->
+                    val data = cph.data.toMutableList()
+                    Collections.rotate(data, -index)
+                    data
+                }
+            }
+
+            val detailsMap =
+                emptyMap<Chargepoint, List<TeslaChargingOwnershipGraphQlApi.ChargerDetail>>().toMutableMap()
+            var i = 0
+            for (connector in location.chargepointsMerged) {
+                detailsMap[connector] =
+                    detailsSorted.subList(i, i + connector.count)
+                i += connector.count
+            }
+
+            val statusMap = detailsMap.mapValues { it.value.map { it.availability.toStatus() } }
+
+            val labelsMap = detailsMap.mapValues {
+                it.value.map {
+                    it.charger.label?.value ?: chargers[it.charger.id]?.label?.value
+                }
+            }
+
+            return ChargeLocationStatus(
+                statusMap,
+                "Tesla",
+                labels = labelsMap,
+                congestionHistogram = congestionHistogram,
+                extraData = details.pricing
+            )
+        }
         val scV2Connectors = location.chargepoints.filter { it.type == Chargepoint.SUPERCHARGER }
         val scV2CCSConnectors = location.chargepoints.filter {
             it.type in listOf(
@@ -165,6 +212,7 @@ class TeslaOwnerAvailabilityDetector(
     override fun isChargerSupported(charger: ChargeLocation): Boolean {
         return when (charger.dataSource) {
             "goingelectric" -> charger.network == "Tesla Supercharger"
+            "nobil" -> charger.network == "Tesla"
             "openchargemap" -> charger.chargepriceData?.network in listOf("23", "3534")
             "openstreetmap" -> charger.operator in listOf("Tesla, Inc.", "Tesla")
             else -> false

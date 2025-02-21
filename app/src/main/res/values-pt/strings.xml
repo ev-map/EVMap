@@ -375,4 +375,7 @@
     <string name="pref_provider_osm">OpenStreetMap</string>
     <string name="auto_zoom_for_details">Amplie para ver mais detalhes</string>
     <string name="filterprofile_name_not_unique">Já existe um filtro com este nome</string>
+    <string name="referral_link">https://ev-map.app/referrals/</string>
+    <string name="tff_forum">Tópico no fórum TFF-Forum.de</string>
+    <string name="mastodon">Mastodon</string>
 </resources>

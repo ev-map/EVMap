@@ -1390,10 +1390,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
         mapFragment = null
         _binding = null
         vm.mapProjection = null
-        markers.clear()
-        clusterMarkers = emptyList()
-        searchResultMarker = null
-        searchResultIcon = null
+        markerManager = null
         /* if we don't dismiss the popup menu, it will be recreated in some cases
         (split-screen mode) and then have references to a destroyed fragment. */
         popupMenu?.dismiss()

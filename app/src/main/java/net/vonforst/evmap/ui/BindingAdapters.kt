@@ -6,8 +6,9 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.LayerDrawable
-import android.text.SpannableString
 import android.text.format.DateUtils
+import android.text.method.LinkMovementMethod
+import android.text.util.Linkify
 import android.view.View
 import android.view.ViewGroup.MarginLayoutParams
 import android.widget.ImageView
@@ -215,21 +216,25 @@ fun setTopMargin(view: View, topMargin: Float) {
 
 /**
  * Linkify is already possible using the autoLink and linksClickable attributes, but this does not
- * remove spans correctly. So we implement a new version that manually removes the spans.
+ * remove spans correctly after autoLink is set to false.
+ * So we implement a new version that manually uses Linkify to create links if necessary.
  */
-@BindingAdapter("linkify")
-fun setLinkify(textView: TextView, oldValue: Int, newValue: Int) {
-    if (oldValue == newValue) return
+@BindingAdapter(value = ["linkify", "android:text"])
+fun setLinkify(
+    textView: TextView,
+    oldLinkify: Int,
+    oldText: CharSequence?,
+    newLinkify: Int,
+    newText: CharSequence?
+) {
+    if (oldLinkify == newLinkify && oldText == newText) return
 
-    textView.autoLinkMask = newValue
-    textView.linksClickable = newValue != 0
-
-    // remove spans
-    val text = textView.text
-    if (newValue == 0 && text != null && text is SpannableString) {
-        text.getSpans(0, text.length, Any::class.java).forEach {
-            text.removeSpan(it)
-        }
+    textView.text = newText
+    if (newLinkify != 0) {
+        Linkify.addLinks(textView, newLinkify)
+        textView.movementMethod = LinkMovementMethod.getInstance()
+    } else {
+        textView.movementMethod = null
     }
 }
 

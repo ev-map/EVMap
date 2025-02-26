@@ -44,7 +44,7 @@ class FusionEngine(context: Context) : LocationEngine(context),
             try {
                 return locationManager.getLastKnownLocation(LocationManager.FUSED_PROVIDER)
             } catch (e: SecurityException) {
-                Log.e(TAG, "Permissions not granted for fused provider", e)
+                Log.w(TAG, "Permissions not granted for fused provider", e)
             }
         }
 
@@ -68,7 +68,7 @@ class FusionEngine(context: Context) : LocationEngine(context),
                     }
                 }
             } catch (e: SecurityException) {
-                Log.e(TAG, "Permissions not granted for provider: $provider", e)
+                Log.w(TAG, "Permissions not granted for provider: $provider", e)
             }
         }
         return bestLocation
@@ -103,7 +103,7 @@ class FusionEngine(context: Context) : LocationEngine(context),
                 enableFused(gpsInterval)
                 checkLastKnownFused()
             } catch (e: SecurityException) {
-                Log.e(TAG, "Permissions not granted for fused provider", e)
+                Log.w(TAG, "Permissions not granted for fused provider", e)
             }
         }
 
@@ -159,7 +159,7 @@ class FusionEngine(context: Context) : LocationEngine(context),
                 looper
             )
         } catch (e: IllegalArgumentException) {
-            Log.e(TAG, "Unable to register for GPS updates.", e)
+            Log.w(TAG, "Unable to register for GPS updates.", e)
         }
     }
 
@@ -174,7 +174,7 @@ class FusionEngine(context: Context) : LocationEngine(context),
                 looper
             )
         } catch (e: IllegalArgumentException) {
-            Log.e(TAG, "Unable to register for network updates.", e)
+            Log.w(TAG, "Unable to register for network updates.", e)
         }
     }
 
@@ -189,7 +189,7 @@ class FusionEngine(context: Context) : LocationEngine(context),
                 looper
             )
         } catch (e: IllegalArgumentException) {
-            Log.e(TAG, "Unable to register for passive updates.", e)
+            Log.w(TAG, "Unable to register for passive updates.", e)
         }
     }
 
@@ -205,7 +205,7 @@ class FusionEngine(context: Context) : LocationEngine(context),
                 looper
             )
         } catch (e: IllegalArgumentException) {
-            Log.e(TAG, "Unable to register for passive updates.", e)
+            Log.w(TAG, "Unable to register for passive updates.", e)
         }
     }
 

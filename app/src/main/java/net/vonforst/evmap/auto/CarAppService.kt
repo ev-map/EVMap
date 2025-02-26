@@ -45,14 +45,20 @@ interface LocationAwareScreen {
 class CarAppService : androidx.car.app.CarAppService() {
     private val CHANNEL_ID = "car_location"
     private val NOTIFICATION_ID = 1000
+    private val TAG = "CarAppService"
     private var foregroundStarted = false
 
     fun ensureForegroundService() {
         // we want to run as a foreground service to make sure we can use location
-        if (!foregroundStarted) {
-            createNotificationChannel()
-            startForeground(NOTIFICATION_ID, getNotification())
-            foregroundStarted = true
+        try {
+            if (!foregroundStarted) {
+                createNotificationChannel()
+                startForeground(NOTIFICATION_ID, getNotification())
+                foregroundStarted = true
+                Log.i(TAG, "Started foreground service")
+            }
+        } catch (e: SecurityException) {
+            Log.w(TAG, "Failed to start foreground service: ", e)
         }
     }
 

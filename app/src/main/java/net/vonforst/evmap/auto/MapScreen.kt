@@ -6,6 +6,7 @@ import android.location.Location
 import androidx.activity.OnBackPressedCallback
 import androidx.car.app.AppManager
 import androidx.car.app.CarContext
+import androidx.car.app.CarToast
 import androidx.car.app.Screen
 import androidx.car.app.annotations.ExperimentalCarApi
 import androidx.car.app.annotations.RequiresCarApi
@@ -30,6 +31,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.car2go.maps.AnyMap
 import com.car2go.maps.OnMapReadyCallback
@@ -56,6 +59,8 @@ import net.vonforst.evmap.storage.ChargeLocationsRepository
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.ui.MarkerManager
 import net.vonforst.evmap.utils.distanceBetween
+import net.vonforst.evmap.utils.headingDiff
+import net.vonforst.evmap.viewmodel.Resource
 import net.vonforst.evmap.viewmodel.Status
 import net.vonforst.evmap.viewmodel.await
 import net.vonforst.evmap.viewmodel.awaitFinished
@@ -67,6 +72,9 @@ import java.time.Instant
 import java.time.ZonedDateTime
 import kotlin.collections.set
 import kotlin.math.min
+import kotlin.math.roundToInt
+import kotlin.time.DurationUnit
+import kotlin.time.TimeSource
 
 /**
  * Main map screen showing either nearby chargers or favorites.
@@ -425,12 +433,15 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                     }
                     this@MapScreen.chargers = chargers
                 } else {
-                    val response = repo.getChargepoints(
+                    val responseLiveData = repo.getChargepoints(
                         map.projection.visibleRegion.latLngBounds,
                         map.cameraPosition.zoom,
                         filtersWithValue,
                         false
-                    ).awaitFinished()
+                    )
+                        val observer = setupProgressToasts(responseLiveData)
+                        val response = responseLiveData.awaitFinished()
+                        responseLiveData.removeObserver(observer)
                     if (response.status == Status.ERROR || response.data == null) {
                         loadingError = true
                         this@MapScreen.chargers = null
@@ -452,6 +463,31 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                 invalidate()
             }
         }
+    }
+
+    private fun setupProgressToasts(
+        responseLiveData: LiveData<Resource<List<ChargepointListItem>>>
+    ): Observer<Resource<List<ChargepointListItem>>> {
+        var lastTime = TimeSource.Monotonic.markNow()
+        val observer =
+            Observer<Resource<List<ChargepointListItem>>> { value ->
+                if (value.progress != null && lastTime.elapsedNow().toDouble(
+                        DurationUnit.SECONDS
+                    ) > 2
+                ) {
+                    CarToast.makeText(
+                        carContext,
+                        carContext.getString(
+                            R.string.downloading_chargers_percent,
+                            value.progress * 100
+                        ),
+                        CarToast.LENGTH_SHORT
+                    ).show()
+                    lastTime = TimeSource.Monotonic.markNow()
+                }
+            }
+        responseLiveData.observe(this@MapScreen, observer)
+        return observer
     }
 
     private fun onEnergyLevelUpdated(energyLevel: EnergyLevel) {

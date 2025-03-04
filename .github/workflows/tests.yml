@@ -36,3 +36,53 @@ jobs:
         run: ./gradlew lint${{ matrix.buildvariant }}Debug --no-daemon
       - name: Check licenses
         run: ./gradlew exportLibraryDefinitions --no-daemon
+
+  apk_check:
+    name: Release APK checks (${{ matrix.buildvariant }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        buildvariant: [ FossNormal, FossAutomotive, GoogleNormal, GoogleAutomotive ]
+
+    steps:
+      - name: Install checksec
+        run: sudo apt install -y checksec
+
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Java environment
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: 'zulu'
+          cache: 'gradle'
+
+      - name: Copy apikeys.xml
+        run: cp _ci/apikeys-ci.xml app/src/main/res/values/apikeys.xml
+
+      - name: Build app
+        run: ./gradlew assemble${{ matrix.buildvariant }}Release --no-daemon
+
+      - name: Unpack native libraries from APK
+        run: |
+          VARIANT_FILENAME=$(echo ${{ matrix.buildvariant }} | sed -E 's/([a-z])([A-Z])/\1-\2/g' | tr 'A-Z' 'a-z')
+          VARIANT_FOLDER=$(echo ${{ matrix.buildvariant }} | sed -E 's/^([A-Z])/\L\1/')
+          APK_FILE="app/build/outputs/apk/$VARIANT_FOLDER/release/app-$VARIANT_FILENAME-release-unsigned.apk"
+          unzip $APK_FILE "lib/*"
+
+      - name: Run checksec on native libraries
+        run: |
+          checksec --output=json --dir=lib > checksec_output.json
+          jq --argjson exceptions '[
+            "lib/armeabi-v7a/libc++_shared.so",
+            "lib/x86/libc++_shared.so"
+          ]' '
+            to_entries
+            | map(select(.value.fortify_source == "no" and (.key as $lib | $exceptions | index($lib) | not)))
+            | if length > 0 then
+                error("The following libraries do not have fortify enabled (and are not in the exception list): " + (map(.key) | join(", ")))
+              else
+                "All libraries have fortify enabled or are in the exception list."
+            end
+          ' checksec_output.json

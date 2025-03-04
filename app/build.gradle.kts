@@ -33,10 +33,12 @@ android {
         }
     }
 
+    val isRunningOnCI = System.getenv("CI") == "true"
+    val isCIKeystoreAvailable = System.getenv("KEYSTORE_PASSWORD") != null
+
     signingConfigs {
         create("release") {
-            val isRunningOnCI = System.getenv("CI") == "true"
-            if (isRunningOnCI) {
+            if (isRunningOnCI && isCIKeystoreAvailable) {
                 // configure keystore
                 storeFile = file("../_ci/keystore.jks")
                 storePassword = System.getenv("KEYSTORE_PASSWORD")
@@ -53,7 +55,11 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.getByName("release")
+            signingConfig = if (isRunningOnCI && !isCIKeystoreAvailable) {
+                null
+            } else {
+                signingConfigs.getByName("release")
+            }
         }
         create("releaseAutomotivePackageName") {
             // Faurecia Aptoide requires the automotive variant to use a separate package name

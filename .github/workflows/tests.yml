@@ -26,7 +26,7 @@ jobs:
           cache: 'gradle'
 
       - name: Copy apikeys.xml
-        run: cp .github/workflows/apikeys-ci.xml app/src/main/res/values/apikeys.xml
+        run: cp _ci/apikeys-ci.xml app/src/main/res/values/apikeys.xml
 
       - name: Build app
         run: ./gradlew assemble${{ matrix.buildvariant }}Debug --no-daemon

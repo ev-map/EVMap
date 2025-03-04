@@ -95,7 +95,7 @@ class CacheLiveData<T>(
  * reload from the API.
  */
 class PreferCacheLiveData(
-    cache: LiveData<ChargeLocation>,
+    cache: LiveData<ChargeLocation?>,
     val api: LiveData<Resource<ChargeLocation>>,
     cacheSoftLimit: Duration
 ) :

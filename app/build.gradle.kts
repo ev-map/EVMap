@@ -348,7 +348,12 @@ dependencies {
     implementation("androidx.room:room-runtime:$room_version")
     kapt("androidx.room:room-compiler:$room_version")
     implementation("androidx.room:room-ktx:$room_version")
-    implementation("com.github.anboralabs:spatia-room:0.3.0")
+    implementation("com.github.anboralabs:spatia-room:0.3.0") {
+        exclude("com.github.dalgarins", "android-spatialite")
+    }
+    // forked version with upgraded sqlite & libxml
+    // https://github.com/dalgarins/android-spatialite/pull/10
+    implementation("com.github.ev-map:android-spatialite:31495dcd81")
 
     // billing library
     val billing_version = "7.0.0"

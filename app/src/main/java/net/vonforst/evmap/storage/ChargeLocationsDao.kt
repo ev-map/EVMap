@@ -16,6 +16,7 @@ import net.vonforst.evmap.api.ChargepointList
 import net.vonforst.evmap.api.StringProvider
 import net.vonforst.evmap.api.goingelectric.GEReferenceData
 import net.vonforst.evmap.api.goingelectric.GoingElectricApiWrapper
+import net.vonforst.evmap.api.nobil.NobilApiWrapper
 import net.vonforst.evmap.api.openchargemap.OpenChargeMapApiWrapper
 import net.vonforst.evmap.model.*
 import net.vonforst.evmap.ui.cluster
@@ -121,6 +122,9 @@ class ChargeLocationsRepository(
                     db.geReferenceDataDao(),
                     prefs
                 ).getReferenceData()
+            }
+            is NobilApiWrapper -> {
+                NobilReferenceDataRepository(scope, prefs).getReferenceData()
             }
             is OpenChargeMapApiWrapper -> {
                 OCMReferenceDataRepository(

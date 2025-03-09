@@ -216,6 +216,11 @@ class ChargepriceFragment : Fragment() {
             }
             false
         }
+        headerBinding.tvChargeFromTo.setOnClickListener {
+            it.postDelayed({
+                vm.resetBatteryRangeToDefault()
+            }, 250)
+        }
 
         binding.toolbar.setOnMenuItemClickListener {
             when (it.itemId) {

@@ -1,14 +1,29 @@
 package net.vonforst.evmap.viewmodel
 
 import android.app.Application
-import androidx.lifecycle.*
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.distinctUntilChanged
+import androidx.lifecycle.viewModelScope
 import jsonapi.Meta
 import jsonapi.Relationship
 import jsonapi.Relationships
 import jsonapi.ResourceIdentifier
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import net.vonforst.evmap.api.chargeprice.*
+import net.vonforst.evmap.api.chargeprice.ChargePrice
+import net.vonforst.evmap.api.chargeprice.ChargepriceApi
+import net.vonforst.evmap.api.chargeprice.ChargepriceCar
+import net.vonforst.evmap.api.chargeprice.ChargepriceChargepointMeta
+import net.vonforst.evmap.api.chargeprice.ChargepriceInclude
+import net.vonforst.evmap.api.chargeprice.ChargepriceMeta
+import net.vonforst.evmap.api.chargeprice.ChargepriceOptions
+import net.vonforst.evmap.api.chargeprice.ChargepriceRequest
+import net.vonforst.evmap.api.chargeprice.ChargepriceRequestTariffMeta
+import net.vonforst.evmap.api.chargeprice.ChargepriceStation
 import net.vonforst.evmap.api.equivalentPlugTypes
 import net.vonforst.evmap.model.ChargeLocation
 import net.vonforst.evmap.model.Chargepoint
@@ -297,5 +312,9 @@ class ChargepriceViewModel(
                 chargePriceMeta.value = Resource.error(e.message, null)
             }
         }
+    }
+
+    fun resetBatteryRangeToDefault() {
+        batteryRange.value = prefs.chargepriceBatteryRangeAndroidAuto
     }
 }

@@ -48,11 +48,14 @@
             tools:orientation="horizontal" />
 
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/tvChargeFromTo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?selectableItemBackground"
             android:text="@{String.format(@string/chargeprice_battery_range, vm.batteryRange[0], vm.batteryRange[1])}"
             android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
             android:textColor="?colorPrimary"
@@ -68,8 +71,8 @@
             android:text="@{@string/chargeprice_stats(vm.chargepriceMetaForChargepoint.data.energy, BindingAdaptersKt.time((int) Math.round(vm.chargepriceMetaForChargepoint.data.duration)), vm.chargepriceMetaForChargepoint.data.energy / vm.chargepriceMetaForChargepoint.data.duration * 60)}"
             android:textAppearance="@style/TextAppearance.Material3.BodySmall"
             app:invisibleUnlessAnimated="@{!vm.batteryRangeSliderDragging &amp;&amp; vm.chargepriceMetaForChargepoint.status == Status.SUCCESS}"
-            app:layout_constraintStart_toStartOf="@+id/textView2"
-            app:layout_constraintTop_toBottomOf="@+id/textView2"
+            app:layout_constraintStart_toStartOf="@+id/tvChargeFromTo"
+            app:layout_constraintTop_toBottomOf="@+id/tvChargeFromTo"
             tools:text="(18 kWh, approx. 23 min, ⌀ 50 kW)" />
 
         <TextView

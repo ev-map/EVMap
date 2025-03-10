@@ -41,4 +41,22 @@
         android:layout_marginStart="32dp"
         android:text="@string/data_source_openchargemap_desc" />
 
+    <RadioButton
+        android:id="@+id/rbOpenStreetMap"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/data_source_openstreetmap"
+        android:textColor="#7ebc6f"
+        app:buttonTint="#7ebc6f"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/textView29"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-8dp"
+        android:layout_marginStart="32dp"
+        android:text="@string/data_source_openstreetmap_desc" />
+
 </RadioGroup>

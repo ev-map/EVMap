@@ -2,6 +2,7 @@ package net.vonforst.evmap.api.openstreetmap
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import kotlinx.parcelize.Parcelize
 import net.vonforst.evmap.model.*
 import okhttp3.internal.immutableListOf
 import java.time.Instant
@@ -40,6 +41,7 @@ private val SOCKET_TYPES = immutableListOf(
     // Tesla
     OsmSocket("tesla_standard", null),
     OsmSocket("tesla_supercharger", Chargepoint.SUPERCHARGER),
+    OsmSocket("tesla_supercharger_ccs", Chargepoint.CCS_UNKNOWN),
 
     // CEE
     OsmSocket("cee_blue", Chargepoint.CEE_BLAU), // Also known as "caravan socket"
@@ -56,6 +58,12 @@ private val SOCKET_TYPES = immutableListOf(
     OsmSocket("sev1011_t15", null),
     OsmSocket("sev1011_t23", null),
     OsmSocket("sev1011_t25", null),
+)
+
+data class OSMDocument(
+    val timestamp: Instant,
+    val count: Long,
+    val elements: Sequence<OSMChargingStation>
 )
 
 @JsonClass(generateAdapter = true)
@@ -87,7 +95,7 @@ data class OSMChargingStation(
         "openstreetmap",
         getName(),
         Coordinate(lat, lon),
-        null, // TODO: Can we determine this with overpass?
+        getAddress(),
         getChargepoints(),
         tags["network"],
         "https://www.openstreetmap.org/node/$id",
@@ -99,17 +107,30 @@ data class OSMChargingStation(
         tags["description"],
         null,
         null,
-        null,
+        getPhotos(),
         null,
         getOpeningHours(),
         getCost(),
         "© OpenStreetMap contributors",
         null,
         null,
-        null,
+        tags["website"],
         dataFetchTimestamp,
         true,
     )
+
+    private fun getAddress(): Address? {
+        val city = tags["addr:city"]
+        val country = tags["addr:country"]
+        val postcode = tags["addr:postcode"]
+        val street = tags["addr:street"]
+        val housenumber = tags["addr:housenumber"] ?: tags["addr:housename"]
+        return if (listOf(city, country, postcode, street, housenumber).any { it != null }) {
+            Address(city, country, postcode, "$street $housenumber")
+        } else {
+            null
+        }
+    }
 
     /**
      * Return the name for this charging station.
@@ -165,7 +186,7 @@ data class OSMChargingStation(
         return null
     }
 
-    private fun getCost(): Cost? {
+    private fun getCost(): Cost {
         val freecharging = when (tags["fee"]?.lowercase()) {
             "yes", "y" -> false
             "no", "n" -> true
@@ -176,7 +197,28 @@ data class OSMChargingStation(
             "yes", "y", "interval" -> false
             else -> null
         }
-        return Cost(freecharging, freeparking)
+        val description = listOfNotNull(tags["charge"], tags["charge:conditional"]).ifEmpty { null }
+            ?.joinToString("\n")
+        return Cost(freecharging, freeparking, null, description)
+    }
+
+    private fun getPhotos(): List<ChargerPhoto> {
+        val photos = mutableListOf<ChargerPhoto>()
+        for (i in -1..9) {
+            val url = tags["image" + if (i >= 0) ":$i" else ""]
+            if (url != null) {
+                if (url.startsWith("https://i.imgur.com")) {
+                    ImgurChargerPhoto.create(url)?.let { photos.add(it) }
+                }
+                /*
+                TODO: Imgur seems to be by far the most common image hoster (650 images),
+                followed by Mapillary (450, requires an API key to retrieve images)
+                Other than that, we have Google Photos, Wikimedia Commons (100-150 images each).
+                And there are some other links to various sites, but not all are valid links pointing directly to a JPEG file...
+                 */
+            }
+        }
+        return photos
     }
 
     companion object {
@@ -199,6 +241,28 @@ data class OSMChargingStation(
             val matchResult = pattern.matchEntire(rawOutput) ?: return null
             val numberString = matchResult.groupValues[1].replace(',', '.')
             return numberString.toDoubleOrNull()
+        }
+    }
+}
+
+@Parcelize
+@JsonClass(generateAdapter = true)
+class ImgurChargerPhoto(override val id: String) : ChargerPhoto(id) {
+    override fun getUrl(height: Int?, width: Int?, size: Int?, allowOriginal: Boolean): String {
+        return if (allowOriginal) {
+            "https://i.imgur.com/$id.jpg"
+        } else {
+            val value = width ?: size ?: height
+            "https://i.imgur.com/${id}_d.jpg?maxwidth=$value"
+        }
+    }
+
+    companion object {
+        private val regex = Regex("https?://i.imgur.com/([\\w\\d]+)(?:_d)?.(?:webp|jpg)")
+
+        fun create(url: String): ImgurChargerPhoto? {
+            val id = regex.find(url)?.groups?.get(1)?.value
+            return id?.let { ImgurChargerPhoto(it) }
         }
     }
 }

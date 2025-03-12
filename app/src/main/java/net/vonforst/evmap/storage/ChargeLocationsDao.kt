@@ -19,6 +19,8 @@ import net.vonforst.evmap.api.goingelectric.GoingElectricApiWrapper
 import net.vonforst.evmap.api.openchargemap.OpenChargeMapApiWrapper
 import net.vonforst.evmap.model.*
 import net.vonforst.evmap.ui.cluster
+import net.vonforst.evmap.utils.crossesAntimeridian
+import net.vonforst.evmap.utils.splitAtAntimeridian
 import net.vonforst.evmap.viewmodel.Resource
 import net.vonforst.evmap.viewmodel.Status
 import net.vonforst.evmap.viewmodel.await
@@ -145,6 +147,14 @@ class ChargeLocationsRepository(
         filters: FilterValues?,
         overrideCache: Boolean = false
     ): LiveData<Resource<List<ChargepointListItem>>> {
+        if (bounds.crossesAntimeridian()) {
+            val (a, b) = bounds.splitAtAntimeridian()
+            val liveDataA = getChargepoints(a, zoom, filters, overrideCache)
+            val liveDataB = getChargepoints(b, zoom, filters, overrideCache)
+            return combineLiveData(liveDataA, liveDataB)
+        }
+        
+        
         val api = api.value!!
 
         val dbResult = if (filters == null) {
@@ -205,6 +215,32 @@ class ChargeLocationsRepository(
             apiResult
         } else {
             CacheLiveData(dbResult, apiResult, savedRegionResult).distinctUntilChanged()
+        }
+    }
+
+    private fun combineLiveData(
+        liveDataA: LiveData<Resource<List<ChargepointListItem>>>,
+        liveDataB: LiveData<Resource<List<ChargepointListItem>>>
+    ) = MediatorLiveData<Resource<List<ChargepointListItem>>>().apply {
+        listOf(liveDataA, liveDataB).forEach {
+            addSource(it) {
+                val valA = liveDataA.value
+                val valB = liveDataB.value
+                val combinedList = if (valA?.data != null && valB?.data != null) {
+                    valA.data + valB.data
+                } else if (valA?.data != null) {
+                    valA.data
+                } else if (valB?.data != null) {
+                    valB.data
+                } else null
+                if (valA?.status == Status.SUCCESS && valB?.status == Status.SUCCESS) {
+                    Resource.success(combinedList)
+                } else if (valA?.status == Status.ERROR || valB?.status == Status.ERROR) {
+                    Resource.error(valA?.message ?: valB?.message, combinedList)
+                } else {
+                    Resource.loading(combinedList)
+                }
+            }
         }
     }
 

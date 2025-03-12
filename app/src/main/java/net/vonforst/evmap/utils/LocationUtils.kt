@@ -9,8 +9,15 @@ import androidx.core.content.ContextCompat
 import com.car2go.maps.model.LatLng
 import com.car2go.maps.model.LatLngBounds
 import net.vonforst.evmap.model.Coordinate
-import java.util.*
-import kotlin.math.*
+import java.util.Locale
+import kotlin.math.abs
+import kotlin.math.asin
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.floor
+import kotlin.math.pow
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 /**
  * Adds a certain distance in meters to a location. Approximate calculation.
@@ -152,4 +159,25 @@ fun Coordinate.formatDecimal(accuracy: Int = 6): String {
 
 fun Location.formatDecimal(accuracy: Int = 6): String {
     return "%.${accuracy}f, %.${accuracy}f".format(Locale.ENGLISH, latitude, longitude)
+}
+
+fun LatLngBounds.normalize() = LatLngBounds(
+    LatLng(southwest.latitude, normalizeLongitude(southwest.longitude)),
+    LatLng(northeast.latitude, normalizeLongitude(northeast.longitude)),
+)
+
+private fun normalizeLongitude(long: Double) =
+    if (-180.0 <= long && long <= 180.0) long else (long + 180) % 360 - 180
+
+fun LatLngBounds.crossesAntimeridian() = southwest.longitude > 0 && northeast.longitude < 0
+
+fun LatLngBounds.splitAtAntimeridian(): Pair<LatLngBounds, LatLngBounds> {
+    if (!crossesAntimeridian()) throw IllegalArgumentException("does not cross antimeridian")
+    return LatLngBounds(
+        LatLng(southwest.latitude, southwest.longitude),
+        LatLng(northeast.latitude, 180.0),
+    ) to LatLngBounds(
+        LatLng(southwest.latitude, -180.0),
+        LatLng(northeast.latitude, northeast.longitude),
+    )
 }

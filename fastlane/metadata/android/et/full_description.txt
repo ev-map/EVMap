@@ -1,0 +1,18 @@
+EVMap võimaldab sul oma Androidi telefonis mugavalt otsida elektrisõidukite laadimisjaamu. Andmed pärinevad kogukonna hallatavatest andmekogudest GoingElectric.de ja Open Charge Map, neist kumbki sisaldab laadimisjaamade andmeid üle maailma. Paljude Euroopa jaamade puhul näed ka reaalajas teavet jaama oleku kohta.
+
+Funktsionaalsus:
+- Material Design kujunduskeel;
+- kõik laadimisjaamade andmed on võetud kogukonna hallatavatest andmekogudest GoingElectric.de ja Open Charge Map;
+- reaalajas saadavuse teave (vaid Euroopas);
+- lõimitud hinnavõrdlus teenusest Chargeprice.app (vaid Euroopas);
+- OpenStreetMapi kaardiandmed;
+- asukohtade otsing;
+- mitmed andmete otsinguvõimalused, sh otsingute salvestamine;
+- lemmikute loend, sh saadavuse teabega;
+- reklaamid puuduvad ja rakendus põhineb täielikult avatud lähtekoodil.
+
+EVMap on avatud lähtekoodiga rakendus, mille lähetkoodihoidla asub GitHubis: https://github.com/ev-map/EVMap.
+
+See rakendus pole GoingElectric.de ega Open Charge Map toode, vaid kasutab mõlema avalikku arendusliidestust.
+
+Rakenduse tööks vajalike õiguste loend koos selgitustega leidub siin: https://ev-map.app/faq/#permissions

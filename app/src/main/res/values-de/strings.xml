@@ -334,7 +334,7 @@
     <string name="auto_chargers_near_location">Nahe %s</string>
     <string name="auto_fault_report_date">⚠️ Störungsmeldung (%s)</string>
     <string name="auto_no_refresh_possible">Weitere Aktualisierung nicht möglich. Bitte zurückgehen und neu starten.</string>
-    <string name="auto_prices">Preise</string>
+    <string name="auto_prices">Preisgestaltung</string>
     <string name="auto_vehicle_data">Fahrzeugdaten</string>
     <string name="auto_charging_level">Ladezustand</string>
     <string name="auto_no_data">Nicht verfügbar</string>

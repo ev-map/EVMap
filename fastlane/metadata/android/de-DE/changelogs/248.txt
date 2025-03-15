@@ -1,0 +1,5 @@
+Verbesserungen:
+- Preisvergleich: Zurücksetzen der Ladebereichsauswahl durch Tippen auf den Titel darüber
+
+Fehler behoben:
+- Anzeigefehler behoben

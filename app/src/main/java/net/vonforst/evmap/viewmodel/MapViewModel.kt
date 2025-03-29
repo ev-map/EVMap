@@ -472,7 +472,7 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
         val sw = bounds.southwest
         val ne = bounds.northeast
         var west = sw.longitude - (ne.longitude - sw.longitude) * 0.25
-        var east = ne.longitude + (ne.longitude + sw.longitude) * 0.25
+        var east = ne.longitude + (ne.longitude - sw.longitude) * 0.25
         val south =
             sw.latitude - (ne.latitude - sw.latitude) * 0.25 * cos(Math.toRadians(sw.latitude))
         val north =

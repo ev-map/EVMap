@@ -102,6 +102,7 @@ data class OSMChargingStation(
         null,
         null,
         null,
+        null,
         getOpeningHours(),
         getCost(),
         "© OpenStreetMap contributors",

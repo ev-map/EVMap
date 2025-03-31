@@ -109,6 +109,7 @@
     <string name="filter_open_247">Tillgänglig 24/7</string>
     <string name="filter_barrierfree">Kan användas utan registrering</string>
     <string name="filter_exclude_faults">Utelämna laddare med felrapporter</string>
+    <string name="filter_accessibility">Laddarens tillgänglighet</string>
     <string name="charge_cards">Betalningsalternativ</string>
     <string name="and_n_others">och %d andra</string>
     <string name="pref_map_provider">Kartleverantör</string>
@@ -379,4 +380,9 @@
     <string name="pref_chargeprice_native_integration_on">Priser kommer visas direkt i EVMap</string>
     <string name="pref_chargeprice_native_integration_off">Prisjämförelseknappen kommer länka till Chargeprice-app eller webbsida</string>
     <string name="auto_zoom_for_details">Zooma in för att se detaljer</string>
+    <string name="accessibility_public">Offentlig</string>
+    <string name="accessibility_visitors">Besökare</string>
+    <string name="accessibility_employees">Anställda</string>
+    <string name="accessibility_by_appointment">Efter överenskommelse</string>
+    <string name="accessibility_residents">Boende</string>
 </resources>

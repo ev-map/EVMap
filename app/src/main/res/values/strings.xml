@@ -109,6 +109,7 @@
     <string name="filter_open_247">Available 24/7</string>
     <string name="filter_barrierfree">Usable without registration</string>
     <string name="filter_exclude_faults">Exclude chargers with reported faults</string>
+    <string name="filter_accessibility">Charger accessibility</string>
     <string name="charge_cards">Payment methods</string>
     <string name="and_n_others">and %d others</string>
     <string name="pref_map_provider">Map provider</string>
@@ -380,4 +381,9 @@
     <string name="pref_chargeprice_native_integration_on">Pricing data will be shown directly in EVMap</string>
     <string name="pref_chargeprice_native_integration_off">Price comparison button will refer to the Chargeprice app or website</string>
     <string name="auto_zoom_for_details">Zoom in to see details</string>
+    <string name="accessibility_public">Public</string>
+    <string name="accessibility_visitors">Visitors</string>
+    <string name="accessibility_employees">Employees</string>
+    <string name="accessibility_by_appointment">By appointment</string>
+    <string name="accessibility_residents">Residents</string>
 </resources>

@@ -50,6 +50,7 @@ sealed class ChargepointListItem
  * @param locationDescription Directions on how to find the charger (e.g. "In the parking garage on level 5")
  * @param photos List of photos of this charging site
  * @param chargecards List of charge cards accepted here
+ * @param accessibility Specifies who may use this charge location
  * @param openinghours List of times when this charging site can be accessed / used
  * @param cost The cost for charging and/or parking
  * @param license How the data about this chargepoint is licensed
@@ -81,6 +82,7 @@ data class ChargeLocation(
     val locationDescription: String?,
     val photos: List<ChargerPhoto>?,
     val chargecards: List<ChargeCardId>?,
+    val accessibility: String?,
     @Embedded val openinghours: OpeningHours?,
     @Embedded val cost: Cost?,
     val license: String?,

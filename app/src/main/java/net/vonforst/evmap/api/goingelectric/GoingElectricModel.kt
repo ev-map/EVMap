@@ -89,6 +89,7 @@ data class GEChargeLocation(
         locationDescription,
         photos?.map { it.convert(apikey) },
         chargecards?.map { it.convert() },
+        null,
         openinghours?.convert(),
         cost?.convert(),
         null,

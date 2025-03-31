@@ -1,6 +1,7 @@
 package net.vonforst.evmap.api.nobil
 
 import android.content.Context
+import android.database.DatabaseUtils
 import com.car2go.maps.model.LatLng
 import com.car2go.maps.model.LatLngBounds
 import com.squareup.moshi.JsonDataException
@@ -22,9 +23,11 @@ import net.vonforst.evmap.model.ChargepointListItem
 import net.vonforst.evmap.model.Filter
 import net.vonforst.evmap.model.FilterValue
 import net.vonforst.evmap.model.FilterValues
+import net.vonforst.evmap.model.MultipleChoiceFilter
 import net.vonforst.evmap.model.ReferenceData
 import net.vonforst.evmap.model.SliderFilter
 import net.vonforst.evmap.model.getBooleanValue
+import net.vonforst.evmap.model.getMultipleChoiceValue
 import net.vonforst.evmap.model.getSliderValue
 import net.vonforst.evmap.viewmodel.Resource
 import okhttp3.Cache
@@ -191,6 +194,13 @@ class NobilApiWrapper(
         referenceData: ReferenceData,
         sp: StringProvider
     ): List<Filter<FilterValue>> {
+        val accessibilityMap = mapOf(
+            "Public" to sp.getString(R.string.accessibility_public),
+            "Visitors" to sp.getString(R.string.accessibility_visitors),
+            "Employees" to sp.getString(R.string.accessibility_employees),
+            "By appointment" to sp.getString(R.string.accessibility_by_appointment),
+            "Residents" to sp.getString(R.string.accessibility_residents)
+        )
         return listOf(
             BooleanFilter(sp.getString(R.string.filter_free_parking), "freeparking"),
             BooleanFilter(sp.getString(R.string.filter_open_247), "open_247"),
@@ -207,7 +217,10 @@ class NobilApiWrapper(
                 10,
                 min = 1
             ),
-
+            MultipleChoiceFilter(
+                sp.getString(R.string.filter_accessibility), "accessibilities",
+                accessibilityMap, manyChoices = true
+            )
         )
     }
 
@@ -241,6 +254,14 @@ class NobilApiWrapper(
         if (minConnectors != null && minConnectors > 1) {
             result.append(" GROUP BY ChargeLocation.id HAVING SUM(json_extract(cp.value, '$.count')) >= $minConnectors")
             requiresChargepointQuery = true
+        }
+
+        val accessibilities = filters.getMultipleChoiceValue("accessibilities")
+        if (accessibilities != null && !accessibilities.all) {
+            val accessibilitiesList = accessibilities.values.joinToString(",") {
+                DatabaseUtils.sqlEscapeString(it)
+            }
+            result.append(" AND accessibility IN (${accessibilitiesList})")
         }
 
         return FiltersSQLQuery(result.toString(), requiresChargepointQuery, false)

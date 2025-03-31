@@ -16,6 +16,7 @@ import net.vonforst.evmap.model.FilterValues
 import net.vonforst.evmap.model.OpeningHours
 import net.vonforst.evmap.model.ReferenceData
 import net.vonforst.evmap.model.getBooleanValue
+import net.vonforst.evmap.model.getMultipleChoiceValue
 import net.vonforst.evmap.model.getSliderValue
 import java.time.Instant
 import java.time.LocalDateTime
@@ -141,6 +142,8 @@ data class NobilChargerStation(
                 NobilChargerPhotoAdapter(chargerStationData.image)
             ) else null,
             null,
+            // 2: Availability
+            chargerStationAttributes.st["2"]?.attrTrans,
             // 24: Open 24h
             if (chargerStationAttributes.st["24"]?.attrTrans == "Yes") OpeningHours(
                 twentyfourSeven = true,
@@ -160,6 +163,11 @@ data class NobilChargerStation(
             Instant.now(),
             true
         )
+
+        val accessibilities = filters?.getMultipleChoiceValue("accessibilities")
+        if (accessibilities != null && !accessibilities.all) {
+            if (!accessibilities.values.contains(chargeLocation.accessibility)) return null
+        }
 
         val freeparking = filters?.getBooleanValue("freeparking")
         if (freeparking == true && chargeLocation.cost?.freeparking != true) return null

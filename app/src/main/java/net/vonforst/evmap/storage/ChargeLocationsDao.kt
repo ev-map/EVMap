@@ -28,6 +28,7 @@ import net.vonforst.evmap.api.openstreetmap.OSMReferenceData
 import net.vonforst.evmap.api.openstreetmap.OpenStreetMapApiWrapper
 import net.vonforst.evmap.model.*
 import net.vonforst.evmap.ui.cluster
+import net.vonforst.evmap.ui.getClusterPrecision
 import net.vonforst.evmap.utils.crossesAntimeridian
 import net.vonforst.evmap.utils.splitAtAntimeridian
 import net.vonforst.evmap.viewmodel.Resource
@@ -127,7 +128,7 @@ abstract class ChargeLocationsDao {
         after: Long,
         zoom: Float
     ): List<ChargepointListItem> {
-        val precision = 30000000 / 2.0.pow(zoom.roundToInt() + 1)
+        val precision = getClusterPrecision(zoom)
         val clusters =
             getChargeLocationClusters(lat1, lat2, lng1, lng2, dataSource, after, precision)
         val singleChargers =
@@ -466,11 +467,10 @@ class ChargeLocationsRepository(
            we have to cluster even at pretty high zoom levels to make sure the map does not get
            laggy. Otherwise, only cluster at zoom levels <= 11. */
         val useClustering = chargers.size > 500 || zoom <= 11f
-        val clusterDistance = getClusterDistance(zoom)
 
-        val chargersClustered = if (useClustering && clusterDistance != null) {
+        val chargersClustered = if (useClustering) {
             Dispatchers.Default.run {
-                cluster(chargers, zoom, clusterDistance)
+                cluster(chargers, zoom)
             }
         } else chargers
         return chargersClustered

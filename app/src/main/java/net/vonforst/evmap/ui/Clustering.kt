@@ -1,40 +1,37 @@
 package net.vonforst.evmap.ui
 
-import com.car2go.maps.model.LatLng
-import com.google.maps.android.clustering.ClusterItem
-import com.google.maps.android.clustering.algo.NonHierarchicalDistanceBasedAlgorithm
+import co.anbora.labs.spatia.geometry.Point
 import net.vonforst.evmap.model.ChargeLocation
 import net.vonforst.evmap.model.ChargeLocationCluster
 import net.vonforst.evmap.model.ChargepointListItem
 import net.vonforst.evmap.model.Coordinate
+import net.vonforst.evmap.utils.SphericalMercatorProjection
+import kotlin.math.pow
+import kotlin.math.roundToInt
+
+fun getClusterPrecision(zoom: Float) = 30000000 / 2.0.pow(zoom.roundToInt() + 1)
 
 
 fun cluster(
     locations: List<ChargeLocation>,
-    zoom: Float,
-    clusterDistance: Int
+    zoom: Float
 ): List<ChargepointListItem> {
-    val clusterItems = locations.map { ChargepointClusterItem(it) }
-
-    val algo = NonHierarchicalDistanceBasedAlgorithm<ChargepointClusterItem>()
-    algo.maxDistanceBetweenClusteredItems = clusterDistance
-    algo.addItems(clusterItems)
-    return algo.getClusters(zoom).map {
-        if (it.size == 1) {
-            it.items.first().charger
+    val clusters = mutableMapOf<Pair<Int, Int>, MutableSet<ChargeLocation>>()
+    val precision = getClusterPrecision(zoom)
+    locations.forEach {
+        // snap coordinates to grid
+        val gridX = (it.coordinatesProjected.x / precision).roundToInt()
+        val gridY = (it.coordinatesProjected.y / precision).roundToInt()
+        clusters.getOrPut(gridX to gridY, ::mutableSetOf).add(it)
+    }
+    return clusters.map {
+        if (it.value.size == 1) {
+            it.value.first()
         } else {
-            ChargeLocationCluster(
-                it.size,
-                Coordinate(it.position.latitude, it.position.longitude),
-                it.items.map { it.charger })
+            val centerX = it.value.map { it.coordinatesProjected.x }.average()
+            val centerY = it.value.map { it.coordinatesProjected.y }.average()
+            val centerLatLng = SphericalMercatorProjection.unproject(Point(centerX, centerY, 3857))
+            ChargeLocationCluster(it.value.size, Coordinate(centerLatLng.y, centerLatLng.x))
         }
     }
-}
-
-private class ChargepointClusterItem(val charger: ChargeLocation) : ClusterItem {
-    override fun getSnippet(): String? = null
-
-    override fun getTitle(): String = charger.name
-
-    override fun getPosition(): LatLng = LatLng(charger.coordinates.lat, charger.coordinates.lng)
 }

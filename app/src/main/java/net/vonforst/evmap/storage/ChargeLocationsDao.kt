@@ -108,7 +108,7 @@ abstract class ChargeLocationsDao {
     abstract suspend fun getChargeLocationsCustom(query: SupportSQLiteQuery): List<ChargeLocation>
 
     @SkipQueryVerification
-    @Query("SELECT SUM(1) AS clusterCount, MakePoint(AVG(X(coordinates)), AVG(Y(coordinates)), 4326) as center, SnapToGrid(coordinatesProjected, :precision) AS snapped, GROUP_CONCAT(id, ',') as ids FROM chargelocation WHERE dataSource == :dataSource AND timeRetrieved > :after AND ROWID IN (SELECT ROWID FROM SpatialIndex WHERE f_table_name = 'ChargeLocation' AND f_geometry_column = 'coordinates' AND search_frame = BuildMbr(:lng1, :lat1, :lng2, :lat2)) GROUP BY snapped")
+    @Query("SELECT SUM(1) AS clusterCount, Transform(MakePoint(AVG(X(coordinatesProjected)), AVG(Y(coordinatesProjected)), 3857), 4326) as center, SnapToGrid(coordinatesProjected, :precision) AS snapped, GROUP_CONCAT(id, ',') as ids FROM chargelocation WHERE dataSource == :dataSource AND timeRetrieved > :after AND ROWID IN (SELECT ROWID FROM SpatialIndex WHERE f_table_name = 'ChargeLocation' AND f_geometry_column = 'coordinates' AND search_frame = BuildMbr(:lng1, :lat1, :lng2, :lat2)) GROUP BY snapped")
     abstract suspend fun getChargeLocationClusters(
         lat1: Double,
         lat2: Double,

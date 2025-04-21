@@ -153,3 +153,24 @@ fun Coordinate.formatDecimal(accuracy: Int = 6): String {
 fun Location.formatDecimal(accuracy: Int = 6): String {
     return "%.${accuracy}f, %.${accuracy}f".format(Locale.ENGLISH, latitude, longitude)
 }
+
+fun LatLngBounds.normalize() = LatLngBounds(
+    LatLng(southwest.latitude, normalizeLongitude(southwest.longitude)),
+    LatLng(northeast.latitude, normalizeLongitude(northeast.longitude)),
+)
+
+private fun normalizeLongitude(long: Double) =
+    if (-180.0 <= long && long <= 180.0) long else (long + 180) % 360 - 180
+
+fun LatLngBounds.crossesAntimeridian() = southwest.longitude > 0 && northeast.longitude < 0
+
+fun LatLngBounds.splitAtAntimeridian(): Pair<LatLngBounds, LatLngBounds> {
+    if (!crossesAntimeridian()) throw IllegalArgumentException("does not cross antimeridian")
+    return LatLngBounds(
+        LatLng(southwest.latitude, southwest.longitude),
+        LatLng(northeast.latitude, 180.0),
+    ) to LatLngBounds(
+        LatLng(southwest.latitude, -180.0),
+        LatLng(northeast.latitude, northeast.longitude),
+    )
+}

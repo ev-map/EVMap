@@ -1,7 +1,6 @@
 package net.vonforst.evmap.viewmodel
 
 import android.app.Application
-import android.graphics.Point
 import android.os.Parcelable
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -14,7 +13,6 @@ import androidx.lifecycle.map
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import com.car2go.maps.AnyMap
-import com.car2go.maps.Projection
 import com.car2go.maps.model.LatLng
 import com.car2go.maps.model.LatLngBounds
 import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike
@@ -51,7 +49,8 @@ import net.vonforst.evmap.storage.FilterProfile
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.ui.cluster
 import net.vonforst.evmap.utils.distanceBetween
-import kotlin.math.roundToInt
+import net.vonforst.evmap.utils.normalize
+import kotlin.math.cos
 
 @Parcelize
 data class MapPosition(val bounds: LatLngBounds, val zoom: Float) : Parcelable
@@ -77,7 +76,6 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
         prefs
     )
     private val availabilityRepo = AvailabilityRepository(application)
-    var mapProjection: Projection? = null
 
     val apiId = repo.api.map { it.id }
 
@@ -471,14 +469,21 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
      * expands LatLngBounds beyond the viewport (1.5x the width and height)
      */
     private fun extendBounds(bounds: LatLngBounds): LatLngBounds {
-        val mapProjection = mapProjection ?: return bounds
-        val swPoint = mapProjection.toScreenLocation(bounds.southwest)
-        val nePoint = mapProjection.toScreenLocation(bounds.northeast)
-        val dx = ((nePoint.x - swPoint.x) * 0.25).roundToInt()
-        val dy = ((nePoint.y - swPoint.y) * 0.25).roundToInt()
-        val newSw = mapProjection.fromScreenLocation(Point(swPoint.x - dx, swPoint.y - dy))
-        val newNe = mapProjection.fromScreenLocation(Point(nePoint.x + dx, nePoint.y + dy))
-        return LatLngBounds(newSw, newNe)
+        val sw = bounds.southwest
+        val ne = bounds.northeast
+        var west = sw.longitude - (ne.longitude - sw.longitude) * 0.25
+        var east = ne.longitude + (ne.longitude - sw.longitude) * 0.25
+        val south =
+            sw.latitude - (ne.latitude - sw.latitude) * 0.25 * cos(Math.toRadians(sw.latitude))
+        val north =
+            ne.latitude + (ne.latitude - sw.latitude) * 0.25 * cos(Math.toRadians(ne.latitude))
+
+        if (east - west >= 360) {
+            west = -180.0
+            east = 180.0
+        }
+
+        return LatLngBounds(LatLng(south, west), LatLng(north, east)).normalize()
     }
 
     fun reloadAvailability() {

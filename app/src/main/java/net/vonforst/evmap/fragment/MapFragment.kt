@@ -974,7 +974,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
 
     override fun onMapReady(map: AnyMap) {
         this.map = map
-        vm.mapProjection = map.projection
         val context = this.context ?: return
         view ?: return
         markerManager = MarkerManager(context, map, this).apply {
@@ -1003,14 +1002,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
         map.uiSettings.setMapToolbarEnabled(false)
 
         map.setOnCameraIdleListener {
-            vm.mapProjection = map.projection
             vm.mapPosition.value = MapPosition(
                 map.projection.visibleRegion.latLngBounds, map.cameraPosition.zoom
             )
             vm.reloadChargepoints()
         }
         map.setOnCameraMoveListener {
-            vm.mapProjection = map.projection
             vm.mapPosition.value = MapPosition(
                 map.projection.visibleRegion.latLngBounds, map.cameraPosition.zoom
             )
@@ -1384,12 +1381,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
     override fun onDestroyView() {
         super.onDestroyView()
         detailsDialog.onDestroy()
-        vm.mapProjection = null
 
         map = null
         mapFragment = null
         _binding = null
-        vm.mapProjection = null
         markerManager = null
         /* if we don't dismiss the popup menu, it will be recreated in some cases
         (split-screen mode) and then have references to a destroyed fragment. */

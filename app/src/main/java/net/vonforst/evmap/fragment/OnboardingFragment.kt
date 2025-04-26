@@ -6,8 +6,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.os.Bundle
-import android.text.Html
-import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,12 +13,17 @@ import android.view.animation.DecelerateInterpolator
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
+import androidx.core.text.method.LinkMovementMethodCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import net.vonforst.evmap.R
-import net.vonforst.evmap.databinding.*
+import net.vonforst.evmap.databinding.FragmentOnboardingAndroidAutoBinding
+import net.vonforst.evmap.databinding.FragmentOnboardingBinding
+import net.vonforst.evmap.databinding.FragmentOnboardingDataSourceBinding
+import net.vonforst.evmap.databinding.FragmentOnboardingIconsBinding
+import net.vonforst.evmap.databinding.FragmentOnboardingWelcomeBinding
 import net.vonforst.evmap.model.FILTERS_DISABLED
 import net.vonforst.evmap.navigation.safeNavigate
 import net.vonforst.evmap.storage.PreferenceDataSource
@@ -234,7 +237,7 @@ class DataSourceSelectFragment : OnboardingPageFragment() {
                 ), HtmlCompat.FROM_HTML_MODE_LEGACY
             )
         binding.cbAcceptPrivacy.linksClickable = true
-        binding.cbAcceptPrivacy.movementMethod = LinkMovementMethod.getInstance()
+        binding.cbAcceptPrivacy.movementMethod = LinkMovementMethodCompat.getInstance()
         binding.btnGetStarted.visibility = View.INVISIBLE
 
         for (rb in listOf(

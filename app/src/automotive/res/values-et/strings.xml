@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="grant_on_phone">Luba</string>
+    <string name="auto_location_permission_needed">Et EVMap toimiks sinu autos, palun luba tal asukohta tuvastada.</string>
+</resources>

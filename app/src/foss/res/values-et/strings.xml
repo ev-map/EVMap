@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="donations_info" formatted="false">Kas EVMap on sulle kasulik? Oma arendajale saadetava rahalise toetusega edendad ka arendustegevust.</string>
+    <string name="donate_paypal">Toeta PayPali abil</string>
+    <string name="data_sources_hint">Selles rakenduses näidatavad kaardiandmed on pärit OpenStreetMapist.</string>
+</resources>

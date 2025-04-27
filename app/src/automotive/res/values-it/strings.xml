@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="grant_on_phone">Consenti</string>
+    <string name="auto_location_permission_needed">Per eseguire EVMap sulla propria auto, è necessario concedere l\'accesso alla propria posizione.</string>
+</resources>

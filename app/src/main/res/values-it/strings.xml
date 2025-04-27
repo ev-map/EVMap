@@ -375,6 +375,6 @@
     <string name="auto_chargeprice_vehicle_unknown">Nessuno dei veicoli selezionati nell\'applicazione corrisponde a questo veicolo (%1$s %2$s).</string>
     <string name="auto_chargeprice_vehicle_ambiguous">Più veicoli selezionati nell\'app corrispondono a questo veicolo (%1$s %2$s).</string>
     <string name="pref_chargeprice_native_integration_on">I dati sui prezzi saranno visualizzati direttamente in EVMap</string>
-    <string name="accept_privacy"><![CDATA[Ho letto e accettato l'<a href=\"%s\">informativa sulla privacy</a> di EVMap.]]></string>
+    <string name="accept_privacy"><![CDATA[Ho letto e accettato l\'<a href=\"%s\">informativa sulla privacy</a> di EVMap.]]></string>
     <string name="auto_multipage_goto">Pagina %d</string>
 </resources>

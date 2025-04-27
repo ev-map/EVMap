@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="donations_info" formatted="false">Trovi utile EVMap? Sostieni il suo sviluppo inviando una donazione allo sviluppatore.\n\nGoogle si prende il 15% su ogni donazione.</string>
+    <string name="data_sources_hint">Nelle impostazioni si può anche scegliere tra Google Maps e OpenStreetMap per i dati cartografici.</string>
+</resources>

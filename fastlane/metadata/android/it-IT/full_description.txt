@@ -1,0 +1,18 @@
+Con EVMap è possibile trovare comodamente le colonnine di ricarica per veicoli elettrici utilizzando il proprio telefono Android. Fornisce l'accesso mobile alle banche dati della comunità di GoingElectric.de e Open Charge Map, che contengono informazioni sui punti di ricarica in tutto il mondo. Per molti punti di ricarica in Europa, è possibile visualizzare informazioni sullo stato in tempo reale.
+
+Caratteristiche:
+- Material Design
+- Mostra tutte le colonnine di ricarica dagli elenchi di GoingElectric.de e Open Charge Map, gestiti dalla comunità.
+- Informazioni sulla disponibilità in tempo reale (solo in Europa)
+- Confronto dei prezzi integrato con Chargeprice.app (solo in Europa)
+- Dati cartografici da OpenStreetMap
+- Ricerca di luoghi
+- Opzioni di filtraggio avanzate, compresi i profili di filtro salvati
+- Elenco dei preferiti, anche con informazioni sulla disponibilità
+- Nessuna pubblicità, completamente open source
+
+EVMap è un progetto open source e si trova all'indirizzo https://github.com/ev-map/EVMap.
+
+Questa applicazione non è un prodotto ufficiale di GoingElectric.de o Open Charge Map, ma utilizza solo le loro API pubbliche.
+
+Un elenco dei permessi necessari con le relative spiegazioni è disponibile qui: https://ev-map.app/faq/#permissions

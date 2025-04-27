@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="donations_info" formatted="false">Trovi utile EVMap? Sostieni il suo sviluppo inviando una donazione allo sviluppatore.</string>
+    <string name="donate_paypal">Dona attraverso PayPal</string>
+    <string name="data_sources_hint">I dati cartografici dell\'applicazione sono forniti da OpenStreetMap.</string>
+</resources>

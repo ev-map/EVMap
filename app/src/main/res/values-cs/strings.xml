@@ -155,7 +155,7 @@
     <string name="chargeprice_price_not_available">Cena není dostupná</string>
     <string name="close">Zavřít</string>
     <string name="chargeprice_no_compatible_connectors">Tato nabíjecí stanice nemá žádné kompatibilní konektory</string>
-    <string name="chargeprice_blocking_fee">Blokovací poplatek&gt;%s</string>
+    <string name="chargeprice_blocking_fee">Blokovací poplatek &gt;%s</string>
     <string name="pref_my_tariffs">Mé nabíjecí plány</string>
     <string name="chargeprice_all_tariffs_selected">vybrány všechny plány</string>
     <string name="license">Licence</string>
@@ -375,4 +375,7 @@
     <string name="pref_provider_osm">OpenStreetMap</string>
     <string name="auto_zoom_for_details">Přibližte pro zobrazení podrobností</string>
     <string name="filterprofile_name_not_unique">Již existuje profil filtru s tímto názvem</string>
+    <string name="referral_link">https://ev-map.app/referrals/</string>
+    <string name="mastodon">Mastodon</string>
+    <string name="tff_forum">Vlákno na fóru TFF-Forum.de</string>
 </resources>

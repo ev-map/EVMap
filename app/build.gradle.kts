@@ -263,7 +263,7 @@ aboutLibraries {
         "Dual OpenSSL and SSLeay License",  // Android NDK OpenSSL
         "Google Maps Platform Terms of Service",  // Google Maps SDK
         "provided without support or warranty",  // org.json
-        "Unicode/ICU License",  // icu4j
+        "Unicode/ICU License", "Unicode-3.0",  // icu4j
         "Bouncy Castle Licence",  // bcprov
         "CDDL + GPLv2 with classpath exception",  // javax.annotation-api
     )

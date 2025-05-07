@@ -12,6 +12,7 @@ import androidx.browser.customtabs.CustomTabsIntent
 import androidx.car.app.CarContext
 import androidx.car.app.CarToast
 import androidx.car.app.Screen
+import androidx.car.app.annotations.ExperimentalCarApi
 import androidx.car.app.constraints.ConstraintManager
 import androidx.car.app.hardware.common.CarUnit
 import androidx.car.app.model.CarColor
@@ -221,13 +222,14 @@ fun supportsCarApiLevel3(ctx: CarContext): Boolean {
     return true
 }
 
-fun openUrl(carContext: CarContext, url: String) {
+@ExperimentalCarApi
+fun openUrl(carContext: CarContext, cas: CarAppService, url: String) {
     val intent = CustomTabsIntent.Builder()
         .setDefaultColorSchemeParams(
             CustomTabColorSchemeParams.Builder()
                 .setToolbarColor(
                     ContextCompat.getColor(
-                        carContext,
+                        cas,
                         R.color.colorPrimary
                     )
                 )
@@ -237,7 +239,7 @@ fun openUrl(carContext: CarContext, url: String) {
     intent.data = Uri.parse(url)
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     try {
-        carContext.startActivity(intent)
+        cas.startActivity(intent)
         if (BuildConfig.FLAVOR_automotive != "automotive") {
             // only show the toast "opened on phone" if we're running on a phone
             CarToast.makeText(

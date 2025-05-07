@@ -162,7 +162,7 @@ class EVMapSession(val cas: CarAppService) : Session(), DefaultLifecycleObserver
         }
         if (!prefs.privacyAccepted) {
             screens.add(
-                AcceptPrivacyScreen(carContext)
+                AcceptPrivacyScreen(carContext, this)
             )
         }
         handleACRAIntent(intent)?.let {

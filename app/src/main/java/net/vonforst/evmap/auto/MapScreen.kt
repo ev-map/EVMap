@@ -386,7 +386,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
             )
 
             setOnClickListener {
-                screenManager.push(ChargerDetailScreen(carContext, charger))
+                screenManager.push(ChargerDetailScreen(carContext, charger, session))
                 session.mapScreen = null
             }
         }.build()

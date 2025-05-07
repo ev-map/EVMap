@@ -16,6 +16,7 @@ import androidx.car.app.CarContext
 import androidx.car.app.CarToast
 import androidx.car.app.HostException
 import androidx.car.app.Screen
+import androidx.car.app.annotations.ExperimentalCarApi
 import androidx.car.app.constraints.ConstraintManager
 import androidx.car.app.model.Action
 import androidx.car.app.model.ActionStrip
@@ -76,7 +77,12 @@ import kotlin.math.roundToInt
 
 private const val TAG = "ChargerDetailScreen"
 
-class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : Screen(ctx) {
+@ExperimentalCarApi
+class ChargerDetailScreen(
+    ctx: CarContext,
+    val chargerSparse: ChargeLocation,
+    val session: EVMapSession
+) : Screen(ctx) {
     var charger: ChargeLocation? = null
     var photo: Bitmap? = null
     private var availability: ChargeLocationStatus? = null
@@ -153,14 +159,20 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
                                     .setTitle(carContext.getString(R.string.auto_prices))
                                 .setOnClickListener {
                                     if (prefs.chargepriceNativeIntegration) {
-                                        screenManager.push(ChargepriceScreen(carContext, charger))
+                                        screenManager.push(
+                                            ChargepriceScreen(
+                                                carContext,
+                                                session,
+                                                charger
+                                            )
+                                        )
                                     } else {
                                         val intent = Intent(
                                             Intent.ACTION_VIEW,
                                             Uri.parse(ChargepriceApi.getPoiUrl(charger))
                                         )
                                             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                        carContext.startActivity(intent)
+                                        session.cas.startActivity(intent)
                                     }
                                 }
                                 .build())
@@ -179,12 +191,12 @@ class ChargerDetailScreen(ctx: CarContext, val chargerSparse: ChargeLocation) : 
                                 Action.Builder()
                                     .setTitle(carContext.getString(R.string.open_in_app))
                                     .setOnClickListener(ParkedOnlyOnClickListener.create {
-                                        val intent = Intent(carContext, MapsActivity::class.java)
+                                        val intent = Intent(session.cas, MapsActivity::class.java)
                                             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                                             .putExtra(EXTRA_CHARGER_ID, chargerSparse.id)
                                             .putExtra(EXTRA_LAT, chargerSparse.coordinates.lat)
                                             .putExtra(EXTRA_LON, chargerSparse.coordinates.lng)
-                                        carContext.startActivity(intent)
+                                        session.cas.startActivity(intent)
                                         CarToast.makeText(
                                             carContext,
                                             R.string.opened_on_phone,

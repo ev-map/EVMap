@@ -140,7 +140,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
     private var myLocationEnabled = false
     private var myLocationNeedsUpdate = false
 
-    private val formatter = ChargerListFormatter(ctx, this)
+    private val formatter = ChargerListFormatter(ctx, this, session.cas)
     private val backPressedCallback = object : OnBackPressedCallback(false) {
         override fun handleOnBackPressed() {
             clearSelectedCharger()
@@ -188,7 +188,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                     selectedCharger,
                     availabilities.get(selectedCharger.id)?.second
                 ) {
-                    screenManager.push(ChargerDetailScreen(carContext, selectedCharger))
+                    screenManager.push(ChargerDetailScreen(carContext, selectedCharger, session))
                     session.mapScreen = null
                 }).apply {
                 setHeader(Header.Builder().apply {
@@ -607,7 +607,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
         map.setIndoorEnabled(false)
         map.uiSettings.setIndoorLevelPickerEnabled(false)
         map.setAttributionClickListener { attributions ->
-            screenManager.push(MapAttributionScreen(carContext, attributions))
+            screenManager.push(MapAttributionScreen(carContext, session, attributions))
         }
         map.setOnMapClickListener {
             clearSelectedCharger()

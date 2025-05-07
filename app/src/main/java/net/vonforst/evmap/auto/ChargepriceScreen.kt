@@ -6,7 +6,14 @@ import androidx.car.app.Screen
 import androidx.car.app.constraints.ConstraintManager
 import androidx.car.app.hardware.CarHardwareManager
 import androidx.car.app.hardware.info.Model
-import androidx.car.app.model.*
+import androidx.car.app.model.Action
+import androidx.car.app.model.ActionStrip
+import androidx.car.app.model.CarIcon
+import androidx.car.app.model.ItemList
+import androidx.car.app.model.ListTemplate
+import androidx.car.app.model.Row
+import androidx.car.app.model.SectionedItemList
+import androidx.car.app.model.Template
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.lifecycleScope
@@ -18,7 +25,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.vonforst.evmap.R
-import net.vonforst.evmap.api.chargeprice.*
+import net.vonforst.evmap.api.chargeprice.ChargePrice
+import net.vonforst.evmap.api.chargeprice.ChargepriceApi
+import net.vonforst.evmap.api.chargeprice.ChargepriceCar
+import net.vonforst.evmap.api.chargeprice.ChargepriceChargepointMeta
+import net.vonforst.evmap.api.chargeprice.ChargepriceInclude
+import net.vonforst.evmap.api.chargeprice.ChargepriceMeta
+import net.vonforst.evmap.api.chargeprice.ChargepriceOptions
+import net.vonforst.evmap.api.chargeprice.ChargepriceRequest
+import net.vonforst.evmap.api.chargeprice.ChargepriceRequestTariffMeta
+import net.vonforst.evmap.api.chargeprice.ChargepriceStation
 import net.vonforst.evmap.api.equivalentPlugTypes
 import net.vonforst.evmap.api.nameForPlugType
 import net.vonforst.evmap.api.stringProvider
@@ -32,7 +48,8 @@ import retrofit2.HttpException
 import java.io.IOException
 import kotlin.math.roundToInt
 
-class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(ctx) {
+class ChargepriceScreen(ctx: CarContext, val session: EVMapSession, val charger: ChargeLocation) :
+    Screen(ctx) {
     private val prefs = PreferenceDataSource(ctx)
     private val db = AppDatabase.getInstance(carContext)
     private val api by lazy {
@@ -130,7 +147,7 @@ class ChargepriceScreen(ctx: CarContext, val charger: ChargeLocation) : Screen(c
                             )
                         ).build()
                     ).setOnClickListener {
-                        openUrl(carContext, ChargepriceApi.getPoiUrl(charger))
+                        openUrl(carContext, session.cas, ChargepriceApi.getPoiUrl(charger))
                     }.build()
                 ).build()
             )

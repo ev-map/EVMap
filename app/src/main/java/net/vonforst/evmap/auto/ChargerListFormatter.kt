@@ -5,6 +5,7 @@ import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import androidx.car.app.CarContext
+import androidx.car.app.annotations.ExperimentalCarApi
 import androidx.car.app.hardware.info.EnergyLevel
 import androidx.car.app.model.Action
 import androidx.car.app.model.CarColor
@@ -43,7 +44,12 @@ interface ChargerListDelegate : ItemList.OnItemVisibilityChangedListener {
     fun onChargerClick(charger: ChargeLocation)
 }
 
-class ChargerListFormatter(val carContext: CarContext, val screen: ChargerListDelegate) {
+@ExperimentalCarApi
+class ChargerListFormatter(
+    val carContext: CarContext,
+    val screen: ChargerListDelegate,
+    val cas: CarAppService
+) {
     private val iconGen = ChargerIconGenerator(carContext, null, height = 96)
     var favorites: Set<Long> = emptySet()
 
@@ -235,7 +241,7 @@ class ChargerListFormatter(val carContext: CarContext, val screen: ChargerListDe
             setTitle(carContext.getString(R.string.navigate))
             setBackgroundColor(CarColor.PRIMARY)
             setOnClickListener {
-                navigateToCharger(carContext, charger)
+                navigateToCharger(carContext, cas, charger)
             }
         }.build())
     }.build()

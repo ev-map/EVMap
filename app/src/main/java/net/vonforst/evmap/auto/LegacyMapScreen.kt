@@ -126,7 +126,7 @@ class LegacyMapScreen(ctx: CarContext, val session: EVMapSession) :
 
     private var searchLocation: LatLng? = null
 
-    private val formatter = ChargerListFormatter(ctx, this)
+    private val formatter = ChargerListFormatter(ctx, this, session.cas)
 
     init {
         lifecycle.addObserver(this)
@@ -260,7 +260,7 @@ class LegacyMapScreen(ctx: CarContext, val session: EVMapSession) :
     }
 
     override fun onChargerClick(charger: ChargeLocation) {
-        screenManager.push(ChargerDetailScreen(carContext, charger))
+        screenManager.push(ChargerDetailScreen(carContext, charger, session))
         session.mapScreen = null
     }
 

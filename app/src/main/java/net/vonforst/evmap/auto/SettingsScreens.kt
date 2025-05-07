@@ -79,7 +79,7 @@ class SettingsScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx) {
                     )
                     setBrowsable(true)
                     setOnClickListener {
-                        screenManager.push(DataSettingsScreen(carContext))
+                        screenManager.push(DataSettingsScreen(carContext, session))
                     }
                 }.build())
                 addItem(Row.Builder().apply {
@@ -147,7 +147,7 @@ class SettingsScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx) {
                         )
                         .setBrowsable(true)
                         .setOnClickListener {
-                            screenManager.push(AboutScreen(carContext))
+                            screenManager.push(AboutScreen(carContext, session))
                         }
                         .build()
                 )
@@ -156,7 +156,8 @@ class SettingsScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx) {
     }
 }
 
-class DataSettingsScreen(ctx: CarContext) : Screen(ctx) {
+@ExperimentalCarApi
+class DataSettingsScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx) {
     val prefs = PreferenceDataSource(ctx)
     val encryptedPrefs = EncryptedPreferenceDataStore(ctx)
     val db = AppDatabase.getInstance(ctx)
@@ -305,7 +306,7 @@ class DataSettingsScreen(ctx: CarContext) : Screen(ctx) {
                 }
             }, IntentFilter(OAuthLoginFragment.ACTION_OAUTH_RESULT))
 
-        carContext.startActivity(intent)
+        session.cas.startActivity(intent)
 
         if (BuildConfig.FLAVOR_automotive != "automotive") {
             CarToast.makeText(
@@ -790,7 +791,8 @@ class SelectChargingRangeScreen(ctx: CarContext) : Screen(ctx) {
     }
 }
 
-class AboutScreen(ctx: CarContext) : Screen(ctx) {
+@ExperimentalCarApi
+class AboutScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx) {
     val prefs = PreferenceDataSource(ctx)
     var developerOptionsCounter = 0
     private val maxRows = ctx.getContentLimit(ConstraintManager.CONTENT_LIMIT_TYPE_LIST)
@@ -835,7 +837,11 @@ class AboutScreen(ctx: CarContext) : Screen(ctx) {
                         .setTitle(carContext.getString(R.string.faq))
                         .setBrowsable(true)
                         .setOnClickListener(ParkedOnlyOnClickListener.create {
-                            openUrl(carContext, carContext.getString(R.string.faq_link))
+                            openUrl(
+                                carContext,
+                                session.cas,
+                                carContext.getString(R.string.faq_link)
+                            )
                         }).build()
                 )
                 addItem(
@@ -846,12 +852,16 @@ class AboutScreen(ctx: CarContext) : Screen(ctx) {
                         .setOnClickListener(ParkedOnlyOnClickListener.create {
                             if (BuildConfig.FLAVOR_automotive == "automotive") {
                                 // we can't open the donation page on the phone in this case
-                                openUrl(carContext, carContext.getString(R.string.donate_link))
+                                openUrl(
+                                    carContext,
+                                    session.cas,
+                                    carContext.getString(R.string.donate_link)
+                                )
                             } else {
                                 val intent = Intent(carContext, MapsActivity::class.java)
                                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                                     .putExtra(EXTRA_DONATE, true)
-                                carContext.startActivity(intent)
+                                session.cas.startActivity(intent)
                                 CarToast.makeText(
                                     carContext,
                                     R.string.opened_on_phone,
@@ -867,7 +877,11 @@ class AboutScreen(ctx: CarContext) : Screen(ctx) {
                     .addText(carContext.getString(R.string.mastodon_handle))
                     .setBrowsable(true)
                     .setOnClickListener(ParkedOnlyOnClickListener.create {
-                        openUrl(carContext, carContext.getString(R.string.mastodon_url))
+                        openUrl(
+                            carContext,
+                            session.cas,
+                            carContext.getString(R.string.mastodon_url)
+                        )
                     }).build()
                 )
                 if (maxRows > 8) {
@@ -877,7 +891,11 @@ class AboutScreen(ctx: CarContext) : Screen(ctx) {
                             .addText(carContext.getString(R.string.twitter_handle))
                             .setBrowsable(true)
                             .setOnClickListener(ParkedOnlyOnClickListener.create {
-                                openUrl(carContext, carContext.getString(R.string.twitter_url))
+                                openUrl(
+                                    carContext,
+                                    session.cas,
+                                    carContext.getString(R.string.twitter_url)
+                                )
                             }).build()
                     )
                 }
@@ -887,7 +905,7 @@ class AboutScreen(ctx: CarContext) : Screen(ctx) {
                         .setBrowsable(true)
                         .setOnClickListener(ParkedOnlyOnClickListener.create {
                             openUrl(
-                                carContext,
+                                carContext, session.cas,
                                 carContext.getString(R.string.goingelectric_forum_url)
                             )
                         }).build()
@@ -900,7 +918,7 @@ class AboutScreen(ctx: CarContext) : Screen(ctx) {
                             .setBrowsable(true)
                             .setOnClickListener(ParkedOnlyOnClickListener.create {
                                 openUrl(
-                                    carContext,
+                                    carContext, session.cas,
                                     carContext.getString(R.string.tff_forum_url)
                                 )
                             }).build()
@@ -912,14 +930,18 @@ class AboutScreen(ctx: CarContext) : Screen(ctx) {
                     .setTitle(carContext.getString(R.string.github_link_title))
                     .setBrowsable(true)
                     .setOnClickListener(ParkedOnlyOnClickListener.create {
-                        openUrl(carContext, carContext.getString(R.string.github_link))
+                        openUrl(carContext, session.cas, carContext.getString(R.string.github_link))
                     }).build()
                 )
                 addItem(Row.Builder()
                     .setTitle(carContext.getString(R.string.privacy))
                     .setBrowsable(true)
                     .setOnClickListener(ParkedOnlyOnClickListener.create {
-                        openUrl(carContext, carContext.getString(R.string.privacy_link))
+                        openUrl(
+                            carContext,
+                            session.cas,
+                            carContext.getString(R.string.privacy_link)
+                        )
                     }).build()
                 )
             }.build(), carContext.getString(R.string.other)))
@@ -927,7 +949,8 @@ class AboutScreen(ctx: CarContext) : Screen(ctx) {
     }
 }
 
-class AcceptPrivacyScreen(ctx: CarContext) : Screen(ctx) {
+@ExperimentalCarApi
+class AcceptPrivacyScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx) {
     val prefs = PreferenceDataSource(ctx)
     override fun onGetTemplate(): Template {
         val textWithoutLink = HtmlCompat.fromHtml(
@@ -948,7 +971,7 @@ class AcceptPrivacyScreen(ctx: CarContext) : Screen(ctx) {
             addAction(Action.Builder()
                 .setTitle(carContext.getString(R.string.privacy))
                 .setOnClickListener(ParkedOnlyOnClickListener.create {
-                    openUrl(carContext, carContext.getString(R.string.privacy_link))
+                    openUrl(carContext, session.cas, carContext.getString(R.string.privacy_link))
                 }).build()
             )
         }.build()

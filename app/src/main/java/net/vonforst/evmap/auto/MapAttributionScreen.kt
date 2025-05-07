@@ -2,6 +2,7 @@ package net.vonforst.evmap.auto
 
 import androidx.car.app.CarContext
 import androidx.car.app.Screen
+import androidx.car.app.annotations.ExperimentalCarApi
 import androidx.car.app.model.Action
 import androidx.car.app.model.Header
 import androidx.car.app.model.ItemList
@@ -12,8 +13,10 @@ import androidx.car.app.model.Template
 import com.car2go.maps.AttributionClickListener
 import net.vonforst.evmap.R
 
+@ExperimentalCarApi
 class MapAttributionScreen(
     ctx: CarContext,
+    val session: EVMapSession,
     val attributions: List<AttributionClickListener.Attribution>
 ) : Screen(ctx) {
     override fun onGetTemplate(): Template {
@@ -32,7 +35,7 @@ class MapAttributionScreen(
                             .setBrowsable(true)
                             .setOnClickListener(
                                 ParkedOnlyOnClickListener.create {
-                                    openUrl(carContext, attr.url)
+                                    openUrl(carContext, session.cas, attr.url)
                                 }).build()
                     )
                 }

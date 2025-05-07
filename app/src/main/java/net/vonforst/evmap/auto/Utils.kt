@@ -17,6 +17,7 @@ import androidx.car.app.CarContext
 import androidx.car.app.CarToast
 import androidx.car.app.HostException
 import androidx.car.app.Screen
+import androidx.car.app.annotations.ExperimentalCarApi
 import androidx.car.app.constraints.ConstraintManager
 import androidx.car.app.hardware.common.CarUnit
 import androidx.car.app.model.CarColor
@@ -237,13 +238,14 @@ fun supportsCarApiLevel3(ctx: CarContext): Boolean {
 fun supportsNewMapScreen(ctx: CarContext) =
     ctx.carAppApiLevel >= 7 && ctx.isAppDrivenRefreshSupported
 
-fun openUrl(carContext: CarContext, url: String) {
+@ExperimentalCarApi
+fun openUrl(carContext: CarContext, cas: CarAppService, url: String) {
     val intent = CustomTabsIntent.Builder()
         .setDefaultColorSchemeParams(
             CustomTabColorSchemeParams.Builder()
                 .setToolbarColor(
                     ContextCompat.getColor(
-                        carContext,
+                        cas,
                         R.color.colorPrimary
                     )
                 )
@@ -253,7 +255,7 @@ fun openUrl(carContext: CarContext, url: String) {
     intent.data = Uri.parse(url)
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     try {
-        carContext.startActivity(intent)
+        cas.startActivity(intent)
         if (BuildConfig.FLAVOR_automotive != "automotive") {
             // only show the toast "opened on phone" if we're running on a phone
             CarToast.makeText(
@@ -271,11 +273,12 @@ fun openUrl(carContext: CarContext, url: String) {
     }
 }
 
-fun navigateToCharger(ctx: CarContext, charger: ChargeLocation) {
+@ExperimentalCarApi
+fun navigateToCharger(ctx: CarContext, cas: CarAppService, charger: ChargeLocation) {
     var success = navigateCarApp(ctx, charger)
     if (!success && BuildConfig.FLAVOR_automotive == "automotive") {
         // on AAOS, some OEMs' navigation apps might not support
-        success = navigateRegularApp(ctx, charger)
+        success = navigateRegularApp(ctx, cas, charger)
     }
     if (!success) {
         CarToast.makeText(ctx, R.string.no_maps_app_found, CarToast.LENGTH_SHORT).show()
@@ -304,7 +307,12 @@ private fun navigateCarApp(ctx: CarContext, charger: ChargeLocation): Boolean {
     return false
 }
 
-private fun navigateRegularApp(ctx: CarContext, charger: ChargeLocation): Boolean {
+@ExperimentalCarApi
+private fun navigateRegularApp(
+    ctx: CarContext,
+    cas: CarAppService,
+    charger: ChargeLocation
+): Boolean {
     val coord = charger.coordinates
     val intent = Intent(Intent.ACTION_VIEW)
     intent.data = Uri.parse(
@@ -314,7 +322,7 @@ private fun navigateRegularApp(ctx: CarContext, charger: ChargeLocation): Boolea
     )
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     if (intent.resolveActivity(ctx.packageManager) != null) {
-        ctx.startActivity(intent)
+        cas.startActivity(intent)
         return true
     } else {
         Log.w("navigateToCharger", "Could not start navigation using regular intent")

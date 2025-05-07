@@ -69,6 +69,7 @@ import java.time.format.FormatStyle
 import kotlin.math.floor
 import kotlin.math.roundToInt
 
+@ExperimentalCarApi
 class ChargerDetailScreen(
     ctx: CarContext,
     val chargerSparse: ChargeLocation,

@@ -3,6 +3,7 @@ package net.vonforst.evmap.auto
 import androidx.car.app.CarContext
 import androidx.car.app.CarToast
 import androidx.car.app.Screen
+import androidx.car.app.annotations.ExperimentalCarApi
 import androidx.car.app.constraints.ConstraintManager
 import androidx.car.app.hardware.CarHardwareManager
 import androidx.car.app.hardware.info.Model
@@ -48,6 +49,7 @@ import retrofit2.HttpException
 import java.io.IOException
 import kotlin.math.roundToInt
 
+@ExperimentalCarApi
 class ChargepriceScreen(ctx: CarContext, val session: EVMapSession, val charger: ChargeLocation) :
     Screen(ctx) {
     private val prefs = PreferenceDataSource(ctx)

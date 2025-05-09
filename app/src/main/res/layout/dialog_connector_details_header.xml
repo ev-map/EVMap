@@ -7,6 +7,8 @@
 
         <import type="net.vonforst.evmap.adapter.ConnectorAdapter.ChargepointWithAvailability" />
 
+        <import type="com.github.erfansn.localeconfigx.LocaleConfigXKt" />
+
         <import type="net.vonforst.evmap.ui.BindingAdaptersKt" />
 
         <import type="net.vonforst.evmap.api.UtilsKt" />
@@ -47,7 +49,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="38dp"
             android:layout_marginTop="38dp"
-            android:text="@{String.format(&quot;\u00D7 %d&quot;, item.chargepoint.count)}"
+            android:text="@{String.format(LocaleConfigXKt.getCurrentOrDefaultLocale(context), &quot;\u00D7 %d&quot;, item.chargepoint.count)}"
             android:textAppearance="@style/TextAppearance.Material3.BodySmall"
             app:goneUnless="@{item.status == null}"
             app:layout_constraintStart_toStartOf="@+id/imageView"
@@ -63,7 +65,7 @@
             android:layout_marginTop="30dp"
             android:background="@drawable/rounded_rect"
             android:padding="2dp"
-            android:text="@{String.format(&quot;%s/%d&quot;, BindingAdaptersKt.availabilityText(item.status), item.chargepoint.count)}"
+            android:text="@{String.format(LocaleConfigXKt.getCurrentOrDefaultLocale(context), &quot;%s/%d&quot;, BindingAdaptersKt.availabilityText(item.status), item.chargepoint.count)}"
             android:textAppearance="@style/TextAppearance.Material3.BodySmall"
             android:textColor="@android:color/white"
             app:backgroundTintAvailability="@{item.status}"
@@ -79,7 +81,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="36dp"
             android:layout_marginTop="4dp"
-            android:text="@{item != null ? UtilsKt.nameForPlugType(ChargepointApiKt.stringProvider(context), item.chargepoint.type) + &quot; · &quot; + item.chargepoint.formatPower() : null}"
+            android:text="@{item != null ? UtilsKt.nameForPlugType(ChargepointApiKt.stringProvider(context), item.chargepoint.type) + &quot; · &quot; + item.chargepoint.formatPower(LocaleConfigXKt.getCurrentOrDefaultLocale(context)) : null}"
             android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
             app:goneUnless="@{item.chargepoint.hasKnownPower()}"
             app:layout_constraintBottom_toTopOf="@id/textView8"

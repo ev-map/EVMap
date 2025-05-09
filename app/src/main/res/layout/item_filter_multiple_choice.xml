@@ -32,6 +32,7 @@
             android:layout_marginTop="16dp"
             android:text="@{item.filter.name}"
             android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+            android:textAlignment="viewStart"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Connectors" />

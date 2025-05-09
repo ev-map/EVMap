@@ -18,6 +18,7 @@ import androidx.car.app.model.Template
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.lifecycleScope
+import com.github.erfansn.localeconfigx.currentOrDefaultLocale
 import jsonapi.Meta
 import jsonapi.Relationship
 import jsonapi.Relationships
@@ -89,7 +90,7 @@ class ChargepriceScreen(ctx: CarContext, val session: EVMapSession, val charger:
                                 carContext.stringProvider(),
                                 chargepoint.type
                             )
-                        } ${chargepoint.formatPower()} ${
+                        } ${chargepoint.formatPower(carContext.currentOrDefaultLocale)} ${
                             carContext.getString(
                                 R.string.chargeprice_stats,
                                 meta.energy,

@@ -27,6 +27,7 @@ import net.vonforst.evmap.databinding.FragmentOnboardingWelcomeBinding
 import net.vonforst.evmap.model.FILTERS_DISABLED
 import net.vonforst.evmap.navigation.safeNavigate
 import net.vonforst.evmap.storage.PreferenceDataSource
+import net.vonforst.evmap.waitForLayout
 
 class OnboardingFragment : Fragment() {
     private lateinit var binding: FragmentOnboardingBinding
@@ -62,7 +63,6 @@ class OnboardingFragment : Fragment() {
             }
 
             override fun onPageSelected(position: Int) {
-                binding.pageIndicatorView.selection = position
                 binding.forward?.visibility =
                     if (position == adapter.itemCount - 1) View.INVISIBLE else View.VISIBLE
                 binding.backward?.visibility = if (position == 0) View.INVISIBLE else View.VISIBLE
@@ -79,9 +79,13 @@ class OnboardingFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        if (prefs.welcomeDialogShown) {
-            // skip to last page for selecting data source or accepting the privacy policy
-            binding.viewPager.currentItem = adapter.itemCount - 1
+        binding.root.waitForLayout {
+            binding.viewPager.currentItem = if (prefs.welcomeDialogShown) {
+                // skip to last page for selecting data source or accepting the privacy policy
+                adapter.itemCount - 1
+            } else {
+                0
+            }
         }
     }
 

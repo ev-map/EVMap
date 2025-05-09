@@ -7,6 +7,8 @@
 
         <import type="java.util.Map" />
 
+        <import type="com.github.erfansn.localeconfigx.LocaleConfigXKt" />
+
         <import type="java.time.ZonedDateTime" />
 
         <import type="net.vonforst.evmap.model.ChargeLocation" />
@@ -120,6 +122,7 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="1"
+                android:textAlignment="viewStart"
                 android:text="@{charger.data.address.toString()}"
                 android:textAppearance="@style/TextAppearance.Material3.BodySmall"
                 app:invisibleUnless="@{charger.data.address != null}"
@@ -134,7 +137,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:ellipsize="end"
-                android:gravity="end"
+                android:textAlignment="viewEnd"
                 android:maxLines="1"
                 android:minWidth="50dp"
                 android:text="@{BindingAdaptersKt.distance(distance, context)}"
@@ -153,7 +156,7 @@
                 android:gravity="end"
                 android:maxLines="1"
                 android:padding="2dp"
-                android:text="@{String.format(&quot;%s/%d&quot;, BindingAdaptersKt.availabilityText(BindingAdaptersKt.flatten(filteredAvailability.data.status.values())), filteredAvailability.data.totalChargepoints)}"
+                android:text="@{String.format(LocaleConfigXKt.getCurrentOrDefaultLocale(context), &quot;%s/%d&quot;, BindingAdaptersKt.availabilityText(BindingAdaptersKt.flatten(filteredAvailability.data.status.values())), filteredAvailability.data.totalChargepoints)}"
                 android:textAppearance="@style/TextAppearance.Material3.BodySmall"
                 android:textColor="@android:color/white"
                 app:backgroundTintAvailability="@{BindingAdaptersKt.flatten(filteredAvailability.data.status.values())}"
@@ -170,7 +173,8 @@
                 android:layout_marginEnd="8dp"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="@{charger.data.formatChargepoints(ChargepointApiKt.stringProvider(context))}"
+                android:textAlignment="viewStart"
+                android:text="@{charger.data.formatChargepoints(ChargepointApiKt.stringProvider(context), LocaleConfigXKt.getCurrentOrDefaultLocale(context))}"
                 android:textAppearance="@style/TextAppearance.Material3.BodySmall"
                 app:layout_constraintEnd_toStartOf="@+id/txtDistance"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
@@ -199,6 +203,7 @@
                 android:text="@string/connectors"
                 android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
                 android:textColor="?colorPrimary"
+                android:textAlignment="viewStart"
                 app:layout_constraintEnd_toStartOf="@+id/btnRefreshLiveData"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/txtConnectors" />
@@ -315,7 +320,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
-                android:gravity="right|end"
+                android:gravity="end"
                 android:text="@{availability.status == Status.SUCCESS ? @string/realtime_data_source(availability.data.source) : availability.status == Status.LOADING ? @string/realtime_data_loading : availability.message == &quot;not signed in&quot; ? @string/realtime_data_login_needed : @string/realtime_data_unavailable}"
                 android:textAppearance="@style/TextAppearance.Material3.BodySmall"
                 app:layout_constraintEnd_toStartOf="@+id/btnLogin"

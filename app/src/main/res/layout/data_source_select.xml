@@ -6,7 +6,7 @@
 
     <RadioButton
         android:id="@+id/rbGoingElectric"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/data_source_goingelectric"
         android:textColor="#098ac7"
@@ -21,6 +21,7 @@
         android:layout_marginTop="-8dp"
         android:layout_marginBottom="8dp"
         android:layout_marginStart="32dp"
+        android:textAlignment="viewStart"
         android:text="@string/data_source_goingelectric_desc" />
 
     <RadioButton
@@ -39,6 +40,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="-8dp"
         android:layout_marginStart="32dp"
+        android:textAlignment="viewStart"
         android:text="@string/data_source_openchargemap_desc" />
 
 </RadioGroup>

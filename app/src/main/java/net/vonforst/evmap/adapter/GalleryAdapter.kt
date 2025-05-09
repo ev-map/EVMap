@@ -5,7 +5,6 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import android.widget.ImageView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -14,6 +13,7 @@ import coil.load
 import coil.memory.MemoryCache
 import net.vonforst.evmap.R
 import net.vonforst.evmap.model.ChargerPhoto
+import net.vonforst.evmap.waitForLayout
 
 
 class GalleryAdapter(context: Context, val itemClickListener: ItemClickListener? = null) :
@@ -39,12 +39,9 @@ class GalleryAdapter(context: Context, val itemClickListener: ItemClickListener?
         val item = getItem(position)
 
         if (holder.view.height == 0) {
-            holder.view.viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
-                override fun onGlobalLayout() {
-                    holder.view.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                    loadImage(item, holder)
-                }
-            })
+            holder.view.waitForLayout {
+                loadImage(item, holder)
+            }
         } else {
             loadImage(item, holder)
         }

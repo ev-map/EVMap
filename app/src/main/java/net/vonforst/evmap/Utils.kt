@@ -16,6 +16,8 @@ import android.text.SpannableStringBuilder
 import android.text.SpannedString
 import android.text.TextUtils
 import android.text.style.StyleSpan
+import android.view.View
+import android.view.ViewTreeObserver
 import net.vonforst.evmap.storage.PreferenceDataSource
 import java.util.Currency
 import java.util.Locale
@@ -143,3 +145,11 @@ fun PackageManager.isAppInstalled(packageName: String): Boolean {
 }
 
 fun currencyDisplayName(code: String) = "${Currency.getInstance(code).displayName} ($code)"
+
+inline fun View.waitForLayout(crossinline f: () -> Unit) =
+    viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+        override fun onGlobalLayout() {
+            viewTreeObserver.removeOnGlobalLayoutListener(this)
+            f()
+        }
+    })

@@ -32,6 +32,7 @@ import androidx.core.text.HtmlCompat
 import androidx.lifecycle.lifecycleScope
 import coil.imageLoader
 import coil.request.ImageRequest
+import com.github.erfansn.localeconfigx.currentOrDefaultLocale
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch

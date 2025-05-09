@@ -30,6 +30,7 @@ import androidx.car.app.model.Template
 import androidx.car.app.versioning.CarAppApiLevels
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.IconCompat
+import com.github.erfansn.localeconfigx.currentOrDefaultLocale
 import net.vonforst.evmap.BuildConfig
 import net.vonforst.evmap.R
 import net.vonforst.evmap.api.availability.ChargeLocationStatus
@@ -386,7 +387,7 @@ fun generateChargepointsText(
             } else {
                 append(nameForPlugType(ctx.stringProvider(), cp.type))
             }
-            cp.formatPower()?.let {
+            cp.formatPower(ctx.currentOrDefaultLocale)?.let {
                 append(" ")
                 append(it)
             }

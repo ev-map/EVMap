@@ -30,6 +30,7 @@
             android:layout_marginEnd="16dp"
             android:text="@string/map_type"
             android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
+            android:textAlignment="viewStart"
             app:layout_constraintEnd_toStartOf="@id/btnClose"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -52,7 +53,8 @@
                 android:layout_height="wrap_content"
                 android:checked="@{vm.mapType.equals(AnyMap.Type.NORMAL)}"
                 android:onClick="@{() -> vm.setMapType(AnyMap.Type.NORMAL)}"
-                android:text="@string/map_type_normal" />
+                android:text="@string/map_type_normal"
+                android:textAlignment="viewStart" />
 
             <RadioButton
                 android:id="@+id/rbSatellite"
@@ -60,7 +62,8 @@
                 android:layout_height="wrap_content"
                 android:checked="@{vm.mapType.equals(AnyMap.Type.HYBRID)}"
                 android:onClick="@{() -> vm.setMapType(AnyMap.Type.HYBRID)}"
-                android:text="@string/map_type_satellite" />
+                android:text="@string/map_type_satellite"
+                android:textAlignment="viewStart" />
 
             <RadioButton
                 android:id="@+id/rbTerrain"
@@ -68,7 +71,8 @@
                 android:layout_height="wrap_content"
                 android:checked="@{vm.mapType.equals(AnyMap.Type.TERRAIN)}"
                 android:onClick="@{() -> vm.setMapType(AnyMap.Type.TERRAIN)}"
-                android:text="@string/map_type_terrain" />
+                android:text="@string/map_type_terrain"
+                android:textAlignment="viewStart" />
         </RadioGroup>
 
         <TextView
@@ -80,6 +84,7 @@
             android:layout_marginEnd="16dp"
             android:text="@string/map_details"
             android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
+            android:textAlignment="viewStart"
             app:goneUnless="@{vm.mapTrafficSupported}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -95,6 +100,7 @@
             android:layout_marginEnd="16dp"
             android:text="@string/map_traffic"
             android:checked="@={vm.mapTrafficEnabled}"
+            android:textAlignment="viewStart"
             app:goneUnless="@{vm.mapTrafficSupported}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

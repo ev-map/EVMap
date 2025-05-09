@@ -96,6 +96,7 @@
             android:layout_marginBottom="24dp"
             android:paddingStart="16dp"
             android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+            android:textAlignment="viewStart"
             app:layout_constraintBottom_toTopOf="@+id/btnGetStarted"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"

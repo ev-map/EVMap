@@ -19,6 +19,7 @@
         android:layout_height="wrap_content"
         android:text="@string/app_name"
         android:textAppearance="@style/TextAppearance.Material3.HeadlineLarge"
+        android:textAlignment="viewStart"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"

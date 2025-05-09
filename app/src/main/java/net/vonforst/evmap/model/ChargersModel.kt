@@ -18,6 +18,7 @@ import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
+import java.util.Locale
 import kotlin.math.abs
 
 sealed class ChargepointListItem
@@ -140,9 +141,11 @@ data class ChargeLocation(
     val totalChargepoints: Int
         get() = chargepoints.sumOf { it.count }
 
-    fun formatChargepoints(sp: StringProvider): String {
+    fun formatChargepoints(sp: StringProvider, locale: Locale): String {
         return chargepointsMerged.joinToString(" · ") {
-            "${it.count} × ${nameForPlugType(sp, it.type)}${it.formatPower()?.let { " $it" } ?: ""}"
+            "${it.count} × ${nameForPlugType(sp, it.type)}${
+                it.formatPower(locale)?.let { " $it" } ?: ""
+            }"
         }
     }
 }
@@ -414,12 +417,12 @@ data class Chargepoint(
      * If chargepoint power is defined, format it into a string.
      * Otherwise, return null.
      */
-    fun formatPower(): String? {
+    fun formatPower(locale: Locale): String? {
         if (power == null) return null
         val powerFmt = if (abs(power - power.toInt()) < 0.1) {
-            "%.0f".format(power)
+            "%.0f".format(locale, power)
         } else {
-            "%.1f".format(power)
+            "%.1f".format(locale, power)
         }
         return "$powerFmt kW"
     }

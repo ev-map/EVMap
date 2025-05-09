@@ -21,6 +21,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="24dp"
         android:layout_gravity="center_horizontal"
+        app:piv_rtl_mode="auto"
         app:piv_animationType="worm"
         app:piv_dynamicCount="true"
         app:piv_interactiveAnimation="true"

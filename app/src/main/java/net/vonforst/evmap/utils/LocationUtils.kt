@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
+import android.text.BidiFormatter
 import androidx.core.content.ContextCompat
 import com.car2go.maps.model.LatLng
 import com.car2go.maps.model.LatLngBounds
@@ -147,11 +148,13 @@ private fun dms(value: Double, lon: Boolean): String {
 }
 
 fun Coordinate.formatDecimal(accuracy: Int = 6): String {
-    return "%.${accuracy}f, %.${accuracy}f".format(Locale.ENGLISH, lat, lng)
+    return BidiFormatter.getInstance()
+        .unicodeWrap("%.${accuracy}f, %.${accuracy}f".format(Locale.ENGLISH, lat, lng))
 }
 
 fun Location.formatDecimal(accuracy: Int = 6): String {
-    return "%.${accuracy}f, %.${accuracy}f".format(Locale.ENGLISH, latitude, longitude)
+    return BidiFormatter.getInstance()
+        .unicodeWrap("%.${accuracy}f, %.${accuracy}f".format(Locale.ENGLISH, latitude, longitude))
 }
 
 fun LatLngBounds.normalize() = LatLngBounds(

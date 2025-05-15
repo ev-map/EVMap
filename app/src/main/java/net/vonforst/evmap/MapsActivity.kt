@@ -3,6 +3,8 @@ package net.vonforst.evmap
 import android.app.PendingIntent
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.content.pm.ResolveInfo
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -11,7 +13,6 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.browser.customtabs.CustomTabColorSchemeParams
-import androidx.browser.customtabs.CustomTabsClient
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen
@@ -268,7 +269,6 @@ class MapsActivity : AppCompatActivity(),
     }
 
     fun openUrl(url: String, rootView: View, preferBrowser: Boolean = true) {
-        val pkg = CustomTabsClient.getPackageName(this, null)
         val intent = CustomTabsIntent.Builder()
             .setDefaultColorSchemeParams(
                 CustomTabColorSchemeParams.Builder()
@@ -276,13 +276,46 @@ class MapsActivity : AppCompatActivity(),
                     .build()
             )
             .build()
-        pkg?.let {
-            // prefer to open URL in custom tab, even if native app
-            // available (such as EVMap itself)
-            if (preferBrowser) intent.intent.setPackage(pkg)
+
+        val uri = Uri.parse(url)
+        val viewIntent = Intent(Intent.ACTION_VIEW, uri)
+        if (preferBrowser) {
+            // EVMap may be set as default app for this link, but we want to open it in a browser
+            // try to find default web browser
+            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("http://"))
+            val resolveInfo =
+                packageManager.resolveActivity(browserIntent, PackageManager.MATCH_DEFAULT_ONLY)
+            val pkg = resolveInfo?.activityInfo?.packageName.takeIf { it != "android" }
+            if (pkg == null) {
+                // There is no default browser, fall back to app chooser
+                val chooserIntent = Intent.createChooser(viewIntent, null).apply {
+                    putExtra(Intent.EXTRA_EXCLUDE_COMPONENTS, arrayOf(componentName))
+                }
+                val targets: List<ResolveInfo> = packageManager.queryIntentActivities(
+                    viewIntent,
+                    PackageManager.MATCH_DEFAULT_ONLY
+                )
+
+                // add missing browsers (if EVMap is already set as default, Android might not find other browsers with the specific intent)
+                val browsers = packageManager.queryIntentActivities(
+                    browserIntent,
+                    PackageManager.MATCH_DEFAULT_ONLY
+                )
+                val extraIntents = browsers.filter { browser ->
+                    targets.find { it.activityInfo.packageName == browser.activityInfo.packageName } == null
+                }.map { browser ->
+                    Intent(Intent.ACTION_VIEW, uri).apply {
+                        setPackage(browser.activityInfo.packageName)
+                    }
+                }
+                chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, extraIntents.toTypedArray())
+                startActivity(chooserIntent)
+                return
+            }
+            intent.intent.setPackage(pkg)
         }
         try {
-            intent.launchUrl(this, Uri.parse(url))
+            intent.launchUrl(this, uri)
         } catch (e: ActivityNotFoundException) {
             Snackbar.make(
                 rootView,

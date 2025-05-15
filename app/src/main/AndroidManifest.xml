@@ -24,6 +24,10 @@
         <intent>
             <action android:name="android.support.customtabs.action.CustomTabsService" />
         </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="http" />
+        </intent>
 
         <package android:name="com.google.android.projection.gearhead" />
         <package android:name="com.google.android.apps.automotive.templates.host" />

@@ -438,7 +438,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
         binding.detailView.sourceButton.setOnClickListener {
             val charger = vm.charger.value?.data
             if (charger != null) {
-                (activity as? MapsActivity)?.openUrl(charger.url, binding.root)
+                (activity as? MapsActivity)?.openUrl(charger.url, binding.root, true)
             }
         }
         binding.detailView.btnChargeprice.setOnClickListener {
@@ -453,8 +453,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
             } else {
                 (activity as? MapsActivity)?.openUrl(
                     ChargepriceApi.getPoiUrl(charger),
-                    binding.root,
-                    false
+                    binding.root
                 )
             }
         }
@@ -508,7 +507,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
                 R.id.menu_edit -> {
                     val charger = vm.charger.value?.data
                     if (charger?.editUrl != null) {
-                        (activity as? MapsActivity)?.openUrl(charger.editUrl, binding.root)
+                        (activity as? MapsActivity)?.openUrl(charger.editUrl, binding.root, true)
                         if (vm.apiId.value == "goingelectric") {
                             // instructions specific to GoingElectric
                             Toast.makeText(
@@ -927,7 +926,11 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
                                 (activity as? MapsActivity)?.showLocation(charger, binding.root)
                             }
                             R.drawable.ic_fault_report -> {
-                                (activity as? MapsActivity)?.openUrl(charger.url, binding.root)
+                                (activity as? MapsActivity)?.openUrl(
+                                    charger.url,
+                                    binding.root,
+                                    true
+                                )
                             }
 
                             R.drawable.ic_payment -> {

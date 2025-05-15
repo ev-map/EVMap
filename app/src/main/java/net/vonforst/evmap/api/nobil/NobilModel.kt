@@ -26,6 +26,16 @@ data class NobilReferenceData(
 ) : ReferenceData()
 
 @JsonClass(generateAdapter = true)
+data class NobilNumChargepointsRequest(
+    val apikey: String,
+    val countrycode: String,
+    val action: String = "search",
+    val type: String = "stats_GetSumChargerstations",
+    val format: String = "json",
+    val apiversion: String = "3"
+)
+
+@JsonClass(generateAdapter = true)
 data class NobilRectangleSearchRequest(
     val apikey: String,
     val northeast: String,
@@ -69,6 +79,22 @@ data class NobilResponseData(
     @Json(name = "Rights") val rights: String?,
     @Json(name = "apiver") val apiver: String?,
     @Json(name = "chargerstations") val chargerStations: List<NobilChargerStation>?
+)
+
+data class NobilNumChargepointsResponseData(
+    val error: String?,
+    val provider: String?,
+    val rights: String?,
+    val apiver: String?,
+    val count: Int?
+)
+
+data class NobilDynamicResponseData(
+    val error: String?,
+    val provider: String?,
+    val rights: String?,
+    val apiver: String?,
+    val chargerStations: Sequence<NobilChargerStation>?
 )
 
 @JsonClass(generateAdapter = true)

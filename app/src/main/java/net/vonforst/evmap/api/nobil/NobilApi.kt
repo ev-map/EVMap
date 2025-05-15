@@ -39,13 +39,26 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Query
 import java.io.IOException
 import java.time.Duration
 
 private const val maxResults = 2000
 
 interface NobilApi {
+    @GET("datadump.php")
+    suspend fun getAllChargingStations(
+        @Query("apikey") apikey: String,
+        @Query("format") dataFormat: String = "json"
+    ): Response<NobilDynamicResponseData>
+
+    @POST("search.php")
+    suspend fun getNumChargepoints(
+        @Body request: NobilNumChargepointsRequest
+    ): Response<NobilNumChargepointsResponseData>
+
     @POST("search.php")
     suspend fun getChargepoints(
         @Body request: NobilRectangleSearchRequest
@@ -84,6 +97,7 @@ interface NobilApi {
 
             val retrofit = Retrofit.Builder()
                 .baseUrl(baseurl)
+                .addConverterFactory(NobilConverterFactory(moshi))
                 .addConverterFactory(MoshiConverterFactory.create(moshi))
                 .client(client)
                 .build()
@@ -99,13 +113,31 @@ class NobilApiWrapper(
 ) : ChargepointApi<NobilReferenceData> {
     override val name = "Nobil"
     override val id = "nobil"
-    override val supportsOnlineQueries = true
-    override val supportsFullDownload = false
+    override val supportsOnlineQueries = false // Online queries are supported, but can't be used together with full downloads
+    override val supportsFullDownload = true
     override val cacheLimit = Duration.ofDays(300L)
     val api = NobilApi.create(baseurl, context)
 
     override suspend fun fullDownload(): FullDownloadResult<NobilReferenceData> {
-        throw NotImplementedError()
+        var numTotalChargepoints = 0
+        arrayOf("DAN", "FIN", "ISL", "NOR", "SWE").forEach { countryCode ->
+            val request = NobilNumChargepointsRequest(apikey, countryCode)
+            val response = api.getNumChargepoints(request)
+            if (!response.isSuccessful) {
+                throw IOException(response.message())
+            }
+            val numChargepoints = response.body()!!.count
+                ?: throw JsonDataException("Failed to get chargepoint count for '$countryCode'")
+            numTotalChargepoints += numChargepoints
+        }
+
+        val response = api.getAllChargingStations(apikey)
+        if (!response.isSuccessful) {
+            throw IOException(response.message())
+        } else {
+            val data = response.body()!!
+            return NobilFullDownloadResult(data, numTotalChargepoints)
+        }
     }
 
     override suspend fun getChargepoints(
@@ -296,5 +328,27 @@ class NobilApiWrapper(
     override fun filteringInSQLRequiresDetails(filters: FilterValues): Boolean {
         return false
     }
+}
 
+class NobilFullDownloadResult(private val data: NobilDynamicResponseData,
+                              private val numTotalChargepoints: Int) : FullDownloadResult<NobilReferenceData> {
+    private var downloadProgress = 0f
+    private var refData: NobilReferenceData? = null
+
+    override val chargers: Sequence<ChargeLocation>
+        get() {
+            if (data.rights == null) throw JsonDataException("Rights field is missing in received data")
+            return sequence {
+                data.chargerStations?.forEachIndexed { i, it ->
+                    downloadProgress = i.toFloat() / numTotalChargepoints
+                    val charger = it.convert(data.rights, null)
+                    charger?.let { yield(charger) }
+                }
+                refData = NobilReferenceData(0)
+            }
+        }
+    override val progress: Float
+        get() = downloadProgress
+    override val referenceData: NobilReferenceData
+        get() = refData ?: throw UnsupportedOperationException("referenceData is only available once download is complete")
 }

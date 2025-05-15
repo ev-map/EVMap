@@ -71,6 +71,14 @@ data class NobilResponseData(
     @Json(name = "chargerstations") val chargerStations: List<NobilChargerStation>?
 )
 
+data class NobilDynamicResponseData(
+    val error: String?,
+    val provider: String?,
+    val rights: String?,
+    val apiver: String?,
+    val chargerStations: Sequence<NobilChargerStation>?
+)
+
 @JsonClass(generateAdapter = true)
 data class NobilChargerStation(
     @Json(name = "csmd") val chargerStationData: NobilChargerStationData,

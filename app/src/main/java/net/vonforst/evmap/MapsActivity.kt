@@ -257,9 +257,24 @@ class MapsActivity : AppCompatActivity(),
                 Uri.encode(charger.name)
             })"
         )
-        if (intent.resolveActivity(packageManager) != null) {
+
+        val resolveInfo =
+            packageManager.resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY)
+        val pkg =
+            resolveInfo?.activityInfo?.packageName.takeIf { it != "android" && it != packageName }
+        if (pkg == null) {
+            // There is no default maps app or EVMap itself is the current default, fall back to app chooser
+            val chooserIntent = Intent.createChooser(intent, null).apply {
+                putExtra(Intent.EXTRA_EXCLUDE_COMPONENTS, arrayOf(componentName))
+            }
+            startActivity(chooserIntent)
+            return
+        }
+        intent.setPackage(pkg)
+
+        try {
             startActivity(intent)
-        } else {
+        } catch (e: ActivityNotFoundException) {
             Snackbar.make(
                 rootView,
                 R.string.no_maps_app_found,

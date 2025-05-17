@@ -1168,6 +1168,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
                     )
                     true
                 }
+                searchResultMarker -> true
                 else -> false
             }
 

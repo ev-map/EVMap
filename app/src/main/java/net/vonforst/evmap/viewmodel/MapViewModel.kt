@@ -471,12 +471,17 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
     private fun extendBounds(bounds: LatLngBounds): LatLngBounds {
         val sw = bounds.southwest
         val ne = bounds.northeast
-        var west = sw.longitude - (ne.longitude - sw.longitude) * 0.25
-        var east = ne.longitude + (ne.longitude - sw.longitude) * 0.25
+
+        // do not expand bounds if the map area shown is very large
+        val expansion = if (ne.longitude - sw.longitude > 10) 1.0 else 1.5
+        val factor = (expansion - 1.0) * 0.5
+
+        var west = sw.longitude - (ne.longitude - sw.longitude) * factor
+        var east = ne.longitude + (ne.longitude - sw.longitude) * factor
         val south =
-            sw.latitude - (ne.latitude - sw.latitude) * 0.25 * cos(Math.toRadians(sw.latitude))
+            sw.latitude - (ne.latitude - sw.latitude) * factor * cos(Math.toRadians(sw.latitude))
         val north =
-            ne.latitude + (ne.latitude - sw.latitude) * 0.25 * cos(Math.toRadians(ne.latitude))
+            ne.latitude + (ne.latitude - sw.latitude) * factor * cos(Math.toRadians(ne.latitude))
 
         if (east - west >= 360) {
             west = -180.0

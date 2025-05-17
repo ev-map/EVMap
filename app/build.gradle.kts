@@ -20,8 +20,8 @@ android {
         minSdk = 21
         targetSdk = 34
         // NOTE: always increase versionCode by 2 since automotive flavor uses versionCode + 1
-        versionCode = 250
-        versionName = "1.9.15"
+        versionCode = 252
+        versionName = "1.9.16"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

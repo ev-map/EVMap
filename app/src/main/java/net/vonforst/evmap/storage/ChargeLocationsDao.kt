@@ -146,7 +146,7 @@ class ChargeLocationsRepository(
         zoom: Float,
         filters: FilterValues?,
         overrideCache: Boolean = false
-    ): LiveData<Resource<List<ChargepointListItem>>> {
+    ): LiveData<Resource<ChargepointList>> {
         if (bounds.crossesAntimeridian()) {
             val (a, b) = bounds.splitAtAntimeridian()
             val liveDataA = getChargepoints(a, zoom, filters, overrideCache)
@@ -168,7 +168,7 @@ class ChargeLocationsRepository(
             )
         } else {
             queryWithFilters(api, filters, bounds)
-        }.map { applyLocalClustering(it, zoom) }
+        }.map { ChargepointList(applyLocalClustering(it, zoom), true) }
         val filtersSerialized =
             filters?.filter { it.value != it.filter.defaultValue() }?.takeIf { it.isNotEmpty() }
                 ?.serialize()
@@ -219,19 +219,22 @@ class ChargeLocationsRepository(
     }
 
     private fun combineLiveData(
-        liveDataA: LiveData<Resource<List<ChargepointListItem>>>,
-        liveDataB: LiveData<Resource<List<ChargepointListItem>>>
-    ) = MediatorLiveData<Resource<List<ChargepointListItem>>>().apply {
+        liveDataA: LiveData<Resource<ChargepointList>>,
+        liveDataB: LiveData<Resource<ChargepointList>>
+    ) = MediatorLiveData<Resource<ChargepointList>>().apply {
         listOf(liveDataA, liveDataB).forEach {
             addSource(it) {
                 val valA = liveDataA.value
                 val valB = liveDataB.value
                 val combinedList = if (valA?.data != null && valB?.data != null) {
-                    valA.data + valB.data
+                    ChargepointList(
+                        valA.data.items + valB.data.items,
+                        valA.data.isComplete && valB.data.isComplete
+                    )
                 } else if (valA?.data != null) {
-                    valA.data
+                    ChargepointList(valA.data.items, false)
                 } else if (valB?.data != null) {
-                    valB.data
+                    ChargepointList(valB.data.items, false)
                 } else null
                 if (valA?.status == Status.SUCCESS && valB?.status == Status.SUCCESS) {
                     Resource.success(combinedList)
@@ -249,7 +252,7 @@ class ChargeLocationsRepository(
         radius: Int,
         zoom: Float,
         filters: FilterValues?
-    ): LiveData<Resource<List<ChargepointListItem>>> {
+    ): LiveData<Resource<ChargepointList>> {
         val api = api.value!!
 
         val radiusMeters = radius.toDouble() * 1000
@@ -263,7 +266,7 @@ class ChargeLocationsRepository(
             )
         } else {
             queryWithFilters(api, filters, location, radiusMeters)
-        }.map { applyLocalClustering(it, zoom) }
+        }.map { ChargepointList(applyLocalClustering(it, zoom), true) }
         val filtersSerialized =
             filters?.filter { it.value != it.filter.defaultValue() }?.takeIf { it.isNotEmpty() }
                 ?.serialize()
@@ -313,18 +316,18 @@ class ChargeLocationsRepository(
     private fun applyLocalClustering(
         result: Resource<ChargepointList>,
         zoom: Float
-    ): Resource<List<ChargepointListItem>> {
+    ): Resource<ChargepointList> {
         val list = result.data ?: return Resource(result.status, null, result.message)
         val chargers = list.items.filterIsInstance<ChargeLocation>()
 
         if (chargers.size != list.items.size) return Resource(
             result.status,
-            list.items,
+            list,
             result.message
         )  // list already contains clusters
 
         val clustered = applyLocalClustering(chargers, zoom)
-        return Resource(result.status, clustered, result.message)
+        return Resource(result.status, ChargepointList(clustered, list.isComplete), result.message)
     }
 
     private fun applyLocalClustering(

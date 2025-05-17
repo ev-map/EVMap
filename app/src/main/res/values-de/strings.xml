@@ -101,6 +101,7 @@
     <string name="pref_language">App-Sprache</string>
     <string name="pref_darkmode">Dunkles Design</string>
     <string name="connection_error">Ladesäulen konnten nicht geladen werden</string>
+    <string name="zoom_in_to_see_more">Hineinzoomen um alle Ladestationen zu sehen</string>
     <string name="location_error">Standort nicht erkannt. Bitte Systemeinstellungen prüfen</string>
     <string name="retry">Wiederholen</string>
     <string name="filter_open_247">24 Stunden geöffnet</string>

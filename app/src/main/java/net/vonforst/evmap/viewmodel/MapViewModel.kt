@@ -20,6 +20,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
+import net.vonforst.evmap.api.ChargepointList
 import net.vonforst.evmap.api.availability.AvailabilityRepository
 import net.vonforst.evmap.api.availability.ChargeLocationStatus
 import net.vonforst.evmap.api.availability.tesla.Pricing
@@ -32,7 +33,6 @@ import net.vonforst.evmap.api.stringProvider
 import net.vonforst.evmap.autocomplete.PlaceWithBounds
 import net.vonforst.evmap.model.ChargeLocation
 import net.vonforst.evmap.model.Chargepoint
-import net.vonforst.evmap.model.ChargepointListItem
 import net.vonforst.evmap.model.FILTERS_DISABLED
 import net.vonforst.evmap.model.FILTERS_FAVORITES
 import net.vonforst.evmap.model.Favorite
@@ -141,10 +141,10 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
             }
         }
     }
-    val chargepoints: MediatorLiveData<Resource<List<ChargepointListItem>>> by lazy {
-        MediatorLiveData<Resource<List<ChargepointListItem>>>()
+    val chargepoints: MediatorLiveData<Resource<ChargepointList>> by lazy {
+        MediatorLiveData<Resource<ChargepointList>>()
             .apply {
-                value = Resource.loading(emptyList())
+                value = Resource.loading(ChargepointList(emptyList(), false))
                 // this is not automatically updated with mapPosition, as we only want to update
                 // when map is idle.
                 listOf(filtersWithValue, repo.api).forEach {
@@ -391,7 +391,7 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
         }
     }.distinctUntilChanged()
 
-    private var chargepointsInternal: LiveData<Resource<List<ChargepointListItem>>>? = null
+    private var chargepointsInternal: LiveData<Resource<ChargepointList>>? = null
     private var chargepointLoader =
         throttleLatest(
             500L,
@@ -418,13 +418,13 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
                 filteredConnectors.value = null
                 filteredMinPower.value = null
                 filteredChargeCards.value = null
-                chargepoints.value = Resource.success(chargersClustered)
+                chargepoints.value = Resource.success(ChargepointList(chargersClustered, true))
                 return@throttleLatest
             }
 
             val result = repo.getChargepoints(bounds, mapPosition.zoom, filters, overrideCache)
             chargepointsInternal?.let { chargepoints.removeSource(it) }
-            chargepointsInternal = result
+            chargepointsInternal
             chargepoints.addSource(result) {
                 val apiId = apiId.value
                 when (apiId) {

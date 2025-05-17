@@ -15,14 +15,34 @@ import androidx.car.app.hardware.info.CarInfo
 import androidx.car.app.hardware.info.CarSensors
 import androidx.car.app.hardware.info.Compass
 import androidx.car.app.hardware.info.EnergyLevel
-import androidx.car.app.model.*
+import androidx.car.app.model.Action
+import androidx.car.app.model.ActionStrip
+import androidx.car.app.model.CarColor
+import androidx.car.app.model.CarIcon
+import androidx.car.app.model.CarIconSpan
+import androidx.car.app.model.CarLocation
+import androidx.car.app.model.CarText
+import androidx.car.app.model.DistanceSpan
+import androidx.car.app.model.ForegroundCarColorSpan
+import androidx.car.app.model.ItemList
+import androidx.car.app.model.Metadata
+import androidx.car.app.model.OnContentRefreshListener
+import androidx.car.app.model.Place
+import androidx.car.app.model.PlaceListMapTemplate
+import androidx.car.app.model.PlaceMarker
+import androidx.car.app.model.Row
+import androidx.car.app.model.Template
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.car2go.maps.model.LatLng
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import net.vonforst.evmap.BuildConfig
 import net.vonforst.evmap.R
 import net.vonforst.evmap.api.availability.AvailabilityRepository
@@ -472,13 +492,13 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                             zoom = 16f,
                             filtersWithValue
                         ).awaitFinished()
-                        if (response.status == Status.ERROR && if (radius == radiusValues.last()) response.data.isNullOrEmpty() else response.data == null) {
+                        if (response.status == Status.ERROR && if (radius == radiusValues.last()) response.data?.items.isNullOrEmpty() else response.data == null) {
                             loadingError = true
                             this@MapScreen.chargers = null
                             invalidate()
                             return@launch
                         }
-                        chargers = response.data?.filterIsInstance(ChargeLocation::class.java)
+                        chargers = response.data?.items?.filterIsInstance<ChargeLocation>()
                         if (prefs.placeSearchResultAndroidAutoName == null) {
                             chargers = headingFilter(
                                 chargers,

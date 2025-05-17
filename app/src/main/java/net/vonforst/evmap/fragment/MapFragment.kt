@@ -90,6 +90,7 @@ import net.vonforst.evmap.adapter.ConnectorAdapter
 import net.vonforst.evmap.adapter.DetailsAdapter
 import net.vonforst.evmap.adapter.GalleryAdapter
 import net.vonforst.evmap.adapter.PlaceAutocompleteAdapter
+import net.vonforst.evmap.api.ChargepointList
 import net.vonforst.evmap.api.chargeprice.ChargepriceApi
 import net.vonforst.evmap.autocomplete.ApiUnavailableException
 import net.vonforst.evmap.autocomplete.PlaceWithBounds
@@ -155,6 +156,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
     private var searchResultMarker: Marker? = null
     private var searchResultIcon: BitmapDescriptor? = null
     private var connectionErrorSnackbar: Snackbar? = null
+    private var zoomInSnackbar: Snackbar? = null
     private var previousChargepointIds: Set<Long>? = null
     private var mapTopPadding: Int = 0
     private var popupMenu: PopupMenu? = null
@@ -708,12 +710,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
         vm.chargepoints.observe(viewLifecycleOwner, Observer { res ->
             val chargepoints = res.data
             if (chargepoints != null) {
-                updateMap(chargepoints)
+                updateMap(chargepoints.items)
             }
+            val view = view ?: return@Observer
             when (res.status) {
                 Status.ERROR -> {
-                    val view = view ?: return@Observer
-
+                    zoomInSnackbar?.dismiss()
                     connectionErrorSnackbar?.dismiss()
                     connectionErrorSnackbar = Snackbar
                         .make(view, R.string.connection_error, Snackbar.LENGTH_INDEFINITE)
@@ -725,13 +727,20 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
                 }
                 Status.SUCCESS -> {
                     connectionErrorSnackbar?.dismiss()
+                    if (res.data != null && !res.data.isComplete) {
+                        zoomInSnackbar?.dismiss()
+                        zoomInSnackbar = Snackbar
+                            .make(view, R.string.zoom_in_to_see_more, Snackbar.LENGTH_INDEFINITE)
+                        zoomInSnackbar!!.show()
+                    }
                 }
                 Status.LOADING -> {
+                    zoomInSnackbar?.dismiss()
                 }
             }
         })
         vm.useMiniMarkers.observe(viewLifecycleOwner) {
-            vm.chargepoints.value?.data?.let { updateMap(it) }
+            vm.chargepoints.value?.data?.let { updateMap(it.items) }
         }
         vm.favorites.observe(viewLifecycleOwner) {
             updateFavoriteToggle()
@@ -1220,10 +1229,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
                 // show charger detail after chargers were loaded
                 vm.chargepoints.observe(
                     viewLifecycleOwner,
-                    object : Observer<Resource<List<ChargepointListItem>>> {
-                        override fun onChanged(value: Resource<List<ChargepointListItem>>) {
+                    object : Observer<Resource<ChargepointList>> {
+                        override fun onChanged(value: Resource<ChargepointList>) {
                             if (value.data == null) return
-                            for (item in value.data) {
+                            for (item in value.data.items) {
                                 if (item is ChargeLocation && item.id == chargerId) {
                                     vm.chargerSparse.value = item
                                     vm.chargepoints.removeObserver(this)

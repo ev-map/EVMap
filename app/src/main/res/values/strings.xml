@@ -101,6 +101,7 @@
     <string name="pref_language">App language</string>
     <string name="pref_darkmode">Dark mode</string>
     <string name="connection_error">Could not load charging stations</string>
+    <string name="zoom_in_to_see_more">Zoom in to see all charging stations</string>
     <string name="location_error">Failed to detect location. Please check system settings</string>
     <string name="retry">Retry</string>
     <string name="filter_open_247">Available 24/7</string>

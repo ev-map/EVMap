@@ -107,6 +107,8 @@ class MarkerManager(
                     true
                 }
 
+                searchResultMarker -> true
+
                 else -> false
             }
         }

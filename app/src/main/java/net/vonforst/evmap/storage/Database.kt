@@ -34,7 +34,7 @@ import net.vonforst.evmap.model.*
         OCMCountry::class,
         OCMOperator::class,
         SavedRegion::class
-    ], version = 22
+    ], version = 25
 )
 @TypeConverters(Converters::class, GeometryConverters::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -75,12 +75,13 @@ abstract class AppDatabase : RoomDatabase() {
                 MIGRATION_7, MIGRATION_8, MIGRATION_9, MIGRATION_10, MIGRATION_11,
                 MIGRATION_12, MIGRATION_13, MIGRATION_14, MIGRATION_15, MIGRATION_16,
                 MIGRATION_17, MIGRATION_18, MIGRATION_19, MIGRATION_20, MIGRATION_21,
-                MIGRATION_22
+                MIGRATION_22, MIGRATION_23, MIGRATION_24, MIGRATION_25
             )
                 .addCallback(object : Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
                         // create default filter profile for each data source
                         db.execSQL("INSERT INTO `FilterProfile` (`dataSource`, `name`, `id`, `order`) VALUES ('goingelectric', 'FILTERS_CUSTOM', $FILTERS_CUSTOM, 0)")
+                        db.execSQL("INSERT INTO `FilterProfile` (`dataSource`, `name`, `id`, `order`) VALUES ('nobil', 'FILTERS_CUSTOM', $FILTERS_CUSTOM, 0)")
                         db.execSQL("INSERT INTO `FilterProfile` (`dataSource`, `name`, `id`, `order`) VALUES ('openchargemap', 'FILTERS_CUSTOM', $FILTERS_CUSTOM, 0)")
                         // initialize spatialite columns
                         db.query("SELECT RecoverGeometryColumn('ChargeLocation', 'coordinates', 4326, 'POINT', 'XY');")
@@ -457,6 +458,42 @@ abstract class AppDatabase : RoomDatabase() {
             override fun migrate(db: SupportSQLiteDatabase) {
                 // clear cache with this update
                 db.execSQL("DELETE FROM savedregion")
+            }
+        }
+
+        private val MIGRATION_23 = object : Migration(22, 23) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                // API nobil added
+                db.execSQL("INSERT INTO `FilterProfile` (`dataSource`, `name`, `id`, `order`) VALUES ('nobil', 'FILTERS_CUSTOM', $FILTERS_CUSTOM, 0)")
+            }
+        }
+
+        private val MIGRATION_24 = object : Migration(23, 24) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                // adding dataSourceUrl and making url optional
+                db.execSQL(
+                    "CREATE TABLE `ChargeLocationNew` (`id` INTEGER NOT NULL, `dataSource` TEXT NOT NULL, `name` TEXT NOT NULL, `coordinates` BLOB NOT NULL, `chargepoints` TEXT NOT NULL, `network` TEXT, `dataSourceUrl` TEXT NOT NULL, `url` TEXT, `editUrl` TEXT, `verified` INTEGER NOT NULL, `barrierFree` INTEGER, `operator` TEXT, `generalInformation` TEXT, `amenities` TEXT, `locationDescription` TEXT, `photos` TEXT, `chargecards` TEXT, `license` TEXT, `timeRetrieved` INTEGER NOT NULL, `isDetailed` INTEGER NOT NULL, `city` TEXT, `country` TEXT, `postcode` TEXT, `street` TEXT, `fault_report_created` INTEGER, `fault_report_description` TEXT, `twentyfourSeven` INTEGER, `description` TEXT, `mostart` TEXT, `moend` TEXT, `tustart` TEXT, `tuend` TEXT, `westart` TEXT, `weend` TEXT, `thstart` TEXT, `thend` TEXT, `frstart` TEXT, `frend` TEXT, `sastart` TEXT, `saend` TEXT, `sustart` TEXT, `suend` TEXT, `hostart` TEXT, `hoend` TEXT, `freecharging` INTEGER, `freeparking` INTEGER, `descriptionShort` TEXT, `descriptionLong` TEXT, `chargepricecountry` TEXT, `chargepricenetwork` TEXT, `chargepriceplugTypes` TEXT, `networkUrl` TEXT, `chargerUrl` TEXT, PRIMARY KEY(`id`, `dataSource`))"
+                )
+
+                db.execSQL("INSERT INTO `ChargeLocationNew` SELECT `id`, `dataSource`, `name`, `coordinates`, `chargepoints`, `network`, '', `url`, `editUrl`, `verified`, `barrierFree`, `operator`, `generalInformation`, `amenities`, `locationDescription`, `photos`, `chargecards`, `license`, `timeRetrieved`, `isDetailed`, `city`, `country`, `postcode`, `street`, `fault_report_created`, `fault_report_description`, `twentyfourSeven`, `description`, `mostart`, `moend`, `tustart`, `tuend`, `westart`, `weend`, `thstart`, `thend`, `frstart`, `frend`, `sastart`, `saend`, `sustart`, `suend`, `hostart`, `hoend`, `freecharging`, `freeparking`, `descriptionShort`, `descriptionLong`, `chargepricecountry`, `chargepricenetwork`, `chargepriceplugTypes`, `networkUrl`, `chargerUrl` FROM `ChargeLocation`")
+                db.execSQL("UPDATE ChargeLocationNew SET `dataSourceUrl` = 'https://www.goingelectric.de/' WHERE `dataSource` = 'goingelectric'")
+                db.execSQL("UPDATE ChargeLocationNew SET `dataSourceUrl` = 'https://openchargemap.org/' WHERE `dataSource` = 'openchargemap'")
+                db.execSQL("UPDATE ChargeLocationNew SET `dataSourceUrl` = 'https://www.openstreetmap.org/' WHERE `dataSource` = 'openstreetmap'")
+                db.execSQL("DROP TABLE `ChargeLocation`")
+                db.execSQL("ALTER TABLE `ChargeLocationNew` RENAME TO `ChargeLocation`")
+            }
+        }
+
+        private val MIGRATION_25 = object : Migration(24, 25) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                // adding accessibility to ChargeLocation
+                db.execSQL(
+                    "CREATE TABLE `ChargeLocationNew` (`id` INTEGER NOT NULL, `dataSource` TEXT NOT NULL, `name` TEXT NOT NULL, `coordinates` BLOB NOT NULL, `chargepoints` TEXT NOT NULL, `network` TEXT, `dataSourceUrl` TEXT NOT NULL, `url` TEXT, `editUrl` TEXT, `verified` INTEGER NOT NULL, `barrierFree` INTEGER, `operator` TEXT, `generalInformation` TEXT, `amenities` TEXT, `locationDescription` TEXT, `photos` TEXT, `chargecards` TEXT, `accessibility` TEXT, `license` TEXT, `timeRetrieved` INTEGER NOT NULL, `isDetailed` INTEGER NOT NULL, `city` TEXT, `country` TEXT, `postcode` TEXT, `street` TEXT, `fault_report_created` INTEGER, `fault_report_description` TEXT, `twentyfourSeven` INTEGER, `description` TEXT, `mostart` TEXT, `moend` TEXT, `tustart` TEXT, `tuend` TEXT, `westart` TEXT, `weend` TEXT, `thstart` TEXT, `thend` TEXT, `frstart` TEXT, `frend` TEXT, `sastart` TEXT, `saend` TEXT, `sustart` TEXT, `suend` TEXT, `hostart` TEXT, `hoend` TEXT, `freecharging` INTEGER, `freeparking` INTEGER, `descriptionShort` TEXT, `descriptionLong` TEXT, `chargepricecountry` TEXT, `chargepricenetwork` TEXT, `chargepriceplugTypes` TEXT, `networkUrl` TEXT, `chargerUrl` TEXT, PRIMARY KEY(`id`, `dataSource`))"
+                )
+
+                db.execSQL("INSERT INTO `ChargeLocationNew` SELECT `id`, `dataSource`, `name`, `coordinates`, `chargepoints`, `network`, `dataSourceUrl`, `url`, `editUrl`, `verified`, `barrierFree`, `operator`, `generalInformation`, `amenities`, `locationDescription`, `photos`, `chargecards`, null, `license`, `timeRetrieved`, `isDetailed`, `city`, `country`, `postcode`, `street`, `fault_report_created`, `fault_report_description`, `twentyfourSeven`, `description`, `mostart`, `moend`, `tustart`, `tuend`, `westart`, `weend`, `thstart`, `thend`, `frstart`, `frend`, `sastart`, `saend`, `sustart`, `suend`, `hostart`, `hoend`, `freecharging`, `freeparking`, `descriptionShort`, `descriptionLong`, `chargepricecountry`, `chargepricenetwork`, `chargepriceplugTypes`, `networkUrl`, `chargerUrl` FROM `ChargeLocation`")
+                db.execSQL("DROP TABLE `ChargeLocation`")
+                db.execSQL("ALTER TABLE `ChargeLocationNew` RENAME TO `ChargeLocation`")
             }
         }
     }

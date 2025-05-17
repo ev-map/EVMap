@@ -218,6 +218,8 @@ class DataSourceSelectFragment : OnboardingPageFragment() {
             binding.rgDataSource.textView27,
             binding.rgDataSource.rbOpenChargeMap,
             binding.rgDataSource.textView28,
+            binding.rgDataSource.rbNobil,
+            binding.rgDataSource.textView29,
             binding.dataSourceHint,
             binding.cbAcceptPrivacy
         )
@@ -246,6 +248,7 @@ class DataSourceSelectFragment : OnboardingPageFragment() {
 
         for (rb in listOf(
             binding.rgDataSource.rbGoingElectric,
+            binding.rgDataSource.rbNobil,
             binding.rgDataSource.rbOpenChargeMap
         )) {
             rb.setOnCheckedChangeListener { _, _ ->
@@ -260,6 +263,7 @@ class DataSourceSelectFragment : OnboardingPageFragment() {
         if (prefs.dataSourceSet) {
             when (prefs.dataSource) {
                 "goingelectric" -> binding.rgDataSource.rbGoingElectric.isChecked = true
+                "nobil" -> binding.rgDataSource.rbNobil.isChecked = true
                 "openchargemap" -> binding.rgDataSource.rbOpenChargeMap.isChecked = true
             }
         }
@@ -277,6 +281,8 @@ class DataSourceSelectFragment : OnboardingPageFragment() {
 
             val result = if (binding.rgDataSource.rbGoingElectric.isChecked) {
                 "goingelectric"
+            } else if (binding.rgDataSource.rbNobil.isChecked) {
+                "nobil"
             } else if (binding.rgDataSource.rbOpenChargeMap.isChecked) {
                 "openchargemap"
             } else {

@@ -9,14 +9,36 @@ import androidx.car.app.CarContext
 import androidx.car.app.CarToast
 import androidx.car.app.Screen
 import androidx.car.app.constraints.ConstraintManager
-import androidx.car.app.model.*
+import androidx.car.app.model.Action
+import androidx.car.app.model.ActionStrip
+import androidx.car.app.model.CarColor
+import androidx.car.app.model.CarIcon
+import androidx.car.app.model.CarText
+import androidx.car.app.model.ForegroundCarColorSpan
+import androidx.car.app.model.ItemList
+import androidx.car.app.model.ListTemplate
+import androidx.car.app.model.Pane
+import androidx.car.app.model.PaneTemplate
+import androidx.car.app.model.ParkedOnlyOnClickListener
+import androidx.car.app.model.Row
+import androidx.car.app.model.Template
+import androidx.car.app.model.Toggle
 import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.map
 import kotlinx.coroutines.launch
 import net.vonforst.evmap.R
-import net.vonforst.evmap.model.*
+import net.vonforst.evmap.model.BooleanFilter
+import net.vonforst.evmap.model.BooleanFilterValue
+import net.vonforst.evmap.model.FILTERS_CUSTOM
+import net.vonforst.evmap.model.FILTERS_DISABLED
+import net.vonforst.evmap.model.FILTERS_FAVORITES
+import net.vonforst.evmap.model.FilterValues
+import net.vonforst.evmap.model.MultipleChoiceFilter
+import net.vonforst.evmap.model.MultipleChoiceFilterValue
+import net.vonforst.evmap.model.SliderFilter
+import net.vonforst.evmap.model.SliderFilterValue
 import net.vonforst.evmap.storage.AppDatabase
 import net.vonforst.evmap.storage.FilterProfile
 import net.vonforst.evmap.storage.PreferenceDataSource
@@ -232,7 +254,6 @@ class FilterScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx) {
                                         ),
                                         CarToast.LENGTH_SHORT
                                     ).show()
-                                    invalidate()
                                 }
                             }
                         }.build())
@@ -349,7 +370,6 @@ class EditFiltersScreen(ctx: CarContext) : Screen(ctx) {
                                     ),
                                     CarToast.LENGTH_SHORT
                                 ).show()
-                                invalidate()
                                 screenManager.pop()
                             }
                         }
@@ -381,7 +401,6 @@ class EditFiltersScreen(ctx: CarContext) : Screen(ctx) {
                                 }
                                 if (!saveSuccess) return@pushForResult
                             }
-                            invalidate()
                         }
                         .build()
                 )

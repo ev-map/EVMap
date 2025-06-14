@@ -41,8 +41,7 @@
           {
             "fieldPath": "network",
             "columnName": "network",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "url",
@@ -53,8 +52,7 @@
           {
             "fieldPath": "editUrl",
             "columnName": "editUrl",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "verified",
@@ -65,62 +63,52 @@
           {
             "fieldPath": "barrierFree",
             "columnName": "barrierFree",
-            "affinity": "INTEGER",
-            "notNull": false
+            "affinity": "INTEGER"
           },
           {
             "fieldPath": "operator",
             "columnName": "operator",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "generalInformation",
             "columnName": "generalInformation",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "amenities",
             "columnName": "amenities",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "locationDescription",
             "columnName": "locationDescription",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "photos",
             "columnName": "photos",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "chargecards",
             "columnName": "chargecards",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "license",
             "columnName": "license",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "networkUrl",
             "columnName": "networkUrl",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "chargerUrl",
             "columnName": "chargerUrl",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "timeRetrieved",
@@ -137,188 +125,157 @@
           {
             "fieldPath": "address.city",
             "columnName": "city",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "address.country",
             "columnName": "country",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "address.postcode",
             "columnName": "postcode",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "address.street",
             "columnName": "street",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "faultReport.created",
             "columnName": "fault_report_created",
-            "affinity": "INTEGER",
-            "notNull": false
+            "affinity": "INTEGER"
           },
           {
             "fieldPath": "faultReport.description",
             "columnName": "fault_report_description",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "openinghours.twentyfourSeven",
             "columnName": "twentyfourSeven",
-            "affinity": "INTEGER",
-            "notNull": false
+            "affinity": "INTEGER"
           },
           {
             "fieldPath": "openinghours.description",
             "columnName": "description",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "openinghours.days.monday.start",
             "columnName": "mostart",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "openinghours.days.monday.end",
             "columnName": "moend",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "openinghours.days.tuesday.start",
             "columnName": "tustart",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "openinghours.days.tuesday.end",
             "columnName": "tuend",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "openinghours.days.wednesday.start",
             "columnName": "westart",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "openinghours.days.wednesday.end",
             "columnName": "weend",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "openinghours.days.thursday.start",
             "columnName": "thstart",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "openinghours.days.thursday.end",
             "columnName": "thend",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "openinghours.days.friday.start",
             "columnName": "frstart",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "openinghours.days.friday.end",
             "columnName": "frend",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "openinghours.days.saturday.start",
             "columnName": "sastart",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "openinghours.days.saturday.end",
             "columnName": "saend",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "openinghours.days.sunday.start",
             "columnName": "sustart",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "openinghours.days.sunday.end",
             "columnName": "suend",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "openinghours.days.holiday.start",
             "columnName": "hostart",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "openinghours.days.holiday.end",
             "columnName": "hoend",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "cost.freecharging",
             "columnName": "freecharging",
-            "affinity": "INTEGER",
-            "notNull": false
+            "affinity": "INTEGER"
           },
           {
             "fieldPath": "cost.freeparking",
             "columnName": "freeparking",
-            "affinity": "INTEGER",
-            "notNull": false
+            "affinity": "INTEGER"
           },
           {
             "fieldPath": "cost.descriptionShort",
             "columnName": "descriptionShort",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "cost.descriptionLong",
             "columnName": "descriptionLong",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "chargepriceData.country",
             "columnName": "chargepricecountry",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "chargepriceData.network",
             "columnName": "chargepricenetwork",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "chargepriceData.plugTypes",
             "columnName": "chargepriceplugTypes",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           }
         ],
         "primaryKey": {
@@ -327,9 +284,7 @@
             "id",
             "dataSource"
           ]
-        },
-        "indices": [],
-        "foreignKeys": []
+        }
       },
       {
         "tableName": "Favorite",
@@ -636,8 +591,7 @@
             "orders": [],
             "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_FilterProfile_dataSource_name` ON `${TABLE_NAME}` (`dataSource`, `name`)"
           }
-        ],
-        "foreignKeys": []
+        ]
       },
       {
         "tableName": "RecentAutocompletePlace",
@@ -682,8 +636,7 @@
           {
             "fieldPath": "viewport",
             "columnName": "viewport",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "types",
@@ -698,9 +651,7 @@
             "id",
             "dataSource"
           ]
-        },
-        "indices": [],
-        "foreignKeys": []
+        }
       },
       {
         "tableName": "GEPlug",
@@ -718,9 +669,7 @@
           "columnNames": [
             "name"
           ]
-        },
-        "indices": [],
-        "foreignKeys": []
+        }
       },
       {
         "tableName": "GENetwork",
@@ -738,9 +687,7 @@
           "columnNames": [
             "name"
           ]
-        },
-        "indices": [],
-        "foreignKeys": []
+        }
       },
       {
         "tableName": "GEChargeCard",
@@ -770,9 +717,7 @@
           "columnNames": [
             "id"
           ]
-        },
-        "indices": [],
-        "foreignKeys": []
+        }
       },
       {
         "tableName": "OCMConnectionType",
@@ -793,20 +738,17 @@
           {
             "fieldPath": "formalName",
             "columnName": "formalName",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "discontinued",
             "columnName": "discontinued",
-            "affinity": "INTEGER",
-            "notNull": false
+            "affinity": "INTEGER"
           },
           {
             "fieldPath": "obsolete",
             "columnName": "obsolete",
-            "affinity": "INTEGER",
-            "notNull": false
+            "affinity": "INTEGER"
           }
         ],
         "primaryKey": {
@@ -814,9 +756,7 @@
           "columnNames": [
             "id"
           ]
-        },
-        "indices": [],
-        "foreignKeys": []
+        }
       },
       {
         "tableName": "OCMCountry",
@@ -837,8 +777,7 @@
           {
             "fieldPath": "continentCode",
             "columnName": "continentCode",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "title",
@@ -852,9 +791,7 @@
           "columnNames": [
             "id"
           ]
-        },
-        "indices": [],
-        "foreignKeys": []
+        }
       },
       {
         "tableName": "OCMOperator",
@@ -869,8 +806,7 @@
           {
             "fieldPath": "websiteUrl",
             "columnName": "websiteUrl",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "title",
@@ -881,20 +817,17 @@
           {
             "fieldPath": "contactEmail",
             "columnName": "contactEmail",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "contactTelephone1",
             "columnName": "contactTelephone1",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "contactTelephone2",
             "columnName": "contactTelephone2",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           }
         ],
         "primaryKey": {
@@ -902,9 +835,7 @@
           "columnNames": [
             "id"
           ]
-        },
-        "indices": [],
-        "foreignKeys": []
+        }
       },
       {
         "tableName": "SavedRegion",
@@ -931,8 +862,7 @@
           {
             "fieldPath": "filters",
             "columnName": "filters",
-            "affinity": "TEXT",
-            "notNull": false
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "isDetailed",
@@ -943,8 +873,7 @@
           {
             "fieldPath": "id",
             "columnName": "id",
-            "affinity": "INTEGER",
-            "notNull": false
+            "affinity": "INTEGER"
           }
         ],
         "primaryKey": {
@@ -964,11 +893,9 @@
             "orders": [],
             "createSql": "CREATE INDEX IF NOT EXISTS `index_SavedRegion_filters_dataSource` ON `${TABLE_NAME}` (`filters`, `dataSource`)"
           }
-        ],
-        "foreignKeys": []
+        ]
       }
     ],
-    "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
       "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5dbaaa5adf8cb9b6e8a8314bb7766447')"

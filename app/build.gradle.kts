@@ -6,6 +6,7 @@ plugins {
     id("kotlin-android")
     id("kotlin-parcelize")
     id("kotlin-kapt")
+    id("com.google.devtools.ksp").version("2.0.21-1.0.28")
     id("androidx.navigation.safeargs.kotlin")
     id("com.mikepenz.aboutlibraries.plugin")
 }
@@ -16,20 +17,17 @@ android {
 
     defaultConfig {
         applicationId = "net.vonforst.evmap"
-        compileSdk = 34
+        compileSdk = 35
         minSdk = 21
-        targetSdk = 34
+        targetSdk = 35
         // NOTE: always increase versionCode by 2 since automotive flavor uses versionCode + 1
         versionCode = 230
         versionName = "1.9.6"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments["room.schemaLocation"] =
-                    "$projectDir/schemas"
-            }
+        ksp {
+            arg("room.schemaLocation", "$projectDir/schemas")
         }
     }
 
@@ -100,18 +98,12 @@ android {
 
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
-        targetCompatibility = JavaVersion.VERSION_1_8
-        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8.toString()
-    }
-
-    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs>().configureEach {
-        kotlinOptions {
-            jvmTarget = "1.8"
-        }
+        jvmTarget = JavaVersion.VERSION_17.toString()
     }
 
     buildFeatures {
@@ -311,8 +303,8 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-moshi:2.9.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.squareup.okhttp3:okhttp-urlconnection:4.12.0")
-    implementation("com.squareup.moshi:moshi-kotlin:1.15.0")
-    implementation("com.squareup.moshi:moshi-adapters:1.15.0")
+    implementation("com.squareup.moshi:moshi-kotlin:1.15.2")
+    implementation("com.squareup.moshi:moshi-adapters:1.15.2")
     implementation("com.markomilos.jsonapi:jsonapi-retrofit:1.1.0")
     implementation("io.coil-kt:coil:2.6.0")
     implementation("com.github.ev-map:StfalconImageViewer:5082ebd392")
@@ -361,9 +353,9 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
 
     // room library
-    val room_version = "2.6.1"
+    val room_version = "2.7.1"
     implementation("androidx.room:room-runtime:$room_version")
-    kapt("androidx.room:room-compiler:$room_version")
+    ksp("androidx.room:room-compiler:$room_version")
     implementation("androidx.room:room-ktx:$room_version")
     implementation("com.github.anboralabs:spatia-room:0.3.0") {
         exclude("com.github.dalgarins", "android-spatialite")
@@ -405,7 +397,7 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     androidTestImplementation("androidx.arch.core:core-testing:2.2.0")
 
-    kapt("com.squareup.moshi:moshi-kotlin-codegen:1.15.0")
+    ksp("com.squareup.moshi:moshi-kotlin-codegen:1.15.2")
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
 }

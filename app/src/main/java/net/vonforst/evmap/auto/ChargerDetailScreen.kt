@@ -371,7 +371,7 @@ class ChargerDetailScreen(
                     var text = formatTeslaPricing(teslaPricing, carContext) as CharSequence
                     formatTeslaParkingFee(teslaPricing, carContext)?.let { text += "\n\n" + it }
                     addText(text)
-                } ?: {
+                } ?: run {
                     addText(carContext.getString(if (prediction != null) R.string.auto_no_data else R.string.loading))
                 }
             }.build())

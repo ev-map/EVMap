@@ -58,7 +58,7 @@ data class Rates(
 @JsonClass(generateAdapter = true)
 data class Pricebook(
     val charging: PricebookDetails,
-    val parking: PricebookDetails,
+    val parking: PricebookDetails?,
     val priceBookID: Long?
 )
 

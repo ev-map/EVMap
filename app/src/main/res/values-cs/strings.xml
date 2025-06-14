@@ -129,7 +129,7 @@
     <string name="charging_barrierfree">Použitelné bez registrace</string>
     <string name="navigate">Navigace</string>
     <string name="charge_price_format">%1$.2f %2$s</string>
-    <string name="charge_price_average_format">⌀ %1$.2f %2$s/kWh</string>
+    <string name="charge_price_average_format">⌀ %1$.2f %2$s/kWh</string>
     <string name="charge_price_kwh_format">%1$.2f %2$s/kWh</string>
     <string name="charge_price_minute_format">%1$.2f %2$s/min</string>
     <string name="chargeprice_select_connector">Zvolte konektor</string>
@@ -214,8 +214,7 @@
     </plurals>
     <string name="pref_prediction_enabled">Zobrazit předpověď využití</string>
     <string name="prediction_only">(pouze %s)</string>
-    <string name="pref_prediction_enabled_summary">pro podporované nabíječky
-\n(v současné době pouze stejnosměrné v Německu)</string>
+    <string name="pref_prediction_enabled_summary">pro podporované nabíječky \n(v současné době pouze stejnosměrné v Německu)</string>
     <string name="prediction_dc_plugs_only">Zástrčky se stejnosměrným proudem</string>
     <string name="data_source_switched_to">Zdroj dat změněn na %s</string>
     <string name="pref_applink_associate">Otevírat podporované odkazy</string>

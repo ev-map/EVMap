@@ -154,17 +154,17 @@
     </plurals>
     <string name="navigate">Navigeer naar hier</string>
     <string name="verified">geverifieerd</string>
-    <string name="charge_price_format">%1$.2f %2$s</string>
-    <string name="charge_price_average_format">⌀ %1$.2f %2$s/kWh</string>
+    <string name="charge_price_format">%1$.2f %2$s</string>
+    <string name="charge_price_average_format">⌀ %1$.2f %2$s/kWh</string>
     <string name="charge_price_kwh_format">%1$.2f %2$s/kWh</string>
     <string name="chargeprice_select_connector">Kies connector</string>
     <string name="chargeprice_provider_customer_tariff">Alleen voor eigen klanten</string>
     <string name="edit_on_goingelectric_info">Log aub in op GoingElectric.de als deze pagina leeg is</string>
     <string name="percent_format">%.0f%%</string>
-    <string name="chargeprice_session_fee">kostprijs  sessie</string>
-    <string name="chargeprice_per_kwh">per kWh</string>
-    <string name="chargeprice_per_minute">per min</string>
-    <string name="chargeprice_blocking_fee">Kostprijs blokkeren &gt;%s</string>
+    <string name="chargeprice_session_fee">kostprijs sessie</string>
+    <string name="chargeprice_per_kwh">per kWh</string>
+    <string name="chargeprice_per_minute">per min</string>
+    <string name="chargeprice_blocking_fee">Kostprijs blokkeren &gt;%s</string>
     <string name="powered_by_chargeprice">powered by Chargeprice</string>
     <string name="settings_chargeprice">Prijsvergelijking</string>
     <string name="pref_my_vehicle">Mijn voertuigen</string>
@@ -194,8 +194,8 @@
     <string name="unknown_operator">Onbekende operator</string>
     <string name="data_source_goingelectric">GoingElectric.de</string>
     <string name="data_source_openchargemap">OpenChargeMap</string>
-    <string name="chargeprice_base_fee">Abonnementskost: %1$.2f %2$s/maand</string>
-    <string name="chargeprice_min_spend">Minimale kost: %1$.2f %2$s/maand</string>
+    <string name="chargeprice_base_fee">Abonnementskost: %1$.2f %2$s/maand</string>
+    <string name="chargeprice_min_spend">Minimale kost: %1$.2f %2$s/maand</string>
     <string name="chargeprice_battery_range">Laden van %1$.0f%% tot %2$.0f%%</string>
     <string name="chargeprice_stats">(%1$.0f kWh, ca. %2$s, ⌀ %3$.0f kW)</string>
     <string name="next">volgende</string>
@@ -239,8 +239,7 @@
     <string name="prediction_help">De voorspelling is gebaseerd op factoren zoals weekdag, tijdstip en gebruik in het verleden, zodat je zwaar bezette laders kan vermijden. Geen garantie, uiteraard.</string>
     <string name="prediction_time_colon">%s:</string>
     <string name="pref_prediction_enabled">Toon voorspeld gebruik</string>
-    <string name="pref_prediction_enabled_summary">voor ondersteunde laders 
-\n(momenteel enkel DC in Duitsland)</string>
+    <string name="pref_prediction_enabled_summary">voor ondersteunde laders \n(momenteel enkel DC in Duitsland)</string>
     <string name="prediction_only">(enkel %s)</string>
     <string name="prediction_dc_plugs_only">DC aansluitingen</string>
     <string name="data_source_switched_to">Gegevensbron gewijzigd naar %s</string>

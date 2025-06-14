@@ -148,11 +148,11 @@
     <string name="welcome_2_detail">Dette er også å finne i «Om» → «O-S-S» i menyen</string>
     <string name="verified_desc">Lader bekreftet av et medlem av %s-gemenskapen. Dette betyr ikke at den virker nå.</string>
     <string name="charge_price_format">%2$s%1$.2f</string>
-    <string name="charge_price_average_format">⌀ %2$s%1$.2f/kWt</string>
+    <string name="charge_price_average_format">⌀ %2$s%1$.2f/kWt</string>
     <string name="charge_price_kwh_format">%2$s%1$.2f/kWt</string>
-    <string name="chargeprice_per_kwh">per kWt</string>
+    <string name="chargeprice_per_kwh">per kWt</string>
     <string name="percent_format">%.0f%%</string>
-    <string name="chargeprice_per_minute">per min</string>
+    <string name="chargeprice_per_minute">per min</string>
     <string name="chargeprice_min_spend">Minimumskostnad: %2$s%1$.2f/måned</string>
     <string name="settings_chargeprice">Prissammenligning</string>
     <string name="pref_my_vehicle">Mine kjøretøy</string>
@@ -217,8 +217,7 @@
     <string name="filter_operators">Operatører</string>
     <string name="category_service_off_motorway">Rasteplass (ikke på motorvei)</string>
     <string name="welcome_2_title">Effekten til veies tilgjengeliggjøres</string>
-    <string name="chargeprice_donation_dialog_detail">Du bruker prissammenligningen en del.
-\nOvervei å dekke kostnadene ved å støtte EVMap med en donasjon.</string>
+    <string name="chargeprice_donation_dialog_detail">Du bruker prissammenligningen en del. \nOvervei å dekke kostnadene ved å støtte EVMap med en donasjon.</string>
     <string name="navigate">Navigasjon</string>
     <string name="chargeprice_session_fee">startgebyr</string>
     <string name="powered_by_chargeprice">tilbudt av Chargeprice</string>
@@ -227,7 +226,7 @@
     <string name="pref_chargeprice_no_base_fee">Utelat abonnementer med månedlige gebyr</string>
     <string name="chargeprice_select_connector">Velg tilkobling</string>
     <string name="chargeprice_provider_customer_tariff">Kun for kundekoblingssalg</string>
-    <string name="chargeprice_blocking_fee">Blokkeringsgebyr &gt;%s</string>
+    <string name="chargeprice_blocking_fee">Blokkeringsgebyr &gt;%s</string>
     <string name="pref_chargeprice_show_provider_customer_tariffs">Inkluder kundekoblingssalg</string>
     <string name="pref_chargeprice_show_provider_customer_tariffs_summary">Strømselskaper tilbyr noen ganger billigere abonnementer til sine kunder</string>
     <string name="pref_my_tariffs">Mine ladeabonnementer</string>
@@ -270,8 +269,7 @@
     <string name="utilization_prediction">Bruksprognose</string>
     <string name="prediction_only">(kun %s)</string>
     <string name="pref_prediction_enabled">Vis bruksprognoser</string>
-    <string name="pref_prediction_enabled_summary">for støttede ladere
-\n(foreløpig kun for likestrøm i Tyskland)</string>
+    <string name="pref_prediction_enabled_summary">for støttede ladere \n(foreløpig kun for likestrøm i Tyskland)</string>
     <string name="chargeprice_price_not_available">Pris ikke tilgjengelig</string>
     <string name="developer_mode_disabled">Utviklermodus avslått</string>
     <string name="gps">GPS</string>

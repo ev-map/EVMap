@@ -34,7 +34,7 @@
     <string name="menu_favs">Favorite</string>
     <string name="menu_filter">Fitru</string>
     <string name="not_implemented">indisponibil momentan</string>
-    <string name="about">Despre </string>
+    <string name="about">Despre</string>
     <string name="version">Versiune</string>
     <string name="github_link_title">Cod sursa</string>
     <string name="oss_licenses">Licente</string>
@@ -167,23 +167,23 @@
     <string name="charging_barrierfree">Utilizabile fara inregistrare</string>
     <plurals name="charge_cards_compatible_num">
         <item quantity="one">%d metoda de plata compatibila</item>
-        <item quantity="other">%d metode de plata compatibile</item>
         <item quantity="few">%d metode de plata compatibile</item>
+        <item quantity="other">%d metode de plata compatibile</item>
     </plurals>
     <string name="navigate">Navigare</string>
     <string name="verified">verificat</string>
     <string name="verified_desc">Statia de incarcare a fost confirmata functionala de un mebru din comunitatea %s</string>
     <string name="charge_price_format">%2$s%1$.2f</string>
-    <string name="charge_price_average_format">⌀ %2$s%1$.2f/kWh</string>
+    <string name="charge_price_average_format">⌀ %2$s%1$.2f/kWh</string>
     <string name="charge_price_kwh_format">%2$s%1$.2f/kWh</string>
     <string name="chargeprice_select_connector">Alege conector</string>
     <string name="chargeprice_provider_customer_tariff">Doar pentru clienti</string>
     <string name="edit_on_goingelectric_info">Va rugam autentificati-va la GoingElectric.de daca pagina e goala</string>
     <string name="percent_format">%.0f%%</string>
-    <string name="chargeprice_session_fee">taxa sesiune</string>
-    <string name="chargeprice_per_kwh">pe kWh</string>
-    <string name="chargeprice_per_minute">pe min</string>
-    <string name="chargeprice_blocking_fee">Taxa blocare &gt;%s</string>
+    <string name="chargeprice_session_fee">taxa sesiune</string>
+    <string name="chargeprice_per_kwh">pe kWh</string>
+    <string name="chargeprice_per_minute">pe min</string>
+    <string name="chargeprice_blocking_fee">Taxa blocare &gt;%s</string>
     <string name="chargeprice_no_tariffs_found">Fara pret pentru aceasta statie in Chargeprice.app</string>
     <string name="powered_by_chargeprice">oferit de Chargeprice</string>
     <string name="chargeprice_base_fee">Pret de baza: %2$s%1$.2f/luna</string>
@@ -208,8 +208,8 @@
     <string name="pref_my_tariffs">Abonamentele mele</string>
     <plurals name="pref_my_tariffs_summary">
         <item quantity="one">(va fi evidentiat in comparatia preturilor)</item>
-        <item quantity="other">(vor fi evidentiate in comparatia preturilor)</item>
         <item quantity="few">(vor fi evidentiate in comparatia preturilor)</item>
+        <item quantity="other">(vor fi evidentiate in comparatia preturilor)</item>
     </plurals>
     <string name="chargeprice_all_tariffs_selected">toate abonamentele selectate</string>
     <string name="license">Licenta</string>
@@ -217,8 +217,8 @@
     <string name="pref_data_source">Sursa date</string>
     <plurals name="chargeprice_some_tariffs_selected">
         <item quantity="one">%d abonament selectat</item>
-        <item quantity="other">%d abonamente selectate</item>
         <item quantity="few">%d abonamente selectate</item>
+        <item quantity="other">%d abonamente selectate</item>
     </plurals>
     <string name="unknown_operator">Operator necunoscut</string>
     <string name="data_sources_description">Alegeti o sursa pentru statiile de incarcare. Puteti modifica ulterior in setarile aplicatiei.</string>
@@ -269,8 +269,8 @@
     <string name="prediction_time_colon">%s:</string>
     <plurals name="prediction_number_available">
         <item quantity="one">%1$d/%2$d disponibil</item>
-        <item quantity="other">%1$d/%2$d disponibile</item>
         <item quantity="few">%1$d/%2$d disponibile</item>
+        <item quantity="other">%1$d/%2$d disponibile</item>
     </plurals>
     <string name="pref_prediction_enabled">Arata estimare utilizare</string>
     <string name="pref_prediction_enabled_summary">pentru statiile de incarcare suportate\n(momentan doar DC in Germania)</string>

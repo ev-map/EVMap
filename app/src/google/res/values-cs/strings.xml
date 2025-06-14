@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="donations_info" formatted="false">Pomohla vám EVMap? Podpořte její vývoj posláním finančního daru vývojáři.
-\n
-\nGoogle si z každého daru strhne 15 %.</string>
+    <string name="donations_info" formatted="false">Pomohla vám EVMap? Podpořte její vývoj posláním finančního daru vývojáři. \n \nGoogle si z každého daru strhne 15 %.</string>
     <string name="data_sources_hint">V nastavení můžete také pro mapová data přepínat mezi službami Mapy Google a OpenStreetMap.</string>
 </resources>

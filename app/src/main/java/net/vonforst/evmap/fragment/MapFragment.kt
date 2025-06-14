@@ -1127,9 +1127,13 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
             binding.search.requestFocus()
             binding.search.setSelection(locationName.length)
         }
-        if (context.checkAnyLocationPermission() && prefs.currentMapMyLocationEnabled) {
-            enableLocation(!positionSet, false)
-            positionSet = true
+        if (context.checkAnyLocationPermission()) {
+            if (prefs.currentMapMyLocationEnabled && !positionSet) {
+                enableLocation(true, false)
+                positionSet = true
+            } else {
+                enableLocation(false, false)
+            }
         }
         if (!positionSet) {
             // use position saved in preferences, fall back to default (Europe)

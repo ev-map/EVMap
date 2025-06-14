@@ -10,13 +10,13 @@
     <string name="network">Réseau</string>
     <string name="hours">Heures d\'ouverture</string>
     <string name="open_247"><b>Ouvert 24h/24 et 7j/7</b></string>
-    <string name="open_closesat"><b>Ouvert</b> · Ferme à %s</string>
+    <string name="open_closesat"><b>Ouvert</b> · Ferme à %s</string>
     <string name="closed_unfmt">Fermé</string>
     <string name="cost">Coût</string>
     <string name="closed"><b>Fermé</b></string>
     <string name="closed_opensat"><b>Fermé</b> · Ouvre à %s</string>
     <string name="holiday">Jour férié</string>
-    <string name="cost_detail"><b>Recharge :</b> %1$s · <b>Stationnement :</b> %2$s</string>
+    <string name="cost_detail"><b>Recharge :</b> %1$s · <b>Stationnement :</b> %2$s</string>
     <string name="realtime_data_unavailable">Statut en temps réel non disponible</string>
     <string name="source">Source : %s</string>
     <string name="menu_favs">Favoris</string>
@@ -87,7 +87,7 @@
     <string name="verified_desc">Le fonctionnement du chargeur a été confirmé au moins une fois par un membre de la communauté %s</string>
     <string name="percent_format">%.0f%%</string>
     <string name="chargeprice_session_fee">frais de session</string>
-    <string name="chargeprice_per_kwh">par kWh</string>
+    <string name="chargeprice_per_kwh">par kWh</string>
     <string name="chargeprice_per_minute">par min</string>
     <string name="chargeprice_blocking_fee">Frais de blocage &gt;%s</string>
     <string name="chargeprice_no_tariffs_found">Aucun tarif de recharge pour ce chargeur sur Chargeprice.app</string>
@@ -223,7 +223,7 @@
     <string name="chargeprice_connection_error">Impossible de charger les prix</string>
     <string name="pref_search_provider">Fournisseur de recherche de lieux</string>
     <plurals name="pref_my_tariffs_summary">
-        <item quantity="one" tools:ignore="ImpliedQuantity">(sera mis en évidence dans la comparaison des prix)</item>
+        <item quantity="one">(sera mis en évidence dans la comparaison des prix)</item>
         <item quantity="many">(seront mis en évidence dans la comparaison des prix)</item>
         <item quantity="other">(seront mis en évidence dans la comparaison des prix)</item>
     </plurals>
@@ -264,8 +264,7 @@
     <string name="location_error">Localisation non détectée. Veuillez vérifier les paramètres du système</string>
     <string name="developer_mode_enabled">Mode développeur activé</string>
     <string name="pref_prediction_enabled">Afficher les prévisions d\'utilisation</string>
-    <string name="pref_prediction_enabled_summary">pour les chargeurs pris en charge
-\n(actuellement seulement chargeurs rapides en Allemagne)</string>
+    <string name="pref_prediction_enabled_summary">pour les chargeurs pris en charge \n(actuellement seulement chargeurs rapides en Allemagne)</string>
     <string name="pref_applink_associate">Ouvrir les liens pris en charge</string>
     <string name="pref_applink_associate_summary">de goingelectric.de et openchargemap.org</string>
     <string name="chargeprice_header_my_tariffs">Mes tarifs</string>
@@ -320,9 +319,9 @@
     <string name="loading">Chargement…</string>
     <string name="auto_multipage_goto">Page %d</string>
     <string name="auto_multipage">(%1$d/%2$d)</string>
-    <string name="tesla_pricing_other_times">Autres horaires :</string>
+    <string name="tesla_pricing_other_times">Autres horaires :</string>
     <string name="settings_cache_clear_summary">Supprime tous les chargeurs mis en cache, sauf les favoris</string>
-    <string name="tesla_pricing_owners">Véhicules Tesla uniquement :</string>
+    <string name="tesla_pricing_owners">Véhicules Tesla uniquement :</string>
     <string name="settings_cache_clear">Effacer le cache</string>
     <string name="charge_price_minute_format">%1$.2f %2$s/min</string>
     <string name="settings_cache_count_summary">%1$d chargeurs mis en cache, %2$.1f MB</string>
@@ -331,7 +330,7 @@
     <string name="pref_tesla_account_disabled">Connectez-vous pour voir les données en temps réel pour les Superchargeurs Tesla. Pas de véhicule Tesla nécessaire</string>
     <string name="pref_tesla_account_enabled">Connecté en tant que %s</string>
     <string name="login_error">Connexion échouée</string>
-    <string name="tesla_pricing_blocking_fee">Frais de blocage : %s</string>
+    <string name="tesla_pricing_blocking_fee">Frais de blocage : %s</string>
     <string name="pref_map_scale">Afficher l\'échelle de la carte</string>
     <string name="data_retrieved_at">Données récupérées %s</string>
     <string name="prediction_only">(%s seulement)</string>
@@ -347,13 +346,13 @@
     <string name="realtime_data_login_needed">Compte Tesla nécessaire pour les données en temps réel</string>
     <string name="generic_connection_error">Impossible de charger les données</string>
     <string name="logged_out">Déconnecté</string>
-    <string name="tesla_pricing_members">Véhicules Tesla &amp; membres :</string>
+    <string name="tesla_pricing_members">Véhicules Tesla &amp; membres :</string>
     <string name="pref_units_metric">Métrique</string>
     <string name="pricing_up_to">jusqu\'à %s</string>
     <string name="pref_tesla_account">Compte Tesla</string>
     <string name="reload">Actualiser</string>
     <string name="charger_website">Site web</string>
-    <string name="tesla_pricing_others">Autres clients :</string>
+    <string name="tesla_pricing_others">Autres clients :</string>
     <string name="referral_tesla">Tesla</string>
     <string name="pref_units_default">Réglage par défaut de l\'appareil</string>
     <string name="pref_map_scale_meters_and_miles">Milles et mètres sur l\'échelle de la carte</string>

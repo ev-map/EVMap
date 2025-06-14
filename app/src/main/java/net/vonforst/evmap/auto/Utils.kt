@@ -202,7 +202,7 @@ fun <T> List<T>.paginate(nSingle: Int, nFirst: Int, nOther: Int, nLast: Int): Li
 
 fun getAndroidAutoVersion(ctx: Context): List<String> {
     val info = ctx.packageManager.getPackageInfoCompat("com.google.android.projection.gearhead", 0)
-    return info.versionName.split(".")
+    return info.versionName!!.split(".")
 }
 
 fun supportsCarApiLevel3(ctx: CarContext): Boolean {

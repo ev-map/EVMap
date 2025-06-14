@@ -1,0 +1,904 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 22,
+    "identityHash": "5dbaaa5adf8cb9b6e8a8314bb7766447",
+    "entities": [
+      {
+        "tableName": "ChargeLocation",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `dataSource` TEXT NOT NULL, `name` TEXT NOT NULL, `coordinates` BLOB NOT NULL, `chargepoints` TEXT NOT NULL, `network` TEXT, `url` TEXT NOT NULL, `editUrl` TEXT, `verified` INTEGER NOT NULL, `barrierFree` INTEGER, `operator` TEXT, `generalInformation` TEXT, `amenities` TEXT, `locationDescription` TEXT, `photos` TEXT, `chargecards` TEXT, `license` TEXT, `networkUrl` TEXT, `chargerUrl` TEXT, `timeRetrieved` INTEGER NOT NULL, `isDetailed` INTEGER NOT NULL, `city` TEXT, `country` TEXT, `postcode` TEXT, `street` TEXT, `fault_report_created` INTEGER, `fault_report_description` TEXT, `twentyfourSeven` INTEGER, `description` TEXT, `mostart` TEXT, `moend` TEXT, `tustart` TEXT, `tuend` TEXT, `westart` TEXT, `weend` TEXT, `thstart` TEXT, `thend` TEXT, `frstart` TEXT, `frend` TEXT, `sastart` TEXT, `saend` TEXT, `sustart` TEXT, `suend` TEXT, `hostart` TEXT, `hoend` TEXT, `freecharging` INTEGER, `freeparking` INTEGER, `descriptionShort` TEXT, `descriptionLong` TEXT, `chargepricecountry` TEXT, `chargepricenetwork` TEXT, `chargepriceplugTypes` TEXT, PRIMARY KEY(`id`, `dataSource`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dataSource",
+            "columnName": "dataSource",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "coordinates",
+            "columnName": "coordinates",
+            "affinity": "BLOB",
+            "notNull": true
+          },
+          {
+            "fieldPath": "chargepoints",
+            "columnName": "chargepoints",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "network",
+            "columnName": "network",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "url",
+            "columnName": "url",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "editUrl",
+            "columnName": "editUrl",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "verified",
+            "columnName": "verified",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "barrierFree",
+            "columnName": "barrierFree",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "operator",
+            "columnName": "operator",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "generalInformation",
+            "columnName": "generalInformation",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "amenities",
+            "columnName": "amenities",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "locationDescription",
+            "columnName": "locationDescription",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "photos",
+            "columnName": "photos",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "chargecards",
+            "columnName": "chargecards",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "license",
+            "columnName": "license",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "networkUrl",
+            "columnName": "networkUrl",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "chargerUrl",
+            "columnName": "chargerUrl",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "timeRetrieved",
+            "columnName": "timeRetrieved",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isDetailed",
+            "columnName": "isDetailed",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "address.city",
+            "columnName": "city",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "address.country",
+            "columnName": "country",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "address.postcode",
+            "columnName": "postcode",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "address.street",
+            "columnName": "street",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "faultReport.created",
+            "columnName": "fault_report_created",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "faultReport.description",
+            "columnName": "fault_report_description",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "openinghours.twentyfourSeven",
+            "columnName": "twentyfourSeven",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "openinghours.description",
+            "columnName": "description",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "openinghours.days.monday.start",
+            "columnName": "mostart",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "openinghours.days.monday.end",
+            "columnName": "moend",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "openinghours.days.tuesday.start",
+            "columnName": "tustart",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "openinghours.days.tuesday.end",
+            "columnName": "tuend",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "openinghours.days.wednesday.start",
+            "columnName": "westart",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "openinghours.days.wednesday.end",
+            "columnName": "weend",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "openinghours.days.thursday.start",
+            "columnName": "thstart",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "openinghours.days.thursday.end",
+            "columnName": "thend",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "openinghours.days.friday.start",
+            "columnName": "frstart",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "openinghours.days.friday.end",
+            "columnName": "frend",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "openinghours.days.saturday.start",
+            "columnName": "sastart",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "openinghours.days.saturday.end",
+            "columnName": "saend",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "openinghours.days.sunday.start",
+            "columnName": "sustart",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "openinghours.days.sunday.end",
+            "columnName": "suend",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "openinghours.days.holiday.start",
+            "columnName": "hostart",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "openinghours.days.holiday.end",
+            "columnName": "hoend",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "cost.freecharging",
+            "columnName": "freecharging",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "cost.freeparking",
+            "columnName": "freeparking",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "cost.descriptionShort",
+            "columnName": "descriptionShort",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "cost.descriptionLong",
+            "columnName": "descriptionLong",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "chargepriceData.country",
+            "columnName": "chargepricecountry",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "chargepriceData.network",
+            "columnName": "chargepricenetwork",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "chargepriceData.plugTypes",
+            "columnName": "chargepriceplugTypes",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id",
+            "dataSource"
+          ]
+        }
+      },
+      {
+        "tableName": "Favorite",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`favoriteId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `chargerId` INTEGER NOT NULL, `chargerDataSource` TEXT NOT NULL, FOREIGN KEY(`chargerId`, `chargerDataSource`) REFERENCES `ChargeLocation`(`id`, `dataSource`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "favoriteId",
+            "columnName": "favoriteId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "chargerId",
+            "columnName": "chargerId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "chargerDataSource",
+            "columnName": "chargerDataSource",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "favoriteId"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_Favorite_chargerId_chargerDataSource",
+            "unique": false,
+            "columnNames": [
+              "chargerId",
+              "chargerDataSource"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_Favorite_chargerId_chargerDataSource` ON `${TABLE_NAME}` (`chargerId`, `chargerDataSource`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "ChargeLocation",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "chargerId",
+              "chargerDataSource"
+            ],
+            "referencedColumns": [
+              "id",
+              "dataSource"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "BooleanFilterValue",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`key` TEXT NOT NULL, `value` INTEGER NOT NULL, `dataSource` TEXT NOT NULL, `profile` INTEGER NOT NULL, PRIMARY KEY(`key`, `profile`, `dataSource`), FOREIGN KEY(`profile`, `dataSource`) REFERENCES `FilterProfile`(`id`, `dataSource`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "key",
+            "columnName": "key",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "value",
+            "columnName": "value",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dataSource",
+            "columnName": "dataSource",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "profile",
+            "columnName": "profile",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "key",
+            "profile",
+            "dataSource"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_BooleanFilterValue_profile_dataSource",
+            "unique": false,
+            "columnNames": [
+              "profile",
+              "dataSource"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_BooleanFilterValue_profile_dataSource` ON `${TABLE_NAME}` (`profile`, `dataSource`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "FilterProfile",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "profile",
+              "dataSource"
+            ],
+            "referencedColumns": [
+              "id",
+              "dataSource"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "MultipleChoiceFilterValue",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`key` TEXT NOT NULL, `values` TEXT NOT NULL, `all` INTEGER NOT NULL, `dataSource` TEXT NOT NULL, `profile` INTEGER NOT NULL, PRIMARY KEY(`key`, `profile`, `dataSource`), FOREIGN KEY(`profile`, `dataSource`) REFERENCES `FilterProfile`(`id`, `dataSource`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "key",
+            "columnName": "key",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "values",
+            "columnName": "values",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "all",
+            "columnName": "all",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dataSource",
+            "columnName": "dataSource",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "profile",
+            "columnName": "profile",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "key",
+            "profile",
+            "dataSource"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_MultipleChoiceFilterValue_profile_dataSource",
+            "unique": false,
+            "columnNames": [
+              "profile",
+              "dataSource"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_MultipleChoiceFilterValue_profile_dataSource` ON `${TABLE_NAME}` (`profile`, `dataSource`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "FilterProfile",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "profile",
+              "dataSource"
+            ],
+            "referencedColumns": [
+              "id",
+              "dataSource"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "SliderFilterValue",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`key` TEXT NOT NULL, `value` INTEGER NOT NULL, `dataSource` TEXT NOT NULL, `profile` INTEGER NOT NULL, PRIMARY KEY(`key`, `profile`, `dataSource`), FOREIGN KEY(`profile`, `dataSource`) REFERENCES `FilterProfile`(`id`, `dataSource`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "key",
+            "columnName": "key",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "value",
+            "columnName": "value",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dataSource",
+            "columnName": "dataSource",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "profile",
+            "columnName": "profile",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "key",
+            "profile",
+            "dataSource"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_SliderFilterValue_profile_dataSource",
+            "unique": false,
+            "columnNames": [
+              "profile",
+              "dataSource"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_SliderFilterValue_profile_dataSource` ON `${TABLE_NAME}` (`profile`, `dataSource`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "FilterProfile",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "profile",
+              "dataSource"
+            ],
+            "referencedColumns": [
+              "id",
+              "dataSource"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "FilterProfile",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `dataSource` TEXT NOT NULL, `id` INTEGER NOT NULL, `order` INTEGER NOT NULL, PRIMARY KEY(`dataSource`, `id`))",
+        "fields": [
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dataSource",
+            "columnName": "dataSource",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "order",
+            "columnName": "order",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "dataSource",
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_FilterProfile_dataSource_name",
+            "unique": true,
+            "columnNames": [
+              "dataSource",
+              "name"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_FilterProfile_dataSource_name` ON `${TABLE_NAME}` (`dataSource`, `name`)"
+          }
+        ]
+      },
+      {
+        "tableName": "RecentAutocompletePlace",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `dataSource` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, `primaryText` TEXT NOT NULL, `secondaryText` TEXT NOT NULL, `latLng` TEXT NOT NULL, `viewport` TEXT, `types` TEXT NOT NULL, PRIMARY KEY(`id`, `dataSource`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dataSource",
+            "columnName": "dataSource",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timestamp",
+            "columnName": "timestamp",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "primaryText",
+            "columnName": "primaryText",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "secondaryText",
+            "columnName": "secondaryText",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "latLng",
+            "columnName": "latLng",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "viewport",
+            "columnName": "viewport",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "types",
+            "columnName": "types",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id",
+            "dataSource"
+          ]
+        }
+      },
+      {
+        "tableName": "GEPlug",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, PRIMARY KEY(`name`))",
+        "fields": [
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "name"
+          ]
+        }
+      },
+      {
+        "tableName": "GENetwork",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, PRIMARY KEY(`name`))",
+        "fields": [
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "name"
+          ]
+        }
+      },
+      {
+        "tableName": "GEChargeCard",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `url` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "url",
+            "columnName": "url",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "OCMConnectionType",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `title` TEXT NOT NULL, `formalName` TEXT, `discontinued` INTEGER, `obsolete` INTEGER, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "formalName",
+            "columnName": "formalName",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "discontinued",
+            "columnName": "discontinued",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "obsolete",
+            "columnName": "obsolete",
+            "affinity": "INTEGER"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "OCMCountry",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `isoCode` TEXT NOT NULL, `continentCode` TEXT, `title` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isoCode",
+            "columnName": "isoCode",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "continentCode",
+            "columnName": "continentCode",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "OCMOperator",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `websiteUrl` TEXT, `title` TEXT NOT NULL, `contactEmail` TEXT, `contactTelephone1` TEXT, `contactTelephone2` TEXT, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "websiteUrl",
+            "columnName": "websiteUrl",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "contactEmail",
+            "columnName": "contactEmail",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "contactTelephone1",
+            "columnName": "contactTelephone1",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "contactTelephone2",
+            "columnName": "contactTelephone2",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "SavedRegion",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`region` BLOB NOT NULL, `dataSource` TEXT NOT NULL, `timeRetrieved` INTEGER NOT NULL, `filters` TEXT, `isDetailed` INTEGER NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT)",
+        "fields": [
+          {
+            "fieldPath": "region",
+            "columnName": "region",
+            "affinity": "BLOB",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dataSource",
+            "columnName": "dataSource",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timeRetrieved",
+            "columnName": "timeRetrieved",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "filters",
+            "columnName": "filters",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "isDetailed",
+            "columnName": "isDetailed",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_SavedRegion_filters_dataSource",
+            "unique": false,
+            "columnNames": [
+              "filters",
+              "dataSource"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_SavedRegion_filters_dataSource` ON `${TABLE_NAME}` (`filters`, `dataSource`)"
+          }
+        ]
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5dbaaa5adf8cb9b6e8a8314bb7766447')"
+    ]
+  }
+}

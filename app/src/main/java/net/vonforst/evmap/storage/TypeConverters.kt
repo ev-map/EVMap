@@ -118,6 +118,16 @@ class Converters {
     }
 
     @TypeConverter
+    fun fromStringMutableSet(value: MutableSet<String>?): String {
+        return stringSetAdapter.toJson(value)
+    }
+
+    @TypeConverter
+    fun toStringMutableSet(value: String): MutableSet<String>? {
+        return stringSetAdapter.fromJson(value)?.toMutableSet()
+    }
+
+    @TypeConverter
     fun fromStringList(value: List<String>?): String {
         return stringListAdapter.toJson(value)
     }

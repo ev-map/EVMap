@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="donations_info" formatted="false">Synes du EVMap er nyttig\? Støtt utviklingen ved å sende penger til utvikleren.
-\n
-\nGoogle tar 15% av alle donasjoner.</string>
+    <string name="donations_info" formatted="false">Synes du EVMap er nyttig? Støtt utviklingen ved å sende penger til utvikleren. \n \nGoogle tar 15% av alle donasjoner.</string>
     <string name="data_sources_hint">I innstillingene kan du også bytte mellom Google Maps og OpenStreetMap for kartdata.</string>
 </resources>

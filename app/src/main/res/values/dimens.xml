@@ -12,4 +12,5 @@
     <dimen name="map_toolbar_width">@dimen/match_parent</dimen>
     <dimen name="layers_fab_top_padding">100dp</dimen>
     <dimen name="directions_fab_translationx">0dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
 </resources>

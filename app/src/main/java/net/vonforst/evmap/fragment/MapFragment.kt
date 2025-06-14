@@ -24,6 +24,7 @@ import android.widget.AdapterView
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.BackEventCompat
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresPermission
@@ -35,7 +36,6 @@ import androidx.core.view.MenuProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.doOnLayout
-import androidx.core.view.doOnNextLayout
 import androidx.core.view.updateLayoutParams
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -62,6 +62,11 @@ import com.car2go.maps.model.BitmapDescriptor
 import com.car2go.maps.model.LatLng
 import com.car2go.maps.model.Marker
 import com.car2go.maps.model.MarkerOptions
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPSED
+import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HALF_EXPANDED
+import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HIDDEN
+import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_SETTLING
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.MaterialArcMotion
@@ -69,14 +74,6 @@ import com.google.android.material.transition.MaterialContainerTransform
 import com.google.android.material.transition.MaterialContainerTransform.FADE_MODE_CROSS
 import com.google.android.material.transition.MaterialFadeThrough
 import com.google.android.material.transition.MaterialSharedAxis
-import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike
-import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike.BottomSheetCallback
-import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT
-import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED
-import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN
-import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike.STATE_SETTLING
-import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike.from
-import com.mahc.custombottomsheetbehavior.MergedAppBarLayoutBehavior
 import com.stfalcon.imageviewer.StfalconImageViewer
 import io.michaelrocks.bimap.HashBiMap
 import io.michaelrocks.bimap.MutableBiMap
@@ -147,8 +144,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
     private var map: AnyMap? = null
     private lateinit var locationEngine: LocationEngine
     private var requestingLocationUpdates = false
-    private lateinit var bottomSheetBehavior: BottomSheetBehaviorGoogleMapsLike<View>
-    private lateinit var detailAppBarBehavior: MergedAppBarLayoutBehavior
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<View>
     private lateinit var detailsDialog: ConnectorDetailsDialog
     private lateinit var prefs: PreferenceDataSource
     private var markers: MutableBiMap<Marker, ChargeLocation> = HashBiMap()
@@ -165,6 +161,35 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
     private lateinit var chargerIconGenerator: ChargerIconGenerator
     private lateinit var animator: MarkerAnimator
     private lateinit var favToggle: MenuItem
+
+    private val bottomSheetBackPressedCallback = object : OnBackPressedCallback(false) {
+        override fun handleOnBackPressed() {
+            val state = bottomSheetBehavior.state
+            when (state) {
+                STATE_COLLAPSED -> vm.chargerSparse.value = null
+                STATE_HIDDEN -> return
+                else -> if (bottomSheetCollapsible) {
+                    bottomSheetBehavior.state = STATE_COLLAPSED
+                } else {
+                    vm.chargerSparse.value = null
+                }
+            }
+            bottomSheetBehavior.cancelBackProgress()
+        }
+
+        override fun handleOnBackStarted(backEvent: BackEventCompat) {
+            bottomSheetBehavior.startBackProgress(backEvent)
+        }
+
+        override fun handleOnBackProgressed(backEvent: BackEventCompat) {
+            bottomSheetBehavior.updateBackProgress(backEvent)
+        }
+
+        override fun handleOnBackCancelled() {
+            bottomSheetBehavior.cancelBackProgress()
+        }
+    }
+
     private val backPressedCallback = object : OnBackPressedCallback(false) {
         override fun handleOnBackPressed() {
             val value = vm.layersMenuOpen.value
@@ -181,18 +206,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
 
             if (binding.search.hasFocus()) {
                 removeSearchFocus()
+                return
             }
 
-            val state = bottomSheetBehavior.state
-            when (state) {
-                STATE_COLLAPSED -> vm.chargerSparse.value = null
-                STATE_HIDDEN -> vm.searchResult.value = null
-                else -> if (bottomSheetCollapsible) {
-                    bottomSheetBehavior.state = STATE_COLLAPSED
-                } else {
-                    vm.chargerSparse.value = null
-                }
-            }
+            vm.searchResult.value = null
         }
     }
 
@@ -245,7 +262,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
             searchResultIcon = null
         }
 
-        binding.detailAppBar.toolbar.popupTheme =
+        binding.detailView.toolbar.popupTheme =
             com.google.android.material.R.style.ThemeOverlay_AppCompat_DayNight
 
         ViewCompat.setOnApplyWindowInsetsListener(
@@ -254,9 +271,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
             ViewCompat.onApplyWindowInsets(binding.root, insets)
 
             val systemWindowInsetTop = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
-            binding.detailAppBar.toolbar.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+            /*binding.detailView.toolbar.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 topMargin = systemWindowInsetTop
-            }
+            }*/
+
+            val insetsBottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
+            bottomSheetBehavior.peekHeight = binding.detailView.topPart.bottom + insetsBottom
 
             // margin of layers button: status bar height + toolbar height + margin
             val density = resources.displayMetrics.density
@@ -289,6 +309,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
             viewLifecycleOwner,
             backPressedCallback
         )
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            bottomSheetBackPressedCallback
+        )
 
         return binding.root
     }
@@ -310,22 +334,20 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
         requireActivity().addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
         mapFragment!!.getMapAsync(this)
-        bottomSheetBehavior = from(binding.bottomSheet)
-        detailAppBarBehavior = MergedAppBarLayoutBehavior.from(binding.detailAppBar)
+        bottomSheetBehavior = BottomSheetBehavior.from(binding.detailView.root)
+        //detailAppBarBehavior = MergedAppBarLayoutBehavior.from(binding.detailAppBar)
 
-        binding.detailAppBar.toolbar.inflateMenu(R.menu.detail)
-        favToggle = binding.detailAppBar.toolbar.menu.findItem(R.id.menu_fav)
+        binding.detailView.toolbar.inflateMenu(R.menu.detail)
+        favToggle = binding.detailView.toolbar.menu.findItem(R.id.menu_fav)
 
         vm.apiName.observe(viewLifecycleOwner) {
-            binding.detailAppBar.toolbar.menu.findItem(R.id.menu_edit).title =
+            binding.detailView.toolbar.menu.findItem(R.id.menu_edit).title =
                 getString(R.string.edit_at_datasource, it)
         }
 
-        binding.detailView.topPart.doOnNextLayout {
-            bottomSheetBehavior.peekHeight = binding.detailView.topPart.bottom
-            vm.bottomSheetState.value?.let { bottomSheetBehavior.state = it }
-        }
-        bottomSheetBehavior.isCollapsible = bottomSheetCollapsible
+        vm.bottomSheetState.value?.let { bottomSheetBehavior.state = it }
+        bottomSheetBehavior.skipCollapsed = !bottomSheetCollapsible
+        bottomSheetBehavior.state = STATE_HIDDEN
         binding.detailView.connectorDetails
 
         setupObservers()
@@ -478,7 +500,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
                 .show()
         }
         binding.detailView.topPart.setOnClickListener {
-            bottomSheetBehavior.state = STATE_ANCHOR_POINT
+            bottomSheetBehavior.state = STATE_HALF_EXPANDED
         }
         binding.detailView.topPart.setOnLongClickListener {
             val charger = vm.charger.value?.data ?: return@setOnLongClickListener false
@@ -486,14 +508,14 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
             return@setOnLongClickListener true
         }
         setupSearchAutocomplete()
-        binding.detailAppBar.toolbar.setNavigationOnClickListener {
+        binding.detailView.toolbar.setNavigationOnClickListener {
             if (bottomSheetCollapsible) {
                 bottomSheetBehavior.state = STATE_COLLAPSED
             } else {
                 vm.chargerSparse.value = null
             }
         }
-        binding.detailAppBar.toolbar.setOnMenuItemClickListener {
+        binding.detailView.toolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.menu_fav -> {
                     toggleFavorite()
@@ -654,7 +676,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
 
     private fun setupObservers() {
         bottomSheetBehavior.addBottomSheetCallback(object :
-            BottomSheetCallback() {
+            BottomSheetBehavior.BottomSheetCallback() {
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
                 if (bottomSheetBehavior.state == STATE_HIDDEN) {
                     map?.setPadding(0, mapTopPadding, 0, 0)
@@ -671,7 +693,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 vm.bottomSheetState.value = newState
-                updateBackPressedCallback()
+                bottomSheetBackPressedCallback.isEnabled = newState != STATE_HIDDEN
 
                 if (vm.layersMenuOpen.value!! && newState !in listOf(
                         STATE_SETTLING,
@@ -683,7 +705,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
                 }
 
                 if (vm.selectedChargepoint.value != null && newState in listOf(
-                        STATE_ANCHOR_POINT, STATE_COLLAPSED
+                        STATE_HALF_EXPANDED, STATE_COLLAPSED
                     )
                 ) {
                     closeConnectorDetailsDialog()
@@ -693,13 +715,13 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
         })
         vm.chargerSparse.observe(viewLifecycleOwner) {
             if (it != null) {
-                if (vm.bottomSheetState.value != STATE_ANCHOR_POINT) {
+                if (vm.bottomSheetState.value != STATE_HALF_EXPANDED) {
                     bottomSheetBehavior.state =
-                        if (bottomSheetCollapsible) STATE_COLLAPSED else STATE_ANCHOR_POINT
+                        if (bottomSheetCollapsible) STATE_COLLAPSED else STATE_HALF_EXPANDED
                 }
                 removeSearchFocus()
                 binding.fabDirections.show()
-                detailAppBarBehavior.setToolbarTitle(it.name)
+                //detailAppBarBehavior.setToolbarTitle(it.name)
                 updateFavoriteToggle()
                 highlightMarker(it)
             } else {
@@ -766,7 +788,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
             if (it != null) {
                 detailsDialog.setData(it, vm.availability.value?.data)
             }
-            updateBackPressedCallback()
         }
 
         updateBackPressedCallback()
@@ -807,12 +828,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
     }
 
     private fun updateBackPressedCallback() {
-        backPressedCallback.isEnabled =
-            vm.bottomSheetState.value != null && vm.bottomSheetState.value != STATE_HIDDEN
-                    || vm.searchResult.value != null
+        backPressedCallback.isEnabled = vm.searchResult.value != null
                     || (vm.layersMenuOpen.value ?: false)
                     || binding.search.hasFocus()
-                    || vm.selectedChargepoint.value != null
     }
 
     private fun unhighlightAllMarkers() {
@@ -1176,6 +1194,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
         map.setOnMapClickListener {
             if (backPressedCallback.isEnabled) {
                 backPressedCallback.handleOnBackPressed()
+            } else if (bottomSheetBackPressedCallback.isEnabled) {
+                bottomSheetBackPressedCallback.handleOnBackPressed()
             }
         }
         map.setMapType(vm.mapType.value)

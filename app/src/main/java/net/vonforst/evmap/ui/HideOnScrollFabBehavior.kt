@@ -6,8 +6,8 @@ import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.ViewCompat
 import androidx.core.widget.NestedScrollView
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike
 
 
 class HideOnScrollFabBehavior(context: Context, attrs: AttributeSet) :
@@ -45,9 +45,9 @@ class HideOnScrollFabBehavior(context: Context, attrs: AttributeSet) :
     ): Boolean {
         if (dependency is NestedScrollView) {
             try {
-                val behavior = BottomSheetBehaviorGoogleMapsLike.from<View>(dependency)
+                val behavior = BottomSheetBehavior.from<View>(dependency)
                 behavior.addBottomSheetCallback(object :
-                    BottomSheetBehaviorGoogleMapsLike.BottomSheetCallback() {
+                    BottomSheetBehavior.BottomSheetCallback() {
                     override fun onSlide(bottomSheet: View, slideOffset: Float) {
 
                     }
@@ -68,12 +68,13 @@ class HideOnScrollFabBehavior(context: Context, attrs: AttributeSet) :
         child: FloatingActionButton,
         dependency: View
     ): Boolean {
-        val behavior = BottomSheetBehaviorGoogleMapsLike.from(dependency)
+        val behavior = BottomSheetBehavior.from(dependency)
         when (behavior.state) {
-            BottomSheetBehaviorGoogleMapsLike.STATE_SETTLING -> {
+            BottomSheetBehavior.STATE_SETTLING -> {
 
             }
-            BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN -> {
+
+            BottomSheetBehavior.STATE_HIDDEN -> {
                 if (!hidden) child.show()
             }
             else -> {

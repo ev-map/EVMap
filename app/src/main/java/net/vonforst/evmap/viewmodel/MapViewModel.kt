@@ -15,7 +15,10 @@ import androidx.lifecycle.viewModelScope
 import com.car2go.maps.AnyMap
 import com.car2go.maps.model.LatLng
 import com.car2go.maps.model.LatLngBounds
-import com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike
+import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPSED
+import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
+import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HALF_EXPANDED
+import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HIDDEN
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -92,12 +95,13 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
     val bottomSheetExpanded = MediatorLiveData<Boolean>().apply {
         addSource(bottomSheetState) {
             when (it) {
-                BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED,
-                BottomSheetBehaviorGoogleMapsLike.STATE_HIDDEN -> {
+                STATE_COLLAPSED,
+                STATE_HIDDEN -> {
                     value = false
                 }
-                BottomSheetBehaviorGoogleMapsLike.STATE_EXPANDED,
-                BottomSheetBehaviorGoogleMapsLike.STATE_ANCHOR_POINT -> {
+
+                STATE_EXPANDED,
+                STATE_HALF_EXPANDED -> {
                     value = true
                 }
             }

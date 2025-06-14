@@ -9,8 +9,6 @@
 
         <import type="net.vonforst.evmap.viewmodel.Status" />
 
-        <import type="com.mahc.custombottomsheetbehavior.BottomSheetBehaviorGoogleMapsLike" />
-
         <variable
             name="vm"
             type="net.vonforst.evmap.viewmodel.MapViewModel" />
@@ -46,7 +44,7 @@
             android:layout_width="@dimen/map_toolbar_width"
             android:layout_height="wrap_content"
             android:fitsSystemWindows="true"
-            app:layout_behavior="@string/ScrollingAppBarLayoutBehavior">
+            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
             <com.google.android.material.card.MaterialCardView
                 style="?attr/materialCardViewElevatedStyle"
@@ -146,7 +144,7 @@
             android:layout_width="@dimen/map_toolbar_width"
             android:layout_height="@dimen/gallery_height_with_margin"
             android:background="?android:colorBackground"
-            app:layout_behavior="@string/BackDropBottomSheetBehavior">
+            android:visibility="gone">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/gallery"
@@ -177,35 +175,23 @@
             app:isFabActive="@{ vm.myLocationEnabled }"
             app:layout_behavior="@string/hide_on_scroll_fab_behavior" />
 
-        <androidx.core.widget.NestedScrollView
-            android:id="@+id/bottom_sheet"
+        <include
+            android:id="@+id/detail_view"
+            layout="@layout/detail_view"
             android:layout_width="@dimen/map_toolbar_width"
-            android:layout_height="match_parent"
-            android:fillViewport="true"
-            android:orientation="vertical"
-            app:bottomsheetbehavior_anchorPoint="@dimen/gallery_height"
+            android:layout_height="wrap_content"
+            app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
             app:behavior_hideable="true"
-            app:behavior_peekHeight="@dimen/peek_height"
-            app:bottomsheetbehavior_defaultState="stateHidden"
-            app:layout_behavior="@string/BottomSheetBehaviorGoogleMapsLike"
-            android:clipToPadding="false"
-            tools:bottomsheetbehavior_defaultState="stateCollapsed">
-
-            <include
-                android:id="@+id/detail_view"
-                layout="@layout/detail_view"
-                app:charger="@{vm.charger}"
-                app:availability="@{vm.availability}"
-                app:filteredAvailability="@{vm.filteredAvailability}"
-                app:predictionData="@{vm.predictionData}"
-                app:chargeCards="@{vm.chargeCardMap}"
-                app:filteredChargeCards="@{vm.filteredChargeCards}"
-                app:distance="@{vm.chargerDistance}"
-                app:expanded="@{vm.bottomSheetExpanded}"
-                app:apiName="@{vm.apiName}"
-                app:teslaPricing="@{vm.teslaPricing}" />
-
-        </androidx.core.widget.NestedScrollView>
+            app:charger="@{vm.charger}"
+            app:availability="@{vm.availability}"
+            app:filteredAvailability="@{vm.filteredAvailability}"
+            app:predictionData="@{vm.predictionData}"
+            app:chargeCards="@{vm.chargeCardMap}"
+            app:filteredChargeCards="@{vm.filteredChargeCards}"
+            app:distance="@{vm.chargerDistance}"
+            app:expanded="@{vm.bottomSheetExpanded}"
+            app:apiName="@{vm.apiName}"
+            app:teslaPricing="@{vm.teslaPricing}" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_directions"
@@ -218,15 +204,7 @@
             android:translationX="@dimen/directions_fab_translationx"
             app:layout_anchor="@id/bottom_sheet"
             app:layout_anchorGravity="top|right|end"
-            app:layout_behavior="@string/ScrollAwareFABBehavior"
             android:theme="@style/NoElevationOverlay" />
-
-        <com.mahc.custombottomsheetbehavior.MergedAppBarLayout
-            android:id="@+id/detail_app_bar"
-            android:layout_width="@dimen/map_toolbar_width"
-            android:layout_height="wrap_content"
-            app:layout_behavior="@string/MergedAppBarLayoutBehavior"
-            android:theme="@style/ThemeOverlay.Material3.Dark.ActionBar" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             style="@style/Widget.Material3.FloatingActionButton.Small.Surface"

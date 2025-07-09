@@ -345,7 +345,7 @@
     </plurals>
     <string name="data_source_goingelectric_desc">Ottimo nei paesi di lingua tedesca. Descrizioni in tedesco. Mantenuto dalla comunità.</string>
     <string name="auto_no_data">Non disponibile</string>
-    <string name="auto_location_permission_needed">Per eseguire EVMap su Android Auto, è necessario concedere l\'accesso alla propria posizione.</string>
+    <string name="auto_location_permission_needed">Per eseguire EVMap su Android Auto, devi concedere l\'accesso alla propria posizione.</string>
     <string name="prediction_help">La previsione si basa su fattori quali il giorno della settimana, l\'ora del giorno e l\'utilizzo passato, in modo da evitare le colonnine di ricarica sovraffollate. Nessuna garanzia a riguardo.</string>
     <string name="charger_website">Sito web</string>
     <string name="pref_map_rotate_gestures_on">Usa due dita per ruotare la mappa</string>

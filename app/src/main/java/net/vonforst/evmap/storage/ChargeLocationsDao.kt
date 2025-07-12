@@ -6,7 +6,6 @@ import androidx.room.*
 import androidx.sqlite.db.SimpleSQLiteQuery
 import androidx.sqlite.db.SupportSQLiteQuery
 import co.anbora.labs.spatia.geometry.Mbr
-import co.anbora.labs.spatia.geometry.MultiPolygon
 import co.anbora.labs.spatia.geometry.Point
 import co.anbora.labs.spatia.geometry.Polygon
 import com.car2go.maps.model.LatLng
@@ -20,6 +19,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.vonforst.evmap.api.ChargepointApi
 import net.vonforst.evmap.api.ChargepointList
+import net.vonforst.evmap.api.FiltersSQLQuery
 import net.vonforst.evmap.api.StringProvider
 import net.vonforst.evmap.api.goingelectric.GEReferenceData
 import net.vonforst.evmap.api.goingelectric.GoingElectricApiWrapper
@@ -34,12 +34,11 @@ import net.vonforst.evmap.utils.splitAtAntimeridian
 import net.vonforst.evmap.viewmodel.Resource
 import net.vonforst.evmap.viewmodel.Status
 import net.vonforst.evmap.viewmodel.await
-import net.vonforst.evmap.viewmodel.getClusterDistance
 import net.vonforst.evmap.viewmodel.singleSwitchMap
 import java.time.Duration
 import java.time.Instant
-import kotlin.math.pow
-import kotlin.math.roundToInt
+
+const val CLUSTER_MAX_ZOOM_LEVEL = 11f
 
 @Dao
 abstract class ChargeLocationsDao {
@@ -119,6 +118,9 @@ abstract class ChargeLocationsDao {
         precision: Double
     ): List<DBChargeLocationCluster>
 
+    @RawQuery(observedEntities = [ChargeLocation::class])
+    abstract suspend fun getChargeLocationClustersCustom(query: SupportSQLiteQuery): List<DBChargeLocationCluster>
+
     suspend fun getChargeLocationsClustered(
         lat1: Double,
         lat2: Double,
@@ -128,6 +130,10 @@ abstract class ChargeLocationsDao {
         after: Long,
         zoom: Float
     ): List<ChargepointListItem> {
+        if (zoom > CLUSTER_MAX_ZOOM_LEVEL) {
+            return getChargeLocationsInBounds(lat1, lat2, lng1, lng2, dataSource, after)
+        }
+
         val precision = getClusterPrecision(zoom)
         val clusters =
             getChargeLocationClusters(lat1, lat2, lng1, lng2, dataSource, after, precision)
@@ -226,7 +232,6 @@ class ChargeLocationsRepository(
 
         val api = api.value!!
         val t1 = System.currentTimeMillis()
-        val filters: FilterValues? = null
         val dbResult = if (filters.isNullOrEmpty()) {
             liveData {
                 emit(
@@ -242,9 +247,7 @@ class ChargeLocationsRepository(
                 )
             }
         } else {
-            queryWithFilters(api, filters, bounds).map {
-                applyLocalClustering(it, zoom) // TODO: use DB clustering
-            }
+            queryWithFiltersClustered(api, filters, bounds, zoom)
         }.map {
             val t2 = System.currentTimeMillis()
             Log.d(TAG, "DB loading time: ${t2 - t1}")
@@ -350,9 +353,8 @@ class ChargeLocationsRepository(
     fun getChargepointsRadius(
         location: LatLng,
         radius: Int,
-        zoom: Float,
         filters: FilterValues?
-    ): LiveData<Resource<List<ChargepointListItem>>> {
+    ): LiveData<Resource<List<ChargeLocation>>> {
         val api = api.value!!
 
         val radiusMeters = radius.toDouble() * 1000
@@ -370,7 +372,7 @@ class ChargeLocationsRepository(
             }
         } else {
             queryWithFilters(api, filters, location, radiusMeters)
-        }.map { applyLocalClustering(it, zoom) }
+        }
         val filtersSerialized =
             filters?.filter { it.value != it.filter.defaultValue() }?.takeIf { it.isNotEmpty() }
                 ?.serialize()
@@ -384,7 +386,6 @@ class ChargeLocationsRepository(
             filtersSerialized,
             requiresDetail
         )
-        val useClustering = shouldUseServerSideClustering(zoom)
         if (api.supportsOnlineQueries) {
             val apiResult = liveData {
                 val refData = referenceData.await()
@@ -394,11 +395,17 @@ class ChargeLocationsRepository(
                         refData,
                         location,
                         radius,
-                        zoom,
-                        useClustering,
+                        16f,
+                        false,
                         filters
                     )
-                emit(applyLocalClustering(result, zoom))
+                emit(
+                    Resource(
+                        result.status,
+                        result.data?.items?.filterIsInstance<ChargeLocation>(),
+                        result.message
+                    )
+                )
                 if (result.status == Status.SUCCESS) {
                     val chargers = result.data!!.items.filterIsInstance<ChargeLocation>()
                     chargeLocationsDao.insertOrReplaceIfNoDetailedExists(
@@ -466,7 +473,7 @@ class ChargeLocationsRepository(
         /* in very crowded places (good example: central London on OpenChargeMap without filters)
            we have to cluster even at pretty high zoom levels to make sure the map does not get
            laggy. Otherwise, only cluster at zoom levels <= 11. */
-        val useClustering = chargers.size > 500 || zoom <= 11f
+        val useClustering = chargers.size > 500 || zoom <= CLUSTER_MAX_ZOOM_LEVEL
 
         val chargersClustered = if (useClustering) {
             Dispatchers.Default.run {
@@ -538,9 +545,16 @@ class ChargeLocationsRepository(
         filters: FilterValues,
         bounds: LatLngBounds
     ): LiveData<List<ChargeLocation>> {
-        val region =
-            "ROWID IN (SELECT ROWID FROM SpatialIndex WHERE f_table_name = 'ChargeLocation' AND search_frame = BuildMbr(${bounds.southwest.longitude}, ${bounds.southwest.latitude}, ${bounds.northeast.longitude}, ${bounds.northeast.latitude}))"
-        return queryWithFilters(api, filters, region)
+        return queryWithFilters(api, filters, boundsSpatialIndexQuery(bounds))
+    }
+
+    private fun queryWithFiltersClustered(
+        api: ChargepointApi<ReferenceData>,
+        filters: FilterValues,
+        bounds: LatLngBounds,
+        zoom: Float
+    ): LiveData<List<ChargepointListItem>> {
+        return queryWithFiltersClustered(api, filters, boundsSpatialIndexQuery(bounds), zoom)
     }
 
     private fun queryWithFilters(
@@ -550,11 +564,17 @@ class ChargeLocationsRepository(
         radius: Double
     ): LiveData<List<ChargeLocation>> {
         val region =
-            "PtDistWithin(coordinates, MakePoint(${location.longitude}, ${location.latitude}, 4326), ${radius}) AND ROWID IN (SELECT ROWID FROM SpatialIndex WHERE f_table_name = 'ChargeLocation' AND search_frame = BuildCircleMbr(${location.longitude}, ${location.latitude}, $radius))"
+            radiusSpatialIndexQuery(location, radius)
         val order =
             "ORDER BY Distance(coordinates, MakePoint(${location.longitude}, ${location.latitude}, 4326))"
         return queryWithFilters(api, filters, region, order)
     }
+
+    private fun boundsSpatialIndexQuery(bounds: LatLngBounds) =
+        "ChargeLocation.ROWID IN (SELECT ROWID FROM SpatialIndex WHERE f_table_name = 'ChargeLocation' AND search_frame = BuildMbr(${bounds.southwest.longitude}, ${bounds.southwest.latitude}, ${bounds.northeast.longitude}, ${bounds.northeast.latitude}))"
+
+    private fun radiusSpatialIndexQuery(location: LatLng, radius: Double) =
+        "PtDistWithin(coordinates, MakePoint(${location.longitude}, ${location.latitude}, 4326), ${radius}) AND ChargeLocation.ROWID IN (SELECT ROWID FROM SpatialIndex WHERE f_table_name = 'ChargeLocation' AND search_frame = BuildCircleMbr(${location.longitude}, ${location.latitude}, $radius))"
 
     private fun queryWithFilters(
         api: ChargepointApi<ReferenceData>,
@@ -565,26 +585,7 @@ class ChargeLocationsRepository(
         try {
             val query = api.convertFiltersToSQL(filters, refData)
             val after = cacheLimitDate(api)
-            val sql = StringBuilder().apply {
-                append("SELECT")
-                if (query.requiresChargeCardQuery or query.requiresChargepointQuery) {
-                    append(" DISTINCT chargelocation.*")
-                } else {
-                    append(" *")
-                }
-                append(" FROM chargelocation")
-                if (query.requiresChargepointQuery) {
-                    append(" JOIN json_each(chargelocation.chargepoints) AS cp")
-                }
-                if (query.requiresChargeCardQuery) {
-                    append(" JOIN json_each(chargelocation.chargecards) AS cc")
-                }
-                append(" WHERE dataSource == '${prefs.dataSource}'")
-                append(" AND $regionSql")
-                append(" AND timeRetrieved > $after")
-                append(query.query)
-                orderSql?.let { append(" " + orderSql) }
-            }.toString()
+            val sql = buildFilteredQuery(query, regionSql, after, orderSql)
 
             liveData {
                 emit(
@@ -600,6 +601,80 @@ class ChargeLocationsRepository(
             MutableLiveData()  // in this case we cannot get a DB result
         }
     }
+
+    private fun queryWithFiltersClustered(
+        api: ChargepointApi<ReferenceData>,
+        filters: FilterValues,
+        regionSql: String,
+        zoom: Float,
+        orderSql: String? = null
+    ): LiveData<List<ChargepointListItem>> = referenceData.singleSwitchMap { refData ->
+        try {
+            if (zoom > CLUSTER_MAX_ZOOM_LEVEL) {
+                queryWithFilters(api, filters, regionSql, orderSql).map { it }
+            } else {
+                val query = api.convertFiltersToSQL(filters, refData)
+                val after = cacheLimitDate(api)
+                val clusterPrecision = getClusterPrecision(zoom)
+                val sql = buildFilteredQuery(query, regionSql, after, orderSql, clusterPrecision)
+
+                liveData {
+                    val clusters = chargeLocationsDao.getChargeLocationClustersCustom(
+                        SimpleSQLiteQuery(
+                            sql,
+                            null
+                        )
+                    )
+                    val singleChargers =
+                        chargeLocationsDao.getChargeLocationsById(clusters.filter { it.clusterCount == 1 }
+                            .map { it.ids }
+                            .flatten(), prefs.dataSource, after)
+                    emit(
+                        clusters.filter { it.clusterCount > 1 }
+                            .map { it.convert() } + singleChargers
+                    )
+                }
+            }
+        } catch (e: NotImplementedError) {
+            MutableLiveData()  // in this case we cannot get a DB result
+        }
+    }
+
+    private fun buildFilteredQuery(
+        query: FiltersSQLQuery,
+        regionSql: String,
+        after: Long,
+        orderSql: String? = null,
+        clusterPrecision: Double? = null
+    ) = StringBuilder().apply {
+        append("SELECT")
+
+        if (clusterPrecision != null) {
+            append(" SUM(1) AS clusterCount, Transform(MakePoint(AVG(X(query.coordinatesProjected)), AVG(Y(query.coordinatesProjected)), 3857), 4326) as center, SnapToGrid(query.coordinatesProjected, $clusterPrecision) AS snapped, GROUP_CONCAT(query.id, ',') as ids FROM (SELECT")
+        }
+
+        if (query.requiresChargeCardQuery or query.requiresChargepointQuery) {
+            append(" DISTINCT chargelocation.*")
+        } else {
+            append(" *")
+        }
+        append(" FROM chargelocation")
+        if (query.requiresChargepointQuery) {
+            append(" JOIN json_each(chargelocation.chargepoints) AS cp")
+        }
+        if (query.requiresChargeCardQuery) {
+            append(" JOIN json_each(chargelocation.chargecards) AS cc")
+        }
+        append(" WHERE dataSource == '${prefs.dataSource}'")
+        append(" AND $regionSql")
+        append(" AND timeRetrieved > $after")
+        append(query.query)
+        orderSql?.let { append(" " + orderSql) }
+
+        if (clusterPrecision != null) {
+            append(") AS query GROUP BY snapped")
+        }
+    }.toString()
 
     private suspend fun fullDownload() {
         val api = api.value!!

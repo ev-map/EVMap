@@ -15,7 +15,7 @@ class CleanupCacheWorker(appContext: Context, workerParams: WorkerParameters) :
         val savedRegionDao = db.savedRegionDao()
         val now = Instant.now()
 
-        val dataSources = listOf("openchargemap", "goingelectric")
+        val dataSources = listOf("openchargemap", "openstreetmap", "goingelectric")
         for (dataSource in dataSources) {
             val api = createApi(dataSource, applicationContext)
             val limit = now.minus(api.cacheLimit).toEpochMilli()

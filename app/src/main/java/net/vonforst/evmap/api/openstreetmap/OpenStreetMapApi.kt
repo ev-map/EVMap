@@ -12,7 +12,6 @@ import net.vonforst.evmap.api.ChargepointList
 import net.vonforst.evmap.api.FiltersSQLQuery
 import net.vonforst.evmap.api.FullDownloadResult
 import net.vonforst.evmap.api.StringProvider
-import net.vonforst.evmap.api.goingelectric.GEReferenceData
 import net.vonforst.evmap.api.mapPower
 import net.vonforst.evmap.api.mapPowerInverse
 import net.vonforst.evmap.api.nameForPlugType
@@ -208,7 +207,7 @@ class OpenStreetMapApiWrapper(baseurl: String = "https://osm.ev-map.app/") :
 
         val minConnectors = filters.getSliderValue("min_connectors")
         if (minConnectors != null && minConnectors > 1) {
-            result.append(" GROUP BY ChargeLocation.id HAVING COUNT(1) >= $minConnectors")
+            result.append(" GROUP BY ChargeLocation.id HAVING SUM(json_extract(cp.value, '$.count')) >= $minConnectors")
             requiresChargepointQuery = true
         }
 

@@ -31,6 +31,7 @@ import net.vonforst.evmap.ui.ChargerIconGenerator
 import net.vonforst.evmap.ui.availabilityText
 import net.vonforst.evmap.ui.getMarkerTint
 import net.vonforst.evmap.utils.distanceBetween
+import net.vonforst.evmap.utils.formatDecimal
 import java.time.ZonedDateTime
 import kotlin.math.roundToInt
 
@@ -222,7 +223,7 @@ class ChargerListFormatter(
 
         addRow(Row.Builder().apply {
             setImage(CarIcon.Builder(IconCompat.createWithBitmap(icon)).build())
-            setTitle(charger.address.toString())
+            setTitle(charger.address?.toString() ?: charger.coordinates.formatDecimal())
             addText(generateChargepointsText(charger, availability, carContext))
         }.build())
         addAction(Action.Builder().apply {

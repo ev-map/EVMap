@@ -160,6 +160,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
     private var previousChargepointIds: Set<Long>? = null
     private var mapTopPadding: Int = 0
     private var popupMenu: PopupMenu? = null
+    private var insetBottom: Int = 0
 
     private lateinit var clusterIconGenerator: ClusterIconGenerator
     private lateinit var chargerIconGenerator: ChargerIconGenerator
@@ -279,6 +280,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
             // and cause an infinite loop. So we rely on onMapReady being called later than
             // onApplyWindowInsets.
 
+            insetBottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
+            binding.navBarScrim.layoutParams.height = insetBottom
+            updatePeekHeight()
+
             insets
         }
 
@@ -291,6 +296,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
         )
 
         return binding.root
+    }
+
+    private fun updatePeekHeight() {
+        bottomSheetBehavior.peekHeight = binding.detailView.topPart.bottom + insetBottom
     }
 
     private fun getMapProvider(provider: String) = when (provider) {
@@ -322,7 +331,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
         }
 
         binding.detailView.topPart.doOnNextLayout {
-            bottomSheetBehavior.peekHeight = binding.detailView.topPart.bottom
+            updatePeekHeight()
             vm.bottomSheetState.value?.let { bottomSheetBehavior.state = it }
         }
         bottomSheetBehavior.isCollapsible = bottomSheetCollapsible
@@ -666,6 +675,14 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
                         0,
                         min(bottomSheetBehavior.peekHeight, height)
                     )
+                }
+                println(slideOffset)
+                if (bottomSheetBehavior.state != STATE_HIDDEN) {
+                    binding.navBarScrim.visibility = View.VISIBLE
+                    binding.navBarScrim.translationY =
+                        (if (slideOffset < 0f) -slideOffset else 2 * slideOffset) * binding.navBarScrim.height
+                } else {
+                    binding.navBarScrim.visibility = View.INVISIBLE
                 }
             }
 

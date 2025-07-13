@@ -718,6 +718,7 @@ class ChargeLocationsRepository(
 
         } finally {
             fullDownloadProgress.value = null
+            fullDownloadJob = null
         }
     }
 

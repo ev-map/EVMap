@@ -309,7 +309,9 @@ class ChargeLocationsRepository(
                 }
                 if (!savedRegionResult.await()) {
                     val job = fullDownloadJob ?: scope.launch {
-                        fullDownload()
+                        withContext(Dispatchers.IO) {
+                            fullDownload()
+                        }
                     }.also { fullDownloadJob = it }
                     val progressJob = scope.launch {
                         fullDownloadProgress.collect {

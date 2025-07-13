@@ -16,7 +16,12 @@ import net.vonforst.evmap.api.goingelectric.GEChargepoint
 import net.vonforst.evmap.api.openchargemap.OCMConnectionType
 import net.vonforst.evmap.api.openchargemap.OCMCountry
 import net.vonforst.evmap.api.openchargemap.OCMOperator
-import net.vonforst.evmap.model.*
+import net.vonforst.evmap.model.BooleanFilterValue
+import net.vonforst.evmap.model.ChargeLocation
+import net.vonforst.evmap.model.FILTERS_CUSTOM
+import net.vonforst.evmap.model.Favorite
+import net.vonforst.evmap.model.MultipleChoiceFilterValue
+import net.vonforst.evmap.model.SliderFilterValue
 
 @Database(
     entities = [
@@ -33,8 +38,9 @@ import net.vonforst.evmap.model.*
         OCMConnectionType::class,
         OCMCountry::class,
         OCMOperator::class,
+        OSMNetwork::class,
         SavedRegion::class
-    ], version = 22
+    ], version = 24
 )
 @TypeConverters(Converters::class, GeometryConverters::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -50,6 +56,9 @@ abstract class AppDatabase : RoomDatabase() {
 
     // OpenChargeMap API specific
     abstract fun ocmReferenceDataDao(): OCMReferenceDataDao
+
+    // OpenStreetMap API specific
+    abstract fun osmReferenceDataDao(): OSMReferenceDataDao
 
     companion object {
         private lateinit var context: Context
@@ -75,21 +84,28 @@ abstract class AppDatabase : RoomDatabase() {
                 MIGRATION_7, MIGRATION_8, MIGRATION_9, MIGRATION_10, MIGRATION_11,
                 MIGRATION_12, MIGRATION_13, MIGRATION_14, MIGRATION_15, MIGRATION_16,
                 MIGRATION_17, MIGRATION_18, MIGRATION_19, MIGRATION_20, MIGRATION_21,
-                MIGRATION_22
+                MIGRATION_22, MIGRATION_23, MIGRATION_24
             )
                 .addCallback(object : Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
                         // create default filter profile for each data source
                         db.execSQL("INSERT INTO `FilterProfile` (`dataSource`, `name`, `id`, `order`) VALUES ('goingelectric', 'FILTERS_CUSTOM', $FILTERS_CUSTOM, 0)")
                         db.execSQL("INSERT INTO `FilterProfile` (`dataSource`, `name`, `id`, `order`) VALUES ('openchargemap', 'FILTERS_CUSTOM', $FILTERS_CUSTOM, 0)")
+                        db.execSQL("INSERT INTO `FilterProfile` (`dataSource`, `name`, `id`, `order`) VALUES ('openstreetmap', 'FILTERS_CUSTOM', $FILTERS_CUSTOM, 0)")
                         // initialize spatialite columns
                         db.query("SELECT RecoverGeometryColumn('ChargeLocation', 'coordinates', 4326, 'POINT', 'XY');")
                             .moveToNext()
                         db.query("SELECT CreateSpatialIndex('ChargeLocation', 'coordinates');")
                             .moveToNext()
+                        db.query("SELECT RecoverGeometryColumn('ChargeLocation', 'coordinatesProjected', 3857, 'POINT', 'XY');")
+                            .moveToNext()
+                        db.query("SELECT CreateSpatialIndex('ChargeLocation', 'coordinatesProjected');")
+                            .moveToNext()
                         db.query("SELECT RecoverGeometryColumn('SavedRegion', 'region', 4326, 'POLYGON', 'XY');")
                             .moveToNext()
                         db.query("SELECT CreateSpatialIndex('SavedRegion', 'region');")
+                            .moveToNext()
+                        db.query("SELECT RecoverGeometryColumn('ChargeLocation', 'coordinatesProjected', 3857, 'POINT', 'XY');")
                             .moveToNext()
                     }
                 }).build()
@@ -457,6 +473,32 @@ abstract class AppDatabase : RoomDatabase() {
             override fun migrate(db: SupportSQLiteDatabase) {
                 // clear cache with this update
                 db.execSQL("DELETE FROM savedregion")
+            }
+        }
+
+        private val MIGRATION_23 = object : Migration(22, 23) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                // API openstreetmap added
+                db.execSQL("INSERT INTO `FilterProfile` (`dataSource`, `name`, `id`, `order`) VALUES ('openstreetmap', 'FILTERS_CUSTOM', $FILTERS_CUSTOM, 0)")
+                db.execSQL("CREATE TABLE IF NOT EXISTS `OSMNetwork` (`name` TEXT NOT NULL, PRIMARY KEY(`name`))")
+            }
+        }
+
+        private val MIGRATION_24 = object : Migration(23, 24) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                try {
+                    db.beginTransaction()
+                    // add column with projected location for fast clustering in DB
+                    db.execSQL("ALTER TABLE `ChargeLocation` ADD `coordinatesProjected` BLOB NOT NULL DEFAULT x'00'")
+                    db.query("SELECT RecoverGeometryColumn('ChargeLocation', 'coordinatesProjected', 3857, 'POINT', 'XY');")
+                        .moveToNext()
+                    db.query("SELECT CreateSpatialIndex('ChargeLocation', 'coordinatesProjected');")
+                        .moveToNext()
+                    db.execSQL("UPDATE `ChargeLocation` SET coordinatesProjected = Transform(coordinates, 3857);")
+                    db.setTransactionSuccessful()
+                } finally {
+                    db.endTransaction()
+                }
             }
         }
     }

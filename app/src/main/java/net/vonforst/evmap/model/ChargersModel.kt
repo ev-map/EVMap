@@ -3,15 +3,19 @@ package net.vonforst.evmap.model
 import android.content.Context
 import android.os.Parcelable
 import androidx.core.text.HtmlCompat
+import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import co.anbora.labs.spatia.geometry.Point
 import com.squareup.moshi.JsonClass
+import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 import net.vonforst.evmap.R
 import net.vonforst.evmap.adapter.Equatable
 import net.vonforst.evmap.api.StringProvider
 import net.vonforst.evmap.api.nameForPlugType
+import net.vonforst.evmap.utils.SphericalMercatorProjection
 import java.time.DayOfWeek
 import java.time.Instant
 import java.time.LocalDate
@@ -148,6 +152,11 @@ data class ChargeLocation(
             }"
         }
     }
+
+    // used to store projected coordinates in DB
+    @IgnoredOnParcel
+    var coordinatesProjected: Point =
+        SphericalMercatorProjection.project(Point(coordinates.lng, coordinates.lat))
 }
 
 /**
@@ -356,8 +365,8 @@ abstract class ChargerPhoto(open val id: String) : Parcelable {
 }
 
 data class ChargeLocationCluster(
-    val clusterCount: Int,
-    val coordinates: Coordinate,
+    @ColumnInfo("clusterCount") val clusterCount: Int,
+    @ColumnInfo("coordinates") val coordinates: Coordinate,
     val items: List<ChargeLocation>? = null
 ) : ChargepointListItem()
 

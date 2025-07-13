@@ -9,6 +9,7 @@ import com.squareup.moshi.Types
 import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
 import net.vonforst.evmap.api.goingelectric.GEChargerPhotoAdapter
 import net.vonforst.evmap.api.openchargemap.OCMChargerPhotoAdapter
+import net.vonforst.evmap.api.openstreetmap.ImgurChargerPhoto
 import net.vonforst.evmap.autocomplete.AutocompletePlaceType
 import net.vonforst.evmap.model.ChargeCardId
 import net.vonforst.evmap.model.Chargepoint
@@ -23,6 +24,7 @@ class Converters {
             PolymorphicJsonAdapterFactory.of(ChargerPhoto::class.java, "type")
                 .withSubtype(GEChargerPhotoAdapter::class.java, "goingelectric")
                 .withSubtype(OCMChargerPhotoAdapter::class.java, "openchargemap")
+                .withSubtype(ImgurChargerPhoto::class.java, "imgur")
                 .withDefaultValue(null)
         )
         .build()
@@ -177,4 +179,10 @@ class Converters {
     fun fromCoordinate(value: Coordinate): Point {
         return Point(value.lng, value.lat)
     }
+
+    @TypeConverter
+    fun fromLongList(value: List<Long>) = value.joinToString(",")
+
+    @TypeConverter
+    fun toLongList(value: String) = value.split(",").map { it.toLong() }
 }

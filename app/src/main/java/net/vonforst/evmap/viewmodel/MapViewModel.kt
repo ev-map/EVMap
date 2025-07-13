@@ -411,10 +411,8 @@ class MapViewModel(application: Application, private val state: SavedStateHandle
                     bounds.northeast.longitude
                 ).map { it.charger }
 
-                val clusterDistance = getClusterDistance(mapPosition.zoom)
-                val chargersClustered = clusterDistance?.let {
-                    cluster(chargers, mapPosition.zoom, clusterDistance)
-                } ?: chargers
+                // TODO: let DB do the clustering here
+                val chargersClustered = cluster(chargers, mapPosition.zoom)
                 filteredConnectors.value = null
                 filteredMinPower.value = null
                 filteredChargeCards.value = null

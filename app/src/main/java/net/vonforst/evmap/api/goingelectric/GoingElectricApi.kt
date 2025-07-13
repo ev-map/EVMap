@@ -15,6 +15,7 @@ import net.vonforst.evmap.addDebugInterceptors
 import net.vonforst.evmap.api.ChargepointApi
 import net.vonforst.evmap.api.ChargepointList
 import net.vonforst.evmap.api.FiltersSQLQuery
+import net.vonforst.evmap.api.FullDownloadResult
 import net.vonforst.evmap.api.StringProvider
 import net.vonforst.evmap.api.mapPower
 import net.vonforst.evmap.api.mapPowerInverse
@@ -159,6 +160,12 @@ class GoingElectricApiWrapper(
     override val name = "GoingElectric.de"
     override val id = "goingelectric"
     override val cacheLimit = Duration.ofDays(1)
+    override val supportsOnlineQueries = true
+    override val supportsFullDownload = false
+
+    override suspend fun fullDownload(): FullDownloadResult<GEReferenceData> {
+        throw NotImplementedError()
+    }
 
     override suspend fun getChargepoints(
         referenceData: ReferenceData,

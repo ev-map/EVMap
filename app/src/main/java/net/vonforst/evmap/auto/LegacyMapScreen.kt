@@ -339,7 +339,6 @@ class LegacyMapScreen(ctx: CarContext, val session: EVMapSession) :
                         val response = repo.getChargepointsRadius(
                             searchLocation,
                             radius,
-                            zoom = 16f,
                             filtersWithValue
                         ).awaitFinished()
                         if (response.status == Status.ERROR && if (radius == radiusValues.last()) response.data.isNullOrEmpty() else response.data == null) {
@@ -348,7 +347,7 @@ class LegacyMapScreen(ctx: CarContext, val session: EVMapSession) :
                             invalidate()
                             return@launch
                         }
-                        chargers = response.data?.filterIsInstance(ChargeLocation::class.java)
+                        chargers = response.data
                         if (prefs.placeSearchResultAndroidAutoName == null) {
                             chargers = headingFilter(
                                 chargers,

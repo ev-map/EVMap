@@ -6,10 +6,12 @@ import android.os.Build
 import androidx.work.Configuration
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import net.vonforst.evmap.storage.CleanupCacheWorker
 import net.vonforst.evmap.storage.PreferenceDataSource
+import net.vonforst.evmap.storage.UpdateFullDownloadWorker
 import net.vonforst.evmap.ui.updateAppLocale
 import net.vonforst.evmap.ui.updateNightMode
 import org.acra.config.dialog
@@ -68,6 +70,7 @@ class EvMapApplication : Application(), Configuration.Provider {
             }
         }
 
+        val workManager = WorkManager.getInstance(this)
         val cleanupCacheRequest = PeriodicWorkRequestBuilder<CleanupCacheWorker>(Duration.ofDays(1))
             .setConstraints(Constraints.Builder().apply {
                 setRequiresBatteryNotLow(true)
@@ -75,8 +78,23 @@ class EvMapApplication : Application(), Configuration.Provider {
                     setRequiresDeviceIdle(true)
                 }
             }.build()).build()
-        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+        workManager.enqueueUniquePeriodicWork(
             "CleanupCacheWorker", ExistingPeriodicWorkPolicy.UPDATE, cleanupCacheRequest
+        )
+
+        val updateFullDownloadRequest =
+            PeriodicWorkRequestBuilder<UpdateFullDownloadWorker>(Duration.ofDays(7))
+                .setConstraints(Constraints.Builder().apply {
+                    setRequiresBatteryNotLow(true)
+                    setRequiredNetworkType(NetworkType.UNMETERED)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        setRequiresDeviceIdle(true)
+                    }
+                }.build()).build()
+        workManager.enqueueUniquePeriodicWork(
+            "UpdateOsmWorker",
+            ExistingPeriodicWorkPolicy.UPDATE,
+            updateFullDownloadRequest
         )
     }
 

@@ -92,7 +92,7 @@
                                     android:ellipsize="end"
                                     android:background="@null"
                                     android:gravity="center_vertical"
-                                    android:hint="@string/search"
+                                    android:hint="@{vm.chargepoints.progress != null ? @string/downloading_chargers_percent(vm.chargepoints.progress * 100) : @string/search}"
                                     android:textSize="18sp"
                                     android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
                                     android:textColorHint="@color/hint_text_color"
@@ -131,7 +131,9 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="-10dp"
                         android:layout_marginBottom="-7dp"
-                        android:indeterminate="true"
+                        android:indeterminate="@{ vm.chargepoints.progress == null }"
+                        android:progress="@{ vm.chargepoints.progress != null ? Math.round(vm.chargepoints.progress * 100f) : 0 }"
+                        android:max="100"
                         android:visibility="visible"
                         app:goneUnless="@{ vm.chargepoints.status == Status.LOADING }" />
 

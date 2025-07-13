@@ -247,6 +247,15 @@
             app:layout_behavior="@string/hide_on_scroll_fab_behavior"
             android:theme="@style/NoElevationOverlay" />
 
+        <View
+            android:id="@+id/navBarScrim"
+            android:layout_width="match_parent"
+            android:layout_height="16dp"
+            android:background="?android:colorBackground"
+            android:layout_gravity="bottom"
+            app:invisibleUnless="@{vm.bottomSheetState == BottomSheetBehaviorGoogleMapsLike.STATE_COLLAPSED}"
+            tools:visibility="invisible" />
+
         <androidx.cardview.widget.CardView
             android:id="@+id/layers_sheet"
             android:layout_height="wrap_content"

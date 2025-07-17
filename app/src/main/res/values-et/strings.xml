@@ -373,4 +373,7 @@
     <string name="referrals_info">Kui peale mõnele järgnevatest linkidest klikkamist ostad kaupu või teenused, siis toetad sellega EVMapi arendajat.</string>
     <string name="tff_forum">Jutulõng TFF-Forum.de kasutajate foorumis</string>
     <string name="mastodon">Mastodon</string>
+    <string name="data_source_openstreetmap">OpenStreetMap</string>
+    <string name="data_source_openstreetmap_desc">Katseline tugi EVMapis - kõik funktsionaalsused pole saadaval.</string>
+    <string name="downloading_chargers_percent">Laadin alla… %.0f%%</string>
 </resources>

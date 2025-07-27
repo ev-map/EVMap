@@ -165,10 +165,16 @@ class ChargeLocationsRepository(
                 bounds.northeast.longitude,
                 api.id,
                 cacheLimitDate(api)
-            )
+            ).map { Resource.success(it) }
         } else {
             queryWithFilters(api, filters, bounds)
-        }.map { ChargepointList(applyLocalClustering(it, zoom), true) }
+        }.map {
+            Resource(
+                it.status,
+                it.data?.let { ChargepointList(applyLocalClustering(it, zoom), true) },
+                it.message
+            )
+        }
         val filtersSerialized =
             filters?.filter { it.value != it.filter.defaultValue() }?.takeIf { it.isNotEmpty() }
                 ?.serialize()
@@ -263,10 +269,16 @@ class ChargeLocationsRepository(
                 radiusMeters,
                 api.id,
                 cacheLimitDate(api)
-            )
+            ).map { Resource.success(it) }
         } else {
             queryWithFilters(api, filters, location, radiusMeters)
-        }.map { ChargepointList(applyLocalClustering(it, zoom), true) }
+        }.map {
+            Resource(
+                it.status,
+                it.data?.let { ChargepointList(applyLocalClustering(it, zoom), true) },
+                it.message
+            )
+        }
         val filtersSerialized =
             filters?.filter { it.value != it.filter.defaultValue() }?.takeIf { it.isNotEmpty() }
                 ?.serialize()
@@ -400,7 +412,7 @@ class ChargeLocationsRepository(
         api: ChargepointApi<ReferenceData>,
         filters: FilterValues,
         bounds: LatLngBounds
-    ): LiveData<List<ChargeLocation>> {
+    ): LiveData<Resource<List<ChargeLocation>>> {
         val region =
             "Within(coordinates, BuildMbr(${bounds.southwest.longitude}, ${bounds.southwest.latitude}, ${bounds.northeast.longitude}, ${bounds.northeast.latitude}))"
         return queryWithFilters(api, filters, region)
@@ -411,7 +423,7 @@ class ChargeLocationsRepository(
         filters: FilterValues,
         location: LatLng,
         radius: Double
-    ): LiveData<List<ChargeLocation>> {
+    ): LiveData<Resource<List<ChargeLocation>>> {
         val region =
             "PtDistWithin(coordinates, MakePoint(${location.longitude}, ${location.latitude}, 4326), ${radius})"
         val order =
@@ -424,7 +436,7 @@ class ChargeLocationsRepository(
         filters: FilterValues,
         regionSql: String,
         orderSql: String? = null
-    ): LiveData<List<ChargeLocation>> = referenceData.singleSwitchMap { refData ->
+    ): LiveData<Resource<List<ChargeLocation>>> = referenceData.singleSwitchMap { refData ->
         try {
             val query = api.convertFiltersToSQL(filters, refData)
             val after = cacheLimitDate(api)
@@ -454,9 +466,14 @@ class ChargeLocationsRepository(
                     sql,
                     null
                 )
-            )
+            ).map { Resource.success(it) }
         } catch (e: NotImplementedError) {
-            MutableLiveData()  // in this case we cannot get a DB result
+            MutableLiveData(
+                Resource.error(
+                    e.message,
+                    null
+                )
+            )  // in this case we cannot get a DB result
         }
     }
 

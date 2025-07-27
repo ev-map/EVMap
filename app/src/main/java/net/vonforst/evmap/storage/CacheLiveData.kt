@@ -16,14 +16,15 @@ import java.time.Instant
  * successful.
  */
 class CacheLiveData<T>(
-    cache: LiveData<T>,
+    cache: LiveData<Resource<T>>,
     api: LiveData<Resource<T>>,
     skipApi: LiveData<Boolean>? = null
 ) :
     MediatorLiveData<Resource<T>>() {
-    private var cacheResult: T? = null
+    private var cacheResult: Resource<T>? = null
     private var apiResult: Resource<T>? = null
     private var skipApiResult: Boolean = false
+    private val apiLiveData = api
 
     init {
         updateValue()
@@ -64,9 +65,21 @@ class CacheLiveData<T>(
             Log.d("CacheLiveData", "cache has finished loading before API")
             // cache has finished loading before API
             if (skipApiResult) {
-                value = Resource.success(cache)
+                value = when (cache.status) {
+                    Status.SUCCESS -> cache
+                    Status.ERROR -> {
+                        Log.d("CacheLiveData", "Cache returned an error, querying API")
+                        addSource(apiLiveData) {
+                            apiResult = it
+                            updateValue()
+                        }
+                        Resource.loading(null)
+                    }
+
+                    Status.LOADING -> cache
+                }
             } else {
-                value = Resource.loading(cache)
+                value = Resource.loading(cache.data)
             }
         } else if (cache == null && api != null) {
             Log.d("CacheLiveData", "API has finished loading before cache")
@@ -81,7 +94,7 @@ class CacheLiveData<T>(
             // Both cache and API have finished loading
             value = when (api.status) {
                 Status.SUCCESS -> api
-                Status.ERROR -> Resource.error(api.message, cache)
+                Status.ERROR -> Resource.error(api.message, cache.data)
                 Status.LOADING -> api  // should not occur
             }
         }

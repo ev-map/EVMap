@@ -235,6 +235,7 @@ class ChargeLocationsRepository(
         val dbResult = if (filters.isNullOrEmpty()) {
             liveData {
                 emit(
+                    Resource.success(
                     chargeLocationsDao.getChargeLocationsClustered(
                         bounds.southwest.latitude,
                         bounds.northeast.latitude,
@@ -244,6 +245,7 @@ class ChargeLocationsRepository(
                         cacheLimitDate(api),
                         zoom
                     )
+                    )
                 )
             }
         } else {
@@ -251,7 +253,7 @@ class ChargeLocationsRepository(
         }.map {
             val t2 = System.currentTimeMillis()
             Log.d(TAG, "DB loading time: ${t2 - t1}")
-            Log.d(TAG, "number of chargers: ${it.size}")
+            Log.d(TAG, "number of chargers: ${it.data?.size}")
             it
         }
         val filtersSerialized =
@@ -321,7 +323,7 @@ class ChargeLocationsRepository(
                     job.join()
                     progressJob.cancelAndJoin()
                 }
-                emit(Resource.success(dbResult.await()))
+                emit(dbResult.await())
             }
         }
     }
@@ -363,12 +365,14 @@ class ChargeLocationsRepository(
         val dbResult = if (filters.isNullOrEmpty()) {
             liveData {
                 emit(
+                    Resource.success(
                     chargeLocationsDao.getChargeLocationsRadius(
                         location.latitude,
                         location.longitude,
                         radiusMeters,
                         api.id,
                         cacheLimitDate(api)
+                    )
                     )
                 )
             }
@@ -446,7 +450,7 @@ class ChargeLocationsRepository(
                     job.join()
                     progressJob.cancelAndJoin()
                 }
-                emit(Resource.success(dbResult.await()))
+                emit(dbResult.await())
             }
         }
     }
@@ -546,7 +550,7 @@ class ChargeLocationsRepository(
         api: ChargepointApi<ReferenceData>,
         filters: FilterValues,
         bounds: LatLngBounds
-    ): LiveData<List<ChargeLocation>> {
+    ): LiveData<Resource<List<ChargeLocation>>> {
         return queryWithFilters(api, filters, boundsSpatialIndexQuery(bounds))
     }
 
@@ -555,7 +559,7 @@ class ChargeLocationsRepository(
         filters: FilterValues,
         bounds: LatLngBounds,
         zoom: Float
-    ): LiveData<List<ChargepointListItem>> {
+    ): LiveData<Resource<List<ChargepointListItem>>> {
         return queryWithFiltersClustered(api, filters, boundsSpatialIndexQuery(bounds), zoom)
     }
 
@@ -564,7 +568,7 @@ class ChargeLocationsRepository(
         filters: FilterValues,
         location: LatLng,
         radius: Double
-    ): LiveData<List<ChargeLocation>> {
+    ): LiveData<Resource<List<ChargeLocation>>> {
         val region =
             radiusSpatialIndexQuery(location, radius)
         val order =
@@ -583,7 +587,7 @@ class ChargeLocationsRepository(
         filters: FilterValues,
         regionSql: String,
         orderSql: String? = null
-    ): LiveData<List<ChargeLocation>> = referenceData.singleSwitchMap { refData ->
+    ): LiveData<Resource<List<ChargeLocation>>> = referenceData.singleSwitchMap { refData ->
         try {
             val query = api.convertFiltersToSQL(filters, refData)
             val after = cacheLimitDate(api)
@@ -591,11 +595,13 @@ class ChargeLocationsRepository(
 
             liveData {
                 emit(
+                    Resource.success(
                     chargeLocationsDao.getChargeLocationsCustom(
                         SimpleSQLiteQuery(
                             sql,
                             null
                         )
+                    )
                     )
                 )
             }
@@ -610,7 +616,7 @@ class ChargeLocationsRepository(
         regionSql: String,
         zoom: Float,
         orderSql: String? = null
-    ): LiveData<List<ChargepointListItem>> = referenceData.singleSwitchMap { refData ->
+    ): LiveData<Resource<List<ChargepointListItem>>> = referenceData.singleSwitchMap { refData ->
         try {
             if (zoom > CLUSTER_MAX_ZOOM_LEVEL) {
                 queryWithFilters(api, filters, regionSql, orderSql).map { it }
@@ -632,13 +638,19 @@ class ChargeLocationsRepository(
                             .map { it.ids }
                             .flatten(), prefs.dataSource, after)
                     emit(
+                        Resource.success(
                         clusters.filter { it.clusterCount > 1 }
                             .map { it.convert() } + singleChargers
-                    )
+                    ))
                 }
             }
         } catch (e: NotImplementedError) {
-            MutableLiveData()  // in this case we cannot get a DB result
+            MutableLiveData(
+                Resource.error(
+                    e.message,
+                    null
+                )
+            )  // in this case we cannot get a DB result
         }
     }
 

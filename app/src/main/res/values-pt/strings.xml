@@ -377,4 +377,7 @@
     <string name="referral_link">https://ev-map.app/referrals/</string>
     <string name="tff_forum">Tópico no fórum TFF-Forum.de</string>
     <string name="mastodon">Mastodon</string>
+    <string name="data_source_openstreetmap">OpenStreetMap</string>
+    <string name="data_source_openstreetmap_desc">Suporte experimental, algumas funcionalidades não estão disponíveis.</string>
+    <string name="downloading_chargers_percent">A descarregar… %.0f%%</string>
 </resources>

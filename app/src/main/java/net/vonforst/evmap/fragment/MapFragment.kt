@@ -218,25 +218,25 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
         binding.detailAppBar.toolbar.popupTheme =
             com.google.android.material.R.style.Theme_Material3_DayNight
 
-        ViewCompat.setOnApplyWindowInsetsListener(
-            binding.root
-        ) { _, insets ->
-            ViewCompat.onApplyWindowInsets(binding.root, insets)
-
-            val systemWindowInsetTop = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
-            binding.detailAppBar.toolbar.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+        val density = resources.displayMetrics.density
+        ViewCompat.setOnApplyWindowInsetsListener(binding.detailAppBar.toolbar) { v, insets ->
+            val systemWindowInsetTop = insets.getInsets(WindowInsetsCompat.Type.systemBars()).top
+            v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 topMargin = systemWindowInsetTop
             }
+            WindowInsetsCompat.CONSUMED
+        }
 
+        ViewCompat.setOnApplyWindowInsetsListener(binding.fabLayers) { v, insets ->
             // margin of layers button: status bar height + toolbar height + margin
-            val density = resources.displayMetrics.density
+            val systemWindowInsetTop = insets.getInsets(WindowInsetsCompat.Type.systemBars()).top
             val margin =
                 if (binding.toolbarContainer.layoutParams.width == ViewGroup.LayoutParams.MATCH_PARENT) {
                     systemWindowInsetTop + (48 * density).toInt() + (28 * density).toInt()
                 } else {
                     systemWindowInsetTop + (12 * density).toInt()
                 }
-            binding.fabLayers.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+            v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 topMargin = margin
             }
             binding.layersSheet.updateLayoutParams<ViewGroup.MarginLayoutParams> {
@@ -249,11 +249,23 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
             // and cause an infinite loop. So we rely on onMapReady being called later than
             // onApplyWindowInsets.
 
-            insetBottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
-            binding.navBarScrim.layoutParams.height = insetBottom
-            updatePeekHeight()
+            WindowInsetsCompat.CONSUMED
+        }
 
-            insets
+        ViewCompat.setOnApplyWindowInsetsListener(binding.navBarScrim) { v, insets ->
+            insetBottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
+            v.layoutParams.height = insetBottom
+            updatePeekHeight()
+            WindowInsetsCompat.CONSUMED
+        }
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.galleryContainer) { v, insets ->
+            val systemWindowInsetTop = insets.getInsets(WindowInsetsCompat.Type.systemBars()).top
+            val newHeight =
+                resources.getDimensionPixelSize(R.dimen.gallery_height_with_margin) + systemWindowInsetTop
+            v.layoutParams.height = newHeight
+            bottomSheetBehavior.anchorPoint = newHeight
+            WindowInsetsCompat.CONSUMED
         }
 
         exitTransition = TransitionInflater.from(requireContext())

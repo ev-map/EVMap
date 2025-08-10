@@ -6,6 +6,9 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -107,6 +110,11 @@ class ChargepriceFragment : Fragment() {
 
         binding.toolbar.inflateMenu(R.menu.chargeprice)
         binding.toolbar.setTitle(R.string.chargeprice_title)
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.chargePricesList) { v, insets ->
+            v.updatePadding(bottom = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom)
+            WindowInsetsCompat.CONSUMED
+        }
 
         return binding.root
     }

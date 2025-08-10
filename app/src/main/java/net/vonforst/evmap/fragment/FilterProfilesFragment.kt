@@ -8,6 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -59,6 +62,13 @@ class FilterProfilesFragment : Fragment() {
         binding = FragmentFilterProfilesBinding.inflate(inflater, container, false)
         binding.lifecycleOwner = viewLifecycleOwner
         binding.vm = vm
+
+        ViewCompat.setOnApplyWindowInsetsListener(
+            binding.filterProfilesList
+        ) { v, insets ->
+            v.updatePadding(bottom = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom)
+            WindowInsetsCompat.CONSUMED
+        }
 
         return binding.root
     }

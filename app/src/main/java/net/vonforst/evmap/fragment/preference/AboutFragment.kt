@@ -1,9 +1,14 @@
 package net.vonforst.evmap.fragment.preference
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.preference.Preference
@@ -28,6 +33,19 @@ class AboutFragment : PreferenceFragmentCompat() {
         super.onCreate(savedInstanceState)
         enterTransition = MaterialFadeThrough()
         exitTransition = MaterialFadeThrough()
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        val view = super.onCreateView(inflater, container, savedInstanceState)
+        ViewCompat.setOnApplyWindowInsetsListener(listView) { v, insets ->
+            v.updatePadding(bottom = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom)
+            WindowInsetsCompat.CONSUMED
+        }
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

@@ -9,6 +9,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuProvider
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -48,6 +51,13 @@ class FilterFragment : Fragment(), MenuProvider {
         binding.lifecycleOwner = viewLifecycleOwner
         binding.vm = vm
         vm.filterProfile.observe(viewLifecycleOwner) {}
+
+        ViewCompat.setOnApplyWindowInsetsListener(
+            binding.filtersList
+        ) { v, insets ->
+            v.updatePadding(bottom = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom)
+            WindowInsetsCompat.CONSUMED
+        }
 
         return binding.root
     }

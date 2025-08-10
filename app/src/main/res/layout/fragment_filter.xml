@@ -35,6 +35,7 @@
             android:id="@+id/filters_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:clipToPadding="false"
             app:data="@{vm.filtersWithValue}"
             tools:itemCount="3"
             tools:listitem="@layout/item_filter_boolean" />

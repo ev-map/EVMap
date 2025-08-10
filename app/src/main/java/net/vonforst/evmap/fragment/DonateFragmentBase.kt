@@ -4,6 +4,9 @@ import android.content.Intent
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import net.vonforst.evmap.R
 import net.vonforst.evmap.databinding.FragmentDonateReferralBinding
@@ -21,6 +24,11 @@ abstract class DonateFragmentBase : Fragment() {
                 }
                 return true
             }
+        }
+
+        ViewCompat.setOnApplyWindowInsetsListener(referrals.root) { v, insets ->
+            v.updatePadding(bottom = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom)
+            WindowInsetsCompat.CONSUMED
         }
     }
 }

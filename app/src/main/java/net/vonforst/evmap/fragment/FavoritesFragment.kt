@@ -7,6 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -67,6 +70,13 @@ class FavoritesFragment : Fragment() {
         )
         binding.lifecycleOwner = viewLifecycleOwner
         binding.vm = vm
+
+        ViewCompat.setOnApplyWindowInsetsListener(
+            binding.favsList
+        ) { v, insets ->
+            v.updatePadding(bottom = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom)
+            WindowInsetsCompat.CONSUMED
+        }
 
         return binding.root
     }

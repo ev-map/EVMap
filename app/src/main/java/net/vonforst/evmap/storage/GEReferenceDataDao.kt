@@ -1,9 +1,15 @@
 package net.vonforst.evmap.storage
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Entity
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.PrimaryKey
+import androidx.room.Query
+import androidx.room.Transaction
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import net.vonforst.evmap.api.goingelectric.GEChargeCard
 import net.vonforst.evmap.api.goingelectric.GEReferenceData
@@ -36,7 +42,7 @@ abstract class GEReferenceDataDao {
     }
 
     @Query("SELECT * FROM genetwork")
-    abstract fun getAllNetworks(): LiveData<List<GENetwork>>
+    abstract fun getAllNetworks(): Flow<List<GENetwork>>
 
     // PLUGS
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -54,7 +60,7 @@ abstract class GEReferenceDataDao {
     }
 
     @Query("SELECT * FROM geplug")
-    abstract fun getAllPlugs(): LiveData<List<GEPlug>>
+    abstract fun getAllPlugs(): Flow<List<GEPlug>>
 
     // CHARGE CARDS
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -72,31 +78,21 @@ abstract class GEReferenceDataDao {
     }
 
     @Query("SELECT * FROM gechargecard")
-    abstract fun getAllChargeCards(): LiveData<List<GEChargeCard>>
+    abstract fun getAllChargeCards(): Flow<List<GEChargeCard>>
 }
 
 class GEReferenceDataRepository(
     private val api: GoingElectricApiWrapper, private val scope: CoroutineScope,
     private val dao: GEReferenceDataDao, private val prefs: PreferenceDataSource
 ) {
-    fun getReferenceData(): LiveData<GEReferenceData> {
+    fun getReferenceData(): Flow<GEReferenceData> {
         scope.launch {
             updateData()
         }
         val plugs = dao.getAllPlugs()
         val networks = dao.getAllNetworks()
         val chargeCards = dao.getAllChargeCards()
-        return MediatorLiveData<GEReferenceData>().apply {
-            value = null
-            listOf(chargeCards, networks, plugs).map { source ->
-                addSource(source) { _ ->
-                    val p = plugs.value ?: return@addSource
-                    val n = networks.value ?: return@addSource
-                    val cc = chargeCards.value ?: return@addSource
-                    value = GEReferenceData(p.map { it.name }, n.map { it.name }, cc)
-                }
-            }
-        }
+        return combine(plugs, networks, chargeCards) { p, n, c -> GEReferenceData(p.map { it.name }, n.map { it.name }, c) }
     }
 
     private suspend fun updateData() {

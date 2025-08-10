@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.room.*
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import net.vonforst.evmap.api.openchargemap.*
 import net.vonforst.evmap.api.openstreetmap.OSMReferenceData
@@ -32,19 +34,13 @@ abstract class OSMReferenceDataDao {
     }
 
     @Query("SELECT * FROM osmnetwork")
-    abstract fun getAllNetworks(): LiveData<List<OSMNetwork>>
+    abstract fun getAllNetworks(): Flow<List<OSMNetwork>>
 }
 
 class OSMReferenceDataRepository(private val dao: OSMReferenceDataDao) {
-    fun getReferenceData(): LiveData<OSMReferenceData> {
+    fun getReferenceData(): Flow<OSMReferenceData> {
         val networks = dao.getAllNetworks()
-        return MediatorLiveData<OSMReferenceData>().apply {
-            value = null
-            addSource(networks) { _ ->
-                val n = networks.value ?: return@addSource
-                value = OSMReferenceData(n.map { it.name })
-            }
-        }
+        return networks.map { OSMReferenceData(it.map { it.name }) }
     }
 
     suspend fun updateReferenceData(refData: OSMReferenceData) {

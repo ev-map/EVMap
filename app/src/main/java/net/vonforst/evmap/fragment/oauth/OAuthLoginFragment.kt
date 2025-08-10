@@ -1,12 +1,8 @@
 package net.vonforst.evmap.fragment.oauth
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.Color
-import android.net.Uri
 import android.os.Bundle
-import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,20 +12,19 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.Toolbar
+import androidx.core.graphics.toColorInt
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.android.material.transition.MaterialSharedAxis
 import net.vonforst.evmap.MapsActivity
 import net.vonforst.evmap.R
-import java.lang.IllegalStateException
 
 class OAuthLoginFragment : Fragment() {
     companion object {
-        val ACTION_OAUTH_RESULT = "oauth_result"
         val EXTRA_URL = "url"
     }
 
@@ -72,11 +67,11 @@ class OAuthLoginFragment : Fragment() {
         }
 
         val args = OAuthLoginFragmentArgs.fromBundle(requireArguments())
-        val uri = Uri.parse(args.url)
+        val uri = args.url.toUri()
 
         webView = view.findViewById(R.id.webView)
 
-        args.color?.let { webView.setBackgroundColor(Color.parseColor(it)) }
+        args.color?.let { webView.setBackgroundColor(it.toColorInt()) }
         val progress = view.findViewById<LinearProgressIndicator>(R.id.progress_indicator)
 
         CookieManager.getInstance().removeAllCookies(null)
@@ -89,13 +84,8 @@ class OAuthLoginFragment : Fragment() {
 
                 if (url.toString().startsWith(args.resultUrlPrefix)) {
                     val result = Bundle()
-                    result.putString("url", url.toString())
+                    result.putString(EXTRA_URL, url.toString())
                     setFragmentResult(args.url, result)
-                    context?.let {
-                        LocalBroadcastManager.getInstance(it).sendBroadcast(
-                            Intent(ACTION_OAUTH_RESULT).putExtra(EXTRA_URL, url)
-                        )
-                    }
                     navController?.popBackStack()
                 }
 

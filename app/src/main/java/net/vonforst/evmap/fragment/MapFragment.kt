@@ -215,8 +215,8 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
             markerManager = null
         }
 
-        binding.detailAppBar.toolbar.popupTheme =
-            com.google.android.material.R.style.ThemeOverlay_AppCompat_DayNight
+        //binding.detailAppBar.toolbar.popupTheme =
+        //com.google.android.material.R.style.ThemeOverlay_Day
 
         ViewCompat.setOnApplyWindowInsetsListener(
             binding.root

@@ -17,12 +17,14 @@ import net.vonforst.evmap.R
 import net.vonforst.evmap.addDebugInterceptors
 import net.vonforst.evmap.api.availability.tesla.TeslaAuthenticationApi
 import net.vonforst.evmap.api.availability.tesla.TeslaOwnerApi
+import net.vonforst.evmap.fragment.oauth.OAuthLoginFragment
 import net.vonforst.evmap.fragment.oauth.OAuthLoginFragmentArgs
 import net.vonforst.evmap.viewmodel.SettingsViewModel
 import net.vonforst.evmap.viewmodel.viewModelFactory
 import okhttp3.OkHttpClient
 import okio.IOException
 import java.time.Instant
+import androidx.core.net.toUri
 
 class DataSettingsFragment : BaseSettingsFragment() {
     override val isTopLevel = false
@@ -159,7 +161,7 @@ class DataSettingsFragment : BaseSettingsFragment() {
     private fun teslaGetAccessToken(result: Bundle, codeVerifier: String) {
         teslaAccountPreference.summary = getString(R.string.logging_in)
 
-        val url = Uri.parse(result.getString("url"))
+        val url = result.getString(OAuthLoginFragment.EXTRA_URL)!!.toUri()
         val code = url.getQueryParameter("code") ?: return
         val okhttp = OkHttpClient.Builder().addDebugInterceptors().build()
         val request = TeslaAuthenticationApi.AuthCodeRequest(code, codeVerifier)

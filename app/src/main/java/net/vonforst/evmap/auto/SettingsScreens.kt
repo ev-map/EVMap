@@ -29,11 +29,13 @@ import androidx.car.app.model.Template
 import androidx.car.app.model.Toggle
 import androidx.core.content.IntentCompat
 import androidx.core.graphics.drawable.IconCompat
+import androidx.core.net.toUri
 import androidx.core.text.HtmlCompat
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.launch
 import net.vonforst.evmap.BuildConfig
 import net.vonforst.evmap.EXTRA_DONATE
@@ -346,17 +348,12 @@ class DataSettingsScreen(ctx: CarContext, val session: EVMapSession) : Screen(ct
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             .putExtras(args)
 
-        LocalBroadcastManager.getInstance(carContext)
-            .registerReceiver(object : BroadcastReceiver() {
-                override fun onReceive(ctx: Context, intent: Intent) {
-                    val url = IntentCompat.getParcelableExtra(
-                        intent,
-                        OAuthLoginFragment.EXTRA_URL,
-                        Uri::class.java
-                    )
-                    teslaGetAccessToken(url!!, codeVerifier)
-                }
-            }, IntentFilter(OAuthLoginFragment.ACTION_OAUTH_RESULT))
+        val resultFlow = OAuthLoginActivity.registerForResult(uri.toString())
+        lifecycleScope.launch {
+            resultFlow.collect { resultUrl ->
+                teslaGetAccessToken(resultUrl.toUri(), codeVerifier)
+            }
+        }
 
         session.cas.startActivity(intent)
 

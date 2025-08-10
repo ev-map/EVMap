@@ -3,6 +3,11 @@ package net.vonforst.evmap.storage
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import net.vonforst.evmap.model.ChargeLocation
 import net.vonforst.evmap.viewmodel.Resource
 import net.vonforst.evmap.viewmodel.Status
@@ -140,5 +145,45 @@ class PreferCacheLiveData(
                 Status.LOADING -> Resource.loading(cache)
             }
         }
+    }
+}
+
+/**
+ * Flow-based implementation that allows loading data both from a cache and an API.
+ *
+ * It first tries loading from cache, and if the result is newer than `cacheSoftLimit` it does not
+ * reload from the API.
+ */
+fun preferCacheFlow(
+    cache: Flow<ChargeLocation?>,
+    api: Flow<Resource<ChargeLocation>>,
+    cacheSoftLimit: Duration
+): Flow<Resource<ChargeLocation>> = flow {
+    emit(Resource.loading(null)) // initial state
+
+    val cacheRes = cache.firstOrNull() // read cache once
+    if (cacheRes != null) {
+        if (cacheRes.isDetailed && cacheRes.timeRetrieved > Instant.now() - cacheSoftLimit) {
+            emit(Resource.success(cacheRes))
+            return@flow
+        } else {
+            emit(Resource.loading(cacheRes))
+            emitAll(api.map { apiRes ->
+                when (apiRes.status) {
+                    Status.SUCCESS -> apiRes
+                    Status.ERROR -> Resource.error(apiRes.message, cacheRes)
+                    Status.LOADING -> Resource.loading(cacheRes)
+                }
+            })
+        }
+    } else {
+        // No cache → straight to API
+        emitAll(api.map { apiRes ->
+            when (apiRes.status) {
+                Status.SUCCESS -> apiRes
+                Status.ERROR -> Resource.error(apiRes.message, null)
+                Status.LOADING -> Resource.loading(null)
+            }
+        })
     }
 }

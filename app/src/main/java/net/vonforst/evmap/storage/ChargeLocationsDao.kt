@@ -14,7 +14,14 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.vonforst.evmap.api.ChargepointApi
@@ -34,9 +41,9 @@ import net.vonforst.evmap.utils.splitAtAntimeridian
 import net.vonforst.evmap.viewmodel.Resource
 import net.vonforst.evmap.viewmodel.Status
 import net.vonforst.evmap.viewmodel.await
-import net.vonforst.evmap.viewmodel.singleSwitchMap
 import java.time.Duration
 import java.time.Instant
+import kotlin.time.TimeSource
 
 const val CLUSTER_MAX_ZOOM_LEVEL = 11f
 
@@ -170,10 +177,9 @@ private const val TAG = "ChargeLocationsDao"
  * and clustering functionality.
  */
 class ChargeLocationsRepository(
-    api: ChargepointApi<ReferenceData>, private val scope: CoroutineScope,
+    private val api: ChargepointApi<ReferenceData>, private val scope: CoroutineScope,
     private val db: AppDatabase, private val prefs: PreferenceDataSource
 ) {
-    val api = MutableLiveData<ChargepointApi<ReferenceData>>().apply { value = api }
 
     // if zoom level is below this value, server-side clustering will be used (if the API provides it)
     private val serverSideClusteringThreshold = 9f
@@ -182,35 +188,33 @@ class ChargeLocationsRepository(
     // if cached data is available and more recent than this duration, API will not be queried
     private val cacheSoftLimit = Duration.ofDays(1)
 
-    val referenceData = this.api.switchMap { api ->
-        when (api) {
-            is GoingElectricApiWrapper -> {
-                GEReferenceDataRepository(
-                    api,
-                    scope,
-                    db.geReferenceDataDao(),
-                    prefs
-                ).getReferenceData()
-            }
-
-            is OpenChargeMapApiWrapper -> {
-                OCMReferenceDataRepository(
-                    api,
-                    scope,
-                    db.ocmReferenceDataDao(),
-                    prefs
-                ).getReferenceData()
-            }
-
-            is OpenStreetMapApiWrapper -> {
-                OSMReferenceDataRepository(db.osmReferenceDataDao()).getReferenceData()
-            }
-
-            else -> {
-                throw RuntimeException("no reference data implemented")
-            }
+    val referenceData = when (api) {
+        is GoingElectricApiWrapper -> {
+            GEReferenceDataRepository(
+                api,
+                scope,
+                db.geReferenceDataDao(),
+                prefs
+            ).getReferenceData()
         }
-    }
+
+        is OpenChargeMapApiWrapper -> {
+            OCMReferenceDataRepository(
+                api,
+                scope,
+                db.ocmReferenceDataDao(),
+                prefs
+            ).getReferenceData()
+        }
+
+        is OpenStreetMapApiWrapper -> {
+            OSMReferenceDataRepository(db.osmReferenceDataDao()).getReferenceData()
+        }
+
+        else -> {
+            throw RuntimeException("no reference data implemented")
+        }
+    }.shareIn(scope, SharingStarted.Lazily, 1)
 
     private val chargeLocationsDao = db.chargeLocationsDao()
     private val savedRegionDao = db.savedRegionDao()
@@ -221,41 +225,36 @@ class ChargeLocationsRepository(
         bounds: LatLngBounds,
         zoom: Float,
         filters: FilterValues?,
-        overrideCache: Boolean = false
-    ): LiveData<Resource<List<ChargepointListItem>>> {
+        overrideCache: Boolean = false,
+    ): Flow<List<ChargepointListItem>> {
         if (bounds.crossesAntimeridian()) {
             val (a, b) = bounds.splitAtAntimeridian()
-            val liveDataA = getChargepoints(a, zoom, filters, overrideCache)
-            val liveDataB = getChargepoints(b, zoom, filters, overrideCache)
-            return combineLiveData(liveDataA, liveDataB)
+            val flowA = getChargepoints(a, zoom, filters, overrideCache)
+            val flowB = getChargepoints(b, zoom, filters, overrideCache)
+            return flowA.combine(flowB) { a, b -> a + b }
         }
 
-        val api = api.value!!
-        val t1 = System.currentTimeMillis()
-        val dbResult = if (filters.isNullOrEmpty()) {
-            liveData {
-                emit(
-                    Resource.success(
-                    chargeLocationsDao.getChargeLocationsClustered(
-                        bounds.southwest.latitude,
-                        bounds.northeast.latitude,
-                        bounds.southwest.longitude,
-                        bounds.northeast.longitude,
-                        api.id,
-                        cacheLimitDate(api),
-                        zoom
-                    )
-                    )
+        val dbResult = flow {
+            val t1 = TimeSource.Monotonic.markNow()
+            val result = if (filters.isNullOrEmpty()) {
+                chargeLocationsDao.getChargeLocationsClustered(
+                    bounds.southwest.latitude,
+                    bounds.northeast.latitude,
+                    bounds.southwest.longitude,
+                    bounds.northeast.longitude,
+                    api.id,
+                    cacheLimitDate(api),
+                    zoom
                 )
+            } else {
+                queryWithFiltersClustered(api, filters, bounds, zoom)
             }
-        } else {
-            queryWithFiltersClustered(api, filters, bounds, zoom)
-        }.map {
-            val t2 = System.currentTimeMillis()
+            val t2 = TimeSource.Monotonic.markNow()
             Log.d(TAG, "DB loading time: ${t2 - t1}")
-            Log.d(TAG, "number of chargers: ${it.data?.size}")
-            it
+            Log.d(TAG, "number of chargers: ${result.size}")
+            emit(result)
         }
+
         val filtersSerialized =
             filters?.filter { it.value != it.filter.defaultValue() }?.takeIf { it.isNotEmpty() }
                 ?.serialize()
@@ -272,8 +271,8 @@ class ChargeLocationsRepository(
         )
         val useClustering = shouldUseServerSideClustering(zoom)
         if (api.supportsOnlineQueries) {
-            val apiResult = liveData {
-                val refData = referenceData.await()
+            val apiResult = flow {
+                val refData = referenceData.first()
                 val time = Instant.now()
                 val result = api.getChargepoints(refData, bounds, zoom, useClustering, filters)
                 emit(applyLocalClustering(result, zoom))
@@ -328,39 +327,11 @@ class ChargeLocationsRepository(
         }
     }
 
-    private fun combineLiveData(
-        liveDataA: LiveData<Resource<List<ChargepointListItem>>>,
-        liveDataB: LiveData<Resource<List<ChargepointListItem>>>
-    ) = MediatorLiveData<Resource<List<ChargepointListItem>>>().apply {
-        listOf(liveDataA, liveDataB).forEach {
-            addSource(it) {
-                val valA = liveDataA.value
-                val valB = liveDataB.value
-                val combinedList = if (valA?.data != null && valB?.data != null) {
-                    valA.data + valB.data
-                } else if (valA?.data != null) {
-                    valA.data
-                } else if (valB?.data != null) {
-                    valB.data
-                } else null
-                if (valA?.status == Status.SUCCESS && valB?.status == Status.SUCCESS) {
-                    Resource.success(combinedList)
-                } else if (valA?.status == Status.ERROR || valB?.status == Status.ERROR) {
-                    Resource.error(valA?.message ?: valB?.message, combinedList)
-                } else {
-                    Resource.loading(combinedList)
-                }
-            }
-        }
-    }
-
     fun getChargepointsRadius(
         location: LatLng,
         radius: Int,
         filters: FilterValues?
     ): LiveData<Resource<List<ChargeLocation>>> {
-        val api = api.value!!
-
         val radiusMeters = radius.toDouble() * 1000
         val dbResult = if (filters.isNullOrEmpty()) {
             liveData {
@@ -394,7 +365,7 @@ class ChargeLocationsRepository(
         )
         if (api.supportsOnlineQueries) {
             val apiResult = liveData {
-                val refData = referenceData.await()
+                val refData = referenceData.first()
                 val time = Instant.now()
                 val result =
                     api.getChargepointsRadius(
@@ -455,7 +426,7 @@ class ChargeLocationsRepository(
         }
     }
 
-    private fun applyLocalClustering(
+    private suspend fun applyLocalClustering(
         result: Resource<ChargepointList>,
         zoom: Float
     ): Resource<List<ChargepointListItem>> {
@@ -472,7 +443,7 @@ class ChargeLocationsRepository(
         return Resource(result.status, clustered, result.message)
     }
 
-    private fun applyLocalClustering(
+    private suspend fun applyLocalClustering(
         chargers: List<ChargeLocation>,
         zoom: Float
     ): List<ChargepointListItem> {
@@ -482,7 +453,7 @@ class ChargeLocationsRepository(
         val useClustering = chargers.size > 500 || zoom <= CLUSTER_MAX_ZOOM_LEVEL
 
         val chargersClustered = if (useClustering) {
-            Dispatchers.Default.run {
+            withContext(Dispatchers.Default) {
                 cluster(chargers, zoom)
             }
         } else chargers
@@ -492,9 +463,8 @@ class ChargeLocationsRepository(
     fun getChargepointDetail(
         id: Long,
         overrideCache: Boolean = false
-    ): LiveData<Resource<ChargeLocation>> {
-        val api = api.value!!
-        val dbResult = liveData {
+    ): Flow<Resource<ChargeLocation>> {
+        val dbResult = flow {
             emit(
                 chargeLocationsDao.getChargeLocationById(
                     id,
@@ -504,9 +474,8 @@ class ChargeLocationsRepository(
             )
         }
         if (api.supportsOnlineQueries) {
-            val apiResult = liveData {
-                emit(Resource.loading(null))
-                val refData = referenceData.await()
+            val apiResult = flow {
+                val refData = referenceData.first()
                 val result = api.getChargepointDetail(refData, id)
                 emit(result)
                 if (result.status == Status.SUCCESS) {
@@ -516,22 +485,15 @@ class ChargeLocationsRepository(
             return if (overrideCache) {
                 apiResult
             } else {
-                PreferCacheLiveData(dbResult, apiResult, cacheSoftLimit)
+                preferCacheFlow(dbResult, apiResult, cacheSoftLimit)
             }
         } else {
             return dbResult.map { Resource.success(it) }
         }
     }
 
-    fun getFilters(sp: StringProvider) = MediatorLiveData<List<Filter<FilterValue>>>().apply {
-        addSource(referenceData) { refData: ReferenceData? ->
-            refData?.let { value = api.value!!.getFilters(refData, sp) }
-        }
-    }
-
-    suspend fun getFiltersAsync(sp: StringProvider): List<Filter<FilterValue>> {
-        val refData = referenceData.await()
-        return api.value!!.getFilters(refData, sp)
+    fun getFilters(sp: StringProvider) = referenceData.map {
+        api.getFilters(it, sp)
     }
 
     val chargeCardMap by lazy {
@@ -546,29 +508,29 @@ class ChargeLocationsRepository(
         }
     }
 
-    private fun queryWithFilters(
+    private suspend fun queryWithFilters(
         api: ChargepointApi<ReferenceData>,
         filters: FilterValues,
         bounds: LatLngBounds
-    ): LiveData<Resource<List<ChargeLocation>>> {
+    ): List<ChargeLocation> {
         return queryWithFilters(api, filters, boundsSpatialIndexQuery(bounds))
     }
 
-    private fun queryWithFiltersClustered(
+    private suspend fun queryWithFiltersClustered(
         api: ChargepointApi<ReferenceData>,
         filters: FilterValues,
         bounds: LatLngBounds,
         zoom: Float
-    ): LiveData<Resource<List<ChargepointListItem>>> {
+    ): List<ChargepointListItem> {
         return queryWithFiltersClustered(api, filters, boundsSpatialIndexQuery(bounds), zoom)
     }
 
-    private fun queryWithFilters(
+    private suspend fun queryWithFilters(
         api: ChargepointApi<ReferenceData>,
         filters: FilterValues,
         location: LatLng,
         radius: Double
-    ): LiveData<Resource<List<ChargeLocation>>> {
+    ): List<ChargeLocation> {
         val region =
             radiusSpatialIndexQuery(location, radius)
         val order =
@@ -582,76 +544,50 @@ class ChargeLocationsRepository(
     private fun radiusSpatialIndexQuery(location: LatLng, radius: Double) =
         "PtDistWithin(coordinates, MakePoint(${location.longitude}, ${location.latitude}, 4326), ${radius}) AND ChargeLocation.ROWID IN (SELECT ROWID FROM SpatialIndex WHERE f_table_name = 'ChargeLocation' AND search_frame = BuildCircleMbr(${location.longitude}, ${location.latitude}, $radius))"
 
-    private fun queryWithFilters(
+    private suspend fun queryWithFilters(
         api: ChargepointApi<ReferenceData>,
         filters: FilterValues,
         regionSql: String,
         orderSql: String? = null
-    ): LiveData<Resource<List<ChargeLocation>>> = referenceData.singleSwitchMap { refData ->
-        try {
-            val query = api.convertFiltersToSQL(filters, refData)
-            val after = cacheLimitDate(api)
-            val sql = buildFilteredQuery(query, regionSql, after, orderSql)
+    ): List<ChargeLocation> {
+        val query = api.convertFiltersToSQL(filters, referenceData.first())
+        val after = cacheLimitDate(api)
+        val sql = buildFilteredQuery(query, regionSql, after, orderSql)
 
-            liveData {
-                emit(
-                    Resource.success(
-                    chargeLocationsDao.getChargeLocationsCustom(
-                        SimpleSQLiteQuery(
-                            sql,
-                            null
-                        )
-                    )
-                    )
-                )
-            }
-        } catch (e: NotImplementedError) {
-            MutableLiveData()  // in this case we cannot get a DB result
-        }
+        return chargeLocationsDao.getChargeLocationsCustom(
+            SimpleSQLiteQuery(
+                sql,
+                null
+            )
+        )
     }
 
-    private fun queryWithFiltersClustered(
+    private suspend fun queryWithFiltersClustered(
         api: ChargepointApi<ReferenceData>,
         filters: FilterValues,
         regionSql: String,
         zoom: Float,
         orderSql: String? = null
-    ): LiveData<Resource<List<ChargepointListItem>>> = referenceData.singleSwitchMap { refData ->
-        try {
-            if (zoom > CLUSTER_MAX_ZOOM_LEVEL) {
-                queryWithFilters(api, filters, regionSql, orderSql).map { it }
-            } else {
-                val query = api.convertFiltersToSQL(filters, refData)
-                val after = cacheLimitDate(api)
-                val clusterPrecision = getClusterPrecision(zoom)
-                val sql = buildFilteredQuery(query, regionSql, after, orderSql, clusterPrecision)
+    ): List<ChargepointListItem> = if (zoom > CLUSTER_MAX_ZOOM_LEVEL) {
+        queryWithFilters(api, filters, regionSql, orderSql).map { it }
+    } else {
+        val query = api.convertFiltersToSQL(filters, referenceData.first())
+        val after = cacheLimitDate(api)
+        val clusterPrecision = getClusterPrecision(zoom)
+        val sql = buildFilteredQuery(query, regionSql, after, orderSql, clusterPrecision)
 
-                liveData {
-                    val clusters = chargeLocationsDao.getChargeLocationClustersCustom(
-                        SimpleSQLiteQuery(
-                            sql,
-                            null
-                        )
-                    )
-                    val singleChargers =
-                        chargeLocationsDao.getChargeLocationsById(clusters.filter { it.clusterCount == 1 }
-                            .map { it.ids }
-                            .flatten(), prefs.dataSource, after)
-                    emit(
-                        Resource.success(
-                        clusters.filter { it.clusterCount > 1 }
-                            .map { it.convert() } + singleChargers
-                    ))
-                }
-            }
-        } catch (e: NotImplementedError) {
-            MutableLiveData(
-                Resource.error(
-                    e.message,
-                    null
-                )
-            )  // in this case we cannot get a DB result
-        }
+        val clusters = chargeLocationsDao.getChargeLocationClustersCustom(
+            SimpleSQLiteQuery(
+                sql,
+                null
+            )
+        )
+        val singleChargers =
+            chargeLocationsDao.getChargeLocationsById(clusters.filter { it.clusterCount == 1 }
+                .map { it.ids }
+                .flatten(), prefs.dataSource, after)
+        clusters.filter { it.clusterCount > 1 }
+                .map { it.convert() } + singleChargers
     }
 
     private fun buildFilteredQuery(
@@ -691,7 +627,6 @@ class ChargeLocationsRepository(
     }.toString()
 
     private suspend fun fullDownload() {
-        val api = api.value!!
         if (!api.supportsFullDownload) return
 
         val time = Instant.now()

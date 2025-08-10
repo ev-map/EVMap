@@ -1,11 +1,19 @@
 package net.vonforst.evmap.storage
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Transaction
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
-import net.vonforst.evmap.api.openchargemap.*
+import net.vonforst.evmap.api.openchargemap.OCMConnectionType
+import net.vonforst.evmap.api.openchargemap.OCMCountry
+import net.vonforst.evmap.api.openchargemap.OCMOperator
+import net.vonforst.evmap.api.openchargemap.OCMReferenceData
+import net.vonforst.evmap.api.openchargemap.OpenChargeMapApiWrapper
 import net.vonforst.evmap.viewmodel.Status
 import java.time.Duration
 import java.time.Instant
@@ -28,7 +36,7 @@ abstract class OCMReferenceDataDao {
     }
 
     @Query("SELECT * FROM ocmconnectiontype")
-    abstract fun getAllConnectionTypes(): LiveData<List<OCMConnectionType>>
+    abstract fun getAllConnectionTypes(): Flow<List<OCMConnectionType>>
 
     // COUNTRIES
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -46,7 +54,7 @@ abstract class OCMReferenceDataDao {
     }
 
     @Query("SELECT * FROM ocmcountry")
-    abstract fun getAllCountries(): LiveData<List<OCMCountry>>
+    abstract fun getAllCountries(): Flow<List<OCMCountry>>
 
     // OPERATORS
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -64,32 +72,21 @@ abstract class OCMReferenceDataDao {
     }
 
     @Query("SELECT * FROM ocmoperator")
-    abstract fun getAllOperators(): LiveData<List<OCMOperator>>
+    abstract fun getAllOperators(): Flow<List<OCMOperator>>
 }
 
 class OCMReferenceDataRepository(
     private val api: OpenChargeMapApiWrapper, private val scope: CoroutineScope,
     private val dao: OCMReferenceDataDao, private val prefs: PreferenceDataSource
 ) {
-    fun getReferenceData(): LiveData<OCMReferenceData> {
+    fun getReferenceData(): Flow<OCMReferenceData> {
         scope.launch {
             updateData()
         }
         val connectionTypes = dao.getAllConnectionTypes()
         val countries = dao.getAllCountries()
         val operators = dao.getAllOperators()
-        return MediatorLiveData<OCMReferenceData>().apply {
-            value = null
-            listOf(countries, connectionTypes, operators).map { source ->
-                addSource(source) { _ ->
-                    val ct = connectionTypes.value
-                    val c = countries.value
-                    val o = operators.value
-                    if (ct.isNullOrEmpty() || c.isNullOrEmpty() || o.isNullOrEmpty()) return@addSource
-                    value = OCMReferenceData(ct, c, o)
-                }
-            }
-        }
+        return combine(connectionTypes, countries, operators) { ct, c, o -> OCMReferenceData(ct, c, o) }
     }
 
     private suspend fun updateData() {

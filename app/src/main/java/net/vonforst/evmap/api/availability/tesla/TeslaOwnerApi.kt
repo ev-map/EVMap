@@ -100,7 +100,8 @@ interface TeslaAuthenticationApi {
                 .appendQueryParameter("code_challenge_method", "S256")
                 .appendQueryParameter("redirect_uri", "https://auth.tesla.com/void/callback")
                 .appendQueryParameter("response_type", "code")
-                .appendQueryParameter("scope", "openid email offline_access")
+                .appendQueryParameter("scope", "openid email offline_access phone")
+                .appendQueryParameter("is_in_app", "true")
                 .appendQueryParameter("state", "123").build()
 
         val resultUrlPrefix = "https://auth.tesla.com/void/callback"

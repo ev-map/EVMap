@@ -148,7 +148,7 @@ class DataSettingsFragment : BaseSettingsFragment() {
         val args = OAuthLoginFragmentArgs(
             uri.toString(),
             TeslaAuthenticationApi.resultUrlPrefix,
-            "#000000"
+            "#FFFFFF"
         ).toBundle()
 
         setFragmentResultListener(uri.toString()) { _, result ->

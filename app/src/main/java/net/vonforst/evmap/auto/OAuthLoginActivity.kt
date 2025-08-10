@@ -14,7 +14,7 @@ class OAuthLoginActivity : AppCompatActivity(R.layout.activity_oauth_login) {
         private val resultRegistry: MutableMap<String, MutableSharedFlow<String>> = mutableMapOf()
 
         fun registerForResult(url: String): Flow<String> {
-            val flow = MutableSharedFlow<String>()
+            val flow = MutableSharedFlow<String>(replay = 1)
             resultRegistry[url] = flow
             return flow
         }
@@ -32,8 +32,10 @@ class OAuthLoginActivity : AppCompatActivity(R.layout.activity_oauth_login) {
         val url = intent.getStringExtra(OAuthLoginFragment.EXTRA_URL)!!
         supportFragmentManager.setFragmentResultListener(url, this) { _, result ->
             val resultUrl = result.getString(OAuthLoginFragment.EXTRA_URL) ?: return@setFragmentResultListener
-            resultRegistry[url]?.tryEmit(resultUrl)
-            resultRegistry.remove(url)
+            resultRegistry[url]?.let { flow ->
+                flow.tryEmit(resultUrl)
+                resultRegistry.remove(url)
+            }
             finish()
         }
     }

@@ -3,11 +3,14 @@ package net.vonforst.evmap.fragment.oauth
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.CookieManager
+import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.appcompat.content.res.AppCompatResources
@@ -20,6 +23,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.android.material.transition.MaterialSharedAxis
+import net.vonforst.evmap.BuildConfig
 import net.vonforst.evmap.MapsActivity
 import net.vonforst.evmap.R
 
@@ -94,6 +98,9 @@ class OAuthLoginFragment : Fragment() {
 
             override fun onPageStarted(view: WebView, url: String, favicon: Bitmap?) {
                 super.onPageStarted(view, url, favicon)
+                if (BuildConfig.DEBUG) {
+                    Log.w("WebViewClient", url)
+                }
                 progress.show()
             }
 
@@ -101,6 +108,24 @@ class OAuthLoginFragment : Fragment() {
                 super.onPageFinished(view, url)
                 progress.hide()
                 webView.background = null
+            }
+
+            override fun onReceivedError(
+                view: WebView,
+                request: WebResourceRequest,
+                error: WebResourceError
+            ) {
+                super.onReceivedError(view, request, error)
+                Log.w("WebViewClient", error.toString())
+            }
+
+            override fun onReceivedHttpError(
+                view: WebView,
+                request: WebResourceRequest,
+                errorResponse: WebResourceResponse
+            ) {
+                super.onReceivedHttpError(view, request, errorResponse)
+                Log.w("WebViewClient", "HTTP Error ${errorResponse.statusCode}")
             }
         }
         webView.settings.javaScriptEnabled = true

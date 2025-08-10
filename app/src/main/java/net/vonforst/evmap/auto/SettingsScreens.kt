@@ -342,7 +342,7 @@ class DataSettingsScreen(ctx: CarContext, val session: EVMapSession) : Screen(ct
         val args = OAuthLoginFragmentArgs(
             uri.toString(),
             TeslaAuthenticationApi.resultUrlPrefix,
-            "#000000"
+            "#FFFFFF"
         ).toBundle()
         val intent = Intent(carContext, OAuthLoginActivity::class.java)
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

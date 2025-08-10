@@ -35,6 +35,7 @@ class CustomNavigator(
             val prefs = PreferenceDataSource(context)
             val url = when (prefs.dataSource) {
                 "goingelectric" -> "https://www.goingelectric.de/stromtankstellen/new/"
+                "nobil" -> "http://nobil.no/api/chargerregistration/chargerregistration.php?action=register"
                 "openchargemap" -> "https://openchargemap.org/site/poi/add"
                 else -> throw IllegalArgumentException()
             }

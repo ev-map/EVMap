@@ -10,17 +10,14 @@ import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ApplicationProvider
 import net.vonforst.evmap.FakeAndroidKeyStore
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.annotation.Config
 import org.robolectric.annotation.internal.DoNotInstrument
 
 @RunWith(RobolectricTestRunner::class)
 @DoNotInstrument
-@Ignore("Disabled because Robolectric does not yet support API 36")
 class CarAppTest {
     private val testCarContext =
         TestCarContext.createCarContext(ApplicationProvider.getApplicationContext()).apply {

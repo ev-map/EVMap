@@ -117,7 +117,6 @@ import net.vonforst.evmap.viewmodel.Status
 import java.io.IOException
 import java.time.Duration
 import java.time.Instant
-import kotlin.collections.set
 import kotlin.math.min
 
 
@@ -137,6 +136,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
     private lateinit var prefs: PreferenceDataSource
     private var connectionErrorSnackbar: Snackbar? = null
     private var mapTopPadding: Int = 0
+    private var mapBottomPadding: Int = 0
     private var popupMenu: PopupMenu? = null
     private var insetBottom: Int = 0
     private lateinit var favToggle: MenuItem
@@ -245,10 +245,20 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
 
             // set map padding so that compass is not obstructed by toolbar
             mapTopPadding = systemWindowInsetTop + (48 * density).toInt() + (16 * density).toInt()
+            mapBottomPadding = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom
             // if we actually use map.setPadding here, MapLibre will re-trigger onApplyWindowInsets
             // and cause an infinite loop. So we rely on onMapReady being called later than
             // onApplyWindowInsets.
 
+            WindowInsetsCompat.CONSUMED
+        }
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.fabLocate) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom
+            v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                bottomMargin =
+                    systemBars + resources.getDimensionPixelSize(com.mahc.custombottomsheetbehavior.R.dimen.fab_margin)
+            }
             WindowInsetsCompat.CONSUMED
         }
 
@@ -637,14 +647,14 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
             BottomSheetCallback() {
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
                 if (bottomSheetBehavior.state == STATE_HIDDEN) {
-                    map?.setPadding(0, mapTopPadding, 0, 0)
+                    map?.setPadding(0, mapTopPadding, 0, mapBottomPadding)
                 } else {
                     val height = binding.root.height - bottomSheet.top
                     map?.setPadding(
                         0,
                         mapTopPadding,
                         0,
-                        min(bottomSheetBehavior.peekHeight, height)
+                        mapBottomPadding + min(bottomSheetBehavior.peekHeight, height)
                     )
                 }
                 println(slideOffset)
@@ -1085,7 +1095,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
         map.setTrafficEnabled(vm.mapTrafficEnabled.value ?: false)
 
         // set padding so that compass is not obstructed by toolbar
-        map.setPadding(0, mapTopPadding, 0, 0)
+        map.setPadding(0, mapTopPadding, 0, mapBottomPadding)
 
         val mode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
         map.setMapStyle(

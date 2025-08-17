@@ -288,10 +288,10 @@ dependencies {
 
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion")
     implementation("androidx.appcompat:appcompat:1.7.1")
-    implementation("androidx.core:core-ktx:1.17.0-rc01")
+    implementation("androidx.core:core-ktx:1.17.0")
     implementation("androidx.core:core-splashscreen:1.0.1")
     implementation("androidx.activity:activity-ktx:1.10.1")
-    implementation("androidx.fragment:fragment-ktx:1.8.8")
+    implementation("androidx.fragment:fragment-ktx:1.8.9")
     implementation("androidx.cardview:cardview:1.0.0")
     implementation("androidx.preference:preference-ktx:1.2.1")
     implementation("com.google.android.material:material:1.13.0-rc01")
@@ -331,7 +331,7 @@ dependencies {
     val anyMapsVersion = "1174ef9375"
     implementation("com.github.ev-map.AnyMaps:anymaps-base:$anyMapsVersion")
     googleImplementation("com.github.ev-map.AnyMaps:anymaps-google:$anyMapsVersion")
-    googleImplementation("com.google.android.gms:play-services-maps:19.0.0")
+    googleImplementation("com.google.android.gms:play-services-maps:19.2.0")
     implementation("com.github.ev-map.AnyMaps:anymaps-maplibre:$anyMapsVersion") {
         // duplicates classes from mapbox-sdk-services
         exclude("org.maplibre.gl", "android-sdk-geojson")
@@ -357,7 +357,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
 
     // room library
-    val room_version = "2.7.1"
+    val room_version = "2.7.2"
     implementation("androidx.room:room-runtime:$room_version")
     ksp("androidx.room:room-compiler:$room_version")
     implementation("androidx.room:room-ktx:$room_version")
@@ -367,7 +367,7 @@ dependencies {
     // forked version with upgraded sqlite & libxml & 16 KB page size support
     // https://github.com/dalgarins/android-spatialite/pull/11
     // https://github.com/dalgarins/android-spatialite/pull/12
-    implementation("io.github.ev-map:android-spatialite:2.2.0-alpha")
+    implementation("io.github.ev-map:android-spatialite:2.2.1-alpha")
 
     // billing library
     val billing_version = "7.0.0"
@@ -375,7 +375,7 @@ dependencies {
     googleImplementation("com.android.billingclient:billing-ktx:$billing_version")
 
     // ACRA (crash reporting)
-    val acraVersion = "5.11.1"
+    val acraVersion = "5.12.0"
     implementation("ch.acra:acra-http:$acraVersion")
     implementation("ch.acra:acra-dialog:$acraVersion")
     implementation("ch.acra:acra-limiter:$acraVersion")

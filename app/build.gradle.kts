@@ -381,9 +381,6 @@ dependencies {
     implementation("ch.acra:acra-limiter:$acraVersion")
 
     // debug tools
-    debugImplementation("com.facebook.flipper:flipper:0.238.0")
-    debugImplementation("com.facebook.soloader:soloader:0.10.5")
-    debugImplementation("com.facebook.flipper:flipper-network-plugin:0.238.0")
     debugImplementation("com.jakewharton.timber:timber:5.0.1")
     debugImplementation("com.squareup.leakcanary:leakcanary-android:2.14")
 

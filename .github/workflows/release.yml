@@ -24,7 +24,7 @@ jobs:
       - name: Extract version code
         run: echo "VERSION_CODE=$(grep -o "^\s*versionCode\s*=\s*[0-9]\+" app/build.gradle.kts | awk '{ print $3 }' | tr -d \''"\\')" >> $GITHUB_ENV
 
-      - name: Build app release
+      - name: Build app release & export libraries
         env:
           GOINGELECTRIC_API_KEY: ${{ secrets.GOINGELECTRIC_API_KEY }}
           OPENCHARGEMAP_API_KEY: ${{ secrets.OPENCHARGEMAP_API_KEY }}
@@ -38,7 +38,7 @@ jobs:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEYSTORE_ALIAS: ${{ secrets.KEYSTORE_ALIAS }}
           KEYSTORE_ALIAS_PASSWORD: ${{ secrets.KEYSTORE_ALIAS_PASSWORD }}
-        run: ./gradlew assembleRelease --no-daemon
+        run: ./gradlew exportLibraryDefinitions assembleRelease --no-daemon
 
       - name: release
         uses: actions/create-release@v1
@@ -88,3 +88,12 @@ jobs:
           asset_path: app/build/outputs/apk/fossAutomotive/release/app-foss-automotive-release.apk
           asset_name: app-foss-automotive-release.apk
           asset_content_type: application/vnd.android.package-archive
+      - name: upload Licenses
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: app/build/generated/aboutLibraries/aboutlibraries.json
+          asset_name: aboutlibraries.json
+          asset_content_type: application/json

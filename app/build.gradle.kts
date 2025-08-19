@@ -336,7 +336,7 @@ dependencies {
         // duplicates classes from mapbox-sdk-services
         exclude("org.maplibre.gl", "android-sdk-geojson")
     }
-    implementation("org.maplibre.gl:android-sdk:10.3.4") {
+    implementation("org.maplibre.gl:android-sdk:10.3.5") {
         exclude("org.maplibre.gl", "android-sdk-geojson")
     }
 

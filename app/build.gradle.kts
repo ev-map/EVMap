@@ -1,7 +1,7 @@
 import java.util.Base64
 
 plugins {
-    id("com.adarshr.test-logger") version "3.1.0"
+    id("com.adarshr.test-logger") version "4.0.0"
     id("com.android.application")
     id("kotlin-android")
     id("kotlin-parcelize")
@@ -264,7 +264,6 @@ aboutLibraries {
             "asdkl",  // Android SDK
             "Dual OpenSSL and SSLeay License",  // Android NDK OpenSSL
             "Google Maps Platform Terms of Service",  // Google Maps SDK
-            "provided without support or warranty",  // org.json
             "Unicode/ICU License", "Unicode-3.0",  // icu4j
             "Bouncy Castle Licence",  // bcprov
             "CDDL + GPLv2 with classpath exception",  // javax.annotation-api
@@ -316,7 +315,6 @@ dependencies {
     implementation("com.mikepenz:aboutlibraries:$aboutLibsVersion")
     implementation("com.airbnb.android:lottie:6.6.7")
     implementation("io.michaelrocks.bimap:bimap:1.1.0")
-    implementation("com.google.guava:guava:29.0-android")
     implementation("com.github.pengrad:mapscaleview:1.6.0")
     implementation("com.github.romandanylyk:PageIndicatorView:b1bad589b5")
     implementation("com.github.erfansn:locale-config-x:1.0.1")
@@ -342,25 +340,25 @@ dependencies {
 
     // Google Places
     googleImplementation("com.google.android.libraries.places:places:3.5.0")
-    googleImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
+    googleImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.10.2")
 
     // Mapbox Geocoding
-    implementation("com.mapbox.mapboxsdk:mapbox-sdk-services:5.5.0")
+    implementation("com.mapbox.mapboxsdk:mapbox-sdk-services:5.8.0")
 
     // navigation library
     implementation("androidx.navigation:navigation-fragment-ktx:$navVersion")
     implementation("androidx.navigation:navigation-ui-ktx:$navVersion")
 
     // viewmodel library
-    val lifecycle_version = "2.8.1"
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
+    val lifecycleVersion = "2.9.2"
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion")
 
     // room library
-    val room_version = "2.7.2"
-    implementation("androidx.room:room-runtime:$room_version")
-    ksp("androidx.room:room-compiler:$room_version")
-    implementation("androidx.room:room-ktx:$room_version")
+    val roomVersion = "2.7.2"
+    implementation("androidx.room:room-runtime:$roomVersion")
+    ksp("androidx.room:room-compiler:$roomVersion")
+    implementation("androidx.room:room-ktx:$roomVersion")
     implementation("com.github.anboralabs:spatia-room:0.3.0") {
         exclude("com.github.dalgarins", "android-spatialite")
     }
@@ -370,9 +368,9 @@ dependencies {
     implementation("io.github.ev-map:android-spatialite:2.2.1-alpha")
 
     // billing library
-    val billing_version = "7.0.0"
-    googleImplementation("com.android.billingclient:billing:$billing_version")
-    googleImplementation("com.android.billingclient:billing-ktx:$billing_version")
+    val billingVersion = "7.0.0"
+    googleImplementation("com.android.billingclient:billing:$billingVersion")
+    googleImplementation("com.android.billingclient:billing-ktx:$billingVersion")
 
     // ACRA (crash reporting)
     val acraVersion = "5.12.0"
@@ -388,20 +386,18 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
     //noinspection GradleDependency
-    testImplementation("org.json:json:20080701")
     testImplementation("org.robolectric:robolectric:4.16-beta-1")
-    testImplementation("androidx.test:core:1.5.0")
+    testImplementation("androidx.test:core:1.7.0")
     testImplementation("androidx.arch.core:core-testing:2.2.0")
     testImplementation("androidx.car.app:app-testing:$carAppVersion")
-    testImplementation("androidx.test:core:1.5.0")
 
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    androidTestImplementation("androidx.test.ext:junit:1.3.0")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")
     androidTestImplementation("androidx.arch.core:core-testing:2.2.0")
 
     ksp("com.squareup.moshi:moshi-kotlin-codegen:1.15.2")
 
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
 }
 
 fun decode(s: String, key: String): String {

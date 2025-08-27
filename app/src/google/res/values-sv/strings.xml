@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="donations_info" formatted="false">Tycker du att EVMap är praktisk? Stöd utvecklingen genom att skicka en donation till utvecklaren.\n\nGoogle tar 15% av alla donationer.</string>
+    <string name="data_sources_hint">I inställningarna kan du välja mellan Google Maps och OpenStreetMap som kartleverantör.</string>
+</resources>

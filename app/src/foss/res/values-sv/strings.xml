@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="donations_info" formatted="false">Tycker du att EVMap är praktisk? Stöd utvecklingen genom att skicka en donation till utvecklaren.</string>
+    <string name="donate_paypal">Donera med PayPal</string>
+    <string name="data_sources_hint">Kartdata i appen tillhandahålls av OpenStreetMap.</string>
+</resources>

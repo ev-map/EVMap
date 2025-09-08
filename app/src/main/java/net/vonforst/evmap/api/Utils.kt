@@ -8,7 +8,7 @@ import kotlin.math.abs
 private val plugNames = mapOf(
     Chargepoint.TYPE_1 to R.string.plug_type_1,
     Chargepoint.TYPE_2_UNKNOWN to R.string.plug_type_2,
-    Chargepoint.TYPE_2_PLUG to R.string.plug_type_2,
+    Chargepoint.TYPE_2_PLUG to R.string.plug_type_2_tethered,
     Chargepoint.TYPE_2_SOCKET to R.string.plug_type_2,
     Chargepoint.TYPE_3A to R.string.plug_type_3a,
     Chargepoint.TYPE_3C to R.string.plug_type_3c,

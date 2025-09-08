@@ -59,6 +59,7 @@
     <string name="filter_connectors">Connectors</string>
     <string name="plug_type_1">Type 1</string>
     <string name="plug_type_2">Type 2</string>
+    <string name="plug_type_2_tethered">Type 2 tethered cable</string>
     <string name="plug_type_3a">Type 3A</string>
     <string name="plug_type_3c">Type 3C</string>
     <string name="plug_ccs">CCS</string>

@@ -39,10 +39,6 @@ class MapSurfaceCallback(val ctx: CarContext, val lifecycleScope: LifecycleCorou
     SurfaceCallback, OnMapReadyCallback {
     private val VIRTUAL_DISPLAY_NAME = "evmap_map"
     private val VELOCITY_THRESHOLD_IGNORE_FLING = 1000
-    private val STATUSBAR_OFFSET_SYSTEMS = listOf(
-        "VolvoCars/ihu_emulator_volvo_car/ihu_emulator:11",
-        "Google/sdk_gcar_x86_64/generic_64bitonly_x86_64:11"
-    )
 
     private val prefs = PreferenceDataSource(ctx)
 
@@ -243,9 +239,11 @@ class MapSurfaceCallback(val ctx: CarContext, val lifecycleScope: LifecycleCorou
     }
 
     private fun offsetY(y: Float): Float {
-        if (!STATUSBAR_OFFSET_SYSTEMS.any { Build.FINGERPRINT.startsWith(it) }) return y
+        if (BuildConfig.FLAVOR_automotive != "automotive") {
+            return y
+        }
 
-        // In some emulators, touch locations are offset by the status bar height
+        // On AAOS, touch locations seem to be offset by the status bar height
         // related: https://issuetracker.google.com/issues/256905247
         val resId = ctx.resources.getIdentifier("status_bar_height", "dimen", "android")
         val offset = resId.takeIf { it > 0 }?.let { ctx.resources.getDimensionPixelSize(it) } ?: 0

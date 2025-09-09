@@ -3,6 +3,7 @@ package net.vonforst.evmap.auto
 import android.animation.ValueAnimator
 import android.app.Presentation
 import android.content.Context
+import android.graphics.Point
 import android.graphics.Rect
 import android.hardware.display.DisplayManager
 import android.hardware.display.VirtualDisplay
@@ -169,14 +170,22 @@ class MapSurfaceCallback(val ctx: CarContext, val lifecycleScope: LifecycleCorou
     override fun onScale(focusX: Float, focusY: Float, scaleFactor: Float) {
         flingAnimator?.cancel()
         val map = map ?: return
-        if (scaleFactor == 2f) return
 
         val offsetX = (focusX - mapView.width / 2) * (scaleFactor - 1f)
         val offsetY = (offsetY(focusY) - mapView.height / 2) * (scaleFactor - 1f)
 
         Log.i("MapSurfaceCallback", "focus: $focusX, $focusY, scaleFactor: $scaleFactor")
-        map.moveCamera(map.cameraUpdateFactory.zoomBy(scaleFactor - 1))
-        map.moveCamera(map.cameraUpdateFactory.scrollBy(offsetX, offsetY))
+        if (scaleFactor == 2f) {
+            map.animateCamera(
+                map.cameraUpdateFactory.zoomBy(
+                    scaleFactor - 1,
+                    Point(focusX.roundToInt(), focusY.roundToInt())
+                )
+            )
+        } else {
+            map.moveCamera(map.cameraUpdateFactory.zoomBy(scaleFactor - 1))
+            map.moveCamera(map.cameraUpdateFactory.scrollBy(offsetX, offsetY))
+        }
         dispatchCameraMoveStarted()
     }
 

@@ -135,6 +135,17 @@ android {
         if (goingelectricKey != null) {
             resValue("string", "goingelectric_key", goingelectricKey)
         }
+        var nobilKey =
+            System.getenv("NOBIL_API_KEY") ?: project.findProperty("NOBIL_API_KEY")?.toString()
+        if (nobilKey == null && project.hasProperty("NOBIL_API_KEY_ENCRYPTED")) {
+            nobilKey = decode(
+                project.findProperty("NOBIL_API_KEY_ENCRYPTED").toString(),
+                "FmK.d,-f*p+rD+WK!eds"
+            )
+        }
+        if (nobilKey != null) {
+            resValue("string", "nobil_key", nobilKey)
+        }
         var openchargemapKey =
             System.getenv("OPENCHARGEMAP_API_KEY") ?: project.findProperty("OPENCHARGEMAP_API_KEY")
                 ?.toString()

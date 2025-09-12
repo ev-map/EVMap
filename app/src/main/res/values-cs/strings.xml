@@ -380,4 +380,5 @@
     <string name="data_source_openstreetmap">OpenStreetMap</string>
     <string name="data_source_openstreetmap_desc">Experimentální podpora v EVMap, nejsou dostupné všechny funkce.</string>
     <string name="downloading_chargers_percent">Stahování… %.0f%%</string>
+    <string name="plug_type_2_tethered">Provázaný kabel typ 2</string>
 </resources>

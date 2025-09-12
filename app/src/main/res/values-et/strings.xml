@@ -376,4 +376,5 @@
     <string name="data_source_openstreetmap">OpenStreetMap</string>
     <string name="data_source_openstreetmap_desc">Katseline tugi EVMapis - kõik funktsionaalsused pole saadaval.</string>
     <string name="downloading_chargers_percent">Laadin alla… %.0f%%</string>
+    <string name="plug_type_2_tethered">Tüüp 2 lõimitud kaabel</string>
 </resources>

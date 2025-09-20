@@ -61,6 +61,7 @@ class ChargeLocationsDaoTest {
                 "https://google.com",
                 null,
                 null,
+                null,
                 false,
                 null,
                 null,
@@ -68,7 +69,7 @@ class ChargeLocationsDaoTest {
                 null,
                 null,
                 null,
-                null, null, null, null, null, null, null, Instant.now(), true
+                null, null, null, null, null, null, null, null, Instant.now(), true
             )
         }
         runBlocking {

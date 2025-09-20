@@ -1,12 +1,12 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 24,
-    "identityHash": "b2b3f39d450f4f7c8280ca850161bbb3",
+    "version": 27,
+    "identityHash": "84f71cce385c444726ba336834ddf6b4",
     "entities": [
       {
         "tableName": "ChargeLocation",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `dataSource` TEXT NOT NULL, `name` TEXT NOT NULL, `coordinates` BLOB NOT NULL, `chargepoints` TEXT NOT NULL, `network` TEXT, `url` TEXT NOT NULL, `editUrl` TEXT, `verified` INTEGER NOT NULL, `barrierFree` INTEGER, `operator` TEXT, `generalInformation` TEXT, `amenities` TEXT, `locationDescription` TEXT, `photos` TEXT, `chargecards` TEXT, `license` TEXT, `networkUrl` TEXT, `chargerUrl` TEXT, `timeRetrieved` INTEGER NOT NULL, `isDetailed` INTEGER NOT NULL, `coordinatesProjected` BLOB NOT NULL, `city` TEXT, `country` TEXT, `postcode` TEXT, `street` TEXT, `fault_report_created` INTEGER, `fault_report_description` TEXT, `twentyfourSeven` INTEGER, `description` TEXT, `mostart` TEXT, `moend` TEXT, `tustart` TEXT, `tuend` TEXT, `westart` TEXT, `weend` TEXT, `thstart` TEXT, `thend` TEXT, `frstart` TEXT, `frend` TEXT, `sastart` TEXT, `saend` TEXT, `sustart` TEXT, `suend` TEXT, `hostart` TEXT, `hoend` TEXT, `freecharging` INTEGER, `freeparking` INTEGER, `descriptionShort` TEXT, `descriptionLong` TEXT, `chargepricecountry` TEXT, `chargepricenetwork` TEXT, `chargepriceplugTypes` TEXT, PRIMARY KEY(`id`, `dataSource`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `dataSource` TEXT NOT NULL, `name` TEXT NOT NULL, `coordinates` BLOB NOT NULL, `chargepoints` TEXT NOT NULL, `network` TEXT, `dataSourceUrl` TEXT NOT NULL, `url` TEXT, `editUrl` TEXT, `verified` INTEGER NOT NULL, `barrierFree` INTEGER, `operator` TEXT, `generalInformation` TEXT, `amenities` TEXT, `locationDescription` TEXT, `photos` TEXT, `chargecards` TEXT, `accessibility` TEXT, `license` TEXT, `networkUrl` TEXT, `chargerUrl` TEXT, `timeRetrieved` INTEGER NOT NULL, `isDetailed` INTEGER NOT NULL, `coordinatesProjected` BLOB NOT NULL, `city` TEXT, `country` TEXT, `postcode` TEXT, `street` TEXT, `fault_report_created` INTEGER, `fault_report_description` TEXT, `twentyfourSeven` INTEGER, `description` TEXT, `mostart` TEXT, `moend` TEXT, `tustart` TEXT, `tuend` TEXT, `westart` TEXT, `weend` TEXT, `thstart` TEXT, `thend` TEXT, `frstart` TEXT, `frend` TEXT, `sastart` TEXT, `saend` TEXT, `sustart` TEXT, `suend` TEXT, `hostart` TEXT, `hoend` TEXT, `freecharging` INTEGER, `freeparking` INTEGER, `descriptionShort` TEXT, `descriptionLong` TEXT, `chargepricecountry` TEXT, `chargepricenetwork` TEXT, `chargepriceplugTypes` TEXT, PRIMARY KEY(`id`, `dataSource`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -44,10 +44,15 @@
             "affinity": "TEXT"
           },
           {
-            "fieldPath": "url",
-            "columnName": "url",
+            "fieldPath": "dataSourceUrl",
+            "columnName": "dataSourceUrl",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "url",
+            "columnName": "url",
+            "affinity": "TEXT"
           },
           {
             "fieldPath": "editUrl",
@@ -93,6 +98,11 @@
           {
             "fieldPath": "chargecards",
             "columnName": "chargecards",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "accessibility",
+            "columnName": "accessibility",
             "affinity": "TEXT"
           },
           {
@@ -922,7 +932,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b2b3f39d450f4f7c8280ca850161bbb3')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '84f71cce385c444726ba336834ddf6b4')"
     ]
   }
 }

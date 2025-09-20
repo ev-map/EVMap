@@ -5,6 +5,7 @@
     <string name="connectors">Laddkontakter</string>
     <string name="no_maps_app_found">Installera en kartapp först</string>
     <string name="no_browser_app_found">Installera en webbläsare först</string>
+    <string name="no_email_app_found">Installera en e-postapp först</string>
     <string name="address">Adress</string>
     <string name="operator">Operatör</string>
     <string name="network">Nätverk</string>
@@ -108,6 +109,7 @@
     <string name="filter_open_247">Tillgänglig 24/7</string>
     <string name="filter_barrierfree">Kan användas utan registrering</string>
     <string name="filter_exclude_faults">Utelämna laddare med felrapporter</string>
+    <string name="filter_accessibility">Laddarens tillgänglighet</string>
     <string name="charge_cards">Betalningsalternativ</string>
     <string name="and_n_others">och %d andra</string>
     <string name="pref_map_provider">Kartleverantör</string>
@@ -225,9 +227,11 @@
     <string name="unknown_operator">Okänd operatör</string>
     <string name="data_sources_description">Vänligen välj en datakälla för laddstationer. Det kan ändras senare i inställningarna.</string>
     <string name="data_source_goingelectric">GoingElectric.de</string>
+    <string name="data_source_nobil">NOBIL</string>
     <string name="data_source_openstreetmap">OpenStreetMap</string>
     <string name="data_source_openchargemap">Open Charge Map</string>
     <string name="data_source_goingelectric_desc">Mycket bra i tysktalande länder. Beskrivningar på tyska. Underhålls av frivilliga.</string>
+    <string name="data_source_nobil_desc"><![CDATA[Öppen data från myndigheter och allmänheten för de nordiska länderna.]]></string>
     <string name="data_source_openchargemap_desc"><![CDATA[Världsomspännande med varierande kvalitet. Beskrivningar på engelska eller på det lokala språket. Underhålls av frivilliga och har öppen data från myndigheter i några länder (t.ex. Nordamerika, Storbritannien, Frankrike och Norge).]]></string>
     <string name="data_source_openstreetmap_desc">Experimentellt stöd i EVMap, inte alla funktioner är tillgängliga.</string>
     <string name="next">nästa</string>
@@ -376,4 +380,9 @@
     <string name="pref_chargeprice_native_integration_on">Priser kommer visas direkt i EVMap</string>
     <string name="pref_chargeprice_native_integration_off">Prisjämförelseknappen kommer länka till Chargeprice-app eller webbsida</string>
     <string name="auto_zoom_for_details">Zooma in för att se detaljer</string>
+    <string name="accessibility_public">Offentlig</string>
+    <string name="accessibility_visitors">Besökare</string>
+    <string name="accessibility_employees">Anställda</string>
+    <string name="accessibility_by_appointment">Efter överenskommelse</string>
+    <string name="accessibility_residents">Boende</string>
 </resources>

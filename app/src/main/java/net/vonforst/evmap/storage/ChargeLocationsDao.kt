@@ -84,7 +84,7 @@ abstract class ChargeLocationsDao {
     ): List<ChargeLocation>
 
     @SkipQueryVerification
-    @Query("SELECT * FROM chargelocation WHERE dataSource == :dataSource AND timeRetrieved > :after AND ROWID IN (SELECT ROWID FROM SpatialIndex WHERE f_table_name = 'ChargeLocation' AND search_frame = BuildMbr(:lng1, :lat1, :lng2, :lat2))")
+    @Query("SELECT * FROM chargelocation WHERE dataSource == :dataSource AND timeRetrieved > :after AND ROWID IN (SELECT ROWID FROM SpatialIndex WHERE f_table_name = 'ChargeLocation' AND f_geometry_column = 'coordinates' AND search_frame = BuildMbr(:lng1, :lat1, :lng2, :lat2))")
     abstract suspend fun getChargeLocationsInBounds(
         lat1: Double,
         lat2: Double,
@@ -95,7 +95,7 @@ abstract class ChargeLocationsDao {
     ): List<ChargeLocation>
 
     @SkipQueryVerification
-    @Query("SELECT * FROM chargelocation WHERE dataSource == :dataSource AND PtDistWithin(coordinates, MakePoint(:lng, :lat, 4326), :radius) AND timeRetrieved > :after AND ROWID IN (SELECT ROWID FROM SpatialIndex WHERE f_table_name = 'ChargeLocation' AND search_frame = BuildCircleMbr(:lng, :lat, :radius)) ORDER BY Distance(coordinates, MakePoint(:lng, :lat, 4326))")
+    @Query("SELECT * FROM chargelocation WHERE dataSource == :dataSource AND PtDistWithin(coordinates, MakePoint(:lng, :lat, 4326), :radius) AND timeRetrieved > :after AND ROWID IN (SELECT ROWID FROM SpatialIndex WHERE f_table_name = 'ChargeLocation' AND f_geometry_column = 'coordinates' AND search_frame = BuildCircleMbr(:lng, :lat, :radius)) ORDER BY Distance(coordinates, MakePoint(:lng, :lat, 4326))")
     abstract suspend fun getChargeLocationsRadius(
         lat: Double,
         lng: Double,
@@ -582,10 +582,10 @@ class ChargeLocationsRepository(
     }
 
     private fun boundsSpatialIndexQuery(bounds: LatLngBounds) =
-        "ChargeLocation.ROWID IN (SELECT ROWID FROM SpatialIndex WHERE f_table_name = 'ChargeLocation' AND search_frame = BuildMbr(${bounds.southwest.longitude}, ${bounds.southwest.latitude}, ${bounds.northeast.longitude}, ${bounds.northeast.latitude}))"
+        "ChargeLocation.ROWID IN (SELECT ROWID FROM SpatialIndex WHERE f_table_name = 'ChargeLocation' AND f_geometry_column = 'coordinates' AND search_frame = BuildMbr(${bounds.southwest.longitude}, ${bounds.southwest.latitude}, ${bounds.northeast.longitude}, ${bounds.northeast.latitude}))"
 
     private fun radiusSpatialIndexQuery(location: LatLng, radius: Double) =
-        "PtDistWithin(coordinates, MakePoint(${location.longitude}, ${location.latitude}, 4326), ${radius}) AND ChargeLocation.ROWID IN (SELECT ROWID FROM SpatialIndex WHERE f_table_name = 'ChargeLocation' AND search_frame = BuildCircleMbr(${location.longitude}, ${location.latitude}, $radius))"
+        "PtDistWithin(coordinates, MakePoint(${location.longitude}, ${location.latitude}, 4326), ${radius}) AND ChargeLocation.ROWID IN (SELECT ROWID FROM SpatialIndex WHERE f_table_name = 'ChargeLocation' AND f_geometry_column = 'coordinates' AND search_frame = BuildCircleMbr(${location.longitude}, ${location.latitude}, $radius))"
 
     private fun queryWithFilters(
         api: ChargepointApi<ReferenceData>,

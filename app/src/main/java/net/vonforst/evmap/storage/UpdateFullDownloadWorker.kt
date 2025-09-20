@@ -23,6 +23,7 @@ class UpdateFullDownloadWorker(appContext: Context, workerParams: WorkerParamete
 
         var insertJob: Job? = null
         val result = api.fullDownload()
+        val chargerIds = mutableListOf<Long>()
         result.chargers.chunked(1024).forEach {
             insertJob?.join()
             insertJob = withContext(Dispatchers.IO) {
@@ -30,7 +31,11 @@ class UpdateFullDownloadWorker(appContext: Context, workerParams: WorkerParamete
                     chargeLocations.insert(*it.toTypedArray())
                 }
             }
+            chargerIds.addAll(it.map { it.id })
         }
+
+        // delete chargers that have been removed
+        chargeLocations.deleteIdNotIn(api.id, chargerIds)
 
         when (api) {
             is OpenStreetMapApiWrapper -> {
@@ -40,7 +45,6 @@ class UpdateFullDownloadWorker(appContext: Context, workerParams: WorkerParamete
             }
         }
 
-        // TODO: remove deleted chargers
         return Result.success()
     }
 }

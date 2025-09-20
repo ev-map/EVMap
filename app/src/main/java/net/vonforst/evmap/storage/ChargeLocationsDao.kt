@@ -69,6 +69,9 @@ abstract class ChargeLocationsDao {
     @Query("DELETE FROM chargelocation WHERE NOT EXISTS (SELECT 1 FROM favorite WHERE favorite.chargerId = chargelocation.id)")
     abstract suspend fun deleteAllIfNotFavorite()
 
+    @Query("DELETE FROM chargelocation WHERE dataSource == :dataSource AND id NOT IN (:chargerIds)")
+    abstract suspend fun deleteIdNotIn(dataSource: String, chargerIds: List<Long>)
+
     @Query("SELECT * FROM chargelocation WHERE dataSource == :dataSource AND id == :id AND isDetailed == 1 AND timeRetrieved > :after")
     abstract suspend fun getChargeLocationById(
         id: Long,
@@ -703,6 +706,7 @@ class ChargeLocationsRepository(
         val result = api.fullDownload()
         try {
             var insertJob: Job? = null
+            val chargerIds = mutableListOf<Long>()
             result.chargers.chunked(1024).forEach {
                 insertJob?.join()
                 insertJob = withContext(Dispatchers.IO) {
@@ -710,8 +714,12 @@ class ChargeLocationsRepository(
                         chargeLocationsDao.insert(*it.toTypedArray())
                     }
                 }
+                chargerIds.addAll(it.map { it.id })
                 fullDownloadProgress.value = result.progress
             }
+            // delete chargers that have been removed
+            chargeLocationsDao.deleteIdNotIn(api.id, chargerIds)
+
             val region = Mbr(
                 -180.0,
                 -90.0,

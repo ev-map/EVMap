@@ -1,0 +1,231 @@
+{
+  "data_format": 1,
+  "data_url": "https://raw.githubusercontent.com/ev-map/evmap/master/_misc/taginfo.json",
+  "data_updated": "20250921T140000Z",
+  "project": {
+    "name": "EVMap",
+    "description": "Find electric vehicle chargers comfortably using your Android phone.",
+    "project_url": "https://ev-map.app/",
+    "doc_url": "https://github.com/ev-map/evmap-osm",
+    "icon_url": "https://avatars.githubusercontent.com/u/115927597?s=32",
+    "contact_name": "Johan von Forstner",
+    "contact_email": "evmap@vonforst.net"
+  },
+  "tags": [
+    {
+      "key": "amenity",
+      "value": "charging_station",
+      "description": "Used to display charging stations."
+    },
+    {
+      "key": "name"
+    },
+    {
+      "key": "network"
+    },
+    {
+      "key": "authentication:none",
+      "value": "yes"
+    },
+    {
+      "key": "operator"
+    },
+    {
+      "key": "description"
+    },
+    {
+      "key": "website"
+    },
+    {
+      "key": "addr:city"
+    },
+    {
+      "key": "addr:country"
+    },
+    {
+      "key": "addr:postcode"
+    },
+    {
+      "key": "addr:street"
+    },
+    {
+      "key": "addr:housenumber"
+    },
+    {
+      "key": "addr:housename"
+    },
+    {
+      "key": "socket:type1"
+    },
+    {
+      "key": "socket:type1:output"
+    },
+    {
+      "key": "socket:type1_combo"
+    },
+    {
+      "key": "socket:type1_combo:output"
+    },
+    {
+      "key": "socket:type2"
+    },
+    {
+      "key": "socket:type2:output"
+    },
+    {
+      "key": "socket:type2_cable"
+    },
+    {
+      "key": "socket:type2_cable:output"
+    },
+    {
+      "key": "socket:type2_combo"
+    },
+    {
+      "key": "socket:type2_combo:output"
+    },
+    {
+      "key": "socket:chademo"
+    },
+    {
+      "key": "socket:chademo:output"
+    },
+    {
+      "key": "socket:tesla_standard"
+    },
+    {
+      "key": "socket:tesla_standard:output"
+    },
+    {
+      "key": "socket:tesla_supercharger"
+    },
+    {
+      "key": "socket:tesla_supercharger:output"
+    },
+    {
+      "key": "socket:tesla_supercharger_ccs"
+    },
+    {
+      "key": "socket:tesla_supercharger_ccs:output"
+    },
+    {
+      "key": "socket:cee_blue"
+    },
+    {
+      "key": "socket:cee_blue:output"
+    },
+    {
+      "key": "socket:cee_red_16a"
+    },
+    {
+      "key": "socket:cee_red_16a:output"
+    },
+    {
+      "key": "socket:cee_red_32a"
+    },
+    {
+      "key": "socket:cee_red_32a:output"
+    },
+    {
+      "key": "socket:cee_red_63a"
+    },
+    {
+      "key": "socket:cee_red_63a:output"
+    },
+    {
+      "key": "socket:cee_red_125a"
+    },
+    {
+      "key": "socket:cee_red_125a:output"
+    },
+    {
+      "key": "socket:schuko"
+    },
+    {
+      "key": "socket:schuko:output"
+    },
+    {
+      "key": "socket:sev1011_t13"
+    },
+    {
+      "key": "socket:sev1011_t13:output"
+    },
+    {
+      "key": "socket:sev1011_t15"
+    },
+    {
+      "key": "socket:sev1011_t15:output"
+    },
+    {
+      "key": "socket:sev1011_t23"
+    },
+    {
+      "key": "socket:sev1011_t23:output"
+    },
+    {
+      "key": "socket:sev1011_t25"
+    },
+    {
+      "key": "socket:sev1011_t25:output"
+    },
+    {
+      "key": "opening_hours",
+      "value": "24/7"
+    },
+    {
+      "key": "fee",
+      "value": "yes"
+    },
+    {
+      "key": "fee",
+      "value": "no"
+    },
+    {
+      "key": "parking:fee",
+      "value": "yes"
+    },
+    {
+      "key": "parking:fee",
+      "value": "no"
+    },
+    {
+      "key": "charge"
+    },
+    {
+      "key": "charge:conditional"
+    },
+    {
+      "key": "image"
+    },
+    {
+      "key": "image:0"
+    },
+    {
+      "key": "image:1"
+    },
+    {
+      "key": "image:2"
+    },
+    {
+      "key": "image:3"
+    },
+    {
+      "key": "image:4"
+    },
+    {
+      "key": "image:5"
+    },
+    {
+      "key": "image:6"
+    },
+    {
+      "key": "image:7"
+    },
+    {
+      "key": "image:8"
+    },
+    {
+      "key": "image:9"
+    }
+  ]
+}

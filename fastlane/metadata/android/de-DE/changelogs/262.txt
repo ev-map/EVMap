@@ -1,0 +1,8 @@
+Neue Funktionen:
+- Neue Datenquellen: OpenStreetMap, NOBIL
+- Android Auto, Android Automotive: Neue Karte inkl. Zoomen und Verschieben (wenn vom Auto unterstützt)
+- Neue Sprache: Schwedisch
+
+Fehler behoben:
+- Anzeigefehler behoben
+- Abstürze behoben

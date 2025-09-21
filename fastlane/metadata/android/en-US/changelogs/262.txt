@@ -1,0 +1,8 @@
+New Features:
+- New data sources: OpenStreetMap, NOBIL
+- Android Auto, Android Automotive OS: New map with pan & zoom (if supported by car)
+- New language: Swedish
+
+Bugfixes:
+- Fixed display errors
+- Fixed crashes

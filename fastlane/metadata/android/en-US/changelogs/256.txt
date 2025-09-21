@@ -1,0 +1,3 @@
+Bugfixes:
+- Fixed crashes
+- Fixed current location not being shown despite it being available

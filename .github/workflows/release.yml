@@ -24,7 +24,7 @@ jobs:
       - name: Extract version code
         run: echo "VERSION_CODE=$(grep -o "^\s*versionCode\s*=\s*[0-9]\+" app/build.gradle.kts | awk '{ print $3 }' | tr -d \''"\\')" >> $GITHUB_ENV
 
-      - name: Build app release & export libraries
+      - name: Build app release & export licenses
         env:
           GOINGELECTRIC_API_KEY: ${{ secrets.GOINGELECTRIC_API_KEY }}
           OPENCHARGEMAP_API_KEY: ${{ secrets.OPENCHARGEMAP_API_KEY }}
@@ -39,6 +39,9 @@ jobs:
           KEYSTORE_ALIAS: ${{ secrets.KEYSTORE_ALIAS }}
           KEYSTORE_ALIAS_PASSWORD: ${{ secrets.KEYSTORE_ALIAS_PASSWORD }}
         run: ./gradlew exportLibraryDefinitions assembleRelease --no-daemon
+
+      - name: Export licenses in Appning format
+        run: python3 _ci/export_licenses_appning.py
 
       - name: release
         uses: actions/create-release@v1
@@ -97,3 +100,21 @@ jobs:
           asset_path: app/build/generated/aboutLibraries/aboutlibraries.json
           asset_name: aboutlibraries.json
           asset_content_type: application/json
+      - name: upload Licenses Appning
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: licenses_fossAutomotiveRelease_appning.csv
+          asset_name: licenses_fossAutomotiveRelease_appning.csv
+          asset_content_type: text/csv
+      - name: upload Licenses Appning
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: licenses_fossNormalRelease_appning.csv
+          asset_name: licenses_fossNormalRelease_appning.csv
+          asset_content_type: text/csv

@@ -4,13 +4,10 @@ import json
 build_types = ["fossNormalRelease", "fossAutomotiveRelease"]
 
 for build_type in build_types:
-    result = subprocess.run(["gradlew.bat", f"generateLibraryDefinitions{build_type.capitalize()}"],
-                            capture_output=True)
-
     data = json.load(
         open(f"app/build/generated/aboutLibraries/{build_type}/res/raw/aboutlibraries.json"))
 
-    with open(f"licenses_{build_type}.csv", "w") as f:
+    with open(f"licenses_{build_type}_appning.csv", "w") as f:
         f.write("component_name;license_title;license_url;public_repository;copyrights\n")
         for lib in data["libraries"]:
             license = data["licenses"][lib["licenses"][0]] if len(lib["licenses"]) > 0 else None

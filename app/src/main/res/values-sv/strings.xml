@@ -160,7 +160,7 @@
     <string name="filterprofile_name_not_unique">Det finns redan en filterprofil med det namnet</string>
     <string name="filterprofiles_empty_state">Du har inga sparade filterprofiler</string>
     <string name="welcome_to_evmap">Välkommen till EVMap</string>
-    <string name="welcome_1">Hitta elbilsladdare i din närhet</string>
+    <string name="welcome_1">Hitta laddare för elfordon i din närhet</string>
     <string name="welcome_2">Varje laddares färg motsvarar dess maximala laddeffekt</string>
     <string name="welcome_2_detail">Det här visas också i “Om” → “Vanliga frågor”</string>
     <string name="donation_dialog_title">Tack för att du använder EVMap</string>
@@ -198,7 +198,7 @@
     <string name="pref_my_vehicle">Mina fordon</string>
     <string name="pref_chargeprice_no_base_fee">Utelämna prisplaner med månadsavgift</string>
     <string name="pref_chargeprice_show_provider_customer_tariffs">Inkludera prisplaner med kundrabatter</string>
-    <string name="chargeprice_select_car_first">Vänligen välj din bilmodell i inställningarna först</string>
+    <string name="chargeprice_select_car_first">Vänligen välj först din bilmodell bland inställningarna</string>
     <string name="chargeprice_battery_range">Ladda från %1$.0f%% till %2$.0f%%</string>
     <string name="chargeprice_battery_range_from">Ladda från</string>
     <string name="chargeprice_battery_range_to">till</string>

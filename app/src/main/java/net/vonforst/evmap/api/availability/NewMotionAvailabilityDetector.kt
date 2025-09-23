@@ -220,6 +220,7 @@ class NewMotionAvailabilityDetector(client: OkHttpClient, baseUrl: String? = nul
         // NewMotion is our fallback
         return when (charger.dataSource) {
             "goingelectric" -> charger.network != "Tesla Supercharger"
+            "nobil" -> charger.network != "Tesla"
             "openchargemap" -> charger.chargepriceData?.network !in listOf("23", "3534")
             "openstreetmap" -> charger.operator !in listOf("Tesla, Inc.", "Tesla")
             else -> false

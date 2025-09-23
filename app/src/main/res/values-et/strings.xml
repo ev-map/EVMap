@@ -377,4 +377,13 @@
     <string name="data_source_openstreetmap_desc">Katseline tugi EVMapis - kõik funktsionaalsused pole saadaval.</string>
     <string name="downloading_chargers_percent">Laadin alla… %.0f%%</string>
     <string name="plug_type_2_tethered">Tüüp 2 lõimitud kaabel</string>
+    <string name="no_email_app_found">Esmalt paigalda e-posti rakendus</string>
+    <string name="filter_accessibility">Laadija ligipääsetavus</string>
+    <string name="data_source_nobil">NOBIL</string>
+    <string name="data_source_nobil_desc"><![CDATA[Kogukonna poolt täiendatud riikide avaandmed Põhjala riikidest.]]></string>
+    <string name="accessibility_public">Avalik</string>
+    <string name="accessibility_visitors">Külastajatele</string>
+    <string name="accessibility_employees">Töötajatele</string>
+    <string name="accessibility_by_appointment">Broneeringu alusel</string>
+    <string name="accessibility_residents">Elanikele</string>
 </resources>

@@ -381,4 +381,13 @@
     <string name="data_source_openstreetmap_desc">Experimentální podpora v EVMap, nejsou dostupné všechny funkce.</string>
     <string name="downloading_chargers_percent">Stahování… %.0f%%</string>
     <string name="plug_type_2_tethered">Provázaný kabel typ 2</string>
+    <string name="no_email_app_found">Nejprve si nainstalujte e-mailovou aplikaci</string>
+    <string name="filter_accessibility">Přístupnost nabíječky</string>
+    <string name="data_source_nobil">NOBIL</string>
+    <string name="data_source_nobil_desc"><![CDATA[Otevřená data poskytovaná vládou a komunitou v severských zemích.]]></string>
+    <string name="accessibility_public">Veřejné</string>
+    <string name="accessibility_visitors">Návštěvníci</string>
+    <string name="accessibility_employees">Zaměstnanci</string>
+    <string name="accessibility_by_appointment">Po domluvě</string>
+    <string name="accessibility_residents">Obyvatelé</string>
 </resources>

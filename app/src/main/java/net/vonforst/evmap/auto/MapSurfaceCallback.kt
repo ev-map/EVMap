@@ -171,8 +171,9 @@ class MapSurfaceCallback(val ctx: CarContext, val lifecycleScope: LifecycleCorou
         flingAnimator?.cancel()
         val map = map ?: return
 
-        val offsetX = (focusX - mapView.width / 2) * (scaleFactor - 1f)
-        val offsetY = (offsetY(focusY) - mapView.height / 2) * (scaleFactor - 1f)
+        val (x, y) = offsetScreen(focusX, focusY)
+        val offsetX = (x - mapView.width / 2) * (scaleFactor - 1f)
+        val offsetY = (y - mapView.height / 2) * (scaleFactor - 1f)
 
         Log.i("MapSurfaceCallback", "focus: $focusX, $focusY, scaleFactor: $scaleFactor")
         if (scaleFactor == 2f) {
@@ -223,13 +224,13 @@ class MapSurfaceCallback(val ctx: CarContext, val lifecycleScope: LifecycleCorou
         flingAnimator?.cancel()
         val downTime: Long = SystemClock.uptimeMillis()
         val eventTime: Long = downTime + 100
-        val yOffset = offsetY(y)
+        val (xOffset, yOffset) = offsetScreen(x, y)
 
         val downEvent = MotionEvent.obtain(
             downTime,
             downTime,
             MotionEvent.ACTION_DOWN,
-            x,
+            xOffset,
             yOffset,
             0
         )
@@ -239,7 +240,7 @@ class MapSurfaceCallback(val ctx: CarContext, val lifecycleScope: LifecycleCorou
             downTime,
             eventTime,
             MotionEvent.ACTION_UP,
-            x,
+            xOffset,
             yOffset,
             0
         )
@@ -247,16 +248,24 @@ class MapSurfaceCallback(val ctx: CarContext, val lifecycleScope: LifecycleCorou
         upEvent.recycle()
     }
 
-    private fun offsetY(y: Float): Float {
+    private fun offsetScreen(x: Float, y: Float): Pair<Float, Float> {
         if (BuildConfig.FLAVOR_automotive != "automotive") {
-            return y
+            return x to y
         }
 
-        // On AAOS, touch locations seem to be offset by the status bar height
+        // On AAOS, touch locations don't seem to take into account system bar insets
         // related: https://issuetracker.google.com/issues/256905247
         val resId = ctx.resources.getIdentifier("status_bar_height", "dimen", "android")
-        val offset = resId.takeIf { it > 0 }?.let { ctx.resources.getDimensionPixelSize(it) } ?: 0
-        return y + offset
+        val yOffset = resId.takeIf { it > 0 }?.let { ctx.resources.getDimensionPixelSize(it) } ?: 0
+
+        val xOffset = if (Build.MODEL == "AIVI2 R FULL DOM" && width > height) {
+            // Renault 5 left system bar
+            120
+        } else {
+            0
+        }
+
+        return x + xOffset to y + yOffset
     }
 
     private fun createMap(ctx: Context): MapContainerView {

@@ -328,7 +328,7 @@ dependencies {
     implementation("io.michaelrocks.bimap:bimap:1.1.0")
     implementation("com.github.pengrad:mapscaleview:1.6.0")
     implementation("com.github.romandanylyk:PageIndicatorView:b1bad589b5")
-    implementation("com.github.ev-map:locale-config-x:c97ce250b9")
+    implementation("com.github.ev-map:locale-config-x:58b036abf4")
 
     // Android Auto
     val carAppVersion = "1.7.0"

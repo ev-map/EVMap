@@ -203,7 +203,7 @@ class EnBwAvailabilityDetector(client: OkHttpClient, baseUrl: String? = null) :
                 "Typ 3A" -> Chargepoint.TYPE_3A
                 "Typ 3C \"Scame\"" -> Chargepoint.TYPE_3C
                 "Typ 2" -> Chargepoint.TYPE_2_UNKNOWN
-                "Typ 1" -> Chargepoint.TYPE_1
+                "Typ 1 Steckdose" -> Chargepoint.TYPE_1
                 "Steckdose(D)" -> Chargepoint.SCHUKO
                 "CCS (Typ 1)" -> Chargepoint.CCS_TYPE_1  // US CCS, aka type1_combo
                 "CCS (Typ 2)" -> Chargepoint.CCS_TYPE_2  // EU CCS, aka type2_combo

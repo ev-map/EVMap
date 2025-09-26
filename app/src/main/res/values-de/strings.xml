@@ -231,7 +231,7 @@
     <string name="data_source_openchargemap">Open Charge Map</string>
     <string name="data_source_openstreetmap">OpenStreetMap</string>
     <string name="data_source_goingelectric_desc">Sehr gute Abdeckung in den deutschsprachigen Ländern. Beschreibungen in Deutsch. Von der Community gepflegt.</string>
-    <string name="data_source_nobil_desc"><![CDATA[Offizielles Verzeichnis der nordischen Länder]]></string>
+    <string name="data_source_nobil_desc"><![CDATA[Offizielles Verzeichnis in Schweden und Norwegen]]></string>
     <string name="data_source_openchargemap_desc"><![CDATA[Weltweite Abdeckung mit variierender Qualität. Beschreibungen in Englisch oder Landessprache. Von der Community gepflegt und offizielle Verzeichnisse einiger Länder (z.B. Nordamerika, UK, Frankreich, Norwegen).]]></string>
     <string name="data_source_openstreetmap_desc">Experimentelle Unterstützung in EVMap, nicht alle Funktionen nutzbar.</string>
     <string name="next">weiter</string>

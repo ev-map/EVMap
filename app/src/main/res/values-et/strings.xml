@@ -380,7 +380,7 @@
     <string name="no_email_app_found">Esmalt paigalda e-posti rakendus</string>
     <string name="filter_accessibility">Laadija ligipääsetavus</string>
     <string name="data_source_nobil">NOBIL</string>
-    <string name="data_source_nobil_desc"><![CDATA[Kogukonna poolt täiendatud riikide avaandmed Põhjala riikidest.]]></string>
+    <string name="data_source_nobil_desc"><![CDATA[Kogukonna poolt täiendatud riikide avaandmed Norrast ja Rootsist.]]></string>
     <string name="accessibility_public">Avalik</string>
     <string name="accessibility_visitors">Külastajatele</string>
     <string name="accessibility_employees">Töötajatele</string>

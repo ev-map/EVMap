@@ -10,11 +10,11 @@
     <string name="operator">Operatör</string>
     <string name="network">Nätverk</string>
     <string name="hours">Öppettider</string>
-    <string name="open_247"><![CDATA[<b>Öppen 24/7</b>]]></string>
-    <string name="closed"><![CDATA[<b>Stängd</b>]]></string>
-    <string name="open_closesat"><![CDATA[<b>Öppen</b> · Stänger %s]]></string>
-    <string name="closed_opensat"><![CDATA[<b>Stängd</b> · Öppnar %s]]></string>
-    <string name="closed_unfmt">Stängd</string>
+    <string name="open_247"><![CDATA[<b>Öppet 24/7</b>]]></string>
+    <string name="closed"><![CDATA[<b>Stängt</b>]]></string>
+    <string name="open_closesat"><![CDATA[<b>Öppet</b> · Stänger %s]]></string>
+    <string name="closed_opensat"><![CDATA[<b>Stängt</b> · Öppnar %s]]></string>
+    <string name="closed_unfmt">Stängt</string>
     <string name="holiday">helgdag</string>
     <string name="cost">Kostnad</string>
     <string name="cost_detail"><![CDATA[<b>Laddning:</b> %1$s · <b>Parkering:</b> %2$s]]></string>
@@ -54,7 +54,7 @@
     <string name="coordinates">Koordinater</string>
     <string name="share">Dela</string>
     <string name="filter_free">Endast gratis laddare</string>
-    <string name="filter_min_power">Lägst effekt</string>
+    <string name="filter_min_power">Lägsta effekt</string>
     <string name="filter_free_parking">Endast laddare med gratis parkering</string>
     <string name="filter_min_connectors">Lägst antal laddkontakter</string>
     <string name="filter_connectors">Laddkontakter</string>

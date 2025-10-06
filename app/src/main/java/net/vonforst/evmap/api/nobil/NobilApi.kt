@@ -120,7 +120,7 @@ class NobilApiWrapper(
 
     override suspend fun fullDownload(): FullDownloadResult<NobilReferenceData> {
         var numTotalChargepoints = 0
-        arrayOf("DAN", "FIN", "ISL", "NOR", "SWE").forEach { countryCode ->
+        arrayOf("NOR", "SWE").forEach { countryCode ->
             val request = NobilNumChargepointsRequest(apikey, countryCode)
             val response = api.getNumChargepoints(request)
             if (!response.isSuccessful) {

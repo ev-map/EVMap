@@ -125,9 +125,6 @@ data class NobilChargerStation(
             Address(
                 chargerStationData.city,
                 when (chargerStationData.landCode) {
-                    "DAN" -> "Denmark"
-                    "FIN" -> "Finland"
-                    "ISL" -> "Iceland"
                     "NOR" -> "Norway"
                     "SWE" -> "Sweden"
                     else -> ""

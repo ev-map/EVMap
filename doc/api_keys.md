@@ -172,8 +172,8 @@ in German.
 
 ### **NOBIL**
 
-NOBIL lists charging stations in the Nordic countries (Denmark, Finland, Iceland, Norway, Sweden)
-and provides an open [API](https://info.nobil.no/api) to access the data.
+NOBIL lists charging stations in Norway and Sweden and provides an open
+[API](https://info.nobil.no/api) to access the data.
 
 To get a NOBIL API key, fill in and submit the form on [this page](https://info.nobil.no/api).
 Then, wait for an an e-mail with your API key.

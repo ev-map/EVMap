@@ -3,7 +3,13 @@ package net.vonforst.evmap.api.openstreetmap
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import kotlinx.parcelize.Parcelize
-import net.vonforst.evmap.model.*
+import net.vonforst.evmap.model.Address
+import net.vonforst.evmap.model.ChargeLocation
+import net.vonforst.evmap.model.Chargepoint
+import net.vonforst.evmap.model.ChargerPhoto
+import net.vonforst.evmap.model.Coordinate
+import net.vonforst.evmap.model.Cost
+import net.vonforst.evmap.model.OpeningHours
 import okhttp3.internal.immutableListOf
 import java.time.Instant
 import java.time.ZonedDateTime
@@ -239,10 +245,24 @@ data class OSMChargingStation(
             if (rawOutput == null) {
                 return null
             }
-            val pattern = Regex("([0-9.,]+)\\s*(kW|kVA)", setOf(RegexOption.IGNORE_CASE))
-            val matchResult = pattern.matchEntire(rawOutput) ?: return null
-            val numberString = matchResult.groupValues[1].replace(',', '.')
-            return numberString.toDoubleOrNull()
+            val kwPattern = Regex("([0-9.,]+)\\s*(kW|kVA)", setOf(RegexOption.IGNORE_CASE))
+            kwPattern.matchEntire(rawOutput)?.let { matchResult ->
+                val numberString = matchResult.groupValues[1].replace(',', '.')
+                return numberString.toDoubleOrNull()
+            }
+
+            val numberPattern = Regex("([0-9.,]+)")
+            numberPattern.matchEntire(rawOutput)?.let { matchResult ->
+                // just a number is mapped without unit
+                val numberString = matchResult.groupValues[1].replace(',', '.')
+                val number = numberString.toDoubleOrNull()
+                return number?.let {
+                    // assume kW if the number is < 1000, otherwise assume W and convert to kW
+                    if (number < 1000) number else number / 1000
+                }
+            }
+
+            return null
         }
     }
 }

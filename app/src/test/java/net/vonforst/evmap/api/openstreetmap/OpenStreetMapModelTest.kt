@@ -114,5 +114,13 @@ class OpenStreetMapModelTest {
         assertEquals(22.0, OSMChargingStation.parseOutputPower("22,0 kW"))
         assertEquals(22.0, OSMChargingStation.parseOutputPower("22kW"))
         assertEquals(22.0, OSMChargingStation.parseOutputPower("22    kW"))
+
+        // number without unit, assume kW or W depending on the number's magnitude
+        assertEquals(22.0, OSMChargingStation.parseOutputPower("22"))
+        assertEquals(22.0, OSMChargingStation.parseOutputPower("22.0"))
+        assertEquals(22.0, OSMChargingStation.parseOutputPower("22,0"))
+        assertEquals(22.0, OSMChargingStation.parseOutputPower("22000"))
+        assertEquals(22.0, OSMChargingStation.parseOutputPower("22000.0"))
+        assertEquals(22.0, OSMChargingStation.parseOutputPower("22000,0"))
     }
 }

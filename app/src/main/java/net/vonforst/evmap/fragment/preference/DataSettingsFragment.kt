@@ -1,10 +1,10 @@
 package net.vonforst.evmap.fragment.preference
 
 import android.content.SharedPreferences
-import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
+import androidx.core.net.toUri
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -24,7 +24,6 @@ import net.vonforst.evmap.viewmodel.viewModelFactory
 import okhttp3.OkHttpClient
 import okio.IOException
 import java.time.Instant
-import androidx.core.net.toUri
 
 class DataSettingsFragment : BaseSettingsFragment() {
     override val isTopLevel = false
@@ -33,8 +32,6 @@ class DataSettingsFragment : BaseSettingsFragment() {
         viewModelFactory {
             SettingsViewModel(
                 requireActivity().application,
-                getString(R.string.chargeprice_key),
-                getString(R.string.chargeprice_api_url)
             )
         }
     })

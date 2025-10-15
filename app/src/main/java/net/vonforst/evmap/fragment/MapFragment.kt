@@ -47,7 +47,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.setupWithNavController
@@ -448,19 +447,28 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
         }
         binding.detailView.btnChargeprice.setOnClickListener {
             val charger = vm.charger.value?.data ?: return@setOnClickListener
-            if (prefs.chargepriceNativeIntegration) {
-                val extras =
-                    FragmentNavigatorExtras(binding.detailView.btnChargeprice to getString(R.string.shared_element_chargeprice))
-                findNavController().safeNavigate(
-                    MapFragmentDirections.actionMapToChargepriceFragment(charger),
-                    extras
-                )
-            } else {
-                (activity as? MapsActivity)?.openUrl(
-                    ChargepriceApi.getPoiUrl(charger),
-                    binding.root
-                )
+
+            if (prefs.chargepriceCounter > 0 && !prefs.chargepriceRemoval2025DialogShown) {
+                // user has been using the native Chargeprice integration before
+                MaterialAlertDialogBuilder(requireContext())
+                    .setTitle(R.string.chargeprice_removal_2025_dialog_title)
+                    .setMessage(R.string.chargeprice_removal_2025_dialog_detail)
+                    .setPositiveButton(R.string.ok) { di, _ ->
+                        di.cancel()
+                        prefs.chargepriceRemoval2025DialogShown = true
+                        (activity as? MapsActivity)?.openUrl(
+                            ChargepriceApi.getPoiUrl(charger),
+                            binding.root
+                        )
+                    }
+                    .show()
+                return@setOnClickListener
             }
+
+            (activity as? MapsActivity)?.openUrl(
+                ChargepriceApi.getPoiUrl(charger),
+                binding.root
+            )
         }
         binding.detailView.btnChargerWebsite.setOnClickListener {
             val charger = vm.charger.value?.data ?: return@setOnClickListener

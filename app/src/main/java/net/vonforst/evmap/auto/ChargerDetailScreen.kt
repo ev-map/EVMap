@@ -32,7 +32,6 @@ import androidx.core.text.HtmlCompat
 import androidx.lifecycle.lifecycleScope
 import coil.imageLoader
 import coil.request.ImageRequest
-import com.github.erfansn.localeconfigx.currentOrDefaultLocale
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -152,22 +151,24 @@ class ChargerDetailScreen(
                                     )
                                     .setTitle(carContext.getString(R.string.auto_prices))
                                 .setOnClickListener {
-                                    if (prefs.chargepriceNativeIntegration) {
+                                    if (!prefs.chargepriceRemoval2025DialogShown) {
                                         screenManager.push(
-                                            ChargepriceScreen(
+                                            TextDialogScreen(
                                                 carContext,
-                                                session,
-                                                charger
+                                                R.string.chargeprice_removal_2025_dialog_title,
+                                                R.string.chargeprice_removal_2025_dialog_detail
                                             )
                                         )
-                                    } else {
-                                        val intent = Intent(
-                                            Intent.ACTION_VIEW,
-                                            Uri.parse(ChargepriceApi.getPoiUrl(charger))
-                                        )
-                                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                        session.cas.startActivity(intent)
+                                        prefs.chargepriceRemoval2025DialogShown = true
+                                        return@setOnClickListener
                                     }
+
+                                    val intent = Intent(
+                                        Intent.ACTION_VIEW,
+                                        Uri.parse(ChargepriceApi.getPoiUrl(charger))
+                                    )
+                                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                    session.cas.startActivity(intent)
                                 }
                                 .build())
                         }

@@ -197,18 +197,6 @@ android {
         if (arcgisKey != null) {
             resValue("string", "arcgis_key", jawgKey)
         }
-        var chargepriceKey =
-            System.getenv("CHARGEPRICE_API_KEY") ?: project.findProperty("CHARGEPRICE_API_KEY")
-                ?.toString()
-        if (chargepriceKey == null && project.hasProperty("CHARGEPRICE_API_KEY_ENCRYPTED")) {
-            chargepriceKey = decode(
-                project.findProperty("CHARGEPRICE_API_KEY_ENCRYPTED").toString(),
-                "FmK.d,-f*p+rD+WK!eds"
-            )
-        }
-        if (chargepriceKey != null) {
-            resValue("string", "chargeprice_key", chargepriceKey)
-        }
         var fronyxKey =
             System.getenv("FRONYX_API_KEY") ?: project.findProperty("FRONYX_API_KEY")?.toString()
         if (fronyxKey == null && project.hasProperty("FRONYX_API_KEY_ENCRYPTED")) {

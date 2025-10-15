@@ -151,6 +151,18 @@ class ChargerDetailScreen(
                                     )
                                     .setTitle(carContext.getString(R.string.auto_prices))
                                 .setOnClickListener {
+                                    if (!prefs.chargepriceRemoval2025DialogShown) {
+                                        screenManager.push(
+                                            TextDialogScreen(
+                                                carContext,
+                                                R.string.chargeprice_removal_2025_dialog_title,
+                                                R.string.chargeprice_removal_2025_dialog_detail
+                                            )
+                                        )
+                                        prefs.chargepriceRemoval2025DialogShown = true
+                                        return@setOnClickListener
+                                    }
+
                                     val intent = Intent(
                                         Intent.ACTION_VIEW,
                                         Uri.parse(ChargepriceApi.getPoiUrl(charger))

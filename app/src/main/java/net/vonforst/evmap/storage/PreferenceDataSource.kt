@@ -167,6 +167,12 @@ class PreferenceDataSource(val context: Context) {
             sp.edit().putLong("chargeprice_counter", value).apply()
         }
 
+    var chargepriceRemoval2025DialogShown: Boolean
+        get() = sp.getBoolean("chargeprice_removal_2025_dialog_shown", false)
+        set(value) {
+            sp.edit().putBoolean("chargeprice_removal_2025_dialog_shown", value).apply()
+        }
+
     var opensourceDonationsDialogLastShown: Instant
         get() = Instant.ofEpochMilli(sp.getLong("opensource_donations_dialog_last_shown", 0L))
         set(value) {

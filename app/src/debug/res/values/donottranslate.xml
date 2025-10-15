@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="chargeprice_api_url">https://staging-api.chargeprice.app/v1/</string>
-    <string name="chargeprice_key">20c0d68918c9dc96c564784b711a6570</string>
-</resources>

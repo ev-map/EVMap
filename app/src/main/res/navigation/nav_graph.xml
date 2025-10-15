@@ -28,9 +28,6 @@
                 app:popEnterAnim="@animator/nav_default_pop_enter_anim"
                 app:popExitAnim="@animator/nav_default_pop_exit_anim" />
             <action
-                android:id="@+id/action_map_to_chargepriceFragment"
-                app:destination="@id/chargeprice" />
-            <action
                 android:id="@+id/action_map_to_opensource_donations"
                 app:destination="@id/opensource_donations" />
             <action
@@ -89,16 +86,6 @@
             android:defaultValue="false" />
     </fragment>
     <fragment
-        android:id="@+id/settings_chargeprice"
-        android:name="net.vonforst.evmap.fragment.preference.ChargepriceSettingsFragment"
-        android:label="@string/settings_chargeprice"
-        tools:layout="@layout/fragment_preference" />
-    <fragment
-        android:id="@+id/settings_android_auto"
-        android:name="net.vonforst.evmap.fragment.preference.AndroidAutoSettingsFragment"
-        android:label="@string/settings_android_auto"
-        tools:layout="@layout/fragment_preference" />
-    <fragment
         android:id="@+id/settings_developer"
         android:name="net.vonforst.evmap.fragment.preference.DeveloperSettingsFragment"
         android:label="@string/developer_options"
@@ -126,25 +113,6 @@
         android:name="net.vonforst.evmap.fragment.FilterProfilesFragment"
         android:label="@string/menu_manage_filter_profiles"
         tools:layout="@layout/fragment_filter_profiles" />
-    <fragment
-        android:id="@+id/chargeprice"
-        android:name="net.vonforst.evmap.fragment.ChargepriceFragment"
-        android:label="@string/chargeprice_title"
-        tools:layout="@layout/fragment_chargeprice">
-        <action
-            android:id="@+id/action_chargeprice_to_chargepriceSettingsFragment"
-            app:destination="@id/settings_chargeprice"
-            app:exitAnim="@animator/nav_default_exit_anim"
-            app:enterAnim="@animator/nav_default_enter_anim"
-            app:popEnterAnim="@animator/nav_default_enter_anim"
-            app:popExitAnim="@animator/nav_default_exit_anim" />
-        <action
-            android:id="@+id/action_chargeprice_to_donateFragment"
-            app:destination="@id/donate" />
-        <argument
-            android:name="charger"
-            app:argType="net.vonforst.evmap.model.ChargeLocation" />
-    </fragment>
     <fragment
         android:id="@+id/donate"
         android:name="net.vonforst.evmap.fragment.DonateFragment"

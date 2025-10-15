@@ -447,6 +447,24 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
         }
         binding.detailView.btnChargeprice.setOnClickListener {
             val charger = vm.charger.value?.data ?: return@setOnClickListener
+
+            if (prefs.chargepriceCounter > 0 && !prefs.chargepriceRemoval2025DialogShown) {
+                // user has been using the native Chargeprice integration before
+                MaterialAlertDialogBuilder(requireContext())
+                    .setTitle(R.string.chargeprice_removal_2025_dialog_title)
+                    .setMessage(R.string.chargeprice_removal_2025_dialog_detail)
+                    .setPositiveButton(R.string.ok) { di, _ ->
+                        di.cancel()
+                        prefs.chargepriceRemoval2025DialogShown = true
+                        (activity as? MapsActivity)?.openUrl(
+                            ChargepriceApi.getPoiUrl(charger),
+                            binding.root
+                        )
+                    }
+                    .show()
+                return@setOnClickListener
+            }
+
             (activity as? MapsActivity)?.openUrl(
                 ChargepriceApi.getPoiUrl(charger),
                 binding.root

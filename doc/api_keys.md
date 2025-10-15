@@ -26,9 +26,6 @@ be put into the app in the form of a resource file called `apikeys.xml` under
    <string name="goingelectric_key" translatable="false">
       insert your GoingElectric key here
    </string>
-   <string name="chargeprice_key" translatable="false">
-      insert your Chargeprice key here
-   </string>
    <string name="openchargemap_key" translatable="false">
       insert your OpenChargeMap key here
    </string>

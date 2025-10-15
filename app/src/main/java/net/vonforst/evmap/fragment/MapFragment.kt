@@ -47,7 +47,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.setupWithNavController
@@ -448,19 +447,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
         }
         binding.detailView.btnChargeprice.setOnClickListener {
             val charger = vm.charger.value?.data ?: return@setOnClickListener
-            if (prefs.chargepriceNativeIntegration) {
-                val extras =
-                    FragmentNavigatorExtras(binding.detailView.btnChargeprice to getString(R.string.shared_element_chargeprice))
-                findNavController().safeNavigate(
-                    MapFragmentDirections.actionMapToChargepriceFragment(charger),
-                    extras
-                )
-            } else {
-                (activity as? MapsActivity)?.openUrl(
-                    ChargepriceApi.getPoiUrl(charger),
-                    binding.root
-                )
-            }
+            (activity as? MapsActivity)?.openUrl(
+                ChargepriceApi.getPoiUrl(charger),
+                binding.root
+            )
         }
         binding.detailView.btnChargerWebsite.setOnClickListener {
             val charger = vm.charger.value?.data ?: return@setOnClickListener

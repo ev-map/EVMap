@@ -380,4 +380,14 @@
     <string name="data_source_openstreetmap">OpenStreetMap</string>
     <string name="data_source_openstreetmap_desc">Supporto sperimentale in EVMap, non tutte le funzionalità sono disponibili.</string>
     <string name="downloading_chargers_percent">Scaricamento… %.0f%%</string>
+    <string name="no_email_app_found">Prima installa una app per le email</string>
+    <string name="plug_type_2_tethered">Cavo fissato di tipo 2</string>
+    <string name="filter_accessibility">Accessibilità colonnina</string>
+    <string name="data_source_nobil">NOBIL</string>
+    <string name="data_source_nobil_desc"><![CDATA[Dati forniti liberamente dal governo e dalla comunità in Svezia e Norvegia.]]></string>
+    <string name="accessibility_public">Pubblico</string>
+    <string name="accessibility_visitors">Visitatori</string>
+    <string name="accessibility_employees">Impiegati</string>
+    <string name="accessibility_by_appointment">Per appuntamento</string>
+    <string name="accessibility_residents">Residenti</string>
 </resources>

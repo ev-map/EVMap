@@ -248,6 +248,12 @@ class PreferenceDataSource(val context: Context) {
         set(value) {
             sp.edit().putBoolean("privacy_accepted", value).apply()
         }
+
+    var androidAutoCompassEnabled: Boolean
+        get() = sp.getBoolean("android_auto_compass_enabled", false)
+        set(value) {
+            sp.edit().putBoolean("android_auto_compass_enabled", value).apply()
+        }
 }
 
 fun SharedPreferences.getLatLng(key: String): LatLng? =

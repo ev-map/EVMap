@@ -59,7 +59,6 @@ import net.vonforst.evmap.storage.ChargeLocationsRepository
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.ui.MarkerManager
 import net.vonforst.evmap.utils.distanceBetween
-import net.vonforst.evmap.utils.headingDiff
 import net.vonforst.evmap.viewmodel.Resource
 import net.vonforst.evmap.viewmodel.Status
 import net.vonforst.evmap.viewmodel.await
@@ -70,9 +69,7 @@ import java.io.IOException
 import java.time.Duration
 import java.time.Instant
 import java.time.ZonedDateTime
-import kotlin.collections.set
 import kotlin.math.min
-import kotlin.math.roundToInt
 import kotlin.time.DurationUnit
 import kotlin.time.TimeSource
 
@@ -146,6 +143,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
     private var map: AnyMap? = null
     private var markerManager: MarkerManager? = null
     private var myLocationEnabled = false
+    private var compassEnabled = false
     private var myLocationNeedsUpdate = false
 
     private val formatter = ChargerListFormatter(ctx, this, session.cas)
@@ -241,11 +239,16 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
         .addAction(Action.PAN)
         .addAction(
             Action.Builder().setIcon(
-                CarIcon.Builder(IconCompat.createWithResource(carContext, R.drawable.ic_location))
+                CarIcon.Builder(
+                    IconCompat.createWithResource(
+                        carContext,
+                        if (compassEnabled) R.drawable.ic_compass else R.drawable.ic_location
+                    )
+                )
                     .setTint(if (myLocationEnabled) CarColor.SECONDARY else CarColor.DEFAULT)
                     .build()
             ).setOnClickListener {
-                enableLocation(true)
+                enableLocation(true, myLocationEnabled && !compassEnabled)
             }.build()
         )
         .addAction(
@@ -385,8 +388,15 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
 
         val map = map ?: return
         if (myLocationEnabled) {
+            val bearing = if (compassEnabled) getBearing(location) else 0f
             if (oldLoc == null) {
-                mapSurfaceCallback.animateCamera(map.cameraUpdateFactory.newLatLngZoom(latLng, 13f))
+                mapSurfaceCallback.animateCamera(
+                    map.cameraUpdateFactory.newLatLngZoomBearing(
+                        latLng,
+                        13f,
+                        bearing
+                    )
+                )
             } else if (latLng != oldLoc && distanceBetween(
                     latLng.latitude,
                     latLng.longitude,
@@ -395,7 +405,11 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                 ) > 1
             ) {
                 // only update map if location changed by more than 1 meter
-                val camUpdate = map.cameraUpdateFactory.newLatLng(latLng)
+                val camUpdate = map.cameraUpdateFactory.newLatLngZoomBearing(
+                    latLng,
+                    map.cameraPosition.zoom,
+                    bearing
+                )
                 mapSurfaceCallback.animateCamera(camUpdate)
             }
         }
@@ -545,6 +559,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
         availabilities.clear()
         location = null
         myLocationEnabled = false
+        compassEnabled = false
         removeListeners()
     }
 
@@ -556,6 +571,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
             prefs.currentMapZoom = it.cameraPosition.zoom
         }
         prefs.currentMapMyLocationEnabled = myLocationEnabled
+        prefs.androidAutoCompassEnabled = compassEnabled
     }
 
     private fun removeListeners() {
@@ -625,9 +641,10 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                 onClusterClick = {
                     val newZoom = map.cameraPosition.zoom + 2
                     mapSurfaceCallback.animateCamera(
-                        map.cameraUpdateFactory.newLatLngZoom(
+                        map.cameraUpdateFactory.newLatLngZoomBearing(
                             LatLng(it.coordinates.lat, it.coordinates.lng),
-                            newZoom
+                            newZoom,
+                            if (compassEnabled) location?.let { getBearing(it) } ?: 0f else 0f
                         )
                     )
                 }
@@ -657,6 +674,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
         prefs.placeSearchResultAndroidAuto?.let { place ->
             // move to the location of the search result
             myLocationEnabled = false
+            compassEnabled = false
             markerManager?.searchResult = place
             if (place.viewport != null) {
                 map.moveCamera(map.cameraUpdateFactory.newLatLngBounds(place.viewport, 0))
@@ -664,7 +682,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                 map.moveCamera(map.cameraUpdateFactory.newLatLngZoom(place.latLng, 12f))
             }
         } ?: if (prefs.currentMapMyLocationEnabled) {
-            enableLocation(false)
+            enableLocation(false, prefs.androidAutoCompassEnabled)
         } else {
             // use position saved in preferences, fall back to default (Europe)
             val cameraUpdate =
@@ -692,14 +710,16 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
         loadChargers()
     }
 
-    private fun enableLocation(animated: Boolean) {
+    private fun enableLocation(animated: Boolean, withCompass: Boolean) {
         myLocationEnabled = true
+        compassEnabled = withCompass
         myLocationNeedsUpdate = true
-        if (location != null) {
+        location?.let { location ->
             val map = map ?: return
-            val update = map.cameraUpdateFactory.newLatLngZoom(
+            val update = map.cameraUpdateFactory.newLatLngZoomBearing(
                 LatLng.fromLocation(location),
-                13f
+                13f,
+                if (withCompass) getBearing(location) else 0f
             )
             if (animated) {
                 mapSurfaceCallback.animateCamera(update)
@@ -708,4 +728,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
             }
         }
     }
+
+    private fun getBearing(location: Location): Float =
+        heading?.orientations?.value?.get(0) ?: location.bearing
 }

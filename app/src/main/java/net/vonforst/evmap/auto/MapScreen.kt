@@ -249,6 +249,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                     .build()
             ).setOnClickListener {
                 enableLocation(true, myLocationEnabled && !compassEnabled)
+                invalidate()
             }.build()
         )
         .addAction(

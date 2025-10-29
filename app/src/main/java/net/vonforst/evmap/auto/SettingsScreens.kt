@@ -47,8 +47,13 @@ import java.io.IOException
 import java.time.Instant
 
 @ExperimentalCarApi
-class SettingsScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx) {
+class SettingsScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx), DefaultLifecycleObserver {
     val prefs = PreferenceDataSource(ctx)
+    val newMapScreenEnabledPrevious = prefs.androidAutoNewMapScreenEnabled
+
+    init {
+        lifecycle.addObserver(this)
+    }
 
     override fun onGetTemplate(): Template {
         return ListTemplate.Builder().apply {
@@ -87,7 +92,26 @@ class SettingsScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx) {
                             }
                             .build()
                     )
-                    if (carContext.carAppApiLevel < 7 || !carContext.isAppDrivenRefreshSupported) {
+                    if (supportsNewMapScreen(carContext)) {
+                        addItem(
+                            Row.Builder()
+                                .setTitle(carContext.getString(R.string.auto_use_new_map_screen))
+                                .setToggle(Toggle.Builder {
+                                    prefs.androidAutoNewMapScreenEnabled = it
+                                    invalidate()
+                                }.setChecked(prefs.androidAutoNewMapScreenEnabled).build())
+                                .setImage(
+                                    CarIcon.Builder(
+                                        IconCompat.createWithResource(
+                                            carContext,
+                                            R.drawable.ic_developer
+                                        )
+                                    ).setTint(CarColor.DEFAULT).build()
+                                )
+                                .build()
+                        )
+                    }
+                    if (!supportsNewMapScreen(carContext) || !prefs.androidAutoNewMapScreenEnabled) {
                         // this option is only supported in LegacyMapScreen
                         addItem(
                             Row.Builder()
@@ -126,6 +150,15 @@ class SettingsScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx) {
                 )
             }.build())
         }.build()
+    }
+
+    override fun onStop(owner: LifecycleOwner) {
+        if (newMapScreenEnabledPrevious != prefs.androidAutoNewMapScreenEnabled) {
+            val newMapScreen = session.onCreateScreen(session.intent)
+            val oldMapScreen = screenManager.screenStack.last()
+            screenManager.push(newMapScreen)
+            screenManager.remove(oldMapScreen)
+        }
     }
 }
 

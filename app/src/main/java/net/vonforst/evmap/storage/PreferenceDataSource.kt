@@ -12,6 +12,7 @@ import net.vonforst.evmap.autocomplete.PlaceWithBounds
 import net.vonforst.evmap.model.FILTERS_CUSTOM
 import net.vonforst.evmap.model.FILTERS_DISABLED
 import java.time.Instant
+import androidx.core.content.edit
 
 class PreferenceDataSource(val context: Context) {
     val sp = PreferenceManager.getDefaultSharedPreferences(context)
@@ -253,6 +254,12 @@ class PreferenceDataSource(val context: Context) {
         get() = sp.getBoolean("android_auto_compass_enabled", false)
         set(value) {
             sp.edit().putBoolean("android_auto_compass_enabled", value).apply()
+        }
+
+    var androidAutoNewMapScreenEnabled: Boolean
+        get() = sp.getBoolean("android_auto_new_map_screen_enabled", false)
+        set(value) {
+            sp.edit { putBoolean("android_auto_new_map_screen_enabled", value) }
         }
 }
 

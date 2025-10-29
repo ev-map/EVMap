@@ -109,6 +109,7 @@ class CarAppService : androidx.car.app.CarAppService() {
 @ExperimentalCarApi
 class EVMapSession(val cas: CarAppService) : Session(), DefaultLifecycleObserver {
     private val TAG = "EVMapSession"
+    lateinit var intent: Intent
     var mapScreen: LocationAwareScreen? = null
         set(value) {
             field = value
@@ -132,7 +133,8 @@ class EVMapSession(val cas: CarAppService) : Session(), DefaultLifecycleObserver
     }
 
     override fun onCreateScreen(intent: Intent): Screen {
-        val mapScreen = if (supportsNewMapScreen(carContext)) {
+        this.intent = intent
+        val mapScreen = if (supportsNewMapScreen(carContext) && prefs.androidAutoNewMapScreenEnabled) {
             MapScreen(carContext, this)
         } else {
             LegacyMapScreen(carContext, this)

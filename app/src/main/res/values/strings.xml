@@ -388,4 +388,5 @@
     <string name="accessibility_residents">Residents</string>
     <string name="chargeprice_removal_2025_dialog_title">Sorry!</string>
     <string name="chargeprice_removal_2025_dialog_detail">Costs for Chargeprice data access have risen sharply and can’t be covered by donations, so EVMap can no longer show this data directly. For now, this opens the Chargeprice website. An alternative solution is being developed, but it’ll take time and may start with limited features. Thanks for your patience and support!</string>
+    <string name="auto_use_new_map_screen">New map screen (beta)</string>
 </resources>

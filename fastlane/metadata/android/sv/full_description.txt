@@ -1,0 +1,18 @@
+Med EVMap hittar du enkelt laddare för elfordon med hjälp av din Android-telefon. Du får tillgång till data från GoingElectric.de och Open Charge Map som innehåller information om laddstationer över hela världen. För många laddstationer i Europa finns realtidsstatus.
+
+Funktioner:
+- Material Design
+- Visar laddstationer från databaserna GoingElectric.de och Open Charge Map
+- Realtidsstatus om en laddstations tillgänglighet (bara i Europa)
+- Integrerad prisjämförelse genom Chargeprice.app (bara i Europa)
+- Kartdata från OpenStreetMap
+- Sök efter platser
+- Avancerad filterfunktion, med möjlighet att spara filterprofiler
+- Favoritlista, med tillgänglighetsstatus
+- Inga annonser, helt öppen källkod
+
+EVMap är fri programvara och hittas på https://github.com/ev-map/EVMap.
+
+Denna app är inte en officiell produkt från GoingElectric.de eller Open Charge Map. Appen använder endast deras öppna API:er.
+
+En lista över nödvändiga behörigheter med förklaringar finns här: https://ev-map.app/faq/#permissions

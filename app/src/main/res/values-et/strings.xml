@@ -386,4 +386,6 @@
     <string name="accessibility_employees">Töötajatele</string>
     <string name="accessibility_by_appointment">Broneeringu alusel</string>
     <string name="accessibility_residents">Elanikele</string>
+    <string name="chargeprice_removal_2025_dialog_title">Vabandust!</string>
+    <string name="chargeprice_removal_2025_dialog_detail">Chargeprice\'i andmete maksumus on 2025. aastast järsult kasvanud ja rahalistest toetustest meile pole võimalik seda enam rahastada. Seega EVMap ei saa neid andmeid enam otse näidata. Asendusena on esialgu kasutusel link Chargeprice\'i veebisaiti. Oleme arendamas ka alternatiivset lahendust, aga selleks kulub aega ning ta võib kasutusele tulla piiratud funktsionaalsuses. Suur tänu teie toe eest!</string>
 </resources>

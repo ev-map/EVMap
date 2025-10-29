@@ -543,8 +543,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/go_to_chargeprice"
-                        app:goneUnless="@{charger.data != null &amp;&amp; ChargepriceApi.isChargerSupported(charger.data)}"
-                        app:icon="@drawable/ic_chargeprice" />
+                        app:goneUnless="@{charger.data != null &amp;&amp; ChargepriceApi.isChargerSupported(charger.data)}" />
 
                     <Button
                         android:id="@+id/btnChargerWebsite"

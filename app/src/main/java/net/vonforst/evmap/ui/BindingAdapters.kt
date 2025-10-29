@@ -254,19 +254,6 @@ fun setChargepriceTagColor(view: TextView, kind: String) {
     )
 }
 
-@BindingAdapter("chargepriceTagIcon")
-fun setChargepriceTagIcon(view: TextView, kind: String) {
-    view.setCompoundDrawablesRelativeWithIntrinsicBounds(
-        when (kind) {
-            "star" -> R.drawable.ic_chargeprice_star
-            "alert" -> R.drawable.ic_chargeprice_alert
-            "info" -> R.drawable.ic_chargeprice_info
-            "lock" -> R.drawable.ic_chargeprice_lock
-            else -> 0
-        }, 0, 0, 0
-    )
-}
-
 private fun availabilityColor(
     status: List<ChargepointStatus>?,
     context: Context

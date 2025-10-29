@@ -141,14 +141,6 @@ class ChargerDetailScreen(
                         if (ChargepriceApi.isChargerSupported(charger)) {
                             addAction(
                                 Action.Builder()
-                                    .setIcon(
-                                        CarIcon.Builder(
-                                            IconCompat.createWithResource(
-                                                carContext,
-                                                R.drawable.ic_chargeprice
-                                            )
-                                        ).build()
-                                    )
                                     .setTitle(carContext.getString(R.string.auto_prices))
                                 .setOnClickListener {
                                     if (!prefs.chargepriceRemoval2025DialogShown) {

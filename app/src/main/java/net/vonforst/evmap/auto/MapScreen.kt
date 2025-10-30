@@ -73,6 +73,8 @@ import kotlin.math.min
 import kotlin.time.DurationUnit
 import kotlin.time.TimeSource
 
+private const val DEFAULT_ZOOM_MYLOCATION = 14f
+
 /**
  * Main map screen showing either nearby chargers or favorites.
  *
@@ -394,7 +396,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
                 mapSurfaceCallback.animateCamera(
                     map.cameraUpdateFactory.newLatLngZoomBearing(
                         latLng,
-                        13f,
+                        DEFAULT_ZOOM_MYLOCATION,
                         bearing
                     )
                 )
@@ -719,7 +721,7 @@ class MapScreen(ctx: CarContext, val session: EVMapSession) :
             val map = map ?: return
             val update = map.cameraUpdateFactory.newLatLngZoomBearing(
                 LatLng.fromLocation(location),
-                13f,
+                DEFAULT_ZOOM_MYLOCATION,
                 if (withCompass) getBearing(location) else 0f
             )
             if (animated) {

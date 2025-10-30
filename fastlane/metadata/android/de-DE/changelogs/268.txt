@@ -1,0 +1,8 @@
+Native Chargeprice-Integration durch Webansicht ersetzt (Details siehe Meldung in der App)
+
+Verbesserungen:
+- Verbesserungen an den neuen Datenquellen Nobil und OpenStreetMap
+- Neue Kartenansicht in Android Auto und AAOS (Beta): Kartenrotation nach Kompass
+
+Fehler behoben:
+- Abstürze behoben

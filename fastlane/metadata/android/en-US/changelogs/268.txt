@@ -1,0 +1,8 @@
+Replaced native Chargeprice integration with link to web view (see details in the app)
+
+Improvements:
+- Minor improvements to Nobil and OpenStreetMap data sources
+- Added compass-based map rotation in new map view on Android Auto and AAOS
+
+Bugfixes:
+- Fixed crashes

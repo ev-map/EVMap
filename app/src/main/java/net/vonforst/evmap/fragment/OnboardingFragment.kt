@@ -6,6 +6,9 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.SpannableStringBuilder
+import android.text.style.URLSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +16,7 @@ import android.view.animation.DecelerateInterpolator
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
+import androidx.core.text.getSpans
 import androidx.core.text.method.LinkMovementMethodCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -27,6 +31,8 @@ import net.vonforst.evmap.databinding.FragmentOnboardingWelcomeBinding
 import net.vonforst.evmap.model.FILTERS_DISABLED
 import net.vonforst.evmap.navigation.safeNavigate
 import net.vonforst.evmap.storage.PreferenceDataSource
+import net.vonforst.evmap.ui.CustomUrlSpan
+import net.vonforst.evmap.ui.replaceUrlSpansWithCustom
 import net.vonforst.evmap.waitForLayout
 
 class OnboardingFragment : Fragment() {
@@ -237,13 +243,14 @@ class DataSourceSelectFragment : OnboardingPageFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        binding.cbAcceptPrivacy.text =
+         val text =
             HtmlCompat.fromHtml(
                 getString(
                     R.string.accept_privacy,
                     getString(R.string.privacy_link)
                 ), HtmlCompat.FROM_HTML_MODE_LEGACY
-            )
+            ).replaceUrlSpansWithCustom()
+        binding.cbAcceptPrivacy.text = text
         binding.cbAcceptPrivacy.linksClickable = true
         binding.cbAcceptPrivacy.movementMethod = LinkMovementMethodCompat.getInstance()
         binding.btnGetStarted.visibility = View.INVISIBLE

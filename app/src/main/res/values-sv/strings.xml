@@ -387,4 +387,5 @@
     <string name="accessibility_residents">Boende</string>
     <string name="chargeprice_removal_2025_dialog_detail">Kostnaderna för Chargeprice-data har stigit kraftigt och täcks inte av längre av donationer. Därför kan inte EVMap längre visa denna data direkt i appen. Tillsvidare öppnar detta Chargeprices webbsida. En alternativ lösning är under utveckling, men kommer dröja något och kan introduceras med begränsad funktionalitet. Tack för ditt tålamod och stöd!</string>
     <string name="chargeprice_removal_2025_dialog_title">Ursäkta!</string>
+    <string name="auto_use_new_map_screen">Ny kartvy (beta)</string>
 </resources>

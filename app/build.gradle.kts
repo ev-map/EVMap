@@ -18,7 +18,7 @@ android {
     defaultConfig {
         applicationId = "net.vonforst.evmap"
         compileSdk = 36
-        minSdk = 21
+        minSdk = 23
         targetSdk = 36
         // NOTE: always increase versionCode by 2 since automotive flavor uses versionCode + 1
         versionCode = 268

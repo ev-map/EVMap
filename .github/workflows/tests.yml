@@ -75,8 +75,10 @@ jobs:
         run: |
           checksec --output=json --dir=lib > checksec_output.json
           jq --argjson exceptions '[
+            "lib/arm64-v8a/libc++_shared.so",
             "lib/armeabi-v7a/libc++_shared.so",
-            "lib/x86/libc++_shared.so"
+            "lib/x86/libc++_shared.so",
+            "lib/x86_64/libc++_shared.so"
           ]' '
             to_entries
             | map(select(.value.fortify_source == "no" and (.key as $lib | $exceptions | index($lib) | not)))

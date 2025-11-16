@@ -2,8 +2,8 @@
 <resources>
     <string name="app_name">EVMap</string>
     <string name="no_maps_app_found">Installer et navigeringsprogram først</string>
-    <string name="closed"><b>Stengt</b></string>
-    <string name="open_closesat"><b>Åpen</b> · Stenger %s</string>
+    <string name="closed"><![CDATA[<b>Stengt</b>]]></string>
+    <string name="open_closesat"><![CDATA[<b>Åpen</b> · Stenger %s]]></string>
     <string name="holiday">Ferie</string>
     <string name="cost">Kostnad</string>
     <string name="general_info">Generell info</string>
@@ -40,18 +40,18 @@
     <string name="edit_filter_profile">Rediger «%s»</string>
     <string name="help">Hjelp</string>
     <string name="hours">Åpningstider</string>
-    <string name="open_247"><b>Døgnåpen</b></string>
+    <string name="open_247"><![CDATA[<b>Døgnåpen</b>]]></string>
     <string name="settings_ui">Grensesnitt</string>
     <string name="title_activity_maps">EVMap</string>
     <string name="no_browser_app_found">Installer en nettleser først</string>
     <string name="address">Adresse</string>
     <string name="network">Nettverk</string>
     <string name="closed_unfmt">Stengt</string>
-    <string name="cost_detail_charging"><b>%s-lading</b></string>
-    <string name="cost_detail_parking"><b>%s-parkering</b></string>
+    <string name="cost_detail_charging"><![CDATA[<b>%s-lading</b>]]></string>
+    <string name="cost_detail_parking"><![CDATA[<b>%s-parkering</b>]]></string>
     <string name="menu_map">Kart</string>
     <string name="category_petrol_station">Bensinstasjon</string>
-    <string name="closed_opensat"><b>Stengt</b> · Åpner %s</string>
+    <string name="closed_opensat"><![CDATA[<b>Stengt</b> · Åpner %s]]></string>
     <string name="retry">Prøv igjen</string>
     <string name="source">Kilde: %s</string>
     <string name="menu_favs">Favoritter</string>
@@ -88,7 +88,7 @@
     <string name="realtime_data_source">Kilde for sanntidsstatus (beta): %s</string>
     <string name="realtime_data_unavailable">Sanntidsstatus utilgjengelig</string>
     <string name="other">Andre</string>
-    <string name="cost_detail"><b>Lading:</b> %1$s · <b>Parkering:</b> %2$s</string>
+    <string name="cost_detail"><![CDATA[<b>Lading:</b> %1$s · <b>Parkering:</b> %2$s]]></string>
     <string name="pref_navigate_use_maps_on">Navigasjonsnkappen starter ruteveiledning på Google Maps</string>
     <string name="filter_free_parking">Kun ladere med gratis parkering</string>
     <string name="filter_min_power">Min. effekt</string>
@@ -239,8 +239,8 @@
     </plurals>
     <string name="data_source_goingelectric_desc">Storartet i tyskspråklige land. Beskrivelser på tysk. Gemenskapsdrevet.</string>
     <string name="powered_by_mapbox">tilbudt av Mapbox</string>
-    <string name="pref_search_provider_info">Data for søk er dyre å hente, spesielt fra Google Maps. Overvei å donere gjennom «Om» → «Doner».</string>
-    <string name="data_source_openchargemap_desc">Verdensomspennende, med varierende kvalitet. Beskrivelser på engelsk eller det lokale språket. Gemenskapsdrevet og åpen myndighetsdata i noen land (f.eks. Nord-Amerika, Storbritannia, Frankrike, og Norge.)</string>
+    <string name="pref_search_provider_info"><![CDATA[Data for søk er dyre å hente, spesielt fra Google Maps. Overvei å donere gjennom «Om» → «Doner».]]></string>
+    <string name="data_source_openchargemap_desc"><![CDATA[Verdensomspennende, med varierende kvalitet. Beskrivelser på engelsk eller det lokale språket. Gemenskapsdrevet og åpen myndighetsdata i noen land (f.eks. Nord-Amerika, Storbritannia, Frankrike, og Norge.)]]></string>
     <string name="lets_go">Begynn</string>
     <string name="crash_report_text">EVMap krasjet. Send en rapport til utvikleren.</string>
     <string name="chargeprice_all_tariffs_selected">alle planer valgt</string>

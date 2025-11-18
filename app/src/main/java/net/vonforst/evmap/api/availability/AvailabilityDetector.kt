@@ -176,6 +176,7 @@ class AvailabilityRepository(context: Context) {
         teslaOwnerAvailabilityDetector,
         TeslaGuestAvailabilityDetector(okhttp),
         EnBwAvailabilityDetector(okhttp),
+        TomTomAvailabilityDetector(okhttp, context),
         NewMotionAvailabilityDetector(okhttp)
     )
 

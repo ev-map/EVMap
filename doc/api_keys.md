@@ -38,6 +38,9 @@ be put into the app in the form of a resource file called `apikeys.xml` under
    <string name="nobil_key" translatable="false">
       insert your nobil key here
    </string>
+   <string name="tomtom_key" translatable="false">
+      insert your TomTom key here
+   </string>
 </resources>
 ```
 
@@ -235,6 +238,12 @@ key and documentation.
 
 If you don't want to test this functionality, simply leave the API key blank.
 </details>
+
+### TomTom
+
+TomTom provides real-time availability data for charging stations.
+Get and API key from
+[here](https://developer.tomtom.com/knowledgebase/platform/articles/how-to-get-an-tomtom-api-key/).
 
 Crash reporting
 ---------------

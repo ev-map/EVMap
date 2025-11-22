@@ -2,8 +2,8 @@
 <resources>
     <string name="data_source_goingelectric_desc">Ideaal in Duitstalige landen. Beschrijvingen in het Duits. Onderhouden door de gebruikersgemeenschap.</string>
     <string name="crash_report_text">EVMap is afgebroken. Stuur een crash rapport naar de ontwikkelaar.</string>
-    <string name="pref_search_provider_info">Gegevens opzoeken is duur, vooral via Google Maps. Overweeg aub om een donatie te doen via “Over” → “Doneer”.</string>
-    <string name="data_source_openchargemap_desc">Werelddekkend, met variabele kwaliteit. Beschrijving in Engels of lokale taal. Onderhouden door de gebruikers. Ook open overheidswege eens in sommige landen (bv. Noord-Amerika, UK, Frankrijk, Noorwegen).</string>
+    <string name="pref_search_provider_info"><![CDATA[Gegevens opzoeken is duur, vooral via Google Maps. Overweeg aub om een donatie te doen via “Over” → “Doneer”.]]></string>
+    <string name="data_source_openchargemap_desc"><![CDATA[Werelddekkend, met variabele kwaliteit. Beschrijving in Engels of lokale taal. Onderhouden door de gebruikers. Ook open overheidswege eens in sommige landen (bv. Noord-Amerika, UK, Frankrijk, Noorwegen).]]></string>
     <string name="pref_darkmode_always_off">altijd uit</string>
     <string name="chargeprice_select_car_first">Kiest eerst je voertuig model in de instellingen</string>
     <string name="chargeprice_no_compatible_connectors">Geen compatibele connectoren aan dit laadstation</string>
@@ -22,16 +22,16 @@
     <string name="address">Adres</string>
     <string name="operator">Operator</string>
     <string name="network">Netwerk</string>
-    <string name="open_247"><b>24/7 open</b></string>
-    <string name="closed"><b>Gesloten</b></string>
-    <string name="open_closesat"><b>Open</b> · Sluit om %s</string>
-    <string name="closed_opensat"><b>Gesloten</b> · Opent om %s</string>
+    <string name="open_247"><![CDATA[<b>24/7 open</b>]]></string>
+    <string name="closed"><![CDATA[<b>Gesloten</b>]]></string>
+    <string name="open_closesat"><![CDATA[<b>Open</b> · Sluit om %s]]></string>
+    <string name="closed_opensat"><![CDATA[<b>Gesloten</b> · Opent om %s]]></string>
     <string name="closed_unfmt">Gesloten</string>
     <string name="holiday">Feestdag</string>
     <string name="cost">Kostprijs</string>
-    <string name="cost_detail"><b>Laden:</b> %1$s · <b>Parkeren:</b> %2$s</string>
-    <string name="cost_detail_charging"><b>%s laden</b></string>
-    <string name="cost_detail_parking"><b>%s parkeren</b></string>
+    <string name="cost_detail"><![CDATA[<b>Laden:</b> %1$s · <b>Parkeren:</b> %2$s]]></string>
+    <string name="cost_detail_charging"><![CDATA[<b>%s laden</b>]]></string>
+    <string name="cost_detail_parking"><![CDATA[<b>%s parkeren</b>]]></string>
     <string name="charging_free">Gratis</string>
     <string name="parking_free">Gratis</string>
     <string name="amenities">Voorzieningen</string>

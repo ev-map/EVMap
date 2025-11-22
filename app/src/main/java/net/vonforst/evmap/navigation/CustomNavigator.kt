@@ -37,6 +37,7 @@ class CustomNavigator(
                 "goingelectric" -> "https://www.goingelectric.de/stromtankstellen/new/"
                 "nobil" -> "http://nobil.no/api/chargerregistration/chargerregistration.php?action=register"
                 "openchargemap" -> "https://openchargemap.org/site/poi/add"
+                "openstreetmap" -> "https://www.openstreetmap.org/edit"
                 else -> throw IllegalArgumentException()
             }
             launchCustomTab(url)

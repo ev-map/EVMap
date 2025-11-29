@@ -380,7 +380,7 @@
     <string name="pref_chargeprice_native_integration_on">Preise werden direkt in EVMap angezeigt</string>
     <string name="pref_chargeprice_native_integration_off">Preisvergleich verlinkt auf die App oder Website von Chargeprice</string>
     <string name="auto_zoom_for_details">Für Details hineinzoomen</string>
-    <string name="plug_type_2_tethered">Typ 2 Kabel mit Stecker</string>
+    <string name="plug_type_2_tethered">Typ-2-Kabel mit Stecker</string>
     <string name="accessibility_public">Öffentlich</string>
     <string name="accessibility_visitors">Besucher</string>
     <string name="accessibility_employees">Mitarbeiter</string>

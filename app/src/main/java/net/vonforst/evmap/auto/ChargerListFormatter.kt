@@ -25,6 +25,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.IconCompat
 import net.vonforst.evmap.R
 import net.vonforst.evmap.api.availability.ChargeLocationStatus
+import net.vonforst.evmap.api.availability.ChargepointStatus
 import net.vonforst.evmap.model.ChargeLocation
 import net.vonforst.evmap.model.FILTERS_FAVORITES
 import net.vonforst.evmap.ui.ChargerIconGenerator
@@ -182,18 +183,18 @@ class ChargerListFormatter(
             }
 
             // availability
+            val total = charger.chargepoints.sumOf { it.count }
+            var status = List(total) { ChargepointStatus.UNKNOWN }
             availabilities[charger.id]?.second?.let { av ->
-                val status = av.status.values.flatten()
-                val available = availabilityText(status)
-                val total = charger.chargepoints.sumOf { it.count }
-
-                if (text.isNotEmpty()) text.append(" · ")
-                text.append(
-                    "$available/$total",
-                    ForegroundCarColorSpan.create(carAvailabilityColor(status)),
-                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-                )
+                status = av.status.values.flatten()
             }
+            val available = availabilityText(status)
+            if (text.isNotEmpty()) text.append(" · ")
+            text.append(
+                "$available/$total",
+                ForegroundCarColorSpan.create(carAvailabilityColor(status)),
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
 
             addText(text)
             setMetadata(

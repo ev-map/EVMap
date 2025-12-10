@@ -287,7 +287,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion")
     implementation("androidx.appcompat:appcompat:1.7.1")
     implementation("androidx.core:core-ktx:1.17.0")
-    implementation("androidx.core:core-splashscreen:1.0.1")
+    implementation("androidx.core:core-splashscreen:1.2.0")
     implementation("androidx.activity:activity-ktx:1.11.0")
     implementation("androidx.fragment:fragment-ktx:1.8.9")
     implementation("androidx.cardview:cardview:1.0.0")

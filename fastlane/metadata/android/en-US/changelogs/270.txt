@@ -1,0 +1,12 @@
+Merry Christmas!
+
+New features:
+- New realtime data source for charger data source Nobil
+
+Improvements:
+- Improved realtime data from NewMotion
+- Automotive: About screen only available in parked state
+
+Bugfixes:
+- Fixed data expiry for Nobil
+- Edit charger button did not work for OpenStreetMap

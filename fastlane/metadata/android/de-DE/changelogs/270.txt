@@ -1,0 +1,12 @@
+Frohe Weihnachten!
+
+Neue Funktionen:
+- Neue Echtzeitdatenquelle für Datenquelle Nobil
+
+Verbesserungen:
+- Verbesserungen zu Echtzeitdaten von NewMotion
+- Automotive: "Über"-Bildschirm nur im geparkten Zustand aufrufbar
+
+Fehler behoben:
+- Ablauf von Daten für Nobil korrigiert
+- Bearbeiten-Knopf funktionierte nicht für OpenStreetMap

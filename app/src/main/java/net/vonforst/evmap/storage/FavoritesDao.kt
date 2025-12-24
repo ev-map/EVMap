@@ -13,10 +13,10 @@ interface FavoritesDao {
     @Delete
     suspend fun delete(vararg favorites: Favorite)
 
-    @Query("SELECT * FROM favorite LEFT JOIN chargelocation ON favorite.chargerDataSource = chargelocation.dataSource AND favorite.chargerId = chargelocation.id")
+    @Query("SELECT * FROM favorite LEFT JOIN chargelocation ON favorite.chargerDataSource = chargelocation.dataSource AND favorite.chargerId = chargelocation.id WHERE chargelocation.id is not NULL")
     fun getAllFavorites(): LiveData<List<FavoriteWithDetail>>
 
-    @Query("SELECT * FROM favorite LEFT JOIN chargelocation ON favorite.chargerDataSource = chargelocation.dataSource AND favorite.chargerId = chargelocation.id")
+    @Query("SELECT * FROM favorite LEFT JOIN chargelocation ON favorite.chargerDataSource = chargelocation.dataSource AND favorite.chargerId = chargelocation.id WHERE chargelocation.id is not NULL")
     suspend fun getAllFavoritesAsync(): List<FavoriteWithDetail>
 
     @SkipQueryVerification

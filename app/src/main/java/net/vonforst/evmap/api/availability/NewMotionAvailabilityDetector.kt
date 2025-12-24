@@ -61,8 +61,9 @@ interface NewMotionApi {
     )
 
     @JsonClass(generateAdapter = true)
-    data class NMElectricalProperties(val powerType: String, val voltage: Int, val amperage: Int) {
+    data class NMElectricalProperties(val powerType: String, val voltage: Int, val amperage: Int, val maxElectricPower: Double?) {
         fun getPower(): Double {
+            maxElectricPower?.let { return it }
             val phases = when (powerType) {
                 "AC1Phase" -> 1
                 "AC3Phase" -> 3

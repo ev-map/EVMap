@@ -26,6 +26,7 @@ jobs:
 
       - name: Build app release & export licenses
         env:
+          EVMAP_API_KEY: ${{ secrets.EVMAP_API_KEY }}
           GOINGELECTRIC_API_KEY: ${{ secrets.GOINGELECTRIC_API_KEY }}
           OPENCHARGEMAP_API_KEY: ${{ secrets.OPENCHARGEMAP_API_KEY }}
           CHARGEPRICE_API_KEY: ${{ secrets.CHARGEPRICE_API_KEY }}

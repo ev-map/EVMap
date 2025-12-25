@@ -86,7 +86,7 @@ Many users currently support the development EVMap with their donations. You can
 information on the [Donate page](https://ev-map.app/donate/) on the EVMap website.
 
 <a href="https://www.jawg.io"><img src="https://www.jawg.io/static/Blue@10x-9cdc4596e4e59acbd9ead55e9c28613e.png" alt="JawgMaps" height="38"/></a><br>
-Since May 2024, **JawgMaps** provides their OpenStreetMap vector map tiles service to EVMap for
+Since May 2024, **JawgMaps** provide their OpenStreetMap vector map tiles service to EVMap for
 free, i.e. the background map displayed in the app if OpenStreetMap is selected as the data source.
 
 <a href="https://www.jetbrains.com/community/opensource/"><img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jetbrains.svg" alt="JetBrains logo" height="38"/></a><br>

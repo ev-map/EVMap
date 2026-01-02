@@ -389,4 +389,5 @@
     <string name="chargeprice_removal_2025_dialog_title">Sorry!</string>
     <string name="chargeprice_removal_2025_dialog_detail">Die Kosten für den Zugriff auf Chargeprice-Daten sind stark gestiegen und können nicht mehr durch Spenden gedeckt werden. Daher kann EVMap diese Daten nicht mehr direkt anzeigen. Hier öffnet sich nun die Chargeprice-Website. Eine alternative Lösung ist in Arbeit, wird aber Zeit brauchen und anfangs nur eingeschränkt funktionieren. Danke für eure Geduld und Unterstützung!</string>
     <string name="auto_use_new_map_screen">Neue Kartendarstellung (beta)</string>
+    <string name="auto_confirm_delete_profile">Filterprofil „%s“ löschen?</string>
 </resources>

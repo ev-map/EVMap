@@ -15,8 +15,10 @@ import androidx.car.app.model.CarColor
 import androidx.car.app.model.CarIcon
 import androidx.car.app.model.CarText
 import androidx.car.app.model.ForegroundCarColorSpan
+import androidx.car.app.model.Header
 import androidx.car.app.model.ItemList
 import androidx.car.app.model.ListTemplate
+import androidx.car.app.model.MessageTemplate
 import androidx.car.app.model.Pane
 import androidx.car.app.model.PaneTemplate
 import androidx.car.app.model.ParkedOnlyOnClickListener
@@ -241,20 +243,23 @@ class FilterScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx) {
 
                             )
                             setOnClickListener {
-                                lifecycleScope.launch {
-                                    db.filterProfileDao().delete(it)
-                                    if (prefs.filterStatus == it.id) {
-                                        prefs.filterStatus = FILTERS_DISABLED
+                                val confirmScreen = ConfirmDeleteScreen(carContext, it) {
+                                    lifecycleScope.launch {
+                                        db.filterProfileDao().delete(it)
+                                        if (prefs.filterStatus == it.id) {
+                                            prefs.filterStatus = FILTERS_DISABLED
+                                        }
+                                        CarToast.makeText(
+                                            carContext,
+                                            carContext.getString(
+                                                R.string.deleted_item,
+                                                it.name
+                                            ),
+                                            CarToast.LENGTH_SHORT
+                                        ).show()
                                     }
-                                    CarToast.makeText(
-                                        carContext,
-                                        carContext.getString(
-                                            R.string.deleted_item,
-                                            it.name
-                                        ),
-                                        CarToast.LENGTH_SHORT
-                                    ).show()
                                 }
+                                screenManager.push(confirmScreen)
                             }
                         }.build())
                     }
@@ -296,6 +301,31 @@ class FilterScreen(ctx: CarContext, val session: EVMapSession) : Screen(ctx) {
     private fun onItemClick(id: Long) {
         prefs.filterStatus = id
         screenManager.pop()
+    }
+}
+
+class ConfirmDeleteScreen(ctx: CarContext, val profile: FilterProfile, val deleteListener: () -> Unit): Screen(ctx) {
+    override fun onGetTemplate(): Template {
+        val message = carContext.getString(R.string.auto_confirm_delete_profile, profile.name)
+        return MessageTemplate.Builder(message)
+            .setHeader(Header.Builder()
+                .setTitle(carContext.getString(R.string.delete))
+                .setStartHeaderAction(Action.BACK)
+                .build())
+            .addAction(Action.Builder()
+                .setTitle(carContext.getString(R.string.delete))
+                .setBackgroundColor(CarColor.PRIMARY)
+                .setFlags(Action.FLAG_PRIMARY)
+                .setOnClickListener {
+                    deleteListener()
+                    screenManager.pop()
+                }
+                .build())
+            .addAction(Action.Builder()
+                .setTitle(carContext.getString(R.string.cancel))
+                .setOnClickListener { screenManager.pop() }
+                .build())
+            .build()
     }
 }
 
@@ -360,18 +390,21 @@ class EditFiltersScreen(ctx: CarContext) : Screen(ctx) {
 
                         )
                         setOnClickListener {
-                            lifecycleScope.launch {
-                                vm.deleteCurrentProfile()
-                                CarToast.makeText(
-                                    carContext,
-                                    carContext.getString(
-                                        R.string.deleted_item,
-                                        currentProfile.name
-                                    ),
-                                    CarToast.LENGTH_SHORT
-                                ).show()
-                                screenManager.pop()
+                            val confirmScreen = ConfirmDeleteScreen(carContext, currentProfile) {
+                                lifecycleScope.launch {
+                                    vm.deleteCurrentProfile()
+                                    CarToast.makeText(
+                                        carContext,
+                                        carContext.getString(
+                                            R.string.deleted_item,
+                                            currentProfile.name
+                                        ),
+                                        CarToast.LENGTH_SHORT
+                                    ).show()
+                                    screenManager.pop()
+                                }
                             }
+                            screenManager.push(confirmScreen)
                         }
                     }.build())
                 }

@@ -101,7 +101,7 @@ abstract class ChargeLocationsDao {
     ): List<ChargeLocation>
 
     @SkipQueryVerification
-    @Query("SELECT * FROM chargelocation WHERE dataSource == :dataSource AND PtDistWithin(coordinates, MakePoint(:lng, :lat, 4326), :radius) AND timeRetrieved > :after AND ROWID IN (SELECT ROWID FROM SpatialIndex WHERE f_table_name = 'ChargeLocation' AND f_geometry_column = 'coordinates' AND search_frame = BuildCircleMbr(:lng, :lat, :radius)) ORDER BY Distance(coordinates, MakePoint(:lng, :lat, 4326))")
+    @Query("SELECT * FROM chargelocation WHERE dataSource == :dataSource AND PtDistWithin(coordinates, MakePoint(:lng, :lat, 4326), :radius) AND timeRetrieved > :after AND ROWID IN (SELECT ROWID FROM SpatialIndex WHERE f_table_name = 'ChargeLocation' AND f_geometry_column = 'coordinates' AND search_frame = BuildCircleMbr(:lng, :lat, :radius)) ORDER BY Distance(coordinates, MakePoint(:lng, :lat, 4326), 0)")
     abstract suspend fun getChargeLocationsRadius(
         lat: Double,
         lng: Double,
@@ -583,7 +583,7 @@ class ChargeLocationsRepository(
         val region =
             radiusSpatialIndexQuery(location, radius)
         val order =
-            "ORDER BY Distance(coordinates, MakePoint(${location.longitude}, ${location.latitude}, 4326))"
+            "ORDER BY Distance(coordinates, MakePoint(${location.longitude}, ${location.latitude}, 4326), 0)"
         return queryWithFilters(api, filters, region, order)
     }
 

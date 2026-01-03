@@ -50,7 +50,7 @@
     <string name="fav_remove">Ta bort från favoriter</string>
     <string name="pref_navigate_use_maps">Omedelbar navigering</string>
     <string name="pref_navigate_use_maps_on">Navigeraknappen startar vägbeskrivning i Google Maps</string>
-    <string name="pref_navigate_use_maps_off">Navigeraknappen öppnar kartappen med laddstationen</string>
+    <string name="pref_navigate_use_maps_off">Navigeraknappen öppnar laddarens position i kartappen</string>
     <string name="coordinates">Koordinater</string>
     <string name="share">Dela</string>
     <string name="filter_free">Endast gratis laddare</string>
@@ -82,7 +82,7 @@
     <string name="map_type_satellite">Satellit</string>
     <string name="map_type_terrain">Terräng</string>
     <string name="map_type">Karttyp</string>
-    <string name="map_details">Kartdetailjer</string>
+    <string name="map_details">Kartdetaljer</string>
     <string name="map_traffic">Trafik</string>
     <string name="faq">Vanliga frågor</string>
     <string name="menu_filters_active">Aktiva filter</string>
@@ -160,14 +160,14 @@
     <string name="filterprofile_name_not_unique">Det finns redan en filterprofil med det namnet</string>
     <string name="filterprofiles_empty_state">Du har inga sparade filterprofiler</string>
     <string name="welcome_to_evmap">Välkommen till EVMap</string>
-    <string name="welcome_1">Hitta laddare för elfordon i din närhet</string>
-    <string name="welcome_2">Varje laddares färg motsvarar dess maximala laddeffekt</string>
-    <string name="welcome_2_detail">Det här visas också i “Om” → “Vanliga frågor”</string>
+    <string name="welcome_1">Hitta elfordonsladdare i din närhet</string>
+    <string name="welcome_2">Varje laddares färg motsvarar dess maximala laddhastighet</string>
+    <string name="welcome_2_detail">Det här visas också i \"Om\" → \"Vanliga frågor\"</string>
     <string name="donation_dialog_title">Tack för att du använder EVMap</string>
-    <string name="donation_dialog_detail">EVMap är fri programvara. Kodbidrag via GitHub tas tacksamt emot. Överväg gärna att donera en valfri summa till utvecklaren för att hjälpa till att täcka driftskostnader.</string>
+    <string name="donation_dialog_detail">EVMap är fri programvara. Kodbidrag tas tacksamt emot via GitHub. Överväg gärna att donera en valfri summa till utvecklaren för att hjälpa till att täcka driftskostnader.</string>
     <string name="chargeprice_donation_dialog_title">Du är en ambitiös prisjämförare!</string>
     <string name="chargeprice_donation_dialog_detail">Du använder prisjämförelsefunktionen flitigt. Hjälp gärna till att täcka kostnaderna för denna funktion genom att stödja EVMap med en donation.</string>
-    <string name="deleted_item">Tog bort “%s”</string>
+    <string name="deleted_item">Tog bort \"%s\"</string>
     <string name="undo">Ångra</string>
     <string name="rename">Döp om</string>
     <string name="charging_barrierfree">Kan användas utan registrering</string>
@@ -225,7 +225,7 @@
         <item quantity="other">%d prisplaner valda</item>
     </plurals>
     <string name="unknown_operator">Okänd operatör</string>
-    <string name="data_sources_description">Vänligen välj en datakälla för laddstationer. Det kan ändras senare i inställningarna.</string>
+    <string name="data_sources_description">Vänligen välj en datakälla för laddstationer. Det kan ändras senare bland inställningarna.</string>
     <string name="data_source_goingelectric">GoingElectric.de</string>
     <string name="data_source_nobil">NOBIL</string>
     <string name="data_source_openstreetmap">OpenStreetMap</string>
@@ -242,7 +242,7 @@
     <string name="crash_report_comment_prompt">Du kan skriva en kommentar nedan:</string>
     <string name="powered_by_mapbox">tillhandahålls av Mapbox</string>
     <string name="pref_search_provider">Sökleverantör</string>
-    <string name="pref_search_provider_info"><![CDATA[Data för sökningar är dyr att hämta, särskilt från Google Maps. Överväg gärna att donera via “Om” → “Donera”.]]></string>
+    <string name="pref_search_provider_info"><![CDATA[Data för sökningar är dyr att hämta, särskilt från Google Maps. Överväg gärna att donera via "Om" → "Donera".]]></string>
     <string name="github_sponsors">GitHub Sponsors</string>
     <string name="donate_desc">Stöd EVMaps utveckling med en engångsdonation</string>
     <string name="github_sponsors_desc">Stöd EVMap via GitHub Sponsors</string>
@@ -252,7 +252,7 @@
     <string name="chargeprice_faq_link">https://ev-map.app/faq/#price-comparison-feature</string>
     <string name="referral_link">https://ev-map.app/referrals/</string>
     <string name="required">obligatorisk</string>
-    <string name="edit_filter_profile">Ändra “%s”</string>
+    <string name="edit_filter_profile">Ändra \"%s\"</string>
     <string name="pref_search_delete_recent">Ta bort senaste sökresultaten</string>
     <string name="deleted_recent_search_results">Senaste sökresultaten har tagits bort</string>
     <string name="settings_data_sources">Datakällor</string>
@@ -349,7 +349,7 @@
     <string name="auto_heading">Riktning</string>
     <string name="auto_settings">Inställningar</string>
     <string name="welcome_android_auto">Android Auto-stöd</string>
-    <string name="welcome_android_auto_detail">Du kan också använda EVMap i Android Auto om bilen stöder det. Välj då bara EVMap i Android Auto-menyn.</string>
+    <string name="welcome_android_auto_detail">Du kan också använda EVMap i Android Auto om bilen stöder det. Sök upp och starta EVMap i Android Autos applista.</string>
     <string name="sounds_cool">Låter schysst</string>
     <string name="auto_chargeprice_vehicle_unavailable">EVMap kunde inte avgöra ditt fordons modell.</string>
     <string name="auto_chargeprice_vehicle_unknown">Inga valda fordon i appen matchar detta fordon (%1$s %2$s).</string>
@@ -368,7 +368,7 @@
     <string name="referral_tesla">Tesla</string>
     <string name="generic_connection_error">Kunde inte hämta data</string>
     <string name="copied">Kopierat till urklipp</string>
-    <string name="downloading_chargers_percent">Laddar ner… %.0f%%</string>
+    <string name="downloading_chargers_percent">Hämtar… %.0f%%</string>
     <string name="status_available">Tillgänglig</string>
     <string name="status_occupied">Upptagen</string>
     <string name="status_charging">Laddar</string>
@@ -385,8 +385,9 @@
     <string name="accessibility_employees">Anställda</string>
     <string name="accessibility_by_appointment">Efter överenskommelse</string>
     <string name="accessibility_residents">Boende</string>
-    <string name="chargeprice_removal_2025_dialog_detail">Kostnaderna för Chargeprice-data har stigit kraftigt och täcks inte av längre av donationer. Därför kan inte EVMap längre visa denna data direkt i appen. Tillsvidare öppnar detta Chargeprices webbsida. En alternativ lösning är under utveckling, men kommer dröja något och kan introduceras med begränsad funktionalitet. Tack för ditt tålamod och stöd!</string>
+    <string name="chargeprice_removal_2025_dialog_detail">Kostnaderna för Chargeprice-data har stigit kraftigt och täcks inte längre av donationer. Därför kan inte EVMap fortsätta visa denna data direkt i appen. Tillsvidare öppnar detta Chargeprices webbsida. En alternativ lösning är under utveckling, men kommer dröja något och kan komma att introduceras med begränsad funktionalitet. Tack för ditt tålamod och stöd!</string>
     <string name="chargeprice_removal_2025_dialog_title">Ursäkta!</string>
     <string name="auto_use_new_map_screen">Ny kartvy (beta)</string>
     <string name="welcome_2_title">Full koll på hastigheten</string>
+    <string name="auto_confirm_delete_profile">Ta bort filterprofilen \"%s\"?</string>
 </resources>

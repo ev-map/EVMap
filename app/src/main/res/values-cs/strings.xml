@@ -393,4 +393,5 @@
     <string name="chargeprice_removal_2025_dialog_title">Omlouváme se!</string>
     <string name="chargeprice_removal_2025_dialog_detail">Náklady na přístup k údajům ze služby Chargeprice prudce vzrostly a nelze je pokrýt z darů, takže EVMap již nemůže tyto údaje přímo zobrazovat. Prozatím se otevře webová stránka Chargeprice. Alternativní řešení se vyvíjí, ale bude to nějakou dobu trvat a zpočátku bude mít omezené funkce. Děkujeme za trpělivost a podporu!</string>
     <string name="auto_use_new_map_screen">Nová obrazovka mapy (beta)</string>
+    <string name="auto_confirm_delete_profile">Odstranit profil filtru „%s“?</string>
 </resources>

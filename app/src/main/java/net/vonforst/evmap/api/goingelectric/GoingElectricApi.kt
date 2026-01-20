@@ -112,7 +112,10 @@ interface GoingElectricApi {
 
         private val moshi = Moshi.Builder()
             .add(ChargepointListItemJsonAdapterFactory())
-            .add(JsonObjectOrFalseAdapter.Factory())
+            .add(StringOrFalseAdapter())
+            .add(IntOrFalseAdapter())
+            .add(GEFaultReportOrFalseAdapter())
+            .add(ChargeCardListOrFalseAdapter())
             .add(HoursAdapter())
             .add(InstantAdapter())
             .build()

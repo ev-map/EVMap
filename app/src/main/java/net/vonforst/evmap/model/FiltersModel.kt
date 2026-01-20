@@ -66,7 +66,8 @@ sealed class FilterValue : BaseObservable(), Equatable {
     primaryKeys = ["key", "profile", "dataSource"],
     indices = [
         Index(value = ["profile", "dataSource"])
-    ]
+    ],
+    ignoredColumns = ["mCallbacks"]
 )
 data class BooleanFilterValue(
     override val key: String,
@@ -89,7 +90,8 @@ data class BooleanFilterValue(
     primaryKeys = ["key", "profile", "dataSource"],
     indices = [
         Index(value = ["profile", "dataSource"])
-    ]
+    ],
+    ignoredColumns = ["mCallbacks"]
 )
 data class MultipleChoiceFilterValue(
     override val key: String,
@@ -122,7 +124,8 @@ data class MultipleChoiceFilterValue(
     primaryKeys = ["key", "profile", "dataSource"],
     indices = [
         Index(value = ["profile", "dataSource"])
-    ]
+    ],
+    ignoredColumns = ["mCallbacks"]
 )
 data class SliderFilterValue(
     override val key: String,

@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.util.Base64
 
 plugins {
@@ -6,7 +7,8 @@ plugins {
     id("kotlin-android")
     id("kotlin-parcelize")
     id("kotlin-kapt")
-    id("com.google.devtools.ksp").version("2.0.21-1.0.28")
+    id("com.google.devtools.ksp") version "2.3.4"
+    id("dev.zacsweers.moshix") version "0.35.0"
     id("androidx.navigation.safeargs.kotlin")
     id("com.mikepenz.aboutlibraries.plugin")
 }
@@ -100,10 +102,6 @@ android {
         isCoreLibraryDesugaringEnabled = true
         targetCompatibility = JavaVersion.VERSION_17
         sourceCompatibility = JavaVersion.VERSION_17
-    }
-
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
     }
 
     buildFeatures {
@@ -243,6 +241,12 @@ android {
                 )
             )
         }
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget = JvmTarget.fromTarget("17")
     }
 }
 
@@ -402,8 +406,6 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.3.0")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")
     androidTestImplementation("androidx.arch.core:core-testing:2.2.0")
-
-    ksp("com.squareup.moshi:moshi-kotlin-codegen:1.15.2")
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
 }

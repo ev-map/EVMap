@@ -115,7 +115,7 @@ class NobilApiWrapper(
     override val id = "nobil"
     override val supportsOnlineQueries = false // Online queries are supported, but can't be used together with full downloads
     override val supportsFullDownload = true
-    override val cacheLimit = Duration.ofDays(300L)
+    override val cacheLimit = Duration.ofDays(15L)
     val api = NobilApi.create(baseurl, context)
 
     override suspend fun fullDownload(): FullDownloadResult<NobilReferenceData> {

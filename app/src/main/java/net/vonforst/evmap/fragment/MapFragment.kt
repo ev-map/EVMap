@@ -36,6 +36,7 @@ import androidx.core.location.LocationListenerCompat
 import androidx.core.view.MenuCompat
 import androidx.core.view.MenuProvider
 import androidx.core.view.ViewCompat
+import androidx.core.view.ViewGroupCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.doOnLayout
 import androidx.core.view.doOnNextLayout
@@ -221,6 +222,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
             com.google.android.material.R.style.Theme_Material3_DayNight
 
         val density = resources.displayMetrics.density
+
+        ViewGroupCompat.installCompatInsetsDispatch(binding.root)
+
         ViewCompat.setOnApplyWindowInsetsListener(binding.detailAppBar.toolbar) { v, insets ->
             val systemWindowInsetTop = insets.getInsets(WindowInsetsCompat.Type.systemBars()).top
             v.updateLayoutParams<ViewGroup.MarginLayoutParams> {

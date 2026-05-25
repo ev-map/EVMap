@@ -326,7 +326,6 @@ dependencies {
     implementation(libs.okhttp.urlconnection)
     implementation(libs.moshi.kotlin)
     implementation(libs.moshi.adapters)
-    implementation(libs.jsonapi.retrofit)
     implementation(libs.coil)
     implementation(libs.stfalcon.image.viewer)
     implementation(libs.aboutlibraries.core)

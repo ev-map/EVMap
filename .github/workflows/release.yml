@@ -18,7 +18,9 @@ jobs:
         with:
           java-version: 21
           distribution: 'zulu'
-          cache: 'gradle'
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+
       - name: Decrypt keystore
         run: openssl aes-256-cbc -K  ${{ secrets.encrypted_53968681344a_key }} -iv  ${{ secrets.encrypted_53968681344a_iv }} -in _ci/keystore.jks.enc -out _ci/keystore.jks -d
       - name: Extract version code
@@ -40,7 +42,7 @@ jobs:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEYSTORE_ALIAS: ${{ secrets.KEYSTORE_ALIAS }}
           KEYSTORE_ALIAS_PASSWORD: ${{ secrets.KEYSTORE_ALIAS_PASSWORD }}
-        run: ./gradlew exportLibraryDefinitions assembleRelease --no-daemon
+        run: ./gradlew exportLibraryDefinitions assembleRelease
 
       - name: Export licenses in Appning format
         run: python3 _ci/export_licenses_appning.py

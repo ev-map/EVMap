@@ -82,7 +82,7 @@ into new languages.
 Sponsors
 --------
 
-Many users currently support the development EVMap with their donations. You can find more
+Many users currently support the development of EVMap with their donations. You can find more
 information on the [Donate page](https://ev-map.app/donate/) on the EVMap website.
 
 <a href="https://www.jawg.io"><img src="https://www.jawg.io/static/Blue@10x-9cdc4596e4e59acbd9ead55e9c28613e.png" alt="JawgMaps" height="38"/></a><br>

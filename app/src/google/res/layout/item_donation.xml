@@ -15,20 +15,20 @@
             android:padding="16dp">
 
             <TextView
-                android:id="@+id/textView15"
+                android:id="@+id/txtName"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/textView21"
+                app:layout_constraintEnd_toStartOf="@+id/txtPrice"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="Spende (extrem langer Beschreibungstext)" />
 
             <TextView
-                android:id="@+id/textView21"
+                android:id="@+id/txtPrice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.Material3.BodyLarge"

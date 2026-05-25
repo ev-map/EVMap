@@ -34,7 +34,7 @@ class FilterProfilesAdapter(
         super.bind(holder, item)
 
         val binding = holder.binding as ItemFilterProfileBinding
-        binding.textView9.text = item.name
+        binding.txtName.text = item.name
         binding.handle.setOnTouchListener { _, event ->
             if (event?.action == MotionEvent.ACTION_DOWN) {
                 dragHelper.startDrag(holder)

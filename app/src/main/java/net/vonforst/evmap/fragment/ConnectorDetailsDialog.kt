@@ -1,17 +1,16 @@
 package net.vonforst.evmap.fragment
 
-import android.content.res.ColorStateList
 import android.content.Context
+import android.content.res.ColorStateList
 import android.view.LayoutInflater
-import android.view.View
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import net.vonforst.evmap.adapter.ConnectorDetailsAdapter
 import net.vonforst.evmap.adapter.SingleViewAdapter
+import net.vonforst.evmap.api.availability.ChargeLocationStatus
 import net.vonforst.evmap.api.iconForPlugType
 import net.vonforst.evmap.api.nameForPlugType
 import net.vonforst.evmap.api.stringProvider
-import net.vonforst.evmap.api.availability.ChargeLocationStatus
 import net.vonforst.evmap.databinding.DialogConnectorDetailsBinding
 import net.vonforst.evmap.databinding.DialogConnectorDetailsHeaderBinding
 import net.vonforst.evmap.model.Chargepoint
@@ -63,7 +62,7 @@ class ConnectorDetailsDialog(
         } else emptyList()
         detailsAdapter.submitList(items)
 
-        headerBinding.divider.visibility = if (items.isEmpty()) View.GONE else View.VISIBLE
+        headerBinding.divider.visibility = goneUnless(items.isNotEmpty())
 
         val context = headerBinding.root.context
         val locale = Locale.getDefault()
@@ -74,30 +73,30 @@ class ConnectorDetailsDialog(
         headerBinding.imageView.imageTintList =
             ColorStateList.valueOf(availabilityColor(cpStatus, context))
 
-        headerBinding.textView5.text = String.format(locale, "x %d", cp.count)
-        goneUnless(headerBinding.textView5, cpStatus == null)
+        headerBinding.txtNumber.text = String.format(locale, "x %d", cp.count)
+        headerBinding.txtNumber.visibility = goneUnless(cpStatus == null)
 
         if (cpStatus != null) {
-            headerBinding.textView7.text = String.format(
+            headerBinding.txtStatus.text = String.format(
                 locale,
                 "%s/%d",
                 availabilityText(cpStatus),
                 cp.count
             )
-            headerBinding.textView7.backgroundTintList =
+            headerBinding.txtStatus.backgroundTintList =
                 ColorStateList.valueOf(availabilityColor(cpStatus, context))
         }
-        goneUnless(headerBinding.textView7, cpStatus != null)
+        headerBinding.txtStatus.visibility = goneUnless(cpStatus != null)
 
         val name = nameForPlugType(provider, cp.type)
-        headerBinding.textView6.text = if (cp.hasKnownPower()) {
+        headerBinding.txtTitle.text = if (cp.hasKnownPower()) {
             "$name - ${cp.formatPower(locale)}"
         } else {
             name
         }
 
-        headerBinding.textView8.text = cp.formatVoltageAndCurrent()
-        goneUnless(headerBinding.textView8, cp.hasKnownVoltageAndCurrent())
+        headerBinding.txtDetail.text = cp.formatVoltageAndCurrent()
+        headerBinding.txtDetail.visibility = goneUnless(cp.hasKnownVoltageAndCurrent())
     }
 
     fun onDestroy() {

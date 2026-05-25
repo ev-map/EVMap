@@ -31,6 +31,7 @@ import net.vonforst.evmap.adapter.FilterProfilesAdapter
 import net.vonforst.evmap.databinding.FragmentFilterProfilesBinding
 import net.vonforst.evmap.databinding.ItemFilterProfileBinding
 import net.vonforst.evmap.storage.FilterProfile
+import net.vonforst.evmap.ui.goneUnless
 import net.vonforst.evmap.ui.showEditTextDialog
 import net.vonforst.evmap.viewmodel.FilterProfilesViewModel
 import net.vonforst.evmap.viewmodel.viewModelFactory
@@ -223,8 +224,7 @@ class FilterProfilesFragment : Fragment() {
 
         vm.filterProfiles.observe(viewLifecycleOwner) { profiles ->
             adapter.submitList(profiles)
-            binding.textView19.visibility =
-                if (profiles.isNullOrEmpty()) View.VISIBLE else View.GONE
+            binding.txtEmptyState.visibility = goneUnless(profiles.isNullOrEmpty())
         }
 
         touchHelper.attachToRecyclerView(binding.filterProfilesList)

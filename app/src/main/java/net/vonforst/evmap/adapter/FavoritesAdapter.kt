@@ -45,29 +45,29 @@ class FavoritesAdapter(val onDelete: (FavoritesViewModel.FavoritesListItem) -> U
         val context = binding.root.context
         val locale = Locale.getDefault()
 
-        binding.textView15.text = item.charger.name
-        binding.textView2.text = item.charger.address?.toString()
-        invisibleUnless(binding.textView2, item.charger.address != null)
+        binding.txtName.text = item.charger.name
+        binding.txtAddress.text = item.charger.address?.toString()
+        binding.txtAddress.visibility = invisibleUnless(item.charger.address != null)
 
         binding.txtConnectors.text =
             item.charger.formatChargepoints(context.stringProvider(), locale)
 
-        binding.textView16.text = distance(item.distance, context)
-        goneUnless(binding.textView16, item.distance != null)
+        binding.txtDistance.text = distance(item.distance, context)
+        binding.txtDistance.visibility = goneUnless(item.distance != null)
 
         val availableData = item.available.data
         if (availableData != null) {
-            binding.textView7.text = String.format(
+            binding.txtStatus.text = String.format(
                 locale,
                 "%s/%d",
                 availabilityText(availableData),
                 item.total
             )
-            binding.textView7.backgroundTintList =
+            binding.txtStatus.backgroundTintList =
                 ColorStateList.valueOf(availabilityColor(availableData, context))
         }
-        invisibleUnless(binding.textView7, item.available.status == Status.SUCCESS)
-        goneUnless(binding.progressBar4, item.available.status == Status.LOADING)
+        binding.txtStatus.visibility = invisibleUnless(item.available.status == Status.SUCCESS)
+        binding.progressBar.visibility = goneUnless(item.available.status == Status.LOADING)
 
         binding.foreground.translationX = 0f
         binding.btnDelete.setOnClickListener {

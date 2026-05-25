@@ -19,7 +19,7 @@ class DonationAdapter : DataBindingAdapter<DonationItem>() {
     override fun bind(holder: ViewHolder, item: DonationItem) {
         super.bind(holder, item)
         val binding = holder.binding as ItemDonationBinding
-        binding.textView15.text = item.product.title
-        binding.textView21.text = item.product.oneTimePurchaseOfferDetails?.formattedPrice
+        binding.txtName.text = item.product.title
+        binding.txtPrice.text = item.product.oneTimePurchaseOfferDetails?.formattedPrice
     }
 }

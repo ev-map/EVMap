@@ -111,24 +111,24 @@ class ConnectorAdapter : DataBindingAdapter<ConnectorAdapter.ChargepointWithAvai
         binding.imageView.imageTintList =
             ColorStateList.valueOf(availabilityColor(item.status, context))
 
-        binding.textView5.text = String.format(locale, "x %d", item.chargepoint.count)
-        goneUnless(binding.textView5, item.status == null)
+        binding.txtNumber.text = String.format(locale, "x %d", item.chargepoint.count)
+        binding.txtNumber.visibility = goneUnless(item.status == null)
 
         if (item.status != null) {
-            binding.textView7.text = String.format(
+            binding.txtStatus.text = String.format(
                 locale,
                 "%s/%d",
                 availabilityText(item.status),
                 item.chargepoint.count
             )
-            binding.textView7.backgroundTintList =
+            binding.txtStatus.backgroundTintList =
                 ColorStateList.valueOf(availabilityColor(item.status, context))
         }
-        goneUnless(binding.textView7, item.status != null)
+        binding.txtStatus.visibility = goneUnless(item.status != null)
 
-        binding.textView6.text = item.chargepoint.formatPower(locale)
-        goneUnless(binding.textView6, item.chargepoint.hasKnownPower())
-        binding.textView6.setTextColor(availabilityColor(item.status, context))
+        binding.txtPower.text = item.chargepoint.formatPower(locale)
+        binding.txtPower.visibility = goneUnless(item.chargepoint.hasKnownPower())
+        binding.txtPower.setTextColor(availabilityColor(item.status, context))
     }
 }
 
@@ -164,6 +164,6 @@ class ConnectorDetailsAdapter : DataBindingAdapter<ConnectorDetailsAdapter.Conne
         }
 
         binding.txtStatus.text = availabilityText(item.status, item.lastChange, context)
-        goneUnless(binding.txtStatus, item.status != null)
+        binding.txtStatus.visibility = goneUnless(item.status != null)
     }
 }

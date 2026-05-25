@@ -6,7 +6,7 @@
     android:layout_height="wrap_content">
 
     <TextView
-        android:id="@+id/textView17"
+        android:id="@+id/txtName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -36,7 +36,7 @@
         app:srcCompat="@drawable/ic_edit" />
 
     <TextView
-        android:id="@+id/textView26"
+        android:id="@+id/txtDetail"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -45,7 +45,7 @@
         android:textAlignment="viewStart"
         app:layout_constraintEnd_toStartOf="@+id/btnEdit"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView17"
+        app:layout_constraintTop_toBottomOf="@+id/txtName"
         tools:text="4 selected" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

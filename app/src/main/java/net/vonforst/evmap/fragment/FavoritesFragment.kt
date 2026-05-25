@@ -31,6 +31,7 @@ import net.vonforst.evmap.databinding.ItemFavoriteBinding
 import net.vonforst.evmap.location.FusionEngine
 import net.vonforst.evmap.location.LocationEngine
 import net.vonforst.evmap.model.FavoriteWithDetail
+import net.vonforst.evmap.ui.goneUnless
 import net.vonforst.evmap.utils.checkAnyLocationPermission
 import net.vonforst.evmap.viewmodel.FavoritesViewModel
 import net.vonforst.evmap.viewmodel.viewModelFactory
@@ -111,8 +112,8 @@ class FavoritesFragment : Fragment() {
         vm.listData.observe(viewLifecycleOwner) { items ->
             adapter.submitList(items)
             val isEmpty = items.isNullOrEmpty()
-            binding.animationView.visibility = if (isEmpty) View.VISIBLE else View.GONE
-            binding.textView19.visibility = if (isEmpty) View.VISIBLE else View.GONE
+            binding.animationView.visibility = goneUnless(isEmpty)
+            binding.txtEmptyState.visibility = goneUnless(isEmpty)
         }
 
         createTouchHelper().attachToRecyclerView(binding.favsList)

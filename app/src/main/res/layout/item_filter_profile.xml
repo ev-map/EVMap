@@ -30,7 +30,7 @@
         android:background="?android:colorBackground">
 
         <TextView
-            android:id="@+id/textView9"
+            android:id="@+id/txtName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"

@@ -17,13 +17,9 @@ import net.vonforst.evmap.meterPerFt
 import net.vonforst.evmap.shouldUseImperialUnits
 import java.time.Instant
 
-fun goneUnless(view: View, visible: Boolean) {
-    view.visibility = if (visible) View.VISIBLE else View.GONE
-}
+fun goneUnless(visible: Boolean): Int = if (visible) View.VISIBLE else View.GONE
 
-fun invisibleUnless(view: View, visible: Boolean) {
-    view.visibility = if (visible) View.VISIBLE else View.INVISIBLE
-}
+fun invisibleUnless(visible: Boolean): Int = if (visible) View.VISIBLE else View.INVISIBLE
 
 fun isFabActive(view: FloatingActionButton, isColored: Boolean) {
     view.imageTintList = activeTint(view.context, isColored)

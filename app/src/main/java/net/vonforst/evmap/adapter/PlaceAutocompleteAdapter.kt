@@ -118,7 +118,7 @@ class PlaceAutocompleteAdapter(val context: Context, val location: LiveData<LatL
         binding.icon.backgroundTintList = ColorStateList.valueOf(tint)
 
         binding.textView16.text = distance(place.distanceMeters, binding.root.context)
-        goneUnless(binding.textView16, place.distanceMeters != null)
+        binding.textView16.visibility = goneUnless(place.distanceMeters != null)
     }
 
     override fun getFilter(): Filter {

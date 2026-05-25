@@ -115,6 +115,8 @@ import net.vonforst.evmap.ui.availabilityColor
 import net.vonforst.evmap.ui.availabilityText
 import net.vonforst.evmap.ui.distance
 import net.vonforst.evmap.ui.flatten
+import net.vonforst.evmap.ui.goneUnless
+import net.vonforst.evmap.ui.invisibleUnless
 import net.vonforst.evmap.ui.isFabActive
 import net.vonforst.evmap.ui.setTouchModal
 import net.vonforst.evmap.utils.boundingBox
@@ -449,19 +451,15 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
         binding.fabLayers.setOnClickListener {
             openLayersMenu()
         }
-        binding.layers.rbStandard.setOnClickListener {
-            vm.setMapType(AnyMap.Type.NORMAL)
-        }
-        binding.layers.rbSatellite.setOnClickListener {
-            vm.setMapType(AnyMap.Type.HYBRID)
-        }
-        binding.layers.rbTerrain.setOnClickListener {
-            vm.setMapType(AnyMap.Type.TERRAIN)
+        binding.layers.radioGroup.setOnCheckedChangeListener { group, i ->
+            when (i) {
+                R.id.rbStandard -> vm.setMapType(AnyMap.Type.NORMAL)
+                R.id.rbSatellite -> vm.setMapType(AnyMap.Type.HYBRID)
+                R.id.rbTerrain -> vm.setMapType(AnyMap.Type.TERRAIN)
+            }
         }
         binding.layers.cbTraffic.setOnCheckedChangeListener { _, isChecked ->
-            if (vm.mapTrafficEnabled.value != isChecked) {
-                vm.mapTrafficEnabled.value = isChecked
-            }
+            vm.mapTrafficEnabled.value = isChecked
         }
         binding.layers.btnClose.setOnClickListener {
             closeLayersMenu()
@@ -648,16 +646,11 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
     }
 
     private fun updateClearSearchVisibility() {
-        binding.clearSearch.visibility = if (binding.search.text.isNullOrEmpty()) {
-            View.INVISIBLE
-        } else {
-            View.VISIBLE
-        }
+        binding.clearSearch.visibility = invisibleUnless(!binding.search.text.isNullOrEmpty())
     }
 
     private fun updateChargepointsUi(res: Resource<List<ChargepointListItem>>) {
-        binding.progressBar2.visibility =
-            if (res.status == Status.LOADING) View.VISIBLE else View.GONE
+        binding.progressBar2.visibility = goneUnless(res.status == Status.LOADING)
         binding.progressBar2.isIndeterminate = res.progress == null
         binding.progressBar2.progress = ((res.progress ?: 0f) * 100f).toInt().coerceIn(0, 100)
         binding.search.hint = if (res.progress != null) {
@@ -670,8 +663,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
     private fun updateGallery(photos: List<ChargerPhoto>?) {
         val galleryAdapter = binding.gallery.adapter as? GalleryAdapter ?: return
         galleryAdapter.submitList(photos)
-        binding.galleryPlaceholder.visibility =
-            if (photos.isNullOrEmpty()) View.VISIBLE else View.INVISIBLE
+        binding.galleryPlaceholder.visibility = invisibleUnless(photos.isNullOrEmpty())
     }
 
     private fun renderDetailView() {
@@ -693,21 +685,21 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
             txtName.text = charger?.name
             txtName.maxLines = if (expanded) 3 else 1
 
-            textView2.text = charger?.address?.toString() ?: charger?.coordinates?.formatDMS()
-            textView2.visibility = if (charger != null) View.VISIBLE else View.INVISIBLE
+            txtAddress.text = charger?.address?.toString() ?: charger?.coordinates?.formatDMS()
+            txtAddress.visibility = invisibleUnless(charger != null)
 
             txtDistance.text = distance(distanceMeters, context)
             txtConnectors.text =
                 charger?.formatChargepoints(context.stringProvider(), Locale.getDefault())
 
             val hasConnectors = charger?.chargepointsMerged?.isNotEmpty() == true
-            connectors.visibility = if (hasConnectors) View.VISIBLE else View.GONE
-            textView7.visibility = if (hasConnectors) View.VISIBLE else View.GONE
-            textView13.visibility = if (hasConnectors) View.VISIBLE else View.GONE
-            btnRefreshLiveData.visibility = if (hasConnectors) View.VISIBLE else View.GONE
+            connectors.visibility = goneUnless(hasConnectors)
+            txtConnectorsHeading.visibility = goneUnless(hasConnectors)
+            txtRealtimeDesc.visibility = goneUnless(hasConnectors)
+            btnRefreshLiveData.visibility = goneUnless(hasConnectors)
             btnRefreshLiveData.isEnabled = availability?.status != Status.LOADING
 
-            val realtimeText = when {
+            txtRealtimeDesc.text = when {
                 availability?.status == Status.SUCCESS -> getString(
                     R.string.realtime_data_source,
                     availability.data?.source.orEmpty()
@@ -717,15 +709,10 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
                 availability?.message == "not signed in" -> getString(R.string.realtime_data_login_needed)
                 else -> getString(R.string.realtime_data_unavailable)
             }
-            textView13.text = realtimeText
 
-            btnLogin.visibility = if (
+            btnLogin.visibility = goneUnless(
                 hasConnectors && availability?.status == Status.ERROR && availability.message == "not signed in"
-            ) {
-                View.VISIBLE
-            } else {
-                View.GONE
-            }
+            )
 
             val flattenedAvailability = flatten(filteredAvailability?.data?.status?.values)
             if (flattenedAvailability != null && !expanded) {
@@ -756,15 +743,15 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
 
             val amenities = charger?.amenities
             val hasAmenities = !amenities.isNullOrBlank()
-            textView12.visibility = if (hasAmenities) View.VISIBLE else View.GONE
-            textView11.visibility = if (hasAmenities) View.VISIBLE else View.GONE
-            textView11.text = amenities
+            txtAmenitiesHeading.visibility = goneUnless(hasAmenities)
+            txtAmenities.visibility = goneUnless(hasAmenities)
+            txtAmenities.text = amenities
 
             val generalInformation = charger?.generalInformation
             val hasGeneralInformation = !generalInformation.isNullOrBlank()
-            textView10.visibility = if (hasGeneralInformation) View.VISIBLE else View.GONE
-            textView4.visibility = if (hasGeneralInformation) View.VISIBLE else View.GONE
-            textView4.text = generalInformation
+            txtGeneralInformationHeading.visibility = goneUnless(hasGeneralInformation)
+            txtGeneralInformation.visibility = goneUnless(hasGeneralInformation)
+            txtGeneralInformation.text = generalInformation
 
             sourceButton.text = getString(R.string.source, apiName)
 
@@ -772,50 +759,45 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
             val hasChargerWebsite = charger?.chargerUrl != null
             val hasExternalLinks = charger != null && (hasChargeprice || hasChargerWebsite)
 
-            buttonsScroller.visibility = if (hasExternalLinks) View.VISIBLE else View.GONE
-            divider3.visibility = if (hasExternalLinks) View.VISIBLE else View.GONE
-            btnChargeprice.visibility = if (hasChargeprice) View.VISIBLE else View.GONE
-            btnChargerWebsite.visibility = if (hasChargerWebsite) View.VISIBLE else View.GONE
+            buttonsScroller.visibility = goneUnless(hasExternalLinks)
+            divider3.visibility = goneUnless(hasExternalLinks)
+            btnChargeprice.visibility = goneUnless(hasChargeprice)
+            btnChargerWebsite.visibility = goneUnless(hasChargerWebsite)
 
             val hasPredictionGraph = predictionData?.predictionGraph != null
             val isPredictionPercentage = predictionData?.isPercentage == true
             val predictionDescription = predictionData?.description
             val showPredictionInfo = hasPredictionGraph && !isPredictionPercentage
 
-            textView8.visibility = if (hasPredictionGraph) View.VISIBLE else View.GONE
-            textView8.text = if (isPredictionPercentage) {
+            txtPredictionHeading.visibility = goneUnless(hasPredictionGraph)
+            txtPredictionHeading.text = if (isPredictionPercentage) {
                 getString(R.string.average_utilization)
             } else {
                 getString(R.string.utilization_prediction)
             }
 
-            prediction.visibility = if (hasPredictionGraph) View.VISIBLE else View.GONE
+            prediction.visibility = goneUnless(hasPredictionGraph)
             prediction.data = predictionData?.predictionGraph
             prediction.maxValue = predictionData?.maxValue
             prediction.isPercentage = isPredictionPercentage
 
-            textView29.text = predictionDescription
-            textView29.visibility =
-                if (showPredictionInfo && !predictionDescription.isNullOrBlank()) {
-                    View.VISIBLE
-                } else {
-                    View.GONE
-                }
-            btnPredictionHelp.visibility = if (showPredictionInfo) View.VISIBLE else View.GONE
-            imgPredictionSource.visibility = if (showPredictionInfo) View.VISIBLE else View.GONE
-            divider1.visibility = if (hasPredictionGraph) View.VISIBLE else View.GONE
+            txtPredictionDescription.text = predictionDescription
+            txtPredictionDescription.visibility =
+                goneUnless(showPredictionInfo && !predictionDescription.isNullOrBlank())
+            btnPredictionHelp.visibility = goneUnless(showPredictionInfo)
+            imgPredictionSource.visibility = goneUnless(showPredictionInfo)
+            divider1.visibility = goneUnless(hasPredictionGraph)
 
-            imgVerified.visibility = if (charger?.verified == true) View.VISIBLE else View.GONE
+            imgVerified.visibility = goneUnless(charger?.verified == true)
             TooltipCompat.setTooltipText(imgVerified, getString(R.string.verified_desc, apiName))
 
-            imgFaultReport.visibility =
-                if (charger?.faultReport != null) View.VISIBLE else View.GONE
+            imgFaultReport.visibility = goneUnless(charger?.faultReport != null)
             TooltipCompat.setTooltipText(imgFaultReport, getString(R.string.fault_report))
 
             val timeRetrieved = charger?.timeRetrieved
             val showTimeRetrieved = timeRetrieved != null &&
                     Duration.between(timeRetrieved, Instant.now()) > Duration.ofHours(1)
-            txtTimeRetrieved.visibility = if (showTimeRetrieved) View.VISIBLE else View.GONE
+            txtTimeRetrieved.visibility = goneUnless(showTimeRetrieved)
             val shownTimeRetrieved = if (showTimeRetrieved) timeRetrieved else null
             if (shownTimeRetrieved != null) {
                 txtTimeRetrieved.text = getString(
@@ -831,7 +813,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
             }
 
             val license = charger?.license
-            txtLicense.visibility = if (license.isNullOrBlank()) View.GONE else View.VISIBLE
+            txtLicense.visibility = goneUnless(!license.isNullOrBlank())
             txtLicense.text = license
         }
     }
@@ -1027,13 +1009,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
             isFabActive(binding.fabLocate, it == true)
         }
         vm.bottomSheetState.observe(viewLifecycleOwner) {
-            binding.navBarScrim.visibility =
-                if (it == STATE_COLLAPSED) View.VISIBLE else View.INVISIBLE
+            binding.navBarScrim.visibility = invisibleUnless(it == STATE_COLLAPSED)
         }
         vm.layersMenuOpen.observe(viewLifecycleOwner) { open ->
             HideOnScrollFabBehavior.from(binding.fabLayers)?.hidden = open
-            binding.fabLayers.visibility = if (open) View.INVISIBLE else View.VISIBLE
-            binding.layersSheet.visibility = if (open) View.VISIBLE else View.INVISIBLE
+            binding.fabLayers.visibility = invisibleUnless(!open)
+            binding.layersSheet.visibility = invisibleUnless(open)
             updateBackPressedCallback()
         }
         vm.mapType.observe(viewLifecycleOwner) {
@@ -1056,13 +1037,12 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
             }
         }
         vm.mapTrafficSupported.observe(viewLifecycleOwner) { supported ->
-            val visibility = if (supported) View.VISIBLE else View.GONE
+            val visibility = goneUnless(supported)
             binding.layers.textView23.visibility = visibility
             binding.layers.cbTraffic.visibility = visibility
         }
         vm.selectedChargepoint.observe(viewLifecycleOwner) {
-            binding.detailView.connectorDetailsCard.visibility =
-                if (it != null) View.VISIBLE else View.INVISIBLE
+            binding.detailView.connectorDetailsCard.visibility = invisibleUnless(it != null)
             if (it != null) {
                 detailsDialog.setData(it, vm.availability.value?.data)
             }
@@ -1543,7 +1523,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
         if (filterBadge != null) {
             // set up badge showing number of active filters
             vm.filtersCount.observe(viewLifecycleOwner) {
-                filterBadge.visibility = if (it > 0) View.VISIBLE else View.GONE
+                filterBadge.visibility = goneUnless(it > 0)
                 filterBadge.text = it.toString()
             }
         }

@@ -34,7 +34,7 @@
             tools:listitem="@layout/fragment_donate_preview" />
 
     <ProgressBar
-        android:id="@+id/progressBar3"
+        android:id="@+id/progressBar"
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

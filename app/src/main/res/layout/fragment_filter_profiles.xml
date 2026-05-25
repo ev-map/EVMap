@@ -37,7 +37,7 @@
 
 
     <TextView
-        android:id="@+id/textView19"
+        android:id="@+id/txtEmptyState"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"

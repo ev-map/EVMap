@@ -109,10 +109,10 @@ class FiltersAdapter : DataBindingAdapter<FilterWithValue<FilterValue>>() {
     ) {
         val filter = item.filter as BooleanFilter
         val value = item.value as BooleanFilterValue
-        binding.textView17.text = filter.name
-        binding.switch1.setOnCheckedChangeListener(null)
-        binding.switch1.isChecked = value.value
-        binding.switch1.setOnCheckedChangeListener { _: CompoundButton, isChecked: Boolean ->
+        binding.txtName.text = filter.name
+        binding.toggle.setOnCheckedChangeListener(null)
+        binding.toggle.isChecked = value.value
+        binding.toggle.setOnCheckedChangeListener { _: CompoundButton, isChecked: Boolean ->
             value.value = isChecked
         }
     }
@@ -123,7 +123,7 @@ class FiltersAdapter : DataBindingAdapter<FilterWithValue<FilterValue>>() {
         value: MultipleChoiceFilterValue
     ) {
         val inflater = LayoutInflater.from(binding.root.context)
-        binding.textView17.text = filter.name
+        binding.txtName.text = filter.name
 
         value.values.toList().forEach {
             if (it !in filter.choices.keys) value.values.remove(it)
@@ -231,8 +231,8 @@ class FiltersAdapter : DataBindingAdapter<FilterWithValue<FilterValue>>() {
             value.values = filter.choices.keys.toMutableSet()
         }
 
-        binding.textView17.text = filter.name
-        binding.textView26.text = binding.root.context.getString(
+        binding.txtName.text = filter.name
+        binding.txtDetail.text = binding.root.context.getString(
             if (value.all) {
                 R.string.all_selected
             } else {
@@ -251,7 +251,7 @@ class FiltersAdapter : DataBindingAdapter<FilterWithValue<FilterValue>>() {
             dialog.okListener = { selected ->
                 value.values = selected.toMutableSet()
                 value.all = value.values == filter.choices.keys
-                binding.textView26.text = binding.root.context.getString(
+                binding.txtDetail.text = binding.root.context.getString(
                     if (value.all) {
                         R.string.all_selected
                     } else {
@@ -269,7 +269,7 @@ class FiltersAdapter : DataBindingAdapter<FilterWithValue<FilterValue>>() {
         filter: SliderFilter,
         value: SliderFilterValue
     ) {
-        binding.textView17.text = filter.name
+        binding.txtName.text = filter.name
         val progress = max(filter.inverseMapping(value.value) - filter.min, 0)
         binding.seekBar.max = filter.max - filter.min
         binding.seekBar.setOnSeekBarChangeListener(null)
@@ -278,8 +278,7 @@ class FiltersAdapter : DataBindingAdapter<FilterWithValue<FilterValue>>() {
 
         binding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                val mapped = filter.mapping(progress + filter.min)
-                value.value = mapped
+                value.value = filter.mapping(progress + filter.min)
                 updateSliderValueText(binding, filter, progress)
             }
 
@@ -294,7 +293,7 @@ class FiltersAdapter : DataBindingAdapter<FilterWithValue<FilterValue>>() {
         progress: Int
     ) {
         val mappedValue = filter.mapping(progress + filter.min)
-        binding.textView18.text = if (filter.unit.isNullOrBlank()) {
+        binding.txtValue.text = if (filter.unit.isNullOrBlank()) {
             mappedValue.toString()
         } else {
             "$mappedValue ${filter.unit}"

@@ -21,7 +21,7 @@
         tools:srcCompat="@drawable/ic_connector_typ2" />
 
     <TextView
-        android:id="@+id/textView5"
+        android:id="@+id/txtNumber"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="38dp"
@@ -33,7 +33,7 @@
         tools:text="×99" />
 
     <TextView
-        android:id="@+id/textView7"
+        android:id="@+id/txtStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
@@ -48,7 +48,7 @@
         tools:text="80/99" />
 
     <TextView
-        android:id="@+id/textView6"
+        android:id="@+id/txtPower"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"

@@ -23,9 +23,9 @@ import net.vonforst.evmap.model.ChargeLocation
 import net.vonforst.evmap.model.OpeningHoursDays
 import net.vonforst.evmap.plus
 import net.vonforst.evmap.ui.applySelectableItemBackground
+import net.vonforst.evmap.ui.currency
 import net.vonforst.evmap.ui.goneUnless
 import net.vonforst.evmap.ui.setLinkify
-import net.vonforst.evmap.ui.currency
 import net.vonforst.evmap.utils.formatDMS
 import net.vonforst.evmap.utils.formatDecimal
 import java.time.DayOfWeek
@@ -82,13 +82,13 @@ class DetailsAdapter : DataBindingAdapter<DetailsAdapter.Detail>() {
         binding.root.isClickable = item.clickable
         applySelectableItemBackground(binding.root, item.clickable)
 
-        binding.imageView3.setImageResource(item.icon)
-        binding.imageView3.contentDescription =
+        binding.imgIcon.setImageResource(item.icon)
+        binding.imgIcon.contentDescription =
             binding.root.context.getString(item.contentDescription)
         binding.txtTariff.text = item.text
 
         binding.txtProvider.text = item.detailText
-        goneUnless(binding.txtProvider, item.detailText != null)
+        binding.txtProvider.visibility = goneUnless(item.detailText != null)
         setLinkify(
             binding.txtProvider,
             if (item.links) Linkify.WEB_URLS or Linkify.PHONE_NUMBERS else 0,
@@ -106,7 +106,7 @@ class DetailsAdapter : DataBindingAdapter<DetailsAdapter.Detail>() {
         binding.txtTariff.text = item.text
 
         binding.txtProvider.text = item.detailText
-        goneUnless(binding.txtProvider, item.detailText != null)
+        binding.txtProvider.visibility = goneUnless(item.detailText != null)
         setLinkify(
             binding.txtProvider,
             if (item.links) Linkify.WEB_URLS or Linkify.PHONE_NUMBERS else 0,
@@ -166,12 +166,12 @@ class DetailsAdapter : DataBindingAdapter<DetailsAdapter.Detail>() {
         dayOfWeek: DayOfWeek?,
         hours: OpeningHoursDays
     ) {
-        include.textView24.text = if (dayOfWeek != null) {
+        include.txtDay.text = if (dayOfWeek != null) {
             dayOfWeek.getDisplayName(TextStyle.FULL, Locale.getDefault())
         } else {
             include.root.context.getString(R.string.holiday)
         }
-        include.textView25.text = hours.getHoursForDayOfWeek(dayOfWeek)?.toString()
+        include.txtHours.text = hours.getHoursForDayOfWeek(dayOfWeek)?.toString()
             ?: include.root.context.getString(R.string.closed_unfmt)
     }
 }

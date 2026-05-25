@@ -20,6 +20,7 @@ import net.vonforst.evmap.adapter.SingleViewAdapter
 import net.vonforst.evmap.databinding.FragmentDonateBinding
 import net.vonforst.evmap.databinding.FragmentDonateHeaderBinding
 import net.vonforst.evmap.databinding.FragmentDonateReferralBinding
+import net.vonforst.evmap.ui.goneUnless
 import net.vonforst.evmap.viewmodel.DonateViewModel
 import net.vonforst.evmap.viewmodel.Status
 
@@ -73,11 +74,7 @@ class DonateFragment : DonateFragmentBase() {
 
         vm.products.observe(viewLifecycleOwner) {
             donationAdapter.submitList(it.data)
-            binding.progressBar3.visibility = if (it.status == Status.LOADING) {
-                View.VISIBLE
-            } else {
-                View.GONE
-            }
+            binding.progressBar.visibility = goneUnless(it.status == Status.LOADING)
         }
 
         vm.purchaseSuccessful.observe(viewLifecycleOwner) {

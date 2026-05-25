@@ -1,91 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools"
+<com.google.android.material.card.MaterialCardView xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <data>
-
-        <import type="java.util.Map" />
-
-        <import type="com.github.erfansn.localeconfigx.LocaleConfigXKt" />
-
-        <import type="java.time.ZonedDateTime" />
-
-        <import type="net.vonforst.evmap.model.ChargeLocation" />
-
-        <import type="net.vonforst.evmap.model.Chargepoint" />
-
-        <import type="net.vonforst.evmap.model.ChargeCard" />
-
-        <import type="net.vonforst.evmap.api.availability.ChargeLocationStatus" />
-
-        <import type="net.vonforst.evmap.adapter.DataBindingAdaptersKt" />
-
-        <import type="net.vonforst.evmap.adapter.DetailsAdapterKt" />
-
-        <import type="net.vonforst.evmap.utils.LocationUtilsKt" />
-
-        <import type="net.vonforst.evmap.viewmodel.Resource" />
-
-        <import type="net.vonforst.evmap.viewmodel.Status" />
-
-        <import type="net.vonforst.evmap.ui.BindingAdaptersKt" />
-
-        <import type="net.vonforst.evmap.api.ChargepointApiKt" />
-
-        <import type="net.vonforst.evmap.api.chargeprice.ChargepriceApi" />
-
-        <import type="android.text.format.DateUtils" />
-
-        <import type="java.time.Instant" />
-
-        <import type="java.time.Duration" />
-
-        <import type="net.vonforst.evmap.api.fronyx.PredictionData" />
-
-        <variable
-            name="charger"
-            type="Resource&lt;ChargeLocation&gt;" />
-
-        <variable
-            name="distance"
-            type="Double" />
-
-        <variable
-            name="availability"
-            type="Resource&lt;ChargeLocationStatus&gt;" />
-
-        <variable
-            name="predictionData"
-            type="PredictionData" />
-
-        <variable
-            name="filteredAvailability"
-            type="Resource&lt;ChargeLocationStatus&gt;" />
-
-        <variable
-            name="teslaPricing"
-            type="net.vonforst.evmap.api.availability.tesla.Pricing" />
-
-        <variable
-            name="chargeCards"
-            type="java.util.Map&lt;Long, ChargeCard&gt;" />
-
-        <variable
-            name="filteredChargeCards"
-            type="java.util.Set&lt;Long&gt;" />
-
-        <variable
-            name="expanded"
-            type="Boolean" />
-
-        <variable
-            name="apiName"
-            type="String" />
-
-    </data>
-
-    <com.google.android.material.card.MaterialCardView
+    xmlns:app="http://schemas.android.com/apk/res-auto"
         style="?attr/materialCardViewElevatedStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -107,8 +23,7 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:hyphenationFrequency="normal"
-                android:maxLines="@{expanded ? 3 : 1}"
-                android:text="@{charger.data.name}"
+                android:maxLines="1"
                 android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
                 app:layout_constrainedWidth="true"
                 app:layout_constraintEnd_toStartOf="@+id/imgFaultReport"
@@ -125,9 +40,8 @@
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:textAlignment="viewStart"
-                android:text="@{charger.data != null ? (charger.data.address != null ? charger.data.address.toString() : LocationUtilsKt.formatDMS(charger.data.coordinates)) : null }"
                 android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-                app:invisibleUnless="@{charger.data != null}"
+                android:visibility="invisible"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/txtName"
@@ -142,7 +56,6 @@
                 android:textAlignment="viewEnd"
                 android:maxLines="1"
                 android:minWidth="50dp"
-                android:text="@{BindingAdaptersKt.distance(distance, context)}"
                 android:textAppearance="@style/TextAppearance.Material3.BodySmall"
                 app:layout_constraintBottom_toBottomOf="@+id/txtConnectors"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
@@ -158,11 +71,9 @@
                 android:gravity="end"
                 android:maxLines="1"
                 android:padding="2dp"
-                android:text="@{String.format(LocaleConfigXKt.getCurrentOrDefaultLocale(context), &quot;%s/%d&quot;, BindingAdaptersKt.availabilityText(BindingAdaptersKt.flatten(filteredAvailability.data.status.values())), filteredAvailability.data.totalChargepoints)}"
                 android:textAppearance="@style/TextAppearance.Material3.BodySmall"
                 android:textColor="@android:color/white"
-                app:backgroundTintAvailability="@{BindingAdaptersKt.flatten(filteredAvailability.data.status.values())}"
-                app:invisibleUnless="@{filteredAvailability.data != null &amp;&amp; !expanded}"
+                android:visibility="invisible"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintTop_toTopOf="@+id/txtName"
                 tools:backgroundTint="@color/available"
@@ -176,7 +87,6 @@
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:textAlignment="viewStart"
-                android:text="@{charger.data.formatChargepoints(ChargepointApiKt.stringProvider(context), LocaleConfigXKt.getCurrentOrDefaultLocale(context))}"
                 android:textAppearance="@style/TextAppearance.Material3.BodySmall"
                 app:layout_constraintEnd_toStartOf="@+id/txtDistance"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
@@ -187,11 +97,10 @@
                 android:id="@+id/connectors"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:data="@{DataBindingAdaptersKt.chargepointWithAvailability(charger.data.chargepointsMerged, availability.data.status)}"
+                android:visibility="gone"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/textView7"
-                app:goneUnless="@{charger.data.chargepointsMerged.size() > 0}"
                 tools:itemCount="3"
                 tools:layoutManager="LinearLayoutManager"
                 tools:listitem="@layout/item_connector"
@@ -207,7 +116,7 @@
                 android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
                 android:textColor="?colorPrimary"
                 android:textAlignment="viewStart"
-                app:goneUnless="@{charger.data.chargepointsMerged.size() > 0}"
+                android:visibility="gone"
                 app:layout_constraintEnd_toStartOf="@+id/btnRefreshLiveData"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/txtConnectors" />
@@ -220,7 +129,7 @@
                 android:text="@string/amenities"
                 android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
                 android:textColor="?colorPrimary"
-                app:goneUnless="@{charger.data.amenities != null}"
+                android:visibility="gone"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
@@ -233,9 +142,8 @@
                 android:layout_marginTop="2dp"
                 android:autoLink="web"
                 android:linksClickable="true"
-                android:text="@{charger.data.amenities}"
                 android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                app:goneUnless="@{charger.data.amenities != null}"
+                android:visibility="gone"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
@@ -250,7 +158,7 @@
                 android:text="@string/general_info"
                 android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
                 android:textColor="?colorPrimary"
-                app:goneUnless="@{charger.data.generalInformation != null}"
+                android:visibility="gone"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
@@ -263,9 +171,8 @@
                 android:layout_marginTop="2dp"
                 android:autoLink="web"
                 android:linksClickable="true"
-                android:text="@{charger.data.generalInformation}"
                 android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                app:goneUnless="@{charger.data.generalInformation != null}"
+                android:visibility="gone"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@+id/guideline3"
@@ -291,7 +198,6 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:nestedScrollingEnabled="false"
-                app:data="@{DetailsAdapterKt.buildDetails(charger.data, chargeCards, filteredChargeCards, teslaPricing, context)}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"
@@ -313,7 +219,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
-                android:text="@{@string/source(apiName)}"
+                android:text=""
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/textView4"
@@ -325,9 +231,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:gravity="end"
-                android:text="@{availability.status == Status.SUCCESS ? @string/realtime_data_source(availability.data.source) : availability.status == Status.LOADING ? @string/realtime_data_loading : availability.message == &quot;not signed in&quot; ? @string/realtime_data_login_needed : @string/realtime_data_unavailable}"
+                android:text="@string/realtime_data_unavailable"
                 android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-                app:goneUnless="@{charger.data.chargepointsMerged.size() > 0}"
+                android:visibility="gone"
                 app:layout_constraintEnd_toStartOf="@+id/btnLogin"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/connectors"
@@ -358,7 +264,7 @@
                 android:layout_height="1dp"
                 android:layout_marginTop="8dp"
                 android:background="?android:attr/listDivider"
-                app:goneUnless="@{charger.data != null &amp;&amp; (ChargepriceApi.isChargerSupported(charger.data) || charger.data.chargerUrl != null)}"
+                android:visibility="gone"
                 app:layout_constraintTop_toBottomOf="@+id/buttonsScroller" />
 
             <TextView
@@ -366,11 +272,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="@{predictionData.isPercentage ? @string/average_utilization : @string/utilization_prediction}"
+                android:text="@string/utilization_prediction"
                 tools:text="@string/utilization_prediction"
                 android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
                 android:textColor="?colorPrimary"
-                app:goneUnless="@{predictionData.predictionGraph != null}"
+                android:visibility="gone"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/divider2" />
 
@@ -380,9 +286,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
-                android:text="@{predictionData.description}"
                 android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-                app:goneUnless="@{predictionData.predictionGraph != null &amp;&amp; !predictionData.isPercentage}"
+                android:visibility="gone"
                 app:layout_constraintBaseline_toBaselineOf="@+id/textView8"
                 app:layout_constraintEnd_toStartOf="@+id/btnPredictionHelp"
                 app:layout_constraintStart_toEndOf="@+id/textView8"
@@ -394,7 +299,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/help"
-                app:goneUnless="@{predictionData.predictionGraph != null &amp;&amp; !predictionData.isPercentage}"
+                android:visibility="gone"
                 app:icon="@drawable/ic_help"
                 app:iconTint="?android:textColorSecondary"
                 app:layout_constraintBottom_toBottomOf="@+id/textView8"
@@ -406,13 +311,10 @@
                 android:layout_width="0dp"
                 android:layout_height="100dp"
                 android:layout_marginTop="8dp"
-                app:data="@{predictionData.predictionGraph}"
-                app:goneUnless="@{predictionData.predictionGraph != null}"
+                android:visibility="gone"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/textView8"
-                app:maxValue="@{predictionData.maxValue}"
-                app:isPercentage="@{predictionData.isPercentage}"
                 tools:itemCount="3"
                 tools:layoutManager="LinearLayoutManager"
                 tools:listitem="@layout/item_connector"
@@ -426,7 +328,7 @@
                 android:adjustViewBounds="true"
                 android:background="?selectableItemBackgroundBorderless"
                 android:scaleType="fitCenter"
-                app:goneUnless="@{predictionData.predictionGraph != null &amp;&amp; !predictionData.isPercentage}"
+                android:visibility="gone"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintTop_toBottomOf="@+id/prediction"
                 app:srcCompat="@drawable/ic_powered_by_fronyx"
@@ -438,7 +340,7 @@
                 android:layout_height="1dp"
                 android:layout_marginTop="8dp"
                 android:background="?android:attr/listDivider"
-                app:goneUnless="@{predictionData.predictionGraph != null}"
+                android:visibility="gone"
                 app:layout_constraintTop_toBottomOf="@+id/imgPredictionSource" />
 
             <ImageView
@@ -449,14 +351,13 @@
                 android:layout_marginTop="2dp"
                 android:layout_marginEnd="8dp"
                 android:contentDescription="@string/verified"
-                app:goneUnless="@{ charger.data.verified }"
+                android:visibility="gone"
                 app:layout_constraintEnd_toStartOf="@+id/txtAvailability"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/imgFaultReport"
                 app:layout_constraintTop_toTopOf="@+id/txtName"
                 app:srcCompat="@drawable/ic_verified"
                 app:tint="@color/available"
-                app:tooltipTextCompat="@{@string/verified_desc(apiName)}"
                 tools:targetApi="o" />
 
             <ImageView
@@ -466,12 +367,11 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="2dp"
                 android:contentDescription="@string/fault_report"
-                app:goneUnless="@{ charger.data.faultReport != null }"
+                android:visibility="gone"
                 app:layout_constraintEnd_toStartOf="@+id/imgVerified"
                 app:layout_constraintStart_toEndOf="@+id/txtName"
                 app:layout_constraintTop_toTopOf="@+id/txtName"
                 app:srcCompat="@drawable/ic_map_marker_fault"
-                app:tooltipTextCompat="@{@string/fault_report}"
                 tools:targetApi="o" />
 
             <TextView
@@ -480,11 +380,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:breakStrategy="balanced"
-                android:text="@{@string/data_retrieved_at(DateUtils.getRelativeTimeSpanString(charger.data.timeRetrieved.toEpochMilli(), Instant.now().toEpochMilli(), 0))}"
+                android:text=""
                 android:textAlignment="center"
                 android:textAppearance="@style/TextAppearance.Material3.BodySmall"
                 android:textStyle="italic"
-                app:goneUnless="@{charger.data.timeRetrieved == null || Duration.between(charger.data.timeRetrieved, Instant.now()).compareTo(Duration.ofHours(1)) > 0}"
+                android:visibility="gone"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/sourceButton"
@@ -496,11 +396,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:breakStrategy="balanced"
-                android:text="@{charger.data.license}"
+                android:text=""
                 android:textAlignment="center"
                 android:textAppearance="@style/TextAppearance.Material3.BodySmall"
                 android:textStyle="italic"
-                app:goneUnless="@{charger.data.license != null}"
+                android:visibility="gone"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/txtTimeRetrieved"
@@ -512,8 +412,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/refresh_live_data"
-                android:enabled="@{availability.status != Status.LOADING}"
-                app:goneUnless="@{charger.data.chargepointsMerged.size() > 0}"
+                android:visibility="gone"
                 app:icon="@drawable/ic_refresh"
                 app:iconTint="?android:textColorSecondary"
                 app:layout_constraintBottom_toBottomOf="@+id/textView7"
@@ -530,7 +429,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/divider1"
                 app:layout_constrainedWidth="true"
                 android:fillViewport="true"
-                app:goneUnless="@{charger.data != null &amp;&amp; (ChargepriceApi.isChargerSupported(charger.data) || charger.data.chargerUrl != null)}">
+                android:visibility="gone">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -543,7 +442,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/go_to_chargeprice"
-                        app:goneUnless="@{charger.data != null &amp;&amp; ChargepriceApi.isChargerSupported(charger.data)}" />
+                        android:visibility="gone" />
 
                     <Button
                         android:id="@+id/btnChargerWebsite"
@@ -552,7 +451,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:text="@string/charger_website"
-                        app:goneUnless="@{charger.data != null &amp;&amp; charger.data.chargerUrl != null}"
+                        android:visibility="gone"
                         app:icon="@drawable/ic_link" />
 
                 </LinearLayout>
@@ -564,7 +463,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:text="@string/login"
-                app:goneUnless="@{availability.status == Status.ERROR &amp;&amp; availability.message == &quot;not signed in&quot;}"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@+id/textView13"
                 app:layout_constraintEnd_toStartOf="@+id/guideline2"
                 app:layout_constraintTop_toTopOf="@+id/textView13" />
@@ -589,5 +488,4 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </com.google.android.material.card.MaterialCardView>
-</layout>
+</com.google.android.material.card.MaterialCardView>

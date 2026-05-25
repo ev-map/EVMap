@@ -1,23 +1,34 @@
 package net.vonforst.evmap.adapter
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
-import androidx.databinding.DataBindingUtil
+import android.widget.BaseAdapter
+import android.widget.Filter
+import android.widget.Filterable
+import android.widget.ImageView
 import androidx.lifecycle.LiveData
 import com.car2go.maps.model.LatLng
 import net.vonforst.evmap.R
-import net.vonforst.evmap.autocomplete.*
+import net.vonforst.evmap.autocomplete.ApiUnavailableException
+import net.vonforst.evmap.autocomplete.AutocompletePlace
+import net.vonforst.evmap.autocomplete.AutocompletePlaceType
+import net.vonforst.evmap.autocomplete.AutocompleteProvider
+import net.vonforst.evmap.autocomplete.MapboxAutocompleteProvider
+import net.vonforst.evmap.autocomplete.PlaceWithBounds
+import net.vonforst.evmap.autocomplete.getAutocompleteProviders
 import net.vonforst.evmap.containsAny
 import net.vonforst.evmap.databinding.ItemAutocompleteResultBinding
 import net.vonforst.evmap.isDarkMode
 import net.vonforst.evmap.storage.AppDatabase
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.storage.RecentAutocompletePlace
+import net.vonforst.evmap.ui.distance
+import net.vonforst.evmap.ui.goneUnless
 import java.time.Instant
 
 class PlaceAutocompleteAdapter(val context: Context, val location: LiveData<LatLng>) :
@@ -56,9 +67,8 @@ class PlaceAutocompleteAdapter(val context: Context, val location: LiveData<LatL
         if (getItemViewType(position) == typeItem) {
             val viewHolder: ViewHolder
             if (view == null) {
-                val binding: ItemAutocompleteResultBinding = DataBindingUtil.inflate(
+                val binding = ItemAutocompleteResultBinding.inflate(
                     LayoutInflater.from(context),
-                    R.layout.item_autocomplete_result,
                     parent,
                     false
                 )
@@ -88,7 +98,27 @@ class PlaceAutocompleteAdapter(val context: Context, val location: LiveData<LatL
         viewHolder: ViewHolder,
         place: AutocompletePlace
     ) {
-        viewHolder.binding.item = place
+        val binding = viewHolder.binding
+        val isSpecial = isSpecialPlace(place.types)
+
+        binding.title.text = place.primaryText
+        binding.subtitle.text = place.secondaryText
+
+        binding.icon.contentDescription = place.secondaryText
+        binding.icon.setImageResource(iconForPlaceType(place.types))
+        val tintColor = if (isSpecial) {
+            androidx.appcompat.R.attr.colorPrimary
+        } else {
+            androidx.appcompat.R.attr.colorControlNormal
+        }
+        val ta = binding.root.context.theme.obtainStyledAttributes(intArrayOf(tintColor))
+        val tint = ta.getColor(0, 0)
+        ta.recycle()
+        binding.icon.imageTintList = ColorStateList.valueOf(tint)
+        binding.icon.backgroundTintList = ColorStateList.valueOf(tint)
+
+        binding.textView16.text = distance(place.distanceMeters, binding.root.context)
+        goneUnless(binding.textView16, place.distanceMeters != null)
     }
 
     override fun getFilter(): Filter {

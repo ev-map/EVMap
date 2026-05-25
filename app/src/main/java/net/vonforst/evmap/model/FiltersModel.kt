@@ -1,6 +1,5 @@
 package net.vonforst.evmap.model
 
-import androidx.databinding.BaseObservable
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
@@ -46,7 +45,7 @@ data class SliderFilter(
     override fun defaultValue() = SliderFilterValue(key, min)
 }
 
-sealed class FilterValue : BaseObservable(), Equatable {
+sealed class FilterValue : Equatable {
     abstract val key: String
     var dataSource: String = ""
     var profile: Long = FILTERS_CUSTOM
@@ -66,8 +65,7 @@ sealed class FilterValue : BaseObservable(), Equatable {
     primaryKeys = ["key", "profile", "dataSource"],
     indices = [
         Index(value = ["profile", "dataSource"])
-    ],
-    ignoredColumns = ["mCallbacks"]
+    ]
 )
 data class BooleanFilterValue(
     override val key: String,
@@ -90,8 +88,7 @@ data class BooleanFilterValue(
     primaryKeys = ["key", "profile", "dataSource"],
     indices = [
         Index(value = ["profile", "dataSource"])
-    ],
-    ignoredColumns = ["mCallbacks"]
+    ]
 )
 data class MultipleChoiceFilterValue(
     override val key: String,
@@ -124,8 +121,7 @@ data class MultipleChoiceFilterValue(
     primaryKeys = ["key", "profile", "dataSource"],
     indices = [
         Index(value = ["profile", "dataSource"])
-    ],
-    ignoredColumns = ["mCallbacks"]
+    ]
 )
 data class SliderFilterValue(
     override val key: String,

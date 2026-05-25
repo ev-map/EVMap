@@ -4,25 +4,36 @@ import android.content.Context
 import android.graphics.Typeface
 import android.text.Spannable
 import android.text.style.StyleSpan
+import android.text.util.Linkify
+import android.transition.TransitionManager
+import android.view.LayoutInflater
+import android.view.ViewGroup
 import androidx.core.text.HtmlCompat
 import androidx.core.text.buildSpannedString
+import androidx.viewbinding.ViewBinding
 import net.vonforst.evmap.R
 import net.vonforst.evmap.api.availability.tesla.Pricing
 import net.vonforst.evmap.api.availability.tesla.Rates
-import net.vonforst.evmap.bold
+import net.vonforst.evmap.databinding.ItemDetailBinding
+import net.vonforst.evmap.databinding.ItemDetailOpeninghoursBinding
 import net.vonforst.evmap.joinToSpannedString
 import net.vonforst.evmap.model.ChargeCard
 import net.vonforst.evmap.model.ChargeCardId
 import net.vonforst.evmap.model.ChargeLocation
-import net.vonforst.evmap.model.Coordinate
 import net.vonforst.evmap.model.OpeningHoursDays
 import net.vonforst.evmap.plus
+import net.vonforst.evmap.ui.applySelectableItemBackground
+import net.vonforst.evmap.ui.goneUnless
+import net.vonforst.evmap.ui.setLinkify
 import net.vonforst.evmap.ui.currency
 import net.vonforst.evmap.utils.formatDMS
 import net.vonforst.evmap.utils.formatDecimal
+import java.time.DayOfWeek
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
+import java.time.format.TextStyle
+import java.util.Locale
 
 class DetailsAdapter : DataBindingAdapter<DetailsAdapter.Detail>() {
     data class Detail(
@@ -37,11 +48,131 @@ class DetailsAdapter : DataBindingAdapter<DetailsAdapter.Detail>() {
 
     override fun getItemViewType(position: Int): Int {
         val item = getItem(position)
-        if (item.hoursDays != null) {
-            return R.layout.item_detail_openinghours
+        return if (item.hoursDays != null) {
+            R.layout.item_detail_openinghours
         } else {
-            return R.layout.item_detail
+            R.layout.item_detail
         }
+    }
+
+    override fun createBinding(
+        inflater: LayoutInflater,
+        parent: ViewGroup,
+        viewType: Int
+    ): ViewBinding = when (viewType) {
+        R.layout.item_detail_openinghours -> ItemDetailOpeninghoursBinding.inflate(
+            inflater,
+            parent,
+            false
+        )
+
+        else -> ItemDetailBinding.inflate(inflater, parent, false)
+    }
+
+    override fun bind(holder: ViewHolder, item: Detail) {
+        super.bind(holder, item)
+        if (holder.binding is ItemDetailBinding) {
+            bindNormal(holder.binding, item)
+        } else {
+            bindOpeningHours(holder.binding as ItemDetailOpeninghoursBinding, item)
+        }
+    }
+
+    private fun bindNormal(binding: ItemDetailBinding, item: Detail) {
+        binding.root.isClickable = item.clickable
+        applySelectableItemBackground(binding.root, item.clickable)
+
+        binding.imageView3.setImageResource(item.icon)
+        binding.imageView3.contentDescription =
+            binding.root.context.getString(item.contentDescription)
+        binding.txtTariff.text = item.text
+
+        binding.txtProvider.text = item.detailText
+        goneUnless(binding.txtProvider, item.detailText != null)
+        setLinkify(
+            binding.txtProvider,
+            if (item.links) Linkify.WEB_URLS or Linkify.PHONE_NUMBERS else 0,
+            item.detailText
+        )
+    }
+
+    private fun bindOpeningHours(binding: ItemDetailOpeninghoursBinding, item: Detail) {
+        binding.root.isClickable = item.clickable
+        applySelectableItemBackground(binding.root, item.clickable)
+
+        binding.imageView3.setImageResource(item.icon)
+        binding.imageView3.contentDescription =
+            binding.root.context.getString(item.contentDescription)
+        binding.txtTariff.text = item.text
+
+        binding.txtProvider.text = item.detailText
+        goneUnless(binding.txtProvider, item.detailText != null)
+        setLinkify(
+            binding.txtProvider,
+            if (item.links) Linkify.WEB_URLS or Linkify.PHONE_NUMBERS else 0,
+            item.detailText
+        )
+
+        val toggleMarginTop = binding.root.resources.getDimensionPixelSize(
+            if (item.detailText != null) {
+                R.dimen.expand_toggle_padding_large
+            } else {
+                R.dimen.expand_toggle_padding_small
+            }
+        )
+        val toggleLayoutParams = binding.expandToggle.layoutParams
+        if (toggleLayoutParams is ViewGroup.MarginLayoutParams) {
+            toggleLayoutParams.topMargin = toggleMarginTop
+            binding.expandToggle.layoutParams = toggleLayoutParams
+        }
+
+        val days = item.hoursDays
+        val expanded = days != null
+        binding.expandToggle.visibility =
+            if (expanded) android.view.View.VISIBLE else android.view.View.GONE
+        if (!expanded) return
+
+        bindDay(binding.hoursMon, DayOfWeek.MONDAY, days)
+        bindDay(binding.hoursTue, DayOfWeek.TUESDAY, days)
+        bindDay(binding.hoursWed, DayOfWeek.WEDNESDAY, days)
+        bindDay(binding.hoursThu, DayOfWeek.THURSDAY, days)
+        bindDay(binding.hoursFri, DayOfWeek.FRIDAY, days)
+        bindDay(binding.hoursSat, DayOfWeek.SATURDAY, days)
+        bindDay(binding.hoursSun, DayOfWeek.SUNDAY, days)
+        bindDay(binding.hoursHoliday, null, days)
+
+        val toggleListener = android.view.View.OnClickListener {
+            TransitionManager.beginDelayedTransition(binding.container)
+            val show = binding.expandToggle.isChecked
+            val visibility = if (show) android.view.View.VISIBLE else android.view.View.GONE
+            listOf(
+                binding.hoursMon.root,
+                binding.hoursTue.root,
+                binding.hoursWed.root,
+                binding.hoursThu.root,
+                binding.hoursFri.root,
+                binding.hoursSat.root,
+                binding.hoursSun.root,
+                binding.hoursHoliday.root
+            ).forEach { it.visibility = visibility }
+        }
+        binding.expandToggle.setOnClickListener(toggleListener)
+        binding.expandToggle.isChecked = false
+        toggleListener.onClick(binding.expandToggle)
+    }
+
+    private fun bindDay(
+        include: net.vonforst.evmap.databinding.ItemDetailOpeninghoursItemBinding,
+        dayOfWeek: DayOfWeek?,
+        hours: OpeningHoursDays
+    ) {
+        include.textView24.text = if (dayOfWeek != null) {
+            dayOfWeek.getDisplayName(TextStyle.FULL, Locale.getDefault())
+        } else {
+            include.root.context.getString(R.string.holiday)
+        }
+        include.textView25.text = hours.getHoursForDayOfWeek(dayOfWeek)?.toString()
+            ?: include.root.context.getString(R.string.closed_unfmt)
     }
 }
 
@@ -278,7 +409,9 @@ fun formatChargeCards(
         .mapNotNull {
             val name = chargecardData[it.id]?.name ?: return@mapNotNull null
             if (filteredChargeCards?.contains(it.id) == true) {
-                name.bold()
+                buildSpannedString {
+                    append(name, StyleSpan(Typeface.BOLD), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                }
             } else {
                 name
             }

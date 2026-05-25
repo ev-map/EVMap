@@ -8,11 +8,13 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.text.format.DateUtils
 import android.text.method.KeyListener
 import android.view.ContextThemeWrapper
 import android.view.Gravity
@@ -31,6 +33,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresPermission
 import androidx.appcompat.widget.PopupMenu
+import androidx.appcompat.widget.TooltipCompat
 import androidx.core.content.ContextCompat
 import androidx.core.location.LocationListenerCompat
 import androidx.core.view.MenuCompat
@@ -41,9 +44,8 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.doOnLayout
 import androidx.core.view.doOnNextLayout
 import androidx.core.view.updateLayoutParams
-import androidx.databinding.DataBindingUtil
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
@@ -87,7 +89,10 @@ import net.vonforst.evmap.adapter.ConnectorAdapter
 import net.vonforst.evmap.adapter.DetailsAdapter
 import net.vonforst.evmap.adapter.GalleryAdapter
 import net.vonforst.evmap.adapter.PlaceAutocompleteAdapter
+import net.vonforst.evmap.adapter.buildDetails
+import net.vonforst.evmap.adapter.chargepointWithAvailability
 import net.vonforst.evmap.api.chargeprice.ChargepriceApi
+import net.vonforst.evmap.api.stringProvider
 import net.vonforst.evmap.autocomplete.ApiUnavailableException
 import net.vonforst.evmap.autocomplete.PlaceWithBounds
 import net.vonforst.evmap.bold
@@ -106,13 +111,18 @@ import net.vonforst.evmap.shouldUseImperialUnits
 import net.vonforst.evmap.storage.PreferenceDataSource
 import net.vonforst.evmap.ui.HideOnScrollFabBehavior
 import net.vonforst.evmap.ui.MarkerManager
+import net.vonforst.evmap.ui.availabilityColor
+import net.vonforst.evmap.ui.availabilityText
+import net.vonforst.evmap.ui.distance
+import net.vonforst.evmap.ui.flatten
+import net.vonforst.evmap.ui.isFabActive
 import net.vonforst.evmap.ui.setTouchModal
 import net.vonforst.evmap.utils.boundingBox
 import net.vonforst.evmap.utils.checkAnyLocationPermission
 import net.vonforst.evmap.utils.checkFineLocationPermission
 import net.vonforst.evmap.utils.distanceBetween
+import net.vonforst.evmap.utils.formatDMS
 import net.vonforst.evmap.utils.formatDecimal
-import net.vonforst.evmap.viewmodel.GalleryViewModel
 import net.vonforst.evmap.viewmodel.MapPosition
 import net.vonforst.evmap.viewmodel.MapViewModel
 import net.vonforst.evmap.viewmodel.Resource
@@ -120,6 +130,7 @@ import net.vonforst.evmap.viewmodel.Status
 import java.io.IOException
 import java.time.Duration
 import java.time.Instant
+import java.util.Locale
 import kotlin.math.min
 
 
@@ -127,7 +138,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
     private var _binding: FragmentMapBinding? = null
     private val binding get() = _binding!!
     private val vm: MapViewModel by viewModels()
-    private val galleryVm: GalleryViewModel by activityViewModels()
     private var mapFragment: MapFragment? = null
     private var map: AnyMap? = null
     private var markerManager: MarkerManager? = null
@@ -192,10 +202,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_map, container, false)
-        println(binding.detailView.sourceButton)
-        binding.lifecycleOwner = viewLifecycleOwner
-        binding.vm = vm
+        _binding = FragmentMapBinding.inflate(inflater, container, false)
 
         val provider = prefs.mapProvider
         if (mapFragment == null) {
@@ -325,6 +332,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
         vm.apiName.observe(viewLifecycleOwner) {
             binding.detailAppBar.toolbar.menu.findItem(R.id.menu_edit).title =
                 getString(R.string.edit_at_datasource, it)
+            renderDetailView()
         }
 
         binding.detailView.topPart.doOnNextLayout {
@@ -337,6 +345,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
         setupObservers()
         setupClickListeners()
         setupAdapters()
+        renderDetailView()
         (activity as? MapsActivity)?.setSupportActionBar(binding.toolbar)
 
         binding.toolbar.setupWithNavController(
@@ -439,6 +448,20 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
         }
         binding.fabLayers.setOnClickListener {
             openLayersMenu()
+        }
+        binding.layers.rbStandard.setOnClickListener {
+            vm.setMapType(AnyMap.Type.NORMAL)
+        }
+        binding.layers.rbSatellite.setOnClickListener {
+            vm.setMapType(AnyMap.Type.HYBRID)
+        }
+        binding.layers.rbTerrain.setOnClickListener {
+            vm.setMapType(AnyMap.Type.TERRAIN)
+        }
+        binding.layers.cbTraffic.setOnCheckedChangeListener { _, isChecked ->
+            if (vm.mapTrafficEnabled.value != isChecked) {
+                vm.mapTrafficEnabled.value = isChecked
+            }
         }
         binding.layers.btnClose.setOnClickListener {
             closeLayersMenu()
@@ -571,6 +594,9 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
     @SuppressLint("SetTextI18n")
     private fun setupSearchAutocomplete() {
         binding.search.threshold = 1
+        binding.search.doAfterTextChanged {
+            updateClearSearchVisibility()
+        }
 
         searchKeyListener = binding.search.keyListener
         binding.search.keyListener = null
@@ -598,6 +624,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
                         place.primaryText.toString()
                     }
                 )
+                updateClearSearchVisibility()
             }
         binding.search.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
@@ -611,10 +638,201 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
         binding.clearSearch.setOnClickListener {
             vm.searchResult.value = null
             removeSearchFocus()
+            updateClearSearchVisibility()
         }
         binding.toolbar.doOnLayout {
             binding.search.dropDownWidth = binding.toolbar.width
             binding.search.dropDownAnchor = R.id.toolbar
+        }
+        updateClearSearchVisibility()
+    }
+
+    private fun updateClearSearchVisibility() {
+        binding.clearSearch.visibility = if (binding.search.text.isNullOrEmpty()) {
+            View.INVISIBLE
+        } else {
+            View.VISIBLE
+        }
+    }
+
+    private fun updateChargepointsUi(res: Resource<List<ChargepointListItem>>) {
+        binding.progressBar2.visibility =
+            if (res.status == Status.LOADING) View.VISIBLE else View.GONE
+        binding.progressBar2.isIndeterminate = res.progress == null
+        binding.progressBar2.progress = ((res.progress ?: 0f) * 100f).toInt().coerceIn(0, 100)
+        binding.search.hint = if (res.progress != null) {
+            getString(R.string.downloading_chargers_percent, (res.progress * 100f).toInt())
+        } else {
+            getString(R.string.search)
+        }
+    }
+
+    private fun updateGallery(photos: List<ChargerPhoto>?) {
+        val galleryAdapter = binding.gallery.adapter as? GalleryAdapter ?: return
+        galleryAdapter.submitList(photos)
+        binding.galleryPlaceholder.visibility =
+            if (photos.isNullOrEmpty()) View.VISIBLE else View.INVISIBLE
+    }
+
+    private fun renderDetailView() {
+        if (_binding == null) return
+
+        val context = requireContext()
+        val charger = vm.charger.value?.data
+        val availability = vm.availability.value
+        val filteredAvailability = vm.filteredAvailability.value
+        val predictionData = vm.predictionData.value
+        val chargeCards = vm.chargeCardMap.value
+        val filteredChargeCards = vm.filteredChargeCards.value
+        val distanceMeters = vm.chargerDistance.value
+        val expanded = vm.bottomSheetExpanded.value == true
+        val teslaPricing = vm.teslaPricing.value
+        val apiName = vm.apiName.value.orEmpty()
+
+        binding.detailView.apply {
+            txtName.text = charger?.name
+            txtName.maxLines = if (expanded) 3 else 1
+
+            textView2.text = charger?.address?.toString() ?: charger?.coordinates?.formatDMS()
+            textView2.visibility = if (charger != null) View.VISIBLE else View.INVISIBLE
+
+            txtDistance.text = distance(distanceMeters, context)
+            txtConnectors.text =
+                charger?.formatChargepoints(context.stringProvider(), Locale.getDefault())
+
+            val hasConnectors = charger?.chargepointsMerged?.isNotEmpty() == true
+            connectors.visibility = if (hasConnectors) View.VISIBLE else View.GONE
+            textView7.visibility = if (hasConnectors) View.VISIBLE else View.GONE
+            textView13.visibility = if (hasConnectors) View.VISIBLE else View.GONE
+            btnRefreshLiveData.visibility = if (hasConnectors) View.VISIBLE else View.GONE
+            btnRefreshLiveData.isEnabled = availability?.status != Status.LOADING
+
+            val realtimeText = when {
+                availability?.status == Status.SUCCESS -> getString(
+                    R.string.realtime_data_source,
+                    availability.data?.source.orEmpty()
+                )
+
+                availability?.status == Status.LOADING -> getString(R.string.realtime_data_loading)
+                availability?.message == "not signed in" -> getString(R.string.realtime_data_login_needed)
+                else -> getString(R.string.realtime_data_unavailable)
+            }
+            textView13.text = realtimeText
+
+            btnLogin.visibility = if (
+                hasConnectors && availability?.status == Status.ERROR && availability.message == "not signed in"
+            ) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
+
+            val flattenedAvailability = flatten(filteredAvailability?.data?.status?.values)
+            if (flattenedAvailability != null && !expanded) {
+                txtAvailability.visibility = View.VISIBLE
+                txtAvailability.text = String.format(
+                    Locale.getDefault(),
+                    "%s/%d",
+                    availabilityText(flattenedAvailability),
+                    filteredAvailability?.data?.totalChargepoints ?: 0
+                )
+                txtAvailability.backgroundTintList = ColorStateList.valueOf(
+                    availabilityColor(flattenedAvailability, context)
+                )
+            } else {
+                txtAvailability.visibility = View.INVISIBLE
+            }
+
+            (connectors.adapter as? ConnectorAdapter)?.submitList(
+                chargepointWithAvailability(
+                    charger?.chargepointsMerged,
+                    availability?.data?.status
+                )
+            )
+
+            (details.adapter as? DetailsAdapter)?.submitList(
+                buildDetails(charger, chargeCards, filteredChargeCards, teslaPricing, context)
+            )
+
+            val amenities = charger?.amenities
+            val hasAmenities = !amenities.isNullOrBlank()
+            textView12.visibility = if (hasAmenities) View.VISIBLE else View.GONE
+            textView11.visibility = if (hasAmenities) View.VISIBLE else View.GONE
+            textView11.text = amenities
+
+            val generalInformation = charger?.generalInformation
+            val hasGeneralInformation = !generalInformation.isNullOrBlank()
+            textView10.visibility = if (hasGeneralInformation) View.VISIBLE else View.GONE
+            textView4.visibility = if (hasGeneralInformation) View.VISIBLE else View.GONE
+            textView4.text = generalInformation
+
+            sourceButton.text = getString(R.string.source, apiName)
+
+            val hasChargeprice = charger?.let { ChargepriceApi.isChargerSupported(it) } == true
+            val hasChargerWebsite = charger?.chargerUrl != null
+            val hasExternalLinks = charger != null && (hasChargeprice || hasChargerWebsite)
+
+            buttonsScroller.visibility = if (hasExternalLinks) View.VISIBLE else View.GONE
+            divider3.visibility = if (hasExternalLinks) View.VISIBLE else View.GONE
+            btnChargeprice.visibility = if (hasChargeprice) View.VISIBLE else View.GONE
+            btnChargerWebsite.visibility = if (hasChargerWebsite) View.VISIBLE else View.GONE
+
+            val hasPredictionGraph = predictionData?.predictionGraph != null
+            val isPredictionPercentage = predictionData?.isPercentage == true
+            val predictionDescription = predictionData?.description
+            val showPredictionInfo = hasPredictionGraph && !isPredictionPercentage
+
+            textView8.visibility = if (hasPredictionGraph) View.VISIBLE else View.GONE
+            textView8.text = if (isPredictionPercentage) {
+                getString(R.string.average_utilization)
+            } else {
+                getString(R.string.utilization_prediction)
+            }
+
+            prediction.visibility = if (hasPredictionGraph) View.VISIBLE else View.GONE
+            prediction.data = predictionData?.predictionGraph
+            prediction.maxValue = predictionData?.maxValue
+            prediction.isPercentage = isPredictionPercentage
+
+            textView29.text = predictionDescription
+            textView29.visibility =
+                if (showPredictionInfo && !predictionDescription.isNullOrBlank()) {
+                    View.VISIBLE
+                } else {
+                    View.GONE
+                }
+            btnPredictionHelp.visibility = if (showPredictionInfo) View.VISIBLE else View.GONE
+            imgPredictionSource.visibility = if (showPredictionInfo) View.VISIBLE else View.GONE
+            divider1.visibility = if (hasPredictionGraph) View.VISIBLE else View.GONE
+
+            imgVerified.visibility = if (charger?.verified == true) View.VISIBLE else View.GONE
+            TooltipCompat.setTooltipText(imgVerified, getString(R.string.verified_desc, apiName))
+
+            imgFaultReport.visibility =
+                if (charger?.faultReport != null) View.VISIBLE else View.GONE
+            TooltipCompat.setTooltipText(imgFaultReport, getString(R.string.fault_report))
+
+            val timeRetrieved = charger?.timeRetrieved
+            val showTimeRetrieved = timeRetrieved != null &&
+                    Duration.between(timeRetrieved, Instant.now()) > Duration.ofHours(1)
+            txtTimeRetrieved.visibility = if (showTimeRetrieved) View.VISIBLE else View.GONE
+            val shownTimeRetrieved = if (showTimeRetrieved) timeRetrieved else null
+            if (shownTimeRetrieved != null) {
+                txtTimeRetrieved.text = getString(
+                    R.string.data_retrieved_at,
+                    DateUtils.getRelativeTimeSpanString(
+                        shownTimeRetrieved.toEpochMilli(),
+                        Instant.now().toEpochMilli(),
+                        0
+                    )
+                )
+            } else {
+                txtTimeRetrieved.text = null
+            }
+
+            val license = charger?.license
+            txtLicense.visibility = if (license.isNullOrBlank()) View.GONE else View.VISIBLE
+            txtLicense.text = license
         }
     }
 
@@ -739,6 +957,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
             }
         }
         vm.chargepoints.observe(viewLifecycleOwner, Observer { res ->
+            updateChargepointsUi(res)
             val chargepoints = res.data
             if (chargepoints != null) {
                 markerManager?.chargepoints = chargepoints
@@ -776,6 +995,41 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
         vm.searchResult.observe(viewLifecycleOwner) { place ->
             displaySearchResult(place, moveCamera = true)
         }
+        vm.charger.observe(viewLifecycleOwner) {
+            updateGallery(it?.data?.photos)
+            renderDetailView()
+        }
+        vm.availability.observe(viewLifecycleOwner) {
+            renderDetailView()
+        }
+        vm.filteredAvailability.observe(viewLifecycleOwner) {
+            renderDetailView()
+        }
+        vm.predictionData.observe(viewLifecycleOwner) {
+            renderDetailView()
+        }
+        vm.chargeCardMap.observe(viewLifecycleOwner) {
+            renderDetailView()
+        }
+        vm.filteredChargeCards.observe(viewLifecycleOwner) {
+            renderDetailView()
+        }
+        vm.chargerDistance.observe(viewLifecycleOwner) {
+            renderDetailView()
+        }
+        vm.bottomSheetExpanded.observe(viewLifecycleOwner) {
+            renderDetailView()
+        }
+        vm.teslaPricing.observe(viewLifecycleOwner) {
+            renderDetailView()
+        }
+        vm.myLocationEnabled.observe(viewLifecycleOwner) {
+            isFabActive(binding.fabLocate, it == true)
+        }
+        vm.bottomSheetState.observe(viewLifecycleOwner) {
+            binding.navBarScrim.visibility =
+                if (it == STATE_COLLAPSED) View.VISIBLE else View.INVISIBLE
+        }
         vm.layersMenuOpen.observe(viewLifecycleOwner) { open ->
             HideOnScrollFabBehavior.from(binding.fabLayers)?.hidden = open
             binding.fabLayers.visibility = if (open) View.INVISIBLE else View.VISIBLE
@@ -784,9 +1038,27 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
         }
         vm.mapType.observe(viewLifecycleOwner) {
             map?.setMapType(it)
+            when (it) {
+                AnyMap.Type.NORMAL -> binding.layers.rbStandard.isChecked = true
+                AnyMap.Type.HYBRID -> binding.layers.rbSatellite.isChecked = true
+                AnyMap.Type.TERRAIN -> binding.layers.rbTerrain.isChecked = true
+                else -> {
+                    binding.layers.rbStandard.isChecked = false
+                    binding.layers.rbSatellite.isChecked = false
+                    binding.layers.rbTerrain.isChecked = false
+                }
+            }
         }
         vm.mapTrafficEnabled.observe(viewLifecycleOwner) {
             map?.setTrafficEnabled(it)
+            if (binding.layers.cbTraffic.isChecked != it) {
+                binding.layers.cbTraffic.isChecked = it
+            }
+        }
+        vm.mapTrafficSupported.observe(viewLifecycleOwner) { supported ->
+            val visibility = if (supported) View.VISIBLE else View.GONE
+            binding.layers.textView23.visibility = visibility
+            binding.layers.cbTraffic.visibility = visibility
         }
         vm.selectedChargepoint.observe(viewLifecycleOwner) {
             binding.detailView.connectorDetailsCard.visibility =

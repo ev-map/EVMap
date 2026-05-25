@@ -2,17 +2,27 @@ package net.vonforst.evmap.adapter
 
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.widget.CompoundButton
+import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.children
-import androidx.databinding.Observable
+import androidx.viewbinding.ViewBinding
 import com.google.android.material.chip.Chip
-import net.vonforst.evmap.BR
 import net.vonforst.evmap.R
+import net.vonforst.evmap.databinding.ItemFilterBooleanBinding
 import net.vonforst.evmap.databinding.ItemFilterMultipleChoiceBinding
 import net.vonforst.evmap.databinding.ItemFilterMultipleChoiceLargeBinding
 import net.vonforst.evmap.databinding.ItemFilterSliderBinding
 import net.vonforst.evmap.fragment.MultiSelectDialog
-import net.vonforst.evmap.model.*
+import net.vonforst.evmap.model.BooleanFilter
+import net.vonforst.evmap.model.BooleanFilterValue
+import net.vonforst.evmap.model.FilterValue
+import net.vonforst.evmap.model.FilterWithValue
+import net.vonforst.evmap.model.MultipleChoiceFilter
+import net.vonforst.evmap.model.MultipleChoiceFilterValue
+import net.vonforst.evmap.model.SliderFilter
+import net.vonforst.evmap.model.SliderFilterValue
 import kotlin.math.max
 
 class FiltersAdapter : DataBindingAdapter<FilterWithValue<FilterValue>>() {
@@ -36,8 +46,30 @@ class FiltersAdapter : DataBindingAdapter<FilterWithValue<FilterValue>>() {
             is SliderFilter -> R.layout.item_filter_slider
         }
 
+    override fun createBinding(
+        inflater: LayoutInflater,
+        parent: ViewGroup,
+        viewType: Int
+    ): ViewBinding = when (viewType) {
+        R.layout.item_filter_boolean -> ItemFilterBooleanBinding.inflate(inflater, parent, false)
+        R.layout.item_filter_multiple_choice -> ItemFilterMultipleChoiceBinding.inflate(
+            inflater,
+            parent,
+            false
+        )
+
+        R.layout.item_filter_multiple_choice_large -> ItemFilterMultipleChoiceLargeBinding.inflate(
+            inflater,
+            parent,
+            false
+        )
+
+        R.layout.item_filter_slider -> ItemFilterSliderBinding.inflate(inflater, parent, false)
+        else -> error("Unknown viewType: $viewType")
+    }
+
     override fun bind(
-        holder: ViewHolder<FilterWithValue<FilterValue>>,
+        holder: ViewHolder,
         item: FilterWithValue<FilterValue>
     ) {
         super.bind(holder, item)
@@ -45,7 +77,8 @@ class FiltersAdapter : DataBindingAdapter<FilterWithValue<FilterValue>>() {
             is SliderFilterValue -> {
                 setupSlider(
                     holder.binding as ItemFilterSliderBinding,
-                    item.filter as SliderFilter, item.value
+                    item.filter as SliderFilter,
+                    item.value
                 )
             }
             is MultipleChoiceFilterValue -> {
@@ -53,17 +86,34 @@ class FiltersAdapter : DataBindingAdapter<FilterWithValue<FilterValue>>() {
                 if (filter.manyChoices) {
                     setupMultipleChoiceMany(
                         holder.binding as ItemFilterMultipleChoiceLargeBinding,
-                        filter, item.value
+                        filter,
+                        item.value
                     )
                 } else {
                     setupMultipleChoice(
                         holder.binding as ItemFilterMultipleChoiceBinding,
-                        filter, item.value
+                        filter,
+                        item.value
                     )
                 }
             }
             is BooleanFilterValue -> {
+                setupBoolean(holder.binding as ItemFilterBooleanBinding, item)
             }
+        }
+    }
+
+    private fun setupBoolean(
+        binding: ItemFilterBooleanBinding,
+        item: FilterWithValue<FilterValue>
+    ) {
+        val filter = item.filter as BooleanFilter
+        val value = item.value as BooleanFilterValue
+        binding.textView17.text = filter.name
+        binding.switch1.setOnCheckedChangeListener(null)
+        binding.switch1.isChecked = value.value
+        binding.switch1.setOnCheckedChangeListener { _: CompoundButton, isChecked: Boolean ->
+            value.value = isChecked
         }
     }
 
@@ -72,35 +122,39 @@ class FiltersAdapter : DataBindingAdapter<FilterWithValue<FilterValue>>() {
         filter: MultipleChoiceFilter,
         value: MultipleChoiceFilterValue
     ) {
-        // TODO: this implementation seems to be buggy
         val inflater = LayoutInflater.from(binding.root.context)
+        binding.textView17.text = filter.name
+
         value.values.toList().forEach {
-            // delete values that cannot be selected anymore
             if (it !in filter.choices.keys) value.values.remove(it)
         }
 
+        var showingAll = false
         fun updateButtons() {
             value.all = value.values == filter.choices.keys
             binding.btnAll.isEnabled = !value.all
             binding.btnNone.isEnabled = value.values.isNotEmpty()
+            binding.chipMore.text = binding.root.context.getString(
+                if (showingAll) R.string.show_less else R.string.show_more
+            )
         }
 
         val chips = mutableMapOf<String, Chip>()
 
-        // reuse existing chips in layout
         val reuseChips = binding.chipGroup.children.filter {
             it.id != R.id.chipMore
         }.toMutableList()
-        binding.chipGroup.children.forEach {
+        binding.chipGroup.children.toList().forEach {
             if (it.id != R.id.chipMore) binding.chipGroup.removeView(it)
         }
+
         filter.choices.entries.sortedByDescending {
             it.key in value.values
         }.sortedByDescending {
             if (filter.commonChoices != null) it.key in filter.commonChoices else false
         }.forEach { choice ->
             var reused = false
-            val chip = if (reuseChips.size > 0) {
+            val chip = if (reuseChips.isNotEmpty()) {
                 reused = true
                 reuseChips.removeAt(0) as Chip
             } else {
@@ -111,6 +165,7 @@ class FiltersAdapter : DataBindingAdapter<FilterWithValue<FilterValue>>() {
                 ) as Chip
             }
             chip.text = choice.value
+            chip.setOnCheckedChangeListener(null)
             chip.isChecked = choice.key in value.values || value.all
             if (value.all && choice.key !in value.values) value.values.add(choice.key)
 
@@ -124,7 +179,7 @@ class FiltersAdapter : DataBindingAdapter<FilterWithValue<FilterValue>>() {
             }
 
             if (filter.commonChoices != null && choice.key !in filter.commonChoices
-                && !(chip.isChecked && !value.all) && !binding.showingAll
+                && !(chip.isChecked && !value.all) && !showingAll
             ) {
                 chip.visibility = View.GONE
             } else {
@@ -134,7 +189,7 @@ class FiltersAdapter : DataBindingAdapter<FilterWithValue<FilterValue>>() {
             if (!reused) binding.chipGroup.addView(chip, binding.chipGroup.childCount - 1)
             chips[choice.key] = chip
         }
-        // delete surplus reusable chips
+
         reuseChips.forEach {
             binding.chipGroup.removeView(it)
         }
@@ -152,16 +207,17 @@ class FiltersAdapter : DataBindingAdapter<FilterWithValue<FilterValue>>() {
             updateButtons()
         }
         binding.chipMore.setOnClickListener {
-            binding.showingAll = !binding.showingAll
+            showingAll = !showingAll
             chips.forEach { (key, chip) ->
                 if (filter.commonChoices != null && key !in filter.commonChoices
-                    && !(chip.isChecked && !value.all) && !binding.showingAll
+                    && !(chip.isChecked && !value.all) && !showingAll
                 ) {
                     chip.visibility = View.GONE
                 } else {
                     chip.visibility = View.VISIBLE
                 }
             }
+            updateButtons()
         }
         updateButtons()
     }
@@ -173,21 +229,36 @@ class FiltersAdapter : DataBindingAdapter<FilterWithValue<FilterValue>>() {
     ) {
         if (value.all) {
             value.values = filter.choices.keys.toMutableSet()
-            binding.notifyPropertyChanged(BR.item)
         }
 
+        binding.textView17.text = filter.name
+        binding.textView26.text = binding.root.context.getString(
+            if (value.all) {
+                R.string.all_selected
+            } else {
+                R.string.number_selected
+            },
+            value.values.size
+        )
+
         binding.btnEdit.setOnClickListener {
-            val dialog =
-                MultiSelectDialog.getInstance(
-                    filter.name,
-                    filter.choices,
-                    value.values,
-                    commonChoices = filter.commonChoices
-                )
+            val dialog = MultiSelectDialog.getInstance(
+                filter.name,
+                filter.choices,
+                value.values,
+                commonChoices = filter.commonChoices
+            )
             dialog.okListener = { selected ->
                 value.values = selected.toMutableSet()
                 value.all = value.values == filter.choices.keys
-                binding.item = binding.item
+                binding.textView26.text = binding.root.context.getString(
+                    if (value.all) {
+                        R.string.all_selected
+                    } else {
+                        R.string.number_selected
+                    },
+                    value.values.size
+                )
             }
             dialog.show((binding.root.context as AppCompatActivity).supportFragmentManager, null)
         }
@@ -198,22 +269,36 @@ class FiltersAdapter : DataBindingAdapter<FilterWithValue<FilterValue>>() {
         filter: SliderFilter,
         value: SliderFilterValue
     ) {
-        binding.progress =
-            max(filter.inverseMapping(value.value) - filter.min, 0)
-        binding.mappedValue = filter.mapping(binding.progress + filter.min)
+        binding.textView17.text = filter.name
+        val progress = max(filter.inverseMapping(value.value) - filter.min, 0)
+        binding.seekBar.max = filter.max - filter.min
+        binding.seekBar.setOnSeekBarChangeListener(null)
+        binding.seekBar.progress = progress
+        updateSliderValueText(binding, filter, progress)
 
-        binding.addOnPropertyChangedCallback(object :
-            Observable.OnPropertyChangedCallback() {
-            override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
-                when (propertyId) {
-                    BR.progress -> {
-                        val mapped = filter.mapping(binding.progress + filter.min)
-                        value.value = mapped
-                        binding.mappedValue = mapped
-                    }
-                }
+        binding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                val mapped = filter.mapping(progress + filter.min)
+                value.value = mapped
+                updateSliderValueText(binding, filter, progress)
             }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
+            override fun onStopTrackingTouch(seekBar: SeekBar?) = Unit
         })
+    }
+
+    private fun updateSliderValueText(
+        binding: ItemFilterSliderBinding,
+        filter: SliderFilter,
+        progress: Int
+    ) {
+        val mappedValue = filter.mapping(progress + filter.min)
+        binding.textView18.text = if (filter.unit.isNullOrBlank()) {
+            mappedValue.toString()
+        } else {
+            "$mappedValue ${filter.unit}"
+        }
     }
 
     override fun getItemId(position: Int): Long {

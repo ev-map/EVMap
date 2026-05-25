@@ -1,28 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
-
-    <data>
-
-        <import type="net.vonforst.evmap.api.UtilsKt" />
-
-        <import type="com.github.erfansn.localeconfigx.LocaleConfigXKt" />
-
-        <import type="net.vonforst.evmap.viewmodel.Status" />
-
-        <import type="net.vonforst.evmap.ui.BindingAdaptersKt" />
-
-        <import type="net.vonforst.evmap.api.ChargepointApiKt" />
-
-        <variable
-            name="item"
-            type="net.vonforst.evmap.viewmodel.FavoritesViewModel.FavoritesListItem" />
-    </data>
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
         <FrameLayout
             android:id="@+id/background"
@@ -55,7 +36,6 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
-                android:text="@{item.charger.name}"
                 android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
                 android:maxLines="2"
                 android:ellipsize="end"
@@ -73,10 +53,8 @@
             android:layout_marginEnd="8dp"
             android:ellipsize="end"
             android:maxLines="1"
-            android:text="@{item.charger.address.toString()}"
             android:textAppearance="@style/TextAppearance.Material3.BodySmall"
             android:textAlignment="viewStart"
-            app:invisibleUnless="@{item.charger.address != null}"
             app:layout_constraintEnd_toStartOf="@+id/textView7"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView15"
@@ -89,7 +67,6 @@
             android:layout_marginEnd="8dp"
             android:ellipsize="end"
             android:maxLines="1"
-            android:text="@{item.charger.formatChargepoints(ChargepointApiKt.stringProvider(context), LocaleConfigXKt.getCurrentOrDefaultLocale(context))}"
             android:textAppearance="@style/TextAppearance.Material3.BodySmall"
             android:textAlignment="viewStart"
             app:layout_constraintEnd_toStartOf="@+id/textView7"
@@ -102,9 +79,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
-                android:text="@{BindingAdaptersKt.distance(item.distance, context)}"
                 android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-                app:goneUnless="@{item.distance != null}"
                 app:layout_constraintEnd_toStartOf="@id/btnDelete"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="9999,9 km" />
@@ -116,11 +91,8 @@
                 android:layout_marginEnd="16dp"
                 android:background="@drawable/rounded_rect"
                 android:padding="2dp"
-                android:text="@{String.format(LocaleConfigXKt.getCurrentOrDefaultLocale(context), &quot;%s/%d&quot;, BindingAdaptersKt.availabilityText(item.available.data), item.total)}"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:textColor="@android:color/white"
-                app:backgroundTintAvailability="@{item.available.data}"
-                app:invisibleUnless="@{item.available.status == Status.SUCCESS}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/btnDelete"
                 tools:backgroundTint="@color/available"
@@ -132,7 +104,6 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_marginEnd="16dp"
-                app:goneUnless="@{item.available.status == Status.LOADING}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/btnDelete" />
 
@@ -149,5 +120,4 @@
                 android:contentDescription="@string/delete" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </FrameLayout>
-</layout>
+</FrameLayout>

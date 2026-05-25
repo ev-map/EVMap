@@ -1,9 +1,12 @@
 package net.vonforst.evmap.adapter
 
 import android.annotation.SuppressLint
+import android.view.LayoutInflater
 import android.view.MotionEvent
+import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
 import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.viewbinding.ViewBinding
 import net.vonforst.evmap.R
 import net.vonforst.evmap.databinding.ItemFilterProfileBinding
 import net.vonforst.evmap.storage.FilterProfile
@@ -17,14 +20,21 @@ class FilterProfilesAdapter(
         setHasStableIds(true)
     }
 
+    override fun createBinding(
+        inflater: LayoutInflater,
+        parent: ViewGroup,
+        viewType: Int
+    ): ViewBinding = ItemFilterProfileBinding.inflate(inflater, parent, false)
+
     @SuppressLint("ClickableViewAccessibility")
     override fun bind(
-        holder: ViewHolder<FilterProfile>,
+        holder: ViewHolder,
         item: FilterProfile
     ) {
         super.bind(holder, item)
 
         val binding = holder.binding as ItemFilterProfileBinding
+        binding.textView9.text = item.name
         binding.handle.setOnTouchListener { _, event ->
             if (event?.action == MotionEvent.ACTION_DOWN) {
                 dragHelper.startDrag(holder)

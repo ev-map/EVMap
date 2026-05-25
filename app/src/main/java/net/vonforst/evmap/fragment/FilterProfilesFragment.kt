@@ -60,8 +60,6 @@ class FilterProfilesFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentFilterProfilesBinding.inflate(inflater, container, false)
-        binding.lifecycleOwner = viewLifecycleOwner
-        binding.vm = vm
 
         ViewCompat.setOnApplyWindowInsetsListener(
             binding.filterProfilesList
@@ -116,7 +114,7 @@ class FilterProfilesFragment : Fragment() {
             override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
                 if (viewHolder != null && actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
                     val binding =
-                        (viewHolder as DataBindingAdapter.ViewHolder<*>).binding as ItemFilterProfileBinding
+                        (viewHolder as DataBindingAdapter.ViewHolder).binding as ItemFilterProfileBinding
                     getDefaultUIUtil().onSelected(binding.foreground)
                 } else {
                     super.onSelectedChanged(viewHolder, actionState)
@@ -130,7 +128,7 @@ class FilterProfilesFragment : Fragment() {
             ) {
                 if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
                     val binding =
-                        (viewHolder as DataBindingAdapter.ViewHolder<*>).binding as ItemFilterProfileBinding
+                        (viewHolder as DataBindingAdapter.ViewHolder).binding as ItemFilterProfileBinding
                     getDefaultUIUtil().onDrawOver(
                         c, recyclerView, binding.foreground, dX, dY,
                         actionState, isCurrentlyActive
@@ -160,7 +158,7 @@ class FilterProfilesFragment : Fragment() {
                 viewHolder: RecyclerView.ViewHolder
             ) {
                 val binding =
-                    (viewHolder as DataBindingAdapter.ViewHolder<*>).binding as ItemFilterProfileBinding
+                    (viewHolder as DataBindingAdapter.ViewHolder).binding as ItemFilterProfileBinding
                 getDefaultUIUtil().clearView(binding.foreground)
             }
 
@@ -171,7 +169,7 @@ class FilterProfilesFragment : Fragment() {
             ) {
                 if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
                     val binding =
-                        (viewHolder as DataBindingAdapter.ViewHolder<*>).binding as ItemFilterProfileBinding
+                        (viewHolder as DataBindingAdapter.ViewHolder).binding as ItemFilterProfileBinding
                     getDefaultUIUtil().onDraw(
                         c, recyclerView, binding.foreground, dX, dY,
                         actionState, isCurrentlyActive
@@ -221,6 +219,12 @@ class FilterProfilesFragment : Fragment() {
                     context, LinearLayoutManager.VERTICAL
                 )
             )
+        }
+
+        vm.filterProfiles.observe(viewLifecycleOwner) { profiles ->
+            adapter.submitList(profiles)
+            binding.textView19.visibility =
+                if (profiles.isNullOrEmpty()) View.VISIBLE else View.GONE
         }
 
         touchHelper.attachToRecyclerView(binding.filterProfilesList)

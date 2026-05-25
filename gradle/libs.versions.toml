@@ -122,7 +122,6 @@ desugar-jdk-libs = { module = "com.android.tools:desugar_jdk_libs", version.ref 
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-android-legacy-kapt = { id = "com.android.legacy-kapt", version.ref = "agp" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 test-logger = { id = "com.adarshr.test-logger", version.ref = "testLogger" }

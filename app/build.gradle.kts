@@ -7,7 +7,6 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.android.legacy.kapt)  // needed for dataBinding since it does not support KSP
     alias(libs.plugins.moshix)
     alias(libs.plugins.navigation.safeargs)
     alias(libs.plugins.aboutlibraries)
@@ -104,7 +103,6 @@ android {
     }
 
     buildFeatures {
-        dataBinding = true
         viewBinding = true
         buildConfig = true
         resValues = true

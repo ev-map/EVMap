@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
@@ -22,6 +21,7 @@ import net.vonforst.evmap.databinding.FragmentDonateBinding
 import net.vonforst.evmap.databinding.FragmentDonateHeaderBinding
 import net.vonforst.evmap.databinding.FragmentDonateReferralBinding
 import net.vonforst.evmap.viewmodel.DonateViewModel
+import net.vonforst.evmap.viewmodel.Status
 
 class DonateFragment : DonateFragmentBase() {
     private lateinit var binding: FragmentDonateBinding
@@ -40,9 +40,7 @@ class DonateFragment : DonateFragmentBase() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_donate, container, false)
-        binding.lifecycleOwner = this
-        binding.vm = vm
+        binding = FragmentDonateBinding.inflate(inflater, container, false)
 
         header = FragmentDonateHeaderBinding.inflate(inflater, container, false)
         referrals = FragmentDonateReferralBinding.inflate(inflater, container, false)
@@ -75,6 +73,11 @@ class DonateFragment : DonateFragmentBase() {
 
         vm.products.observe(viewLifecycleOwner) {
             donationAdapter.submitList(it.data)
+            binding.progressBar3.visibility = if (it.status == Status.LOADING) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
         }
 
         vm.purchaseSuccessful.observe(viewLifecycleOwner) {

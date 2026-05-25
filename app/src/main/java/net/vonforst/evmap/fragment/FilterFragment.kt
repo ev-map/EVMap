@@ -12,7 +12,6 @@ import androidx.core.view.MenuProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -34,6 +33,7 @@ import net.vonforst.evmap.viewmodel.FilterViewModel
 
 class FilterFragment : Fragment(), MenuProvider {
     private lateinit var binding: FragmentFilterBinding
+    private lateinit var filtersAdapter: FiltersAdapter
     private val vm: FilterViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,10 +47,7 @@ class FilterFragment : Fragment(), MenuProvider {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_filter, container, false)
-        binding.lifecycleOwner = viewLifecycleOwner
-        binding.vm = vm
-        vm.filterProfile.observe(viewLifecycleOwner) {}
+        binding = FragmentFilterBinding.inflate(inflater, container, false)
 
         ViewCompat.setOnApplyWindowInsetsListener(
             binding.filtersList
@@ -77,8 +74,9 @@ class FilterFragment : Fragment(), MenuProvider {
             }
         }
 
+        filtersAdapter = FiltersAdapter()
         binding.filtersList.apply {
-            adapter = FiltersAdapter()
+            adapter = filtersAdapter
             layoutManager =
                 LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             addItemDecoration(
@@ -86,6 +84,13 @@ class FilterFragment : Fragment(), MenuProvider {
                     context, LinearLayoutManager.VERTICAL
                 )
             )
+        }
+
+        vm.filtersWithValue.observe(viewLifecycleOwner) {
+            @Suppress("UNCHECKED_CAST")
+            val items =
+                it as? List<net.vonforst.evmap.model.FilterWithValue<net.vonforst.evmap.model.FilterValue>>
+            filtersAdapter.submitList(items)
         }
 
         binding.toolbar.setNavigationOnClickListener {

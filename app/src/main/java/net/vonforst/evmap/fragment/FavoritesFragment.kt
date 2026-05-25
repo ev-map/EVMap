@@ -10,7 +10,6 @@ import android.widget.FrameLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -64,12 +63,7 @@ class FavoritesFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = DataBindingUtil.inflate(
-            inflater,
-            R.layout.fragment_favorites, container, false
-        )
-        binding.lifecycleOwner = viewLifecycleOwner
-        binding.vm = vm
+        binding = FragmentFavoritesBinding.inflate(inflater, container, false)
 
         ViewCompat.setOnApplyWindowInsetsListener(
             binding.favsList
@@ -114,6 +108,13 @@ class FavoritesFragment : Fragment() {
                 )
             )
         }
+        vm.listData.observe(viewLifecycleOwner) { items ->
+            adapter.submitList(items)
+            val isEmpty = items.isNullOrEmpty()
+            binding.animationView.visibility = if (isEmpty) View.VISIBLE else View.GONE
+            binding.textView19.visibility = if (isEmpty) View.VISIBLE else View.GONE
+        }
+
         createTouchHelper().attachToRecyclerView(binding.favsList)
 
         binding.swipeRefresh.setOnRefreshListener {
@@ -185,7 +186,7 @@ class FavoritesFragment : Fragment() {
             override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
                 if (viewHolder != null && actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
                     val binding =
-                        (viewHolder as DataBindingAdapter.ViewHolder<*>).binding as ItemFavoriteBinding
+                        (viewHolder as DataBindingAdapter.ViewHolder).binding as ItemFavoriteBinding
                     getDefaultUIUtil().onSelected(binding.foreground)
                 } else {
                     super.onSelectedChanged(viewHolder, actionState)
@@ -199,7 +200,7 @@ class FavoritesFragment : Fragment() {
             ) {
                 if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
                     val binding =
-                        (viewHolder as DataBindingAdapter.ViewHolder<*>).binding as ItemFavoriteBinding
+                        (viewHolder as DataBindingAdapter.ViewHolder).binding as ItemFavoriteBinding
                     getDefaultUIUtil().onDrawOver(
                         c, recyclerView, binding.foreground, dX, dY,
                         actionState, isCurrentlyActive
@@ -229,7 +230,7 @@ class FavoritesFragment : Fragment() {
                 viewHolder: RecyclerView.ViewHolder
             ) {
                 val binding =
-                    (viewHolder as DataBindingAdapter.ViewHolder<*>).binding as ItemFavoriteBinding
+                    (viewHolder as DataBindingAdapter.ViewHolder).binding as ItemFavoriteBinding
                 getDefaultUIUtil().clearView(binding.foreground)
             }
 
@@ -240,7 +241,7 @@ class FavoritesFragment : Fragment() {
             ) {
                 if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
                     val binding =
-                        (viewHolder as DataBindingAdapter.ViewHolder<*>).binding as ItemFavoriteBinding
+                        (viewHolder as DataBindingAdapter.ViewHolder).binding as ItemFavoriteBinding
                     getDefaultUIUtil().onDraw(
                         c, recyclerView, binding.foreground, dX, dY,
                         actionState, isCurrentlyActive

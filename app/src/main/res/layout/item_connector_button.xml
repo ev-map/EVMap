@@ -1,33 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<net.vonforst.evmap.ui.CheckableConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
-
-    <data>
-
-        <import type="net.vonforst.evmap.model.Chargepoint" />
-
-        <import type="net.vonforst.evmap.ui.BindingAdaptersKt" />
-
-        <import type="com.github.erfansn.localeconfigx.LocaleConfigXKt" />
-
-        <variable
-            name="item"
-            type="Chargepoint" />
-
-        <variable
-            name="enabled"
-            type="boolean" />
-    </data>
-
-    <net.vonforst.evmap.ui.CheckableConstraintLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/button_outline"
-        android:foreground="?selectableItemBackground"
-        android:clickable="@{enabled}"
-        android:focusable="true"
-        android:layout_margin="4dp">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/button_outline"
+    android:foreground="?selectableItemBackground"
+    android:focusable="true"
+    android:layout_margin="4dp">
 
         <ImageView
             android:id="@+id/imageView"
@@ -37,12 +17,9 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:tintMode="src_in"
-            android:contentDescription="@{item.type}"
-            app:connectorIcon="@{item.type}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tint="@{BindingAdaptersKt.colorEnabled(context, enabled)}"
             tools:tint="?colorControlNormal"
             tools:srcCompat="@drawable/ic_connector_typ2" />
 
@@ -53,9 +30,7 @@
             android:layout_marginStart="38dp"
             android:layout_marginTop="38dp"
             android:layout_marginEnd="4dp"
-            android:text="@{String.format(LocaleConfigXKt.getCurrentOrDefaultLocale(context), &quot;× %d&quot;, item.count)}"
             android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-            android:textColor="@{BindingAdaptersKt.colorEnabled(context, enabled)}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/imageView"
             app:layout_constraintTop_toTopOf="@+id/imageView"
@@ -67,14 +42,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="4dp"
-            android:text="@{item.formatPower(LocaleConfigXKt.getCurrentOrDefaultLocale(context))}"
             android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-            android:textColor="@{BindingAdaptersKt.colorEnabled(context, enabled)}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView"
             tools:text="350 kW" />
-
-    </net.vonforst.evmap.ui.CheckableConstraintLayout>
-</layout>
+</net.vonforst.evmap.ui.CheckableConstraintLayout>

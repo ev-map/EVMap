@@ -4,14 +4,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
+import android.widget.CompoundButton
 import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.viewbinding.ViewBinding
 import net.vonforst.evmap.R
 import net.vonforst.evmap.adapter.DataBindingAdapter
 import net.vonforst.evmap.adapter.Equatable
 import net.vonforst.evmap.databinding.DialogMultiSelectBinding
+import net.vonforst.evmap.databinding.DialogMultiSelectItemBinding
 import net.vonforst.evmap.ui.MaterialDialogFragment
-import java.util.*
+import java.util.HashMap
+import java.util.HashSet
+import java.util.Locale
 
 class MultiSelectDialog : MaterialDialogFragment() {
     companion object {
@@ -121,8 +127,26 @@ private fun search(
     }
 }
 
-class Adapter() : DataBindingAdapter<MultiSelectItem>({ it.key }) {
+class Adapter : DataBindingAdapter<MultiSelectItem>({ it.key }) {
     override fun getItemViewType(position: Int) = R.layout.dialog_multi_select_item
+
+    override fun createBinding(
+        inflater: LayoutInflater,
+        parent: ViewGroup,
+        viewType: Int
+    ): ViewBinding = DialogMultiSelectItemBinding.inflate(inflater, parent, false)
+
+    override fun bind(holder: ViewHolder, item: MultiSelectItem) {
+        super.bind(holder, item)
+        val binding = holder.binding as DialogMultiSelectItemBinding
+        val checkBox = binding.root.findViewById<CheckBox>(android.R.id.text1)
+        checkBox.text = item.name
+        checkBox.setOnCheckedChangeListener(null)
+        checkBox.isChecked = item.selected
+        checkBox.setOnCheckedChangeListener { _: CompoundButton, isChecked: Boolean ->
+            item.selected = isChecked
+        }
+    }
 }
 
 data class MultiSelectItem(val key: String, val name: CharSequence, var selected: Boolean) :

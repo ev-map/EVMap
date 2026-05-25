@@ -3,14 +3,14 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.util.Base64
 
 plugins {
-    id("com.adarshr.test-logger") version "4.0.0"
-    id("com.android.application")
-    id("kotlin-parcelize")
-    id("com.google.devtools.ksp") version "2.3.5"
-    id("com.android.legacy-kapt")  // needed for dataBinding since it does not support KSP
-    id("dev.zacsweers.moshix") version "0.35.0"
-    id("androidx.navigation.safeargs.kotlin")
-    id("com.mikepenz.aboutlibraries.plugin")
+    alias(libs.plugins.test.logger)
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.android.legacy.kapt)  // needed for dataBinding since it does not support KSP
+    alias(libs.plugins.moshix)
+    alias(libs.plugins.navigation.safeargs)
+    alias(libs.plugins.aboutlibraries)
 }
 
 
@@ -299,122 +299,111 @@ aboutLibraries {
 }
 
 dependencies {
-    val kotlinVersion: String by rootProject.extra
-    val aboutLibsVersion: String by rootProject.extra
-    val navVersion: String by rootProject.extra
     val normalImplementation by configurations
     val googleImplementation by configurations
     val automotiveImplementation by configurations
-    val fossImplementation by configurations
-    val testGoogleImplementation by configurations
 
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion")
-    implementation("androidx.appcompat:appcompat:1.7.1")
-    implementation("androidx.core:core-ktx:1.17.0")
-    implementation("androidx.core:core-splashscreen:1.2.0")
-    implementation("androidx.activity:activity-ktx:1.11.0")
-    implementation("androidx.fragment:fragment-ktx:1.8.9")
-    implementation("androidx.cardview:cardview:1.0.0")
-    implementation("androidx.preference:preference-ktx:1.2.1")
-    implementation("com.google.android.material:material:1.13.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.2.1")
-    implementation("androidx.recyclerview:recyclerview:1.4.0")
-    implementation("androidx.browser:browser:1.9.0")
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
-    implementation("androidx.viewpager2:viewpager2:1.1.0")
-    implementation("androidx.security:security-crypto:1.1.0")
-    implementation("androidx.work:work-runtime-ktx:2.10.5")
-    implementation("com.github.ev-map:CustomBottomSheetBehavior:e48f73ea7b")
-    implementation("com.squareup.retrofit2:retrofit:3.0.0")
-    implementation("com.squareup.retrofit2:converter-moshi:3.0.0")
-    implementation("com.squareup.okhttp3:okhttp:4.12.0")
-    implementation("com.squareup.okhttp3:okhttp-urlconnection:4.12.0")
-    implementation("com.squareup.moshi:moshi-kotlin:1.15.2")
-    implementation("com.squareup.moshi:moshi-adapters:1.15.2")
-    implementation("com.markomilos.jsonapi:jsonapi-retrofit:1.1.0")
-    implementation("io.coil-kt:coil:2.7.0")
-    implementation("com.github.ev-map:StfalconImageViewer:c6ba219517")
-    implementation("com.mikepenz:aboutlibraries-core:$aboutLibsVersion")
-    implementation("com.mikepenz:aboutlibraries:$aboutLibsVersion")
-    implementation("com.airbnb.android:lottie:6.6.10")
-    implementation("io.michaelrocks.bimap:bimap:1.1.0")
-    implementation("com.github.pengrad:mapscaleview:1.6.0")
-    implementation("com.github.romandanylyk:PageIndicatorView:b1bad589b5")
-    implementation("com.github.ev-map:locale-config-x:58b036abf4")
+    implementation(libs.kotlin.stdlib.jdk7)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.core.splashscreen)
+    implementation(libs.androidx.activity.ktx)
+    implementation(libs.androidx.fragment.ktx)
+    implementation(libs.androidx.cardview)
+    implementation(libs.androidx.preference.ktx)
+    implementation(libs.material)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.recyclerview)
+    implementation(libs.androidx.browser)
+    implementation(libs.androidx.swiperefreshlayout)
+    implementation(libs.androidx.viewpager2)
+    implementation(libs.androidx.security.crypto)
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.custom.bottom.sheet.behavior)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.moshi)
+    implementation(libs.okhttp)
+    implementation(libs.okhttp.urlconnection)
+    implementation(libs.moshi.kotlin)
+    implementation(libs.moshi.adapters)
+    implementation(libs.jsonapi.retrofit)
+    implementation(libs.coil)
+    implementation(libs.stfalcon.image.viewer)
+    implementation(libs.aboutlibraries.core)
+    implementation(libs.aboutlibraries)
+    implementation(libs.lottie)
+    implementation(libs.bimap)
+    implementation(libs.mapscaleview)
+    implementation(libs.page.indicator.view)
+    implementation(libs.locale.config.x)
 
     // Android Auto
-    val carAppVersion = "1.8.0-beta01"
-    implementation("androidx.car.app:app:$carAppVersion")
-    normalImplementation("androidx.car.app:app-projected:$carAppVersion")
-    automotiveImplementation("androidx.car.app:app-automotive:$carAppVersion")
+    implementation(libs.androidx.car.app)
+    normalImplementation(libs.androidx.car.app.projected)
+    automotiveImplementation(libs.androidx.car.app.automotive)
 
     // AnyMaps
-    val anyMapsVersion = "e087fcdf86"
-    implementation("com.github.ev-map.AnyMaps:anymaps-base:$anyMapsVersion")
-    googleImplementation("com.github.ev-map.AnyMaps:anymaps-google:$anyMapsVersion")
-    googleImplementation("com.google.android.gms:play-services-maps:19.2.0")
-    implementation("com.github.ev-map.AnyMaps:anymaps-maplibre:$anyMapsVersion") {
+    implementation(libs.anymaps.base)
+    googleImplementation(libs.anymaps.google)
+    googleImplementation(libs.play.services.maps)
+    implementation(libs.anymaps.maplibre) {
         // exclude Vulkan version and use OpenGL ES 3.0 version for now for better compatibility
         exclude("org.maplibre.gl", "android-sdk")
     }
-    implementation("org.maplibre.gl:android-sdk-opengl:13.1.0")
+    implementation(libs.maplibre.android.sdk.opengl)
 
     // Google Places
-    googleImplementation("com.google.android.libraries.places:places:3.5.0")
-    googleImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.10.2")
+    googleImplementation(libs.places)
+    googleImplementation(libs.kotlinx.coroutines.play.services)
 
     // Mapbox Geocoding
-    implementation("com.mapbox.mapboxsdk:mapbox-sdk-services:5.8.0")
+    implementation(libs.mapbox.sdk.services)
 
     // navigation library
-    implementation("androidx.navigation:navigation-fragment-ktx:$navVersion")
-    implementation("androidx.navigation:navigation-ui-ktx:$navVersion")
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
 
     // viewmodel library
-    val lifecycleVersion = "2.9.2"
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion")
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
 
     // room library
-    val roomVersion = "2.7.2"
-    implementation("androidx.room:room-runtime:$roomVersion")
-    ksp("androidx.room:room-compiler:$roomVersion")
-    implementation("androidx.room:room-ktx:$roomVersion")
-    implementation("com.github.anboralabs:spatia-room:1.0.1") {
+    implementation(libs.androidx.room.runtime)
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.spatia.room) {
         exclude("com.github.dalgarins", "android-spatialite")
     }
     // forked version with upgraded libxml 2.15.2 & APP_STL := c++_static
-    implementation("io.github.ev-map:android-spatialite:2.3.0-alpha")
+    implementation(libs.android.spatialite)
 
     // billing library
-    val billingVersion = "7.0.0"
-    googleImplementation("com.android.billingclient:billing:$billingVersion")
-    googleImplementation("com.android.billingclient:billing-ktx:$billingVersion")
+    googleImplementation(libs.billing)
+    googleImplementation(libs.billing.ktx)
 
     // ACRA (crash reporting)
-    val acraVersion = "5.12.0"
-    implementation("ch.acra:acra-http:$acraVersion")
-    implementation("ch.acra:acra-dialog:$acraVersion")
-    implementation("ch.acra:acra-limiter:$acraVersion")
+    implementation(libs.acra.http)
+    implementation(libs.acra.dialog)
+    implementation(libs.acra.limiter)
 
     // debug tools
-    debugImplementation("com.jakewharton.timber:timber:5.0.1")
-    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.14")
+    debugImplementation(libs.timber)
+    debugImplementation(libs.leakcanary.android)
 
     // testing
-    testImplementation("junit:junit:4.13.2")
-    testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
+    testImplementation(libs.junit4)
+    testImplementation(libs.okhttp.mockwebserver)
     //noinspection GradleDependency
-    testImplementation("org.robolectric:robolectric:4.16")
-    testImplementation("androidx.test:core:1.7.0")
-    testImplementation("androidx.arch.core:core-testing:2.2.0")
-    testImplementation("androidx.car.app:app-testing:$carAppVersion")
+    testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.test.core)
+    testImplementation(libs.androidx.arch.core.testing)
+    testImplementation(libs.androidx.car.app.testing)
 
-    androidTestImplementation("androidx.test.ext:junit:1.3.0")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")
-    androidTestImplementation("androidx.arch.core:core-testing:2.2.0")
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.androidx.test.espresso.core)
+    androidTestImplementation(libs.androidx.arch.core.testing)
 
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
 }
 
 fun decode(s: String, key: String): String {

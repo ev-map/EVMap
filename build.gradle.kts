@@ -3,14 +3,15 @@
 buildscript {
     val kotlinVersion by extra("2.3.20")
     val aboutLibsVersion by extra("12.2.4")
-    val navVersion by extra("2.9.3")
+    val navVersion by extra("2.9.6")
     repositories {
         google()
         mavenCentral()
         gradlePluginPortal()
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:8.13.2")
+        classpath("com.android.tools.build:gradle:9.0.1")
+        classpath("com.android.legacy-kapt:com.android.legacy-kapt.gradle.plugin:9.0.1")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
         classpath("com.mikepenz.aboutlibraries.plugin:aboutlibraries-plugin:$aboutLibsVersion")
         classpath("androidx.navigation:navigation-safe-args-gradle-plugin:$navVersion")

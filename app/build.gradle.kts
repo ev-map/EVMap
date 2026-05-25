@@ -1,13 +1,13 @@
+import com.android.build.api.dsl.ApplicationBaseFlavor
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.util.Base64
 
 plugins {
     id("com.adarshr.test-logger") version "4.0.0"
     id("com.android.application")
-    id("kotlin-android")
     id("kotlin-parcelize")
-    id("kotlin-kapt")
-    id("com.google.devtools.ksp") version "2.3.4"
+    id("com.google.devtools.ksp") version "2.3.5"
+    id("com.android.legacy-kapt")  // needed for dataBinding since it does not support KSP
     id("dev.zacsweers.moshix") version "0.35.0"
     id("androidx.navigation.safeargs.kotlin")
     id("com.mikepenz.aboutlibraries.plugin")
@@ -27,10 +27,8 @@ android {
         versionName = "2.1.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
 
-    ksp {
-        arg("room.schemaLocation", "$projectDir/schemas")
+        addApiKeys()
     }
 
     val isRunningOnCI = System.getenv("CI") == "true"
@@ -85,6 +83,7 @@ android {
         create("google") {
             dimension = "dependencies"
             versionNameSuffix = "-google"
+            addGoogleApiKey()
         }
         create("normal") {
             dimension = "automotive"
@@ -108,6 +107,7 @@ android {
         dataBinding = true
         viewBinding = true
         buildConfig = true
+        resValues = true
     }
     lint {
         disable += listOf("NullSafeMutableLiveData")
@@ -125,111 +125,6 @@ android {
 
     namespace = "net.vonforst.evmap"
 
-    // add API keys from environment variable if not set in apikeys.xml
-    applicationVariants.all {
-        var evmapKey =
-            System.getenv("EVMAP_API_KEY") ?: project.findProperty("EVMAP_API_KEY")?.toString()
-        if (evmapKey == null && project.hasProperty("EVMAP_API_KEY_ENCRYPTED")) {
-            evmapKey = decode(
-                project.findProperty("EVMAP_API_KEY_ENCRYPTED").toString(),
-                "FmK.d,-f*p+rD+WK!eds"
-            )
-        }
-        if (evmapKey != null) {
-            resValue("string", "evmap_key", evmapKey)
-        }
-        val goingelectricKey =
-            System.getenv("GOINGELECTRIC_API_KEY") ?: project.findProperty("GOINGELECTRIC_API_KEY")
-                ?.toString()
-        if (goingelectricKey != null) {
-            resValue("string", "goingelectric_key", goingelectricKey)
-        }
-        var nobilKey =
-            System.getenv("NOBIL_API_KEY") ?: project.findProperty("NOBIL_API_KEY")?.toString()
-        if (nobilKey == null && project.hasProperty("NOBIL_API_KEY_ENCRYPTED")) {
-            nobilKey = decode(
-                project.findProperty("NOBIL_API_KEY_ENCRYPTED").toString(),
-                "FmK.d,-f*p+rD+WK!eds"
-            )
-        }
-        if (nobilKey != null) {
-            resValue("string", "nobil_key", nobilKey)
-        }
-        var openchargemapKey =
-            System.getenv("OPENCHARGEMAP_API_KEY") ?: project.findProperty("OPENCHARGEMAP_API_KEY")
-                ?.toString()
-        if (openchargemapKey == null && project.hasProperty("OPENCHARGEMAP_API_KEY_ENCRYPTED")) {
-            openchargemapKey = decode(
-                project.findProperty("OPENCHARGEMAP_API_KEY_ENCRYPTED").toString(),
-                "FmK.d,-f*p+rD+WK!eds"
-            )
-        }
-        if (openchargemapKey != null) {
-            resValue("string", "openchargemap_key", openchargemapKey)
-        }
-        val googleMapsKey =
-            System.getenv("GOOGLE_MAPS_API_KEY") ?: project.findProperty("GOOGLE_MAPS_API_KEY")
-                ?.toString()
-        if (googleMapsKey != null && flavorName.startsWith("google")) {
-            resValue("string", "google_maps_key", googleMapsKey)
-        }
-        var mapboxKey =
-            System.getenv("MAPBOX_API_KEY") ?: project.findProperty("MAPBOX_API_KEY")?.toString()
-        if (mapboxKey == null && project.hasProperty("MAPBOX_API_KEY_ENCRYPTED")) {
-            mapboxKey = decode(
-                project.findProperty("MAPBOX_API_KEY_ENCRYPTED").toString(),
-                "FmK.d,-f*p+rD+WK!eds"
-            )
-        }
-        if (mapboxKey != null) {
-            resValue("string", "mapbox_key", mapboxKey)
-        }
-        var jawgKey =
-            System.getenv("JAWG_API_KEY") ?: project.findProperty("JAWG_API_KEY")?.toString()
-        if (jawgKey == null && project.hasProperty("JAWG_API_KEY_ENCRYPTED")) {
-            jawgKey = decode(
-                project.findProperty("JAWG_API_KEY_ENCRYPTED").toString(),
-                "FmK.d,-f*p+rD+WK!eds"
-            )
-        }
-        if (jawgKey != null) {
-            resValue("string", "jawg_key", jawgKey)
-        }
-        var arcgisKey =
-            System.getenv("ARCGIS_API_KEY") ?: project.findProperty("ARCGIS_API_KEY")?.toString()
-        if (arcgisKey == null && project.hasProperty("ARCGIS_API_KEY_ENCRYPTED")) {
-            arcgisKey = decode(
-                project.findProperty("ARCGIS_API_KEY_ENCRYPTED").toString(),
-                "FmK.d,-f*p+rD+WK!eds"
-            )
-        }
-        if (arcgisKey != null) {
-            resValue("string", "arcgis_key", jawgKey)
-        }
-        var fronyxKey =
-            System.getenv("FRONYX_API_KEY") ?: project.findProperty("FRONYX_API_KEY")?.toString()
-        if (fronyxKey == null && project.hasProperty("FRONYX_API_KEY_ENCRYPTED")) {
-            fronyxKey = decode(
-                project.findProperty("FRONYX_API_KEY_ENCRYPTED").toString(),
-                "FmK.d,-f*p+rD+WK!eds"
-            )
-        }
-        if (fronyxKey != null) {
-            resValue("string", "fronyx_key", fronyxKey)
-        }
-        var acraKey = System.getenv("ACRA_CRASHREPORT_CREDENTIALS")
-            ?: project.findProperty("ACRA_CRASHREPORT_CREDENTIALS")?.toString()
-        if (acraKey == null && project.hasProperty("ACRA_CRASHREPORT_CREDENTIALS_ENCRYPTED")) {
-            acraKey = decode(
-                project.findProperty("ACRA_CRASHREPORT_CREDENTIALS_ENCRYPTED").toString(),
-                "FmK.d,-f*p+rD+WK!eds"
-            )
-        }
-        if (acraKey != null) {
-            resValue("string", "acra_credentials", acraKey)
-        }
-    }
-
     packaging {
         jniLibs {
             pickFirsts.addAll(
@@ -244,10 +139,124 @@ android {
     }
 }
 
+/**
+ * add API keys from environment variable if not set in apikeys.xml
+ */
+fun ApplicationBaseFlavor.addApiKeys() {
+    var evmapKey =
+        System.getenv("EVMAP_API_KEY") ?: project.findProperty("EVMAP_API_KEY")?.toString()
+    if (evmapKey == null && project.hasProperty("EVMAP_API_KEY_ENCRYPTED")) {
+        evmapKey = decode(
+            project.findProperty("EVMAP_API_KEY_ENCRYPTED").toString(),
+            "FmK.d,-f*p+rD+WK!eds"
+        )
+    }
+    if (evmapKey != null) {
+        resValue("string", "evmap_key", evmapKey)
+    }
+    val goingelectricKey =
+        System.getenv("GOINGELECTRIC_API_KEY") ?: project.findProperty("GOINGELECTRIC_API_KEY")
+            ?.toString()
+    if (goingelectricKey != null) {
+        resValue("string", "goingelectric_key", goingelectricKey)
+    }
+    var nobilKey =
+        System.getenv("NOBIL_API_KEY") ?: project.findProperty("NOBIL_API_KEY")?.toString()
+    if (nobilKey == null && project.hasProperty("NOBIL_API_KEY_ENCRYPTED")) {
+        nobilKey = decode(
+            project.findProperty("NOBIL_API_KEY_ENCRYPTED").toString(),
+            "FmK.d,-f*p+rD+WK!eds"
+        )
+    }
+    if (nobilKey != null) {
+        resValue("string", "nobil_key", nobilKey)
+    }
+    var openchargemapKey =
+        System.getenv("OPENCHARGEMAP_API_KEY") ?: project.findProperty("OPENCHARGEMAP_API_KEY")
+            ?.toString()
+    if (openchargemapKey == null && project.hasProperty("OPENCHARGEMAP_API_KEY_ENCRYPTED")) {
+        openchargemapKey = decode(
+            project.findProperty("OPENCHARGEMAP_API_KEY_ENCRYPTED").toString(),
+            "FmK.d,-f*p+rD+WK!eds"
+        )
+    }
+    if (openchargemapKey != null) {
+        resValue("string", "openchargemap_key", openchargemapKey)
+    }
+    var mapboxKey =
+        System.getenv("MAPBOX_API_KEY") ?: project.findProperty("MAPBOX_API_KEY")?.toString()
+    if (mapboxKey == null && project.hasProperty("MAPBOX_API_KEY_ENCRYPTED")) {
+        mapboxKey = decode(
+            project.findProperty("MAPBOX_API_KEY_ENCRYPTED").toString(),
+            "FmK.d,-f*p+rD+WK!eds"
+        )
+    }
+    if (mapboxKey != null) {
+        resValue("string", "mapbox_key", mapboxKey)
+    }
+    var jawgKey =
+        System.getenv("JAWG_API_KEY") ?: project.findProperty("JAWG_API_KEY")?.toString()
+    if (jawgKey == null && project.hasProperty("JAWG_API_KEY_ENCRYPTED")) {
+        jawgKey = decode(
+            project.findProperty("JAWG_API_KEY_ENCRYPTED").toString(),
+            "FmK.d,-f*p+rD+WK!eds"
+        )
+    }
+    if (jawgKey != null) {
+        resValue("string", "jawg_key", jawgKey)
+    }
+    var arcgisKey =
+        System.getenv("ARCGIS_API_KEY") ?: project.findProperty("ARCGIS_API_KEY")?.toString()
+    if (arcgisKey == null && project.hasProperty("ARCGIS_API_KEY_ENCRYPTED")) {
+        arcgisKey = decode(
+            project.findProperty("ARCGIS_API_KEY_ENCRYPTED").toString(),
+            "FmK.d,-f*p+rD+WK!eds"
+        )
+    }
+    if (arcgisKey != null) {
+        resValue("string", "arcgis_key", arcgisKey)
+    }
+    var fronyxKey =
+        System.getenv("FRONYX_API_KEY") ?: project.findProperty("FRONYX_API_KEY")?.toString()
+    if (fronyxKey == null && project.hasProperty("FRONYX_API_KEY_ENCRYPTED")) {
+        fronyxKey = decode(
+            project.findProperty("FRONYX_API_KEY_ENCRYPTED").toString(),
+            "FmK.d,-f*p+rD+WK!eds"
+        )
+    }
+    if (fronyxKey != null) {
+        resValue("string", "fronyx_key", fronyxKey)
+    }
+    var acraKey = System.getenv("ACRA_CRASHREPORT_CREDENTIALS")
+        ?: project.findProperty("ACRA_CRASHREPORT_CREDENTIALS")?.toString()
+    if (acraKey == null && project.hasProperty("ACRA_CRASHREPORT_CREDENTIALS_ENCRYPTED")) {
+        acraKey = decode(
+            project.findProperty("ACRA_CRASHREPORT_CREDENTIALS_ENCRYPTED").toString(),
+            "FmK.d,-f*p+rD+WK!eds"
+        )
+    }
+    if (acraKey != null) {
+        resValue("string", "acra_credentials", acraKey)
+    }
+}
+
+fun ApplicationBaseFlavor.addGoogleApiKey() {
+    val googleMapsKey =
+        System.getenv("GOOGLE_MAPS_API_KEY") ?: project.findProperty("GOOGLE_MAPS_API_KEY")
+            ?.toString()
+    if (googleMapsKey != null) {
+        resValue("string", "google_maps_key", googleMapsKey)
+    }
+}
+
 kotlin {
     compilerOptions {
         jvmTarget = JvmTarget.fromTarget("17")
     }
+}
+
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
 }
 
 androidComponents {

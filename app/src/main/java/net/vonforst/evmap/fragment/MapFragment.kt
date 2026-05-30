@@ -888,7 +888,6 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
                         mapBottomPadding + min(bottomSheetBehavior.peekHeight, height)
                     )
                 }
-                println(slideOffset)
                 if (bottomSheetBehavior.state != STATE_HIDDEN) {
                     binding.navBarScrim.visibility = View.VISIBLE
                     binding.navBarScrim.translationY =

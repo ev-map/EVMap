@@ -7,6 +7,7 @@ import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
 import kotlinx.coroutines.runBlocking
+import net.vonforst.evmap.api.proceedSafely
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -135,7 +136,7 @@ interface TeslaOwnerApi {
                         .header("x-tesla-user-agent", "TeslaApp/4.44.5-3304/3a5d531cc3/android/27")
                         .header("Accept", "*/*")
                         .build()
-                    chain.proceed(request)
+                    chain.proceedSafely(request)
                 }.build()
             val retrofit = Retrofit.Builder()
                 .baseUrl(baseUrl ?: "https://owner-api.teslamotors.com")
@@ -376,7 +377,7 @@ interface TeslaChargingOwnershipGraphQlApi {
                         .header("x-tesla-user-agent", "TeslaApp/4.44.5-3304/3a5d531cc3/android/27")
                         .header("Accept", "*/*")
                         .build()
-                    chain.proceed(request)
+                    chain.proceedSafely(request)
                 }.build()
             val retrofit = Retrofit.Builder()
                 .baseUrl(baseUrl ?: "https://akamai-apigateway-charging-ownership.tesla.com")

@@ -3,6 +3,7 @@ package net.vonforst.evmap.api.availability.tesla
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
+import net.vonforst.evmap.api.proceedSafely
 import okhttp3.CacheControl
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -48,7 +49,7 @@ interface TeslaCuaApi {
                     val request = chain.request().newBuilder()
                         .cacheControl(CacheControl.Builder().maxStale(24, TimeUnit.HOURS).build())
                         .build()
-                    chain.proceed(request)
+                    chain.proceedSafely(request)
                 }.build()
             val retrofit = Retrofit.Builder()
                 .baseUrl(baseUrl ?: "https://www.tesla.com/cua-api/")

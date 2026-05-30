@@ -16,6 +16,7 @@ import net.vonforst.evmap.api.StringProvider
 import net.vonforst.evmap.api.mapPower
 import net.vonforst.evmap.api.mapPowerInverse
 import net.vonforst.evmap.api.powerSteps
+import net.vonforst.evmap.api.proceedSafely
 import net.vonforst.evmap.model.BooleanFilter
 import net.vonforst.evmap.model.ChargeLocation
 import net.vonforst.evmap.model.ChargepointListItem
@@ -101,7 +102,7 @@ interface OpenChargeMapApi {
                     val new = original.newBuilder()
                         .header("X-API-Key", apikey)
                         .build()
-                    chain.proceed(new)
+                    chain.proceedSafely(new)
                 }
                 if (BuildConfig.DEBUG) {
                     addDebugInterceptors()

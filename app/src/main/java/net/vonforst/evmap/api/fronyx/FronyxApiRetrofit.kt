@@ -4,6 +4,7 @@ import android.content.Context
 import com.squareup.moshi.Moshi
 import net.vonforst.evmap.BuildConfig
 import net.vonforst.evmap.addDebugInterceptors
+import net.vonforst.evmap.api.proceedSafely
 import net.vonforst.evmap.model.ChargeLocation
 import net.vonforst.evmap.model.Chargepoint
 import okhttp3.Cache
@@ -46,7 +47,7 @@ private interface FronyxApiRetrofit {
                         .header("X-API-Token", apikey)
                         .header("Content-Type", "application/json")
                         .build()
-                    chain.proceed(new)
+                    chain.proceedSafely(new)
                 }
                 if (BuildConfig.DEBUG) {
                     addDebugInterceptors()

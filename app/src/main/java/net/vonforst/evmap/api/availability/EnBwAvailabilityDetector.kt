@@ -4,6 +4,7 @@ import com.squareup.moshi.FromJson
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.ToJson
+import net.vonforst.evmap.api.proceedSafely
 import net.vonforst.evmap.model.ChargeLocation
 import net.vonforst.evmap.model.Chargepoint
 import net.vonforst.evmap.utils.distanceBetween
@@ -91,7 +92,7 @@ interface EnBwApi {
                         .header("Referer", "https://www.enbw.com/")
                         .header("Accept", "application/json")
                         .build()
-                    chain.proceed(request)
+                    chain.proceedSafely(request)
                 }.build()
             val retrofit = Retrofit.Builder()
                 .baseUrl(baseUrl ?: "https://enbw-emp.azure-api.net/emobility-public-api/api/v1/")

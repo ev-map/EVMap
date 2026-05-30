@@ -21,6 +21,7 @@ import net.vonforst.evmap.api.mapPower
 import net.vonforst.evmap.api.mapPowerInverse
 import net.vonforst.evmap.api.nameForPlugType
 import net.vonforst.evmap.api.powerSteps
+import net.vonforst.evmap.api.proceedSafely
 import net.vonforst.evmap.model.BooleanFilter
 import net.vonforst.evmap.model.ChargeLocation
 import net.vonforst.evmap.model.Chargepoint
@@ -131,7 +132,7 @@ interface GoingElectricApi {
                     var original = chain.request()
                     val url = original.url.newBuilder().addQueryParameter("key", apikey).build()
                     original = original.newBuilder().url(url).build()
-                    chain.proceed(original)
+                    chain.proceedSafely(original)
                 }
                 if (BuildConfig.DEBUG) {
                     addDebugInterceptors()

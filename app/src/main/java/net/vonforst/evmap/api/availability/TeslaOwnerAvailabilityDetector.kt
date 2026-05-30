@@ -7,6 +7,7 @@ import net.vonforst.evmap.api.availability.tesla.asTeslaCoord
 import net.vonforst.evmap.model.ChargeLocation
 import net.vonforst.evmap.model.Chargepoint
 import okhttp3.OkHttpClient
+import retrofit2.HttpException
 import java.time.Instant
 import java.util.Collections
 
@@ -229,12 +230,21 @@ class TeslaOwnerAvailabilityDetector(
                         ?: run {
                             val refreshToken = tokenStore.teslaRefreshToken
                                 ?: throw NotSignedInException()
-                            val response =
+                            val response = try {
                                 authApi.getToken(
                                     TeslaAuthenticationApi.RefreshTokenRequest(
                                         refreshToken
                                     )
                                 )
+                            } catch (e: HttpException) {
+                                if (e.code() == 401) {
+                                    // refresh token is invalid, clear it
+                                    tokenStore.teslaRefreshToken = null
+                                    throw NotSignedInException()
+                                } else {
+                                    throw e
+                                }
+                            }
                             tokenStore.teslaAccessToken = response.accessToken
                             tokenStore.teslaAccessTokenExpiry = now + response.expiresIn
                             response.accessToken

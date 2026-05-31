@@ -654,7 +654,7 @@ class MapFragment : Fragment(), OnMapReadyCallback, MenuProvider {
         binding.progressBar2.isIndeterminate = res.progress == null
         binding.progressBar2.progress = ((res.progress ?: 0f) * 100f).toInt().coerceIn(0, 100)
         binding.search.hint = if (res.progress != null) {
-            getString(R.string.downloading_chargers_percent, (res.progress * 100f))
+            getString(R.string.downloading_chargers_percent, (res.progress * 100f).coerceIn(0f, 100f))
         } else {
             getString(R.string.search)
         }

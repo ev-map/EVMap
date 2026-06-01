@@ -7,6 +7,7 @@
     <string name="no_browser_app_found">Install a web browser first</string>
     <string name="no_email_app_found">Install an email app first</string>
     <string name="no_share_app_found">Could not find an app to share with</string>
+    <string name="system_setting_not_supported">Your system does not support this setting</string>
     <string name="address">Address</string>
     <string name="operator">Operator</string>
     <string name="network">Network</string>

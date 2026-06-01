@@ -1,15 +1,18 @@
 package net.vonforst.evmap.fragment.preference
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.SharedPreferences
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
+import androidx.core.net.toUri
 import androidx.preference.CheckBoxPreference
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import com.github.erfansn.localeconfigx.configuredLocales
+import com.google.android.material.snackbar.Snackbar
 import net.vonforst.evmap.R
 import net.vonforst.evmap.isAppInstalled
 import net.vonforst.evmap.ui.getAppLocale
@@ -83,9 +86,23 @@ class UiSettingsFragment : BaseSettingsFragment() {
                     val context = context ?: return false
                     val intent = Intent(
                         Settings.ACTION_APP_OPEN_BY_DEFAULT_SETTINGS,
-                        Uri.parse("package:${context.packageName}")
+                        "package:${context.packageName}".toUri()
                     )
-                    context.startActivity(intent)
+                    try {
+                        context.startActivity(intent)
+                    } catch (_: ActivityNotFoundException) {
+                        view?.let { v ->
+                            Snackbar.make(
+                                v,
+                                R.string.system_setting_not_supported,
+                                Snackbar.LENGTH_SHORT
+                            ).show()
+                        }
+                        Log.e(
+                            "UiSettingsFragment",
+                            "Settings.ACTION_APP_OPEN_BY_DEFAULT_SETTINGS activity not found"
+                        )
+                    }
                 }
                 return true
             }

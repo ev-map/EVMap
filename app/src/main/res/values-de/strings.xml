@@ -7,6 +7,7 @@
     <string name="no_browser_app_found">Bitte installiere einen Webbrowser</string>
     <string name="no_email_app_found">Bitte installiere eine E-Mail-App</string>
     <string name="no_share_app_found">Keine App zum Teilen gefunden</string>
+    <string name="system_setting_not_supported">Diese Einstellung wird von deinem System nicht unterstützt</string>
     <string name="address">Adresse</string>
     <string name="operator">Betreiber</string>
     <string name="network">Verbund</string>

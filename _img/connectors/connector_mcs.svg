@@ -1,0 +1,14 @@
+<svg id="vector" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <title>connector_mcs</title>
+
+    <path fill="#000000" d="M7.57,2.904A5.168,5.168 0,0 0,2.4 8.074a5.168,5.168 0,0 0,1.097 3.181l5.656,7.24A3.616,3.616 0,0 0,12 19.885a3.616,3.616 0,0 0,2.843 -1.389l5.656,-7.24 A5.168,5.168 0,0 0,21.6 8.074a5.168,5.168 0,0 0,-5.17 -5.17z" fill-opacity="0" stroke="#000" stroke-width="2" id="path_0"/>
+
+    <path d="M11.5 10.159a1.0 1.0 0 0 0 -1.0 1.0 1.0 1.0 0 0 0 1.0 1.0h1.0a1.0 1.0 0 0 0 1.0 -1.0 1.0 1.0 0 0 0 -1.0 -1.0z"/>
+    <circle fill="none" stroke="black" stroke-width="1px" cx="7.5" cy="8.074" r="2.9" />
+    <circle fill="none" stroke="black" stroke-width="1px" cx="16.5" cy="8.074" r="2.9" />
+
+    <circle cx="9" cy="13" r="1" />
+    <circle cx="15" cy="13" r="1" />
+
+    <circle fill="none" stroke="black" stroke-width="1px" cx="12" cy="15.5" r="1.8" />
+</svg>

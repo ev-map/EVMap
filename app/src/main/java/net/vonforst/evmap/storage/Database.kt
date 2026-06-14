@@ -40,7 +40,7 @@ import net.vonforst.evmap.model.SliderFilterValue
         OCMOperator::class,
         OSMNetwork::class,
         SavedRegion::class
-    ], version = 28
+    ], version = 29
 )
 @TypeConverters(Converters::class, GeometryConverters::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -85,7 +85,7 @@ abstract class AppDatabase : RoomDatabase() {
                 MIGRATION_12, MIGRATION_13, MIGRATION_14, MIGRATION_15, MIGRATION_16,
                 MIGRATION_17, MIGRATION_18, MIGRATION_19, MIGRATION_20, MIGRATION_21,
                 MIGRATION_22, MIGRATION_23, MIGRATION_24, MIGRATION_25, MIGRATION_26,
-                MIGRATION_27, MIGRATION_28
+                MIGRATION_27, MIGRATION_28, MIGRATION_29
             )
                 .addCallback(object : Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
@@ -551,6 +551,14 @@ abstract class AppDatabase : RoomDatabase() {
         private val MIGRATION_28 = object : Migration(27, 28) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 // Force nobil data refresh to fetch EVSE UId attributes needed for real-time data
+                db.execSQL("DELETE FROM SavedRegion WHERE `dataSource` = 'nobil'")
+                db.execSQL("DELETE FROM ChargeLocation WHERE `dataSource` = 'nobil'")
+            }
+        }
+
+        private val MIGRATION_29 = object : Migration(28, 29) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                // Force nobil data refresh to update MCS connectors
                 db.execSQL("DELETE FROM SavedRegion WHERE `dataSource` = 'nobil'")
                 db.execSQL("DELETE FROM ChargeLocation WHERE `dataSource` = 'nobil'")
             }

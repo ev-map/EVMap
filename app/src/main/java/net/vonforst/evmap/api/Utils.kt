@@ -20,7 +20,8 @@ private val plugNames = mapOf(
     Chargepoint.SUPERCHARGER to R.string.plug_supercharger,
     Chargepoint.CEE_BLAU to R.string.plug_cee_blau,
     Chargepoint.CEE_ROT to R.string.plug_cee_rot,
-    Chargepoint.TESLA_ROADSTER_HPC to R.string.plug_roadster_hpc
+    Chargepoint.TESLA_ROADSTER_HPC to R.string.plug_roadster_hpc,
+    Chargepoint.MCS to R.string.plug_mcs
 )
 
 fun nameForPlugType(ctx: StringProvider, type: String): String =
@@ -63,6 +64,7 @@ fun iconForPlugType(type: String): Int =
         Chargepoint.CEE_BLAU -> R.drawable.ic_connector_cee_blau
         Chargepoint.CEE_ROT -> R.drawable.ic_connector_cee_rot
         Chargepoint.TYPE_1 -> R.drawable.ic_connector_typ1
+        Chargepoint.MCS -> R.drawable.ic_connector_mcs
         // TODO: add other connectors
         else -> R.drawable.ic_connector_unknown
     }

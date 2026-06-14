@@ -232,7 +232,7 @@ data class NobilChargerStation(
                 "40" -> Chargepoint.SUPERCHARGER // Tesla Connector Model
                 "70" -> return null // Hydrogen
                 "82" -> return null // Biogas
-                "87" -> "" // MCS
+                "87" -> Chargepoint.MCS
 
                 // These are deprecated and not used
                 "50" -> "" // Type 2 + Schuko

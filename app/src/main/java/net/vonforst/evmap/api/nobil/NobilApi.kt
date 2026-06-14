@@ -234,7 +234,8 @@ class NobilApiWrapper(
             Chargepoint.TYPE_2_PLUG,
             Chargepoint.CCS_UNKNOWN,
             Chargepoint.CHADEMO,
-            Chargepoint.SUPERCHARGER
+            Chargepoint.SUPERCHARGER,
+            Chargepoint.MCS
         )
         val connectorsMap = connectors.associateWith { connector ->
             nameForPlugType(sp, connector)

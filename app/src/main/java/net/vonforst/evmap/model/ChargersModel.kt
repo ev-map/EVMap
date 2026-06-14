@@ -470,6 +470,7 @@ data class Chargepoint(
         const val CEE_BLAU = "CEE Blau"
         const val CEE_ROT = "CEE Rot"
         const val TESLA_ROADSTER_HPC = "Tesla HPC"
+        const val MCS = "Megawatt Charging System"
     }
 }
 

@@ -391,4 +391,6 @@
     <string name="welcome_2_title">Full koll på hastigheten</string>
     <string name="auto_confirm_delete_profile">Ta bort filterprofilen \"%s\"?</string>
     <string name="no_share_app_found">Kunde inte hitta en app att dela med</string>
+    <string name="system_setting_not_supported">Din enhet stöder inte denna inställning</string>
+    <string name="plug_mcs">MCS</string>
 </resources>

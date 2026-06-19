@@ -395,4 +395,6 @@
     <string name="auto_use_new_map_screen">Nová obrazovka mapy (beta)</string>
     <string name="auto_confirm_delete_profile">Odstranit profil filtru „%s“?</string>
     <string name="no_share_app_found">Nepodařilo se najít aplikaci ke sdílení</string>
+    <string name="system_setting_not_supported">Váš systém nepodporuje toto nastavení</string>
+    <string name="plug_mcs">MCS</string>
 </resources>

@@ -391,4 +391,6 @@
     <string name="auto_use_new_map_screen">Uus kaardivaade (beetaversioon)</string>
     <string name="auto_confirm_delete_profile">Kas soovid kustutada filtriprofiili „%s“?</string>
     <string name="no_share_app_found">Ei leidunud rakendust, millega sisu jagada</string>
+    <string name="system_setting_not_supported">Sinu nutiseade ei toeta selle seadistuse kasutamist</string>
+    <string name="plug_mcs">MCS</string>
 </resources>

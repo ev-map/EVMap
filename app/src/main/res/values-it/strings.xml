@@ -390,4 +390,9 @@
     <string name="accessibility_employees">Impiegati</string>
     <string name="accessibility_by_appointment">Per appuntamento</string>
     <string name="accessibility_residents">Residenti</string>
+    <string name="no_share_app_found">Non è stato possibile trovare un\'app con cui condividere</string>
+    <string name="chargeprice_removal_2025_dialog_title">Spiacente!</string>
+    <string name="chargeprice_removal_2025_dialog_detail">I costi per l\'accesso ai dati di Chargeprice sono aumentati notevolmente e non possono essere coperti dalle donazioni, pertanto EVMap non è più in grado di visualizzare direttamente questi dati. Per il momento, viene reindirizzato al sito web di Chargeprice. Stiamo lavorando a una soluzione alternativa, ma ci vorrà del tempo e inizialmente potrebbe essere disponibile solo con funzionalità limitate. Grazie per la pazienza e il sostegno!</string>
+    <string name="auto_use_new_map_screen">Nuova schermata della mappa (beta)</string>
+    <string name="auto_confirm_delete_profile">Eliminare il profilo di filtro “%s“?</string>
 </resources>

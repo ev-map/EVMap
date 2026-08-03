@@ -19,7 +19,6 @@ import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import com.google.android.libraries.places.api.net.PlacesStatusCodes
 import kotlinx.coroutines.tasks.await
-import net.vonforst.evmap.R
 import java.io.IOException
 import java.util.concurrent.ExecutionException
 import kotlin.math.sqrt
@@ -53,7 +52,7 @@ class GooglePlacesAutocompleteProvider(val context: Context) : AutocompleteProvi
                     it.getSecondaryText(bold),
                     it.placeId,
                     it.distanceMeters?.toDouble(),
-                    it.placeTypes.map { AutocompletePlaceType.valueOf(it.name) })
+                    it.types.mapNotNull { AutocompletePlaceType.valueOfOrNull(it.uppercase()) })
             }
         } catch (e: ExecutionException) {
             val cause = e.cause
@@ -75,12 +74,13 @@ class GooglePlacesAutocompleteProvider(val context: Context) : AutocompleteProvi
 
     override suspend fun getDetails(id: String): PlaceWithBounds {
         val request =
-            FetchPlaceRequest.builder(id, listOf(Place.Field.LAT_LNG, Place.Field.VIEWPORT)).build()
+            FetchPlaceRequest.builder(id, listOf(Place.Field.LOCATION, Place.Field.VIEWPORT))
+                .build()
         try {
             val place = client.fetchPlace(request).await().place
             token = AutocompleteSessionToken.newInstance()
             return PlaceWithBounds(
-                AnyMapAdapter.adapt(place.latLng),
+                AnyMapAdapter.adapt(place.location),
                 AnyMapAdapter.adapt(place.viewport)
             )
         } catch (e: ApiException) {

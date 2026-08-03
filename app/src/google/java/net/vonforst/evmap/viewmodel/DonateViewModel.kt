@@ -4,8 +4,18 @@ import android.app.Activity
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import com.android.billingclient.api.*
+import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingClient.ProductType
+import com.android.billingclient.api.BillingClientStateListener
+import com.android.billingclient.api.BillingFlowParams
+import com.android.billingclient.api.BillingResult
+import com.android.billingclient.api.ConsumeParams
+import com.android.billingclient.api.PendingPurchasesParams
+import com.android.billingclient.api.ProductDetails
+import com.android.billingclient.api.Purchase
+import com.android.billingclient.api.PurchasesUpdatedListener
+import com.android.billingclient.api.QueryProductDetailsParams
+import com.android.billingclient.api.QueryPurchasesParams
 import net.vonforst.evmap.BuildConfig
 import net.vonforst.evmap.adapter.Equatable
 
@@ -13,7 +23,7 @@ class DonateViewModel(application: Application) : AndroidViewModel(application),
     PurchasesUpdatedListener {
     private var billingClient = BillingClient.newBuilder(application)
         .setListener(this)
-        .enablePendingPurchases()
+        .enablePendingPurchases(PendingPurchasesParams.newBuilder().enableOneTimeProducts().build())
         .build()
     
     val products: MutableLiveData<Resource<List<DonationItem>>> by lazy {
@@ -67,6 +77,7 @@ class DonateViewModel(application: Application) : AndroidViewModel(application),
         billingClient.queryProductDetailsAsync(params) { result, details ->
             if (result.responseCode == BillingClient.BillingResponseCode.OK) {
                 products.postValue(Resource.success(details
+                    .productDetailsList
                     .sortedBy { it.oneTimePurchaseOfferDetails!!.priceAmountMicros }
                     .map { DonationItem(it) }
                 ))

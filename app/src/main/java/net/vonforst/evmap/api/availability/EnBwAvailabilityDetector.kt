@@ -87,7 +87,7 @@ interface EnBwApi {
                 .addInterceptor { chain ->
                     // add API key to every request
                     val request = chain.request().newBuilder()
-                        .header("Ocp-Apim-Subscription-Key", "d4954e8b2e444fc89a89a463788c0a72")
+                        .header("Ocp-Apim-Subscription-Key", "90a67b9900364009b588e100e4b1cc64")
                         .header("Origin", "https://www.enbw.com")
                         .header("Referer", "https://www.enbw.com/")
                         .header("Accept", "application/json")
@@ -95,7 +95,7 @@ interface EnBwApi {
                     chain.proceedSafely(request)
                 }.build()
             val retrofit = Retrofit.Builder()
-                .baseUrl(baseUrl ?: "https://enbw-emp.azure-api.net/emobility-public-api/api/v1/")
+                .baseUrl(baseUrl ?: "https://api.emp.emob-enbw.com/emobility-public-api/api/v1/")
                 .addConverterFactory(
                     MoshiConverterFactory.create(
                         Moshi.Builder().add(InstantAdapter()).build()

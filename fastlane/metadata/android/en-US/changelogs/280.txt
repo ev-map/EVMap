@@ -1,0 +1,9 @@
+Improvements:
+- Support for Vulkan and OpenGL ES 3.0 for rendering OpenStreetMap maps
+- Some improvements "under the hood"
+- Nobil: Support for Megawatt Charging System connectors
+
+Bugfixes:
+- Screen insets were not correctly handled on Android <= 10
+- Tesla real-time status no longer worked when re-login was required
+- Crashes fixed

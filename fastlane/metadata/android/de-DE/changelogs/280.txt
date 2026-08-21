@@ -1,0 +1,9 @@
+Verbesserungen:
+- Unterstützung für Vulkan und OpenGL ES 3.0 zum Rendern von OpenStreetMap-Karten
+- Einige Verbesserungen "unter der Haube"
+- Nobil: Unterstützung für Megawatt Charging System-Anschlüsse
+
+Fehler behoben:
+- Bildschirmränder wurden unter Android <= 10 nicht korrekt berücksichtigt
+- Tesla-Echtzeitstatus funktionierte nicht mehr, wenn erneutes Login erforderlich war
+- Abstürze behoben

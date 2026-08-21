@@ -344,10 +344,10 @@ dependencies {
     googleImplementation(libs.anymaps.google)
     googleImplementation(libs.play.services.maps)
     implementation(libs.anymaps.maplibre) {
-        // exclude Vulkan version and use OpenGL ES 3.0 version for now for better compatibility
+        // exclude default (Vulkan) version and use Vulkan + OpenGL ES 3.0 version for better compatibility
         exclude("org.maplibre.gl", "android-sdk")
     }
-    implementation(libs.maplibre.android.sdk.opengl)
+    implementation(libs.maplibre.android.sdk.vulkan.opengl)
 
     // Google Places
     googleImplementation(libs.places)

@@ -32,7 +32,7 @@ anymaps = "596b491875"
 playServicesMaps = "20.0.0"
 places = "4.4.1"  # last version that supports minSdkVersion 23
 kotlinxCoroutinesPlayServices = "1.10.2"
-mapLibre = "13.4.1"
+mapLibre = "13.5.0"
 mapboxServices = "5.8.0"
 lifecycle = "2.9.2"
 room = "2.7.2"
@@ -91,7 +91,7 @@ anymaps-base = { module = "com.github.ev-map.AnyMaps:anymaps-base", version.ref 
 anymaps-google = { module = "com.github.ev-map.AnyMaps:anymaps-google", version.ref = "anymaps" }
 play-services-maps = { module = "com.google.android.gms:play-services-maps", version.ref = "playServicesMaps" }
 anymaps-maplibre = { module = "com.github.ev-map.AnyMaps:anymaps-maplibre", version.ref = "anymaps" }
-maplibre-android-sdk-opengl = { module = "org.maplibre.gl:android-sdk-opengl", version.ref = "mapLibre" }
+maplibre-android-sdk-vulkan-opengl = { module = "org.maplibre.gl:android-sdk-vulkan-opengl", version.ref = "mapLibre" }
 places = { module = "com.google.android.libraries.places:places", version.ref = "places" }
 kotlinx-coroutines-play-services = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "kotlinxCoroutinesPlayServices" }
 mapbox-sdk-services = { module = "com.mapbox.mapboxsdk:mapbox-sdk-services", version.ref = "mapboxServices" }

@@ -58,7 +58,10 @@ class MapsActivity : AppCompatActivity(),
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
-        WindowCompat.enableEdgeToEdge(window)
+        if (Build.VERSION.SDK_INT >= 26) {
+            // do not use edgeToEdge on Android API 24-25, because light navigation bar is not supported
+            WindowCompat.enableEdgeToEdge(window)
+        }
 
         setContentView(R.layout.activity_maps)
 

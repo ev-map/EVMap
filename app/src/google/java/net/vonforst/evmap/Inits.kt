@@ -6,11 +6,26 @@ import android.util.Log
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.maps.MapsInitializer
+import com.google.android.gms.security.ProviderInstaller
 import com.google.android.libraries.places.api.Places
 
 fun init(context: Context) {
     Places.initialize(context, context.getString(R.string.google_maps_key))
     MapsInitializer.initialize(context, MapsInitializer.Renderer.LATEST, null)
+    ProviderInstaller.installIfNeededAsync(
+        context,
+        object : ProviderInstaller.ProviderInstallListener {
+            override fun onProviderInstalled() {
+                Log.d("EVMap", "Google Play Security provider installed")
+            }
+
+            override fun onProviderInstallFailed(
+                errorCode: Int,
+                recoveryIntent: android.content.Intent?
+            ) {
+                Log.e("EVMap", "Google Play Security provider installation failed: $errorCode")
+            }
+        })
 }
 
 fun checkPlayServices(activity: Activity): Boolean {

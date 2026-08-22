@@ -94,7 +94,10 @@ class CacheLiveData<T>(
             // Both cache and API have finished loading
             value = when (api.status) {
                 Status.SUCCESS -> api
-                Status.ERROR -> Resource.error(api.message, cache.data)
+                Status.ERROR -> {
+                    Log.e("CacheLiveData", "API returned an error: ${api.message}")
+                    Resource.error(api.message, cache.data)
+                }
                 Status.LOADING -> api  // should not occur
             }
         }

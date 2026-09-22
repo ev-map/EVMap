@@ -314,7 +314,6 @@ data class NobilChargerStationData(
     @Json(name = "Number_charging_points") val numChargePoints: Int,
     @Json(name = "Position") val position: Coordinate,
     @Json(name = "Image") val image: String,
-    @Json(name = "Available_charging_points") val availableChargePoints: Int,
     @Json(name = "User_comment") val userComment: String?,
     @Json(name = "Contact_info") val contactInfo: String?,
     @Json(name = "Created") val created: LocalDateTime,

@@ -295,7 +295,7 @@ class EnBwAvailabilityDetector(client: OkHttpClient, baseUrl: String? = null) :
             /* TODO: OSM usually does not have the country tagged. Therefore we currently just use
                a bounding box to determine whether the charger is roughly in Europe */
             "openstreetmap" -> charger.coordinates.lat in 35.0..72.0
-                    && charger.coordinates.lng in 25.0..65.0
+                    && charger.coordinates.lng in -25.0..65.0
                     && charger.operator !in listOf("Tesla, Inc.", "Tesla")
 
             else -> false

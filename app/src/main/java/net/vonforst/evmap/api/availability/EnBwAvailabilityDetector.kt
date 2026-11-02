@@ -132,15 +132,7 @@ class EnBwAvailabilityDetector(client: OkHttpClient, baseUrl: String? = null) :
     override suspend fun getAvailability(location: ChargeLocation): ChargeLocationStatus {
         val lat = location.coordinates.lat
         val lng = location.coordinates.lng
-
-        // find nearest station to this position
-        var markers =
-            api.getMarkers(lng - coordRange, lng + coordRange, lat - coordRange, lat + coordRange)
-
-        repeat(3) {
-            markers = ungroupMarkers(markers)
-        }
-        if (markers.any { it.grouped }) throw AvailabilityDetectorException("markers still grouped")
+        val markers = findMarkersNearLocation(lng, lat)
 
         val nearest = markers.minByOrNull { marker ->
             distanceBetween(marker.lat, marker.lon, lat, lng)
@@ -153,31 +145,45 @@ class EnBwAvailabilityDetector(client: OkHttpClient, baseUrl: String? = null) :
                 lng
             ) > radius
         ) {
+            // no marker within radius
             throw AvailabilityDetectorException("no candidates found")
         }
 
-        if (nearest.numberOfChargePoints < location.totalChargepoints) {
-            // combine related stations
-            markers = markers.filter { marker ->
-                distanceBetween(
-                    marker.lat,
-                    marker.lon,
-                    nearest.lat,
-                    nearest.lon
-                ) < maxDistance
-            }.filter {
-                // only include stations from same operator
-                it.operator == nearest.operator && it.stationId != null
+        // try to combine related stations (EnBW sometimes splits a single location into multiple stations)
+        val combinedMarkers = markers.filter { marker ->
+            distanceBetween(
+                marker.lat,
+                marker.lon,
+                nearest.lat,
+                nearest.lon
+            ) < maxDistance
+        }.filter {
+            // only include stations from same operator
+            it.operator == nearest.operator && it.stationId != null
+        }
+        val candidateSets = listOf(listOf(nearest), combinedMarkers)
+
+        val detailsCache = mutableMapOf<Long, EnBwApi.EnBwLocationDetail>()
+        var lastException: AvailabilityDetectorException? = null
+        for (markersCandidate in candidateSets) {
+            val details = markersCandidate.mapNotNull { it.stationId }.map {
+                detailsCache.getOrPut(it) { api.getLocation(it) }
             }
-        } else {
-            markers = listOf(nearest)
-        }
 
-        val details = markers.mapNotNull { it.stationId }.map {
-            // load details
-            api.getLocation(it)
+            try {
+                return buildStatusFromDetails(location, details)
+            } catch (e: AvailabilityDetectorException) {
+                lastException = e
+                // try next candidate
+            }
         }
+        throw lastException!!
+    }
 
+    private fun buildStatusFromDetails(
+        location: ChargeLocation,
+        details: List<EnBwApi.EnBwLocationDetail>
+    ): ChargeLocationStatus {
         val connectorStatus = details.flatMap { it.chargePoints }.flatMap { cp ->
             cp.connectors.map { connector ->
                 EnBwStatus(connector, cp.status, cp.evseId, cp.state?.updatedAt)
@@ -231,6 +237,21 @@ class EnBwAvailabilityDetector(client: OkHttpClient, baseUrl: String? = null) :
             evseIds,
             lastChange = lastChange
         )
+    }
+
+    private suspend fun findMarkersNearLocation(
+        lng: Double,
+        lat: Double
+    ): List<EnBwApi.EnBwLocation> {
+        // find nearest station to this position
+        var markers =
+            api.getMarkers(lng - coordRange, lng + coordRange, lat - coordRange, lat + coordRange)
+
+        repeat(3) {
+            markers = ungroupMarkers(markers)
+        }
+        if (markers.any { it.grouped }) throw AvailabilityDetectorException("markers still grouped")
+        return markers
     }
 
     private suspend fun ungroupMarkers(markers: List<EnBwApi.EnBwLocation>): List<EnBwApi.EnBwLocation> =

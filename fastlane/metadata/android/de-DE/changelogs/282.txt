@@ -1,0 +1,8 @@
+Verbesserungen:
+- Verbesserungen für Echtzeitdaten bei einigen Ladestationen
+
+Fehler behoben:
+- Verschiedene Darstellungs- und Verbindungsprobleme auf Android 6 und 7 behoben
+- Fehler beim Laden der Daten von der Datenquelle Nobil behoben
+- Echtzeitdaten für Datenquelle OpenStreetMap funktionierten nicht
+

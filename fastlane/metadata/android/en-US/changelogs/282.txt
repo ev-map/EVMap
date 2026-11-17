@@ -1,0 +1,7 @@
+Improvements:
+- Improved realtime data for a few chargers
+
+Bugfixes:
+- Fixed display and connection errors on Android 6 and 7
+- Fixed a bug when loading data from the Nobil data source
+- Realtime data for the OpenStreetMap data source was not working

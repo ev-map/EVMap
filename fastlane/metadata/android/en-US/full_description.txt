@@ -1,10 +1,9 @@
-Using EVMap, you can find electric vehicle chargers comfortably using your Android phone. It provides mobile access to the community-driven databases from GoingElectric.de and Open Charge Map, containing information about charging locations across the world. For many chargepoints in Europe, you can see real-time status information.
+Using EVMap, you can find electric vehicle chargers comfortably using your Android phone. It provides mobile access to the community-driven databases from GoingElectric.de, Open Charge Map, OpenStreetMap, and NOBIL, containing information about charging locations across the world. For many chargepoints in Europe, you can see real-time status information.
 
 Features:
 - Material Design
 - Shows all charging stations from the community-maintained GoingElectric.de and Open Charge Map directories
 - Realtime availability information (only in Europe)
-- Integrated price comparison using Chargeprice.app (only in Europe)
 - Map data from OpenStreetMap
 - Search for places
 - Advanced filtering options, including saved filter profiles
@@ -13,6 +12,6 @@ Features:
 
 EVMap is an open source project and can be found at https://github.com/ev-map/EVMap.
 
-This app is not an official product of GoingElectric.de or Open Charge Map, it only uses their public APIs.
+This app is not an official product of GoingElectric.de, Open Charge Map, OpenStreetMap, or NOBIL, it only uses their public APIs.
 
 A list of necessary permissions with explanations is available here: https://ev-map.app/faq/#permissions

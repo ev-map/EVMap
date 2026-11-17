@@ -1,10 +1,9 @@
-Mit EVMap kannst du Stromtankstellen in deiner Nähe komfortabel über dein Android-Smartphone finden. Die Datenbanken von GoingElectric.de oder Open Charge Map werden als Datenquelle genutzt und bieten Community-gepflegte Informationen zu Ladestationen auf der ganzen Welt. Für viele Ladepunkte in Europa kann zusätzlich der aktuelle Status (verfügbar oder belegt) angezeigt werden.
+Mit EVMap kannst du Stromtankstellen in deiner Nähe komfortabel über dein Android-Smartphone finden. Die Datenbanken von GoingElectric.de, Open Charge Map, OpenStreetMap oder NOBIL werden als Datenquelle genutzt und bieten Community-gepflegte Informationen zu Ladestationen auf der ganzen Welt. Für viele Ladepunkte in Europa kann zusätzlich der aktuelle Status (verfügbar oder belegt) angezeigt werden.
 
 Funktionen:
 - Zeitgemäßes Material Design
 - Anzeige der Stromtankstellen aus den Stromtankstellenverzeichnissen von GoingElectric.de und Open Charge Map
 - Echtzeit-Verfügbarkeitsanzeige für viele Ladesäulen (nur in Europa)
-- Integrierter Preisvergleich für die jeweilige Ladesäule mit Chargeprice.app (nur in Europa)
 - Kartendaten von OpenStreetMap
 - Suche nach Orten
 - Erweiterte Filterfunktionen, Filterprofile speichern
@@ -13,6 +12,6 @@ Funktionen:
 
 EVMap ist ein Open-Source-Projekt und unter https://github.com/ev-map/EVMap zu finden.
 
-Die App ist kein offizielles Angebot von GoingElectric.de oder Open Charge Map, sondern nutzt die öffentlichen APIs dieser Seiten.
+Die App ist kein offizielles Angebot von GoingElectric.de, Open Charge Map, OpenStreetMap oder NOBIL, sondern nutzt die öffentlichen APIs dieser Seiten.
 
 Eine Liste der benötigten Berechtigungen mit Beschreibung gibt es unter diesem Link: https://ev-map.app/de/faq/#permissions
